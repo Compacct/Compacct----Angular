@@ -1,0 +1,290 @@
+<div class="adiogram-wrap">
+  <div class="adiogram-patient">
+    <div class="form-horizontal" style="padding: 0 15px;">
+      <form name="registrationForm5" #registrationForm5="ngForm" novalidate>
+        <div id="invoice">
+          <div class="invoice overflow-auto">
+            <div>
+              <main>
+                <div class="row contacts">
+                  <div class="col invoice-to">
+                    <h2 class="to">
+                      {{
+                        objCommonAll.Prefix + " " + objCommonAll.Contact_Name
+                          | titlecase
+                      }}
+                    </h2>
+                    <div class="date">
+                      Mobile No:&nbsp;<a
+                        href="{{ 'tel:+91' + objCommonAll?.Mobile }}"
+                        class="ng-binding"
+                        ><i class="fa fa-fw fa-phone-square"></i> &nbsp;{{
+                          objCommonAll?.Mobile
+                        }}
+                      </a>
+                    </div>
+                    <div class="address">
+                      Gender :
+                      {{ objCommonAll?.Gender ? objCommonAll?.Gender : "" }}
+                      &nbsp;&nbsp;Age :
+                      {{ objCommonAll?.Age ? objCommonAll?.Age : "" }}
+                    </div>
+                    <div class="address">
+                      {{ objCommonAll?.Address ? objCommonAll?.Address : "" }}
+                    </div>
+                    <div class="email">
+                      {{
+                        objCommonAll?.District +
+                          " " +
+                          objCommonAll?.State +
+                          " " +
+                          objCommonAll?.Pin
+                      }}
+                    </div>
+                  </div>
+                  <div class="col invoice-details">
+                    <h4 class="invoice-id">
+                      <small>Patient ID :</small
+                      >{{ objCommonAll?.Foot_Fall_ID }}
+                    </h4>
+
+                    <div class="address">
+                      Date Of Birth :
+                      {{ getDateObj(objCommonAll?.Date_Of_Birth) }}
+                    </div>
+                    <div class="address">
+                      Enq Source :
+                      {{
+                        objCommonAll?.Enq_Source_Sub_Name
+                          ? objCommonAll?.Enq_Source_Sub_Name
+                          : ""
+                      }}
+                    </div>
+                    <div class="address">
+                      Referance Doctor :
+                      {{
+                        objCommonAll?.Enq_Source_Sub_Name1
+                          ? objCommonAll?.Enq_Source_Sub_Name1
+                          : ""
+                      }}
+                    </div>
+                    <div class="date">
+                      Date of Appointment:
+                      {{ appoDate | date: "MMM d, y, h:mm: a" }}
+                    </div>
+                  </div>
+                </div>
+              </main>
+            </div>
+            <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
+            <div></div>
+          </div>
+        </div>
+        <!-- <div class="form-group">
+          <div class="col-sm-3">
+            <label class="control-label"
+              >Select Patient &nbsp;<span class="text-danger">*</span></label
+            >
+            <p-dropdown
+              [options]="PatientList"
+              name="Patient"
+              [(ngModel)]="PatientSearch"
+              [showClear]="true"
+              [emptyFilterMessage]="' No Patient Found'"
+              (onChange)="PatientChange(PatientSearch)"
+              [filter]="true"
+              filterBy="label,value.name"
+              [placeholder]="'Select Patient'"
+              [virtualScroll]="true"
+              itemSize="30"
+              #Patient="ngModel"
+              [styleClass]="
+                registrationSubmitted5 && Patient.errors?.required
+                  ? 'clearance'
+                  : ''
+              "
+              [required]="true"
+            >
+            </p-dropdown>
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label"
+              >Mobile No.<sup class="text-danger">*</sup></label
+            >
+            <input
+              class="form-control"
+              name="mobile"
+              #mobile
+              [ngClass]="{
+                clearance: registrationSubmitted5 && mobile?.errors?.required
+              }"
+              [(ngModel)]="objCommonAll.Mobile"
+              autofocus
+              placeholder="Mobile Number"
+              [maxlength]="10"
+              [minlength]="10"
+              required
+              valid-number
+              [disabled]="true"
+            />
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label"
+              >Name<sup class="text-danger">*</sup></label
+            >
+            <input
+              type="text"
+              class="form-control"
+              name="name"
+              [(ngModel)]="objCommonAll.Contact_Name"
+              placeholder="Name"
+              allow-pattern="[a-z ]"
+              #name
+              [ngClass]="{
+                clearance: registrationSubmitted5 && name?.errors?.required
+              }"
+              [disabled]="true"
+            />
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label"
+              >Gender<span class="text-danger">*</span></label
+            >
+            <select
+              class="form-control"
+              name="gender"
+              [(ngModel)]="objCommonAll.Gender"
+              [ngClass]="{
+                clearance: registrationSubmitted5 && gender?.errors?.required
+              }"
+              #gender
+              [disabled]="true"
+            >
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-3">
+            <label class="control-label"
+              >D.O.B<sup class="text-danger"></sup
+            ></label>
+            <div class="input-group date">
+              <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </div>
+              <input
+                type="date"
+                name="DOB"
+                [(ngModel)]="DOBDate"
+                class="form-control"
+                [disabled]="true"
+                [ngClass]="{
+                  clearance: registrationSubmitted5 && DOB?.errors?.required
+                }"
+                #DOB
+              />
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Age</label>
+            <input
+              class="form-control"
+              name="age"
+              [(ngModel)]="objCommonAll.Age"
+              #age
+              placeholder="Age"
+              [disabled]="true"
+            />
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Referance Source</label>
+            <input
+              class="form-control"
+              name="referenceSource"
+              #referenceSource
+              [(ngModel)]="objCommonAll.Enq_Source_Sub_Name"
+              placeholder="Referance Source"
+              [disabled]="true"
+            />
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Referance Doctor</label>
+            <input
+              class="form-control"
+              name="subreferenceSource"
+              #subreferenceSource
+              [(ngModel)]="objCommonAll.Enq_Source_Sub_Name1"
+              placeholder="Referance Doctor"
+              [disabled]="true"
+            />
+          </div>
+        </div> -->
+      </form>
+    </div>
+  </div>
+
+  <div class="adiogram-container">
+    <h5
+      style="
+                                              padding: 0.5em 1em;
+                                              background: #c1c1c185;
+                                              border-top: 5px solid #3c8dbc;
+                                              border-bottom: 1px solid #c6c6c6;
+                                              "
+    >
+      <i class="fa fa-fw  fa-line-chart"> </i> &nbsp;<strong
+        >Audiogram Graph :</strong
+      >
+    </h5>
+    <app-compacct-hearing-threshold-chart
+      #Audograph
+      [Footfall]="FootFallID"
+      [AppoID]="appoID"
+    ></app-compacct-hearing-threshold-chart>
+  </div>
+  <div class="adiogram-data">
+    <h5
+      style="
+                                            padding: 0.5em 1em;
+                                            background: #c1c1c185;
+                                            border-top: 5px solid #3c8dbc;
+                                            border-bottom: 1px solid #c6c6c6;
+                                            margin-top: 15px;
+                                            "
+    >
+      <i class="fa fa-fw  fa-object-group"> </i> &nbsp;<strong
+        >Audiogram Data :</strong
+      >
+    </h5>
+    <div [ngSwitch]="company">
+      <div *ngSwitchCase="'C.C.SAHA LTD'">
+        <app-compacct-ccshaha-ad
+          #ccsahaAudiometry
+          [Footfall]="FootFallID"
+          [AppoID]="appoID"
+          (_saveCCsahaAudiometry)="childSaveCall($event)"
+        ></app-compacct-ccshaha-ad>
+      </div>
+      <div *ngSwitchCase="'Aura Hearing And Speech Care Centre'">
+        <app-compacct-aura-ad
+          [Footfall]="FootFallID"
+          [AppoID]="appoID"
+        ></app-compacct-aura-ad>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <button
+        class="btn btn-primary pull-right"
+        *ngIf="PrintBtnFlag"
+        (click)="fetchDetails()"
+      >
+        <span class="glyphicon glyphicon-print"></span>
+        Print
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+.productTable .ui-table-auto-layout > .ui-table-wrapper {
+  width: 100% !important;
+  min-height: 170px !important;
+}
+
+.table-bordered {
+  border: 1px solid #cccccc;
+}
+.table-bordered > thead > tr > th{
+  color: #fff;
+  background-color: #3c8dbc;
+
+}
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+  border: 1px solid #cccccc;
+}
+
+/* Validation css*/
+.invalid-feedback{
+  color: red;
+}
+input[type=text].is-invalid, input[type=textarea].is-invalid, select.is-invalid, input[type=number].is-invalid {
+  border: 1px solid red !important;
+}
+.is-invalid .ui-dropdown{
+  border: 1px solid red !important;
+}
+
+.error-msg{
+  color: red;
+  text-align: center;
+  margin:15px 0;
+}
+body .ui-inputtext {
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+}
+body .ui-inputtext:enabled:hover:not(.ui-state-error) {
+  border-color: #3c8dbc !important;
+}
+.uBtn{
+  padding: 5px 10px;
+  color: #fff;
+  background-color: #3c8dbc;
+  margin-left: 4px;
+}
+.top-section{
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #c8daf7;
+}
+.compacct-multiselect{
+  width: 100% !important;
+  /* border: 1px solid #d2d6de !important; */
+}
+.is-invalid .compacct-multiselect {
+  border: 1px solid red !important;
+}

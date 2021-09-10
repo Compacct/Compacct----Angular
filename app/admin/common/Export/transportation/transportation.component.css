@@ -1,0 +1,72 @@
+.raw-bgcolor{
+  background-color: #ecf0f5;
+  padding: 15px;
+  margin-top: 15px;
+}
+.consumable-bgcolor{
+  background-color: #c8daf7;
+  padding: 15px;
+}
+.wastage-bgcolor{
+  background-color: #ecf0f5;
+  padding: 15px;
+}
+.final-bgcolor{
+  background-color: #c8daf7;
+  padding: 15px;
+}
+
+.productTable .ui-table-auto-layout > .ui-table-wrapper {
+  width: 100% !important;
+  min-height: 170px !important;
+}
+
+.table-bordered {
+  border: 1px solid #cccccc;
+}
+.table-bordered > thead > tr > th{
+  color: #fff;
+  background-color: #3c8dbc;
+
+}
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+  border: 1px solid #cccccc;
+}
+.pull-right {
+  margin: 15px 0;
+}
+
+/* Validation css*/
+
+.invalid-feedback{
+  color: red;
+}
+input[type=text].is-invalid, input[type=textarea].is-invalid, select.is-invalid, input[type=number].is-invalid {
+  border: 1px solid red !important;
+}
+.is-invalid .ui-dropdown{
+  border: 1px solid red !important;
+}
+body .ui-inputtext {
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+}
+body .ui-inputtext:enabled:hover:not(.ui-state-error) {
+  border-color: #3c8dbc !important;
+}
+
+
+/* .is-invalid::placeholder{
+color: red !important;
+} */
+/* PRIME SELECT BOX VALIDATION */
+/* body .ui-dropdown.is-invalid {
+border: 1px solid red !important;
+} */
+
+/* .form-group {
+margin-bottom: 1px;
+} */
+/* body .ui-dropdown {
+  border: 1px solid red !important;
+} */

@@ -1,0 +1,388 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="fa fa-fw fa-check-circle" style="font-size: 3em;color:green"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="CallTutopiaAppApi()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                  <p-tabView [activeIndex]="tabIndexToView" >
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"
+                        leftIcon="fa fa-fw fa-pencil-square-o">
+                        <form name="BillSearchForm" #BillSearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <!-- <div class="col-sm-3">
+                                    <label class="control-label">
+                                        Cost Center &nbsp;<span class="text-danger"></span></label>
+                                    <select class="form-control" name="costcenterFrom2" #costcenterFrom2="ngModel"
+                                        [(ngModel)]="ObjVoucherSearch.Cost_Cen_ID" [ngClass]="{
+                    clearance:
+                      VoucherSearchhFormSubmitted &&
+                      costcenterFrom2.errors?.required
+                  }">
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of CostCenterList"
+                                            [ngValue]="option.Cost_Cen_ID">{{ option.Cost_Cen_Name }}</option>
+                                    </select>
+                                </div> -->
+                                <div class="col-sm-4">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal"
+                                        (click)="SearchVoucher(BillSearchForm.form.valid,'NOT VERIFIED')" id="load"
+                                        [disabled]="seachSpinner">
+                                        <p-progressSpinner *ngIf="seachSpinner"
+                                            [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                            animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner"
+                                            class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                    <button style="margin-right: 30px;" *ngIf='VoucherBillList.length'  (click)="exportexcel(VoucherBillList,'Confirmed_Voucher')"
+                                    class="btn btn-primary custombutton">
+                                    <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                  </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive no-padding">
+                            <p-table [value]="VoucherBillList" #dt1 [paginator]="VoucherBillList.length ? true : false" [rows]="10"
+                                [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowHover]="true"
+                                [globalFilterFields]='["Bill_No","Bill_Date","Student_Name","PIN","Created_By","Net_Amt","CASH RECEIVED","BANK A/C","ONLINE PAYMENT","FINANCE PEER"]'>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search"
+                                                (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th>Doc No</th>
+                                        <th>Doc Date</th>
+                                        <th>Student Name</th>
+                                        <th>Pin</th>
+                                        <th>Created By</th>
+                                        <th>Net Amt.</th>
+                                        <th>CASH RECEIVED</th>
+                                        <th>BANK A/C</th>
+                                        <th>ONLINE PAYMENT </th>
+                                        <th>FINANCE PEER</th>
+                                        <!-- <th>Voucher Amt </th>
+                                        <th>Bank Txn Type</th>
+                                        <th>PDF</th>
+                                        <th>Fin Year</th> -->
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                    data-toggle="dropdown" style="height:27px">
+                                                    <i class="fa fa-fw fa-bars"></i>
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                      <a (click)="GetPDF(col)">
+                                                          <i class="fa fa-print" aria-hidden="true"></i>
+                                                          Print
+                                                      </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="ConfirmBill(col)">
+                                                            <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                                            Confirm Voucher
+                                                        </a>
+                                                    </li>
+                                                    <!-- <li>
+                                                        <a (click)="GetPDF(col)">
+                                                            <i class="fa fa-fw file-text "></i>
+                                                            PDF
+                                                        </a>
+                                                    </li> -->
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>{{ col.Bill_No }}</td>
+                                        <td>{{ col.Bill_Date}}</td>
+                                        <td>{{ col.Student_Name  }}</td>
+                                        <td>{{ col.PIN }}</td>
+                                        <td>{{col.Created_By }}</td>
+                                        <td>{{ col.Net_Amt }}</td>
+                                        <td>{{ col['CASH RECEIVED'] ? col['CASH RECEIVED'] : '-' }}</td>
+                                        <td>{{ col['BANK A/C'] ? col['BANK A/C'] : '-' }}</td>
+                                        <td>{{ col['ONLINE PAYMENT'] ? col['ONLINE PAYMENT'] : '-' }}</td>
+                                        <td>{{ col['FINANCE PEER'] ? col['FINANCE PEER'] : '-' }}</td>
+                                        <!-- <td>{{ col.Customer_Name }}</td>
+                                        <td>{{ col.Adj_Amount }}</td>
+                                        <td>{{ col.Rec_Amt }}</td>
+                                        <td>{{ col.Bank_Txn_Type }}</td>
+                                        <td>
+                                            <a href="{{col.Voucher_Upload}}" ng-if="col.Voucher_Upload" target="_blank"><i
+                                                    class="fa fa-fw fa-file-pdf-o"></i></a>
+
+                                        </td>
+                                        <td>{{col.Fin_Year_Name}}</td> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" *ngIf="VoucherBillList.length" let-state>
+                                    Showing {{ state.first + 1 }} of
+                                    {{ state.first + 1 + state.rows }} of
+                                    {{ state.totalRecords }}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-fw fa-check-square-o">
+                        <form name="PendingLoanForm" #PendingLoanForm="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label"> Loan Company</label>
+                                <select class="form-control"
+                                name="Loan_Company_Ledger"
+                                #Loan_Company_Ledger="ngModel"
+                                [(ngModel)]="ObjLoanSearch.Loan_Company_Ledger"
+                                [ngClass]="{clearance: PendingLoanSearchhFormSubmitted && Loan_Company_Ledger.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of LoanCompanyList" value="{{ option.Support_Category_ID }}" >
+                                  {{ option.Support_Category_Name }}
+                                </option>
+                              </select>
+                            </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <!-- <div class="col-sm-3">
+                                    <label class="control-label">
+                                        Cost Center &nbsp;<span class="text-danger"></span></label>
+                                    <select class="form-control" name="costcenterFrom2" #costcenterFrom2="ngModel"
+                                        [(ngModel)]="ObjVoucherSearch.Cost_Cen_ID" [ngClass]="{
+                                            clearance:
+                                              VoucherSearchhFormSubmitted &&
+                                              costcenterFrom2.errors?.required
+                                          }">
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of CostCenterList" [ngValue]="option.Cost_Cen_ID">{{ option.Cost_Cen_Name
+                                            }}</option>
+                                    </select>
+                                </div> -->
+                                <div class="col-sm-4">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal"
+                                        (click)="SearchPendingLoan(PendingLoanForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                        <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                            animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive no-padding">
+                            <p-table [value]="PendingLoanBillList" #dt1 [paginator]="PendingLoanBillList.length ? true : false" [rows]="10"
+                                [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowHover]="true"
+                                [globalFilterFields]='["Order_No","Order_Date","Loan_Amt","Loan_EMI_No","Loan_EMI_Amount","DP_Amt","DP_Confirm_Date","Loan_Confirm_Date","FINANCE PEER"]'>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search"
+                                                (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Order No</th>
+                                        <th>Date</th>
+                                        <th>Loan Amount</th>
+                                        <th>No of EMI</th>
+                                        <th>EMI Amount</th>
+                                        <th>DP Amount</th>
+                                        <th>DP Confirmation Date</th>
+                                        <th>Loan Confirmation Date</th>
+                                        <th>EMI To Be Transferred</th>
+                                        <th>Update</th>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                        <td>{{ col.Order_No }}</td>
+                                        <td>{{ col.Order_Date}}</td>
+                                        <!-- <td>{{ col.Loan_Ledger_ID  }}</td> -->
+                                        <td>{{ col.Loan_Amt }}</td>
+                                        <td>{{col.Loan_EMI_No }}</td>
+                                        <td>{{ col.Loan_EMI_Amount }}</td>
+                                        <td>{{ col.DP_Amt }}</td>
+                                        <td>{{col.DP_Confirm_Date }}</td>
+                                        <td>{{ col.Loan_Confirm_Date }}</td>
+                                        <td>{{ col.Emi_To_Be_Tran }}</td>
+                                        <td class="text-center">
+                                          <p-checkbox [(ngModel)]="col.Selected" (onChange)='LoanBillCheckBoxChanged()' [binary]="true"></p-checkbox>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td colspan="9"><b>TOTAL :</b></td>
+                                      <td><b>{{UpdateLoanTotalAmt}}</b></td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{ state.first + 1 }} of
+                                    {{ state.first + 1 + state.rows }} of
+                                    {{ state.totalRecords }}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <form name="LedgerForm" #LedgerForm="ngForm" novalidate>
+                          <div class="form-group">
+                            <div class="col-sm-4">
+                              <label class="control-label"> Bank Account</label>
+                              <select class="form-control"
+                              name="Bank_Ledger"
+                              #Bank_Ledger="ngModel"
+                              [(ngModel)]="ObjCommonUseObj.Bank_Ledger"
+                              [ngClass]="{clearance: VoucherSubmitted && Bank_Ledger.errors?.required}"
+                              required
+                                >
+                              <option [ngValue]="undefined">Select</option>
+                              <option *ngFor="let option of BankLedgerList" value="{{ option.Support_Category_ID }}" >
+                                {{ option.Support_Category_Name }}
+                              </option>
+                            </select>
+                            </div>
+                            <div class="col-sm-4">
+                              <label class="control-label">Transfer Date</label>
+                              <ejs-datepicker  [(value)]="ObjLedger.Voucher_Date" [format]="'dd/MMM/yyyy'"
+                              name="TransferDatef"
+                              [required]="ChequeOptionRequire"
+                              ></ejs-datepicker>
+
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Bank TRN Type</label>
+                                <select class="form-control"
+                                name="Bank_Txn_Type"
+                                #Bank_Txn_Type="ngModel"
+                                [(ngModel)]="ObjLedger.Bank_Txn_Type"
+                                (change)='BankTRNTypeChange()'
+                                [ngClass]="{clearance: VoucherSubmitted && Bank_Txn_Type.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of BankLedgerList" value="{{ option.Support_Category_ID }}" >
+                                  {{ option.Support_Category_Name }}
+                                </option>
+                              </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">{{lblDate}}</label>
+                                <ejs-datepicker  [(value)]="ObjLedger.Cheque_Date" [format]="'dd/MMM/yyyy'"
+                                name="ChequeDatef"
+                                [enable]="!ChequeOption"
+                                [required]="ChequeOptionRequire"
+                                ></ejs-datepicker>
+
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">{{lblNo}}</label>
+                                <input class="form-control" name="chequenof"
+                                      #chequenof="ngModel"
+                                       [(ngModel)]="ObjLedger.Cheque_No" [placeholder]="lblNo"
+                                       [disabled]="ChequeOption"
+                                       [required]="ChequeOptionRequire"
+                                       [ngClass]="{clearance: VoucherSubmitted && chequenof.errors?.required }">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Bank Name</label>
+                                <input class="form-control"
+                                       name="banknamef"
+                                       #banknamef="ngModel"
+                                       [(ngModel)]="ObjLedger.Bank_Name"
+                                       placeholder="Bank Name"
+                                       [disabled]="bankName"
+                                       [required]="bankNameRequire"
+                                       [ngClass]="{clearance: VoucherSubmitted && banknamef.errors?.required }">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Bank Branch Name</label>
+                                <input class="form-control"
+                                       name="bankbranchnamef"
+                                       #bankbranchnamef="ngModel"
+                                       [(ngModel)]="ObjLedger.Bank_Branch_Name"
+                                       placeholder="Bank Branch Name"
+                                       [disabled]="bankbranchName"
+                                       [required]="bankBranchNameRequire"
+                                       [ngClass]="{clearance: VoucherSubmitted && bankbranchnamef.errors?.required }">
+                            </div>
+                            <div class="col-sm-4">
+                              <label class="control-label">Naration</label>
+                              <input class="form-control"
+                                     name="Naration"
+                                     #Naration="ngModel"
+                                     [(ngModel)]="ObjLedger.Naration"
+                                     placeholder="Naration"
+                                     [ngClass]="{clearance: VoucherSubmitted && Naration.errors?.required }">
+                            </div>
+                              <!-- <div class="col-sm-3">
+                                  <label class="control-label">
+                                      Cost Center &nbsp;<span class="text-danger"></span></label>
+                                  <select class="form-control" name="costcenterFrom2" #costcenterFrom2="ngModel"
+                                      [(ngModel)]="ObjVoucherSearch.Cost_Cen_ID" [ngClass]="{
+                                          clearance:
+                                            VoucherSearchhFormSubmitted &&
+                                            costcenterFrom2.errors?.required
+                                        }">
+                                      <option [ngValue]="undefined">Select</option>
+                                      <option *ngFor="let option of CostCenterList" [ngValue]="option.Cost_Cen_ID">{{ option.Cost_Cen_Name
+                                          }}</option>
+                                  </select>
+                              </div> -->
+                              <div class="box-footer">
+                                  <button class="btn btn-primary custombutton" data-toggle="modal"
+                                      (click)="SaveLoanTransfer(LedgerForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                          animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Save
+                                  </button>
+                              </div>
+                          </div>
+                      </form>
+                    </p-tabPanel>
+                  </p-tabView>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>

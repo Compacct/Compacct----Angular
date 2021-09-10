@@ -1,0 +1,266 @@
+.compacct-appo-header {
+    position: relative;
+    width: 100%;
+    background: white;
+    border-top: 4px solid #3c8dbc;
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #d0d0d0;
+}
+.cost-center {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #f4f4f4;
+    color: #444;
+    border: 1px solid #ddd;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+}
+.invoice-id{
+font-size: 22px;
+}
+.control-label{
+    margin-bottom: 0 !important;
+}
+.control-section {
+    position: relative;
+}
+body .ui-sidebar .ui-sidebar-close{
+    margin: 10px;
+}
+.panel{
+    margin-bottom: 0 !important;
+}
+.ui-sidebar-mask {
+    position: unset !important;
+}
+body .ui-sidebar{
+    padding: 0 0!important;
+}
+.panel-default>.panel-heading{
+    background-color: #c1c1c18c !important;
+}
+.e-schedule {
+    border-left: 2px solid #c1c1c1;
+}
+.ui-sidebar-active.ui-sidebar-right{
+    position: absolute;
+}
+/* CONTEXT MENU */
+.e-contextmenu-wrapper ul.e-contextmenu {
+border: 1px solid rgba(128, 128, 128, 0.48) !important;
+}
+.e-contextmenu-wrapper ul .e-menu-item {
+    border-bottom: 1px solid #c1c1c1;
+}
+.e-menu-item.e-focused{
+    color: #fff !important;
+    background-color: #428bca !important;
+    border-color: #357ebd !important;
+}
+
+
+
+/* CELL */
+.schedule-cell-dimension.e-schedule .e-vertical-view .e-date-header-wrap table col,
+.schedule-cell-dimension.e-schedule .e-vertical-view .e-content-wrap table col {
+    width: 200px;
+}
+
+.schedule-cell-dimension.e-schedule .e-vertical-view .e-time-cells-wrap table td,
+.schedule-cell-dimension.e-schedule .e-vertical-view .e-work-cells {
+    height: 100px;
+}
+
+.schedule-cell-dimension.e-schedule .e-month-view .e-work-cells,
+.schedule-cell-dimension.e-schedule .e-month-view .e-date-header-wrap table col {
+    width: 200px;
+}
+
+.schedule-cell-dimension.e-schedule .e-month-view .e-work-cells {
+    height: 200px;
+}
+
+.schedule-cell-dimension.e-schedule .e-timeline-month-view .e-content-wrap table col,
+.schedule-cell-dimension.e-schedule .e-timeline-view .e-content-wrap table col {
+    width: 100px;
+}
+
+.schedule-cell-dimension.e-schedule .e-timeline-view .e-work-cells,
+.schedule-cell-dimension.e-schedule .e-timeline-month-view .e-work-cells {
+    height: 600px;
+}
+
+.e-schedule .e-vertical-view .e-day-wrapper .e-appointment{
+    color: #222d32;
+    border: 2px solid #ffffff !important;
+}
+.e-schedule .e-vertical-view .e-day-wrapper .e-appointment .e-subject {
+    font-weight: 700;
+}
+
+/* TOOLTIP */
+.e-schedule-event-tooltip .tooltip-wrap {
+    display: flex;
+}
+
+.e-schedule-event-tooltip .tooltip-wrap .image {
+    width: 50px;
+    height: 50px;
+}
+.e-schedule-event-tooltip .tooltip-wrap .content-area {
+    padding-left: 6px;
+    font-size: 12px;
+}
+
+
+.e-schedule-event-tooltip .tooltip-wrap .name {
+    font-weight: 500;
+    font-size: 14px;
+}
+/* APPOINTMENT HEADER */
+
+.invoice {
+    position: relative;
+    background-color: #FFF;
+    min-height: 680px;
+    padding: 0 !important;
+}
+.invoice header {
+    padding: 10px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #3989c6
+}
+.invoice .company-details {
+    text-align: right
+}
+.invoice .company-details .name {
+    margin-top: 0;
+    margin-bottom: 0
+}
+.invoice .contacts {
+    margin-bottom: 20px
+}
+.invoice .invoice-to {
+    text-align: left;
+    display: inline-block;
+    width: 50%;
+}
+.invoice .invoice-to .to {
+    margin-top: 0;
+    margin-bottom: 0
+}
+.invoice .invoice-details {
+    text-align: right;
+    display: inline-block;
+    width: 50%;
+}
+.invoice .invoice-details .invoice-id {
+    margin-top: 0;
+    color: #3989c6
+}
+.invoice main {
+    padding-bottom: 50px
+}
+.invoice main .thanks {
+    margin-top: -100px;
+    font-size: 2em;
+    margin-bottom: 50px
+}
+.invoice main .notices {
+    padding-left: 6px;
+    border-left: 6px solid #3989c6
+}
+.invoice main .notices .notice {
+    font-size: 1.2em
+}
+.invoice table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 20px
+}
+.invoice table td,.invoice table th {
+    padding: 5px;
+    background: #eee;
+    border-bottom: 1px solid #fff
+}
+.invoice table th {
+    white-space: nowrap;
+    font-weight: 400;
+    font-size: 14px;
+    background: #3c8dbc;
+    border: 1px solid #62a5ccde;
+    color: white;
+}
+.invoice table td h3 {
+    margin: 0;
+    font-weight: 400;
+    color: #3989c6;
+    font-size: 1.2em
+}
+.invoice table .no {
+    font-size: 1em;
+    background: #ddd
+}
+.invoice table tbody tr:last-child td {
+    border: none
+}
+.invoice table tfoot td {
+    background: 0 0;
+    border-bottom: none;
+    white-space: nowrap;
+    text-align: right;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    border-top: 1px solid #aaa
+}
+.invoice table tfoot tr:first-child td {
+    border-top: none
+}
+.invoice table tfoot tr:last-child td {
+    color: #3989c6;
+    font-size: 1.4em;
+    border-top: 1px solid #3989c6
+}
+.invoice table tfoot tr td:first-child {
+    border: none
+}
+.invoice footer {
+    width: 100%;
+    text-align: center;
+    color: #777;
+    border-top: 1px solid #aaa;
+    padding: 8px 0
+}
+@media print {
+    .invoice {
+        font-size: 11px!important;
+        overflow: hidden!important
+    }
+
+    .invoice footer {
+        position: absolute;
+        bottom: 10px;
+        page-break-after: always
+    }
+
+    .invoice>div:last-child {
+        page-break-before: always
+    }
+}
+
+body .ui-fieldset {
+    border: none !important;
+  }
+  body .ui-fieldset .ui-fieldset-legend a{
+   padding: 0px 10px !important;
+   color: #ffffff !important;
+   background-color: #3c8dbc !important;
+  }
+  body .ui-fieldset .ui-fieldset-legend a .ui-fieldset-toggler{
+   margin-right: 0.2em !important;
+   color: #ffffff !important;
+  }

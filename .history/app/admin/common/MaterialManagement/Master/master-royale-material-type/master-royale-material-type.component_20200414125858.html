@@ -1,0 +1,124 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast
+  position="center"
+  key="c"
+  (onClose)="onReject()"
+  [modal]="true"
+  [autoZIndex]="true"
+>
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onConfirm()"
+          label="Yes"
+          class="ui-button-success"
+        ></button>
+      </div>
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onReject()"
+          label="No"
+          class="ui-button-secondary"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body">
+          <div class="form-group">
+            <div class="col-sm-7"></div>
+            <div class="col-sm-5">
+              <div class="table-responsive no-padding">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr style="background-color:#3c8dbc;color:white;">
+
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                       Index
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                        Material Type
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                      Material Sub Type
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                        Use to PM
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                        Edit
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                      Delete
+                      </th>
+
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let d of MaterialTypeLists;
+                        let odd = odd;
+                        let index = index
+                      "
+                      [class.even]="odd"
+                    >
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ d.Product_Name }}</td>
+                      <td>{{ d.Batch_Number ? d.Batch_Number : "-" }}</td>
+                      <td>{{ d.No_Of_Bag }}</td>
+                      <td>
+                        <a (click)="EditMaterialType(d)"
+                          ><div><i class="fa fa-fw fa-pencil"> </i></div>
+                        </a>
+                      </td>
+                      <td>
+                        <a (click)="DeleteMaterialType(d)"
+                          ><div><i class="fa fa-fw fa-trash"> </i></div>
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

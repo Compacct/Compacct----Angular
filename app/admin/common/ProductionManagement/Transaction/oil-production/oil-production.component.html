@@ -1,0 +1,1175 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                            <form name="bagProcessSearchForm" #bagProcessSearchForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                        (click)="searchBagProcess(bagProcessSearchForm.form.valid)"
+                                                        id="load"
+                                                        [disabled]="Spinner">
+                                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                 </button>
+
+                                                      </div>
+                                                  </div>
+                                             </form>
+
+                                            <div class="table-responsive no-padding productTable">
+                                            <p-table [value]="searchBagProcessList"
+                                                     [paginator]="searchBagProcessList.length ? true : false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                </div>
+                                                           </div>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width:5em">Action</th>
+                                                                <th>Mfg Process No</th>
+                                                                <th>Cost Center Name</th>
+                                                                <th>Date</th>
+                                                                <th>Shift Name</th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+                                                                <td>
+                                                                  <div class="dropdown">
+                                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                                          <i class="fa fa-fw fa-bars"></i>
+                                                                          <span class="caret"></span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu">
+                                                                          <li>
+                                                                              <a  (click)="editProcess(col.Process_Date, col.Mfg_Process_No, col.Cost_Cen_ID, col.Godown_ID, col.Shift_ID)">
+                                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                                  Edit Production
+                                                                              </a>
+                                                                          </li>
+                                                                          <li>
+                                                                              <a (click)="deleteBagProcess(col)">
+                                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                                  Delete
+                                                                              </a>
+                                                                          </li>
+                                                                          <li>
+                                                                            <a (click)="GetPDF(col)">
+                                                                                <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                                Print
+                                                                            </a>
+                                                                        </li>
+                                                                      </ul>
+                                                                  </div>
+                                                                </td>
+                                                                <td>{{col.Mfg_Process_No}}</td>
+                                                                <td>{{col.Cost_Cen_Name }}</td>
+                                                                <td>{{col.Process_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Shift_Name}}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+
+                                        </p-tabPanel>
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                            <form name="bagProcessForm" #bagProcessForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Plant
+                                                           <sup class="text-danger">*</sup></label>
+                                                          <p-dropdown [options]="plantList"
+                                                              name="Cost_Cen_ID"
+                                                              [(ngModel)]="objBagProcess.Cost_Cen_ID"
+                                                              [showClear]="true"
+                                                              [emptyFilterMessage]="'No Vendor Found'"
+                                                              (onChange)="getGodownForBagProcess(objBagProcess.Cost_Cen_ID)"
+                                                              [filter]="true"
+                                                              filterBy="label,value.name"
+                                                              [placeholder]="'Select Plant'"
+                                                              [virtualScroll]="true"
+                                                              >
+                                                          </p-dropdown>
+                                                   </div>
+                                                    <div class="col-sm-4">
+                                                          <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                                          <select class="form-control"
+                                                           name="Godown_ID"
+                                                           [(ngModel)]="objBagProcess.Godown_ID"
+                                                           (change)="getData()"
+                                                           required>
+                                                           <option [ngValue]="undefined">Select</option>
+                                                            <option *ngFor="let option of godownList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                   </select>
+                                                    </div>
+
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Doc Date
+                                                            <sup class="text-danger">*</sup></label>
+                                                             <div class="input-group date">
+                                                              <div class="input-group-addon">
+                                                                  <i class="fa fa-calendar"></i>
+                                                              </div>
+                                                                  <input type="date"
+                                                                  class="form-control"
+                                                                  name="Process_Date"
+                                                                  [ngModel]="DocDate | date:'yyyy-MM-dd'"
+                                                                  #Process_Date='ngModel'
+                                                                  (ngModelChange)="GetDocdate($event)"
+                                                                  required>
+                                                          </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                  <label class="control-label">Shift <sup class="text-danger">*</sup></label>                        <select class="form-control"
+                                                            name="Shift_ID"
+                                                            [(ngModel)]="objBagProcess.Shift_ID"
+                                                            (change)="getData()"
+                                                            required>
+                                                            <option [ngValue]="undefined">Select</option>
+                                                            <option *ngFor="let option of shiftList" [ngValue]="option.Shift_ID">{{option.Shift_Name}}</option>
+                                                          </select>
+                                                  </div>
+                                                  <div class="col-sm-4">
+
+                                                  </div>
+                                                  <div class="col-sm-4">
+
+                                                  </div>
+                                              </div>
+
+                                           <div class="section raw-bgcolor">
+                                                <h3>Raw Material / Finished Goods Used</h3>
+                                                <div class="invalid-feedback" *ngIf="rawMaterialMsg!=''">{{rawMaterialMsg}}</div>
+                                                <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Cost Center Name
+                                                         <sup class="text-danger">*</sup></label>
+                                                        <p-dropdown [options]="storeTankPlantList"
+                                                          name="Raw_material_Cost_Cen_ID"
+                                                          [(ngModel)]="objRawMaterial.Cost_Cen_ID"
+                                                          [showClear]="true"
+                                                          [emptyFilterMessage]="'No Vendor Found'"
+                                                          (onChange)="getGodownForRawMaterial(objRawMaterial.Cost_Cen_ID)"
+                                                          [filter]="true"
+                                                          filterBy="label,value.name"
+                                                          [placeholder]="'Select Cost Center'"
+                                                          [virtualScroll]="true"
+                                                          >
+                                                      </p-dropdown>
+                                                 </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Godown<sup class="text-danger">*</sup></label>
+                                                       <select class="form-control"
+                                                         name="Raw_materail_Godown_ID"
+                                                         [(ngModel)]="objRawMaterial.Godown_ID"
+                                                         required>
+                                                         <option [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of rawMaterialGodownList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                       </select>
+                                                  </div>
+
+                                                  <div class="col-sm-4">
+                                                     <label class="control-label">Select Raw Materials  &nbsp;<span class="text-danger">*</span></label>
+                                                     <p-dropdown [options]="productList"
+                                                     name="Product_ID"
+                                                     [(ngModel)]="objRawMaterial.Product_ID"
+                                                     [showClear]="true"
+                                                     [emptyFilterMessage]="'No Vendor Found'"
+                                                     (onChange)="getBatchNoForRawMaterial(objRawMaterial.Product_ID)"
+                                                     [filter]="true"
+                                                     filterBy="label,value.name"
+                                                     [placeholder]="'Select Raw Materials'"
+                                                     [virtualScroll]="true"
+                                                     >
+                                                 </p-dropdown>
+                                                  </div>
+                                              </div>
+
+                                                <div class="form-group" >
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Batch <sup class="text-danger">*</sup></label>
+                                                      <select class="form-control"
+                                                              name="Batch_No"
+                                                              [(ngModel)]="objRawMaterial.Batch_No"
+                                                              (change)="getProductDetails(objRawMaterial.Batch_No)"
+                                                              required>
+                                                              <option [ngValue]="undefined">Select</option>
+                                                               <option *ngFor="let option of productBatchno" [ngValue]="option.Batch_No">{{option.Batch_No}}</option>
+                                                      </select>
+                                                    </div>
+                                                        <div class="col-sm-4">
+                                                          <ng-container *ngIf="Raw_Material_Cost_Cen_Main_Type !=='STORE-TANK'">
+                                                              <label class="control-label">Qty<ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                              <input class="form-control"
+                                                              type="number"
+                                                              name="raw_Qty"
+                                                              [(ngModel)]="objRawMaterial.Qty"
+                                                              placeholder="Qty"
+                                                              (ngModelChange) ="checkQty(objRawMaterial.Qty)"
+                                                              >
+                                                              <div class="invalid-feedback" *ngIf="checkRawMaterialQtyExist">Raw Material Qty should not more than {{tmp_rawmaterial_qty}}</div>
+                                                          </ng-container>
+
+                                                          <ng-container *ngIf="Raw_Material_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                            <label class="control-label">Tank Open Height (Inch)<sup class="text-danger">*</sup></label>
+                                                                  <input class="form-control"
+                                                                  type="number"
+                                                                  name="Tank_Open_Hight"
+                                                                  [(ngModel)]="objRawMaterial.Tank_Open_Hight"
+                                                                  placeholder="Tank Open Hight"
+                                                                  readonly>
+                                                            </ng-container>
+
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <ng-container *ngIf="Raw_Material_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                          <label class="control-label">Tank Open Qty <ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container><sup class="text-danger">*</sup></label>
+                                                          <input class="form-control"
+                                                                type="number"
+                                                                name="Tank_Open_Qty"
+                                                                [(ngModel)]="objRawMaterial.Tank_Open_Qty"
+                                                                placeholder="Tank Open Qty" readonly>
+                                                          </ng-container>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group" *ngIf="Raw_Material_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                        <input class="form-control"
+                                                        type="number"
+                                                        name="Tank_Close_Hight"
+                                                        [(ngModel)]="objRawMaterial.Tank_Close_Hight"
+                                                        placeholder="Talk Close Hight"
+                                                        (ngModelChange) ="tankCloseQtyForRaw()">
+                                              </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label"> Tank Close Qty<ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container><sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                      type="number"
+                                                      name="Tank_Close_Qty"
+                                                      [(ngModel)]="objRawMaterial.Tank_Close_Qty"
+                                                      placeholder="Tank Close Qty"
+                                                      readonly>
+                                                  </div>
+
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Qty  <ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    type="number"
+                                                    name="Raw_Material_Qty"
+                                                    #Raw_Material_Qty="ngModel"
+                                                    [(ngModel)]="objRawMaterial.Qty"
+                                                    readonly>
+
+                                                  </div>
+                                              </div>
+
+                                                <div class="clearfix mt-15">
+                                                    <button class="btn btn-primary pull-right" (click)="addRawMaterial(true)">Add</button>
+                                                </div>
+
+                                              <table class="table table-bordered" *ngIf="rawMaterialObj.length > 0">
+                                                <thead>
+                                                  <tr>
+                                                    <th>Raw Materials</th>
+                                                    <th>Batch</th>
+                                                    <th>Tank Open Hight</th>
+                                                    <th>Talk Close Hight</th>
+                                                    <th>Tank Open Qty</th>
+                                                    <th>Tank Close Qty</th>
+                                                    <th>Qty</th>
+                                                    <th>UOM</th>
+                                                    <th>Edit</th>
+                                                    <th>Delete</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr *ngFor="let item of rawMaterialObj; let index = index">
+                                                    <td>{{item.Product_Description}}</td>
+                                                    <td>{{item.Batch_No}}</td>
+                                                    <td>{{item.Tank_Open_Hight}}</td>
+                                                    <td>{{item.Tank_Close_Hight}}</td>
+                                                    <td>{{item.Tank_Open_Qty}}</td>
+                                                    <td>{{item.Tank_Close_Qty}}</td>
+                                                    <td>{{item.Qty}}</td>
+                                                    <td>{{item.UOM}}</td>
+                                                    <td> <span (click)="editRawMaterial(index)" *ngIf="item.Cost_Cen_Main_Type ==='STORE-TANK'"><i class="fa fa-fw fa-pencil"> </i> </span> </td>
+                                                    <td> <span (click)="deleteRawMaterial(index)" > <i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                                  </tr>
+                                                </tbody>
+                                              </table>
+                                              </div>
+
+                                              <div class="section consumable-bgcolor">
+                                                <h3>Consumable Used</h3>
+                                                <div class="invalid-feedback" *ngIf="consumablelMsg!=''">{{consumablelMsg}}</div>
+                                                <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Cost Center Name
+                                                         <sup class="text-danger">*</sup></label>
+                                                        <p-dropdown [options]="storeTankPlantList"
+                                                          name="Con_Cost_Cen_ID"
+                                                          [(ngModel)]="objConsumable.Cost_Cen_ID"
+                                                          [showClear]="true"
+                                                          [emptyFilterMessage]="'No Vendor Found'"
+                                                          (onChange)="getGodownForConsumable(objConsumable.Cost_Cen_ID)"
+                                                          [filter]="true"
+                                                          filterBy="label,value.name"
+                                                          [placeholder]="'Select Cost Center'"
+                                                          [virtualScroll]="true"
+                                                          >
+                                                      </p-dropdown>
+                                                 </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Godown<sup class="text-danger">*</sup></label>
+                                                       <select class="form-control"
+                                                         name="Con_Godown_ID"
+                                                         [(ngModel)]="objConsumable.Godown_ID"
+                                                         required>
+                                                         <option [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of consumableGodownList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                       </select>
+                                                  </div>
+
+                                                  <div class="col-sm-4">
+                                                     <label class="control-label">Select Product  &nbsp;<span class="text-danger">*</span></label>
+                                                     <p-dropdown [options]="consumableList"
+                                                     name="Con_Product_ID"
+                                                     [(ngModel)]="objConsumable.Product_ID"
+                                                     [showClear]="true"
+                                                     [emptyFilterMessage]="'No Vendor Found'"
+                                                     (onChange)="getBatchNoForConsumable(objConsumable.Product_ID)"
+                                                     [filter]="true"
+                                                     filterBy="label,value.name"
+                                                     [placeholder]="'Select Product'"
+                                                     [virtualScroll]="true"
+                                                     >
+                                                 </p-dropdown>
+                                                  </div>
+                                              </div>
+
+                                                <div class="form-group" >
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Batch <sup class="text-danger">*</sup></label>
+                                                      <select class="form-control"
+                                                              name="Con_Batch_No"
+                                                              [(ngModel)]="objConsumable.Batch_No"
+                                                              (change)="getProductDetailsForConsumanble(objConsumable.Batch_No)"
+                                                              required>
+                                                              <option [ngValue]="undefined">Select</option>
+                                                               <option *ngFor="let option of productBatchnoConsum" [ngValue]="option.Batch_No">{{option.Batch_No}}</option>
+                                                      </select>
+                                                    </div>
+                                                        <div class="col-sm-4">
+                                                          <ng-container *ngIf="Consumable_Cost_Cen_Main_Type !=='STORE-TANK'">
+                                                              <label class="control-label">Qty<ng-container *ngIf="objConsumable.UOM != undefined">  ({{objConsumable.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                              <input class="form-control"
+                                                              type="number"
+                                                              name="Con_Qty"
+                                                              #Raw_Material_Qty="ngModel"
+                                                              [(ngModel)]="objConsumable.Qty"
+                                                              placeholder="Qty"
+                                                              CompacctDigitonly="true"
+                                                              (ngModelChange) ="checkQtyForConsumanble(objConsumable.Qty)"
+                                                              >
+                                                              <div class="invalid-feedback" *ngIf="checkRawMaterialQtyExist">Raw Material Qty should not more than {{tmp_rawmaterial_qty}}</div>
+                                                          </ng-container>
+
+                                                          <ng-container *ngIf="Consumable_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                            <label class="control-label">Tank Open Height (Inch)<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                                  type="number"
+                                                                  name="Con_Tank_Open_Hight"
+                                                                  [(ngModel)]="objConsumable.Tank_Open_Hight"
+                                                                  placeholder="Tank Open Hight"
+                                                                  (ngModelChange) ="tankOpenQtyForConsumable()">
+                                                            </ng-container>
+
+                                                    </div>
+                                                    <div class="col-sm-4">
+
+                                                        <ng-container *ngIf="Consumable_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                          <label class="control-label">Tank Open Qty <ng-container *ngIf="objConsumable.UOM !=''">  ({{objConsumable.UOM}}) </ng-container><sup class="text-danger">*</sup></label>
+                                                          <input class="form-control"
+                                                                type="number"
+                                                                name="Con_Tank_Open_Qty"
+                                                                [(ngModel)]="objConsumable.Tank_Open_Qty"
+                                                                placeholder="Tank Open Qty" readonly>
+                                                          </ng-container>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group" *ngIf="Consumable_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                        <input class="form-control"
+                                                        type="number"
+                                                        name="Con_Tank_Close_Hight"
+                                                        [(ngModel)]="objConsumable.Tank_Close_Hight"
+                                                        placeholder="Talk Close Hight"
+                                                        (ngModelChange) ="tankCloseQtyForConsumable()">
+                                              </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label"> Tank Close Qty<ng-container *ngIf="objConsumable.UOM !=''">  ({{objConsumable.UOM}}) </ng-container><sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                      type="number"
+                                                      name="Con_Tank_Close_Qty"
+                                                      [(ngModel)]="objConsumable.Tank_Close_Qty"
+                                                      placeholder="Tank Close Qty"
+                                                      readonly>
+                                                  </div>
+
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Qty  <ng-container *ngIf="objConsumable.UOM != undefined">  ({{objConsumable.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    type="number"
+                                                    name="Con_Qty"
+                                                    #Raw_Material_Qty="ngModel"
+                                                    [(ngModel)]="objConsumable.Qty"
+                                                    readonly>
+                                                  </div>
+                                              </div>
+
+                                                <div class="clearfix mt-15">
+                                                    <button class="btn btn-primary pull-right" (click)="addConsumable()">Add</button>
+                                                </div>
+
+                                              <table class="table table-bordered" *ngIf="consumableObj.length > 0">
+                                                <thead>
+                                                  <tr>
+                                                    <th>Consumable</th>
+                                                    <th>Batch</th>
+                                                    <th>Tank Open Hight</th>
+                                                    <th>Talk Close Hight</th>
+                                                    <th>Tank Open Qty</th>
+                                                    <th>Tank Close Qty</th>
+                                                    <th>Qty</th>
+                                                    <th>UOM</th>
+                                                    <th>Edit</th>
+                                                    <th>Delete</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr *ngFor="let item of consumableObj; let index = index">
+                                                    <td>{{item.Product_Description}}</td>
+                                                    <td>{{item.Batch_No}}</td>
+                                                    <td>{{item.Tank_Open_Hight}}</td>
+                                                    <td>{{item.Tank_Close_Hight}}</td>
+                                                    <td>{{item.Tank_Open_Qty}}</td>
+                                                    <td>{{item.Tank_Close_Qty}}</td>
+                                                    <td>{{item.Qty}}</td>
+                                                    <td>{{item.UOM}}</td>
+                                                    <td> <span (click)="editConsumanble(index)" *ngIf="item.Cost_Cen_Main_Type ==='STORE-TANK'"><i class="fa fa-fw fa-pencil"> </i> </span> </td>
+                                                    <td> <span (click)="deleteConsumable(index)" > <i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                                  </tr>
+                                                </tbody>
+                                              </table>
+                                       </div>
+
+                                              <div class="section wastage-bgcolor">
+                                                <h3>Wastage / Reused</h3>
+                                                <div class="invalid-feedback" *ngIf="wastageMsg!=''">{{wastageMsg}}</div>
+                                                <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">To Cost Center Name                                                 <sup class="text-danger">*</sup></label>                                                        <p-dropdown [options]="storeTankList"
+                                                          name="Wastage_Cost_Cen_ID_To"
+                                                          [(ngModel)]="objWastage.Cost_Cen_ID_To"
+                                                          [showClear]="true"
+                                                          [emptyFilterMessage]="'No Vendor Found'"
+                                                          (onChange)="getGodownForWastage(objWastage.Cost_Cen_ID_To)"
+                                                          [filter]="true"
+                                                          filterBy="label,value.name"
+                                                          [placeholder]="'Select Cost Center'"
+                                                          [virtualScroll]="true"
+                                                          >
+                                                      </p-dropdown>
+
+                                                 </div>
+                                                  <div class="col-sm-4">
+                                                        <label class="control-label">To Godown<sup class="text-danger">*</sup></label>
+                                                       <select class="form-control"
+                                                         name="Wastage_Godown_ID_To"
+                                                         [(ngModel)]="objWastage.Godown_ID_To"
+                                                         required>
+                                                         <option [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of wastageGodownList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                       </select>
+                                                  </div>
+
+                                                  <div class="col-sm-4">
+                                                     <label class="control-label">Select Product  &nbsp;<span class="text-danger">*</span></label>
+                                                    <p-dropdown [options]="wastageList"
+                                                    name="Wastage_Product_ID"
+                                                    [(ngModel)]="objWastage.Product_ID"
+                                                    [showClear]="true"
+                                                    [emptyFilterMessage]="'No Vendor Found'"
+                                                    (onChange)="getBatchNoForWastage(objWastage.Product_ID)"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Product'"
+                                                    [virtualScroll]="true"
+                                                    >
+                                                </p-dropdown>
+                                                  </div>
+                                              </div>
+
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Batch <sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                      type="text"
+                                                      name="Wastage_Batch_No"
+                                                      [(ngModel)]="objWastage.Batch_No"
+                                                       readonly>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <ng-container *ngIf="Wastage_Cost_Cen_Main_Type !=='STORE-TANK'">
+
+                                                        <label class="control-label">Qty<ng-container *ngIf="objWastage.UOM != undefined">  ({{objWastage.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+
+                                                        <input class="form-control"
+                                                              type="number"
+                                                              name="Wastage_Qty"
+                                                              [(ngModel)]="objWastage.Qty"
+                                                             >
+                                                      </ng-container>
+                                                      <ng-container *ngIf="Wastage_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                        <label class="control-label">Tank Open Height (Inch)<sup class="text-danger">*</sup></label>
+                                                        <input class="form-control"
+                                                            type="number"
+                                                            name="Wastage_Tank_Open_Hight"
+                                                            [(ngModel)]="objWastage.Tank_Open_Hight"
+                                                            (ngModelChange) ="tankOpenQtyForWastage()">
+
+                                                      </ng-container>
+
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <ng-container *ngIf="Wastage_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                        <label class="control-label">Tank Open Qty<ng-container *ngIf="objWastage.UOM != undefined">  ({{objWastage.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                        <!-- <input class="form-control"
+                                                              type="number"
+                                                              name="Wastage_Tank_Open_Qty"
+                                                              [(ngModel)]="objWastage.Tank_Open_Qty"
+                                                              placeholder="Tank Open Qty"
+                                                              (ngModelChange) ="wastageTankNetQty(type='open_qty')"
+                                                              > -->
+                                                              <input class="form-control"
+                                                              type="number"
+                                                              name="Wastage_Tank_Open_Qty"
+                                                              [(ngModel)]="objWastage.Tank_Open_Qty"
+                                                              placeholder="Tank Open Qty"
+                                                              readonly >
+                                                      </ng-container>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" *ngIf="Wastage_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    type="number"
+                                                    name="Wastage_Tank_Close_Hight"
+                                                    [(ngModel)]="objWastage.Tank_Close_Hight"
+                                                    (ngModelChange) ="tankCloseQtyForWastage()">
+                                                  </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Tank Close Qty<ng-container *ngIf="objWastage.UOM != undefined">  ({{objWastage.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                      <!-- <input class="form-control"
+                                                      type="number"
+                                                      name="Wastage_Tank_Close_Qty"
+                                                      [(ngModel)]="objWastage.Tank_Close_Qty"
+                                                      placeholder="Tank Close Qty"
+                                                      (ngModelChange) ="wastageTankNetQty(type='close_qty')"
+                                                      > -->
+                                                      <input class="form-control"
+                                                      type="number"
+                                                      name="Wastage_Tank_Close_Qty"
+                                                      [(ngModel)]="objWastage.Tank_Close_Qty"
+                                                      placeholder="Tank Close Qty"
+                                                     readonly >
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label"> Qty<ng-container *ngIf="objWastage.UOM != undefined">  ({{objWastage.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                          type="number"
+                                                          name="Wastage_Qty"
+                                                          [(ngModel)]="objWastage.Qty"
+                                                          readonly>
+                                                  </div>
+                                              </div>
+
+                                                <div class="clearfix mt-15">
+                                                    <button class="btn btn-primary pull-right" (click)="addWastage(true)">Add</button>
+                                                </div>
+
+                                                    <table class="table table-bordered" *ngIf="wastageObj.length > 0">
+                                                      <thead>
+                                                        <tr>
+                                                          <th>Wastage</th>
+                                                          <th>Batch</th>
+                                                          <th>Tank Open Hight</th>
+                                                          <th>Talk Close Hight</th>
+                                                          <th>Tank Open Qty</th>
+                                                          <th>Tank Close Qty</th>
+                                                          <th>Qty</th>
+                                                          <th>UOM</th>
+                                                          <th>Edit</th>
+                                                          <th>Delete</th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        <tr *ngFor="let item of wastageObj; let index = index">
+                                                          <td>{{item.Product_Description}}</td>
+                                                          <td>{{item.Batch_No}}</td>
+                                                          <td>{{item.Tank_Open_Hight}}</td>
+                                                          <td>{{item.Tank_Close_Hight}}</td>
+                                                          <td>{{item.Tank_Open_Qty}}</td>
+                                                          <td>{{item.Tank_Close_Qty}}</td>
+                                                          <td>{{item.Qty}}</td>
+                                                          <td>{{item.UOM}}</td>
+                                                          <td> <span (click)="editWastage(index)" *ngIf="item.Cost_Cen_Main_Type ==='STORE-TANK'"> <i class="fa fa-fw fa-pencil"> </i> </span> </td>
+                                                          <td> <span (click)="deleteWastage(index)" ><i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                                        </tr>
+                                                      </tbody>
+                                                    </table>
+                                              </div>
+
+                                              <div class="section final-bgcolor">
+                                                <h3>Final Production</h3>
+                                                <div class="invalid-feedback" *ngIf="finalMsg!=''">{{finalMsg}}</div>
+                                                <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">To Cost Center Name
+                                                         <sup class="text-danger">*</sup></label>
+                                                        <p-dropdown [options]="storeTankList"
+                                                        name="Fianl_Cost_Cen_ID_To"
+                                                        [(ngModel)]="objFinal.Cost_Cen_ID_To"
+                                                        [showClear]="true"
+                                                        [emptyFilterMessage]="'No Vendor Found'"
+                                                        (onChange)="getGodownForFianl(objFinal.Cost_Cen_ID_To)"
+                                                        [filter]="true"
+                                                        filterBy="label,value.name"
+                                                        [placeholder]="'Select Cost Center'"
+                                                        [virtualScroll]="true"
+                                                        >
+                                                    </p-dropdown>
+
+                                                 </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">To Godown<sup class="text-danger">*</sup></label>
+                                                       <select class="form-control"
+                                                       name="Fianl_Godown_ID_To"
+                                                       [(ngModel)]="objFinal.Godown_ID_To"
+                                                       required>
+                                                       <option [ngValue]="undefined">Select</option>
+                                                        <option *ngFor="let option of finalGodownList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                     </select>
+                                                  </div>
+
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Select Product  &nbsp;<span class="text-danger">*</span></label>
+                                                      <p-dropdown [options]="finalList"
+                                                      name="Final_Product_ID"
+                                                      [(ngModel)]="objFinal.Product_ID"
+                                                      [showClear]="true"
+                                                      [emptyFilterMessage]="'No Vendor Found'"
+                                                      (onChange)="getBatchNoForFinal(objFinal.Product_ID)"
+                                                      [filter]="true"
+                                                      filterBy="label,value.name"
+                                                      [placeholder]="'Select Product'"
+                                                      [virtualScroll]="true"
+                                                      >
+                                                  </p-dropdown>
+
+                                                  </div>
+                                              </div>
+
+                                                <div class="form-group" *ngIf="Final_Cost_Cen_Main_Type !=='STORE-TANK'">
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Batch <sup class="text-danger">*</sup></label>
+                                                            <!-- <input class="form-control"
+                                                            type="text"
+                                                            name="Final_Batch_No"
+                                                            [(ngModel)]="objFinal.Batch_No"
+                                                              readonly> -->
+                                                              <input class="form-control"
+                                                              type="text"
+                                                              name="Final_Batch_No"
+                                                              [(ngModel)]="objFinal.Batch_No"
+                                                              >
+                                                    </div>
+                                                        <div class="col-sm-4">
+                                                          <label class="control-label">Bag Qty<ng-container *ngIf="objFinal.UOM != undefined">  ({{objFinal.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                          <input class="form-control"
+                                                                type="text"
+                                                                name="Qty_Bag"
+                                                                [(ngModel)]="objFinal.Qty_Bag"
+                                                                (ngModelChange) ="netQtyCal()"
+                                                                CompacctDigitonly="true">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                          <label class="control-label">Per Bag <sup class="text-danger">*</sup></label>
+                                                          <input class="form-control"
+                                                          type="text"
+                                                          name="Per_Bag"
+                                                          [(ngModel)]="objFinal.Per_Bag"
+                                                          (ngModelChange) ="netQtyCal()"
+                                                          CompacctDigitonly="true">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" *ngIf="Final_Cost_Cen_Main_Type !=='STORE-TANK'">
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Net Qty<ng-container *ngIf="objFinal.UOM != undefined">  ({{objFinal.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    type="text"
+                                                    name="Fina_Qty"
+                                                    [(ngModel)]="objFinal.Qty"
+                                                    readonly>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <ng-container *ngIf="Final_Cost_Cen_Main_Type !=='STORE-TANK' && product_expiry">
+
+                                                        <label class="control-label">Manufacturing Date
+                                                          <sup class="text-danger">*</sup></label>
+                                                          <div class="input-group date">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </div>
+                                                                <input type="date"
+                                                                class="form-control"
+                                                                name="mf_date"
+                                                                [ngModel]="mfDate | date:'yyyy-MM-dd'"
+                                                                #mf_date='ngModel'
+                                                                (ngModelChange)="getMfDate($event)"
+                                                                required>
+                                                            </div>
+                                                      </ng-container>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <ng-container *ngIf="Final_Cost_Cen_Main_Type !=='STORE-TANK' && product_expiry">
+                                                      <label class="control-label">Exprire Date
+                                                        <sup class="text-danger">*</sup></label>
+                                                        <div class="input-group date">
+                                                          <div class="input-group-addon">
+                                                              <i class="fa fa-calendar"></i>
+                                                          </div>
+                                                              <input type="date"
+                                                              class="form-control"
+                                                              name="exp_date"
+                                                              [ngModel]="expDate | date:'yyyy-MM-dd'"
+                                                              #exp_date='ngModel'
+                                                              (ngModelChange)="getExpDate($event)"
+                                                              required>
+                                                        </div>
+                                                    </ng-container>
+                                            </div>
+                                          </div>
+
+                                              <div class="form-group" *ngIf="Final_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Batch <sup class="text-danger">*</sup></label>
+                                                  <!-- <input class="form-control"
+                                                  type="text"
+                                                  name="Final_Batch_No"
+                                                  [(ngModel)]="objFinal.Batch_No"
+                                                    readonly> -->
+                                                    <input class="form-control"
+                                                    type="text"
+                                                    name="Final_Batch_No"
+                                                    [(ngModel)]="objFinal.Batch_No"
+                                                    >
+                                                </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Tank Open Height (Inch)<sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                            type="number"
+                                                            name="Final_Tank_Open_Hight"
+                                                            [(ngModel)]="objFinal.Tank_Open_Hight"
+                                                            (ngModelChange) ="tankOpenQtyForFinal()">
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Tank Open Qty<ng-container *ngIf="objFinal.UOM != undefined">  ({{objFinal.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                  <!-- <input class="form-control"
+                                                        type="number"
+                                                        name="Fianl_Tank_Open_Qty"
+                                                        [(ngModel)]="objFinal.Tank_Open_Qty"
+                                                        placeholder="Tank Open Qty"
+                                                        (ngModelChange) ="finalTankNetQty(type='open_qty')"
+                                                        > -->
+                                                        <input class="form-control"
+                                                        type="number"
+                                                        name="Fianl_Tank_Open_Qty"
+                                                        [(ngModel)]="objFinal.Tank_Open_Qty"
+                                                        placeholder="Tank Open Qty"
+                                                        readonly >
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" *ngIf="Final_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                              <div class="col-sm-4">
+                                                <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                type="number"
+                                                name="Final_Tank_Close_Hight"
+                                                [(ngModel)]="objFinal.Tank_Close_Hight"
+                                                (ngModelChange) ="tankCloseQtyForFinal()">
+                                              </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Tank Close Qty<ng-container *ngIf="objFinal.UOM != undefined">  ({{objFinal.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                    <!-- <input class="form-control"
+                                                    type="number"
+                                                    name="Final_Tank_Close_Qty"
+                                                    [(ngModel)]="objFinal.Tank_Close_Qty"
+                                                    placeholder="Tank Close Qty"
+                                                    (ngModelChange) ="finalTankNetQty(type='close_qty')"
+                                                    > -->
+                                                    <input class="form-control"
+                                                    type="number"
+                                                    name="Final_Tank_Close_Qty"
+                                                    [(ngModel)]="objFinal.Tank_Close_Qty"
+                                                    placeholder="Tank Close Qty"
+                                                   readonly>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label"> Qty<ng-container *ngIf="objFinal.UOM != undefined">  ({{objFinal.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                  <input class="form-control"
+                                                  type="text"
+                                                  name="Fina_Qty"
+                                                  [(ngModel)]="objFinal.Qty"
+                                                  readonly>
+                                              </div>
+                                          </div>
+                                      <ng-container *ngIf="Final_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                          <div class="form-group" *ngIf="product_expiry">
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Manufacturing Date
+                                                <sup class="text-danger">*</sup></label>
+                                                 <div class="input-group date">
+                                                  <div class="input-group-addon">
+                                                      <i class="fa fa-calendar"></i>
+                                                  </div>
+                                                      <input type="date"
+                                                      class="form-control"
+                                                      name="mf_date"
+                                                      [ngModel]="mfDate | date:'yyyy-MM-dd'"
+                                                      #mf_date='ngModel'
+                                                      (ngModelChange)="getMfDate($event)"
+                                                      required>
+                                                  </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Exprire Date
+                                                <sup class="text-danger">*</sup></label>
+                                                 <div class="input-group date">
+                                                  <div class="input-group-addon">
+                                                      <i class="fa fa-calendar"></i>
+                                                  </div>
+                                                      <input type="date"
+                                                      class="form-control"
+                                                      name="exp_date"
+                                                      [ngModel]="expDate | date:'yyyy-MM-dd'"
+                                                      #exp_date='ngModel'
+                                                      (ngModelChange)="getExpDate($event)"
+                                                      required>
+                                                </div>
+                                          </div>
+                                          <div class="col-sm-4">
+
+                                      </div>
+                                    </div>
+
+                                    </ng-container>
+
+                                                <div class="clearfix mt-15">
+                                                    <button class="btn btn-primary pull-right" (click)="addFinal()">Add</button>
+                                                </div>
+
+                                              <table class="table table-bordered" *ngIf="finalObj.length > 0">
+                                                <thead>
+                                                  <tr>
+                                                    <th>Final</th>
+                                                    <th>Batch</th>
+                                                    <th>Tank Open Hight</th>
+                                                    <th>Talk Close Hight</th>
+                                                    <th>Tank Open Qty</th>
+                                                    <th>Tank Close Qty</th>
+                                                    <th>Qty</th>
+                                                    <th>UOM</th>
+                                                    <th>Mfg. Date</th>
+                                                    <th>Exp. Date</th>
+                                                    <th>Edit</th>
+                                                    <th>Delete</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr *ngFor="let item of finalObj; let index = index">
+                                                    <td>{{item.Product_Description}}</td>
+                                                    <td>{{item.Batch_No}}</td>
+                                                    <td>{{item.Tank_Open_Hight}}</td>
+                                                      <td>{{item.Tank_Close_Hight}}</td>
+                                                      <td>{{item.Tank_Open_Qty}}</td>
+                                                      <td>{{item.Tank_Close_Qty}}</td>
+                                                      <td>{{item.Qty}}</td>
+                                                      <td>{{item.UOM}}</td>
+                                                      <td>
+                                                        <ng-container *ngIf="item.Mfg_Date!='1900-01-01T00:00:00'">
+                                                          {{item.Mfg_Date | date: 'MM/dd/yyyy'}}
+                                                        </ng-container>
+                                                      </td>
+                                                      <td>
+                                                        <ng-container *ngIf="item.Exp_Date!='1900-01-01T00:00:00'">
+                                                          {{item.Exp_Date | date: 'MM/dd/yyyy'}}
+                                                        </ng-container>
+                                                      </td>
+                                                      <td> <span (click)="editFinal(index)" *ngIf="item.Cost_Cen_Main_Type ==='STORE-TANK'"> <i class="fa fa-fw fa-pencil"> </i> </span> </td>
+                                                      <td> <span (click)="deleteFinal(index)" ><i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                                  </tr>
+                                                </tbody>
+                                              </table>
+
+
+
+                                              </div>
+
+                                                <div class="box-footer">
+                                                    <button class="btn btn-primary pull-right"
+                                                            (click)="SaveBagProcessMaster(bagProcessForm.form.valid)"
+                                                            id="load"
+                                                            [disabled]="Spinner">
+                                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </p-tabPanel>
+                                    </p-tabView>
+
+                                    <p-dialog header="Update Close Height & Qty" [appendTo]="'body'" [visible]="displayEwayModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '40%', minWidth: '200px'}" [minY]="70"
+                                                [maximizable]="true" [baseZIndex]="10000">
+                                                <form name="EwayForm" #EwayForm="ngForm" novalidate>
+
+                                                  <div class="invalid-feedback" *ngIf="rawMaterialMsg!=''">{{rawMaterialMsg}}</div>
+
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Rawmaterial_Tank_Close_Hight2"
+                                                            [(ngModel)]="objRawMaterial.Tank_Close_Hight"
+                                                            (ngModelChange) ="tankCloseQtyForRaw()"
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label">Tank Close Qty<ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Rawmaterial_Tank_Close_Qty2"
+                                                            [(ngModel)]="objRawMaterial.Tank_Close_Qty"
+                                                            placeholder="Tank Close Qty"
+                                                            readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <h2></h2>
+                                                            </div>
+                                                        </div>
+                                                    <br>
+                                                </form>
+
+                                                <p-footer>
+                                                    <button type="button" pButton icon="pi pi-close" (click)="rawMaterialCancel()" label="CANCEL" class="ui-button-secondary"></button>
+                                                    <button type="button" pButton icon="pi pi-check" (click)="rawMaterialUpdate(true)" label="Update"></button>
+                                                </p-footer>
+                                                </p-dialog>
+
+                                                <p-dialog header="Update Close Height & Qty" [appendTo]="'body'" [visible]="displayConsumableModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '40%', minWidth: '200px'}" [minY]="70"
+                                                [maximizable]="true" [baseZIndex]="10000">
+
+                                                <form name="ConsumableForm" #ConsumableForm="ngForm" novalidate>
+                                                  <div class="invalid-feedback" *ngIf="consumablelMsg!=''">{{consumablelMsg}}</div>
+
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Con_Tank_Close_Hight2"
+                                                            [(ngModel)]="objConsumable.Tank_Close_Hight"
+                                                            (ngModelChange) ="tankCloseQtyForConsumable()"
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label">Tank Close Qty<ng-container *ngIf="objConsumable.UOM != undefined">  ({{objConsumable.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Con_Tank_Close_Qty2"
+                                                            [(ngModel)]="objConsumable.Tank_Close_Qty"
+                                                            placeholder="Tank Close Qty"
+                                                            readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <h2></h2>
+                                                            </div>
+                                                        </div>
+                                                    <br>
+                                                </form>
+
+                                                <p-footer>
+
+                                                    <button type="button" pButton icon="pi pi-close" (click)="consumableCancel()" label="CANCEL" class="ui-button-secondary"></button>
+                                                    <button type="button" pButton icon="pi pi-check" (click)="consumableUpdate()" label="Update"></button>
+                                                </p-footer>
+                                                </p-dialog>
+
+                                                <p-dialog header="Update Close Height & Qty" [appendTo]="'body'" [visible]="displayWastageModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '40%', minWidth: '200px'}" [minY]="70"
+                                                [maximizable]="true" [baseZIndex]="10000">
+
+                                                <form name="WastageForm" #WastageForm="ngForm" novalidate>
+                                                  <div class="invalid-feedback" *ngIf="wastageMsg!=''">{{wastageMsg}}</div>
+
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Wastage_Tank_Close_Hight2"
+                                                            [(ngModel)]="objWastage.Tank_Close_Hight"
+                                                            (ngModelChange) ="tankCloseQtyForWastage()">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label">Tank Close Qty<ng-container *ngIf="objWastage.UOM != undefined">  ({{objWastage.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                            <!-- <input class="form-control"
+                                                            type="number"
+                                                            name="Wastage_Tank_Close_Qty2"
+                                                            [(ngModel)]="objWastage.Tank_Close_Qty"
+                                                            placeholder="Tank Close Qty"
+                                                            (ngModelChange) ="wastageTankNetQty(type='close_qty')"
+                                                            > -->
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Wastage_Tank_Close_Qty2"
+                                                            [(ngModel)]="objWastage.Tank_Close_Qty"
+                                                            placeholder="Tank Close Qty"
+                                                            readonly >
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <h2></h2>
+                                                            </div>
+                                                        </div>
+                                                    <br>
+                                                </form>
+
+                                                <p-footer>
+
+                                                    <button type="button" pButton icon="pi pi-close" (click)="wastageCancel()" label="CANCEL" class="ui-button-secondary"></button>
+                                                    <button type="button" pButton icon="pi pi-check" (click)="wastageUpdate()" label="Update"></button>
+                                                </p-footer>
+                                                </p-dialog>
+
+                                                <p-dialog header="Update Close Height & Qty" [appendTo]="'body'" [visible]="displayFinalModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '40%', minWidth: '200px'}" [minY]="70"
+                                                [maximizable]="true" [baseZIndex]="10000">
+
+                                                <form name="FianlForm" #FianlForm="ngForm" novalidate>
+                                                  <div class="invalid-feedback" *ngIf="finalMsg!=''">{{finalMsg}}</div>
+
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Fianl_Tank_Close_Hight2"
+                                                            [(ngModel)]="objFinal.Tank_Close_Hight"
+                                                            (ngModelChange) ="tankCloseQtyForFinal()">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label">Tank Close Qty<ng-container *ngIf="objFinal.UOM != undefined">  ({{objFinal.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                            <!-- <input class="form-control"
+                                                            type="number"
+                                                            name="Fianl_Tank_Close_Qty2"
+                                                            [(ngModel)]="objFinal.Tank_Close_Qty"
+                                                            placeholder="Tank Close Qty"
+                                                            (ngModelChange) ="finalTankNetQty(type='close_qty')"
+                                                            > -->
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Fianl_Tank_Close_Qty2"
+                                                            [(ngModel)]="objFinal.Tank_Close_Qty"
+                                                            placeholder="Tank Close Qty"
+                                                           readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <h2></h2>
+                                                            </div>
+                                                        </div>
+                                                    <br>
+                                                </form>
+
+                                                <p-footer>
+                                                    <button type="button" pButton icon="pi pi-close" (click)="finalCancel()" label="CANCEL" class="ui-button-secondary"></button>
+                                                    <button type="button" pButton icon="pi pi-check" (click)="finalUpdate()" label="Update"></button>
+                                                </p-footer>
+                                                </p-dialog>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+

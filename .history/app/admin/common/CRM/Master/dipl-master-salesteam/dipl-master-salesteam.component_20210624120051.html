@@ -1,0 +1,217 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+              <div class="box-header with-border">
+                <button (click)='SaleExcModal()' class="btn btn-primary btn-sm pull-right">
+                  <span class="glyphicon glyphicon-plus"></span> Create Sales Executive
+                </button>
+                <h3 class="box-title"> Member Tree View : {{CurrentNode?.label}} </h3>
+              </div>
+                <div class="box-body">
+                  <div class="form-group">
+                    <div class="col-sm-12 text-right" style="margin: 0.5em 0;">
+                      <span class='pull-left'>Tree View Tools</span>
+                      <button  type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Expand all" (click)="expandAll()"><i class="fa fa-fw fa-expand"></i></button>
+                      <button  type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Collapse all" (click)="collapseAll()"><i class="fa fa-fw fa-compress"></i></button>
+                      <button  type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="View Change" (click)="ToggleView()"><i class="fa fa-fw fa-arrows"></i></button>
+                    </div>
+                    <div class="col-sm-12" >
+                      <p-tree  scrollHeight="300px" (onNodeSelect)='GetSelectedMember($event.node)' [value]="TreeDataList" [loading]="loading" layout="{{layoutString}}"></p-tree>
+
+                    </div>
+                    <div class="col-sm-4" *ngIf="QueryStringMemtype === 'channelsales'">
+                      <div class="table-responsive table-id no-padding">
+                        <p-table [value]="PincodeList" #dt1 [paginator]="PincodeList.length ? true : false" [rows]="10"
+                            [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowHover]="true"
+                            [globalFilterFields]='["PINCODE"]'>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                        <input type="text" pInputText size="50" placeholder="Search"
+                                            (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                            class="searchInput form-control">
+                                    </div>
+                                </div>
+
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Pincode</th>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                <tr>
+                                    <td>{{ col.PINCODE}}</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorright" let-state>
+                                Showing {{ state.first + 1 }} of
+                                {{ state.first + 1 + state.rows }} of
+                                {{ state.totalRecords }}
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+      </div>
+  </div>
+<!-- UPDATE ANSWER  -->
+<p-dialog
+  header="Create Sales Executive"
+  [appendTo]="'body'"
+  [visible]="CreateSalesExceModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '300px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <form name="CreateSalesExceUpdate" #CreateSalesExceUpdate="ngForm" novalidate>
+    <div class="form-group">
+
+        <div class="col-sm-12">
+          <label class="control-label">Member Name<sup class="text-danger">*</sup></label>
+          <input type="text" class="form-control"
+          name="studName"
+            #studName="ngModel"
+            [(ngModel)]="ObjSaleExe.Member_Name"
+            [ngClass]="{
+              clearance:
+              CreateSalesExceFormSubmitted && studName.errors?.required
+            }"
+            required>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label">User Name<sup class="text-danger">*</sup></label>
+          <select
+          class="form-control"
+          name="One"
+          #One="ngModel"
+          [(ngModel)]="ObjSaleExe.User_ID"
+          [ngClass]="{
+            clearance:
+            CreateSalesExceFormSubmitted && One.errors?.required
+          }"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of UserList"
+            value="{{ option.User_ID }}"
+          >
+            {{ option.Name }}
+          </option>
+        </select>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label"
+            >Under Team<sup class="text-danger">*</sup></label
+          >
+          <select
+            class="form-control"
+            name="Team"
+            #Team="ngModel"
+            [(ngModel)]="ObjSaleExe.Intro_Member_ID"
+            [ngClass]="{
+              clearance:
+              CreateSalesExceFormSubmitted && Team.errors?.required
+            }"
+            required
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of UnderTeamList"
+              value="{{ option.Member_ID }}"
+            >
+              {{ option.Member_Name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-12" >
+          <label class="control-label">Customer Route <span class="text-danger"></span></label>
+          <p-multiSelect [options]="CustomerRouteList" [(ngModel)]="SelectedCustomerRoute" [virtualScroll]="true"
+            itemSize="30"  [styleClass]="'compacct-multiselect'"
+            name="Registered"></p-multiSelect>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label"
+            >Weekly Off One<sup class="text-danger">*</sup></label
+          >
+          <select
+            class="form-control"
+            name="One"
+            #One="ngModel"
+            [(ngModel)]="ObjSaleExe.Weekly_Off_One"
+            [ngClass]="{
+              clearance:
+              CreateSalesExceFormSubmitted && One.errors?.required
+            }"
+            required
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+          </select>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label"
+            >Weekly Off Two<sup class="text-danger">*</sup></label
+          >
+          <select
+            class="form-control"
+            name="Two"
+            #Two="ngModel"
+            [(ngModel)]="ObjSaleExe.Weekly_Off_Two"
+            [ngClass]="{
+              clearance:
+              CreateSalesExceFormSubmitted && Two.errors?.required
+            }"
+            required
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+          </select>
+        </div>
+
+      </div>
+  </form>
+
+  <p-footer>
+    <button
+      type="button"
+      (click)="CreateSalesExceModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="InsertSalesExe(CreateSalesExceUpdate.form.valid)"
+    >
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>

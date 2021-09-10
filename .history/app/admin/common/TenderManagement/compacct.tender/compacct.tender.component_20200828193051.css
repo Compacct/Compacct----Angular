@@ -1,0 +1,48 @@
+.createPatient {
+  padding: 0 5px !important;
+  border-radius: 3px !important;
+  margin-top: 5px !important;
+}
+.productTable .ui-table-auto-layout > .ui-table-wrapper {
+  width: 100% !important;
+  min-height: 170px !important;
+}
+#ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
+  width: auto !important;
+}
+.custombutton {
+  margin-top: 25px;
+}
+.ui-dialog .ui-dialog-content {
+  padding: 0 .75em !important;
+}
+.cdk-overlay-container {
+  z-index: 9999999999999 !important;
+}
+.table.bidopen>thead>tr>th {
+  padding: 4px !important;
+}
+div.label-t{
+  padding: 6px 12px;
+    background: #f7f7f7;
+}
+.refresh-btn {
+  position: absolute;
+    right: 1em;
+    z-index: 99999;
+    top: 1em;
+}
+
+.boqExcel-toast .ui-toast {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+}
+
+// adjusts font, color and other elements of the toast window if needed
+.boqExcel-toast .ui-toast-message-content {
+  font-family: 'Courier New', Courier, monospace;
+  background: #FFD07B;
+}

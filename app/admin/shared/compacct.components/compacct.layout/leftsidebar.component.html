@@ -1,0 +1,4 @@
+ <!-- Left side column. contains the logo and sidebar -->
+ <aside class="main-sidebar">
+  <div [innerHtml]="navItems | safe: 'html'" (click)="getRoute($event)"></div>
+  </aside>

@@ -1,0 +1,1613 @@
+
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                  <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                      <form #SearchTicket='ngForm' novalidate>
+                        <div class="form-group">
+                          <div class="col-sm-2">
+                            <label class="control-label"
+                              >Status<sup class="text-danger">*</sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="Support_Status_ID2"
+                              #Support_Status_ID2="ngModel"
+                              [(ngModel)]="ObjSearchTicket.Status"
+                              (change)='BrowseTikStatusChanged()'
+                              [ngClass]="{
+                                clearance:
+                                SearchTicketFormSubmitted && Support_Status_ID2.errors?.required
+                              }"
+                              required
+                            >
+                              <option
+                                *ngFor="let option of SupportStatusList"
+                                value="{{ option.Support_Status_ID }}"
+                              >
+                                {{ option.Status_Name }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label">Period</label>
+
+                            <app-compacct-daterangepicker [DefaultEnable]='DefaultEnableChanger' [DefaultDateOpt]="DateRangeChanger" (DaterangeObj)="getDateRangeTickSearch($event)"></app-compacct-daterangepicker>
+                          </div>
+                          <div class="col-sm-3">
+                            <label class="control-label"
+                              >Assigned To<sup class="text-danger"></sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="Assigned"
+                              #Assigned="ngModel"
+                              [(ngModel)]="ObjSearchTicket.Asigned_To"
+                              [ngClass]="{
+                                clearance:
+                                SearchTicketFormSubmitted && Assigned.errors?.required
+                              }"
+                            >
+                            <option *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" [ngValue]="undefined">Select</option>
+                              <option
+                                *ngFor="let option of AssignedToList"
+                                value="{{ option.User_ID }}"
+                              >
+                                {{ option.Column1 }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-3">
+                            <button class="btn btn-primary custombutton" (click)="GetSupportTicketList(SearchTicket.form.valid)" id="load"
+                              [disabled]="seachSpinner1">
+                              <p-progressSpinner *ngIf="seachSpinner1" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!seachSpinner1" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                            </button>
+                            <button *ngIf='AssignToBtnFlag' (click)="GlobalAssign()" class="btn btn-primary custombutton">
+                              <span class="fa fa-fw fa-refresh"></span> Assign To
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="table-responsive table-id">
+                        <p-table [value]="SupportTicketList" #dt2 [paginator]="SupportTicketList.length ? true : false" [rows]="10"
+                          [autoLayout]="true" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true"
+                          [globalFilterFields]='["Support_ID","Support_Date","Name","Status","TAT_HR","PIN_Code","Class_Name"]'>
+                          <ng-template pTemplate="caption">
+                            <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                <input type="text" pInputText size="50" placeholder="Search"
+                                  (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                              </div>
+                            </div>
+                          </ng-template>
+                          <ng-template pTemplate="header">
+                            <tr>
+                              <th class="text-center">Ticket ID</th>
+                              <th *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'">Select</th>
+                              <th>Ticket Date</th>
+                              <th>TAT(Hour)</th>
+                              <th>Name</th>
+                              <th>Class</th>
+                              <th>Present Status</th>
+                              <th class="text-center">Update Ticket</th>
+
+
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-Querylist>
+                            <tr>
+                              <td class="text-center"><b>{{Querylist.Support_ID}}</b>&nbsp;<a title="Ticket Details" class="border-left btn btn-info btn-xs" (click)='ShowTicketDetails(Querylist)'><i class="fa fa-fw fa-info"></i></a></td>
+                              <td  *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" class="text-center">
+                                <p-checkbox (onChange)='GlobalAssignToFlag()'  [(ngModel)]="Querylist['Select_Flag']" [binary]="true"></p-checkbox>
+                              </td>
+                              <td>{{Querylist.Support_Date}}</td>
+                              <td  [class]='getTatClass(Querylist.TAT)'>{{Querylist.TAT}}</td>
+                              <td>{{Querylist.Name}}</td>
+                              <td>{{Querylist.Class_Name ? Querylist.Class_Name : '-'}}</td>
+                              <td>{{Querylist.Status}}</td>
+                              <td class="text-center"><a *ngIf='Querylist.Status !== "RESOLVED"' class="btn btn-reddit btn-sm" (click)='UpdateTicketStatusModal(Querylist)'>
+                                <i class="fa fa-fw fa-ticket"></i> Update Ticket
+                              </a>
+                            </td>
+
+
+                            </tr>
+                          </ng-template>
+                          <ng-template *ngIf="SupportTicketList.length" pTemplate="paginatorright" let-state>
+                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                          </ng-template>
+                        </p-table>
+                      </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                      <form #CreateTicketSearchForm="ngForm" novalidate>
+                        <div class="form-group">
+                          <div class="col-sm-4" style="margin-bottom: -5px;">
+                            <label class="control-label">
+                              Registered number<sup class="text-danger">*</sup></label
+                            >
+                            <span *ngIf='ObjTicket.Foot_Fall_ID' (click)="GetPrevTickets()" class="btn-vk createPatient"><i class="glyphicon glyphicon-list-alt"></i>&nbsp; Show Previous Tickets</span>
+                            <input
+                              class="form-control"
+                              name="mobile1"
+                              #mobile1="ngModel"
+                              CompacctDigitonly="true"
+                              [ngClass]="{
+                                clearance:
+                                  (CreateTicketFormSubmitted && mobile1.errors?.required) ||
+                                  (mobile1.errors?.minlength && mobile1.touched)
+                              }"
+                              (change)='GetStudentsDetails()'
+                              [(ngModel)]="ObjTicket.Mobile_No"
+                              placeholder="Mobile Number"
+                              minlength="10"
+                              maxlength="10"
+                              required
+                            />
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label">Students Name<sup class="text-danger">*</sup></label>
+                            <input type="text" class="form-control"
+                            name="studName"
+                              #studName="ngModel"
+                              [(ngModel)]="ObjTicket.Name"
+                              [disabled]='!UnIdentifyStudent'
+                              [ngClass]="{
+                                clearance:
+                                CreateTicketFormSubmitted && studName.errors?.required
+                              }"
+                              required>
+                          </div>
+
+                          <div class="col-sm-4">
+                            <label class="control-label"
+                              >Class<sup class="text-danger">*</sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="Class"
+                              #Class="ngModel"
+                              [(ngModel)]="ObjTicket.Class_ID"
+                              [disabled]='!UnIdentifyStudent'
+                              [ngClass]="{
+                                clearance:
+                                CreateTicketFormSubmitted && Class.errors?.required
+                              }"
+                              required
+                            >
+                              <option [ngValue]="undefined">Select</option>
+                              <option
+                                *ngFor="let option of ClassList"
+                                value="{{ option.Class_ID }}"
+                              >
+                                {{ option.Class_Name }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label">Pincode</label>
+                            <div  class="label-t">{{ObjTicket.PIN_Code ? ObjTicket.PIN_Code: '-'}}</div>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label">Registration Date</label>
+                            <div  class="label-t">{{ObjTicket.Registration_Date ? ObjTicket.Registration_Date : '-'}}</div>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label">City / District</label>
+                            <div  class="label-t">{{ObjTicket.District ? ObjTicket.District : '-'}}</div>
+                          </div>
+                          <div class="col-sm-12" style="margin-top:1em;" *ngIf='ObjTicket.Foot_Fall_ID'>
+                            <p-fieldset legend="Show Sale Details" [toggleable]="true">
+                              <div *ngIf='!SalesDetailsList.length'>No Data Found...</div>
+                              <div *ngIf='SalesDetailsList.length' class="table table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr style="background-color:#3c8dbc;color:white;">
+                                      <th>Order ID</th>
+                                      <th>Order Date</th>
+                                      <th>Distributor CODE</th>
+                                      <th>Invoice No</th>
+                                      <th>Confirmed</th>
+                                      <th>Confirmed date</th>
+                                      <th>Products</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngFor='let obj of SalesDetailsList'>
+                                      <td>{{obj.Order_ID}}</td>
+                                      <td>{{obj.Order_Date | date : "dd/MMM/yyyy"}}</td>
+                                      <td>{{obj.Distributor_CODE ? obj.Distributor_CODE : '-'}}</td>
+                                      <td>{{obj.CRM_Invoice_No ? obj.CRM_Invoice_No: '-'}}</td>
+                                      <td>{{obj.Acc_Confirmed === 'Y' ? 'YES' : 'NO'}}</td>
+                                      <td>{{obj.App_Confirmed_Date ? (obj.App_Confirmed_Date | date : "dd/MMM/yyyy") : '-'}}</td>
+                                      <td>{{obj.Products ? obj.Products :'-'}}</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </p-fieldset>
+                          </div>
+                          <div class="col-sm-12" style="margin-top:1em;" *ngIf='ObjTicket.Foot_Fall_ID && PrevPendingTicketList.length'>
+                            <p-fieldset legend="Show Previous Pending Tikcets" [toggleable]="true">
+                              <div *ngIf='PrevPendingTicketList.length' class="table table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr style="background-color:#3c8dbc;color:white;">
+
+                                      <th class="text-center">Reply</th>
+                                      <th>Ticket Date</th>
+                                      <th>Assgined To</th>
+                                      <th>Class</th>
+                                      <th>City / District</th>
+                                      <th>Pincode</th>
+                                      <th>Short description</th>
+                                      <th>Description (write issue in detail)</th>
+                                      <th>Category</th>
+                                      <th>Android version</th>
+                                      <th>FMC</th>
+                                      <th>Source Type</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngFor='let Querylist of PrevPendingTicketList'>
+                                      <td class="text-center"><a class="btn btn-reddit btn-sm" (click)='UpdateTicketStatusModal(Querylist)'>Reply</a></td>
+
+                                      <td>{{Querylist.Support_Date}}</td>
+                                      <td>{{Querylist.Assigned_To }}</td>
+                                      <td>{{Querylist.Class_Name ? Querylist.Class_Name : '-'}}</td>
+                                      <td>{{Querylist.District}}</td>
+                                      <td>{{Querylist.PIN_Code}}</td>
+                                      <td>{{Querylist.Short_Description}}</td>
+                                      <td>{{Querylist.Description}}</td>
+                                      <td>{{Querylist.Support_Category_Name}}</td>
+                                      <td>{{Querylist.Anndroid_Ver_Name}}</td>
+                                      <td>{{Querylist.FMC_Desc}}</td>
+                                      <td>{{Querylist.Enq_Source_Name}}</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </p-fieldset>
+                          </div>
+                        </div>
+                        <hr class="box boxboxDivide-primary" />
+                        <div class="form-group">
+                          <div class="col-sm-6">
+                            <label class="control-label"
+                              >Short description<sup class="text-danger">*</sup
+                            ></label>
+                            <textarea
+                              class="form-control"
+                              rows="2"
+                              name="Short"
+                              #Short="ngModel"
+                              minlength="5"
+                              placeholder="Short description"
+                              [ngClass]="{
+                                clearance:
+                                  (CreateTicketFormSubmitted && Short.errors?.required) ||
+                                  (Short.errors?.minlength && Short.touched)
+                              }"
+                              [(ngModel)]="ObjTicket.Short_Description"
+                              required></textarea>
+                          </div>
+                          <div class="col-sm-6">
+                            <label class="control-label"
+                              >Description (write issue in detail)<sup class="text-danger">*</sup
+                            ></label>
+                            <textarea
+                              class="form-control"
+                              rows="2"
+                              name="Description"
+                              #Description="ngModel"
+                              minlength="10"
+                              [(ngModel)]="ObjTicket.Description"
+                              [ngClass]="{
+                                clearance:
+                                  (CreateTicketFormSubmitted && Description.errors?.required) ||
+                                  (Description.errors?.minlength && Description.touched)
+                              }"
+                              placeholder="Description (write issue in detail)"
+                              required></textarea>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label"
+                              >Category<sup class="text-danger">*</sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="Category"
+                              #Category="ngModel"
+                              [(ngModel)]="ObjTicket.Support_Category_ID"
+                              [ngClass]="{
+                                clearance:
+                                CreateTicketFormSubmitted && Category.errors?.required
+                              }"
+                              required
+                            >
+                              <option [ngValue]="undefined">Select</option>
+                              <option
+                                *ngFor="let option of SupportCatList"
+                                value="{{ option.Support_Category_ID }}"
+                              >
+                                {{ option.Support_Category_Name }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label">Assigned to</label>
+                            <div  class="label-t">{{ObjTicket.Asigned_To ? $CompacctAPI.CompacctCookies.Name : '-'}}</div>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label"
+                              >Status<sup class="text-danger">*</sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="Support_Status_ID"
+                              #Support_Status_ID="ngModel"
+                              [(ngModel)]="ObjTicket.Support_Status_ID"
+                              [ngClass]="{
+                                clearance:
+                                CreateTicketFormSubmitted && Support_Status_ID.errors?.required
+                              }"
+                              required
+                            >
+                              <option [ngValue]="undefined">Select</option>
+                              <option
+                                *ngFor="let option of SupportStatusList"
+                                value="{{ option.Support_Status_ID }}"
+                              >
+                                {{ option.Status_Name }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label"
+                              >Android version<sup class="text-danger">*</sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="Android"
+                              #Android="ngModel"
+                              [(ngModel)]="ObjTicket.Anndroid_Ver_ID"
+                              [ngClass]="{
+                                clearance:
+                                CreateTicketFormSubmitted && Android.errors?.required
+                              }"
+                              required
+                            >
+                              <option [ngValue]="undefined">Select</option>
+                              <option
+                                *ngFor="let option of AndroidVerList"
+                                value="{{ option.Anndroid_Ver_ID }}"
+                              >
+                                {{ option.Anndroid_Ver_Name }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label"
+                              >FMC<sup class="text-danger">*</sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="FMC"
+                              #FMC="ngModel"
+                              [(ngModel)]="ObjTicket.FMC_ID"
+                              [ngClass]="{
+                                clearance:
+                                CreateTicketFormSubmitted && FMC.errors?.required
+                              }"
+                              required
+                            >
+                              <option [ngValue]="undefined">Select</option>
+                              <option
+                                *ngFor="let option of FmcList"
+                                value="{{ option.FMC_ID }}"
+                              >
+                                {{ option.FMC_Desc }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4">
+                            <label class="control-label"
+                              >Source Type<sup class="text-danger">*</sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="ENQ_Source_ID"
+                              #ENQ_Source_ID="ngModel"
+                              [(ngModel)]="ObjTicket.ENQ_Source_ID"
+                              [ngClass]="{
+                                clearance:
+                                CreateTicketFormSubmitted && ENQ_Source_ID.errors?.required
+                              }"
+                              required
+                            >
+                              <option [ngValue]="undefined">Select</option>
+                              <option
+                                *ngFor="let option of EnqSrcList"
+                                value="{{ option.Enq_Source_ID }}"
+                              >
+                                {{ option.Enq_Source_Name }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        <hr class="box boxboxDivide-primary">
+                        <div class="form-group">
+                          <!-- <div class="col-sm-12">
+                            <label class="control-label"
+                              >Upload Document<sup class="text-danger"></sup
+                            ></label>
+                            <p-fileUpload
+                              #fileInput
+                              name="aFile"
+                              multiple="multiple"
+                              accept="image/*,.pdf"
+                              customUpload="true"
+                              [chooseLabel]="'Browse'"
+                              [showUploadButton]="false"
+                              (onUpload)="FetchPDFFile($event)"
+                            >
+                          <ng-template let-file let-i="index" pTemplate="file">
+                            <div class="ui-fileupload-row">
+                              <div><img [src]="file.objectURL" *ngIf="fileUpload.isImage(file)" [width]="fileUpload.previewWidth" /></div>
+                              <div>{{file.name}}</div>
+                              <div>{{fileUpload.formatSize(file.size)}}</div>
+                              <div><button type="button" icon="fa fa-fw fa-close" pButton (click)="fileUpload.remove(i)"></button></div>
+                            </div>
+                          </ng-template>
+
+                          </p-fileUpload>
+                          </div> -->
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-primary custombutton pull-right" (click)="SaveSupportTicket(CreateTicketSearchForm.form.valid)"
+                            id="load" [disabled]="seachSpinnersave">
+                            <p-progressSpinner *ngIf="seachSpinnersave" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                              animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!seachSpinnersave" class="glyphicon glyphicon-save"></span>&nbsp;Create
+                          </button>
+                        </div>
+                      </form>
+
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-fw  fa-clock-o">
+                      <form #QuerySearchForm="ngForm" novalidate>
+                        <div class="form-group">
+                          <div class="col-sm-3">
+                            <label class="control-label">Date</label>
+
+                            <app-compacct-daterangepicker
+                            (DaterangeObj)="getDateRange2($event)">
+                            </app-compacct-daterangepicker>
+                            <!-- <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
+                            <div class="input-group date">
+                              <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                              </div>
+                              <input type="date" name="docdate" [ngModel]="NextFollowupDate | date: 'yyyy-MM-dd'" #docdate="ngModel"
+                                (ngModelChange)="getNxtFollowupDate($event)"
+                                [ngClass]="{clearance: QuerySearchFormSubmitted && docdate.errors?.required}" class="form-control" required />
+                            </div> -->
+                          </div>
+                          <div class="col-sm-2">
+                            <label class="control-label">Status<sup class="text-danger">*</sup></label>
+                            <select class="form-control"
+                            name="SatusSearch"
+                            #SatusSearch="ngModel"
+                            [(ngModel)]='ObjSearchContactMgs.Status_ID'
+                            [ngClass]="{'clearance': QuerySearchFormSubmitted && SatusSearch?.errors?.required}"
+                            required>
+                              <!-- <option *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" [ngValue]="undefined">Select</option> -->
+                                <option *ngFor="let option of ContactSearchStatusList" value={{option.Status_ID}}>
+                                  {{option.Status_Name}}
+                                </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-3">
+                            <label class="control-label"
+                              >User<sup class="text-danger"></sup></label
+                            >
+                            <select
+                              class="form-control"
+                              name="AssignedsEARCH"
+                              #AssignedsEARCH="ngModel"
+                              [(ngModel)]="ObjSearchContactMgs.User_ID"
+                              [ngClass]="{
+                                clearance:
+                                QuerySearchFormSubmitted && AssignedsEARCH.errors?.required
+                              }"
+                            >
+                            <option *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" [ngValue]="undefined">Select</option>
+                              <option
+                                *ngFor="let option of ContactSearchUserList"
+                                value="{{ option.To_User }}"
+                              >
+                                {{ option.User_Name }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4">
+                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="Getquerylist(QuerySearchForm.form.valid)"
+                              id="load" [disabled]="seachSpinner">
+                              <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                            </button>
+                            <button *ngIf='AssignToCntMgsBtnFlag' (click)="ForwardModalGlobal()" class="btn btn-primary custombutton">
+                              <span class="fa fa-fw fa-refresh"></span> Assign To
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                      <!-- <div class="row" style="padding-left: 10px;">
+                        <div style="margin-top:5px;margin-bottom:10px">
+                          <fieldset class="col-md-12">
+                            <legend>Filter</legend>
+                            <div class="form-group">
+                              <div class="col-sm-3">
+                                <label class="control-label">Class <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistClass" [(ngModel)]="SelectedDistClass" [virtualScroll]="true" itemSize="30"
+                                  (onChange)='GlobalFilterChangenUpdate()' [styleClass]="'compacct-multiselect'" name="Class"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Status <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistStatus" [(ngModel)]="SelectedDistStatus" [virtualScroll]="true"
+                                  itemSize="30" (onChange)='GlobalFilterChangenUpdate()' [styleClass]="'compacct-multiselect'"
+                                  name="Tutorial"></p-multiSelect>
+                              </div>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div> -->
+                      <div class="table-responsive table-id">
+                          <p-table [value]="SupportQuerylist" #dt
+                            [paginator]="SupportQuerylist.length ? true : false"  [rows]="10"
+                            [autoLayout]="true"
+                            [rowsPerPageOptions]="[10,20,30]"
+                            [rowHover]="true"
+                            [globalFilterFields]='["Name","Class_Name","Query_Date","Subject","TAT_HR","Question"]'>
+                              <ng-template pTemplate="caption">
+                                    <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                          <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                              </div>
+                                    </div>
+                                  </ng-template>
+                                  <ng-template pTemplate="header">
+                                      <tr>
+                                          <th style="width:5em">Action</th>
+                                          <th *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'">Select</th>
+                                          <th>Student Name</th>
+                                          <th>Class</th>
+                                          <th>Recieved on</th>
+                                          <th>Subject</th>
+                                          <th>TAT(Hour)</th>
+                                          <th>Question</th>
+                                          <!-- <th>Question</th> -->
+
+
+                                      </tr>
+                                  </ng-template>
+                                  <ng-template pTemplate="body" let-Querylist>
+                                      <tr>
+
+                                          <td>
+                                            <div class="dropdown">
+                                              <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                  type="button" data-toggle="dropdown" style="height:27px">
+                                                  <i class="fa fa-fw fa-bars"></i>
+                                                  <span class="caret"></span>
+                                              </button>
+                                              <ul class="dropdown-menu">
+                                                <!-- STATUS ID -> 1 -->
+                                                  <li *ngIf='Querylist.Status_ID === 1'>
+                                                      <a (click)="ForwardModal(Querylist,'2')">
+                                                        <i class="fa fa-fw fa-user-plus" aria-hidden="true"></i>
+                                                        Assign
+                                                    </a>
+                                                </li>
+                                                  <!-- STATUS ID -> 2 -->
+                                                  <li *ngIf='Querylist.Status_ID === 2'>
+                                                    <a (click)="TicketModal(Querylist)">
+                                                      <i class="fa fa-fw fa-ticket" aria-hidden="true"></i>
+                                                      Create Ticket
+                                                    </a>
+                                                  </li>
+                                                  <li *ngIf='Querylist.Status_ID === 2 && $CompacctAPI.CompacctCookies.User_Type === "A"'>
+                                                    <a (click)="ForwardModal(Querylist,'2')">
+                                                      <i class="fa fa-fw fa-user-plus" aria-hidden="true"></i>
+                                                      Re-Assign
+                                                  </a>
+                                              </li>
+                                                  <!-- <li *ngIf='Querylist.Status_ID === 2'>
+                                                    <a (click)="ForwardModal(Querylist,'5')">
+                                                      <i class="fa fa-fw fa-forward" aria-hidden="true"></i>
+                                                      Forward
+                                                    </a>
+                                                  </li> -->
+                                                  <!-- STATUS ID -> 3 -->
+                                                  <!-- <li *ngIf='Querylist.Status_ID === 3'>
+                                                    <a (click)="ReplyModal(Querylist)">
+                                                      <i class="fa fa-fw fa-reply" aria-hidden="true"></i>
+                                                      Reply
+                                                    </a>
+                                                  </li> -->
+                                                  <li *ngIf='Querylist.Status_ID === 3 && $CompacctAPI.CompacctCookies.User_Type === "A"'>
+                                                    <a (click)="ForwardModal(Querylist,'3')">
+                                                      <i class="fa fa-fw fa-forward" aria-hidden="true"></i>
+                                                      Forward
+                                                    </a>
+                                                  </li>
+                                                  <!-- STATUS ID -> 6 -->
+                                                  <!-- <li *ngIf='Querylist.Status_ID === 6'>
+                                                    <a (click)="InformModal(Querylist)">
+                                                      <i class="fa fa-fw fa-bullhorn" aria-hidden="true"></i>
+                                                      Inform To Student
+                                                  </a>
+                                              </li> -->
+
+                                              </ul>
+                                          </div>
+
+                                          </td>
+                                          <td  *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" class="text-center">
+                                            <p-checkbox (onChange)='GlobalAssignToFlag2()'  [(ngModel)]="Querylist['Select_Flag']" [binary]="true"></p-checkbox>
+                                          </td>
+                                          <td>{{Querylist.Name}}</td>
+                                          <td>{{Querylist.Class_Name ? Querylist.Class_Name : '-'}}</td>
+                                          <td>{{Querylist.Query_Date}}</td>
+                                          <td>{{Querylist.Subject}}</td>
+                                          <td  [class]='getTatClass(Querylist.TAT)'>{{Querylist.TAT_HR}}</td>
+                                          <td style="width:35em">{{Querylist.Question}}</td>
+
+
+                                      </tr>
+                                  </ng-template>
+                                  <ng-template *ngIf="SupportQuerylist.length" pTemplate="paginatorright" let-state>
+                                      Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                              </ng-template>
+                          </p-table>
+                      </div>
+                    </p-tabPanel>
+                    <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-fw fa-check-circle">
+                      <form novalidate>
+                        <div class="form-group">
+                          <div class="col-sm-4">
+                            <label class="control-label">Period</label>
+
+                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                          </div>
+                          <div class="col-sm-3">
+                            <button class="btn btn-primary custombutton" (click)="GetResolvedQueryList()" id="load"
+                              [disabled]="seachSpinner1">
+                              <p-progressSpinner *ngIf="seachSpinner1" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!seachSpinner1" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="table-responsive table-id">
+                        <p-table [value]="ResolvedQueryList" #dt2 [paginator]="ResolvedQueryList.length ? true : false" [rows]="10"
+                          [autoLayout]="true" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true"
+                          [globalFilterFields]='["Name","Class_Name","Query_Date","Subject","TAT_HR","Question"]'>
+                          <ng-template pTemplate="caption">
+                            <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                <input type="text" pInputText size="50" placeholder="Search"
+                                  (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                              </div>
+                            </div>
+                          </ng-template>
+                          <ng-template pTemplate="header">
+                            <tr>
+                              <th>Student Name</th>
+                              <th>Class</th>
+                              <th>Recieved on</th>
+                              <th>Subject</th>
+                              <th>TAT(Hour)</th>
+                              <th>Question</th>
+
+
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-Querylist>
+                            <tr>
+                              <td>{{Querylist.Name}}</td>
+                              <td>{{Querylist.Class_Name ? Querylist.Class_Name : '-'}}</td>
+                              <td>{{Querylist.Query_Date}}</td>
+                              <td>{{Querylist.Subject}}</td>
+                              <td>{{Querylist.TAT_HR}}</td>
+                              <td style="width:35em">{{Querylist.Question}}</td>
+
+
+                            </tr>
+                          </ng-template>
+                          <ng-template *ngIf="ResolvedQueryList.length" pTemplate="paginatorright" let-state>
+                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                          </ng-template>
+                        </p-table>
+                      </div>
+                    </p-tabPanel> -->
+                  </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- UPDATE TICKET -->
+<p-dialog header="UPDATE TICKET" [appendTo]="'body'" [visible]="UpdateStatusModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="UpdateStatusUpdate"  #UpdateStatusUpdate="ngForm" novalidate>
+    <div class="row">
+      <div class="col-md-12">
+          <div class="col-md-6">
+            <p-tabView [activeIndex]="0">
+
+              <p-tabPanel headerStyleClass="compacct-tabs"  [header]="'Follow-up'" leftIcon="fa fa-angle-double-right" aria-hidden="true" >
+
+                <div class="form-horizontal">
+                  <div class="box-body ">
+                      <div class="timelinescroll style-3">
+                          <ul class="timeline ">
+                              <li class="time-label" style="margin-bottom: -20px"
+                                  *ngFor="let objMain of distinctDateArray">
+                                  <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
+                                  <ul class="timeline" style="margin: 7px 0 30px 0">
+                                      <li *ngFor="let objSub of getFollowupByDate(objMain)">
+                                          <i class="fa fa-user bg-blue"></i>
+                                          <div class="timeline-item">
+                                              <!-- <span class="time" *ngIf="false"><i class="fa fa-clock-o"></i> 12:05</span> -->
+                                              <div class="timeline-header">
+                                                <a class="btn btn-reddit btn-social  btn-xs">
+                                                  Assigned To  :
+                                                  <i class="fa fa-user-plus"></i>&nbsp;{{objSub.User_Name}}
+                                                </a>
+                                              </div>
+                                              <div class="timeline-body">
+                                                  {{objSub.Last_Remarks}}
+                                              </div>
+                                              <div class="timeline-footer" style="padding-bottom: 10px">
+                                                  <!-- <a class="btn btn-primary btn-social  btn-xs"
+                                                      *ngIf="objSub.CreatedBy != objSub.SentTo_Name">
+                                                      <i class="fa fa-user"></i>&nbsp;{{objSub.SentTo_Name}}
+                                                  </a> -->
+                                                  <div class="btn btn-reddit btn-social  btn-xs" style="white-space: pre-line;width: 75%;">
+                                                    Remarks :
+                                                    <i class="fa fa-comments"></i>&nbsp;{{objSub.Followup_Remarks}}
+                                                </div>
+                                                  <div style="margin-top:0.2em;">
+                                                    <a class="btn btn-danger btn-social  btn-xs">
+                                                      Status :
+                                                      <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Status}}
+                                                    </a>
+                                                  </div>
+
+
+                                                  <a *ngIf="objSub.PDF_File"
+                                                      ng-click="viewPDF(objSub.PDF_File)">
+                                                      <img src="~/PDF_Logo/PDF-logo.png" class='pdf'
+                                                          style="width:20px; height:20px ">
+                                                  </a>
+                                              </div>
+                                          </div>
+                                      </li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+              </p-tabPanel>
+              <p-tabPanel headerStyleClass="compacct-tabs"  [header]="'Ticket Info'" leftIcon="fa fa-info" aria-hidden="true" >
+                <form name="InformModalUpdate"  #InformModalUpdate="ngForm" novalidate>
+                  <h5 class="text-center bg-green-gradient" style="padding: 0.25em;">
+                    Ticket ID : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Support_ID}}</span>&nbsp;&nbsp;|&nbsp;
+                    Ticket Date : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Support_Date}}</span>
+                  </h5>
+                  <div class="form-group">
+                    <div class="col-sm-6">
+                      <label class="control-label">Mobile No.</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Mobile_No ? ObjUpdateStatus.Mobile_No : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Name</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Name ? ObjUpdateStatus.Name : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Class</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Class_Name ? ObjUpdateStatus.Class_Name : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">City / District</label>
+                      <div  class="label-t">{{ObjUpdateStatus.District ? ObjUpdateStatus.District : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Pincode</label>
+                      <div  class="label-t">{{ObjUpdateStatus.PIN_Code ? ObjUpdateStatus.PIN_Code: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Registration Date</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Registration_Date ? ObjUpdateStatus.Registration_Date : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Short description</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Short_Description ? ObjUpdateStatus.Short_Description : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Description (write issue in detail)</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Description ? ObjUpdateStatus.Description: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Category</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Support_Category_Name ? ObjUpdateStatus.Support_Category_Name: '-'}}</div>
+                    </div>
+                    <!-- <div class="col-sm-4">
+                      <label class="control-label">Assigned to</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Support_Category_Name ? ObjUpdateStatus.Support_Category_Name: '-'}}</div>
+                    </div> -->
+                    <div class="col-sm-6">
+                      <label class="control-label">Status</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Status ? ObjUpdateStatus.Status: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Android version</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Anndroid_Ver_Name ? ObjUpdateStatus.Anndroid_Ver_Name: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">FMC</label>
+                      <div  class="label-t">{{ObjUpdateStatus.FMC_Desc ? ObjUpdateStatus.FMC_Desc: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Source Type</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Enq_Source_Name ? ObjUpdateStatus.Enq_Source_Name: '-'}}</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="box-footer">
+                      <h5></h5>
+                    </div>
+                  </div>
+                </form>
+              </p-tabPanel>
+            </p-tabView>
+          </div>
+          <div class="col-md-6">
+            <h5 class="text-center bg-green-gradient" style="padding: 0.25em;">
+              Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Name}}</span>&nbsp;&nbsp;|&nbsp;
+              Current Status : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Status}}</span>
+            </h5>
+            <div class="form-group">
+              <div class="col-sm-12" >
+                <label class="control-label"
+                >Status<sup class="text-danger">*</sup></label
+              >
+              <select
+                class="form-control"
+                name="Support_Status_ID1"
+                #Support_Status_ID1="ngModel"
+                [(ngModel)]="ObjUpdateStatus.Support_Status_ID"
+                [ngClass]="{
+                  clearance:
+                  UpdateStatusFormSubmit && Support_Status_ID1.errors?.required
+                }"
+                required
+              >
+                <option [ngValue]="undefined">Select</option>
+                <option
+                  *ngFor="let option of SupportStatusList"
+                  value="{{ option.Support_Status_ID }}"
+                >
+                  {{ option.Status_Name }}
+                </option>
+              </select>
+              </div>
+              <div class="col-sm-12"  style="margin-bottom: 1em;">
+                <label class="control-label"
+                >Remarks<sup class="text-danger">*</sup></label
+              >
+              <textarea
+              class="form-control"
+              name="Followup_Remarks1"
+              rows="3"
+              #Followup_Remarks1="ngModel"
+              [(ngModel)]="ObjUpdateStatus.Followup_Remarks"
+              minlength="5"
+              [ngClass]="{
+                clearance:
+                (UpdateStatusFormSubmit && Followup_Remarks1.errors?.required) ||
+                (Followup_Remarks1.errors?.minlength && Followup_Remarks1.touched)
+              }"
+              required></textarea>
+
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+  <!-- <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div> -->
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="UpdateStatusModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="UpdateTicketStatus(UpdateStatusUpdate.form.valid)">
+      UPDATE
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- TICKET DETAILS  -->
+<p-dialog header="TICKET DETAILS" [appendTo]="'body'" [visible]="TicketDetailsModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '88%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="row">
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-horizontal">
+                <div class="box-body ">
+                    <div class="timelinescroll style-3">
+                        <ul class="timeline ">
+                            <li class="time-label" style="margin-bottom: -20px"
+                                *ngFor="let objMain of distinctDateArray">
+                                <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
+                                <ul class="timeline" style="margin: 7px 0 30px 0">
+                                    <li *ngFor="let objSub of getFollowupByDate(objMain)">
+                                        <i class="fa fa-user bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <!-- <span class="time" *ngIf="false"><i class="fa fa-clock-o"></i> 12:05</span> -->
+                                            <div class="timeline-header">
+                                              <a class="btn btn-reddit btn-social  btn-xs">
+                                                Assigned To  :
+                                                <i class="fa fa-user-plus"></i>&nbsp;{{objSub.User_Name}}
+                                              </a>
+                                            </div>
+                                            <div class="timeline-body">
+                                                {{objSub.Last_Remarks}}
+                                            </div>
+                                            <div class="timeline-footer" style="padding-bottom: 10px">
+                                                <!-- <a class="btn btn-primary btn-social  btn-xs"
+                                                    *ngIf="objSub.CreatedBy != objSub.SentTo_Name">
+                                                    <i class="fa fa-user"></i>&nbsp;{{objSub.SentTo_Name}}
+                                                </a> -->
+                                                <div class="btn btn-reddit btn-social  btn-xs" style="white-space: pre-line;width: 75%;">
+                                                    Remarks :
+                                                    <i class="fa fa-comments"></i>&nbsp;{{objSub.Followup_Remarks}}
+                                                </div>
+                                                <div style="margin-top:0.2em;">
+                                                  <a class="btn btn-danger btn-social  btn-xs">
+                                                    Status :
+                                                    <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Status}}
+                                                  </a>
+                                                </div>
+
+
+                                                <a *ngIf="objSub.PDF_File"
+                                                    ng-click="viewPDF(objSub.PDF_File)">
+                                                    <img src="~/PDF_Logo/PDF-logo.png" class='pdf'
+                                                        style="width:20px; height:20px ">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+          <form name="InformModalUpdate" style="margin-top:1em" #InformModalUpdate="ngForm" novalidate>
+            <h5 class="text-center bg-green-gradient" style="padding: 0.25em;">
+              Ticket ID : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Support_ID}}</span>&nbsp;&nbsp;|&nbsp;
+              Ticket Date : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Support_Date}}</span>
+            </h5>
+            <div class="form-group">
+              <div class="col-sm-6">
+                <label class="control-label">Mobile No.</label>
+                <div  class="label-t">{{ObjUpdateStatus.Mobile_No ? ObjUpdateStatus.Mobile_No : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Name</label>
+                <div  class="label-t">{{ObjUpdateStatus.Name ? ObjUpdateStatus.Name : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Class</label>
+                <div  class="label-t">{{ObjUpdateStatus.Class_Name ? ObjUpdateStatus.Class_Name : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">City / District</label>
+                <div  class="label-t">{{ObjUpdateStatus.District ? ObjUpdateStatus.District : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Pincode</label>
+                <div  class="label-t">{{ObjUpdateStatus.PIN_Code ? ObjUpdateStatus.PIN_Code: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Registration Date</label>
+                <div  class="label-t">{{ObjUpdateStatus.Registration_Date ? ObjUpdateStatus.Registration_Date : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Short description</label>
+                <div  class="label-t">{{ObjUpdateStatus.Short_Description ? ObjUpdateStatus.Short_Description : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Description (write issue in detail)</label>
+                <div  class="label-t">{{ObjUpdateStatus.Description ? ObjUpdateStatus.Description: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Category</label>
+                <div  class="label-t">{{ObjUpdateStatus.Support_Category_Name ? ObjUpdateStatus.Support_Category_Name: '-'}}</div>
+              </div>
+              <!-- <div class="col-sm-4">
+                <label class="control-label">Assigned to</label>
+                <div  class="label-t">{{ObjUpdateStatus.Support_Category_Name ? ObjUpdateStatus.Support_Category_Name: '-'}}</div>
+              </div> -->
+              <div class="col-sm-6">
+                <label class="control-label">Status</label>
+                <div  class="label-t">{{ObjUpdateStatus.Status ? ObjUpdateStatus.Status: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Android version</label>
+                <div  class="label-t">{{ObjUpdateStatus.Anndroid_Ver_Name ? ObjUpdateStatus.Anndroid_Ver_Name: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">FMC</label>
+                <div  class="label-t">{{ObjUpdateStatus.FMC_Desc ? ObjUpdateStatus.FMC_Desc: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Source Type</label>
+                <div  class="label-t">{{ObjUpdateStatus.Enq_Source_Name ? ObjUpdateStatus.Enq_Source_Name: '-'}}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="box-footer">
+                <h5></h5>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  <p-footer>
+    <button type="button" (click)="TicketDetailsModalFlag = false" class="btn btn-default">
+      CLOSE
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- UPDATE ANSWER  -->
+<p-dialog
+  header="UPDATE ANSWER"
+  [appendTo]="'body'"
+  [visible]="SAnswerUpdateModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '60%', minWidth: '300px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <form name="SAnswerUpdate" #AnswerUpdate="ngForm" novalidate>
+    <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label"
+          >Subject : </label
+        > &nbsp;&nbsp;&nbsp;&nbsp;
+        {{Subject}}
+        </div>
+      </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label"
+        >Question : </label
+      > &nbsp;&nbsp;&nbsp;&nbsp;
+      {{Question}}
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">
+            Answer : <sup class="text-danger">*</sup></label>
+        <textarea
+          name="Answer"
+          #Answer="ngModel"
+          rows='4'
+          minlength="20"
+          [(ngModel)]="ObjAnswer.Reply"
+          [ngClass]="{
+            clearance:
+            SAnswerUpdateSubmitted && Answer.errors?.required ||  (Answer.errors?.minlength && Answer.touched)
+          }"
+          class="form-control"
+          required
+        ></textarea>
+      </div>
+    </div>
+    <!-- <div class="form-group">
+      <div class="box-footer">
+        <label class="control-label"
+        >Is Public : </label>
+      <select
+        name="ispublic"
+        #ispublic="ngModel"
+        [(ngModel)]="ObjAnswer.is_public"
+        [ngClass]="{
+          clearance:
+          AnswerUpdateSubmitted && ispublic.errors?.required
+        }"
+        class="form-control"
+        required
+      >
+      <option value="Y">Yes</option>
+      <option value="N">No</option>
+    </select>
+        <h5></h5>
+      </div>
+    </div> -->
+  </form>
+
+  <p-footer>
+    <button
+      type="button"
+      (click)="SAnswerUpdateModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="CallTutopiaAppApi(AnswerUpdate.form.valid)"
+    >
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- ASSIGN TO -->
+<p-dialog header="ASSIGN TO" [appendTo]="'body'" [visible]="AssignToModal" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="AssignToModalUpdate" style="margin-top:2em" #AssignToModalUpdate="ngForm" novalidate>
+    <div class="form-group" *ngIf="AssignToObj['Assigned_To']">
+      <div class="col-sm-12" style="margin:1em 0;">
+        <label class="control-label">Last Assigned To : </label> &nbsp;&nbsp;&nbsp;&nbsp;
+        {{AssignToObj['Assigned_To']}}
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">
+          Assign To <sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='assignTo'
+          #assignTo='ngModel'
+          [ngClass]="{'clearance': AssignToFormSubmit &&  assignTo?.errors?.required}"
+          [(ngModel)]="AssignToObj['User_ID']" required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of AssignedToList" [ngValue]="option.User_ID">{{option.Column1}}</option>
+        </select>
+      </div>
+    </div>
+  <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div>
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="AssignToModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="SaveAssignTo(AssignToModalUpdate.form.valid)">
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>
+<!--SHOW PREV TICKET  -->
+<p-dialog header="SHOW PREVIOUS TICKET" [appendTo]="'body'" [visible]="PrevTicketModal" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="col-sm-4">
+    <button style="margin-right: 30px;" (click)="exportexcel(PrevTicketList,'PreviousTicket')" class="btn btn-primary custombutton">
+      <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+    </button>
+  </div>
+    <div class="table-responsive table-id">
+      <p-table [value]="PrevTicketList" #dt3 [paginator]="PrevTicketList.length ? true : false" [rows]="10"
+        [autoLayout]="true" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true"
+        [globalFilterFields]='["Support_ID","Support_Date","Name","Status","TAT_HR","PIN_Code","Class_Name"]'>
+        <ng-template pTemplate="caption">
+          <div class="row">
+            <div class="col-sm-3 pull-right" style="text-align: right">
+              <input type="text" pInputText size="50" placeholder="Search"
+                (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-center">Ticket ID</th>
+            <th>Ticket Date</th>
+            <th>Mobile No</th>
+            <th>Name</th>
+            <th>Class</th>
+            <th>Present Status</th>
+            <th>City / District</th>
+            <th>Pincode</th>
+            <th>Registration Date</th>
+            <th>Short description</th>
+            <th>Description (write issue in detail)</th>
+            <th>Category</th>
+            <th>Android version</th>
+            <th>FMC</th>
+            <th>Source Type</th>
+
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-Querylist>
+          <tr>
+            <td class="text-center">
+              <b>{{Querylist.Support_ID}}</b>&nbsp;
+              <a *ngIf='Querylist.Status === "RESOLVED"' title="Ticket Details" class="border-left btn btn-info btn-xs" (click)='ShowTicketDetails(Querylist)'>
+                <i class="fa fa-fw fa-info"></i>
+              </a>
+            </td>
+            <td>{{Querylist.Support_Date}}</td>
+            <td>{{Querylist.Mobile_No}}</td>
+            <td>{{Querylist.Name}}</td>
+            <td>{{Querylist.Class_Name ? Querylist.Class_Name : '-'}}</td>
+            <td>{{Querylist.Status}}</td>
+            <td>{{Querylist.District}}</td>
+            <td>{{Querylist.PIN_Code}}</td>
+            <td>{{Querylist.Registration_Date}}</td>
+            <td>{{Querylist.Short_Description}}</td>
+            <td>{{Querylist.Description}}</td>
+            <td>{{Querylist.Support_Category_Name}}</td>
+            <td>{{Querylist.Anndroid_Ver_Name}}</td>
+            <td>{{Querylist.FMC_Desc}}</td>
+            <td>{{Querylist.Enq_Source_Name}}</td>
+          </tr>
+        </ng-template>
+        <ng-template *ngIf="SupportTicketList.length" pTemplate="paginatorright" let-state>
+          Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+        </ng-template>
+      </p-table>
+    </div>
+  <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div>
+
+  <p-footer>
+    <button type="button" (click)="PrevTicketModal = false" class="btn btn-default">
+      CLOSE
+    </button>
+  </p-footer>
+</p-dialog>
+
+<!--DYNAMIC FORWARD TO CONTACT MGS-->
+<p-dialog [header]="ForwardModalTitle" [appendTo]="'body'" [visible]="AssignToCntMgsModal" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="ForwardModalUpdate" style="margin-top:2em" #ForwardModalUpdate="ngForm" novalidate>
+
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Forward To Sub Department<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='Department'
+          #Department='ngModel'
+          [ngClass]="{'clearance': ForwardModalFormSubmited &&  Department?.errors?.required}"
+          [(ngModel)]="SubDepartmentModel"
+          (change)='GetUserWithSubDeptList()' required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of SubDeptList" [ngValue]="option.Sub_Dept_ID">{{option.Sub_Dept_Name}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Forward To User<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='To_User'
+          #To_User='ngModel'
+          [disabled]='UserWithSubDeptList.length === 0'
+          [ngClass]="{'clearance': ForwardModalFormSubmited &&  To_User?.errors?.required}"
+          [(ngModel)]="ObjFolowup.To_User" required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of UserWithSubDeptList" [ngValue]="option.User_ID">{{option.Name}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Remarks<sup class="text-danger">*</sup></label>
+          <textarea class="form-control"
+          name='Followup_Remarks2'
+          #Followup_Remarks2='ngModel'
+          rows="4"
+          [ngClass]="{'clearance': ForwardModalFormSubmited &&  Followup_Remarks2?.errors?.required}"
+          [(ngModel)]="ObjFolowup.Followup_Remarks" required>
+
+        </textarea>
+      </div>
+    </div>
+  <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div>
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="AssignToCntMgsModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="SaveGlobalAssignCntMgs(ForwardModalUpdate.form.valid)">
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>
+<!--DYNAMIC FORWARD TO -->
+<p-dialog [header]="ForwardModalTitle" [appendTo]="'body'" [visible]="ForwardModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="ForwardModalUpdate" style="margin-top:2em" #ForwardModalUpdate="ngForm" novalidate>
+
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Forward To Sub Department<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='Department'
+          #Department='ngModel'
+          [ngClass]="{'clearance': ForwardModalFormSubmited &&  Department?.errors?.required}"
+          [(ngModel)]="SubDepartmentModel"
+          (change)='GetUserWithSubDeptList()' required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of SubDeptList" [ngValue]="option.Sub_Dept_ID">{{option.Sub_Dept_Name}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Forward To User<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='To_User'
+          #To_User='ngModel'
+          [disabled]='UserWithSubDeptList.length === 0'
+          [ngClass]="{'clearance': ForwardModalFormSubmited &&  To_User?.errors?.required}"
+          [(ngModel)]="ObjFolowup.To_User" required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of UserWithSubDeptList" [ngValue]="option.User_ID">{{option.Name}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Remarks<sup class="text-danger">*</sup></label>
+          <textarea class="form-control"
+          name='Followup_Remarks2'
+          #Followup_Remarks2='ngModel'
+          rows="4"
+          [ngClass]="{'clearance': ForwardModalFormSubmited &&  Followup_Remarks2?.errors?.required}"
+          [(ngModel)]="ObjFolowup.Followup_Remarks" required>
+
+        </textarea>
+      </div>
+    </div>
+  <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div>
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="ForwardModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="SaveForwarCommon(ForwardModalUpdate.form.valid)">
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>
+<!--CREATE TICKET  -->
+<p-dialog header="CREATE TICKET" [appendTo]="'body'" [visible]="TicketModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="TicketModalUpdate" style="margin-top:2em" #TicketModalUpdate="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Remarks<sup class="text-danger">*</sup></label>
+          <textarea class="form-control"
+          name='Followup_Remarks3'
+          #Followup_Remarks3='ngModel'
+          rows="4"
+          [ngClass]="{'clearance': TicketModalFormSubmited &&  Followup_Remarks3?.errors?.required}"
+          [(ngModel)]="ObjFolowup.Followup_Remarks" required>
+
+        </textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Source<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='Source'
+          #Source='ngModel'
+          [ngClass]="{'clearance': TicketModalFormSubmited &&  Source?.errors?.required}"
+          [(ngModel)]="SourceModel" required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of SourceList" [ngValue]="option.Source_ID">{{option.Source_Name}}</option>
+        </select>
+      </div>
+    </div>
+
+
+  <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div>
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="TicketModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="SaveTicket(TicketModalUpdate.form.valid)">
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>
+<!--REPLY -->
+<p-dialog header="REPLY" [appendTo]="'body'" [visible]="ReplyModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="ReplyModalUpdate" style="margin-top:2em" #ReplyModalUpdate="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Reply<sup class="text-danger">*</sup></label>
+          <textarea class="form-control"
+          name='Followup_Remarks4'
+          #Followup_Remarks4='ngModel'
+          rows="4"
+          [ngClass]="{'clearance': ReplyModalFormSubmited &&  Followup_Remarks4?.errors?.required}"
+          [(ngModel)]="ObjFolowup.Followup_Remarks" required>
+
+        </textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Status <sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='Status'
+          #Status='ngModel'
+          [ngClass]="{'clearance': ReplyModalFormSubmited &&  Status?.errors?.required}"
+          [(ngModel)]="ReplyStatusModel"
+          (change)='ReplyStatusModelChange()' required>
+          <option  [ngValue]="undefined">Select</option>
+          <ng-container  *ngFor="let option of StatusList">
+            <option *ngIf='option.Status_ID === 6 || option.Status_ID === 7' [ngValue]="option.Status_ID">{{option.Status_Name}}</option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" *ngIf="ReplyStatusModel === 6">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Forward To Sub Department<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='Department'
+          #Department='ngModel'
+          [ngClass]="{'clearance': ReplyModalFormSubmited &&  Department?.errors?.required}"
+          [(ngModel)]="SubDepartmentModel"
+          (change)='GetUserWithSubDeptList()' required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of SubDeptList" [ngValue]="option.Sub_Dept_ID">{{option.Sub_Dept_Name}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" *ngIf="ReplyStatusModel === 6">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Forward To User<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='To_User'
+          #To_User='ngModel'
+          [disabled]='UserWithSubDeptList.length === 0'
+          [ngClass]="{'clearance': ReplyModalFormSubmited &&  To_User?.errors?.required}"
+          [(ngModel)]="ObjFolowup.To_User" required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of UserWithSubDeptList" [ngValue]="option.User_ID">{{option.Name}}</option>
+        </select>
+      </div>
+    </div>
+
+  <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div>
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="ReplyModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="SaveReply(ReplyModalUpdate.form.valid)">
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>
+<!--INFORM TO STUDENT  -->
+<p-dialog header="INFORM TO STUDENT" [appendTo]="'body'" [visible]="InformModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="InformModalUpdate" style="margin-top:2em" #InformModalUpdate="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-12"  style="margin-bottom: 1em;">
+        <label class="control-label">
+          Reply<sup class="text-danger">*</sup></label>
+          <textarea class="form-control"
+          name='Followup_Remarks5'
+          #Followup_Remarks5='ngModel'
+          rows="4"
+          [ngClass]="{'clearance': InformModalFormSubmited &&  Followup_Remarks5?.errors?.required}"
+          [(ngModel)]="ObjFolowup.Followup_Remarks" required>
+
+        </textarea>
+      </div>
+    </div>
+  <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div>
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="InformModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="SaveInform(InformModalUpdate.form.valid)">
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>

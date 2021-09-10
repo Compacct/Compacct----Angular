@@ -1,0 +1,40 @@
+.btn-space {
+  margin-right: 5px;
+}
+.text-danger {
+  color: red !important;
+}
+.text-primary {
+  color: blue !important;
+}
+.right {
+  background-color: #a94442;
+  color: white;
+}
+.left {
+  background-color: #337ab7;
+  color: white;
+}
+#chkR1 {
+  margin-top: 30px;
+}
+
+.ta-editor {
+  min-height: 160px;
+  height: auto;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 100%;
+}
+
+.custombutton {
+  margin-top: 25px;
+  margin-left: 15px;
+}
+
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+  background-color: rgba(247, 247, 247, 0.87);
+  opacity: 1;
+}

@@ -1,0 +1,162 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+      <form #BillingTypeForm="ngForm" novalidate>
+        <div style="text-align: center">
+        <div *ngIf="popup_Flag">
+            <div class="form-group" >
+                <label class="control-label">Select Billing Type</label>
+                <select class="form-control"
+                name = "Pay_ID"
+                #Pay_ID="ngModel"
+                [ngClass]="{clearance: BillingTypeFormSubmited && Pay_ID.errors?.required}"
+                 [(ngModel)] = "Billing_Type"
+                 required>
+                     <option  *ngFor="let option of BillingList" value="{{option.Pay_ID}}">{{option.Pay_Type}}</option>
+               </select>
+                </div>
+
+                <div class="form-group" *ngIf='Billing_Type && isLoanAcReq()'>
+                  <label class="control-label">Enter Loan a/c No.</label>
+                  <span class="pull-right"><p-checkbox name="Received"  [binary]="true" (onChange)='ChangedRevcFlag()' label="Not Received Yet" [(ngModel)]="LoanRecvFlag"></p-checkbox>
+                  </span>
+                  <input class="form-control"
+                  name = "Loan_"
+                  minlength="5"
+                  #Loan_="ngModel"
+                  (keypress)="CheckValidAC($event)"
+                  [ngClass]="{
+                    clearance:
+                      (BillingTypeFormSubmited && Loan_.errors?.required) ||
+                      (Loan_.errors?.minlength && Loan_.touched)
+                  }"
+                  placeholder="Enter Loan a/c No."
+                   [(ngModel)] = "Loan_Ac_No"
+                   [disabled]="LoanRecvFlag"
+                   required>
+                  </div>
+            </div>
+        </div>
+        <div *ngIf="popup_Flag">
+        <div class="ui-g ui-fluid" style="margin-top: 25px;">
+            <div class="ui-g-12">
+                <button type="button" pButton (click)="onConfirm(BillingTypeForm.form.valid)" label="Yes" class="ui-button-success center"></button>
+            </div>
+         </div>
+         </div>
+        </form>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <div class="form-group"  style="padding-left: 12px;">
+                        <div class="col-sm-4">
+                            <label class="control-label">Student Name</label>
+                            <input class="form-control"
+                            name="stdName"
+                            [(ngModel)]="stdName"
+                            disabled>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Mobile No</label>
+                            <input class="form-control"
+                            name="stdModile"
+                            [(ngModel)]="stdModile"
+                            disabled>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Pin Code</label>
+                            <input class="form-control"
+                            name="stdPincode"
+                            [(ngModel)]="stdPincode"
+                            disabled>
+                        </div>
+                    </div>
+
+                        <div class="table-responsive no-padding" style="overflow-x: hidden !important;margin-left: 12px; margin-top: 20px;">
+                            <table class="table table-bordered" style="margin-left: 0px;">
+
+                                       <thead>
+                                                <tr style="background-color:#3c8dbc;color:white;">
+
+                                                  <th  class="text-center"style="vertical-align:middle" >
+                                                    Product Description
+                                                  </th>
+                                                  <th  class="text-center"style="vertical-align:middle" >
+                                                    Amount
+                                                    </th>
+                                                  <th class="text-center" style="vertical-align:middle">
+                                                    SGST
+                                                  </th>
+                                                  <th class="text-center"style="vertical-align:middle">
+                                                    CGST
+                                                  </th>
+                                                  <th class="text-center"style="vertical-align:middle">
+                                                    IGST
+                                                  </th>
+                                                  <th class="text-center"style="vertical-align:middle">
+                                                    Net_Amt
+                                                  </th>
+
+                                                 
+                                              </thead>
+                                              <tbody>
+                                            <tr  *ngFor="
+                                            let col of productList;
+                                           let index = index
+                                          ">
+                                          <td>{{col.Product_Description}}</td>
+                                          <td>{{col.Taxable_Amt}}</td>
+                                          <td>{{col.SGST_AMT}}</td>
+                                          <td>{{col.CGST_AMT}}</td>
+                                          <td>{{col.IGST_Amt}}</td>
+                                          <td>{{col.Net_Amt}}</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5"><p class="pull-right">Total Amount</p></td>
+                                            <td>{{getTotalValue()}}</td>
+                                          </tr>
+                                        </tbody>
+
+                                </table>
+                            </div>
+                        <div class="box-footer">
+                            <div *ngIf="savebutton">
+                                <button class="btn btn-primary pull-right"
+                                   (click)="Saveorder()"
+                                    id="load"
+                                    [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                            </button>
+                            </div>
+                            <div *ngIf="popup_Flag2">
+                                <p> <span style="font-size: 15px;">Order Created Successfully Vide Order No : {{OrderId}}</span>
+                                <button class="btn btn-primary pull-right"
+                                (click)="printOut()"
+                                    id="load"
+                                    [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    Print Provisional Receipt cum Invoice
+                            </button>
+                            <button class="btn btn-primary pull-right" style=" margin-right: 10px;"
+                            (click)="makePayment()"
+                                   id="load"
+                                    [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            Update Payment Information
+                            </button>
+                        </p>
+                        <p style=" color: #2471A3; line-height: 0.5;"> You have to update the payment information to Confirm the Order</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>

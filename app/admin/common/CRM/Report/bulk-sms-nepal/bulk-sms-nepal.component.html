@@ -1,0 +1,60 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box box-header box-solid text-bold" style="margin-bottom: 2px;">
+                    NET DUE CONFIRMATION EMAIL :
+                </div>
+                <div class="box-body">
+                    <form name="SendEmail1SearchForm" #SendEmail1SearchForm="ngForm" novalidate>
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Send To<sup class="text-danger">*</sup></label>
+                                <select class="form-control" name='sent' #sent="ngModel" [(ngModel)]="ObjBulkEmail1.Report_type"
+                                    [ngClass]="{'clearance':SendEmail1SearchSubmitted && sent?.errors?.required}" required>
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option Value="Due Greater Than">Due Greater Than</option>
+                                    
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Amount<sup class="text-danger">*</sup></label>
+                                <input class="form-control" name="Amount" #Amount="ngModel" [(ngModel)]="ObjBulkEmail1.Due_Amount" placeholder="Due Amount"
+                                CompacctDigitonly="true"
+                                [ngClass]="{'clearance':SendEmail1SearchSubmitted && Amount?.errors?.required}" required>
+                            
+                            </div>
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAllCustomer(SendEmail1SearchForm.form.valid)" id="load"
+                                    [disabled]="sendSpinner">
+                                    <p-progressSpinner *ngIf="sendSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                        animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!sendSpinner" class="fa fa-fw fa-location-arrow"></span>&nbsp;SEND EMAIL
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 15px;" *ngIf="sendSpinner">
+                            
+                            <div class="col-sm-12" style="margin-bottom: 10px;">
+                                <span class="badge bg-black-gradient" *ngIf='DueCustomerList.length'>
+                                    &nbsp;&nbsp;Total&nbsp;&nbsp; Customer&nbsp;&nbsp;:&nbsp;&nbsp;<b>&nbsp;&nbsp;&nbsp;{{DueCustomerList.length}}&nbsp;&nbsp;</b>
+                                </span><br>
+                                <span  class="badge bg-green-gradient">&nbsp;&nbsp;Email&nbsp;&nbsp; Sent&nbsp;&nbsp;:&nbsp;&nbsp;
+                                    <p-progressSpinner *ngIf="EmailCounter" [style]="{ width: '10px', height: '10px' }" strokeWidth="8"
+                                        animationDuration=".5s"></p-progressSpinner>
+                                    <b>&nbsp;&nbsp;&nbsp;{{EmailCounter}}&nbsp;&nbsp;</b>
+                                </span> 
+                                
+                            </div>
+                            <div class="col-sm-12">
+                                <p-progressBar [value]="ProgressPercentage"></p-progressBar>
+                            </div>
+                            
+                        </div>
+                    </form>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            </div>

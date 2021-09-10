@@ -1,0 +1,412 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                                <form name="ProductSearchForm" #ProductSearchForm="ngForm" novalidate>
+                                                        <div class="form-group">
+                                                                <div class="col-sm-4">
+                                                                        <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
+                                                                        <select class="form-control"
+                                                                                name="Material_TypeBrowse"
+                                                                                #Material_TypeBrowse="ngModel"
+                                                                                [(ngModel)]="MaterialType_Browse"
+                                                                                (change)="MaterialTypeChangeSearch(MaterialType_Browse)"
+                                                                                [ngClass]="{'clearance': ProductSearchSubmitted && Material_Type.errors?.required}" required>
+                                                                                <option  [ngValue]="undefined">Select</option>
+                                                                            <option *ngFor="let option of MaterialTypeList" [ngValue]="option.Material_Type">
+                                                                                {{option.Material_Type}}
+                                                                                </option>
+                                                                        </select>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <label class="control-label">Material Sub Type<sup class="text-danger"></sup></label>
+                                                                    <select class="form-control"
+                                                                            name="Material_Sub_TypeBrowse"
+                                                                            #Material_Sub_TypeBrowse="ngModel"
+                                                                            [(ngModel)]="MaterialSubType_Browse">
+                                                                            <option  [ngValue]="undefined">Select</option>
+                                                                        <option *ngFor="let option of MaterialSubTypeList" [ngValue]="option.Material_Sub_Type">
+                                                                            {{option.Material_Sub_Type}}
+                                                                            </option>
+                                                                    </select>
+                                                                </div>
+                                                            <div class="col-sm-3">
+                                                                        <button class="btn btn-primary custombutton" data-toggle="modal"
+                                                                                (click)="SearchProduct(ProductSearchForm.form.valid)"
+                                                                                id="load"
+                                                                                [disabled]="Spinner">
+                                                                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                                        </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    <br>
+                                            <div class="table-responsive no-padding productTable">
+                                            <p-table #dt [value]="AllProductList"
+                                                     [globalFilterFields]="['Product_Description','Cat_Name','Mfg_Company']"
+                                                     [paginator]="AllProductList.length ? true:false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                    </div>
+                                                           </div>
+
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width:5em">Action</th>
+                                                                <th>Description</th>
+                                                                <th>Product Category</th>
+                                                                <th>Manufacturer</th>
+                                                                <th>Is Service</th>
+                                                                <th>ESN</th>
+                                                                <th>UOM</th>
+                                                                <th>Billable</th>
+                                                                <th>Sale Rate</th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+
+                                                                <td>
+                                                                        <div class="dropdown">
+                                                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                                type="button" data-toggle="dropdown" style="height:27px">
+                                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                                <span class="caret"></span>
+                                                                            </button>
+                                                                            <ul class="dropdown-menu">
+                                                                                <li>
+                                                                                    <a (click)="EditProduct(col)">
+                                                                                        <i class="fa fa-fw fa-pencil"></i>
+                                                                                        Edit
+                                                                                    </a>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <a (click)="DeleteProduct(col)">
+                                                                                        <i class="fa fa-fw fa-trash"></i>
+                                                                                        Delete
+                                                                                    </a>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                </td>
+                                                                <td>{{col.Product_Description}}</td>
+                                                                <td>{{col.Cat_Name ? col.Cat_Name : '-'}}</td>
+                                                                <td>{{col.Mfg_Company ? col.Mfg_Company : '-' }}</td>
+                                                                <td>{{col.Is_Service === true ? 'Yes' : 'No'}}</td>
+                                                                <td>{{col.ESN === true ? 'Yes' : 'No'}}</td>
+                                                                <td>{{col.UOM}}</td>
+                                                                <td>{{col.Billable === true ? 'Yes' : 'No'}}</td>
+                                                                <td>{{col.Sale_rate}}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template  pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+                                        </p-tabPanel>
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                            <form name="ProductForm" #ProductForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
+                                                            <select class="form-control"
+                                                                    name="Material_Type"
+                                                                    #Material_Type="ngModel"
+                                                                    [(ngModel)]="ObjProduct.Material_Type"
+                                                                    (change)="MaterialTypeChange(ObjProduct.Material_Type)"
+                                                                    [ngClass]="{'clearance': ProductFormSubmitted && Material_Type.errors?.required}" required>
+                                                                    <option  [ngValue]="undefined">Select</option>
+                                                                <option *ngFor="let option of MaterialTypeList" [ngValue]="option.Material_Type">
+                                                                    {{option.Material_Type}}
+                                                                    </option>
+                                                            </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Material Sub Type<sup class="text-danger">*</sup></label>
+                                                        <select class="form-control"
+                                                                name="Material_Sub_Type"
+                                                                #Material_Sub_Type="ngModel"
+                                                                [(ngModel)]="ObjProduct.Material_Sub_Type"
+                                                                [ngClass]="{'clearance': ProductFormSubmitted && Material_Sub_Type.errors?.required}" required>
+                                                                <option  [ngValue]="undefined">Select</option>
+                                                            <option *ngFor="let option of MaterialSubTypeList" [ngValue]="option.Material_Sub_Type">
+                                                                {{option.Material_Sub_Type}}
+                                                                </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product or Service<sup class="text-danger"></sup></label>
+                                                        <div class="checkBox">
+                                                            <p-checkbox [(ngModel)]="ObjProduct.Is_Service" name="Is_Service" binary="true"> </p-checkbox> &nbsp; Check if Service
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Product Code<sup class="text-danger"></sup></label>
+                                                            <input class="form-control"
+                                                                    name="Product_Code"
+                                                                    #Product_Code="ngModel"
+                                                                    [(ngModel)]="ObjProduct.Product_Code"
+                                                                    placeholder="Product Code"
+                                                                    [ngClass]="{'clearance': ProductFormSubmitted && Product_Code.errors?.required}">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Description/Model<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                                    name="Product_Description"
+                                                                    #Product_Description="ngModel"
+                                                                    [(ngModel)]="ObjProduct.Product_Description"
+                                                                    placeholder="Description"
+                                                                    [ngClass]="{'clearance': ProductFormSubmitted && Product_Description.errors?.required}"
+                                                                    required>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Category<sup class="text-danger">*</sup></label>
+                                                            <select class="form-control"
+                                                                    name="Cat_ID"
+                                                                    #Cat_ID="ngModel"
+                                                                    [(ngModel)]="ObjProduct.Cat_ID"
+                                                                    [ngClass]="{'clearance': ProductFormSubmitted && Cat_ID.errors?.required}" required>
+                                                                    <option  [ngValue]="undefined">Select</option>
+                                                                    <option *ngFor='let option of ProductCategoryLists' [ngValue]="option.Cat_ID">{{option.Cat_Name  }}</option>
+                                                            </select>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Manufacturer<sup class="text-danger">*</sup></label>
+                                                            <select class="form-control"
+                                                                    name="Product_Mfg_Comp_ID"
+                                                                    #Product_Mfg_Comp_ID="ngModel"
+                                                                    [(ngModel)]="ObjProduct.Product_Mfg_Comp_ID"
+                                                                    [ngClass]="{'clearance': ProductFormSubmitted && Cat_ID.errors?.required}" required>
+                                                                    <option  [ngValue]="undefined">Select</option>
+                                                                    <option *ngFor='let option of ProductMfdLists' [ngValue]="option.Product_Mfg_Comp_ID">{{option.Mfg_Company }}</option>
+
+                                                            </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Maintain Serial No<sup class="text-danger"></sup></label>
+                                                            <div class="checkBox">
+                                                                <p-checkbox [(ngModel)]="ObjProduct.ESN" name="ESN" binary="true"></p-checkbox> &nbsp; Check if Yes
+                                                            </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                                    name="UOM"
+                                                                    #UOM="ngModel"
+                                                                    [(ngModel)]="ObjProduct.UOM"
+                                                                    placeholder="UOM"
+                                                                    [ngClass]="{'clearance': ProductFormSubmitted && UOM.errors?.required}"
+                                                                    required>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Alternative UOM<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                                    name="Alt_UOM"
+                                                                    #Alt_UOM="ngModel"
+                                                                    [(ngModel)]="ObjProduct.Alt_UOM"
+                                                                    placeholder="Alternative UOM"
+                                                                    [ngClass]="{'clearance': ProductFormSubmitted && Alt_UOM.errors?.required}"
+                                                                    required>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Where </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" placeholder="UOM Qty" name="UOM_Qty" [(ngModel)]="ObjProduct.UOM_Qty" />
+                                                                <span class="input-group-addon">=</span>
+                                                                <input type="text" class="form-control" [(ngModel)]="ObjProduct.ALT_UOM_Qty" name="ALT_UOM_Qty" placeholder="Alt UOM Qty" />
+                                                            </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Billable Product<sup class="text-danger"></sup></label>
+                                                            <div class="checkBox">
+                                                                <p-checkbox [(ngModel)]="ObjProduct.Billable" name="Billable" binary="true"></p-checkbox> &nbsp; Check to Make it Billable
+                                                            </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Purchasable Product<sup class="text-danger"></sup></label>
+                                                            <div class="checkBox">
+                                                                <p-checkbox [(ngModel)]="ObjProduct.Can_Purchase" name="Can_Purchase" binary="true"></p-checkbox> &nbsp; Check to Make it Purchaseable
+                                                            </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Reorder Level<sup class="text-danger"></sup></label>
+                                                            <input class="form-control"
+                                                                   name="Reorder_Level"
+                                                                   #Reorder_Level="ngModel"
+                                                                   [(ngModel)]="ObjProduct.Reorder_Level"
+                                                                   placeholder="Reorder Lavel"
+                                                                   CompacctDigitonly="true"
+                                                                   [ngClass]="{'clearance': ProductFormSubmitted && Reorder_Level.errors?.required}">
+                                                    </div>
+                                                    <div class="col-sm-4" >
+                                                            <label class="control-label">Customer Terms<sup class="text-danger"></sup></label>
+                                                            <input class="form-control"
+                                                                   name="Warranty_Terms"
+                                                                   #Warranty_Terms="ngModel"
+                                                                   CompacctDigitonly="true"
+                                                                   [(ngModel)]="ObjProduct.Warranty_Terms"
+                                                                   placeholder="Customer Warrenty Months"
+                                                                   [ngClass]="{'clearance': ProductFormSubmitted && Warranty_Terms.errors?.required}">
+                                                    </div>
+                                                    <div class="col-sm-4" >
+                                                            <label class="control-label">Barcode Count<sup class="text-danger"></sup></label>
+                                                            <input class="form-control"
+                                                                   name="BARCODE_COUNT"
+                                                                   #BARCODE_COUNT="ngModel"
+                                                                   CompacctDigitonly="true"
+                                                                   [(ngModel)]="ObjProduct.BARCODE_COUNT"
+                                                                   placeholder="Barcode Count"
+                                                                   [ngClass]="{'clearance': ProductFormSubmitted && BARCODE_COUNT.errors?.required}">
+                                                    </div>
+                                                    <div class="col-sm-4" >
+                                                            <label class="control-label">Purchase Rate<sup class="text-danger"></sup></label>
+                                                            <input class="form-control"
+                                                                   name="Purchase_Rate"
+                                                                   #Purchase_Rate="ngModel"
+                                                                   CompacctDigitonly="true"
+                                                                   [(ngModel)]="ObjProduct.Purchase_Rate"
+                                                                   placeholder="Purchase Rate"
+                                                                   [ngClass]="{'clearance': ProductFormSubmitted && Purchase_Rate.errors?.required}">
+                                                    </div>
+                                                    <div class="col-sm-4" >
+                                                            <label class="control-label">Sale Rate<sup class="text-danger"></sup></label>
+                                                            <input class="form-control"
+                                                                   name="Sale_rate"
+                                                                   #Sale_rate="ngModel"
+                                                                   CompacctDigitonly="true"
+                                                                   [(ngModel)]="ObjProduct.Sale_rate"
+                                                                   placeholder="Sale Rate"
+                                                                   [ngClass]="{'clearance': ProductFormSubmitted && Sale_rate.errors?.required}">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Rate From Quote<sup class="text-danger"></sup></label>
+                                                            <select class="form-control"
+                                                                    name="Rate_Form_Quote"
+                                                                    #Rate_Form_Quote="ngModel"
+                                                                    [(ngModel)]="ObjProduct.Rate_Form_Quote"
+                                                                    [ngClass]="{'clearance':ProductFormSubmitted && Rate_Form_Quote.errors?.required}">
+                                                                    <option  [ngValue]="undefined">Select</option>
+                                                                <option value="N">No</option>
+                                                                <option value="Y">Yes</option>
+                                                            </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Sale Rate From Quote<sup class="text-danger"></sup></label>
+                                                            <select class="form-control"
+                                                                    name="Sale_Rate_Form_Quote"
+                                                                    #Sale_Rate_Form_Quote="ngModel"
+                                                                    [(ngModel)]="ObjProduct.Sale_Rate_Form_Quote"
+                                                                    [ngClass]="{'clearance':ProductFormSubmitted && Sale_Rate_Form_Quote.errors?.required}">
+                                                                    <option  [ngValue]="undefined">Select</option>
+                                                                <option value="N">No</option>
+                                                                <option value="Y">Yes</option>
+                                                            </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Manufacture Product Code<sup class="text-danger"></sup></label>
+                                                            <input class="form-control"
+                                                                   name="Mfg_Product_Code"
+                                                                   #Mfg_Product_Code="ngModel"
+                                                                   [(ngModel)]="ObjProduct.Mfg_Product_Code"
+                                                                   placeholder="Manufacture Product Code"
+                                                                   [ngClass]="{'clearance': ProductFormSubmitted && Mfg_Product_Code.errors?.required}">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-2" >
+                                                        <label class="control-label">HSN No.<sup class="text-danger">*</sup></label>
+                                                        <input class="form-control"
+                                                               name="HSN_NO"
+                                                               #HSN_NO="ngModel"
+                                                               [(ngModel)]="ObjProduct.HSN_NO"
+                                                               placeholder="HSN NO"
+                                                               [ngClass]="{'clearance': ProductFormSubmitted && HSN_NO.errors?.required}"
+                                                               required>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                            <label class="control-label">Has Expiry Date<sup class="text-danger"></sup></label>
+                                                            <div class="checkBox">
+                                                                <p-checkbox [(ngModel)]="ObjProduct.Product_Expiry" name="Product_Expiry" binary="true"></p-checkbox> &nbsp; Check if Yes
+                                                            </div>
+                                                     </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                                                            <textarea class="form-control" name="remarks" [(ngModel)]="ObjProduct.Remarks" rows="2" placeholder="Brief Description"></textarea>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                            <label class="control-label">Product Brochure<sup class="text-danger"></sup></label>
+                                                            <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="application/pdf/*" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" url="/Master_Product_V2/Upload_Doc" ></p-fileUpload>
+                                                            <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;" ><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="from-group">
+                                                    <div class="col-sm-12">
+                                                        <h4></h4>
+                                                    </div>
+                                                </div>
+                                                <div class="box-footer">
+                                                    <button class="btn btn-primary pull-right"
+                                                            (click)="SaveProductMaster(ProductForm.form.valid)"
+                                                            id="load"
+                                                            [disabled]="Spinner">
+                                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </p-tabPanel>
+                                    </p-tabView>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

@@ -1,0 +1,125 @@
+.e-grid .e-headercell, .e-grid .e-detailheadercell{
+  background-color: #367fa9 !important ;
+}
+span.e-headertext ,.e-stackedheadercelldiv {
+  color:white !important ;
+}
+
+.zui-table {
+  width: 100%;
+  border: none;
+  border-right: solid 1px #DDEFEF;
+  border-collapse: separate;
+  border-spacing: 0;
+  font: normal 13px Arial, sans-serif;
+}
+.zui-table thead th {
+  background-color: #3c8dbc;
+  border: none;
+  color: white;
+  padding: 10px;
+  white-space: nowrap;
+}
+.zui-table tbody td {
+  border-bottom: solid 1px #DDEFEF;
+  color: #333;
+  padding: 10px;
+  text-shadow: 1px 1px 1px #fff;
+  height: auto;
+  white-space: initial;
+}
+.zui-wrapper {
+  position: relative;
+}
+.zui-scroller {
+  margin-left: 520px;
+  overflow-x: scroll;
+  overflow-y: visible;
+  padding-bottom: 5px;
+  /* width: 300px; */
+}
+.zui-table .zui-sticky-col {
+  border-left: solid 1px #DDEFEF;
+  border-right: solid 1px #DDEFEF;
+  left: 0;
+  position: absolute;
+  top: auto;
+  width: 120px;
+}
+.zui-table .zui-sticky-col2 {
+  border-left: solid 1px #DDEFEF;
+  border-right: solid 1px #DDEFEF;
+  left: 120px;
+  position: absolute;
+  top: auto;
+  width: 200px;
+}
+.zui-table .zui-sticky-col3 {
+  border-left: solid 1px #DDEFEF;
+  border-right: solid 1px #DDEFEF;
+  left: 320px;
+  position: absolute;
+  top: auto;
+  width: 200px;
+}
+
+
+
+
+.myTable {
+  border: none;
+  border-right: solid 1px #DDEFEF;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font: normal 13px Arial, sans-serif;
+}
+.myTable thead th {
+  background-color: #EEE;
+  border: none;
+  color: #336B6B;
+  padding: 10px;
+  text-align: left;
+  text-shadow: 1px 1px 1px #fff;
+  white-space: nowrap;
+}
+.myTable tbody td {
+  color: #333;
+  padding: 10px;
+  text-shadow: 1px 1px 1px #fff;
+  white-space: nowrap;
+}
+.myTable tbody td, .myTable thead th {
+  border: 1px solid #ccc;
+}
+.my-wrapper {
+  position: relative;
+}
+.my-scroller {
+  margin-left: 403px;
+  overflow-x: scroll;
+  overflow-y: visible;
+  padding-bottom: 5px;
+  width: 300px;
+}
+.myTable .my-sticky-col {
+  left: 0;
+  position: absolute;
+  top: auto;
+  width: 120px;
+}
+.myTable .my-sticky-col2 {
+  border-right: solid 1px #000;
+  left: 142px;
+  position: absolute;
+  width: 120px;
+}
+.myTable .my-sticky-col3 {
+  border-right: solid 1px #000;
+  left: 282px;
+  position: absolute;
+  width: 120px;
+}
+.test {
+height:51px;
+background: lightblue
+}

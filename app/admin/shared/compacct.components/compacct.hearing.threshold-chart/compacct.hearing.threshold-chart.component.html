@@ -1,0 +1,2744 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+  <div class="col-sm-6 threshold-container right-thre">
+    <h4 class="threshold-heading right">RIGHT EAR</h4>
+    <span class="vertical-text left-text "
+      >Hearing&nbsp;&nbsp; threshold&nbsp; level
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in (dB)&#8594;</span
+    >
+    <canvas id="c" width="450px" height="450px" #canvas1></canvas>
+    <span class="hori-text red-text">Frequency in Hz &nbsp;&#8594;</span>
+  </div>
+
+  <div class="col-sm-6 text-right  threshold-container left-thre">
+    <h4 class="threshold-heading left">LEFT EAR</h4>
+    <span class="vertical-text right-text "
+      >Hearing&nbsp;&nbsp; threshold&nbsp; level
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in (dB)&#8594;</span
+    >
+    <canvas id="d" width="450px" height="450px" #canvas2></canvas>
+    <span class="hori-text blue-text">Frequency in Hz &nbsp;&#8594;</span>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-4">
+    <button
+      class="btn btn-xs btn-danger  pull-left"
+      style="margin: 10px 2.5%;"
+      (click)="clear()"
+    >
+      <i class="fa fa-fw fa-refresh"></i>&nbsp;Clear Right
+    </button>
+  </div>
+  <div class="col-sm-4">
+    <div class=" text-center" *ngIf="!ValidField">
+      <button
+        class="btn btn-xs btn-primary"
+        style="margin: 10px 2.5%;"
+        (click)="PrintRight()"
+      >
+        <i class="fa fa-fw fa-print"></i>&nbsp;Print Right
+      </button>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <button
+        class="btn btn-xs btn-primary"
+        style="margin: 10px 2.5%;"
+        (click)="PrintBoth()"
+      >
+        <i class="fa fa-fw fa-print"></i>&nbsp; Both
+      </button>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <button
+        class="btn btn-xs btn-primary"
+        style="margin: 10px 2.5%;"
+        (click)="PrintLeft()"
+      >
+        <i class="fa fa-fw fa-print"></i>&nbsp;Print Left
+      </button>
+    </div>
+    <div class="valid-hearing" *ngIf="ValidField">
+      <small>Input Error !!</small>
+      <hr style="margin:0;" />
+      <p>Input Must be Less Than 131 & Greater Than -21</p>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <button
+      class="btn btn-xs btn-blue  pull-right"
+      style="margin: 10px 2.5%;"
+      (click)="clear2()"
+    >
+      Clear Left&nbsp;<i class="fa fa-fw fa-refresh"></i>
+    </button>
+  </div>
+</div>
+<div class="row">
+  <div class="table-responsive no-padding">
+    <table class="HEARING">
+      <tbody>
+        <tr>
+          <th><small>COPY TO LEFT</small></th>
+          <th><small>CLEAR ROW</small></th>
+          <th class="red">250</th>
+          <th class="red">500</th>
+          <th class="red">750</th>
+          <th class="red">1k</th>
+          <th class="red">1.5k</th>
+          <th class="red">2k</th>
+          <th class="red">3k</th>
+          <th class="red">4k</th>
+          <th class="red">6k</th>
+          <th class="red">8k</th>
+          <th colspan="3" style="background-color: white;"></th>
+          <th class="blue">250</th>
+          <th class="blue">500</th>
+          <th class="blue">750</th>
+          <th class="blue">1k</th>
+          <th class="blue">1.5k</th>
+          <th class="blue">2k</th>
+          <th class="blue">3k</th>
+          <th class="blue">4k</th>
+          <th class="blue">6k</th>
+          <th class="blue">8k</th>
+          <th><small>CLEAR ROW</small></th>
+          <th><small>COPY TO RIGHT</small></th>
+        </tr>
+
+        <tr>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('AC', 'RIGHT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearRightRow('AC', 'RIGHT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT250']"
+              placeholder="dB"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT250'], 250, 'AC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT500']"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT500'], 500, 'AC', 'RIGHT')
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT750']"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT750'], 750, 'AC', 'RIGHT')
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT1k']"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT1k'], '1k', 'AC', 'RIGHT')
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT15k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACRIGHT15k'],
+                  '1.5k',
+                  'AC',
+                  'RIGHT'
+                )
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT2k']"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT2k'], '2k', 'AC', 'RIGHT')
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT3k']"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT3k'], '3k', 'AC', 'RIGHT')
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT4k']"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT4k'], '4k', 'AC', 'RIGHT')
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT6k']"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT6k'], '6k', 'AC', 'RIGHT')
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              [(ngModel)]="xAxisValue['ACRIGHT8k']"
+              (change)="
+                XaxisRightChange(xAxisValue['ACRIGHT8k'], '8k', 'AC', 'RIGHT')
+              "
+              placeholder="dB"
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td colspan="3" class="text-center caption">
+            <span class="pull-left white">&nbsp;△&nbsp;</span>
+            AC MASKED
+            <span class="pull-right white">&nbsp;▢&nbsp;</span>
+          </td>
+
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT250']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT250'], 250, 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT500']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT500'], 500, 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT750']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT750'], 750, 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT1k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT1k'], '1k', 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT15k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT15k'], '1.5k', 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT2k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT2k'], '2k', 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT3k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT3k'], '3k', 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT4k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT4k'], '4k', 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT6k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT6k'], '6k', 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACLEFT8k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACLEFT8k'], '8k', 'AC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearLeftRow('AC', 'LEFT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('AC', 'LEFT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('BC', 'RIGHT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearRightRow('BC', 'RIGHT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT250']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT250'], 250, 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT500']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT500'], 500, 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT750']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT750'], 750, 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT1k']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT1k'], '1k', 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT15k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCRIGHT15k'],
+                  '1.5k',
+                  'BC',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT2k']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT2k'], '2k', 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT3k']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT3k'], '3k', 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT4k']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT4k'], '4k', 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT6k']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT6k'], '6k', 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCRIGHT8k']"
+              (change)="
+                XaxisRightChange(xAxisValue['BCRIGHT8k'], '8k', 'BC', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td colspan="3" class="text-center caption">
+            <span class="pull-left white">&nbsp;[&nbsp;</span>
+            BC MASKED
+            <span class="pull-right white">&nbsp;]&nbsp;</span>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT250']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT250'], 250, 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT500']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT500'], 500, 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT750']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT750'], 750, 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT1k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT1k'], '1k', 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT15k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT15k'], '1.5k', 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT2k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT2k'], '2k', 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT3k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT3k'], '3k', 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT4k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT4k'], '4k', 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT6k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT6k'], '6k', 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCLEFT8k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCLEFT8k'], '8k', 'BC', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearLeftRow('BC', 'LEFT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('BC', 'LEFT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('UCL', 'RIGHT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearRightRow('UCL', 'RIGHT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT250']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT250'], 250, 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT500']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT500'], 500, 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT750']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT750'], 750, 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT1k']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT1k'], '1k', 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT15k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLRIGHT15k'],
+                  '1.5k',
+                  'UCL',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT2k']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT2k'], '2k', 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT3k']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT3k'], '3k', 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT4k']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT4k'], '4k', 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT6k']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT6k'], '6k', 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLRIGHT8k']"
+              (change)="
+                XaxisRightChange(xAxisValue['UCLRIGHT8k'], '8k', 'UCL', 'RIGHT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td colspan="3" class="text-center caption">
+            <span class="pull-left white">&nbsp;U&nbsp;</span>
+            ULC MASKED
+            <span class="pull-right white">&nbsp;U&nbsp;</span>
+          </td>
+
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT250']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT250'], 250, 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT500']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT500'], 500, 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT750']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT750'], 750, 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT1k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT1k'], '1k', 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT15k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT15k'], '1.5k', 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT2k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT2k'], '2k', 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT3k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT3k'], '3k', 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT4k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT4k'], '4k', 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT6k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT6k'], '6k', 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLLEFT8k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['UCLLEFT8k'], '8k', 'UCL', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearLeftRow('UCL', 'LEFT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('UCL', 'LEFT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('ACUN', 'RIGHT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearRightRow('ACUN', 'RIGHT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT250']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT250'],
+                  250,
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT500']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT500'],
+                  500,
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT750']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT750'],
+                  750,
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT1k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT1k'],
+                  '1k',
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT15k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT15k'],
+                  '1.5k',
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT2k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT2k'],
+                  '2k',
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT3k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT3k'],
+                  '3k',
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT4k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT4k'],
+                  '4k',
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT6k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT6k'],
+                  '6k',
+                  'AC UN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNRIGHT8k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACUNRIGHT8k'],
+                  '8k',
+                  'ACUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td colspan="3" class="text-center caption">
+            <span class="pull-left white">&nbsp;⭘&nbsp;</span>
+            AC UN MASKED
+            <span class="pull-right white">&nbsp;🞫&nbsp;</span>
+          </td>
+
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT250']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT250'], 250, 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT500']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT500'], 500, 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT750']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT750'], 750, 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT1k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT1k'], '1k', 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT15k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['ACUNLEFT15k'],
+                  '1.5k',
+                  'ACUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT2k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT2k'], '2k', 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT3k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT3k'], '3k', 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT4k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT4k'], '4k', 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT6k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT6k'], '6k', 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACUNLEFT8k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACUNLEFT8k'], '8k', 'ACUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearLeftRow('ACUN', 'LEFT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('ACUN', 'LEFT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('BCUN', 'RIGHT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearRightRow('BCUN', 'RIGHT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT250']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT250'],
+                  250,
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT500']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT500'],
+                  500,
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT750']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT750'],
+                  750,
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT1k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT1k'],
+                  '1k',
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT15k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT15k'],
+                  '1.5k',
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT2k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT2k'],
+                  '2k',
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT3k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT3k'],
+                  '3k',
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT4k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT4k'],
+                  '4k',
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT6k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT6k'],
+                  '6k',
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNRIGHT8k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCUNRIGHT8k'],
+                  '8k',
+                  'BCUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td colspan="3" class="text-center caption">
+            <span class="pull-left white">&nbsp;&#60;&nbsp;</span>
+            BC UN MASKED
+            <span class="pull-right white">&nbsp;&#62;&nbsp;</span>
+          </td>
+
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT250']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT250'], 250, 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT500']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT500'], 500, 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT750']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT750'], 750, 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT1k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT1k'], '1k', 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT15k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['BCUNLEFT15k'],
+                  '1.5k',
+                  'BCUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT2k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT2k'], '2k', 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT3k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT3k'], '3k', 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT4k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT4k'], '4k', 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT6k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT6k'], '6k', 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCUNLEFT8k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCUNLEFT8k'], '8k', 'BCUN', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearLeftRow('BCUN', 'LEFT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('BCUN', 'LEFT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('UCLUN', 'RIGHT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearRightRow('UCLUN', 'RIGHT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT250']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT250'],
+                  250,
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT500']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT500'],
+                  500,
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT750']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT750'],
+                  750,
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT1k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT1k'],
+                  '1k',
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT15k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT15k'],
+                  '1.5k',
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT2k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT2k'],
+                  '2k',
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT3k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT3k'],
+                  '3k',
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT4k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT4k'],
+                  '4k',
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT6k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT6k'],
+                  '6k',
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNRIGHT8k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['UCLUNRIGHT8k'],
+                  '8k',
+                  'UCLUN',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td colspan="3" class="text-center caption">
+            <span class="pull-left white">&nbsp;U&nbsp;</span>
+            UCL UN MASKED
+            <span class="pull-right white">&nbsp;U&nbsp;</span>
+          </td>
+
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT250']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT250'],
+                  250,
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT500']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT500'],
+                  500,
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT750']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT750'],
+                  750,
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT1k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT1k'],
+                  '1k',
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT15k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT15k'],
+                  '1.5k',
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT2k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT2k'],
+                  '2k',
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT3k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT3k'],
+                  '3k',
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT4k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT4k'],
+                  '4k',
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT6k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT6k'],
+                  '6k',
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['UCLUNLEFT8k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['UCLUNLEFT8k'],
+                  '8k',
+                  'UCLUN',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearLeftRow('UCLUN', 'LEFT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('UCLUN', 'LEFT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('ACNO', 'RIGHT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearRightRow('ACNO', 'RIGHT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT250']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT250'],
+                  250,
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT500']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT500'],
+                  500,
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT750']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT750'],
+                  750,
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT1k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT1k'],
+                  '1k',
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT15k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT15k'],
+                  '1.5k',
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT2k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT2k'],
+                  '2k',
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT3k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT3k'],
+                  '3k',
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT4k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT4k'],
+                  '4k',
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT6k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT6k'],
+                  '6k',
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNORIGHT8k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['ACNORIGHT8k'],
+                  '8k',
+                  'ACNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td colspan="3" class="text-center caption">
+            <span class="pull-left white">&nbsp;U&nbsp;</span>
+            AC NO RESPONSE
+            <span class="pull-right white">&nbsp;U&nbsp;</span>
+          </td>
+
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT250']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT250'], 250, 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT500']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT500'], 500, 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT750']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT750'], 750, 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT1k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT1k'], '1k', 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT15k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['ACNOLEFT15k'],
+                  '1.5k',
+                  'ACNO',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT2k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT2k'], '2k', 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT3k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT3k'], '3k', 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT4k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT4k'], '4k', 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT6k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT6k'], '6k', 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['ACNOLEFT8k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['ACNOLEFT8k'], '8k', 'ACNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearLeftRow('ACNO', 'LEFT')"
+              ><i class="fa fa-fw fa-trash"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('ACNO', 'LEFT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('BCNO', 'RIGHT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearRightRow('BCNO', 'RIGHT')"
+              ><i class="fa fa-fw  fa-trash"></i
+            ></a>
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT250']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT250'],
+                  250,
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT500']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT500'],
+                  500,
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT750']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT750'],
+                  750,
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT1k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT1k'],
+                  '1k',
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT15k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT15k'],
+                  '1.5k',
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT2k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT2k'],
+                  '2k',
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT3k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT3k'],
+                  '3k',
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT4k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT4k'],
+                  '4k',
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT6k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT6k'],
+                  '6k',
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput red-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNORIGHT8k']"
+              (change)="
+                XaxisRightChange(
+                  xAxisValue['BCNORIGHT8k'],
+                  '8k',
+                  'BCNO',
+                  'RIGHT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+
+          <td colspan="3" class="text-center caption">BC NO RESPONSE</td>
+
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT250']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT250'], 250, 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT500']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT500'], 500, 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT750']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT750'], 750, 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT1k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT1k'], '1k', 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT15k']"
+              (change)="
+                XaxisLeftChange(
+                  xAxisValue['BCNOLEFT15k'],
+                  '1.5k',
+                  'BCNO',
+                  'LEFT'
+                )
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT2k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT2k'], '2k', 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT3k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT3k'], '3k', 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT4k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT4k'], '4k', 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT6k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT6k'], '6k', 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input
+              type="text"
+              class="DBInput blue-text"
+              placeholder="dB"
+              [(ngModel)]="xAxisValue['BCNOLEFT8k']"
+              (change)="
+                XaxisLeftChange(xAxisValue['BCNOLEFT8k'], '8k', 'BCNO', 'LEFT')
+              "
+              CompacctDigitonly="true"
+            />
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="ClearLeftRow('BCNO', 'LEFT')"
+              ><i class="fa fa-fw  fa-trash"></i
+            ></a>
+          </td>
+          <td class="duplicate-btn">
+            <a (click)="DuplicateData('BCNO', 'LEFT')"
+              ><i class="fa fa-fw fa-copy"></i
+            ></a>
+          </td>
+        </tr>
+
+        <!--  <tr>
+          <td class="duplicate-btn"><a (click)="DuplicateData('UCLNO' , 'RIGHT')"><i class="fa fa-fw fa-copy"></i></a></td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT250']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT250'], 250, 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT500']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT500'], 500, 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT750']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT750'], 750, 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT1k']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT1k'], '1k', 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT15k']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT15k'], '1.5k', 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" [(ngModel)]="xAxisValue['UCLNORIGHT2k']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT2k'], '2k', 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT3k']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT3k'], '3k', 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT4k']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT4k'], '4k', 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT6k']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT6k'], '6k', 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNORIGHT8k']" (change)="XaxisRightChange(xAxisValue['UCLNORIGHT8k'], '8k', 'UCLNO' ,'RIGHT')"
+              CompacctDigitonly="true" />
+          </td>
+          <td colspan="3" class="text-center caption">UCL NO RESPONSE</td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT250']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT250'], 250, 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT500']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT500'], 500, 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT750']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT750'], 750, 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT1k']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT1k'], '1k', 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT15k']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT15k'], '1.5k', 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT2k']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT2k'], '2k', 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT3k']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT3k'], '3k', 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT4k']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT4k'], '4k', 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT6k']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT6k'], '6k', 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td data-tag="dB" class="overlayMark">
+            <input type="text" class="DBInput" [(ngModel)]="xAxisValue['UCLNOLEFT8k']"
+              (change)="XaxisLeftChange(xAxisValue['UCLNOLEFT8k'], '8k', 'UCLNO' ,'LEFT')" CompacctDigitonly="true" />
+          </td>
+          <td class="duplicate-btn"><a (click)="DuplicateData('UCLNO' , 'LEFT')"><i class="fa fa-fw fa-copy"></i></a></td>
+        </tr> -->
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <button
+      class="btn btn-primary custombutton pull-right"
+      (click)="FetchAudiogram()"
+    >
+      Save Audiograph
+    </button>
+  </div>
+</div>
+
+<!-- <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-2">
+              <div class="form-group">
+                <div class="col-sm-12" style="padding:0;">
+                  <label class="control-label">Symbols</label>
+                  <select class="form-control" [(ngModel)]="ThresoldLevelVal">
+                    <option *ngFor="let obj of symbols" [ngValue]="obj">{{ obj }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          <div class="col-sm-4">
+            <label class="control-label">Symbols</label>
+            <select class="form-control" [(ngModel)]="ThresoldLevelVal">
+              <option *ngFor="let obj of symbols" [ngValue]="obj">{{
+                obj
+              }}</option>
+            </select>
+          </div>
+           <div class="col-sm-4">
+                <label class="control-label">Value (X)</label>
+                <input
+                  class="form-control"
+                  CompacctDigitonly="true"
+                  [(ngModel)]="xAxisValue[ThresoldLevelVal]"
+                  name="Xaxis"
+                />
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Value (Y)</label>
+                <input
+                  class="form-control"
+                  CompacctDigitonly="true"
+                  [(ngModel)]="yAxisValue[ThresoldLevelVal]"
+                  name="Yaxis"
+                />
+              </div> 
+        </div>
+        <div class="form-group">
+          <div class="col-sm-6 pull-right">
+            <button class="btn btn-primary custombutton" (click)="saveValue()">
+              SAVE
+            </button>
+          </div>
+        </div>
+      </div> -->

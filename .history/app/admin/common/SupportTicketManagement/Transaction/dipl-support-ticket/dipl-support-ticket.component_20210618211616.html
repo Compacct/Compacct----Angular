@@ -1,0 +1,363 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="fa fa-fw fa-check-circle" style="font-size: 3em;color:green"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="CallTutopiaAppApi()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                  <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="BillSearchForm" #BillSearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange2($event)">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <!-- <div class="col-sm-3">
+                                    <label class="control-label">
+                                        Cost Center &nbsp;<span class="text-danger"></span></label>
+                                    <select class="form-control" name="costcenterFrom2" #costcenterFrom2="ngModel"
+                                        [(ngModel)]="ObjVoucherSearch.Cost_Cen_ID" [ngClass]="{
+                    clearance:
+                      VoucherSearchhFormSubmitted &&
+                      costcenterFrom2.errors?.required
+                  }">
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of CostCenterList"
+                                            [ngValue]="option.Cost_Cen_ID">{{ option.Cost_Cen_Name }}</option>
+                                    </select>
+                                </div> -->
+                                <div class="col-sm-4">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal"
+                                        (click)="SearchTransferedLoan(BillSearchForm.form.valid)" id="load"
+                                        [disabled]="seachSpinner">
+                                        <p-progressSpinner *ngIf="seachSpinner"
+                                            [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                            animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner"
+                                            class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                    <!-- <button style="margin-right: 30px;" *ngIf='VoucherBillList.length'  (click)="exportexcel(VoucherBillList,'Confirmed_Voucher')"
+                                    class="btn btn-primary custombutton">
+                                    <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                  </button> -->
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive table-id no-padding">
+                            <p-table [value]="SupportTicketList" #dt1 [paginator]="SupportTicketList.length ? true : false" [rows]="10"
+                                [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowHover]="true"
+                                [globalFilterFields]='["Voucher_No","Voucher_Date","Ledger_Name","Rec_Amt","Created_By","Net_Amt","CASH RECEIVED","BANK A/C","ONLINE PAYMENT","FINANCE PEER"]'>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search"
+                                                (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <!-- <th style="width:5em">Action</th> -->
+                                        <th>Voucher No</th>
+                                        <th>Transfer Date</th>
+                                        <th>Ledger Name</th>
+                                        <th>Voucher Amt.</th>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+
+                                        <td>{{ col.Voucher_No }}</td>
+                                        <td>{{ col.Voucher_Date | date: "dd/MMM/yyyy"}}</td>
+                                        <td>{{ col.Ledger_Name  }}</td>
+                                        <td>{{ col.Rec_Amt }}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{ state.first + 1 }} of
+                                    {{ state.first + 1 + state.rows }} of
+                                    {{ state.totalRecords }}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                        <form name="PendingLoanForm" #PendingLoanForm="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-6">
+                                <label class="control-label">Select Customer &nbsp;<span class="text-danger">*</span></label>
+                                <span class="pull-right"><p-radioButton name="groupname" label="Lead" value="Lead" [(ngModel)]="CustomerselectedValue"></p-radioButton>
+                                  <p-radioButton name="groupname" label="Existing" value="Existing" [(ngModel)]="CustomerselectedValue"></p-radioButton></span>
+                                <p-dropdown
+                                  [options]="ExistingList"
+                                  name="vendor"
+                                  [(ngModel)]="SubledgerID"
+                                  [showClear]="true"
+                                  *ngIf="CustomerselectedValue === 'Existing'"
+                                  [emptyFilterMessage]="' No Existing Customer Found'"
+                                  (onChange)="ChangeExitingCus()"
+                                  [filter]="true"
+                                  filterBy="label,value.name"
+                                  [placeholder]="'Select Existing Customer'"
+                                  [virtualScroll]="true"
+                                  itemSize="30"
+                                  #vendor="ngModel"
+                                  [styleClass]="
+                                  SupportTktFormSubmitted && vendor.errors?.required
+                                      ? 'clearance'
+                                      : ''
+                                  "
+                                  [required]="true"
+                                >
+                                </p-dropdown>
+                                <p-dropdown
+                                  [options]="LeadList"
+                                  name="vendor"
+                                  [(ngModel)]="FootFallID"
+                                  [showClear]="true"
+                                  *ngIf="CustomerselectedValue === 'Lead'"
+                                  [emptyFilterMessage]="' No Lead Customer Found'"
+                                  (onChange)="ChangeLeadCus()"
+                                  [filter]="true"
+                                  filterBy="label,value.name"
+                                  [placeholder]="'Select Lead Customer'"
+                                  [virtualScroll]="true"
+                                  itemSize="30"
+                                  #vendor="ngModel"
+                                  [styleClass]="
+                                  SupportTktFormSubmitted && vendor.errors?.required
+                                      ? 'clearance'
+                                      : ''
+                                  "
+                                  [required]="true"
+                                >
+                                </p-dropdown>
+                              </div>
+                            </div>
+                              <div class="form-group">
+                              <div class="col-sm-4" *ngIf="CustomerselectedValue === 'Existing'">
+                                <label class="control-label"> Address Caption</label>
+                                <select class="form-control"
+                                name="Address_Caption"
+                                #Address_Caption="ngModel"
+                                [(ngModel)]="SubledgerAdressCap"
+                                (change)='ChangeExistingAdressCaption()'
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Address_Caption.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of ExistingAdressCaptionList" value="{{ option.Address_Caption }}" >
+                                  {{ option.Address_Caption }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Address</label>
+                                <textarea class="form-control"
+                                name="Address"
+                                rows="1"
+                                #Address="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Address"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Address.errors?.required}"
+                                required
+                                  >
+                              </textarea>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">PIN<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                     name="Pin"
+                                     #Pin="ngModel"
+                                     [(ngModel)]="ObjSupportTkt.PIN_Code"
+                                     placeholder="PIN"
+                                      minlength="6"
+                                      maxlength="6"
+                                      CompacctDigitonly="true"
+                                      [ngClass]="{'clearance':SupportTktFormSubmitted && Pin?.errors?.required ||
+                                      (Pin.errors?.minlength && Pin.touched)}" required>
+
+                              </div>
+                              <div class="col-sm-4">
+                              <label class="control-label">Contact Person<sup class="text-danger">*</sup></label>
+                                 <input class="form-control"
+                                  name="Person"
+                                  #Person="ngModel"
+                                  [(ngModel)]="ObjSupportTkt.Contact_Peson_Name"
+                                  placeholder="Contact Person"
+                                  [ngClass]="{'clearance':SupportTktFormSubmitted && Person?.errors?.required}" required>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Email<sup class="text-danger">*</sup></label>
+                                   <input class="form-control"
+                                    name="Email"
+                                    #Email="ngModel"
+                                    [(ngModel)]="ObjSupportTkt.Customer_Email"
+                                    placeholder="Email"
+                                    [ngClass]="{'clearance':SupportTktFormSubmitted && Email?.errors?.required}" required>
+                              </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary" />
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label"> Support Location</label>
+                                <select class="form-control"
+                                name="Location"
+                                #Location="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Support_Loation"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Location.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SupportLocationList" value="{{ option.Support_Location }}" >
+                                  {{ option.Support_Location }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Support Charge Type</label>
+                                <select class="form-control"
+                                name="Charge_Type"
+                                #Charge_Type="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Support_Charge_Type"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Charge_Type.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SupportChargeTypeList" value="{{ option.Address_Caption }}" >
+                                  {{ option.Address_Caption }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Call Recieved By</label>
+                                <select class="form-control"
+                                name="Call_Recieved_By"
+                                #Call_Recieved_By="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Call_Recieved_By"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Call_Recieved_By.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option  value="PHONE" >PHONE</option>
+                                <option  value="EMAIL" >EMAIL</option>
+                              </select>
+                              </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary" />
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                  <label class="control-label">Product Name<sup class="text-danger">*</sup></label>
+                                   <input class="form-control"
+                                    name="Product"
+                                    #Product="ngModel"
+                                    [(ngModel)]="ObjSupportTkt.Product_Name"
+                                    placeholder="Product Name"
+                                    [ngClass]="{'clearance':SupportTktFormSubmitted && Product?.errors?.required}" required>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Product Serial No<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Serial"
+                                    #Serial="ngModel"
+                                    [(ngModel)]="ObjSupportTkt.Product_Serial_No"
+                                    placeholder="Product Serial No"
+                                    [ngClass]="{'clearance':SupportTktFormSubmitted && Serial?.errors?.required}" required>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Support Type</label>
+                                <select class="form-control"
+                                name="spt_Type"
+                                #spt_Type="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Support_Type_ID"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && spt_Type.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SupportTypeList" value="{{ option.Support_Type_ID }}" >
+                                  {{ option.Support_Type }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Symptom</label>
+                                <select class="form-control"
+                                name="Symptom"
+                                #Symptom="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Symptom_ID"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Symptom.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SupportSymptomTypeList" value="{{ option.Support_Type_ID }}" >
+                                  {{ option.Symptom }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Brief Description</label>
+                                <textarea class="form-control"
+                                name="Description"
+                                #Description="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Problem_Brief_Description"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Description.errors?.required}"
+                                required
+                                  >
+                              </textarea>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Status</label>
+                                <select class="form-control"
+                                name="Status"
+                                #Status="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Status_ID"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Status.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of StatusList" value="{{ option.Status_ID }}" >
+                                  {{ option.Status }}
+                                </option>
+                              </select>
+                              </div>
+                            </div>
+                        </form>
+
+                          <div class="box-footer">
+                            <button class="btn btn-primary pull-right custombutton" data-toggle="modal"
+                                (click)="SaveSupportTicket(LedgerForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                    animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Save
+                            </button>
+                        </div>
+
+                    </p-tabPanel>
+                  </p-tabView>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>

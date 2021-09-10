@@ -1,0 +1,343 @@
+<div [ngClass]="overLayFlag ? 'disabledGRN' :''">
+<div style="margin-top: 10px;"></div>
+
+<form  #GRNForm="ngForm" novalidate>
+    <fieldset [disabled]="overLayFlag">
+<div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Debit Doc Date<sup class="text-danger">*</sup></label>
+            <div class="input-group date">
+                <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                </div>
+                <input type="date"
+                    name="GRNDoc_Date"
+                    [ngModel]="DebitDocDate | date:'yyyy-MM-dd'"
+                    #GRNDoc_Date='ngModel'
+                    [ngClass]="{'clearance': DebitFormSubmitted && GRNDoc_Date.errors?.required}"
+                    (ngModelChange)="GetDocdate($event)"
+                    class="form-control"
+                    required>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Debit Doc No </label>
+            <input class="form-control"
+                name="Doc_No1"
+                #Doc_No1='ngModel'
+                [disabled]="true"
+                [(ngModel)]="DebitDoc_No"
+                placeholder="Doc No">
+        </div> 
+        <!-- <div class="col-sm-3">
+            <label class="control-label">GRN Cost Center &nbsp;<span class="text-danger">*</span></label>
+            <select class="form-control" name="costcenterFrom2"
+                    #costcenterFrom2= 'ngModel'
+                    [(ngModel)]="ObjDebitCommon.Cost_Cen_ID"
+                    (change)="GetGodown(ObjGRNCommon.Cost_Cen_ID)"
+                    [ngClass]="{'clearance': DebitFormSubmitted && costcenterFrom2.errors?.required}"
+                    required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor='let option of CostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label"> Stock Point<sup class="text-danger">*</sup></label>
+            <select class="form-control" name="godownname"
+                    #godownname="ngModel"
+                    [ngClass]="{'clearance': DebitFormSubmitted &&  godownname?.errors?.required}"
+                    [(ngModel)]="ObjGRNCommon.godown_id"
+                    [required]="true">
+                <option  [ngValue]="undefined">Select</option>
+                <option *ngFor="let option of GodownLists" [ngValue]="option.godown_id">{{option.godown_name}}</option>
+            </select>
+        </div>  -->
+</div>
+<div class="form-group">
+    <div class="col-sm-6">
+        <h3></h3>
+        <br>
+    </div>
+</div>
+
+<p-table [columns]="DebitViewCols" [frozenColumns]="frozenCols"
+    [value]="DebitProductList"
+    [scrollable]="true" 
+    scrollHeight="100px" 
+    *ngIf="(DebitProductList | json) != '[]'"
+    frozenWidth="250px">
+    <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+            <col *ngFor="let col of columns" style="width:200px">
+        </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th *ngFor="let col of columns">
+                {{col.header}}
+            </th>
+            <th>Edit</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+            <td *ngFor="let col of columns">
+                {{rowData[col.field] ? rowData[col.field] :'-'}}
+            </td>
+            <td style="background: #c1c1c180;" class="text-center"><a style="color: black; cursor: pointer;" (click)="DebitModal(rowData)">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </a></td>
+        </tr>
+    </ng-template>
+</p-table>
+<div class="form-group">
+        <div class="col-sm-6">
+            <h3></h3>
+            <br>
+        </div>
+    </div>
+  <div class="form-group">
+      <div class="col-sm-12">
+            <button type="submit"
+            name='stock'
+            class="btn btn-primary pull-right" 
+            (click)="SaveDebit(GRNForm.form.valid)"
+            id="load"
+            [disabled]="saveSpinner || DebitUpdateFlag">
+            <p-progressSpinner *ngIf="saveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>&nbsp;{{buttonname}}
+        </button>
+      </div>
+  </div>
+</fieldset>
+</form>      
+        <!-- Update GRN -->
+<p-dialog header="Update Debit Note {{ProtoDebitObj.Product_Name ? '- Product Name : '+ ProtoDebitObj.Product_Name +'' : ''}}" [appendTo]="'body'"  [visible]="displayDebitModal && (ProtoDebitObj | json) != '{}'" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '65%', minWidth: '200px'}" style='text-align: left;' [minY]="70" 
+[maximizable]="true" [baseZIndex]="10000">
+<form  #GRNProductForm="ngForm" novalidate>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label" style="margin:0;font-weight:600">No. of Less Bag</label>
+            <input class="form-control GrnInput1" name="GRN_Less_Bags_Quantity_Bag" #GRN_Less_Bags_Quantity_Bag="ngModel" [disabled]="!DebitModalFlag"
+                [(ngModel)]="ProtoDebitObj['GRN_Less_Bags_Quantity_Bag']" (change)="ChangeLessBagCalculate(ProtoDebitObj['GRN_Less_Bags_Quantity_Bag'])"
+                [ngClass]="{'clearance': DebitProductFormSubmitted &&  GRN_Less_Bags_Quantity_Bag?.errors?.required  }"
+                CompacctDigitonly="true" placeholder="No of Bags" required />
+        </div> 
+        <div class="col-sm-2">
+        <label class="control-label" style="margin:0;font-weight:600">Rate</label>
+        <input class="form-control GrnInput1" name="GRN_Less_Bags_Quantity_Rate" #GRN_Less_Bags_Quantity_Rate="ngModel" [disabled]="true"
+            [(ngModel)]="ProtoDebitObj['GRN_Less_Bags_Quantity_Rate']"
+            [ngClass]="{'clearance': DebitProductFormSubmitted &&  GRN_Less_Bags_Quantity_Rate?.errors?.required  }"
+            CompacctDigitonly="true" placeholder="No of Bags" required />
+        </div>
+        <div class="col-sm-2">
+        <label class="control-label" style="margin:0;font-weight:600">Less Qty</label>
+        <input class="form-control GrnInput1" name="GRN_Less_Bags_Quantity_Qty" #GRN_Less_Bags_Quantity_Qty="ngModel"
+            [(ngModel)]="ProtoDebitObj['GRN_Less_Bags_Quantity_Qty']" [disabled]="true"
+            [ngClass]="{'clearance': DebitProductFormSubmitted &&  GRN_Less_Bags_Quantity_Qty?.errors?.required  }"
+            CompacctDigitonly="true" placeholder="No of Bags"  />
+        </div>
+        <div class="col-sm-3"> 
+        <label class="control-label" style="margin:0;font-weight:600">Less Amt</label>
+        <input class="form-control GrnInput1" name="GRN_Less_Bags_Quantity_Amt" #GRN_Less_Bags_Quantity_Amt="ngModel" [disabled]="!DebitModalFlag"
+            [(ngModel)]="ProtoDebitObj['GRN_Less_Bags_Quantity_Amt']"
+            [ngClass]="{'clearance': DebitProductFormSubmitted &&  GRN_Less_Bags_Quantity_Amt?.errors?.required  }"
+            CompacctDigitonly="true" placeholder="No of Bags" />
+        </div>
+        <div class="col-sm-2">
+            <button type="button" *ngIf="DebitModalFlag" (click)="onLessConfirm()" style="margin-top:20px;" class="btn btn-info">Procced <i class="fa fa-fw fa-share"></i></button>
+         
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-12">
+            <h4></h4>
+        </div>
+    </div>
+        <div class="table-responsive no-padding" style="box-shadow: 0px 0px 2px 0px black; width: 100%;" >
+            <fieldset [disabled]="DebitModalFlag">
+                <table class="table table-bordered table-striped grn-table" >
+                    <thead>
+                        <tr style="background-color:#3c8dbc;color:white">
+                            <th style="border: none;">Description</th>
+                            <th style="border: none;">Bags</th>
+                            <th style="border: none;">Rate</th>
+                            <th style="border: none;">Per Bag Kg Less Rate</th>
+                            <th style="border: none;">Less Qty</th>
+                            <th style="border: none;">Less Amt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: bold;">Bag Weight</td>
+                            <td>{{ProtoDebitObj.Final_No_Of_Bag}}</td>
+                            <td>{{ProtoDebitObj.Rate}}</td>
+                            <td data-tag="KG" class="overlayMark">
+                                    <input class="form-control GrnInput" name="GRN_Less_Bag_Per_Bag"
+                                    #GRN_Less_Bag_Per_Bag="ngModel"                                    
+                                    [(ngModel)]="ProtoDebitObj['GRN_Less_Bag_Per_Bag']"
+                                    (change)="ChangeBagCalculate(ProtoDebitObj['GRN_Less_Bag_Per_Bag'])"
+                                    [ngClass]="{'clearance': DebitProductFormSubmitted &&  GRN_Less_Bag_Per_Bag?.errors?.required  }"
+                                    CompacctDigitonly="true"
+                                    placeholder="No of Bags" 
+                                    required/>
+
+                            </td>
+                            <td>{{ProtoDebitObj.GRN_Less_Total_Bag }}</td>
+                            <td>{{ProtoDebitObj.GRN_Less_Total_Bag_Amt}}</td>
+                        </tr>
+                        <tr class="odd">
+                            <td style="font-weight: bold;">Dust & Husk </td>
+                            <td>{{ProtoDebitObj.Final_No_Of_Bag}}</td>
+                            <td>{{ProtoDebitObj.Rate}}</td>
+                            <td data-tag="KG" class="overlayMark">
+                                    <input class="form-control GrnInput" name="GRN_Less_Dust_Per_Bag"
+                                    #GRN_Less_Dust_Per_Bag="ngModel"
+                                    [(ngModel)]="ProtoDebitObj['GRN_Less_Dust_Per_Bag']"
+                                    (change)="ChangeDuskCalculate(ProtoDebitObj['GRN_Less_Dust_Per_Bag'])"
+                                    [ngClass]="{'clearance': DebitProductFormSubmitted &&  GRN_Less_Dust_Per_Bag?.errors?.required }"
+                                    CompacctDigitonly="true"
+                                    placeholder="No of Bags" 
+                                    required/>
+
+                            </td>
+                            <td>{{ProtoDebitObj.GRN_Less_Total_Dust }}</td>
+                            <td>{{ProtoDebitObj.GRN_Less_Total_Dust_Amt}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Unloading</td>
+                            <td>{{ProtoDebitObj.Final_No_Of_Bag}}</td>
+                            <td>{{ProtoDebitObj.Rate}}</td>
+                            <td  data-tag="₹" class="overlayMark">
+                                    <input class="form-control GrnInput" name="GRN_Less_Unloading_Per_Bag"
+                                    #GRN_Less_Unloading_Per_Bag="ngModel"
+                                    [(ngModel)]="ProtoDebitObj['GRN_Less_Unloading_Per_Bag']"
+                                    (change)="Calculate()"
+                                    [ngClass]="{'clearance': DebitProductFormSubmitted &&  GRN_Less_Unloading_Per_Bag?.errors?.required }"
+                                    CompacctDigitonly="true"
+                                    placeholder="Unloading Amount Per Bag" 
+                                    required/>
+
+                            </td>
+                            <td class="empty-cell"></td>
+                            <td>{{ProtoDebitObj.GRN_Less_Total_Unloading_Amt}}</td>
+                        </tr>
+                        <tr class="odd">
+                            <td style="font-weight: bold;">FFA</td>
+                            <td><small>Taxable Amt =></small></td>
+                            <td>{{ProtoDebitObj.Taxable_Amount}}</td>
+                            <td data-tag="%" class="overlayMark">
+                                <input class="form-control GrnInput" name="FFA_Percentage"
+                                #FFA_Percentage="ngModel"
+                                [(ngModel)]="ProtoDebitObj['GRN_Less_Total_FFA_Persentage']"
+                                (change)="Calculate()"
+                                [ngClass]="{'clearance': DebitProductFormSubmitted &&  FFA_Percentage?.errors?.required }"
+                                CompacctDigitonly="true"
+                                placeholder="Percentage Of Amount" 
+                                required/>
+                            </td>
+                            <td class="empty-cell"></td>
+                            <td> {{ProtoDebitObj.GRN_Less_Total_FFA_Amt}}
+                                    <!-- <input class="form-control GrnInput" name="GRN_Less_Total_FFA_Amt"
+                                    #GRN_Less_Total_FFA_Amt="ngModel"
+                                    [(ngModel)]="ProtoDebitObj['GRN_Less_Total_FFA_Amt']"
+                                    (change)="Calculate()"
+                                    [ngClass]="{'clearance': DebitProductFormSubmitted &&  GRN_Less_Total_FFA_Amt?.errors?.required }"
+                                    CompacctDigitonly="true"
+                                    placeholder="Amount" 
+                                    required/> -->
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Adjustment</td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td>
+                                <select class="form-control GrnInput" name="Plus_Minus" #Plus_Minus="ngModel"
+                                     (change)="CalculateAdjustment()"
+                                    [(ngModel)]="ProtoDebitObj['Plus_Minus']" style="padding:0;">
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option Value="PLUS">Plus</option>
+                                    <option Value="MINUS">Minus</option>
+                                </select>
+                            </td>
+                            <td data-tag="₹" class="overlayMark">
+                                <input class="form-control GrnInput" name="Adjustment" #Adjustment="ngModel"
+                                    [(ngModel)]="ProtoDebitObj['Adjustment']" (change)="CalculateAdjustment()"
+                                    [disabled]="!ProtoDebitObj['Plus_Minus']"
+                                    [ngClass]="{'clearance': DebitProductFormSubmitted &&  Adjustment?.errors?.required }" CompacctDigitonly="true"
+                                    placeholder="Adjustment" [required]="ProtoDebitObj['Plus_Minus']" />
+                            
+                            </td>
+                        </tr>
+                        <tr class="odd">
+                            <td style="font-weight: bold;">Others</td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td  data-tag="₹" class="overlayMark">
+                                <input class="form-control GrnInput" name="No_Of_Bags1"
+                                    #No_Of_Bags1="ngModel"
+                                    [(ngModel)]="ProtoDebitObj['GRN_Less_Total_Other_Amt']"
+                                    (change)="Calculate()"
+                                    [ngClass]="{'clearance': DebitProductFormSubmitted &&  No_Of_Bags1?.errors?.required }"
+                                    CompacctDigitonly="true"
+                                    placeholder="Amount" 
+                                    required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Total</td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td>{{ProtoDebitObj.GRN_Total_Less_Qty}} </td>
+                            <td>{{ProtoDebitObj.GRN_Total_Gross_Less_Amt}} </td>
+                        </tr>
+                        <tr  class="odd">
+                            <td style="font-weight: bold;">SGST</td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td>{{ProtoDebitObj.GRN_SGST_Amount}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">CGST</td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td>{{ProtoDebitObj.GRN_CGST_Amount}}</td>
+                        </tr>
+                        <tr class="odd">
+                            <td style="font-weight: bold;">IGST</td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td>{{ProtoDebitObj.GRN_IGST_Amount}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Total Debit Note</td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td  style="font-weight: bold;">{{ProtoDebitObj.GRN_Total_Net_Less_Amt}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </fieldset>
+        </div>
+    </form>
+    <p-footer>
+            <button type="button" (click)="onProductConfirm(GRNProductForm.form.valid)" class="btn btn-success btn-sm">ADD</button>
+            <button type="button"  (click)="CloseModal(false)"  class="btn btn-default">CANCEL</button>
+    </p-footer>
+    <br>
+</p-dialog>
+    </div>

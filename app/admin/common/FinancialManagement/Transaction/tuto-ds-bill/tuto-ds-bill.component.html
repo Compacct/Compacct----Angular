@@ -1,0 +1,237 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                        <div class="form-group">
+                            <div class="col-sm-3" style="margin-bottom: -5px;">
+                                <label class="control-label">
+                                    Mobile No. <sup class="text-danger">*</sup>
+                                </label >
+                                    <input
+                                    class="form-control"
+                                    name="mobile1"
+                                    #mobile1="ngModel"
+                                    CompacctDigitonly="true"
+                                    [ngClass]="{
+                                        clearance:
+                                        (DSBillFormSubmitted && mobile1.errors?.required) ||
+                                        (mobile1.errors?.minlength && mobile1.touched)
+                                    }"
+                                    (change)='GetStudentsDetails()'
+                                    [(ngModel)]="ObjDSBill.Mobile_No"
+                                    placeholder="Mobile Number"
+                                    minlength="10"
+                                    maxlength="10"
+                                    required
+                                    />
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">
+                                    Name <sup class="text-danger">*</sup>
+                                </label >
+                                <div  class="label-t">{{ObjDSBill['Contact_Name'] ? ObjDSBill['Contact_Name'] : '-'}}</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">
+                                    Class <sup class="text-danger">*</sup>
+                                </label >
+                                <div  class="label-t">{{ObjDSBill['Class_Name'] ? ObjDSBill['Class_Name'] : '-'}}</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">
+                                    City <sup class="text-danger">*</sup>
+                                </label >
+                                <div  class="label-t">{{ObjDSBill['City'] ? ObjDSBill['City'] : '-'}}</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">
+                                    Pincode <sup class="text-danger">*</sup>
+                                </label >
+                                <div  class="label-t">{{ObjDSBill['Pin'] ? ObjDSBill['Pin'] : '-'}}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" style="margin-top:1em;" *ngIf='ObjDSBill.Foot_Fall_ID'>
+                            <p-fieldset legend="Show Transactions Details" [toggleable]="true">
+                                <div *ngIf='!TransactionList.length'>No Data Found...</div>
+                                <div *ngIf='TransactionList.length' class="table table-responsive">
+                                    <div class='form-group'>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">
+                                                Total Paid Amount <sup class="text-danger">*</sup>
+                                            </label >
+                                            <div  class="label-t">{{ TotalAmount }}</div>
+                                        </div>
+                                        <button  class="btn btn-primary btn-sm custombutton" (click)="GetTransactionDetails()" id="load">
+                                            <span class="fa fa-fw fa-refresh"></span>&nbsp;
+                                        </button>
+                                    </div>
+                                    
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#3c8dbc;color:white;">
+                                                <th>Txn Date Time</th>
+                                                <th>PG Inv ID</th>
+                                                <th>Payment Link</th>
+                                                <th>Remarks</th>
+                                                <th>Amount</th>
+                                                <th>Current Status</th>
+                                                <th>Last Update ON</th>
+                                                <th>Payment Type</th>
+                                                <th>Bank Txn ID</th>
+                                                <th>Bank Name</th>
+                                                <th>Payment VPA</th>
+                                                <th>Card Last Four</th>
+                                                <th>Card Name</th>
+                                                <th>Card Network</th>
+                                                <th>Card Type</th>
+                                                <th>Wallet</th>
+                                                <th>File</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor='let obj of TransactionList'
+                                            [ngClass]="{'bg-green-gradient': obj.Current_Status === 'PAID'}" >
+                                                <td>{{obj.Txn_Date_Time  | date : "dd/MMM/yyyy hh:mm a"}}</td>
+                                                <td><a class='btn btn-xs' (click)='GetPGInvDetails(obj.PG_Inv_ID)'>{{obj.PG_Inv_ID ? obj.PG_Inv_ID : '-'}}</a></td>
+                                                <td>{{obj.Payment_Link ? obj.Payment_Link : '-'}}</td>
+                                                <td>{{obj.Remarks ? obj.Remarks : '-'}}</td>
+                                                <td>{{obj.Amount ? obj.Amount : '-'}}</td>
+                                                <td>{{obj.Current_Status ? obj.Current_Status : '-'}}</td>
+                                                <td>{{obj.Last_Update_ON === "1900-01-01T00:00:00" ? '-' : (obj.Last_Update_ON | date : "dd/MMM/yyyy hh:mm a")}}</td>
+                                                <td>{{obj.Payment_Type ? obj.Payment_Type : '-'}}</td>
+                                                <td>{{obj.Bank_Txn_ID ? obj.Bank_Txn_ID : '-'}}</td>
+                                                <td>{{obj.Bank_Name ? obj.Bank_Name : '-'}}</td>
+                                                <td>{{obj.Payment_VPA ? obj.Payment_VPA : '-'}}</td>
+                                                <td>{{obj.Card_Last_Four ? obj.Card_Last_Four : '-'}}</td>
+                                                <td>{{obj.Card_Name ? obj.Card_Name : '-'}}</td>
+                                                <td>{{obj.Card_Network ? obj.Card_Network : '-'}}</td>
+                                                <td>{{obj.Card_Type ? obj.Card_Type : '-'}}</td>
+                                                <td>{{obj.Wallet ? obj.Wallet : '-'}}</td>
+                                                <td>
+                                                    <a class='btn btn-xs'
+                                                    *ngIf='obj.File_URL != "NA"'
+                                                    style="cursor: pointer;"
+                                                    (click)='OpenInNewTab(obj.File_URL)'>
+                                                        <i class="fa fa-fw fa-image"></i>
+                                                    </a>
+                                                    <span *ngIf='obj.File_URL == "NA"'>{{obj.File_URL ? obj.File_URL : '-'}}</span>
+                                                </td>
+
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </p-fieldset>
+                        </div>
+                    </form>
+                    <hr class="box boxboxDivide-primary" />
+                    <form name="addProductForm" #addProductForm="ngForm" novalidate>
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label"
+                                  >Product <sup class="text-danger">*</sup> &nbsp;
+                                </label>
+
+                                <p-dropdown [options]="ProductList" name="Product" #Product2 [(ngModel)]="ObjDSProduct.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                    [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #Product="ngModel" [required]="true" [ngClass]="{'clearance':DSProductFormSubmitted && Product.errors?.required}" required>
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="control-label">Amount <sup class="text-danger">*</sup></label>
+                                <input (change)="AmountChange()" class="form-control" name="Net_Price" #Net_Price='ngModel' [(ngModel)]="ObjDSProduct.Rate" CompacctDigitonly="true" [ngClass]="{'clearance':DSProductFormSubmitted && Net_Price.errors?.required}" required>
+                            </div>
+                            <div class="col-sm-4">
+                                <button class="btn btn-primary custombutton" (click)="AddProduct(addProductForm.form.valid)"> ADD</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive no-padding" style="margin-top: 1em;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- ngRepeat: obj in ctrl.ProductCategoryGST -->
+                                <tr *ngFor="let obj of AddedProductList ;let ind = index;">
+                                    <td>{{obj.Product_Description}} </td>
+                                    <td>{{obj.Rate}}</td>
+                                    <td *ngIf="!obj?.deleteflag"><button (click)="DeleteProduct(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class='box-footer'>
+                        <button class="btn btn-primary pull-right" (click)="SaveDSbill(SearchForm.form.valid)" id="load" [disabled]="Spinner">
+                         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> SAVE
+                 </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- PG Inv Details -->
+<p-dialog header="PG Inv Details" [appendTo]="'body'" [visible]="PGInvDetailsModalFlag" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <form name="TransferLeadModalUpdate" style="margin-top:2em" #TransferLeadModalUpdate="ngForm" novalidate>
+
+        <div class="table table-responsive">
+
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr style="background-color:#3c8dbc;color:white;">
+                        <th>Posted On</th>
+                        <th>Bank Name</th>
+                        <th>Bank Txn_ID</th>
+                        <th>Card Last_4</th>
+                        <th>Card Name</th>
+                        <th>Card Network</th>
+                        <th>Card Type</th>
+                        <th>Payment Method</th>
+                        <th>Payment VPA</th>
+                        <th>Status</th>
+                        <th>Wallet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='let obj of PGInvDetailsList'>
+                        <td>{{obj.Posted_On === "1900-01-01T00:00:00" ? '-' : (obj.Posted_On | date : "dd/MMM/yyyy hh:mm a")}}</td>
+                        <td>{{obj.Bank_Name ? obj.Bank_Name : '-'}}</td>
+                        <td>{{obj.Bank_Txn_ID ? obj.Bank_Txn_ID : '-'}}</td>
+                        <td>{{obj.Card_Last_4 ? obj.Card_Last_4 : '-'}}</td>
+                        <td>{{obj.Card_Name ? obj.Card_Name : '-'}}</td>
+                        <td>{{obj.Card_Network ? obj.Card_Network : '-'}}</td>
+                        <td>{{obj.Card_Type ? obj.Card_Type : '-'}}</td>
+                        <td>{{obj.Payment_Method ? obj.Payment_Method : '-'}}</td>
+                        <td>{{obj.Payment_VPA ? obj.Payment_VPA : '-'}}</td>
+                        <td>{{obj.Status ? obj.Status : '-'}}</td>
+                        <td>{{obj.Wallet ? obj.Wallet : '-'}}</td>
+
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="PGInvDetailsModalFlag = false" class="btn btn-default">
+CLOSE
+</button>
+    </p-footer>
+</p-dialog>

@@ -1,0 +1,2239 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<button
+  type="text"
+  class="btn btn-default"
+  (click)="display = !display"
+  label=""
+>
+  <i class="fa-fw fa fa-gears"> </i>&nbsp;Filter / Settings
+</button>
+<button
+  type="text"
+  class="btn btn-default"
+  (click)="displayAddPatientModal = !displayAddPatientModal"
+  label=""
+>
+  <i class="fa fa-fw  fa-plus"> </i>&nbsp;Create Patient
+</button>
+<span *ngIf="costCenterName" class="cost-center pull-right"
+  ><i class="fa fa-fw  fa-hospital-o"> </i>&nbsp;{{ costCenterName }}</span
+>
+<div class="control-section">
+  <p-sidebar [(visible)]="display" position="right" appendTo="control-section">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Details
+        </h3>
+      </div>
+      <ul class="list-group">
+        <a class="list-group-item"
+          >Total Appointment:<span class="badge badge-info">{{
+            TotalAppointment
+          }}</span></a
+        >
+        <a class="list-group-item"
+          >Total Consultancy:<span class="badge badge-info">{{
+            TotalConsultancy
+          }}</span></a
+        >
+        <a class="list-group-item"
+          >Total Reschedule:<span class="badge badge-info">{{
+            TotalRescedule
+          }}</span></a
+        >
+      </ul>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Filters
+        </h3>
+      </div>
+      <div class="row" style="padding: 10px;padding-bottom: 10px;">
+        <div class="col-sm-12">
+          <label class="control-label"
+            >Consultancy Type<sup class="text-danger"></sup
+          ></label>
+          <select
+            class="form-control"
+            name="consultancyType"
+            #consultancyType="ngModel"
+            [(ngModel)]="objSearchAppointment.Consultancy_Type"
+            (change)="
+              changeConsultancyType(objSearchAppointment.Consultancy_Type)
+            "
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of consultancyTypeList"
+              value="{{ option.Consultancy_Type }}"
+            >
+              {{ option.Consultancy_Type }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label"
+            >Cost Center<sup class="text-danger"></sup
+          ></label>
+          <select
+            class="form-control"
+            name="Cost_Center"
+            #Cost_Center="ngModel"
+            [(ngModel)]="objSearchAppointment.Cost_Cen_ID"
+            (change)="ChangeSearchCostCenter(objSearchAppointment.Cost_Cen_ID)"
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of CostCenterList"
+              value="{{ option.Cost_Cen_ID }}"
+            >
+              {{ option.Cost_Cen_Name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label"
+            >Doctors<sup class="text-danger"></sup
+          ></label>
+          <select
+            class="form-control"
+            name="Doctors"
+            #Doctors="ngModel"
+            [(ngModel)]="objSearchAppointment.Schedule_ID"
+            (change)="changeDoctor(objSearchAppointment.Schedule_ID)"
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of doctorList"
+              value="{{ option.Schedule_ID }}"
+            >
+              {{ option.Name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-12">
+          <button
+            name="button"
+            class="btn btn-primary custombutton pull-right"
+            (click)="GetAppointmentList()"
+            id="refreshAppointmentLoad"
+          >
+            <span class="glyphicon glyphicon-refresh"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </p-sidebar>
+  <div>
+    <div class="compacct-appo-header"></div>
+    <ejs-schedule
+      #scheduleObj
+      height="550px"
+      [selectedDate]="selectedDate"
+      [allowResizing]="allowResizing"
+      [(currentView)]="currentView"
+      [(eventSettings)]="eventSettings"
+      (eventRendered)="onEventRendered($event)"
+      [endHour]="'21:00'"
+      [startHour]="'10:00'"
+      cssClass="schedule-cell-dimension"
+      (eventClick)="OnAppoClick($event)"
+      (cellClick)="OnDateClick($event)"
+      (navigating)="onNavigating($event)"
+      (popupOpen)="onPopupOpen($event)"
+    >
+      <e-views>
+        <e-view option="Day"></e-view>
+        <e-view option="Agenda" [allowVirtualScrolling]="true"></e-view>
+        <e-view option="TimelineDay"></e-view>
+      </e-views>
+    </ejs-schedule>
+    <ejs-contextmenu
+      #menuObj
+      cssClass="schedule-context-menu"
+      target=".e-schedule"
+      [items]="menuItems"
+      (beforeOpen)="onContextMenuBeforeOpen($event)"
+      (select)="onMenuItemSelect($event)"
+    ></ejs-contextmenu>
+  </div>
+</div>
+
+<!-- ADD APPO -->
+<p-dialog
+  header="Add Appointment"
+  [visible]="displayCreateAppoModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '75%', minWidth: '200px', minHeight: '300px' }"
+  [contentStyle]="{ minHeight: '350px' }"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <form name="appointmentForm" #appointmentForm="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Appointment Date<sup class="text-danger">*</sup></label
+        >
+        <div class="input-group date">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input
+            type="date"
+            name="appointmentDate1"
+            #appointmentDate1="ngModel"
+            [(ngModel)]="appointmentDate"
+            (change)="changeAppointmentDate(appointmentDate1.value)"
+            [ngClass]="{
+              clearance:
+                appointmentFormSubmitted && appointmentDate1.errors?.required
+            }"
+            class="form-control"
+            required
+            autofocus
+          />
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Consultancy Type<sup class="text-danger">*</sup></label
+        >
+        <select
+          class="form-control"
+          name="consultancyType"
+          #consultancyType="ngModel"
+          (change)="changeConsultancyType(objPatient.Consultancy_Type)"
+          [(ngModel)]="objAppointment.Consultancy_Type"
+          [ngClass]="{
+            clearance:
+              appointmentFormSubmitted && consultancyType.errors?.required
+          }"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of consultancyTypeList"
+            value="{{ option.Consultancy_Type }}"
+          >
+            {{ option.Consultancy_Type }}
+          </option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Cost Center<sup class="text-danger">*</sup></label
+        >
+        <select
+          class="form-control"
+          name="Cost_Center"
+          #Cost_Center="ngModel"
+          [(ngModel)]="objAppointment.Cost_Cen_ID"
+          (change)="changeCostCenter(objAppointment.Cost_Cen_ID)"
+          [ngClass]="{
+            clearance: appointmentFormSubmitted && Cost_Center.errors?.required
+          }"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of CostCenterList"
+            value="{{ option.Cost_Cen_ID }}"
+          >
+            {{ option.Cost_Cen_Name }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Doctors<sup class="text-danger"></sup
+        ></label>
+        <select
+          class="form-control"
+          name="Doctors"
+          #Doctors="ngModel"
+          [(ngModel)]="objAppointment.Schedule_ID"
+          (change)="changeDoctor(objAppointment.Schedule_ID)"
+          [ngClass]="{
+            clearance: appointmentFormSubmitted && Doctors.errors?.required
+          }"
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of doctorList"
+            value="{{ option.Schedule_ID }}"
+          >
+            {{ option.Name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label class="control-label">
+          Mobile No.<sup class="text-danger">*</sup></label
+        >
+        <input
+          class="form-control"
+          name="mobile"
+          #mobile="ngModel"
+          [ngClass]="{
+            clearance:
+              appointmentFormSubmitted &&
+              mobile.errors?.required &&
+              User_mobileNo.dirty
+          }"
+          [(ngModel)]="MobileNumber"
+          (change)="changeMobile(mobile.value)"
+          placeholder="Mobile Number"
+          minlength="10"
+          maxlength="10"
+          required
+        />
+      </div>
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Name<sup class="text-danger">*</sup></label
+        >
+        <select
+          class="form-control"
+          name="patientName"
+          #patientName="ngModel"
+          [(ngModel)]="objAppointment.Foot_Fall_ID"
+          (change)="changeName(objAppointment.Foot_Fall_ID)"
+          [ngClass]="{
+            clearance: appointmentFormSubmitted && patientName.errors?.required
+          }"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of patientNameList"
+            value="{{ option.Foot_Fall_ID }}"
+          >
+            {{ option.Prefix + " " + option.Contact_Name }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Consultancy/Package<sup class="text-danger">*</sup></label
+        >
+        <select
+          class="form-control"
+          name="consultancyPackage1"
+          #consultancyPackage1="ngModel"
+          [(ngModel)]="consultancyPackage"
+          (change)="changeConsultancyPackage()"
+          [ngClass]="{
+            clearance:
+              appointmentFormSubmitted && consultancyPackage1.errors?.required
+          }"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option value="Consultancy">Consultancy</option>
+          <option value="Package">Package</option>
+        </select>
+      </div>
+      <div class="col-sm-4" *ngIf="consultancyPackage === 'Consultancy'">
+        <label class="control-label"
+          >Consultancy<sup class="text-danger">*</sup></label
+        >
+        <p-multiSelect
+          [options]="allConsultancyList"
+          [(ngModel)]="SelectConsultancy"
+          [styleClass]="'compacct-multiselect'"
+          name="serialno"
+        ></p-multiSelect>
+        <!-- <select class="form-control"
+                                                name="consultancy"
+                                                #consultancy="ngModel"
+                                                [ngModel]="objAppointment.Cons_ID"
+                                                [ngClass]="{'clearance': appointmentFormSubmitted && consultancy.errors?.required}" 
+                                                [required]="consultancyPackage=='Consultancy'">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of consultancyList" value={{option.Cons_ID}}>
+                                                {{option.Consultancy_Descr}}
+                                            </option>
+                                        </select> -->
+      </div>
+      <div class="col-sm-4" *ngIf="consultancyPackage === 'Package'">
+        <label class="control-label"
+          >Package<sup class="text-danger">*</sup></label
+        >
+        <select
+          class="form-control"
+          name="package"
+          #package="ngModel"
+          [(ngModel)]="objAppointment.Package_Selection_ID"
+          (change)="changePackage(objAppointment.Package_Selection_ID)"
+          [ngClass]="{
+            clearance: appointmentFormSubmitted && package.errors?.required
+          }"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of packageList"
+            value="{{ option.Package_ID }}"
+          >
+            {{ option.Package_Name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-sm-4" *ngIf="consultancyPackage === 'Package'">
+        <label class="control-label"
+          >{{ consultancyPackage }} Sub Type<sup class="text-danger"
+            >*</sup
+          ></label
+        >
+        <select
+          class="form-control"
+          name="consultancySub"
+          #consultancySub="ngModel"
+          [(ngModel)]="objAppointment.Cons_Sub_ID"
+          (change)="changePackageSubType(objAppointment.Cons_Sub_ID)"
+          [ngClass]="{
+            clearance:
+              appointmentFormSubmitted && consultancySub.errors?.required
+          }"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of consultancySubList"
+            value="{{ option.Cons_Sub_ID }}"
+          >
+            {{ option.Consultancy_Sub_Descr }}
+          </option>
+        </select>
+      </div>
+      <div class="col-sm-4" *ngIf="consultancyPackage === 'Package'">
+        <label class="control-label"
+          >Repeat Followup<sup class="text-danger">*</sup></label
+        >
+        <select
+          class="form-control"
+          name="repeatFollowup"
+          #repeatFollowup="ngModel"
+          [(ngModel)]="objAppointment.Followup_Visit"
+          [ngClass]="{
+            clearance:
+              appointmentFormSubmitted && repeatFollowup.errors?.required
+          }"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of optionsYesNo"
+            value="{{ option.value }}"
+          >
+            {{ option.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Time<sup class="text-danger">*</sup></label
+        >
+        <input
+          type="time"
+          placeholder="HH:mm:ss"
+          name="appointmentTime1"
+          #appointmentTime1="ngModel"
+          [(ngModel)]="appointmentTime"
+          [ngClass]="{
+            clearance:
+              appointmentFormSubmitted && appointmentTime1.errors?.required
+          }"
+          class="form-control"
+          required
+        />
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Remarks<sup class="text-danger"></sup
+        ></label>
+        <textarea
+          class="form-control"
+          rows="2"
+          name="leadCloseRemarks"
+          #leadCloseRemarks="ngModel"
+          [(ngModel)]="objAppointment.CRM_Note"
+          placeholder="Remarks"
+        ></textarea>
+      </div>
+    </div>
+  </form>
+
+  <p-footer>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="CreateAppointment(appointmentForm.form.valid)"
+    >
+      CREATE
+    </button>
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="displayCreateAppoModal = false"
+    >
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- VIEW APPO -->
+
+<p-dialog
+  header="View Appointment"
+  [blockScroll]="true"
+  [contentStyle]="{ 'overflow-x': 'scroll !important' }"
+  [visible]="displayAppoDetailsModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '85%', minWidth: '200px' }"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <div id="invoice">
+    <div class="invoice overflow-auto">
+      <div>
+        <main>
+          <div class="row contacts" *ngIf="(EventDetailsObj | json) != '{}'">
+            <div class="col invoice-to">
+              <h2 class="to">{{ EventDetailsObj?.Patient | titlecase }}</h2>
+              <div class="date">
+                Mobile No:&nbsp;<a
+                  href="{{ 'tel:+91' + EventDetailsObj?.Mobile }}"
+                  class="ng-binding"
+                  ><i class="fa fa-fw fa-phone-square"></i> &nbsp;{{
+                    EventDetailsObj?.Mobile
+                  }}
+                </a>
+              </div>
+              <div class="address">
+                {{ PatientInfo?.Address ? PatientInfo?.Address : "" }}
+              </div>
+              <div class="email">
+                {{
+                  PatientInfo?.District +
+                    " " +
+                    PatientInfo?.State +
+                    " " +
+                    PatientInfo?.Pin
+                }}
+              </div>
+            </div>
+            <div class="col invoice-details">
+              <h1 class="invoice-id">
+                <small>Registration ID :</small
+                >{{ EventDetailsObj?.Foot_Fall_ID }}
+              </h1>
+              <div class="date">
+                Date of Appointment:
+                {{ EventDetailsObj?.Appo_Dt | date: "MMM d, y, h:mm: a" }}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <p-tabView [activeIndex]="tabIndexToView">
+              <p-tabPanel
+                headerStyleClass="compacct-tabs"
+                [header]="items[0]"
+                rightIcon="fa fa-fw fa-bar-chart"
+              >
+                <form name="PatientEditForm" #UserForm="ngForm" novalidate>
+                  <fieldset disabled="disabled">
+                    <div class="form-group">
+                      <div class="col-sm-4">
+                        <label class="control-label">
+                          Mobile No.<sup class="text-danger">*</sup></label
+                        >
+                        <input
+                          class="form-control"
+                          name="User_mobileNo"
+                          #User_mobileNo="ngModel"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              User_mobileNo.errors?.required &&
+                              User_mobileNo.dirty
+                          }"
+                          [ngModel]="objPatientEdit.Mobile"
+                          placeholder="Mobile Number"
+                          minlength="10"
+                          maxlength="10"
+                          required
+                        />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Alternative Mobile No.<sup class="text-danger"
+                            >*</sup
+                          ></label
+                        >
+                        <input
+                          class="form-control"
+                          name="Alternativemobile"
+                          #Alternativemobile="ngModel"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              Alternativemobile.errors?.required &&
+                              Alternativemobile.dirty
+                          }"
+                          [ngModel]="objPatientEdit.Mobile_2"
+                          placeholder="Alternative Mobile Number"
+                          minlength="10"
+                          maxlength="10"
+                        />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >WhatsApp Mobile No.<sup class="text-danger"
+                            >*</sup
+                          ></label
+                        >
+                        <input
+                          class="form-control"
+                          name="mobileWP"
+                          #mobileWP="ngModel"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              mobileWP.errors?.required &&
+                              mobileWP.dirty
+                          }"
+                          [ngModel]="objPatientEdit.Mobile_3_WP"
+                          placeholder="WhatsApp Mobile Number"
+                          minlength="10"
+                          maxlength="10"
+                        />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Consultancy Type<sup class="text-danger"></sup
+                        ></label>
+                        <select
+                          class="form-control"
+                          name="consultancyType"
+                          #consultancyType="ngModel"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              consultancyType.errors?.required &&
+                              consultancyType.dirty
+                          }"
+                          [(ngModel)]="objPatientEdit.Consultancy_Type"
+                          (change)="GetAppointmentList()"
+                          required
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of consultancyTypeList"
+                            value="{{ option.Consultancy_Type }}"
+                          >
+                            {{ option.Consultancy_Type }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Name<sup class="text-danger">*</sup></label
+                        >
+                        <div class="input-group" style="width:100%">
+                          <select
+                            class="form-control"
+                            name="prefix"
+                            #prefix="ngModel"
+                            [ngModel]="objPatientEdit.Prefix"
+                            ng-class="{'clearance': PatientEditForm &&  prefix.errors?.required}"
+                            required
+                          >
+                            <option value="">Select</option>
+                            <option value="Mr">Mr</option>
+                            <option value="Mrs">Mrs</option>
+                            <option value="Miss">Miss</option>
+                            <option value="Ms">Ms</option>
+                            <option value="Sir">Sir</option>
+                            <option value="Dr">Dr</option>
+                          </select>
+                          <span
+                            class="input-group-addon"
+                            style="border-color: #ffffff; padding:0px"
+                          ></span>
+                          <input
+                            class="form-control"
+                            name="Name"
+                            #Name="ngModel"
+                            [ngModel]="objPatientEdit.Contact_Name"
+                            placeholder="Name"
+                            allow-pattern="([a-z ]|\.)"
+                            [ngClass]="{
+                              clearance:
+                                PatientEditForm && Name.errors?.required
+                            }"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Gender<sup class="text-danger">*</sup></label
+                        >
+                        <select
+                          class="form-control"
+                          name="user_Type"
+                          #user_Type="ngModel"
+                          [ngModel]="objPatientEdit.Gender"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm && user_Type.errors?.required
+                          }"
+                          required
+                        >
+                          <option value="">Select</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Date of Birth<sup class="text-danger"></sup
+                        ></label>
+                        <div class="input-group">
+                          <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                          </div>
+                          <input
+                            type="date"
+                            name="dateOfBirth"
+                            [ngClass]="{
+                              clearance:
+                                PatientEditForm && dateOfBirth.errors?.required
+                            }"
+                            #dateOfBirth="ngModel"
+                            [ngModel]="dateOfBirth"
+                            class="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-sm-2">
+                        <label class="control-label"
+                          >Age<sup class="text-danger"></sup
+                        ></label>
+                        <input
+                          class="form-control"
+                          name="Age"
+                          #Age="ngModel"
+                          [ngModel]="objPatientEdit.Age"
+                          placeholder="Age"
+                          valid-number
+                        />
+                      </div>
+
+                      <div class="col-sm-2">
+                        <label class="control-label"
+                          >PIN<sup class="text-danger"></sup
+                        ></label>
+                        <input
+                          class="form-control"
+                          name="PIN"
+                          #PIN="ngModel"
+                          [ngModel]="objPatientEdit.Pin"
+                          placeholder="PIN Code"
+                          valid-number
+                        />
+                        <!-- ng-change="ctrl.GetStateDestric(ctrl.objLeadCreation.Pin)" -->
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label">Location</label>
+                        <input
+                          class="form-control"
+                          name="Location"
+                          #Location="ngModel"
+                          [ngModel]="objPatientEdit.Location"
+                          placeholder="Area"
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Address<sup class="text-danger"></sup>
+                        </label>
+                        <textarea
+                          class="form-control"
+                          rows="4"
+                          name="address"
+                          style="padding: unset;"
+                          #address="ngModel"
+                          [ngModel]="objPatientEdit.Address"
+                          placeholder="Address"
+                        ></textarea>
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Country<sup class="text-danger"></sup
+                        ></label>
+                        <input
+                          class="form-control"
+                          name="Country"
+                          #Country="ngModel"
+                          [ngModel]="objPatientEdit.Country"
+                          placeholder="Country"
+                        />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >State<sup class="text-danger"></sup
+                        ></label>
+                        <input
+                          class="form-control"
+                          name="state"
+                          #state="ngModel"
+                          [ngModel]="objPatientEdit.State"
+                          placeholder="State"
+                        />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >District<sup class="text-danger"></sup
+                        ></label>
+                        <input
+                          class="form-control"
+                          name="District"
+                          #District="ngModel"
+                          [ngModel]="objPatientEdit.District"
+                          placeholder="District"
+                        />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Enquiry Source<sup class="text-danger">*</sup></label
+                        >
+                        <select
+                          class="form-control"
+                          name="referenceSource"
+                          #referenceSource="ngModel"
+                          [ngModel]="objPatientEdit.Enq_Source_ID"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              referenceSource.errors?.required
+                          }"
+                          required
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of referenceSourceList"
+                            value="{{ option.Enq_Source_ID }}"
+                          >
+                            {{ option.Enq_Source_Name }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Reference Audiologist
+                          <span class="text-danger"></span
+                        ></label>
+                        <select
+                          class="form-control"
+                          name="ReferenceAudiologist"
+                          #ReferenceAudiologist="ngModel"
+                          [ngModel]="objPatientEdit.Enq_Source_Sub_ID"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              ReferenceAudiologist.errors?.required
+                          }"
+                          required
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of ReferenceDoctorList"
+                            value="{{ option.Enq_Source_Sub_ID }}"
+                          >
+                            {{ option.Enq_Source_Sub_Name }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Marketing Executive<sup class="text-danger"></sup
+                        ></label>
+                        <select
+                          class="form-control"
+                          name="marketingExecutive"
+                          #marketingExecutive="ngModel"
+                          [ngModel]="objPatientEdit.Marketing_Executive"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              marketingExecutive.errors?.required
+                          }"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SalesteamList"
+                            value="{{ option.Sales_Man_ID }}"
+                          >
+                            {{ option.Member_Name }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Patient Type <sup class="text-danger">*</sup></label
+                        >
+                        <select
+                          class="form-control"
+                          name="customerType"
+                          #customerType="ngModel"
+                          [ngModel]="objPatientEdit.Customer_Type"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm && customerType.errors?.required
+                          }"
+                          required
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option value="First time HA user"
+                            >First time HA user
+                          </option>
+                          <option value="Existing HA user"
+                            >Existing HA user</option
+                          >
+                        </select>
+
+                        <!-- (change)="ChangeCustomerType(objPatientEdit.Customer_Type)" -->
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-4">
+                        <label class="control-label" style="text-align: left;"
+                          >Problem Description by Patient / Remarks<sup
+                            class="text-danger"
+                          ></sup>
+                        </label>
+                        <textarea
+                          class="form-control"
+                          rows="4"
+                          name="ProblemDetails"
+                          #ProblemDetails="ngModel"
+                          [ngModel]="objPatientEdit.Problem_Details"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm && ProblemDetails.errors?.required
+                          }"
+                          placeholder="Problem Description by Patient / Remarks"
+                        ></textarea>
+                      </div>
+                      <div class="col-sm-2">
+                        <label class="control-label"
+                          >HA Used
+                          <sup class="text-danger">{{
+                            PreviousCompanyField ? "*" : ""
+                          }}</sup></label
+                        >
+                        <select
+                          class="form-control"
+                          name="previousCompany"
+                          #previousCompany="ngModel"
+                          [ngModel]="objPatientEdit.Previous_Company"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              previousCompany.errors?.required
+                          }"
+                          [required]="PreviousCompanyField"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PreviousCompanyList"
+                            value="{{ option.Name }}"
+                          >
+                            {{ option.Name }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-sm-2">
+                        <label class="control-label"
+                          >Patient Budget
+                          <sup class="text-danger">*</sup></label
+                        >
+                        <select
+                          class="form-control"
+                          name="customerChoice"
+                          #customerChoice="ngModel"
+                          [ngModel]="objPatientEdit.Customer_Choice"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm && customerChoice.errors?.required
+                          }"
+                          required
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of CustomerChoiceList"
+                            value="{{ option.Name }}"
+                          >
+                            {{ option.Name }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-sm-2">
+                        <label class="control-label" style="text-align: left;"
+                          >Plan for Purchase
+                          <sup class="text-danger">*</sup></label
+                        >
+                        <select
+                          class="form-control"
+                          name="chanceToBuy"
+                          #chanceToBuy="ngModel"
+                          [ngModel]="objPatientEdit.Chance_Buy"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm && chanceToBuy.errors?.required
+                          }"
+                          required
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of ChanceToBuyList"
+                            value="{{ option.Name }}"
+                          >
+                            {{ option.Name }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-sm-2">
+                        <label class="control-label"
+                          >Visit Location<sup class="text-danger">*</sup></label
+                        >
+                        <select
+                          class="form-control"
+                          name="preferedLocation"
+                          #preferedLocation="ngModel"
+                          [ngModel]="objPatientEdit.Prefered_Location"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm &&
+                              preferedLocation.errors?.required
+                          }"
+                          required
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PreferedLocationList"
+                            value="{{ option.Name }}"
+                          >
+                            {{ option.Name }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Lead Requirement<sup class="text-danger"
+                            >*</sup
+                          ></label
+                        >
+                        <select
+                          class="form-control"
+                          name="followupStatus"
+                          [ngClass]="{
+                            clearance:
+                              PatientEditForm && followupStatus.errors?.required
+                          }"
+                          #followupStatus="ngModel"
+                          [ngModel]="objPatientEdit.Status"
+                          required
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of StatusList"
+                            value="{{ option.Name }}"
+                          >
+                            {{ option.Name }}
+                          </option>
+                        </select>
+                        <!-- (change)="changeStatus(ctrl.objLeadCreation.Status)" -->
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="control-label"
+                          >Next Followup<sup class="text-danger">*</sup></label
+                        >
+                        <div class="input-group date">
+                          <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                          </div>
+                          <input
+                            type="text"
+                            name="nextFollowUp"
+                            placeholder="dd-mm-yyyy"
+                            #referenceSource="ngModel"
+                            [ngModel]="objPatientEdit.Next_Followup"
+                            class="form-control"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="box-footer">
+                      <button
+                        class="btn btn-primary pull-right custombutton"
+                        id="load"
+                      >
+                        <span class="glyphicon glyphicon-save"></span
+                        >{{ buttonname }}
+                      </button>
+                    </div>
+                  </fieldset>
+                </form>
+              </p-tabPanel>
+              <p-tabPanel
+                headerStyleClass="compacct-tabs"
+                [header]="items[1]"
+                rightIcon="fa fa-fw fa-calendar"
+              >
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <thead>
+                    <tr>
+                      <th>Registration No</th>
+                      <th class="text-left">Package</th>
+                      <th class="text-center">Apoo Date&Time</th>
+                      <th class="text-center">Type</th>
+                      <th class="text-center">Doctor</th>
+                      <th class="text-center">Sub Type</th>
+                      <th class="text-center">Centre</th>
+                      <th class="text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let AppoList of AppoListOfPatient">
+                      <td class="no">{{ AppoList?.Foot_Fall_ID }}</td>
+                      <td class="text-left">
+                        {{ AppoList.Package_Name }}
+                      </td>
+                      <td class="total">
+                        {{ AppoList.Appo_Dt | date: "MMM d, y, h:mm: a" }}
+                      </td>
+                      <td class="unit">{{ AppoList.Consultancy_Type }}</td>
+                      <td class="qty">{{ AppoList.Name }}</td>
+                      <td class="total">
+                        {{ AppoList.Consultancy_Sub_Descr }}
+                      </td>
+                      <td class="total">{{ AppoList.Cost_Cen_Name }}</td>
+                      <td class="total">
+                        <span
+                          [ngClass]="'badge bg-' + fecthColorStatus(AppoList)"
+                          >{{ AppoList.Status }}</span
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </p-tabPanel>
+              <p-tabPanel
+                headerStyleClass="compacct-tabs"
+                [header]="items[2]"
+                rightIcon="fa fa-fw fa-calendar"
+              >
+                <form name="billingForm" novalidate>
+                  <div class="row" *ngIf="BillingList.length">
+                    <div class="col-sm-8">
+                      <h5><strong>Billing Details</strong></h5>
+                    </div>
+                  </div>
+                  <div
+                    class="table-responsive no-padding"
+                    *ngIf="BillingList.length"
+                  >
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr style="background-color:#3c8dbc;color:white">
+                          <th nowrap>Action</th>
+                          <th nowrap>Bill No</th>
+                          <th nowrap>Bill Date</th>
+                          <th nowrap>Patient Name</th>
+                          <th nowrap>Mobile No</th>
+                          <th nowrap>CostCenter</th>
+                          <th nowrap>Taxable Amount</th>
+                          <th nowrap>Tax Amount</th>
+                          <th nowrap>Net Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let obj of BillingList">
+                          <td>
+                            <a
+                              href=""
+                              data-toggle="modal"
+                              (click)="PdfViewBilling(obj.Doc_No)"
+                              ><i class="fa fa-fw fa-file-pdf-o"></i
+                            ></a>
+                          </td>
+                          <td>{{ obj.Doc_No }}</td>
+                          <td>{{ obj.Doc_Date | date: "dd/MM/yyyy" }}</td>
+                          <td>{{ obj.Contact_Name }}</td>
+                          <td>{{ obj.Mobile }}</td>
+                          <td>{{ obj.Cost_Cen_Name }}</td>
+                          <td>{{ obj.Taxable_Amt }}</td>
+                          <td>{{ obj.Tax }}</td>
+                          <td>{{ obj.Net_Amt }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="row" *ngIf="PaymentList.length">
+                    <div class="col-sm-8">
+                      <h5><strong>Receive Details</strong></h5>
+                    </div>
+                  </div>
+                  <div
+                    class="table-responsive no-padding"
+                    *ngIf="PaymentList.length"
+                  >
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr style="background-color:#3c8dbc;color:white">
+                          <th>Action</th>
+                          <th>Voucher No</th>
+                          <th>Date</th>
+                          <th>Patient Name</th>
+                          <th>Mobile No</th>
+                          <th>Adjusted With</th>
+                          <th>Adjusted Amt.</th>
+                          <th>Voucher Amt</th>
+                          <th>Bank Txn Type</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let vouchar of PaymentList">
+                          <td>
+                            <a
+                              href=""
+                              data-toggle="modal"
+                              (click)="PdfViewBilling(obj)"
+                              ><i class="fa fa-fw fa-file-pdf-o"></i
+                            ></a>
+                          </td>
+                          <td>{{ vouchar.Voucher_No }}</td>
+                          <td>
+                            {{ vouchar.Voucher_Date | date: "dd/MM/yyyy" }}
+                          </td>
+                          <td>{{ vouchar.Patient_Name }}</td>
+                          <td>{{ vouchar.Mobile }}</td>
+                          <td>{{ vouchar.Adj_with_Doc_No }}</td>
+                          <td>{{ vouchar.Adj_Amount }}</td>
+                          <td>{{ vouchar.Rec_Amt }}</td>
+                          <td>
+                            {{
+                              vouchar.Bank_Txn_Type
+                                ? vouchar.Bank_Txn_Type
+                                : "-"
+                            }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="row" *ngIf="PaymentVoucherList.length">
+                    <div class="col-sm-8">
+                      <h5><strong>Payment Vouchers </strong></h5>
+                    </div>
+                  </div>
+                  <div
+                    class="table-responsive no-padding"
+                    *ngIf="PaymentVoucherList.length"
+                  >
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr style="background-color:#3c8dbc;color:white">
+                          <th nowrap>Action</th>
+                          <th nowrap>Voucher No</th>
+                          <th nowrap>Date</th>
+                          <th nowrap>Ledger</th>
+                          <th nowrap>SubLedger</th>
+                          <th nowrap>Cost Head</th>
+                          <th nowrap>Adjusted With</th>
+                          <th nowrap>Billed To</th>
+                          <th nowrap>Adjusted Amt.</th>
+                          <th nowrap>Voucher Amt</th>
+                          <th nowrap>Bank Txn Type</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let obj of PaymentVoucherList">
+                          <td>
+                            <a
+                              href=""
+                              data-toggle="modal"
+                              (click)="paymentVoucherPDF(obj)"
+                              ><i class="fa fa-fw fa-file-pdf-o"></i
+                            ></a>
+                          </td>
+                          <td>{{ obj.Voucher_No }}</td>
+                          <td>{{ obj.Voucher_Date | date: "dd/MM/yyyy" }}</td>
+                          <td>{{ obj.Ledger_Name }}</td>
+                          <td>{{ obj.Sub_Ledger_Name }}</td>
+                          <td>{{ obj.Cost_Head_Name }}</td>
+                          <td>{{ obj.Adj_with_Doc_No }}</td>
+                          <td>{{ obj.Customer_Name }}</td>
+                          <td>{{ obj.Adj_Amount }}</td>
+                          <td>{{ obj.Rec_Amt }}</td>
+                          <td>{{ obj.Bank_Txn_Type }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="row" *ngIf="ChallanList.length">
+                    <div class="col-sm-8">
+                      <h5><strong>Trial Challan Details</strong></h5>
+                    </div>
+                  </div>
+                  <div
+                    class="table-responsive no-padding"
+                    *ngIf="ChallanList.length"
+                  >
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr style="background-color:#3c8dbc;color:white">
+                          <th nowrap>Action</th>
+                          <th nowrap>Doc No</th>
+                          <th nowrap>Doc Date</th>
+                          <th nowrap>Patient Name</th>
+                          <th nowrap>Mobile No</th>
+                          <th nowrap>Trial For (Days)</th>
+                          <th nowrap>Rent Per Day</th>
+                          <th nowrap>Return Date</th>
+                          <th nowrap>Amount</th>
+                          <th nowrap>Advance Amount</th>
+                          <th nowrap>Bill No</th>
+                          <th nowrap>Bill Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ngFor="let obj of ChallanList">
+                          <td>
+                            <a
+                              href=""
+                              data-toggle="modal"
+                              data-click="pdfViewChallan(obj)"
+                              ><i class="fa fa-fw fa-file-pdf-o"></i
+                            ></a>
+                          </td>
+                          <td>{{ obj.Doc_No }}</td>
+                          <td>{{ obj.Doc_Date | date: "dd/MM/yyyy" }}</td>
+                          <td>{{ obj.Contact_Name }}</td>
+                          <td>{{ obj.Mobile }}</td>
+                          <td>{{ obj.Trail_For_Days }}</td>
+                          <td>{{ obj.Rent_Per_Day }}</td>
+                          <td>{{ obj.Return_Date | date: "dd/MM/yyyy" }}</td>
+                          <td>
+                            {{ obj.Total_Amount ? obj.Total_Amount : "-" }}
+                          </td>
+                          <td>{{ obj.Paid_Amount ? obj.Paid_Amount : "-" }}</td>
+                          <td>{{ obj.Bill_No ? obj.Bill_No : "-" }}</td>
+                          <td>
+                            {{
+                              obj.Bill_Date == "1900-01-01T00:00:00"
+                                ? "-"
+                                : (obj.Bill_Date | date: "dd/MM/yyyy")
+                            }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="row" *ngIf="AdvanceOrderList.length">
+                    <div class="col-sm-8">
+                      <h5><strong>Advance Orders</strong></h5>
+                    </div>
+                  </div>
+                  <div
+                    class="table-responsive no-padding"
+                    *ngIf="AdvanceOrderList.length"
+                  >
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr style="background-color:#3c8dbc;color:white">
+                          <th nowrap>Action</th>
+                          <th>Doc No</th>
+                          <th>Doc Date</th>
+                          <th>Customer</th>
+                          <th>Total Amount</th>
+                          <th>Discount</th>
+                          <th>Remarks</th>
+                          <th>Receive Amount</th>
+                          <th>Bill No.</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let obj of AdvanceOrderList">
+                          <td>
+                            <a
+                              href=""
+                              data-toggle="modal"
+                              (click)="AdvanceOrderPDF(obj)"
+                              ><i class="fa fa-fw fa-file-pdf-o"></i
+                            ></a>
+                          </td>
+                          <td>{{ obj.Doc_No }}</td>
+                          <td>{{ obj.Doc_Date | date: "dd/MM/yyyy" }}</td>
+                          <td>{{ obj.Contact_Name }}</td>
+                          <td>{{ obj.Amount }}</td>
+                          <td>{{ obj.Discount ? obj.Discount : "-" }}</td>
+                          <td>{{ obj.Remarks ? obj.Remarks : "-" }}</td>
+                          <td>{{ obj.Received_Amount }}</td>
+                          <td>{{ obj.Bill_No ? obj.Bill_No : "-" }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="row" *ngIf="SaleReturnList.length">
+                    <div class="col-sm-8">
+                      <h5><strong>Sale Return</strong></h5>
+                    </div>
+                  </div>
+                  <div
+                    class="table-responsive no-padding"
+                    *ngIf="SaleReturnList.length"
+                  >
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr style="background-color:#3c8dbc;color:white">
+                          <th nowrap>Sale Return No</th>
+                          <th nowrap>Sale Return Date</th>
+                          <th nowrap>Bill No</th>
+                          <th nowrap>Product</th>
+                          <th nowrap>Batch No.</th>
+                          <th nowrap>Serial No.</th>
+                          <th nowrap>Unit</th>
+                          <th nowrap>Qty</th>
+                          <th nowrap>Rate</th>
+                          <th nowrap>Amount</th>
+                          <th nowrap>Discount Amount</th>
+                          <th nowrap>Taxable Amount</th>
+                          <th nowrap>CGST Amount</th>
+                          <th nowrap>SGST Amount</th>
+                          <th nowrap>IGST Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let obj of SaleReturnList">
+                          <td>{{ obj.Sale_Return_No }}</td>
+                          <td>
+                            {{ obj.Sale_Return_Date | date: "dd/MM/yyyy" }}
+                          </td>
+                          <td>{{ obj.Bill_No }}</td>
+                          <td>{{ obj.Product_Name }}</td>
+                          <td>
+                            {{ obj.Batch_Number ? obj.Batch_Number : "-" }}
+                          </td>
+                          <td>{{ obj.Serial_No ? obj.Serial_No : "-" }}</td>
+                          <td>{{ obj.UOM }}</td>
+                          <td>{{ obj.Qty }}</td>
+                          <td>{{ obj.Rate }}</td>
+                          <td>{{ obj.Amount }}</td>
+                          <td>{{ obj.Discount_Type_Amount }}</td>
+                          <td>{{ obj.Taxable_Amount }}</td>
+                          <td>{{ obj.CGST_Amount }}</td>
+                          <td>{{ obj.SGST_Amount }}</td>
+                          <td>{{ obj.IGST_Amount }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="row" *ngIf="ProductSaleList.length">
+                    <div class="col-sm-8">
+                      <h5><strong>Product Sale Details</strong></h5>
+                    </div>
+                  </div>
+                  <div
+                    class="table-responsive no-padding"
+                    *ngIf="ProductSaleList.length"
+                  >
+                    <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr style="background-color:#3c8dbc;color:white">
+                          <th nowrap>Bill No</th>
+                          <th nowrap>Bill Date</th>
+                          <th nowrap>Product</th>
+                          <th nowrap>Batch No.</th>
+                          <th nowrap>Serial No.</th>
+                          <th nowrap>Unit</th>
+                          <th nowrap>Qty</th>
+                          <th nowrap>Rate</th>
+                          <th nowrap>Amount</th>
+                          <th nowrap>Discount Amount</th>
+                          <th nowrap>Taxable Amount</th>
+                          <th nowrap>CGST Amount</th>
+                          <th nowrap>SGST Amount</th>
+                          <th nowrap>IGST Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let obj of ProductSaleList">
+                          <td>{{ obj.Bill_No }}</td>
+                          <td>{{ obj.Bill_Date | date: "dd/MM/yyyy" }}</td>
+                          <td>{{ obj.Product_Name }}</td>
+                          <td>
+                            {{ obj.Batch_Number ? obj.Batch_Number : "-" }}
+                          </td>
+                          <td>{{ obj.Serial_No ? obj.Serial_No : "-" }}</td>
+                          <td>{{ obj.UOM }}</td>
+                          <td>{{ obj.Qty }}</td>
+                          <td>{{ obj.Rate }}</td>
+                          <td>{{ obj.Amount }}</td>
+                          <td>{{ obj.Discount_Type_Amount }}</td>
+                          <td>{{ obj.Taxable_Amount }}</td>
+                          <td>{{ obj.CGST_Amount }}</td>
+                          <td>{{ obj.SGST_Amount }}</td>
+                          <td>{{ obj.IGST_Amount }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </form>
+              </p-tabPanel>
+            </p-tabView>
+          </div>
+
+          <!-- <div class="thanks">Thank you!</div>
+                                            <div class="notices">
+                                                <div>NOTICE:</div>
+                                                <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
+                                            </div> -->
+        </main>
+        <!-- <footer>
+                                            Invoice was created on a computer and is valid without the signature and seal.
+                                        </footer> -->
+      </div>
+      <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
+      <div></div>
+    </div>
+  </div>
+
+  <p-footer>
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="displayAppoDetailsModal = false"
+    >
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+
+<!-- Rescedule  -->
+<p-dialog
+  header="Rescedule"
+  [visible]="displayResceduleModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '50%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <br />
+  <div>
+    <form name="ResceduleForm" #ResceduleForm="ngForm" novalidate>
+      <div class="form-group">
+        <div class="col-sm-6">
+          <label class="control-label"
+            >Appointment Date<sup class="text-danger">*</sup></label
+          >
+          <div class="input-group date">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <input
+              type="date"
+              name="nextFollowUp"
+              placeholder="dd-mm-yyyy"
+              #referenceSource="ngModel"
+              [(ngModel)]="rescheduleAppointmentDate"
+              (change)="getDoctorListForRescheduleAppointment()"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <label class="control-label"
+            >Cost Center<sup class="text-danger"></sup
+          ></label>
+          <select
+            class="form-control"
+            name="Cost_Center"
+            #Cost_Center="ngModel"
+            (change)="getDoctorListForRescheduleAppointment()"
+            [(ngModel)]="objRescheduleAppointment.Cost_Cen_ID"
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of CostCenterList"
+              value="{{ option.Cost_Cen_ID }}"
+            >
+              {{ option.Cost_Cen_Name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label class="control-label"
+            >Doctors<sup class="text-danger"></sup
+          ></label>
+          <select
+            class="form-control"
+            name="Doctors"
+            #Doctors="ngModel"
+            [(ngModel)]="objRescheduleAppointment.Schedule_ID"
+            (change)="
+              changeRescheduleAppointmentDoctor(
+                objRescheduleAppointment.Schedule_ID
+              )
+            "
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of doctorListForReschedule"
+              value="{{ option.Schedule_ID }}"
+            >
+              {{ option.Name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label class="control-label"
+            >Time<sup class="text-danger">*</sup></label
+          >
+          <input
+            type="time"
+            placeholder="HH:mm:ss"
+            name="appointmentReTime1"
+            #appointmentReTime1="ngModel"
+            [(ngModel)]="rescheduleAppointmentTime"
+            [ngClass]="{
+              clearance:
+                rescheduleAppointmentSubmitted &&
+                appointmentReTime1.errors?.required
+            }"
+            class="form-control"
+            required
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="box-footer">
+          <h5></h5>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <p-footer>
+    <button
+      type="button"
+      (click)="displayResceduleModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="checkRescheduleAppointment(ResceduleForm.form.valid)"
+    >
+      UPDATE
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- Doctor Update  -->
+<p-dialog
+  header="Doctor Update"
+  [visible]="displayDoctorUpdateModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <form name="DoctorUpdateForm" #DoctorUpdateForm="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-8 col-sm-offset-2">
+        <label class="control-label"
+          >Audiologist<sup class="text-danger">*</sup></label
+        >
+        <select
+          class="form-control"
+          name="Doctors"
+          #Doctors="ngModel"
+          [(ngModel)]="objUpdateDoctor.Schedule_ID"
+          [ngClass]="{
+            clearance: updateDoctorSubmitted && Doctors.errors?.required
+          }"
+          (change)="changeDoctorForUpdate(objUpdateDoctor.Schedule_ID)"
+          required
+        >
+          <option [ngValue]="undefined">Select</option>
+          <option
+            *ngFor="let option of doctorListForUpdate"
+            value="{{ option.Schedule_ID }}"
+          >
+            {{ option.Name }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-8 col-sm-offset-2">
+        <label class="control-label"
+          >Time<sup class="text-danger">*</sup></label
+        >
+        <input
+          type="time"
+          placeholder="HH:mm:ss"
+          name="appointmentDoctorTime1"
+          #appointmentDoctorTime1="ngModel"
+          [(ngModel)]="objUpdateDoctorTime"
+          [ngClass]="{
+            clearance:
+              updateDoctorSubmitted && appointmentDoctorTime1.errors?.required
+          }"
+          class="form-control"
+          required
+        />
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="box-footer">
+        <h5></h5>
+      </div>
+    </div>
+  </form>
+
+  <p-footer>
+    <button
+      type="button"
+      (click)="displayDoctorUpdateModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+      type="button"
+      (click)="UpdateDoctor(DoctorUpdateForm.form.valid)"
+      class="btn btn-primary"
+    >
+      {{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- Cancel Appointment  -->
+<p-dialog
+  header="Cancel Appointment"
+  [visible]="displayCancelAppoModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '25%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <br />
+  <div>
+    <div
+      style="text-align: center"
+      *ngIf="(ShiftMenuDetailsObj | json) != '{}'"
+    >
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>CANCEL APPOINTMENT</h3>
+      <p>
+        Appo ID :<strong>{{ ShiftMenuDetailsObj?.id }}&nbsp;</strong>
+        <br />Patient Name:
+        <strong>{{ ShiftMenuDetailsObj?.Name | titlecase }}&nbsp;</strong>
+      </p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button
+          type="button"
+          (click)="onCancelConfirm(ShiftMenuDetailsObj)"
+          class="col-sm-12 btn btn-success"
+        >
+          Yes
+        </button>
+      </div>
+      <div class="ui-g-6">
+        <button
+          type="button"
+          (click)="displayCancelAppoModal = false"
+          class="col-sm-12 btn btn-default"
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+  <br />
+</p-dialog>
+<!-- Update Consultancy -->
+<p-dialog
+  header="Update Consultancy Done"
+  [visible]="displayUpdateConsultModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '25%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <br />
+  <div>
+    <div
+      style="text-align: center"
+      *ngIf="(ShiftMenuDetailsObj | json) != '{}'"
+    >
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>Update Consultancy Done</h3>
+      <p>
+        Appo ID :<strong>{{ ShiftMenuDetailsObj?.id }}&nbsp;</strong>
+        <br />Patient Name:
+        <strong>{{ ShiftMenuDetailsObj?.Name | titlecase }}&nbsp;</strong>
+      </p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button
+          type="button"
+          (click)="onUpdateConfirm(ShiftMenuDetailsObj)"
+          class="col-sm-12 btn btn-success"
+        >
+          Yes
+        </button>
+      </div>
+      <div class="ui-g-6">
+        <button
+          type="button"
+          (click)="displayUpdateConsultModal = false"
+          class="col-sm-12 btn btn-default"
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+  <br />
+</p-dialog>
+<!-- Patient Details -->
+<p-dialog
+  header="Patient Details"
+  [blockScroll]="true"
+  [contentStyle]="{ 'overflow-x': 'scroll !important' }"
+  [visible]="displayPatientDetailsModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '70%', minWidth: '200px' }"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <div class="row">
+    <!-- <p-tabView [activeIndex]="tabIndexToView">
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" rightIcon="fa fa-fw fa-bar-chart" >
+                            
+                            </p-tabPanel>
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" rightIcon="fa fa-fw fa-calendar">
+                                    
+                            </p-tabPanel>
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" rightIcon="fa fa-fw fa-calendar">
+                                    
+                            </p-tabPanel>
+                    </p-tabView>    -->
+  </div>
+
+  <p-footer>
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="displayPatientDetailsModal = false"
+    >
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- Appointment Feedback -->
+<p-dialog
+  header="Appointment Feedback"
+  [blockScroll]="true"
+  [contentStyle]="{ 'overflow-x': 'scroll !important' }"
+  [visible]="displayFeedbackModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '70%', minWidth: '200px' }"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <div class="row"></div>
+
+  <p-footer>
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="displayFeedbackModal = false"
+    >
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- Create Patient -->
+<p-dialog
+  header="Create Patient"
+  [blockScroll]="true"
+  [contentStyle]="{ 'overflow-x': 'scroll !important' }"
+  [visible]="displayAddPatientModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [style]="{ width: '70%', minWidth: '200px' }"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <div class="row">
+    <form name="registrationForm" #registrationForm="ngForm" novalidate>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label"
+            >Mobile No.<sup class="text-danger">*</sup></label
+          >
+          <p-inputMask
+            name="mobile"
+            placeholder="Mobile No."
+            type="tel"
+            autoClear="true"
+            maxlength="10"
+            unmask="true"
+            [ngClass]="{ clearance: leadSubmitted && mobile?.errors?.required }"
+            [(ngModel)]="objPatient.Mobile"
+            mask="9999-999-999"
+          ></p-inputMask>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label"
+            >Alternative Mobile No.<sup class="text-danger"></sup
+          ></label>
+          <p-inputMask
+            name="Alternativemobile"
+            placeholder="Alternative Mobile No."
+            type="tel"
+            autoClear="true"
+            maxlength="10"
+            unmask="true"
+            [ngClass]="{
+              clearance: leadSubmitted && Alternativemobile?.errors?.required
+            }"
+            [(ngModel)]="objPatient.Mobile_2"
+            mask="9999-999-999"
+          ></p-inputMask>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label"
+            >WhatsApp No.<sup class="text-danger"></sup>
+          </label>
+          <p-inputMask
+            [(ngModel)]="objPatient.Mobile_3_WP"
+            name="mobileWP"
+            placeholder="WhatsApp No."
+            unmask="true"
+            type="tel"
+            autoClear="true"
+            maxlength="10"
+            [ngClass]="{
+              clearance: leadSubmitted && mobileWP?.errors?.required
+            }"
+            mask="9999-999-999"
+          ></p-inputMask>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label"
+            >Name<sup class="text-danger">*</sup> &nbsp;</label
+          >
+          <div class="input-group" style="width:100%">
+            <select
+              class="form-control"
+              name="prefix"
+              [(ngModel)]="objPatient.Prefix"
+              [ngClass]="{
+                clearance: leadSubmitted && prefix?.errors?.required
+              }"
+              [required]="nameTextFieldVisible"
+            >
+              <option [ngValue]="undefined">Select</option>
+              <option value="Mr">Mr</option>
+              <option value="Mrs">Mrs</option>
+              <option value="Miss">Miss</option>
+              <option value="Ms">Ms</option>
+              <option value="Sir">Sir</option>
+              <option value="Dr">Dr</option>
+            </select>
+            <span
+              class="input-group-addon"
+              style="border-color: #ffffff; padding:0px"
+            ></span>
+            <input
+              type="text"
+              class="form-control"
+              name="name"
+              #name="ngModel"
+              [(ngModel)]="objPatient.Contact_Name"
+              placeholder="Name"
+              allow-pattern="([a-z ]|\.)"
+              [ngClass]="{ clearance: leadSubmitted && name?.errors?.required }"
+              required
+            />
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <label class="control-label"
+            >Gender<span class="text-danger">*</span></label
+          >
+          <select
+            class="form-control"
+            name="gender"
+            #gender="ngModel"
+            [(ngModel)]="objPatient.Gender"
+            [ngClass]="{ clearance: leadSubmitted && gender?.errors?.required }"
+            required
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-sm-2">
+          <label class="control-label"
+            >Age<sup class="text-danger"></sup
+          ></label>
+          <input
+            class="form-control"
+            name="Age"
+            [(ngModel)]="objPatient.Age"
+            CompacctDigitonly="true"
+            placeholder="Age"
+          />
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label"
+            >PIN<sup class="text-danger"></sup
+          ></label>
+          <input
+            class="form-control"
+            name="PIN"
+            [(ngModel)]="objPatient.Pin"
+            placeholder="PIN Code"
+            CompacctDigitonly="true"
+            (change)="GetStateDistrict(objPatient.Pin)"
+            valid-number
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label"
+            >Address<sup class="text-danger"></sup>
+          </label>
+          <textarea
+            class="form-control"
+            rows="3.5"
+            name="address"
+            [(ngModel)]="objPatient.Address"
+            placeholder="Address"
+          ></textarea>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Location</label>
+          <input
+            class="form-control"
+            gm-places-autocomplete
+            name="Location"
+            placeholder="Area"
+          />
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label"
+            >Country<sup class="text-danger"></sup
+          ></label>
+          <input
+            class="form-control"
+            name="Country"
+            [(ngModel)]="objPatient.Country"
+            placeholder="Country"
+          />
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label"
+            >State<sup class="text-danger"></sup
+          ></label>
+          <select
+            class="form-control"
+            name="state"
+            [(ngModel)]="objPatient.State"
+            (change)="GetDistrict(objPatient.State)"
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option *ngFor="let option of states" value="{{ option.State }}">
+              {{ option.State }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label"
+            >District<sup class="text-danger"></sup
+          ></label>
+          <select
+            class="form-control"
+            name="district"
+            [(ngModel)]="objPatient.District"
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of Districts"
+              value="{{ option.District }}"
+            >
+              {{ option.District }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label"
+            >Reference Doctor <span class="text-danger"></span
+          ></label>
+          <p-dropdown
+            [options]="referenceDoctorList"
+            name="ReferenceDoctor"
+            [(ngModel)]="selectedReferenceDoctor"
+            [showClear]="true"
+            [emptyFilterMessage]="' No Doctor Found'"
+            [filter]="true"
+            filterBy="label,value.name"
+            [placeholder]="'Select Doctor'"
+            [virtualScroll]="true"
+            itemSize="30"
+            #ReferenceDoctor="ngModel"
+            [styleClass]="
+              leadSubmitted && ReferenceDoctor.errors?.required
+                ? 'clearance'
+                : ''
+            "
+          >
+          </p-dropdown>
+          <!-- <span ng-bind-html="a.Enq_Source_Sub_Name | highlight: $select.search"></span> -->
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label"
+            >Enquiry Source <span class="text-danger">*</span></label
+          >
+          <select
+            class="form-control"
+            name="referenceSource"
+            [(ngModel)]="objPatient.Enq_Source_ID"
+            [ngClass]="{
+              clearance: leadSubmitted && referenceSource?.errors?.required
+            }"
+            required
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of referenceSourceList"
+              value="{{ option.Enq_Source_ID }}"
+            >
+              {{ option.Enq_Source_Name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label"
+            >Consultancy Type<span class="text-danger">*</span></label
+          >
+          <select
+            class="form-control"
+            name="consultType"
+            #consultType="ngModel"
+            [(ngModel)]="objPatient.Consultancy_Type"
+            [ngClass]="{
+              clearance: leadSubmitted && consultType?.errors?.required
+            }"
+            required
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of consultancyTypeList"
+              value="{{ option.Consultancy_Type }}"
+            >
+              {{ option.Consultancy_Type }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <p-footer>
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="displayAddPatientModal = false"
+    >
+      CANCEL
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="CreatePatient(registrationForm.form.valid)"
+    >
+      UPDATE
+    </button>
+  </p-footer>
+</p-dialog>

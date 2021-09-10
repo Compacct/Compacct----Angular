@@ -1,0 +1,633 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                            <form name="CommercialInvoiceSearchForm" #CommercialInvoiceSearchForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                        (click)="searchCommercialInvoice(CommercialInvoiceSearchForm.form.valid)"
+                                                        id="load"
+                                                        [disabled]="Spinner">
+                                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                 </button>
+
+                                                      </div>
+                                                  </div>
+                                             </form>
+
+                                            <div class="table-responsive no-padding productTable">
+                                            <p-table [value]="searchCommercialInvoiceList"
+                                                     [paginator]="searchCommercialInvoiceList.length ? true : false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                </div>
+                                                           </div>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width:5em">Action</th>
+                                                                <th>Consignee Invoice No</th>
+                                                                <th>Consignee Invoice Date</th>
+                                                                <th>Exporter's Ref</th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+                                                                <td>
+                                                                  <div class="dropdown">
+                                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                                          <i class="fa fa-fw fa-bars"></i>
+                                                                          <span class="caret"></span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu">
+                                                                          <li>
+                                                                              <a  (click)="edit(col.Com_Inv_No)">
+                                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                                  Edit Commercial Invoice
+                                                                              </a>
+                                                                          </li>
+                                                                          <li>
+                                                                              <a (click)="deleteCommercialInvoice(col)">
+                                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                                  Delete
+                                                                              </a>
+                                                                          </li>
+                                                                          <li>
+                                                                            <a (click)="getPrint1(col)">
+                                                                                <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                                Custom Invoice Print
+                                                                            </a>
+                                                                        </li>
+                                                                          <li>
+                                                                            <a (click)="getPrint2(col)">
+                                                                                <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                                Commerercial Invoice Print
+                                                                            </a>
+                                                                        </li>
+                                                                      <li>
+                                                                        <a (click)="getPrint3(col)">
+                                                                            <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                            Phyto Invoice For Health Checking Print
+                                                                        </a>
+                                                                    </li>
+                                                                      </ul>
+                                                                  </div>
+                                                                </td>
+                                                                <td>{{col.Com_Inv_No}}</td>
+                                                                <td>{{col.Com_Inv_Dt | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Exp_Ref }}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+
+                                        </p-tabPanel>
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                            <form name="CommercialInvoiceForm" #CommercialInvoiceForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                          <label class="control-label">Date
+                                                            <sup class="text-danger">*</sup></label>
+                                                             <div class="input-group date">
+                                                              <div class="input-group-addon">
+                                                                  <i class="fa fa-calendar"></i>
+                                                              </div>
+                                                                  <input type="date"
+                                                                  class="form-control"
+                                                                  name="Com_Inv_Dt"
+                                                                  [ngModel]="DocDate | date:'yyyy-MM-dd'"
+                                                                  #Com_Inv_Dt='ngModel'
+                                                                  (ngModelChange)="GetDocdate($event)"
+                                                                  required>
+                                                          </div>
+                                                   </div>
+                                                    <div class="col-sm-4">
+
+                                                      <label class="control-label">Exporter Ref<sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                      type="text"
+                                                      name="Exp_Ref"
+                                                      [(ngModel)]="objCommercialInvoice.Exp_Ref"
+                                                      placeholder="Exporter Ref"
+                                                      >
+                                                    </div>
+
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Sale Contract No  <sup class="text-danger">*</sup></label>   <select class="form-control"
+                                                      name="Sale_Contract_No"
+                                                      [(ngModel)]="objCommercialInvoice.Sale_Contract_No"
+                                                      (change)="getContractDate(objCommercialInvoice.Sale_Contract_No)"
+                                                      required>
+                                                      <option [ngValue]="undefined">Select</option>
+                                                      <option *ngFor="let option of salesContractList" [ngValue]="option.Contract_No">{{option.Contract_No}}</option>
+                                                    </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Sale Contract Date<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    type="text"
+                                                    name="Sale_Contract_Date"
+                                                    [(ngModel)]="objCommercialInvoice.Sale_Contract_Date"
+                                                    placeholder="Sale Contract Date"
+                                                    readonly>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Buyer Order No<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    type="text"
+                                                    name="Buyer_Order_No"
+                                                    [(ngModel)]="objCommercialInvoice.Buyer_Order_No"
+                                                    placeholder="Buyer Order No"
+                                                    >
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Buyer Order Date
+                                                      <sup class="text-danger">*</sup></label>
+                                                       <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                            <input type="date"
+                                                            class="form-control"
+                                                            name="Buyer_Order_Dt"
+                                                            [ngModel]="buyerOrderDt | date:'yyyy-MM-dd'"
+                                                            #Buyer_Order_Dt='ngModel'
+                                                            (ngModelChange)="getBuyerOrderDt($event)"
+                                                            >
+                                                    </div>
+                                                  </div>
+                                              </div>
+
+                                              <div class="form-group">
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Consignee
+                                                    <sup class="text-danger">*</sup></label>
+                                                      <p-dropdown [options]="consigneeList"
+                                                          name="Sub_Ledger_ID"
+                                                          [(ngModel)]="objCommercialInvoice.Sub_Ledger_ID"
+                                                          [showClear]="true"
+                                                          [emptyFilterMessage]="'No Vendor Found'"
+                                                          (onChange)="getConsigneeDetails(objCommercialInvoice.Sub_Ledger_ID)"
+                                                          [filter]="true"
+                                                          filterBy="label,value.name"
+                                                          [placeholder]="'Select Consignee'"
+                                                          [virtualScroll]="true"
+                                                          >
+                                                      </p-dropdown>
+
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Consignee Name<sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                      type="text"
+                                                      name="Sub_Ledger_Name"
+                                                      [(ngModel)]="objCommercialInvoice.Sub_Ledger_Name"
+                                                      placeholder="Consignee Name"
+                                                      >
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Consignee Address<sup class="text-danger">*</sup></label>
+                                                  <input class="form-control"
+                                                  type="text"
+                                                  name="Sub_Ledger_Address"
+                                                  [(ngModel)]="objCommercialInvoice.Sub_Ledger_Address"
+                                                  placeholder="Consignee Address"
+                                                  >
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Consignee Buyer Name<sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                type="text"
+                                                name="Sub_Ledger_Name_Buyer"
+                                                [(ngModel)]="objCommercialInvoice.Sub_Ledger_Name_Buyer"
+                                                placeholder="Consignee Buyer Name"
+                                                >
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Consignee Buyer Address<sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                type="text"
+                                                name="Sub_Ledger_Address_Buyer"
+                                                [(ngModel)]="objCommercialInvoice.Sub_Ledger_Address_Buyer"
+                                                placeholder="Consignee Buyer Address"
+                                                >
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Country Of Origin<sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                type="text"
+                                                name="Country_Of_Origin"
+                                                [(ngModel)]="objCommercialInvoice.Country_Of_Origin"
+                                                placeholder="Country Of Origin"
+                                                >
+                                              </div>
+                                          </div>
+
+                                          <div class="form-group">
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Country Of Final Destination<sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                              type="text"
+                                              name="Country_Of_Final_Destination"
+                                              [(ngModel)]="objCommercialInvoice.Country_Of_Final_Destination"
+                                              placeholder="Country Of Final Destination"
+                                              >
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Pre-Carrige By<sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                              type="text"
+                                              name="Pre_Carrige"
+                                              [(ngModel)]="objCommercialInvoice.Pre_Carrige"
+                                              placeholder="Pre Carrige"
+                                              >
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label"> Place Of Receipt By Pre-Carrier <sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                              type="text"
+                                              name="Pre_Carrige_Reciept"
+                                              [(ngModel)]="objCommercialInvoice.Pre_Carrige_Reciept"
+                                              placeholder="Place Of Receipt By Pre-Carrier"
+                                              >
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                          <div class="col-sm-4">
+                                            <label class="control-label">Vessel/Filight No<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            type="text"
+                                            name="Vessel_Filight_No"
+                                            [(ngModel)]="objCommercialInvoice.Vessel_Filight_No"
+                                            placeholder="Vessel/Filight No"
+                                            >
+                                          </div>
+                                          <div class="col-sm-4">
+                                            <label class="control-label">Port Of Loading<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            type="text"
+                                            name="Port_Of_Loading"
+                                            [(ngModel)]="objCommercialInvoice.Port_Of_Loading"
+                                            placeholder="Port Of Loading"
+                                            >
+                                          </div>
+                                          <div class="col-sm-4">
+                                            <label class="control-label">Port Of Discharge<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            type="text"
+                                            name="Port_Of_Discharge"
+                                            [(ngModel)]="objCommercialInvoice.Port_Of_Discharge"
+                                            placeholder="Port Of Discharge"
+                                            >
+                                          </div>
+                                      </div>
+
+                                      <div class="form-group">
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Final Destination<sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                          type="text"
+                                          name="Final_Destination"
+                                          [(ngModel)]="objCommercialInvoice.Final_Destination"
+                                          placeholder="Final Destination"
+                                          >
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Term's Of Delivery & Payment<sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                          type="text"
+                                          name="Term_Delivery_Payment"
+                                          [(ngModel)]="objCommercialInvoice.Term_Delivery_Payment"
+                                          placeholder="Term's Of Delivery & Payment"
+                                          >
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Currency <sup class="text-danger">*</sup></label>                               <select class="form-control"
+                                                    name="Currency"
+                                                    [(ngModel)]="objCommercialInvoice.Currency"
+                                                    >
+                                                    <option ngValue="undefined">Select</option>
+                                                    <option ngValue="USD">USD</option>
+                                                    <option ngValue="EURO">EURO</option>
+                                                  </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                      <div class="col-sm-4">
+                                        <label class="control-label">INR Conv Rate<sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                          type="number"
+                                          name="INR_Conv_Rate"
+                                          [(ngModel)]="objCommercialInvoice.INR_Conv_Rate"
+                                          placeholder="INR Conv Rate"
+                                          >
+
+                                      </div>
+                                      <div class="col-sm-4">
+                                        <label class="control-label">ARN No<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        type="text"
+                                        name="ARN_No"
+                                        [(ngModel)]="objCommercialInvoice.ARN_No"
+                                        placeholder="ARN No"
+                                        >
+                                      </div>
+                                      <div class="col-sm-4">
+                                        <label class="control-label">ARN Date
+                                          <sup class="text-danger">*</sup></label>
+                                           <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                                <input type="date"
+                                                class="form-control"
+                                                name="ARN_Dt"
+                                                [ngModel]="ARNDate | date:'yyyy-MM-dd'"
+                                                #ARN_Dt='ngModel'
+                                                (ngModelChange)="getARNDate($event)"
+                                                >
+                                            </div>
+                                      </div>
+                                  </div>
+
+                            <div class="raw-bgcolor">
+
+                                    <div class="form-group">
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Container No<sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                          type="text"
+                                          name="Container_No"
+                                          [(ngModel)]="objCommercialInvoice.Container_No"
+                                          placeholder="Container No"
+                                          >
+                                      </div>
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Commodity
+                                          <sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="finalList"
+                                                name="Product_ID"
+                                                [(ngModel)]="objCommercialInvoice.Product_ID"
+                                                [showClear]="true"
+                                                [emptyFilterMessage]="'No Vendor Found'"
+                                                (onChange)="getCommodityDetails(objCommercialInvoice.Product_ID)"
+                                                [filter]="true"
+                                                filterBy="label,value.name"
+                                                [placeholder]="'Select Commodity'"
+                                                [virtualScroll]="true"
+                                                >
+                                            </p-dropdown>
+                                      </div>
+                                      <div class="col-sm-4">
+                                            <label class="control-label">Commodity Name<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            type="text"
+                                            name="Product_Description"
+                                            [(ngModel)]="objCommercialInvoice.Product_Description"
+                                            placeholder="Commodity Name"
+                                            >
+                                      </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Specification<sup class="text-danger">*</sup></label>
+                                      <input class="form-control"
+                                      type="text"
+                                      name="Specification"
+                                      [(ngModel)]="objCommercialInvoice.Specification"
+                                      placeholder="Specification"
+                                      >
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">HS Code<sup class="text-danger">*</sup></label>
+                                      <input class="form-control"
+                                      type="text"
+                                      name="HS_Code"
+                                      [(ngModel)]="objCommercialInvoice.HS_Code"
+                                      placeholder="HS Code"
+                                      >
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Gross Weight<sup class="text-danger">*</sup></label>
+                                      <input class="form-control"
+                                      type="number"
+                                      name="Gross_Wt"
+                                      [(ngModel)]="objCommercialInvoice.Gross_Wt"
+                                      (ngModelChange)="getQty()"
+                                      placeholder="Gross Weight"
+                                      >
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                  <div class="col-sm-4">
+                                    <label class="control-label">Package Weight<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    type="number"
+                                    name="Pkg_Wt"
+                                    [(ngModel)]="objCommercialInvoice.Pkg_Wt"
+                                    (ngModelChange)="getQty()"
+                                    placeholder="Pkg_Wt"
+                                    >
+                                  </div>
+                                  <div class="col-sm-4">
+                                    <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    type="number"
+                                    name="Qty"
+                                    [(ngModel)]="objCommercialInvoice.Qty"
+                                    placeholder="Qty"
+                                    readonly>
+                                  </div>
+                                  <div class="col-sm-4">
+                                    <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    type="number"
+                                    name="Rate"
+                                    [(ngModel)]="objCommercialInvoice.Rate"
+                                    (ngModelChange)="getAmount()"
+                                    placeholder="Rate"
+                                    >
+                                  </div>
+                              </div>
+
+                              <div class="form-group">
+                                <div class="col-sm-4">
+                                <label class="control-label">Amount<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    type="number"
+                                    name="Amount"
+                                    [(ngModel)]="objCommercialInvoice.Amount"
+                                    placeholder="Amount"
+                                    >
+                                </div>
+                                <div class="col-sm-4">
+                                  <label class="control-label">INR Amt<sup class="text-danger">*</sup></label>
+                                  <input class="form-control"
+                                  type="number"
+                                  name="INR_Amt"
+                                  [(ngModel)]="objCommercialInvoice.INR_Amt"
+                                  placeholder="INR Amt"
+                                  >
+                                </div>
+                                <div class="col-sm-4">
+                                  <label class="control-label">Batch No<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    type="text"
+                                    name="Batch_No"
+                                    [(ngModel)]="objCommercialInvoice.Batch_No"
+                                    placeholder="Batch No"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label">Manufacturing Date
+                                  <sup class="text-danger">*</sup></label>
+                                   <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                        <input type="date"
+                                        class="form-control"
+                                        name="Mfg_Dt"
+                                        [ngModel]="mfDate | date:'yyyy-MM-dd'"
+                                        #mf_date='ngModel'
+                                        (ngModelChange)="getMfDate($event)"
+                                        required>
+                                    </div>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Exprire Date
+                                  <sup class="text-danger">*</sup></label>
+                                   <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                        <input type="date"
+                                        class="form-control"
+                                        name="Exp_Dt"
+                                        [ngModel]="expDate | date:'yyyy-MM-dd'"
+                                        #Exp_Dt='ngModel'
+                                        (ngModelChange)="getExpDate($event)"
+                                        >
+                                  </div>
+                            </div>
+                            <div class="col-sm-4">
+
+                        </div>
+                      </div>
+
+                    </div>
+
+
+                                      <div class="clearfix mt-15">
+                                        <button class="btn btn-primary pull-right" (click)="addMoreInvoice()">Add</button>
+                                    </div>
+
+                                      <table class="table table-bordered" *ngIf="commercialInvoiceObj.length > 0">
+                                        <thead>
+                                          <tr>
+                                            <th>Container No</th>
+                                            <th>Commodity </th>
+                                            <th>Batch No</th>
+                                            <th>HS Code</th>
+                                            <th>Gross Wt</th>
+                                            <th>Pkg Wt</th>
+                                            <th>Qty</th>
+                                            <th>Rate</th>
+                                            <th>Mfg. Date</th>
+                                            <th>Exp. Date</th>
+                                            <th>Delete</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor="let item of commercialInvoiceObj; let index = index">
+                                            <td>{{item.Container_No}}</td>
+                                            <td>{{item.Product_Description}}</td>
+                                            <td>{{item.Batch_No}}</td>
+                                              <td>{{item.HS_Code}}</td>
+                                              <td>{{item.Gross_Wt}}</td>
+                                              <td>{{item.Pkg_Wt}}</td>
+                                              <td>{{item.Qty}}</td>
+                                              <td>{{item.Rate}}</td>
+                                              <td>
+                                                <ng-container *ngIf="item.Mfg_Dt!='1900-01-01T00:00:00'">
+                                                  {{item.Mfg_Dt | date: 'MM/dd/yyyy'}}
+                                                </ng-container>
+                                              </td>
+                                              <td>
+                                                <ng-container *ngIf="item.Exp_Dt!='1900-01-01T00:00:00'">
+                                                  {{item.Exp_Dt | date: 'MM/dd/yyyy'}}
+                                                </ng-container>
+                                              </td>
+                                              <td> <span (click)="deleteInvoice(index)" ><i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+
+
+                                          <div class="box-footer">
+                                              <button class="btn btn-primary pull-right"
+                                                      (click)="SaveCommercialInvoiceMaster()"
+                                                      id="load"
+                                                      [disabled]="Spinner">
+                                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                  <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                              </button>
+                                          </div>
+                                      </form>
+                                  </p-tabPanel>
+                              </p-tabView>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+

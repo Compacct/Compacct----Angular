@@ -1,0 +1,469 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<p-toast position="center" key="c2" (onClose)="onReject2()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+          <h3>{{message.summary}}</h3>
+          <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject2()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+  </ng-template>
+</p-toast>
+
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                            <form name="ContainerBookingSearchForm" #ContainerBookingSearchForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                        (click)="searchContainerBooking(ContainerBookingSearchForm.form.valid)"
+                                                        id="load"
+                                                        [disabled]="Spinner">
+                                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                 </button>
+
+                                                      </div>
+                                                  </div>
+                                             </form>
+
+                                            <div class="table-responsive no-padding productTable">
+                                            <p-table [value]="searchContainerBookingList"
+                                                     [paginator]="searchContainerBookingList.length ? true : false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                </div>
+                                                           </div>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width:5em">Action</th>
+                                                                <th>Booking Date</th>
+                                                                <th>Commercial Invoice No</th>
+                                                                <th>Shipping Line No</th>
+                                                                <th>Expected Date </th>
+                                                                <th>Rate </th>
+                                                                <th>Qty </th>
+                                                                <th>Amount</th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+                                                                <td>
+                                                                  <div class="dropdown">
+                                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                                          <i class="fa fa-fw fa-bars"></i>
+                                                                          <span class="caret"></span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu">
+                                                                          <li>
+                                                                              <a (click)="EditContainerBooking(col.Exp_Container_Book_ID)">
+                                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                                  Edit Container Booking
+                                                                              </a>
+                                                                          </li>
+                                                                          <li>
+                                                                          <a (click)="createPickup(col.Exp_Container_Book_ID)">
+                                                                              <i class="fa fa-fw fa-pencil"></i>
+                                                                              Update Container Pickup
+                                                                          </a>
+                                                                        </li>
+                                                                        <!-- <li>
+                                                                          <a (click)="GetPDF(col)">
+                                                                              <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                              Print
+                                                                          </a>
+                                                                        </li> -->
+                                                                          <li>
+                                                                              <a (click)="DeleteContainerBooking(col)">
+                                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                                  Delete
+                                                                              </a>
+                                                                          </li>
+                                                                      </ul>
+                                                                  </div>
+                                                                </td>
+                                                                <td>{{col.Booking_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Com_Inv_No }}</td>
+                                                                <td>{{col.Sub_Ledger_Name}}</td>
+                                                                <td>{{col.Expected_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Rate}}</td>
+                                                                <td>{{col.Qty }}</td>
+                                                                <td>{{col.Amount }}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+
+                                        </p-tabPanel>
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+
+                                          <form [formGroup]="bookingForm" novalidate>
+
+                                            <div class="form-group">
+                                              <div class="col-sm-4">
+                                                  <label class="control-label">Commercial Invoice No.
+                                                      <sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="InvoiceList"
+                                                    formControlName="Com_Inv_No"
+                                                    [ngClass]="{ 'is-invalid': bookingFormSubmitted && f.Com_Inv_No.errors }"
+                                                    [(ngModel)]="objContainerBooking.Com_Inv_No"
+                                                    [showClear]="true"
+                                                    [emptyFilterMessage]="'No Vendor Found'"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Commercial Invoice No'"
+                                                    [virtualScroll]="true"
+                                                    >
+                                                </p-dropdown>
+                                                <div *ngIf="bookingFormSubmitted && f.Com_Inv_No.errors" class="invalid-feedback">
+                                                  <div *ngIf="f.Com_Inv_No.errors.required">Consignee is required</div>
+                                                </div>
+
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Booking Date
+                                                  <sup class="text-danger">*</sup></label>
+                                                        <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                            <input type="date"
+                                                            class="form-control"
+                                                            formControlName="Booking_Date"
+                                                            [ngModel]="BookingDate | date:'yyyy-MM-dd'"
+                                                            (ngModelChange)="getBookingDate($event)"
+                                                            >
+                                                    </div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Shipping Line Name
+                                                  <sup class="text-danger">*</sup></label>
+                                                <p-dropdown [options]="tranpoterList"
+                                                    formControlName="Sub_Ledger_ID"
+                                                    [ngClass]="{ 'is-invalid': bookingFormSubmitted && f.Sub_Ledger_ID.errors }"
+                                                    [(ngModel)]="objContainerBooking.Sub_Ledger_ID"
+                                                    [showClear]="true"
+                                                    [emptyFilterMessage]="'No Vendor Found'"
+                                                    (onChange)="getSubLedgerName(objContainerBooking.Sub_Ledger_ID)"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Shipping Line Name'"
+                                                    [virtualScroll]="true"
+                                                    >
+                                                </p-dropdown>
+                                                <div *ngIf="bookingFormSubmitted && f.Sub_Ledger_ID.errors" class="invalid-feedback">
+                                                  <div *ngIf="f.Sub_Ledger_ID.errors.required">Sub Ledger ID is required</div>
+                                              </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="form-group">
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Destination                                                      <sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                                  type="text"
+                                                  formControlName="Destination"
+                                                  [ngClass]="{ 'is-invalid': bookingFormSubmitted && f.Destination.errors }"
+                                                  [(ngModel)]="objContainerBooking.Destination"
+                                                  placeholder="Destination"
+                                                  >
+                                                  <div *ngIf="bookingFormSubmitted && f.Destination.errors" class="invalid-feedback">
+                                                    <div *ngIf="f.Destination.errors.required">Destination is required</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Expected Date
+                                                <sup class="text-danger">*</sup></label>
+                                                      <div class="input-group date">
+                                                      <div class="input-group-addon">
+                                                          <i class="fa fa-calendar"></i>
+                                                      </div>
+                                                          <input type="date"
+                                                          class="form-control"
+                                                          formControlName="Expected_Date"
+                                                          [ngModel]="ExpectedDate | date:'yyyy-MM-dd'"
+                                                          (ngModelChange)="getExpectedDate($event)"
+                                                          >
+                                                  </div>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Rate
+                                                <sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                type="number"
+                                                formControlName="Rate"
+                                                [ngClass]="{ 'is-invalid': bookingFormSubmitted && f.Rate.errors }"
+                                                [(ngModel)]="objContainerBooking.Rate"
+                                                placeholder="Rate"
+                                                (ngModelChange)="amountCal()">
+                                                <div *ngIf="bookingFormSubmitted && f.Rate.errors" class="invalid-feedback">
+                                                  <div *ngIf="f.Rate.errors.required">Rate is required</div>
+                                              </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                          <div class="col-sm-4">
+                                            <label class="control-label">Qty
+                                              <sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                              type="number"
+                                              formControlName="Qty"
+                                              [ngClass]="{ 'is-invalid': bookingFormSubmitted && f.Qty.errors }"
+                                              [(ngModel)]="objContainerBooking.Qty"
+                                              placeholder="Qty"
+                                              (ngModelChange)="amountCal()">
+                                              <div *ngIf="bookingFormSubmitted && f.Qty.errors" class="invalid-feedback">
+                                                <div *ngIf="f.Qty.errors.required">Qty is required</div>
+                                            </div>
+                                          </div>
+                                          <div class="col-sm-4">
+                                            <label class="control-label">Amount
+                                              <sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                              type="text"
+                                              formControlName="Amount"
+                                              [(ngModel)]="objContainerBooking.Amount"
+                                              placeholder="Amount"
+                                              readonly>
+                                          </div>
+                                          <div class="col-sm-4">
+                                          </div>
+                                      </div>
+
+                                          <div class="box-footer">
+                                              <button class="btn btn-primary pull-right"
+                                                      (click)="SaveContainerBookingMaster()"
+                                                      id="load"
+                                                      [disabled]="Spinner">
+                                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                  <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                              </button>
+                                          </div>
+                                      </form>
+
+                                  </p-tabPanel>
+
+                                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" [disabled]="!(buttonname === 'Create Pickup')" leftIcon="glyphicon glyphicon-floppy-save">
+
+                                    <div class="top-section">
+                                      <div class="form-group">
+                                          <div class="col-sm-4">
+                                             <label class="control-label">Commercial Invoice No.</label>
+                                                {{objContainerBooking.Com_Inv_No }}
+                                          </div>
+                                          <div class="col-sm-4">
+                                            <label class="control-label">Booking Date </label>
+                                            {{ objContainerBooking.Booking_Date | date:'yyyy-MM-dd'}}
+                                          </div>
+                                          <div class="col-sm-4">
+                                              <label class="control-label">Shipping Line Name </label>
+                                              {{objContainerBooking.Sub_Ledger_Name}}
+                                          </div>
+                                      </div>
+
+                                      <div class="form-group">
+                                        <div class="col-sm-4">
+                                              <label class="control-label">Destination </label>
+                                              {{objContainerBooking.Destination}}
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Expected Date </label>
+                                            {{ objContainerBooking.Expected_Date | date:'yyyy-MM-dd'}}
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Rate  </label>
+                                            {{objContainerBooking.Rate}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <div class="col-sm-4">
+                                            <label class="control-label">Qty  </label>
+                                            {{objContainerBooking.Qty}}
+                                      </div>
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Amount  </label>
+                                           {{objContainerBooking.Amount}}
+                                      </div>
+                                      <div class="col-sm-4">
+
+                                      </div>
+                                    </div>
+
+                                   </div>
+
+                                          <form [formGroup]="pickupForm" novalidate>
+                                            <div class="form-group">
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Transporter Name
+                                                  <sup class="text-danger">*</sup></label>
+                                                <p-dropdown [options]="tranpoterList"
+                                                    formControlName="Sub_Ledger_ID"
+                                                    [ngClass]="{ 'is-invalid': pickupFormSubmitted && f2.Sub_Ledger_ID.errors }"
+                                                    [(ngModel)]="objContainerPickup.Sub_Ledger_ID"
+                                                    [showClear]="true"
+                                                    [emptyFilterMessage]="'No Vendor Found'"
+                                                    (onChange)="getPickupSubLedgerName(objContainerPickup.Sub_Ledger_ID)"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Transporter Name'"
+                                                    [virtualScroll]="true"
+                                                    >
+                                                </p-dropdown>
+                                                <div *ngIf="pickupFormSubmitted && f2.Sub_Ledger_ID.errors" class="invalid-feedback">
+                                                  <div *ngIf="f2.Sub_Ledger_ID.errors.required">Sub Ledger ID is required</div>
+                                              </div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Container No                                                      <sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                    type="text"
+                                                    formControlName="Container_No"
+                                                    [ngClass]="{ 'is-invalid': pickupFormSubmitted && f2.Container_No.errors }"
+                                                    [(ngModel)]="objContainerPickup.Container_No"
+                                                    placeholder="Container No"
+                                                    >
+                                                    <div *ngIf="pickupFormSubmitted && f2.Container_No.errors" class="invalid-feedback">
+                                                      <div *ngIf="f2.Container_No.errors.required">Container No is required</div>
+                                                  </div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Pickup Date
+                                                  <sup class="text-danger">*</sup></label>
+                                                        <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                            <input type="date"
+                                                            class="form-control"
+                                                            formControlName="Pickup_Date"
+                                                            [ngModel]="PickupDate | date:'yyyy-MM-dd'"
+                                                            (ngModelChange)="getPickupDate($event)"
+                                                            >
+                                                    </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="box-footer">
+                                              <button class="btn btn-primary pull-right"
+                                                      (click)="saveContainerPickupMaster()"
+                                                      id="load"
+                                                      [disabled]="Spinner">
+                                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                  <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                              </button>
+                                          </div>
+                                      </form>
+
+                                      <div class="error-msg" *ngIf="dateMsg!=''">
+                                        {{dateMsg}}
+                                      </div>
+                                      <div class="table-responsive no-padding">
+                                      <table class="table table-bordered " *ngIf="containerPickupList.length > 0">
+                                        <thead>
+                                          <tr>
+                                            <th>Transporter Name</th>
+                                            <th>Container No </th>
+                                            <th>Pickup Date</th>
+                                            <th style="width: 220px;">Loading Date</th>
+                                            <th style="width: 220px;">Unloading Date</th>
+                                            <th style="width: 220px;">Custom Date</th>
+                                            <th>Consumed Days</th>
+                                            <th>Delete</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor="let item of containerPickupList; let index = index">
+                                            <td>{{item.Sub_Ledger_Name}}</td>
+                                            <td>{{item.Container_No}}</td>
+                                            <td>{{item.Pickup_Date | date: 'MM/dd/yyyy'}}</td>
+                                            <td>
+                                              <div style="width: 220px;">
+                                                <input type="date"
+                                                name="loadingDate"
+                                                [(ngModel)]="loadingDate[index]"
+                                                >
+                                              <span class="uBtn" (click)="updatePickupForLoadingDate(item, index)">Save</span>
+                                              </div>
+
+                                            </td>
+                                            <td>
+                                              <div style="width: 220px;">
+                                                <input type="date"
+                                                name="unloadingDate"
+                                                [(ngModel)]="unloadingDate[index]"
+                                                >
+                                              <span class="uBtn" (click)="updatePickupForUnloadingDate(item, index)">Save</span>
+                                            </div>
+
+                                            </td>
+                                            <td>
+                                              <div style="width: 220px;">
+                                                <input type="date"
+                                                      name="customDate"
+                                                      [(ngModel)]="customDate[index]"
+                                                      >
+                                                    <span class="uBtn" (click)="updatePickupForCustomDate(item, index)">Save</span>
+
+                                              </div>
+                                            </td>
+                                            <td>{{item.Consumed_Days}}</td>
+                                            <td> <span (click)="DeleteContainerPickup(item)" > <i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                      </div>
+                                  </p-tabPanel>
+                                </p-tabView>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+

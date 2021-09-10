@@ -1,0 +1,65 @@
+div.table-responsive.table-id > p-table > div > div {
+  width: auto !important;
+}
+.box-body {
+  padding-top: 10px !important;
+  padding-left: 10px !important;
+}
+.custombutton {
+  margin-top: 25px;
+}
+div.label-t {
+  padding: 6px 12px;
+  background: rgb(206, 216, 216);
+}
+
+.invoice {
+  /* position: relative; */
+  background-color: #fff;
+  min-height: 680px;
+  padding: 0 !important;
+}
+.invoice header {
+  padding: 10px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #3989c6;
+}
+.invoice .company-details {
+  text-align: right;
+}
+.invoice .company-details .name {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.invoice .contacts {
+  margin-bottom: 20px;
+  padding: 0.5em;
+}
+.invoice .invoice-to {
+  text-align: left;
+  display: inline-block;
+  width: 50%;
+}
+.invoice .invoice-to .to {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.invoice .invoice-details {
+  text-align: right;
+  display: inline-block;
+  width: 50%;
+}
+.invoice .invoice-details .invoice-id {
+  margin-top: 0;
+  color: #3989c6;
+}
+.h1,
+h1 {
+  font-size: 26px;
+}
+hr {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 0;
+  border-top: 1px solid rgb(59, 50, 99);
+}

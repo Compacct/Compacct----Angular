@@ -1,0 +1,272 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+ <div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                            <form name="BillSearchForm" #BillSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                  <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+
+                                    <app-compacct-daterangepicker
+                                      (DaterangeObj)="getDateRange($event)"
+                                    ></app-compacct-daterangepicker>
+                                  </div>
+
+                                  <div class="col-sm-3">
+                                    <button
+                                      class="btn btn-primary custombutton"
+                                      data-toggle="modal"
+                                      (click)="Searchlead()"
+                                      id="load"
+                                      [disabled]="seachSpinner"
+                                    >
+                                      <p-progressSpinner
+                                        *ngIf="seachSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                  </div>
+
+                                </div>
+                                <div class="form-group" *ngIf='LeadList.length'>
+                                  <div class="col-sm-3" >
+                                    <label class="control-label">Registered <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistRegistered" [(ngModel)]="SelectedDistRegistered" [virtualScroll]="true"
+                                      itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                                      name="Registered"></p-multiSelect>
+                                  </div>
+                                  <div class="col-sm-3" >
+                                    <label class="control-label">Subscribed <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistSubscribed" [(ngModel)]="SelectedDistSubscribed" [virtualScroll]="true"
+                                      itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                                      name="Assigned3"></p-multiSelect>
+                                  </div>
+                                </div>
+                              </form>
+                            <div class="table-responsive table-id">
+                            <p-table #dt
+                                     [value]='LeadList'
+                                     [globalFilterFields]="['Mobile','Mobile_Whatsup','Contact_Name','Class_Name','Pin','City','Address','School']"
+                                     [paginator]="true" [rows]="10" [rowHover]="true"
+                                     [autoLayout]="true" sortMode="multiple"
+                                     [rowsPerPageOptions]="[10,20,30]"
+                                     [rowHover]="true">
+                                       <ng-template pTemplate="caption">
+                                           <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                    </div>
+                                           </div>
+
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+
+                                                <th>Mobile No</th>
+                                                <th>Whatsapp No</th>
+                                                <th>Name</th>
+                                                <th>Class</th>
+                                                <th>PIN</th>
+                                                <th>City</th>
+                                                <th>Address</th>
+                                                <th>School Name</th>
+                                                <th>Registered</th>
+                                                <th>Subscribed</th>
+
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+
+                                                <td>{{col.Mobile}}</td>
+                                                <td>{{col.Mobile_Whatsup}}</td>
+                                                <td>{{col.Contact_Name ? col.Contact_Name : '-' }}</td>
+                                                <td>{{col.Class_Name ? col.Class_Name : '-'}}</td>
+                                                <td>{{col.Pin ? col.Pin : '-'}}</td>
+                                                <td>{{col.City ? col.City : '-'}}</td>
+
+                                                <td>{{col.Address ? col.Address : '-'}}</td>
+                                                <td>{{col.School ? col.School : '-'}}</td>
+                                                <td>{{col.Registered ? col.Registered : '-'}}</td>
+                                                <td>{{col.Subscribed ? col.Subscribed : '-'}}</td>
+                                            </tr>
+                                        </ng-template>
+
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                    </ng-template>
+                            </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                <form name="LeadcreationForm" #LeadcreationForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                      <div class="col-sm-4">
+                                             <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                 name="Mobile"
+                                                 #Mobile="ngModel"
+                                                 [(ngModel)]="ObjLeadcreation.Mobile"
+                                                 placeholder="Mobile No"
+                                                 CompacctDigitonly="true"
+                                                 minlength="10"
+                                                 maxlength="10"
+                                                 [ngClass]="{'clearance':LeadcreationFormSubmitted && Mobile?.errors?.required ||
+                                                 (Mobile.errors?.minlength && Mobile.touched)}" required>
+
+                                        </div>
+                                        <div class="col-sm-4">
+                                             <label class="control-label">Whatsapp No</label>
+                                                <input class="form-control"
+                                                 name="Mobile_Whatsup"
+                                                 #Mobile_Whatsup="ngModel"
+                                                 CompacctDigitonly="true"
+                                                 minlength="10"
+                                                 maxlength="10"
+                                                 [(ngModel)]="ObjLeadcreation.Mobile_Whatsup"
+                                                 placeholder="Whatsapp No"
+                                                 >
+                                        </div>
+                                        <div class="col-sm-4">
+                                             <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                 name="Contact_Name"
+                                                 #Contact_Name="ngModel"
+                                                 [(ngModel)]="ObjLeadcreation.Contact_Name"
+                                                 placeholder="Name"
+                                                 [ngClass]="{'clearance':LeadcreationFormSubmitted && Contact_Name?.errors?.required ||
+                                                 (Contact_Name.errors?.minlength && Contact_Name.touched)}" required>
+                                        </div>
+                                    </div>
+                                    <div  class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">School Name</label>
+                                               <input class="form-control"
+                                                name="School"
+                                                #School="ngModel"
+                                                [(ngModel)]="ObjLeadcreation.School"
+                                                placeholder="School Name"
+                                                >
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Class<sup class="text-danger">*</sup></label>
+                                               <select class="form-control"
+                                                  name=Class_ID
+                                                  #Class_ID="ngModel"
+                                                  [(ngModel)]="ObjLeadcreation.Class_ID"[ngClass]="{'clearance':LeadcreationFormSubmitted && Class_ID?.errors?.required ||
+                                                  (Class_ID.errors?.minlength && Class_ID.touched)}" required>
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                       <option *ngFor="let option of Classlist" value={{option.Class_ID}}>
+                                                        {{option.Class_Name}}
+                                                     </option>
+                                                </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                             <label class="control-label">Address</label>
+                                                 <input class="form-control"
+                                                  name="Address"
+                                                  #Address="ngModel"
+                                                  [(ngModel)]="ObjLeadcreation.Address"
+                                                  placeholder="Address">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                             <label class="control-label">City<sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                 name="City"
+                                                 #City="ngModel"
+                                                 [(ngModel)]="ObjLeadcreation.City"
+                                                 placeholder="City"
+                                                 [ngClass]="{'clearance':LeadcreationFormSubmitted && City?.errors?.required ||
+                                                 (City.errors?.minlength && City.touched)}" required>
+                                        </div>
+                                        <div class="col-sm-4">
+                                           <label class="control-label">PIN<sup class="text-danger">*</sup></label>
+                                               <input class="form-control"
+                                                name="Pin"
+                                                #Pin="ngModel"
+                                                [(ngModel)]="ObjLeadcreation.Pin"
+                                                placeholder="PIN"
+                                                (ngModelChange)="stateDistrictChange(ObjLeadcreation.Pin)"
+                                                 minlength="6"
+                                                 maxlength="6"
+                                                 CompacctDigitonly="true"
+                                                 [ngClass]="{'clearance':LeadcreationFormSubmitted && Pin?.errors?.required ||
+                                                 (Pin.errors?.minlength && Pin.touched)}" required>
+
+                                        </div>
+                                        <div class="col-sm-4">
+                                             <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                                <select class="form-control"
+                                                  name="State"
+                                                  #State="ngModel"
+                                                  [(ngModel)]="ObjLeadcreation.State"
+                                                  (change)="StateChange(ObjLeadcreation.State)"
+                                                  [ngClass]="{'clearance':LeadcreationFormSubmitted && State?.errors?.required ||
+                                                  (State.errors?.minlength && State.touched)}" required>
+
+                                                  <option  [ngValue]="undefined">Select</option>
+                                                      <option *ngFor="let option of StateList" value={{option.statename}} >
+                                                      {{option.statename}}
+                                                    </option>
+                                                </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">District<sup class="text-danger">*</sup></label>
+                                              <select class="form-control"
+                                                  name="District"
+                                                  #District="ngModel"
+                                                  [(ngModel)]="ObjLeadcreation.District"
+                                                  (change)="StateChange(ObjLeadcreation.District)"
+                                                  [ngClass]="{'clearance':LeadcreationFormSubmitted && District?.errors?.required ||
+                                                  (District.errors?.minlength && District.touched)}" required>
+
+                                                   <option  [ngValue]="undefined" > Select</option>
+                                                     <option *ngFor="let option of DistrictList" value={{option.Districtname}} >
+                                                      {{option.Districtname}}
+                                                    </option>
+                                                </select>
+
+                                        </div>
+
+                                    </div>
+
+                                   <div class="box-footer">
+                                        <button class="btn btn-primary pull-right"
+                                          (click)=save(LeadcreationForm.form.valid)
+                                          id="load"
+                                          [disabled]="Spinner">
+                                          <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                           <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                                        </button>
+                                    </div>
+
+                                </form>
+                        </p-tabPanel>
+                    </p-tabView>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

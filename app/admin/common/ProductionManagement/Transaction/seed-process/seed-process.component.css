@@ -1,0 +1,30 @@
+#ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
+  width: auto !important;
+}
+.custombutton {
+  margin-top: 25px;
+}
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+.invalid-feedback{
+  color: red;
+}
+.top-section{
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #c8daf7;
+}
+.seedsTable .ui-table-auto-layout > .ui-table-wrapper {
+  width: 100% !important;
+  min-height: 170px !important;
+}
+.bag-bgcolor{
+  background-color: #c8daf7;
+  padding: 15px;
+  margin: 15px 0;
+}

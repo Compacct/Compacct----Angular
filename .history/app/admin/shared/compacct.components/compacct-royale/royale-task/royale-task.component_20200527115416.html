@@ -1,0 +1,385 @@
+
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+
+<form
+name="FollowupSearchForm"
+#TaskSearchForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label">As On Date</label>
+      <div class="input-group date">
+        <div class="input-group-addon">
+          <i class="fa fa-calendar"></i>
+        </div>
+        <input
+          type="date"
+          name="Enddate"
+          #Enddate="ngModel"
+          [ngModel]="EndDate | date: 'yyyy-MM-dd'"
+          (ngModelChange)="GetEndDate($event)"
+          class="form-control"
+        />
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <label class="control-label"
+    >User<sup class="text-danger">*</sup
+  ></label>
+  <select
+    class="form-control"
+    name="SearchUserTask"
+    #SearchUserTask = "ngModel"
+    [(ngModel)]="ObjLeadSearch.Member_ID"
+    [ngClass]="{
+      clearance: SearcTaskSubmitted && SearchUserTask?.errors?.required
+    }"
+    required
+  >
+    <option [ngValue]="undefined">Select</option>
+    <option
+      *ngFor="let option of MemberList"
+      value="{{ option.Member_ID }}"
+    >
+      {{ option.Member_Name }}
+    </option>
+  </select>
+  </div>
+  <div class="col-sm-2">
+    <label class="control-label"
+    >Pending Task<sup class="text-danger">*</sup
+  ></label>
+  <select
+    class="form-control"
+    name="SatusTask"
+    #SatusTask = "ngModel"
+    [(ngModel)]="ObjLeadSearch.Task"
+    [ngClass]="{
+      clearance: SearcTaskSubmitted && SatusTask?.errors?.required
+    }"
+    required
+  >
+    <option [ngValue]="undefined">Select</option>
+    <option value="Show Pending Task">Show Pending Task</option>
+    <option value="Show All Task">Show All Task</option>
+  </select>
+  </div>
+  <div class="col-sm-4">
+    <button
+      class="btn btn-primary custombutton"
+      (click)="Searchfollowup(TaskSearchForm.form.valid)"
+      id="load"
+      [disabled]="seachSpinner"
+    >
+      <p-progressSpinner
+        *ngIf="seachSpinner"
+        [style]="{ width: '15px', height: '15px' }"
+        strokeWidth="8"
+        animationDuration=".5s"
+      ></p-progressSpinner>
+      <span
+        *ngIf="!seachSpinner"
+        class="glyphicon glyphicon-search"
+      ></span
+      >&nbsp;Search
+    </button>
+    <button
+    class="btn btn-primary custombutton"
+    (click)="AddTask()"
+    [disabled]="seachSpinner"
+  >
+    <span class="glyphicon glyphicon-plus"
+    ></span
+    >&nbsp;Create
+  </button>
+  </div>
+
+</div>
+</form>
+<br />
+<div class="table-responsive no-padding LeadTable">
+<p-table
+  #dt2
+  [value]="FollowupList"
+  [globalFilterFields]="[
+    'Business_Type',
+    'City',
+    'Org_Name',
+    'Mobile',
+    'Country',
+    'Next_Followup',
+    'Contact_Name',
+    'Phone',
+    'Product_Category',
+    'Followup_Action'
+  ]"
+  [paginator]="FollowupList.length ? true : false"
+  [rows]="10"
+  [rowHover]="true"
+  [autoLayout]="true"
+  sortMode="multiple"
+  [rowsPerPageOptions]="[10, 20, 30]"
+  [rowHover]="true"
+>
+  <ng-template pTemplate="caption">
+    <div class="row">
+      <div
+        class="col-sm-3 pull-right"
+        style="text-align: right;"
+      >
+        <input
+          type="text"
+          pInputText
+          size="50"
+          placeholder="Search"
+          (input)="
+          dt2.filterGlobal($event.target.value, 'contains')
+          "
+          class="searchInput form-control"
+        />
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width:5em">Action</th>
+      <th>Priority</th>
+      <th>Task Date</th>
+      <th>Due Date</th>
+      <th>Status</th>
+      <th>Created By</th>
+      <th>Details</th>
+      <th>Attached To</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-col>
+    <tr>
+      <td>
+        <div class="dropdown">
+          <button
+            class="btn btn-default btn-sm tableButton dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+            style="height:27px"
+          >
+            <i class="fa fa-fw fa-bars"></i>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a (click)="EditTask(col.Task_ID)">
+                <i class="fa fa-commenting-o"> </i>Update Task</a
+              >
+            </li>
+            <li>
+              <a (click)="RedirectStatus(col.Task_ID)"
+                ><i class="fa fa-fw fa-home"> </i> Update Status</a
+              >
+            </li>
+
+          </ul>
+        </div>
+      </td>
+      <td>{{ col.Business_Type }}</td>
+      <td>{{ col.Org_Name ? col.Org_Name : "-" }}</td>
+      <td>{{ col.Contact_Name }}</td>
+      <td>{{ col.Mobile }}</td>
+      <td>{{ col.Phone ? col.Phone : "-" }}</td>
+      <td>{{ col.District ? col.District : "-" }}</td>
+      <td>{{ col.State ? col.State : "-" }}</td>
+
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="paginatorright" let-state>
+    Showing {{ state.first + 1 }} of
+    {{ state.first + 1 + state.rows }} of
+    {{ state.totalRecords }}
+  </ng-template>
+</p-table>
+</div>
+
+
+
+<p-dialog
+  [header]="'Task'"
+  [appendTo]="'body'"
+  [visible]="TaskModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '70%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="TaskForm"
+#TaskForm="ngForm"
+novalidate
+>
+
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Subject<sup class="text-danger">*</sup></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      name="name"
+      #name="ngModel"
+      [(ngModel)]="ObjTask.Task_Subject"
+      placeholder="Task Subject"
+      [ngClass]="{
+        clearance: TaskSubmitted && name?.errors?.required
+      }"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Priority<sup class="text-danger">*</sup
+    ></label>
+    <select
+      class="form-control"
+      name="Buy"
+      #Buy="ngModel"
+      [(ngModel)]="ObjTask.Priority"
+      [ngClass]="{
+        clearance: TaskSubmitted && Buy?.errors?.required
+      }"
+      required
+    >
+      <option [ngValue]="undefined">Select</option>
+      <option value="Low"> Low</option>
+      <option value="Normal"> Normal</option>
+      <option value="High"> High </option>
+    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"> Date</label>
+    <div class="input-group date">
+      <div class="input-group-addon">
+        <i class="fa fa-calendar"></i>
+      </div>
+      <input
+        type="date"
+        name="duedate"
+        #duedate="ngModel"
+        [ngModel]="TaskDueDate | date: 'yyyy-MM-dd'"
+        (ngModelChange)="GetTaskDueDate($event)"
+        class="form-control"
+      />
+  </div>
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label"
+    >Tagged To<sup class="text-danger">*</sup
+  ></label>
+  <p-multiSelect [options]="UserList" [(ngModel)]="userSelect" [styleClass]="'compacct-multiselect'" name="serialno"></p-multiSelect>
+
+  </div>
+  <div style="background-color: #f1f1f1;
+  border: 1px solid #c1c1c124;
+  padding: 5px 25px;
+  margin: 10px 0px;
+  display: inline-block;
+    width: 100%;">
+    <div>
+      <div class="col-sm-3">
+        <p-radioButton name="groupname1" value="Lead" (onClick)="TaskRadioChange()"  [(ngModel)]="ObjTask.Linked_To"></p-radioButton> &nbsp; &nbsp;
+        <label class="control-label">Lead<sup class="text-danger"></sup></label>
+      </div>
+      <div class="col-sm-3" >
+        <p-radioButton name="groupname1" value="Subledger" (onClick)="TaskRadioChange()"   [(ngModel)]="ObjTask.Linked_To"></p-radioButton>&nbsp; &nbsp;
+        <label class="control-label">Customer<sup class="text-danger"></sup></label>
+      </div>
+      <div class="col-sm-3" >
+        <p-radioButton name="groupname1" value="None"  (onClick)="TaskRadioChange()"  [(ngModel)]="ObjTask.Linked_To"></p-radioButton>&nbsp; &nbsp;
+        <label class="control-label">None<sup class="text-danger"></sup></label>
+      </div>
+      <div class="col-sm-3" *ngIf="ObjTask.Linked_To === 'Lead'" >
+        <select
+                  class="form-control"
+                  name="SearchSalesExecutive"
+                  #SearchSalesExecutive = "ngModel"
+                  [(ngModel)]="ObjTask.Foot_Fall_ID"
+                  [ngClass]="{
+                    clearance: TaskSubmitted && SearchSalesExecutive?.errors?.required
+                  }"
+                  required
+                >
+                  <option [ngValue]="undefined">Select Existing Customer</option>
+                  <option
+                    *ngFor="let option of ExistingContactList"
+                    value="{{ option.Foot_Fall_ID }}"
+                  >
+                    {{ option.Contact_Name }}
+                  </option>
+        </select>
+      </div>
+      <div class="col-sm-3" *ngIf="ObjTask.Linked_To === 'Subledger'" >
+        <select
+                  class="form-control"
+                  name="SearchSalesExecutive"
+                  #SearchSalesExecutive = "ngModel"
+                  [(ngModel)]="ObjTask.Sub_Ledger_ID"
+                  [ngClass]="{
+                    clearance: TaskSubmitted && SearchSalesExecutive?.errors?.required
+                  }"
+                  required
+                >
+                  <option [ngValue]="undefined">Select Subledger</option>
+                  <option
+                    *ngFor="let option of SubledgerList"
+                    value="{{ option.Member_ID }}"
+                  >
+                    {{ option.Member_Name }}
+                  </option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+</form>
+</div>
+  <p-footer>
+    <button
+      type="button"
+      (click)="TaskModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+    type="submit"
+    name="bill"
+    class="btn btn-primary pull-right custombutton"
+    (click)="SaveTask(TaskForm.form.valid)"
+    id="load2"
+    [disabled]="Spinner"
+  >
+    <p-progressSpinner
+      *ngIf="Spinner"
+      [style]="{ width: '15px', height: '15px' }"
+      strokeWidth="8"
+      animationDuration=".5s"
+    ></p-progressSpinner>
+    <span
+      *ngIf="!Spinner"
+      class="glyphicon glyphicon-save"
+    ></span
+    >&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>

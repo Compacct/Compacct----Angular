@@ -1,0 +1,35 @@
+<div class="hold-transition skin-blue ">
+  <div class="wrapper">
+    <app-header></app-header>
+
+    <app-sidebar></app-sidebar>
+
+    <div class="content-wrapper">
+      <section
+        class="content-header"
+        [innerHtml]="CompacctHeaderTemplate"
+      ></section>
+      <section class="content">
+        <div class="row">
+          <div class="col-xs-12">
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="content-wrapper">
+      <ngx-ui-loader
+        [pbColor]="'#fff'"
+        [logoSize]="35"
+        [bgsColor]="'rgba(40, 40, 40, 0.53)'"
+        [fgsType]="spinnerStyle.ballScaleMultiple"
+        [logoPosition]="position.bottomRight"
+        [logoUrl]="'/Scripts/libs/favicon.ico'"
+        [fgsColor]="'#fff'"
+      ></ngx-ui-loader>
+    </div>
+
+    <app-footer></app-footer>
+    <app-rightsidebar></app-rightsidebar>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+
+<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+    <p-tabPanel [header]="items[0]">
+        <app-service></app-service>   
+    </p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]">
+        <app-new-ha></app-new-ha>
+    </p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]">
+        <app-new-ha-custom></app-new-ha-custom>
+    </p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]">
+        <app-new-ha-ric></app-new-ha-ric>
+    </p-tabPanel>   
+    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]">
+        <app-ear-mould></app-ear-mould>
+    </p-tabPanel>
+</p-tabView>  
+
+
+
+
+
+

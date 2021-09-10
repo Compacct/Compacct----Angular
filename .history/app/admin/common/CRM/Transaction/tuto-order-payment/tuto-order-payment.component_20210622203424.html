@@ -1,0 +1,277 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="c4" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+    <form #BillingTypeForm="ngForm" novalidate>
+      <div style="text-align: center">
+      <div>
+              <div class="form-group" *ngIf='Billing_Type && isLoanAcReq()'>
+                <label class="control-label">Enter Loan a/c No.</label>
+                <input class="form-control"
+                name = "Loan_"
+                minlength="5"
+                #Loan_="ngModel"
+                (keypress)="CheckValidAC($event)"
+                [ngClass]="{ clearance: TransactionIDFormSubmited }"
+                placeholder="Enter Loan a/c No."
+                 [(ngModel)] = "Loan_Ac_No"
+                 required>
+                </div>
+          </div>
+      </div>
+      <div>
+      <div class="ui-g ui-fluid" style="margin-top: 25px;">
+          <div class="ui-g-12">
+              <button type="button" pButton (click)="SaveTransactionID()" label="Yes" class="ui-button-success center"></button>
+          </div>
+       </div>
+       </div>
+      </form>
+  </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <div class="form-group"  style="margin-left: 0px;">
+                        <div class="col-sm-3">
+                            <label class="control-label">Student Name</label>
+                            <input class="form-control"
+                            name="stdName"
+                            [(ngModel)]="stdName"
+                            disabled>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label">Mobile No</label>
+                            <input class="form-control"
+                            name="stdModile"
+                            [(ngModel)]="stdModile"
+                            disabled>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label">Order NO</label>
+                            <input class="form-control"
+                            name="stdOrderNO"
+                            [(ngModel)]="stdOrderNO"
+                            disabled>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label">Order Date</label>
+                            <input class="form-control"
+                            name="stdOrderDate"
+                            [(ngModel)]="stdOrderDate"
+                            disabled>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label">Order Amount</label>
+                            <input class="form-control"
+                            name="stdOrderAmount"
+                            [(ngModel)]="stdOrderAmount"
+                            disabled>
+                        </div>
+                    </div>
+                    <div class="panel-group" style="margin-left: 12px; margin-top: 8px;">
+                        <div class="panel panel-primary">
+                          <div class="panel-body">
+                    <form name="paymentForm" #paymentForm="ngForm" novalidate>
+                        <div class="form-group"  style="padding-left: 12px;">
+                            <div class="col-sm-3">
+                                <label class="control-label">Payment By <sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                 name="Ledger_ID"
+                                 #Ledger_ID="ngModel"
+                                 [(ngModel)]="Objpayment.Ledger_ID"
+                                 (ngModelChange) = "getPaymentTypedata()"
+                                 [ngClass]="{'clearance': paymentFormSubmitted && Ledger_ID?.errors?.required}"
+                                  required>
+                                 <option  [ngValue]="undefined">Select</option>
+                                 <option *ngFor="let option of PaymentByList" value="{{option.Ledger_ID}}">
+                                  {{option.Ledger_Name}}
+                                   </option>
+                                   </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Payment Type <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                     name="Bank_Txn_Type_ID"
+                                     #Bank_Txn_Type_ID="ngModel"
+                                     [(ngModel)]="Objpayment.Bank_Txn_Type_ID"
+                                     (ngModelChange) = "getDisable()"
+                                     [ngClass]="{'clearance': paymentFormSubmitted && Bank_Txn_Type_ID?.errors?.required}"
+                                     required>
+                                     <option  [ngValue]="undefined">Select</option>
+                                     <option *ngFor="let option of PaymentTypeList" value="{{option.Bank_Txn_Type_ID}}">
+                                      {{option.Txn_Type_Name}}
+                                       </option>
+                                       </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Transaction Date</label>
+                                    <ejs-datepicker  [(value)]="delivery_Date" [format]="'dd/MMM/yyyy'" [enabled]="Transaction_DateDis" ></ejs-datepicker>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Transaction ID  <sup class="text-danger" *ngIf='!TransactionDis'>*</sup></label>
+                                      <input class="form-control"
+                                                  name="Transaction_ID"
+                                                  #Transaction_ID="ngModel"
+                                                  [(ngModel)]="Objpayment.Transaction_ID"
+                                                  placeholder="Transaction ID"
+                                                  [disabled]="TransactionDis"
+                                                  [ngClass]="{'clearance': paymentFormSubmitted && Transaction_ID?.errors?.required}"
+                                                  [required]='!TransactionDis'
+                                                  >
+                                      </div>
+                                   </div>
+                                   <div class="form-group"  style="padding-left: 12px;">
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Bank Name</label>
+                                        <input class="form-control"
+                                                    name="Bank_Name"
+                                                    #Bank_Name="ngModel"
+                                                    [(ngModel)]="Objpayment.Bank_Name"
+                                                    placeholder="Bank Name"
+                                                    [disabled]="Bank_NameDis"
+                                                    >
+                                      </div>
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Bank Branch Name</label>
+                                        <input class="form-control"
+                                                    name="Bank_Branch_Name"
+                                                    #Bank_Branch_Name="ngModel"
+                                                    [(ngModel)]="Objpayment.Bank_Branch_Name"
+                                                    placeholder="Bank Branch Name"
+                                                    [disabled]="Bank_Branch_NameDis"
+                                                    >
+                                      </div>
+                                      <div class="col-sm-2">
+                                        <label class="control-label">Amount</label>
+                                        <input class="form-control"
+                                                    name="Amount"
+                                                    #Amount="ngModel"
+                                                    [(ngModel)]="Objpayment.Amount"
+                                                    CompacctDigitonly="true"
+                                                    (ngModelChange) = "getPaymentTypedata()"
+                                                    [disabled]="aftersave"
+                                                    >
+                                      </div>
+                                      <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal"
+                                        style="margin-top: 25px;"
+                                        (click)="addorder(paymentForm.form.valid)"
+                                        id="load"
+
+                                        >
+                                        <span  class="glyphicon glyphicon-plus"></span>&nbsp;Add
+                                     </button>
+                                      </div>
+                                    </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+            <table class="table table-bordered" style="margin-left: 5px;">
+
+                       <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+
+                                  <th  class="text-center"style="vertical-align:middle" >
+                                  Payment By
+                                  </th>
+                                  <th  class="text-center"style="vertical-align:middle" >
+                                    Payment Type
+                                    </th>
+                                  <th class="text-center" style="vertical-align:middle">
+                                  Transaction Date
+                                  </th>
+                                  <th class="text-center"style="vertical-align:middle">
+                                  Transaction ID
+                                  </th>
+                                  <th class="text-center"style="vertical-align:middle">
+                                  Bank Name
+                                  </th>
+                                  <th class="text-center"style="vertical-align:middle">
+                                  Bank Branch Name
+                                  </th>
+                                  <th class="text-center" style="vertical-align:middle" >
+                                  Amount
+                                  </th>
+                                  <th class="text-center" style="vertical-align:middle">
+                                  Delete
+                                  </th>
+
+                              </thead>
+                              <tbody>
+                            <tr  *ngFor="
+                            let col of adddataList;
+                           let index = index
+                          ">
+                               <td>{{col.Ledger_Name}}</td>
+                                <td>{{col.Txn_Type_Name}}</td>
+                                <td>{{col.Transaction_Date | date :"dd/MMM/yyyy"}}</td>
+                                <td>{{col.Transaction_ID}}</td>
+                                <td>{{col.Bank_Name}}</td>
+                                <td>{{col.Bank_Branch_Name}}</td>
+                                <td>{{col.Amount}}</td>
+                                <td><a  *ngIf="col.del != 'NA'" (click)="delete(index)" class="btn danger"> <i class="fa fa-trash"></i></a></td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="6"><p class="pull-right">Total Amount</p></td>
+                                <td>{{totalAmt}}</td>
+                              </tr>
+                        </tbody>
+
+                </table>
+            </div>
+            <div class="box-footer" >
+                <div *ngIf="!saveButtonDis">
+                <button class="btn btn-primary pull-right"
+                         id="load"
+                         (click)="savePayment()"
+                        [disabled]="Spinner"
+                         [disabled]="buttonDis"
+                        >
+                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
+                </button>
+            </div>
+            <div *ngIf="saveButtonDis">
+                <button
+                     class="btn btn-primary pull-right"
+                         id="load"
+                         (click)="printOut()"
+                        [disabled]="Spinner"
+                        >
+                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                    <span *ngIf="!Spinner" class="glyphicon glyphicon-print"></span>&nbsp;Print Provisional Receipt cum Invoice
+                </button>
+            </div>
+            </div>
+
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+

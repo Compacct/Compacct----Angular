@@ -1,0 +1,1463 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body">
+          <p-tabView
+            [activeIndex]="tabIndexToView"
+            (onChange)="TabClick($event)"
+          >
+            <p-tabPanel
+              headerStyleClass="compacct-tabs"
+              [header]="items[0]"
+              leftIcon="fa fa-fw  fa-user-plus"
+            >
+            <form
+            name="FollowupSearchForm"
+            #FollowupSearchForm="ngForm"
+            novalidate
+          >
+            <div class="form-group">
+              <div class="col-sm-4">
+                <label class="control-label">Period</label>
+
+                <app-compacct-daterangepicker
+                  (DaterangeObj)="getDateRange($event)"
+                ></app-compacct-daterangepicker>
+              </div>
+              <div class="col-sm-2">
+                <label class="control-label"
+                >Sales Executive<sup class="text-danger">*</sup
+              ></label>
+              <select
+                class="form-control"
+                name="SearchSalesExecutive"
+                #SearchSalesExecutive = "ngModel"
+                [(ngModel)]="ObjLeadSearch.SalesManID"
+                [ngClass]="{
+                  clearance: SearchleadSubmitted && SearchSalesExecutive?.errors?.required
+                }"
+                required
+              >
+                <option [ngValue]="undefined">Select</option>
+                <option
+                  *ngFor="let option of MemberList"
+                  value="{{ option.Member_ID }}"
+                >
+                  {{ option.Member_Name }}
+                </option>
+              </select>
+              </div>
+              <div class="col-sm-2">
+                <label class="control-label"
+                >Satus<sup class="text-danger"></sup
+              ></label>
+              <select
+                class="form-control"
+                name="Satus"
+                #SatusSearch = "ngModel"
+                [(ngModel)]="ObjLeadSearch.Status_ID"
+              >
+              <!-- [ngClass]="{
+                clearance: SearchleadSubmitted && SatusSearch?.errors?.required
+              }"
+              required -->
+                <option [ngValue]="undefined">Select</option>
+                <option
+                  *ngFor="let option of StatusList"
+                  value="{{ option.Status_ID }}"
+                >
+                  {{ option.Status_Name }}
+                </option>
+              </select>
+              </div>
+              <div class="col-sm-4">
+                <button
+                  class="btn btn-primary custombutton"
+                  (click)="Searchfollowup(FollowupSearchForm.form.valid)"
+                  id="load"
+                  [disabled]="seachSpinner"
+                >
+                  <p-progressSpinner
+                    *ngIf="seachSpinner"
+                    [style]="{ width: '15px', height: '15px' }"
+                    strokeWidth="8"
+                    animationDuration=".5s"
+                  ></p-progressSpinner>
+                  <span
+                    *ngIf="!seachSpinner"
+                    class="glyphicon glyphicon-search"
+                  ></span
+                  >&nbsp;Search
+                </button>
+                <button
+                class="btn btn-primary custombutton"
+                (click)="CreateLead()"
+                [disabled]="seachSpinner"
+              >
+                <span class="glyphicon glyphicon-plus"
+                ></span
+                >&nbsp;Create
+              </button>
+              </div>
+
+            </div>
+          </form>
+          <br />
+          <div class="table-responsive no-padding LeadTable">
+            <p-table
+              #dt
+              [value]="FollowupList"
+              [globalFilterFields]="[
+                'Business_Type',
+                'City',
+                'Org_Name',
+                'Mobile',
+                'Country',
+                'Next_Followup',
+                'Contact_Name',
+                'Phone',
+                'Product_Category',
+                'Followup_Action'
+              ]"
+              [paginator]="FollowupList.length ? true : false"
+              [rows]="10"
+              [rowHover]="true"
+              [autoLayout]="true"
+              sortMode="multiple"
+              [rowsPerPageOptions]="[10, 20, 30]"
+              [rowHover]="true"
+            >
+              <ng-template pTemplate="caption">
+                <div class="row">
+                  <div
+                    class="col-sm-3 pull-right"
+                    style="text-align: right;"
+                  >
+                    <input
+                      type="text"
+                      pInputText
+                      size="50"
+                      placeholder="Search"
+                      (input)="
+                        dt.filterGlobal($event.target.value, 'contains')
+                      "
+                      class="searchInput form-control"
+                    />
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width:5em">Action</th>
+                  <th>Inquiry Date</th>
+                  <th >Sales Man</th>
+                  <th>Customer Name</th>
+                  <th>Company</th>
+                  <th>Mobile</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Address</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-col>
+                <tr>
+                  <td>
+                    <div class="dropdown">
+                      <button
+                        class="btn btn-default btn-sm tableButton dropdown-toggle"
+                        type="button"
+                        data-toggle="dropdown"
+                        style="height:27px"
+                      >
+                        <i class="fa fa-fw fa-bars"></i>
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <a (click)="GetEdit(col.Foot_Fall_ID)"
+                            ><i class="fa fa-fw fa-edit"> </i> Edit
+                            Lead</a
+                          >
+                        </li>
+                        <li>
+                          <a (click)="RedirectFollowup(col.Foot_Fall_ID)">
+                            <i class="fa fa-commenting-o"> </i>Followup</a
+                          >
+                        </li>
+                        <li>
+                          <a (click)="RedirectAddress(col.Foot_Fall_ID)"
+                            ><i class="fa fa-fw fa-home"> </i> Add
+                            Address</a
+                          >
+                        </li>
+                        <li>
+                          <a (click)="RedirectStaus(col.Foot_Fall_ID)"
+                            ><i class="fa fa-fw fa-update"></i
+                            >Update Status</a
+                          >
+                        </li>
+                        <li>
+                          <a (click)="RedirectQuotation(col.Foot_Fall_ID)"
+                            ><i class="fa fa-fw fa-file-word-o"></i
+                            >Proposal</a
+                          >
+                        </li>
+                        <li>
+                          <a (click)="RedirectLeadDetails(col.Foot_Fall_ID)"
+                            ><i class="fa fa-fw fa fa-clone"></i>View
+                            Details</a
+                          >
+                        </li>
+                        <li>
+                          <a (click)="RedirectLeadClose(col.Foot_Fall_ID)"
+                            ><i class="fa fa-fw fa fa-clone"></i>Lead
+                            Close</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                  <td>{{ col.Business_Type }}</td>
+                  <td>{{ col.Org_Name ? col.Org_Name : "-" }}</td>
+                  <td>{{ col.Contact_Name }}</td>
+                  <td>{{ col.Mobile }}</td>
+                  <td>{{ col.Phone ? col.Phone : "-" }}</td>
+                  <td>{{ col.District ? col.District : "-" }}</td>
+                  <td>{{ col.State ? col.State : "-" }}</td>
+                  <td>{{ col.Location ? col.Location : "-" }}</td>
+
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="paginatorright" let-state>
+                Showing {{ state.first + 1 }} of
+                {{ state.first + 1 + state.rows }} of
+                {{ state.totalRecords }}
+              </ng-template>
+            </p-table>
+          </div>
+            </p-tabPanel>
+            <p-tabPanel
+              headerStyleClass="compacct-tabs"
+              [header]="items[1]"
+              leftIcon="fa fa-fw fa-commenting-o"
+            >
+            <form
+            name="FollowupSearchForm"
+            #TaskSearchForm="ngForm"
+            novalidate
+          >
+            <div class="form-group">
+              <div class="col-sm-4">
+                <label class="control-label">Period</label>
+
+                <app-compacct-daterangepicker
+                  (DaterangeObj)="getDateRange($event)"
+                ></app-compacct-daterangepicker>
+              </div>
+              <div class="col-sm-2">
+                <label class="control-label"
+                >User<sup class="text-danger">*</sup
+              ></label>
+              <select
+                class="form-control"
+                name="SearchUserTask"
+                #SearchUserTask = "ngModel"
+                [(ngModel)]="SearchUserID"
+                [ngClass]="{
+                  clearance: SearcTaskSubmitted && SearchUserTask?.errors?.required
+                }"
+                required
+              >
+                <option [ngValue]="undefined">Select</option>
+                <option
+                  *ngFor="let option of UserList"
+                  value="{{ option.User_ID }}"
+                >
+                  {{ option.User_Name }}
+                </option>
+              </select>
+              </div>
+              <div class="col-sm-2">
+                <label class="control-label"
+                >Pending Task<sup class="text-danger">*</sup
+              ></label>
+              <select
+                class="form-control"
+                name="SatusTask"
+                #SatusTask = "ngModel"
+                [(ngModel)]="ObjLeadSearch.Status_ID"
+                [ngClass]="{
+                  clearance: SearcTaskSubmitted && SatusTask?.errors?.required
+                }"
+                required
+              >
+                <option [ngValue]="undefined">Select</option>
+                <option
+                  *ngFor="let option of StatusList"
+                  value="{{ option.Status_ID }}"
+                >
+                  {{ option.Status_Name }}
+                </option>
+              </select>
+              </div>
+              <div class="col-sm-4">
+                <button
+                  class="btn btn-primary custombutton"
+                  (click)="Searchfollowup(TaskSearchForm.form.valid)"
+                  id="load"
+                  [disabled]="seachSpinner"
+                >
+                  <p-progressSpinner
+                    *ngIf="seachSpinner"
+                    [style]="{ width: '15px', height: '15px' }"
+                    strokeWidth="8"
+                    animationDuration=".5s"
+                  ></p-progressSpinner>
+                  <span
+                    *ngIf="!seachSpinner"
+                    class="glyphicon glyphicon-search"
+                  ></span
+                  >&nbsp;Search
+                </button>
+                <button
+                class="btn btn-primary custombutton"
+                (click)="CreateLead()"
+                [disabled]="seachSpinner"
+              >
+                <span class="glyphicon glyphicon-plus"
+                ></span
+                >&nbsp;Create
+              </button>
+              </div>
+
+            </div>
+          </form>
+          <br />
+          <div class="table-responsive no-padding LeadTable">
+            <p-table
+              #dt2
+              [value]="FollowupList"
+              [globalFilterFields]="[
+                'Business_Type',
+                'City',
+                'Org_Name',
+                'Mobile',
+                'Country',
+                'Next_Followup',
+                'Contact_Name',
+                'Phone',
+                'Product_Category',
+                'Followup_Action'
+              ]"
+              [paginator]="FollowupList.length ? true : false"
+              [rows]="10"
+              [rowHover]="true"
+              [autoLayout]="true"
+              sortMode="multiple"
+              [rowsPerPageOptions]="[10, 20, 30]"
+              [rowHover]="true"
+            >
+              <ng-template pTemplate="caption">
+                <div class="row">
+                  <div
+                    class="col-sm-3 pull-right"
+                    style="text-align: right;"
+                  >
+                    <input
+                      type="text"
+                      pInputText
+                      size="50"
+                      placeholder="Search"
+                      (input)="
+                      dt2.filterGlobal($event.target.value, 'contains')
+                      "
+                      class="searchInput form-control"
+                    />
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width:5em">Action</th>
+                  <th>Priority</th>
+                  <th>Task Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Created By</th>
+                  <th>Details</th>
+                  <th>Attached To</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-col>
+                <tr>
+                  <td>
+                    <div class="dropdown">
+                      <button
+                        class="btn btn-default btn-sm tableButton dropdown-toggle"
+                        type="button"
+                        data-toggle="dropdown"
+                        style="height:27px"
+                      >
+                        <i class="fa fa-fw fa-bars"></i>
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <a (click)="RedirectFollowup(col.Foot_Fall_ID)">
+                            <i class="fa fa-commenting-o"> </i>Update Task</a
+                          >
+                        </li>
+                        <li>
+                          <a (click)="RedirectAddress(col.Foot_Fall_ID)"
+                            ><i class="fa fa-fw fa-home"> </i> View
+                            Task</a
+                          >
+                        </li>
+
+                      </ul>
+                    </div>
+                  </td>
+                  <td>{{ col.Business_Type }}</td>
+                  <td>{{ col.Org_Name ? col.Org_Name : "-" }}</td>
+                  <td>{{ col.Contact_Name }}</td>
+                  <td>{{ col.Mobile }}</td>
+                  <td>{{ col.Phone ? col.Phone : "-" }}</td>
+                  <td>{{ col.District ? col.District : "-" }}</td>
+                  <td>{{ col.State ? col.State : "-" }}</td>
+
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="paginatorright" let-state>
+                Showing {{ state.first + 1 }} of
+                {{ state.first + 1 + state.rows }} of
+                {{ state.totalRecords }}
+              </ng-template>
+            </p-table>
+          </div>
+            </p-tabPanel>
+          </p-tabView>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog
+  [header]="CreateLeadModalHeader"
+  [appendTo]="'body'"
+  [visible]="CreateLeadModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '70%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="registrationForm"
+#registrationForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label"
+    >Sales Executive<sup class="text-danger">*</sup
+  ></label>
+  <select
+    class="form-control"
+    name="SalesExecutive"
+    #SalesExecutive = "ngModel"
+    [(ngModel)]="ObjLead.Member_ID"
+    [ngClass]="{
+      clearance: leadSubmitted && SalesExecutive?.errors?.required
+    }"
+    required
+  >
+  <option [ngValue]="undefined">Select</option>
+  <option
+    *ngFor="let option of MemberList"
+    value="{{ option.Member_ID }}"
+  >
+    {{ option.Member_Name }}
+  </option>
+  </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      > Source<sup class="text-danger">*</sup></label
+    >
+    <select
+      class="form-control"
+      name="Enquery"
+      #Enquery="ngModel"
+      [(ngModel)]="ObjLead.Enq_Source_ID"
+      [ngClass]="{
+        clearance:
+          leadSubmitted && Enquery?.errors?.required
+      }"
+      required
+    >
+      <option [ngValue]="undefined">Select</option>
+      <option
+        *ngFor="let option of EnqSourceModel"
+        value="{{ option.Enq_Source_ID }}"
+      >
+        {{ option.Enq_Source_Name }}
+      </option>
+    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Lead Type<sup class="text-danger">*</sup
+    ></label>
+    <select
+      class="form-control"
+      name="Buy"
+      #Buy="ngModel"
+      [(ngModel)]="ObjLead.Lead_Type"
+      [ngClass]="{
+        clearance: leadSubmitted && Buy?.errors?.required
+      }"
+      required
+    >
+      <option [ngValue]="undefined">Select</option>
+      <option value="New Installation"> New Installation</option>
+      <option value="AMC"> AMC </option>
+      <option value="Modernization"> Modernization</option>
+    </select>
+  </div>
+</div>
+<div class="form-group" *ngIf="CreateLeadModalHeader !== 'Create Lead'">
+  STATUS : <b>{{getStatus(ObjLead.Status_ID)}}</b>
+</div>
+<div style="background-color: #f1f1f1;
+border: 1px solid #c1c1c124;
+padding: 5px 25px;
+margin: 10px 0px;">
+  <div class="row">
+    <div class="col-sm-3">
+      <p-radioButton name="groupname" value="ExistingCustomer" (onClick)="CustomerRadioChange()"  [(ngModel)]="CustomerRadioFlag"></p-radioButton> &nbsp; &nbsp;
+      <label class="control-label">Existing Customer<sup class="text-danger"></sup></label>
+    </div>
+    <div class="col-sm-3" >
+      <p-radioButton name="groupname" value="NewCustomer"  [(ngModel)]="CustomerRadioFlag"></p-radioButton>&nbsp; &nbsp;
+      <label class="control-label">New Contact<sup class="text-danger"></sup></label>
+    </div>
+    <div class="col-sm-6" *ngIf="CustomerRadioFlag === 'ExistingCustomer'" >
+      <select
+                class="form-control"
+                name="SearchSalesExecutive"
+                #SearchSalesExecutive = "ngModel"
+                [(ngModel)]="ObjLeadSearch.SalesManID"
+                [ngClass]="{
+                  clearance: SearchleadSubmitted && SearchSalesExecutive?.errors?.required
+                }"
+                required
+              >
+                <option [ngValue]="undefined">Select Existing Customer</option>
+                <option
+                  *ngFor="let option of ExistingContactList"
+                  value="{{ option.Member_ID }}"
+                >
+                  {{ option.Member_Name }}
+                </option>
+              </select>
+    </div>
+  </div>
+
+</div>
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Customer Name<sup class="text-danger">*</sup></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      name="name"
+      #name="ngModel"
+      [(ngModel)]="ObjLead.Contact_Name"
+      placeholder="Customer Name"
+      allow-pattern="([a-z ]|\.)"
+      [ngClass]="{
+        clearance: leadSubmitted && name?.errors?.required
+      }"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label">Company  Name<sup class="text-danger">*</sup></label>
+    <input
+      class="form-control"
+      name="Organization"
+      #Organization="ngModel"
+      [(ngModel)]="ObjLead.Org_Name"
+      [ngClass]="{
+        clearance:
+          leadSubmitted && Organization.errors?.required
+      }"
+      placeholder="Company Name"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Site  Name<sup class="text-danger">*</sup></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      name="Site"
+      #Site="ngModel"
+      [(ngModel)]="ObjLead.Site_Name"
+      placeholder="Site Name"
+      allow-pattern="([a-z ]|\.)"
+      [ngClass]="{
+        clearance: leadSubmitted && Site?.errors?.required
+      }"
+      required
+    />
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label">Email ID<sup class="text-danger">*</sup></label>
+    <input
+      class="form-control"
+      name="Email"
+      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+      #Email="ngModel"
+      [(ngModel)]="ObjLead.Email"
+      [ngClass]="{
+        clearance:
+          (leadSubmitted && Email.errors?.required) ||
+          (Email.errors?.pattern && Email.invalid)
+      }"
+      placeholder="Email"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Mobile No.<sup class="text-danger">*</sup></label
+    >
+    <input
+      class="form-control"
+      name="mobile"
+      #mobile="ngModel"
+      CompacctDigitonly="true"
+      [ngClass]="{
+        clearance: leadSubmitted && mobile.errors?.required
+      }"
+      [(ngModel)]="ObjLead.Mobile"
+      placeholder="Mobile Number"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Alternatie  No.<sup class="text-danger"></sup></label
+    >
+    <input
+      class="form-control"
+      name="Alternatie "
+      #Alternatie ="ngModel"
+      CompacctDigitonly="true"
+      [ngClass]="{
+        clearance: leadSubmitted && Alternatie.errors?.required
+      }"
+      [(ngModel)]="ObjLead.Alternatie_Mobile"
+      placeholder="Alternatie Number"
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Whats Up  No.<sup class="text-danger"></sup></label
+    >
+    <input
+      class="form-control"
+      name="Whats "
+      #Whats ="ngModel"
+      CompacctDigitonly="true"
+      [ngClass]="{
+        clearance: leadSubmitted && Whats.errors?.required
+      }"
+      [(ngModel)]="ObjLead.Whats_Up"
+      placeholder="Whats Up Number"
+    />
+  </div>
+</div>
+<div >
+  <h5 style="
+      padding: 0.5em 1em;
+      background: #c1c1c185;
+      border-top: 5px solid #3c8dbc;
+      border-bottom: 1px solid #c6c6c6;
+      margin-top: 15px;
+      ">
+      <i class="fa fa-fw fa-fax">
+      </i> &nbsp;<strong>Company Address :</strong>
+  </h5>
+<div class="form-group">
+
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Company Address<sup class="text-danger"></sup>
+    </label>
+    <textarea
+      class="form-control"
+      rows="4"
+      name="address"
+      [(ngModel)]="ObjLead.Address"
+      placeholder="Address"
+    ></textarea>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >PIN / ZIP<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="PIN"
+      [(ngModel)]="ObjLead.Pin"
+      placeholder="PIN / ZIP Code"
+    />
+    <!-- (change)="GetStateDistrict(ObjLead.Pin)" -->
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >State<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="State"
+      [(ngModel)]="ObjLead.State"
+      placeholder="State"
+    />
+    <!-- <select class="form-control" name="state" [(ngModel)]="ObjLead.State" (change)="GetDistrict(ObjLead.State)">
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of states" value={{option.State}}>
+                            {{option.State}}
+                        </option>
+                    </select> -->
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >District<sup class="text-danger"></sup
+    ></label>
+     <select class="form-control" name="District" [(ngModel)]="ObjLead.District" (change)="GetDistrict(ObjLead.State)">
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of districtList" value={{option.districts}}>
+                            {{option.districts}}
+                        </option>
+                    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Country<sup class="text-danger"></sup
+    ></label>
+    <select
+      class="form-control"
+      name="Country"
+      [(ngModel)]="ObjLead.Country"
+    >
+      <option [ngValue]="undefined">Select</option>
+      <option
+        *ngFor="let option of CountryList"
+        value="{{ option.country }}"
+      >
+        {{ option.country }}
+      </option>
+    </select>
+  </div>
+
+</div>
+</div>
+<div >
+  <h5 style="
+      padding: 0.5em 1em;
+      background: #c1c1c185;
+      border-top: 5px solid #3c8dbc;
+      border-bottom: 1px solid #c6c6c6;
+      margin-top: 15px;
+      ">
+      <i class="fa fa-fw fa-fax">
+      </i> &nbsp;<strong>Site Address :</strong>
+  </h5>
+<div class="form-group">
+
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Site Address<sup class="text-danger"></sup>
+    </label>
+    <textarea
+      class="form-control"
+      rows="4"
+      name="Site_Address"
+      [(ngModel)]="ObjLead.Site_Address"
+      placeholder="Site Address"
+    ></textarea>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Site PIN / ZIP<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="Site_PIN_Code"
+      [(ngModel)]="ObjLead.Site_PIN_Code"
+      placeholder="Site PIN / ZIP Code"
+    />
+    <!-- (change)="GetStateDistrict(ObjLead.Pin)" -->
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Site State<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="Site_State"
+      [(ngModel)]="ObjLead.Site_State"
+      placeholder=" Site State"
+    />
+    <!-- <select class="form-control" name="state" [(ngModel)]="ObjLead.State" (change)="GetDistrict(ObjLead.State)">
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of states" value={{option.State}}>
+                            {{option.State}}
+                        </option>
+                    </select> -->
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Site District<sup class="text-danger"></sup
+    ></label>
+     <select class="form-control" name="Site_District" [(ngModel)]="ObjLead.Site_District" (change)="GetDistrict(ObjLead.State)">
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of districtList" value={{option.districts}}>
+                            {{option.districts}}
+                        </option>
+                    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Site Country<sup class="text-danger"></sup
+    ></label>
+    <select
+      class="form-control"
+      name="Site_Country"
+      [(ngModel)]="ObjLead.Site_Country"
+    >
+      <option [ngValue]="undefined">Select</option>
+      <option
+        *ngFor="let option of CountryList"
+        value="{{ option.country }}"
+      >
+        {{ option.country }}
+      </option>
+    </select>
+  </div>
+
+</div>
+</div>
+</form>
+</div>
+  <p-footer>
+    <button
+      type="button"
+      (click)="CreateLeadModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+    type="submit"
+    name="bill"
+    class="btn btn-primary pull-right custombutton"
+    (click)="SaveLead(registrationForm.form.valid)"
+    id="load2"
+    [disabled]="Spinner"
+  >
+    <p-progressSpinner
+      *ngIf="Spinner"
+      [style]="{ width: '15px', height: '15px' }"
+      strokeWidth="8"
+      animationDuration=".5s"
+    ></p-progressSpinner>
+    <span
+      *ngIf="!Spinner"
+      class="glyphicon glyphicon-save"
+    ></span
+    >&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [header]="'Add Address'"
+  [appendTo]="'body'"
+  [visible]="CreateAddressModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '70%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="AddressForm"
+#AddressForm="ngForm"
+novalidate
+>
+<div >
+  <h5 style="
+      padding: 0.5em 1em;
+      background: #c1c1c185;
+      border-top: 5px solid #3c8dbc;
+      border-bottom: 1px solid #c6c6c6;
+      margin-top: 15px;
+      ">
+      <i class="fa fa-fw fa-fax">
+      </i> &nbsp;<strong>Add Address :</strong>
+  </h5>
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Address Caption<sup class="text-danger">*</sup
+    ></label>
+    <input
+      class="form-control"
+      name="State"
+      #caption = "ngModel"
+      [(ngModel)]="ObjAddress.address_caption"
+      placeholder="Address Caption"
+       [ngClass]="{
+        clearance:
+        AddressSubmitted && caption?.errors?.required
+      }"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Contact Person Name<sup class="text-danger">*</sup
+    ></label>
+    <input
+      class="form-control"
+      name="person"
+      #person="ngModel"
+      [(ngModel)]="ObjAddress.Contact_Person_Name"
+      placeholder="Contact Person Name"
+      [ngClass]="{
+        clearance:
+        AddressSubmitted && person?.errors?.required
+      }"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Department<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="Department"
+      [(ngModel)]="ObjAddress.Department"
+      placeholder="Department"
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Designation<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="Designation"
+      [(ngModel)]="ObjAddress.Designation"
+      placeholder="Designation"
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      > Address<sup class="text-danger"></sup>
+    </label>
+    <textarea
+      class="form-control"
+      rows="1"
+      name="address"
+      [(ngModel)]="ObjAddress.Address"
+      placeholder="Address"
+    ></textarea>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Land Mark<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="Land_Mark"
+      [(ngModel)]="ObjAddress.Land_Mark"
+      placeholder="Land Mark"
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >PIN / ZIP<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="PIN"
+      [(ngModel)]="ObjAddress.PIN"
+      placeholder="PIN / ZIP Code"
+    />
+    <!-- (change)="GetStateDistrict(ObjLead.Pin)" -->
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >State<sup class="text-danger"></sup
+    ></label>
+    <input
+      class="form-control"
+      name="State"
+      [(ngModel)]="ObjAddress.State"
+      placeholder="State"
+    />
+    <!-- <select class="form-control" name="state" [(ngModel)]="ObjLead.State" (change)="GetDistrict(ObjLead.State)">
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of states" value={{option.State}}>
+                            {{option.State}}
+                        </option>
+                    </select> -->
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >District<sup class="text-danger"></sup
+    ></label>
+     <select class="form-control" name="District" [(ngModel)]="ObjAddress.District" (change)="GetDistrict(ObjLead.State)">
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of districtList" value={{option.districts}}>
+                            {{option.districts}}
+                        </option>
+                    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Country<sup class="text-danger"></sup
+    ></label>
+    <select
+      class="form-control"
+      name="Country"
+      [(ngModel)]="ObjAddress.Country"
+    >
+      <option [ngValue]="undefined">Select</option>
+      <option
+        *ngFor="let option of CountryList"
+        value="{{ option.country }}"
+      >
+        {{ option.country }}
+      </option>
+    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label">Email ID<sup class="text-danger"></sup></label>
+    <input
+      class="form-control"
+      name="Email"
+      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+      #Email1="ngModel"
+      [(ngModel)]="ObjAddress.Email_ID"
+      [ngClass]="{
+        clearance:
+          (AddressSubmitted && Email1.errors?.required) ||
+          (Email1.errors?.pattern && Email1.invalid)
+      }"
+      placeholder="Email"
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Mobile No.<sup class="text-danger">*</sup></label
+    >
+    <input
+      class="form-control"
+      name="mobile"
+      #mobile="ngModel"
+      CompacctDigitonly="true"
+      [ngClass]="{
+        clearance: AddressSubmitted && mobile.errors?.required
+      }"
+      [(ngModel)]="ObjAddress.Mobile_No"
+      placeholder="Mobile Number"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Land Line<sup class="text-danger"></sup></label
+    >
+    <input
+      class="form-control"
+      name="Phone "
+      #Phone ="ngModel"
+      CompacctDigitonly="true"
+      [ngClass]="{
+        clearance: leadSubmitted && Phone.errors?.required
+      }"
+      [(ngModel)]="ObjAddress.Phone"
+      placeholder="Land Line"
+    />
+  </div>
+
+</div>
+</div>
+<div >
+  <h5 style="
+      padding: 0.5em 1em;
+      background: #c1c1c185;
+      border-top: 5px solid #3c8dbc;
+      border-bottom: 1px solid #c6c6c6;
+      margin-top: 15px;
+      ">
+      <i class="fa fa-fw fa-fax">
+      </i> &nbsp;<strong> Address List :</strong>
+  </h5>
+<div class="form-group">
+  <div class="table-responsive no-padding">
+    <table class="table table-bordered">
+      <thead>
+        <tr style="background-color:#3c8dbc;color:white;">
+          <th>Sl No</th>
+          <th>Address Caption</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Designation</th>
+          <th>Address</th>
+          <th>Land Mark</th>
+          <th>District</th>
+          <th>State</th>
+          <th>PIN</th>
+          <th>Mobile</th>
+          <th>Phone</th>
+          <th>Email ID</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of AddressListView;let odd = odd;let index = index" [class.even]="odd">
+          <td>{{ index + 1 }}</td>
+          <td>{{ d.address_caption }}</td>
+          <td>{{ d.Contact_Person_Name ? d.Contact_Person_Name : "-" }}</td>
+          <td>{{ d.Department  ? d.Department : "-"}}</td>
+          <td>{{ d.Designation  ? d.Designation : "-"}}</td>
+          <td>{{ d.Address ? d.Address : "-"}}</td>
+          <td>{{ d.Land_Mark  ? d.Land_Mark : "-"}}</td>
+          <td>{{ d.District  ? d.District : "-"}}</td>
+          <td>{{ d.State ? d.State : "-" }}</td>
+          <th>{{ d.PIN ? d.PIN : "-" }}</th>
+          <th>{{ d.Mobile_No ? d.Mobile_No : "-" }}</th>
+          <th>{{ d.Phone ? d.Phone : "-" }}</th>
+          <th>{{ d.Email_ID ? d.Email_ID : "-" }}</th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+<div class="text-right">
+  <button
+  type="submit"
+  name="bill"
+  class="btn btn-primary pull-right custombutton"
+  (click)="SaveAddress(AddressForm.form.valid)"
+  id="load2"
+  [disabled]="Spinner"
+>
+  <p-progressSpinner
+    *ngIf="Spinner"
+    [style]="{ width: '15px', height: '15px' }"
+    strokeWidth="8"
+    animationDuration=".5s"
+  ></p-progressSpinner>
+  <span
+    *ngIf="!Spinner"
+    class="glyphicon glyphicon-save"
+  ></span
+  >&nbsp;{{ buttonname }}
+  </button>
+</div>
+</form>
+</div>
+  <p-footer>
+    <button
+      type="button"
+      (click)="CreateAddressModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [header]="'Update Status'"
+  [appendTo]="'body'"
+  [visible]="StatusModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '70%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="StatusForm"
+#StatusForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-2">
+    <label class="control-label"
+    >Satus<sup class="text-danger"></sup
+  ></label>
+  <select
+    class="form-control"
+    name="Satus"
+    #SatusSearch = "ngModel"
+    [(ngModel)]="ObjStaus.Status_ID"
+    [ngClass]="{
+      clearance: StausSubmitted && SatusSearch?.errors?.required
+    }"
+    required
+  >
+  <!-- -->
+    <option [ngValue]="undefined">Select</option>
+    <option
+      *ngFor="let option of StatusList"
+      value="{{ option.Status_ID }}"
+    >
+      {{ option.Status_Name }}
+    </option>
+  </select>
+  </div>
+</div>
+
+</form>
+</div>
+  <p-footer>
+    <button
+      type="button"
+      (click)="StatusModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+    type="submit"
+    name="bill"
+    class="btn btn-primary pull-right custombutton"
+    (click)="SaveStatus(StatusForm.form.valid)"
+    id="load2"
+    [disabled]="Spinner"
+  >
+    <p-progressSpinner
+      *ngIf="Spinner"
+      [style]="{ width: '15px', height: '15px' }"
+      strokeWidth="8"
+      animationDuration=".5s"
+    ></p-progressSpinner>
+    <span
+      *ngIf="!Spinner"
+      class="glyphicon glyphicon-save"
+    ></span
+    >&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [header]="'Task'"
+  [appendTo]="'body'"
+  [visible]="TaskModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '70%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="TaskForm"
+#TaskForm="ngForm"
+novalidate
+>
+
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Subject<sup class="text-danger">*</sup></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      name="name"
+      #name="ngModel"
+      [(ngModel)]="ObjTask.Task_Subject"
+      placeholder="Task Subject"
+      [ngClass]="{
+        clearance: TaskSubmitted && name?.errors?.required
+      }"
+      required
+    />
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"
+      >Priority<sup class="text-danger">*</sup
+    ></label>
+    <select
+      class="form-control"
+      name="Buy"
+      #Buy="ngModel"
+      [(ngModel)]="ObjTask.Priority"
+      [ngClass]="{
+        clearance: TaskSubmitted && Buy?.errors?.required
+      }"
+      required
+    >
+      <option [ngValue]="undefined">Select</option>
+      <option value="Normal"> Normal</option>
+      <option value="High"> High </option>
+      <option value="Medium"> Medium</option>
+    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label"> Date</label>
+    <div class="input-group date">
+      <div class="input-group-addon">
+        <i class="fa fa-calendar"></i>
+      </div>
+      <input
+        type="date"
+        name="duedate"
+        #duedate="ngModel"
+        [ngModel]="TaskDueDate | date: 'yyyy-MM-dd'"
+        (ngModelChange)="GetTaskDueDate($event)"
+        class="form-control"
+      />
+  </div>
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-sm-4">
+    <label class="control-label"
+    >Tagged To<sup class="text-danger">*</sup
+  ></label>
+  <select
+    class="form-control"
+    name="tagged"
+    #tagged="ngModel"
+    [(ngModel)]="ObjTask.Tagged_To_User_ID"
+    [ngClass]="{
+      clearance: TaskSubmitted && tagged?.errors?.required
+    }"
+    required
+  >
+    <option [ngValue]="undefined">Select</option>
+    <option
+      *ngFor="let option of MemberList"
+      value="{{ option.Member_ID }}"
+    >
+      {{ option.Member_Name }}
+    </option>
+  </select>
+  </div>
+  <div style="background-color: #f1f1f1;
+  border: 1px solid #c1c1c124;
+  padding: 5px 25px;
+  margin: 10px 0px;">
+    <div class="row">
+      <div class="col-sm-3">
+        <p-radioButton name="groupname1" value="ExistingCustomer" (onClick)="CustomerRadioChange()"  [(ngModel)]="TaskCustomerRadioFlag"></p-radioButton> &nbsp; &nbsp;
+        <label class="control-label">Existing Customer<sup class="text-danger"></sup></label>
+      </div>
+      <div class="col-sm-3" >
+        <p-radioButton name="groupname1" value="NewCustomer"  [(ngModel)]="TaskCustomerRadioFlag"></p-radioButton>&nbsp; &nbsp;
+        <label class="control-label">New Contact<sup class="text-danger"></sup></label>
+      </div>
+      <div class="col-sm-3" >
+        <p-radioButton name="groupname1" value="None"  [(ngModel)]="TaskCustomerRadioFlag"></p-radioButton>&nbsp; &nbsp;
+        <label class="control-label">None<sup class="text-danger"></sup></label>
+      </div>
+      <div class="col-sm-3" *ngIf="TaskCustomerRadioFlag === 'ExistingCustomer'" >
+        <select
+                  class="form-control"
+                  name="SearchSalesExecutive"
+                  #SearchSalesExecutive = "ngModel"
+                  [(ngModel)]="ObjLeadSearch.SalesManID"
+                  [ngClass]="{
+                    clearance: SearchleadSubmitted && SearchSalesExecutive?.errors?.required
+                  }"
+                  required
+                >
+                  <option [ngValue]="undefined">Select Existing Customer</option>
+                  <option
+                    *ngFor="let option of ExistingContactList"
+                    value="{{ option.Member_ID }}"
+                  >
+                    {{ option.Member_Name }}
+                  </option>
+                </select>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+</form>
+</div>
+  <p-footer>
+    <button
+      type="button"
+      (click)="TaskModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+    type="submit"
+    name="bill"
+    class="btn btn-primary pull-right custombutton"
+    (click)="SaveTask(TaskForm.form.valid)"
+    id="load2"
+    [disabled]="Spinner"
+  >
+    <p-progressSpinner
+      *ngIf="Spinner"
+      [style]="{ width: '15px', height: '15px' }"
+      strokeWidth="8"
+      animationDuration=".5s"
+    ></p-progressSpinner>
+    <span
+      *ngIf="!Spinner"
+      class="glyphicon glyphicon-save"
+    ></span
+    >&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>

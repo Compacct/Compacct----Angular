@@ -1,0 +1,200 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <div class="table-responsive table-id">
+                        <p-table #dt [value]="SKUList" [paginator]="SKUList.length ? true : false" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,50,25,10]" [rowHover]="true" [globalFilterFields]='["Product_ID","Product_Description","Tutopia_Product_Description","Tutopia_Product_Count",
+                    "Direct_Sale_Min_Sale","Direct_Sale_Commission","Affi_Sale_Min_Sale","Affi_Sale_Commission","Dist_Sale_Min_Sale","Dist_Sale_Commission"]'>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                    </div>
+                                </div>
+
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th width='6%'>SKU ID</th>
+                                    <th width='12%'>English Name</th>
+                                    <th width='8%'>Display Name</th>
+                                    <th width='8%'>Product Count</th>
+                                    <th width='8%'>Direct Sale Min Bill Amount</th>
+                                    <th width='8%'>Direct Sale Max Bill Amount</th>
+                                    <th width='8%'>Direct Sale Min Sale</th>
+                                    <th width='8%'>Direct Sale Commission</th>
+                                    <!-- <th width='8%'>Affi Sale Min Sale</th>
+                                    <th width='8%'>Affi Sale Commission</th>
+                                    <th width='8%'>Dist Sale Min Sale</th>
+                                    <th width='8%'>Dist Sale Commission</th> -->
+                                    <th width='6%'>Action</th>
+                                    <th width='8%'>Update Commission</th>
+                                    
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-col>
+                                <tr>
+                                    <td class="text-center">{{col.Product_ID ? col.Product_ID : '-'}}</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" [(ngModel)]='col.Product_Description' class="form-control">
+                                            <span class="input-group-btn">
+                                         <!-- <button class="btn btn-primary" (click)='UpdateDescription(col)' type="button" [id]="'RowID'+col.Product_ID"
+                                         data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                            Update
+                                          </button> -->
+                                    </span>
+                                        </div>
+                                    </td>
+                                    <td>{{col.Tutopia_Product_Description ? col.Tutopia_Product_Description : '-'}}</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" [(ngModel)]='col.Tutopia_Product_Count' class="form-control" CompacctDigitonly="true">
+                                            <span class="input-group-btn"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" [(ngModel)]='col.DS_Min_Bill_Amt' class="form-control" CompacctDigitonly="true">
+                                            <span class="input-group-btn"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" [(ngModel)]='col.DI_Max_Bill_Amt' class="form-control" CompacctDigitonly="true">
+                                            <span class="input-group-btn"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" [(ngModel)]='col.Direct_Sale_Min_Sale' class="form-control" CompacctDigitonly="true">
+                                            <span class="input-group-btn"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" [(ngModel)]='col.Direct_Sale_Commission' class="form-control" CompacctDigitonly="true">
+                                            <span class="input-group-btn"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary custombtn" (click)='UpdateDescription(col)' type="button" [id]="'RowID'+col.Product_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                            Update
+                                    </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary custombtn" (click)='GetUpdateCommission(col.Product_ID)' type="button" [id]="'RowcomID'+col.Product_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                            Update Commission
+                                    </button>
+                                    </td>
+                                   
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorleft" let-state>
+                                Showing {{ state.first + 1 }} of {{ state.first + 1 + state.rows }} of {{ state.totalRecords }}
+                            </ng-template>
+                        </p-table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog header="Dist Sale Commission" [(visible)]="viewpopUp" [modal]="true" [responsive]="true"
+[style]="{width: '50%', minWidth: '300px'}" [minY]="70" [baseZIndex]="10000">
+<form name="skuSearchForm" #skuSearchForm="ngForm" novalidate>
+<div class="form-group">
+    <div class="col-sm-3">
+        <label class="control-label">Start Date</label>
+        <ejs-datepicker  [(value)]="Start_Date" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">End Date</label>
+        <ejs-datepicker  [(value)]="End_Date" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">Dist Sale Commission</label>
+        <input type="text"  
+        name="Dist_Sale_Commission"
+        placeholder="Dist Sale Commission" 
+        #Dist_Sale_Commission="ngModel"
+        [(ngModel)]="Objaddcommission.Dist_Sale_Commission"
+        class="form-control"
+         CompacctDigitonly="true">
+    </div>
+    <div class="col-sm-3">
+        <button class="btn btn-primary custombutton" data-toggle="modal"
+        (click)="adddata(skuSearchForm.form.valid)"
+        id="load"
+        [disabled]="addSpinner"
+        >
+        <p-progressSpinner *ngIf="addSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!addSpinner" class="glyphicon glyphicon-plus"></span>&nbsp;Add
+     </button>
+ </div>
+  </div>
+</form>
+<div class="clearfix"></div>
+<div class="no-padding">
+    <p-table [value]="productList"
+            [globalFilterFields]="['Start_From','End_To','Dist_Sale_Commission']"
+             [rowHover]="true"
+             [autoLayout]="true"
+
+             #dt1>
+       
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                         <th>Dist Sale Commission</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                        
+                     </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-col let-i="rowIndex">
+                    <tr>
+                     <!-- <td>{{col.Start_From | date :"dd/MMM/yyyy"}}</td> -->
+                     <td><ejs-datepicker  [(value)]="col.Start_Date" [format]="'dd/MMM/yyyy'" ></ejs-datepicker></td>
+                     <!-- <td>{{col.End_To | date :"dd/MMM/yyyy"}}</td> -->
+                     <td><ejs-datepicker  [(value)]="col.End_Date" [format]="'dd/MMM/yyyy'" ></ejs-datepicker></td>
+                     <td><div class="input-group">
+                        <input type="text" [(ngModel)]='col.Dist_Sale_Commission' class="form-control" CompacctDigitonly="true">
+                        <span class="input-group-btn"></span>
+                    </div></td>
+                     <td><button class="btn btn-primary custombtn" (click)='updateDriect(col)' type="button" [id]="'RowTxnID'+col.Txn_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                        Update
+                </button></td>
+                <td><button class="btn btn-danger custombtn" (click)='deleteDriect(col)' type="button" [id]="'RowDTxnID'+col.Txn_ID" >
+                    Delete
+            </button>
+        </td>
+                     </tr>
+                </ng-template>
+        </p-table>
+    </div>
+</p-dialog>

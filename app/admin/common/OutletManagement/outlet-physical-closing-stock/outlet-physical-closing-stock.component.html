@@ -1,0 +1,312 @@
+
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+          <h3>{{message.summary}}</h3>
+          <p >{{message.detail}}</p>
+      </div>
+
+      <div  class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+  </ng-template>
+</p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                  <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                      <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                          <div class="form-group">
+                            <div class="col-sm-3">
+                              <label class="control-label">Date</label>
+
+                              <app-compacct-daterangepicker
+                              (DaterangeObj)="getDateRange($event)">
+                              </app-compacct-daterangepicker>
+
+                            </div>
+                            <div class="col-sm-3">
+                              <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
+                              <select class="form-control"
+                              name="Brand"
+                              #Brand="ngModel"
+                              [(ngModel)]="ObjBrowse.Brand_ID"
+                              [ngClass]="{'clearance': SearchFormSubmitted && Brand?.errors?.required}"
+                              required>
+                              <option  [ngValue]="undefined">Select</option>
+                          <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                              {{option.Brand_INI}}
+                          </option>
+                      </select>
+                             </div>
+
+                            <div class="col-sm-3">
+                              <button
+                                class="btn btn-primary custombutton"
+                                data-toggle="modal"
+                                (click)="GetSearchedList(SearchForm.form.valid)"
+                                id="load"
+                                [disabled]="seachSpinner"
+                              >
+                                <p-progressSpinner
+                                  *ngIf="seachSpinner"
+                                  [style]="{ width: '15px', height: '15px' }"
+                                  strokeWidth="8"
+                                  animationDuration=".5s"
+                                ></p-progressSpinner>
+                                <span
+                                  *ngIf="!seachSpinner"
+                                  class="glyphicon glyphicon-search"
+                                ></span
+                                >&nbsp;Search
+                              </button>
+                            </div>
+                          </div>
+
+                        </form>
+                      <div class="row">
+                          <div class="col-sm-8"><h5><strong></strong></h5></div>
+                          </div>
+                      <div class="table-responsive table-id">
+                          <p-table [value]="Searchedlist" #dt2
+                          [paginator] ="true"
+                          [rows] ="100"
+                          [loading] = "seachSpinner"
+                          [rowHover] ="true"
+                          [autoLayout] ="true"
+                          sortMode ="multiple"
+                          [rowsPerPageOptions]="[10,25,50,100]"
+                          [rowHover] ="true"
+                          [globalFilterFields]='["Doc_No","Doc_Date","Location","godown_name","Closing_Qty","Remarks"]'>
+                          <ng-template pTemplate="caption">
+                              <div class="row">
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input) ="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                              </div>
+
+                            </ng-template>
+                              <ng-template pTemplate="header">
+                                  <tr>
+                                      <th style="width:5em">Action</th>
+                                      <th>Doc No</th>
+                                      <th>Date</th>
+                                      <th>From Outlet</th>
+                                      <th>From Stock Point</th>
+                                      <th>Total Qty</th>
+                                      <th>Remarks</th>
+                                  </tr>
+                              </ng-template>
+                               <ng-template pTemplate="body" let-col>
+                                 <tr >
+                                         <td>
+                                              <div class="dropdown">
+                                                  <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                      type="button" data-toggle="dropdown" style="height:27px">
+                                                      <i class="fa fa-fw fa-bars"></i>
+                                                      <span class="caret"></span>
+                                                  </button>
+                                                  <ul class="dropdown-menu">
+                                                      <!-- <li>
+                                                          <a (click)="view(col)">
+                                                            <i class="fa fa-fw fa-eye" aria-hidden="true"></i>
+                                                             View
+                                                          </a>
+                                                      </li> -->
+                                                      <li>
+                                                            <a (click) = "Edit(col)">
+                                                              <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
+                                                              Edit
+                                                          </a>
+                                                      </li>
+                                                      <!-- <li *ngIf= "col.Toyal_Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.To_Cost_Cen_ID">
+                                                        <a (click)="AcceptChallan(col)">
+                                                            <i class="fa fa-check"></i>
+                                                           Accepted Challan
+                                                        </a>
+                                                    </li>
+
+                                                       <li>
+                                                         <a (click)="editmaster(col)">
+                                                            <i class="fa fa-print" aria-hidden="true"></i>
+                                                            Print
+                                                        </a>
+                                                    </li> -->
+                                                      <li>
+                                                          <a (click) = "Delete(col)">
+                                                              <i class="fa fa-trash" aria-hidden="true"></i>
+                                                              Delete
+                                                          </a>
+                                                      </li>
+                                                  </ul>
+                                              </div>
+                                      </td>
+                                      <td>{{col.Doc_No}}</td>
+                                      <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                      <td>{{col.Location}}</td>
+                                      <td>{{col.godown_name}}</td>
+                                      <td>{{col.Closing_Qty}}</td>
+                                      <td>{{col.Remarks ? col.Remarks : '-'}}</td>
+                                  </tr>
+                              </ng-template>
+                              <ng-template pTemplate="paginatorright" let-state>
+                                  Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                          </ng-template>
+                          </p-table>
+
+                      </div>
+
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save" >
+                    <div class="col-lg-12">
+                    <div class="panel-group"  >
+                      <div class="panel panel-primary">
+
+                        <div class="panel-body">
+                            <form name="ClosingStockForm" #ClosingStockForm="ngForm" novalidate>
+                             <div class="form-group">
+                              <div class="col-sm-2">
+                                <label class="control-label">Date</label>
+                                <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+                                      [(value)] = 'todayDate'
+                                ></ejs-datepicker>
+                                <!-- <input class="form-control"
+                                      name="Date"
+                                      [disabled]="true"
+                                      [ngModel] ='myDate  | date :"dd-MMM-yyyy"'> -->
+                              </div>
+                              <div class="col-sm-2">
+                                <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                name="Brand_ID"
+                                #Brand_ID="ngModel"
+                                [(ngModel)]="ObjClosingStock.Brand_ID"
+                                [disabled] = "BrandDisable"
+                                [ngClass]="{'clearance': ClosingStockFormSubmitted && Brand_ID?.errors?.required}"
+                                required>
+                                <option  [ngValue]="undefined">Select</option>
+                            <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                {{option.Brand_INI}}
+                            </option>
+                        </select>
+                               </div>
+                                <div class="col-sm-4">
+                                  <label class="control-label" >Outlet <sup class="text-danger">*</sup>
+                                  </label>
+                                <select class="form-control"
+                                        name="godown"
+                                        #godown="ngModel"
+                                        [(ngModel)]="ObjClosingStock.godown_id"
+                                        [disabled] = "godowndisableflag"
+                                        [ngClass]="{'clearance':ClosingStockFormSubmitted && godown?.errors?.required}"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                  <option *ngFor = "let option of GodownId" [value] ="option.godown_id">
+                                    {{option.godown_name}}
+                                  </option>
+                                </select>
+
+                                </div>
+                                  <div class="col-sm-4">
+                                    <label class="control-label">Remarks</label>
+                                          <textarea class="form-control"
+                                          name="Remarks"
+                                          #Ramarks = "ngModel"
+                                          [(ngModel)]="ObjClosingStock.Remarks"
+                                          [ngClass]="{'clearance':ClosingStockFormSubmitted && Remarks?.errors?.required}"></textarea>
+                                  </div>
+                             </div>
+                          </form>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    (click)="GetProduct(ClosingStockForm.form.valid)"
+                     class="btn btn-primary pull-right">
+                     <span class="glyphicon glyphicon-search"></span>  Get Product
+                  </button>
+                </div>
+                <br>
+                <div class="col-sm-4">
+                  <label class="control-label">Product Type <span class="text-danger"></span></label>
+                  <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType"
+                    itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
+                    name="Product_Type"></p-multiSelect>
+                </div>
+
+                        <div class="row">
+                          <div class="col-sm-8"><h5><strong></strong></h5></div>
+                          </div>
+                      <div class="table-responsive table-id">
+                          <p-table [value]="productlist" #dt1
+                          [loading] = "seachSpinner"
+                          [autoLayout] ="true"
+                          [rowHover] ="true"
+                          [globalFilterFields]='["Product_Type","Product_Description"]'>
+                          <ng-template pTemplate="caption">
+                              <div class="row">
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input) ="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                              </div>
+
+                            </ng-template>
+                              <ng-template pTemplate="header">
+                                  <tr>
+                                      <!-- <th style="width:5em">Action</th> -->
+                                      <th>Product Type</th>
+                                      <th>Product Description</th>
+                                      <th>Closing Qty</th>
+                                  </tr>
+                              </ng-template>
+                               <ng-template pTemplate="body" let-col>
+                                  <tr>
+                                      <td>{{col.Product_Type}}</td>
+                                      <td>{{col.Product_Description}}</td>
+                                      <td><input type="text" [name]="col.Product_ID"  [(ngModel)]='col.Closing_Qty'
+                                                [ngClass]="{'clearance' : flag}"
+                                           CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                  </tr>
+                              </ng-template>
+                              <ng-template pTemplate="paginatorright" let-state>
+                                  Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                          </ng-template>
+                          </p-table>
+
+                      </div>
+
+
+
+                <div class="box-footer">
+                    <button
+                           type="button"
+                            class="btn btn-primary pull-right"
+                            (click) = "SaveClosingStock()"
+                            id="load"
+                            [disabled]="Spinner">
+                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                    </button>
+                </div>
+              </p-tabPanel>
+            </p-tabView>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+

@@ -1,0 +1,994 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+          <h3>{{message.summary}}</h3>
+          <p>{{message.detail}}</p>
+      </div>
+
+      <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+  </ng-template>
+</p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                  <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" *ngIf='!CustomerDisabledFlag' leftIcon="glyphicon glyphicon-list-alt" >
+                          <div class="col-lg-6">
+                            <div class="panel-group"  >
+                                <div class="panel panel-primary">
+                                  <div class="panel-body">
+                                      <form name="AdvaceorderForm" #AdvaceorderForm="ngForm" novalidate>
+                                       <div class="form-group">
+                                          <div class="col-sm-5">
+                                               <label class="control-label">Search By</label>
+                                               <select class="form-control"
+                                               name="Search_By"
+                                               [(ngModel)]="Search_By">
+
+                                                      <!-- <option  [ngValue]="undefined">Select</option> -->
+                                                      <option value="Delivery Date">Delivery Date</option>
+                                                      <option value="Order Date">Order Date</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-sm-7">
+                                              <label class="control-label">Date Range</label>
+
+                                              <app-compacct-daterangepicker
+                                              (DaterangeObj)="getDateRange($event)"
+                                              [DefaultDateOpt]="'weekwise'"
+                                              required>
+                                              </app-compacct-daterangepicker>
+
+                                          </div>
+                                        </div>
+                                        <div class="form-group">
+                                          <div class="col-sm-7">
+                                            <label class="control-label">Delivery Location</label>
+                                            <select class="form-control"
+                                                  name="BroeItem"
+                                                  #BroeItem = "ngModel"
+                                                  [(ngModel)] ="ObjaddbillForm.BrowserDeliveryto"
+                                                  >
+                                             <option  [ngValue] ="undefined">Select</option>
+                                              <option *ngFor = "let option of returnedID" [value] ="option.Cost_Cen_ID">
+                                               {{option.Cost_Cen_Name}}
+                                              </option>
+                                            </select>
+                                          </div>
+                                          <div class="col-sm-4">
+                                            <button class="btn btn-primary custombutton"
+                                            data-toggle="modal"
+                                            (click) = "Showdata()"
+                                            id="load"
+                                           [disabled]="Spinner"
+                                             >
+                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span *ngIf="!Spinner" ></span>Show
+                                     </button>
+                                        </div>
+                                       </div>
+                                    </form>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="panel-group"  >
+                                <div class="panel panel-primary">
+                                  <div class="panel-body">
+                                      <form name="AdditioanForm" #AdditioanForm="ngForm" novalidate>
+                                       <div class="form-group">
+                                           <div class="col-sm-7">
+                                              <label class="control-label">Customer Mobile</label>
+                                              <input type="text"
+                                              placeholder = "Customer Mobile"
+                                              name = "Custmobile"
+                                              #Costomer_Mobile = "ngModel"
+                                              [(ngModel)] ="Objcustomerdetail.Costomer_Mobile"
+                                              CompacctDigitonly="true"
+                                              maxlength="10"
+                                              minlength="10"
+                                              class="form-control"
+
+                                             >
+                                              <!-- <p-calendar [(ngModel)]="today" [showIcon]="true"></p-calendar> -->
+                                            </div>
+
+                                         <div class="col-sm-3">
+                                            <button class="btn btn-primary custombutton"
+                                            data-toggle="modal"
+                                            (click) = "Showdatabymobile()"
+                                            id="load"
+                                           [disabled]="Spinner"
+                                             >
+                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span *ngIf="!Spinner"></span>Show
+                                     </button>
+                                        </div>
+                                       </div>
+
+                                    </form>
+                                  </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+
+                            <div class="table-responsive no-padding table-id">
+                                <p-table [value]="Searchlist" [rows]="100" [rowHover]="true"
+                                         [paginator] ="true"
+                                         [autoLayout]="true" sortMode="multiple"
+                                         [loading] = "seachSpinner"
+                                         [rowsPerPageOptions]="[10,25,50,100]"
+                                         [globalFilterFields]="['Adv_Order_No','Order_Date','Del_Date','Del_Date_Time','Customer_Name',
+                                          'Costomer_Mobile','Total_Amount','Total_Paid','Net_Due','Bill_No','Bill_Date','Billing_Outlet']"
+                                         [rowHover]="true"
+                                         #dt>
+                                           <ng-template pTemplate="caption">
+                                               <div class="row">
+                                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                        </div>
+                                               </div>
+
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width:5em">Action</th>
+                                                    <th>Order No</th>
+                                                    <th>Order Date</th>
+                                                    <th>Delivery Location</th>
+                                                    <th>Delivery Date & Time</th>
+                                                    <th>Name</th>
+                                                    <th>Mobile No</th>
+                                                    <th>Total Amount</th>
+                                                    <th>Total Paid</th>
+                                                    <th>Net Due</th>
+                                                    <th>Bill No</th>
+                                                    <th>Bill Date</th>
+                                                    <th>Billing Outlet</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col>
+                                                 <tr [class]='col.Cancel_Order === "Y" ? "text-red-active" : ""'>
+
+                                                    <td>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                    type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li  *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y"'>
+                                                                        <a (click)="Edit(col)">
+                                                                            <i class="fa fa-fw fa-pencil"></i>
+                                                                            Edit
+                                                                        </a>
+                                                                    </li>
+                                                                    <li >
+                                                                      <a (click)="Print(col)">
+                                                                          <i class="fa fa-print" aria-hidden="true"></i>
+                                                                          Print
+                                                                      </a>
+                                                                  </li>
+                                                                    <li  *ngIf='col.Cancel_Order === "N" && col.Can_Cancel === "Y"'>
+                                                                        <a (click)="Cancle(col)">
+                                                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                                                            Cancel
+                                                                        </a>
+                                                                    </li>
+                                                                    <li  *ngIf='col.Cancel_Order === "N"'>
+                                                                      <a (click)="Create(col)">
+                                                                          <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                                          Create Bill
+                                                                      </a>
+                                                                  </li>
+                                                                  <li  *ngIf='col.Cancel_Order === "N"'>
+                                                                    <a (click)="MakePayment(col)">
+                                                                        <i class="fa fa-money" aria-hidden="true"></i>
+                                                                        Make Payment
+                                                                    </a>
+                                                                </li>
+                                                                </ul>
+                                                            </div>
+                                                    </td>
+                                                    <td>{{col.Adv_Order_No}}</td>
+                                                    <td>{{col.Order_Date | date: "dd/MMM/yyyy"}}</td>
+                                                    <td>{{col.Delivery_Location}}</td>
+                                                    <td>{{col.Del_Date | date: "dd/MMM/yyyy"}} - {{col.Del_Date_Time}}</td>
+                                                    <td>{{col.Customer_Name}}</td>
+                                                    <td>{{col.Costomer_Mobile}}</td>
+                                                    <td>{{col.Total_Amount}}</td>
+                                                    <td>{{col.Total_Paid}}</td>
+                                                    <td>{{col.Net_Due}}</td>
+                                                    <td>{{col.Bill_No}}</td>
+                                                    <td>{{col.Bill_Date}}</td>
+                                                    <td>{{col.Billing_Outlet}}</td>
+                                                 </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="paginatorright" let-state>
+                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                            </ng-template>
+                                    </p-table>
+                                </div>
+
+                                <p-dialog
+                                header="DETAILS"
+                                [appendTo]="'body'"
+                                [visible]="MakePaymentModal"
+                                [closeOnEscape]="true"
+                                [closable]="false"
+                                [modal]="true"
+                                [responsive]="true"
+                                [style]="{ width: '30%', minWidth: '200px' }"
+                                style="text-align: center;"
+                                [minY]="80"
+                                [maximizable]="true"
+                                [baseZIndex]="10000"
+                              >
+                              <div class="col-sm-6">
+                                <div class="box box-successMP wellMP well-smMP shadow">
+                                    <div class="form-horizontal">
+                                        <div class="box-body">
+                                            <div class="form-group">
+                                                <div class='col-sm-12'>
+                                                    <label class="control-label">Amount Payable:</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    {{Amount_Payable}}
+                                                </div>
+                                                <div class='col-sm-12'>
+                                                    <label class="control-label">Credit to Account:</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">
+                                                            <select
+                                                                 name = "Credit"
+                                                                #Credit_To_Ac_ID = "ngModel"
+                                                                [(ngModel)] ="ObjcashForm.Credit_To_Ac_ID">
+                                                                <option [ngValue]="undefined">select</option>
+                                                                <option *ngFor = "let option of creditlist" [value] ="option.Txn_ID">
+                                                                    {{option.Ledger_Name}}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <input type="text" class="form-control" id="exampleInputAmount1" placeholder="Amount"
+                                                        name = "credit"
+                                                        #credit = "ngModel"
+                                                           [(ngModel)] = "ObjcashForm.Credit_To_Amount"
+                                                           (ngModelChange) = "AmountChange()"
+                                                           CompacctDigitonly="true">
+                                                      </div>
+                                                </div>
+                                                <div class='col-sm-12'>
+                                                    <label class="control-label">Cash Amount:</label>
+                                                    <input class="form-control"
+                                                           type = "text"
+                                                           style = "text-align: center"
+                                                           name="cash"
+                                                           placeholder="Amount"
+                                                           #cash = "ngModel"
+                                                           [(ngModel)] = "ObjcashForm.Cash_Amount"
+                                                           (ngModelChange) = "AmountChange()"
+                                                           CompacctDigitonly="true">
+                                                </div>
+                                                <div class='col-sm-12'>
+                                                    <label class="control-label">Card Amount: </label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">
+                                                            <select
+                                                               name = "Card"
+                                                               #Card_Ac_ID = "ngModel"
+                                                               [(ngModel)] ="ObjcashForm.Card_Ac_ID">
+                                                                <option [ngValue]="undefined">select</option>
+                                                                <option *ngFor = "let option of cardlist" [value] ="option.Txn_ID">
+                                                                    {{option.Ledger_Name}}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <input type="text" class="form-control" id="exampleInputAmount" placeholder="Amount"
+                                                        name = "card"
+                                                        #card = "ngModel"
+                                                           [(ngModel)] = "ObjcashForm.Card_Amount"
+                                                           (ngModelChange) = "AmountChange()"
+                                                           CompacctDigitonly="true">
+                                                      </div>
+                                                </div>
+                                                <div class='col-sm-12'>
+                                                    <label class="control-label">Total Paid:</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    {{ObjcashForm.Total_Paid}}
+                                                </div>
+                                                <div class='col-sm-12'>
+                                                          <label class="control-label">Net Due:</label>
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                          {{ObjcashForm.Net_Due}}
+                                                      </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                              <p-footer>
+                                <button type="button" (click)="CloseMPaymentModal()" class="btn btn-default">
+                                  CLOSE
+                                </button>
+                                <button type="button" (click)="AddPayment()" class="btn btn-success">
+                                  ADD PAMENT
+                                </button>
+                                </p-footer>
+                             </p-dialog>
+
+                      </p-tabPanel>
+                      <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" *ngIf='CustomerDisabledFlag' leftIcon="glyphicon glyphicon-floppy-save" >
+                       <form name="addbillForm" #addbillForm="ngForm" novalidate>
+                          <fieldset ng-disabled="ctrl.productCategoryView" aria-disabled="false">
+                           <div class="form-group">
+                            <div class="col-sm-3">
+                              <label class="control-label">Order Date</label>
+                              <input class="form-control"
+                                     name="Doc_Date"
+                                     [disabled]="true"
+                                     [ngModel] ="myDate  | date :'dd-MMM-yyyy'"
+                                     (ngModelChange) ='myDate = $event'  >
+                            </div>
+                            <div class="col-sm-3">
+                              <label class="control-label">Delivery Date</label>
+                              <ejs-datepicker  [(value)]="delivery_Date" [format]="'dd/MMM/yyyy'"
+                                               name = "Del_Date"
+                                               #Del_Date = "ngModel"
+                                               [ngModel] = "delivery_Date"
+                                               (keydown)="onKeydownMain($event,'Delivey_Time')"
+                                               ></ejs-datepicker>
+                              <!-- <input class="form-control"
+                                     type="date"
+                                     name="Delivey_Date"
+                                     #Delivey_Date = "ngModel"
+                                     [ngModel]="delivery_Date | date:'yyyy-MM-dd'"
+                                         (ngModelChange)="delivery_Date = $event"> -->
+
+
+                            </div>
+                            <div class="col-sm-3">
+                              <label class="control-label">Delivery Time</label>
+                              <!-- <p-calendar [(value)]="Delivey_Time" [format]="12"></p-calendar> -->
+                              <input class="form-control"
+                                     type="time"
+                                     name="Delivey_Time"
+                                     id='Delivey_Time'
+                                     #Delivey_Time = "ngModel"
+                                     [(ngModel)] ="Objcustomerdetail.Del_Date_Time"
+                                     (keydown)="onKeydownMain($event,'outlet')">
+
+
+                            </div>
+                            <div class="col-sm-3">
+                              <label class="control-label">Outlet</label>
+                              <select class="form-control"
+                                      name="Outlet"
+                                      id='outlet'
+                                      #selectitem2 = "ngModel"
+                                      [(ngModel)] ="ObjaddbillForm.selectitem"
+                                      (change)='getselectitem()'
+                                      [disabled]="true"
+                                      [disabled]='productSubmit.length'
+                                      (keydown)="onKeydownMain($event,'delLocation')">
+                              <option  [ngValue]="undefined">Select</option>
+                              <option *ngFor = "let option of returnedID" [value] ="option.Cost_Cen_ID">
+                                  {{option.Cost_Cen_Name}}
+                                </option>
+                          </select>
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                            <div class="col-sm-3">
+                              <label class="control-label">Delivery Location</label>
+                              <select class="form-control"
+                                      name="delLocation"
+                                      id='delLocation'
+                                      #Del_Cost_Cent_ID = "ngModel"
+                                      [(ngModel)] ="Objcustomerdetail.Del_Cost_Cent_ID"
+                                      (keydown)="onKeydownMain($event,'Qty')">
+                                      <option  [ngValue]="undefined">Select</option>
+                               <option *ngFor = "let option of delloclist" [value] ="option.Cost_Cen_ID">
+                                  {{option.Cost_Cen_Name}}
+                                </option>
+                          </select>
+                            </div>
+                            <div class="col-sm-4">
+                              <label class="control-label"
+                                >Product <sup class="text-danger">*</sup> &nbsp;
+                              </label>
+                             <p-dropdown
+                                [options]="selectitem"
+                                name="Product"
+                                #Product2
+                                [(ngModel)] ="ObjaddbillForm.Product_ID"
+                                [showClear]="true"
+                                [emptyFilterMessage]="' No Product Found'"
+                                (onChange)="ProductChange()"
+                                [filter]="true"
+                                filterBy="label,value.name"
+                                [placeholder]="'Select Product'"
+                                (onHide)="enableButton($event)"
+                                [disabled]="selectitem.length === 0"
+                                [virtualScroll]="true"
+                                itemSize="30"
+                                #Product="ngModel"
+                                [required]="true"
+                                [ngClass]="{'clearance':addbillFormSubmitted && Product?.errors?.required}"
+                                required>
+                              </p-dropdown>
+                            </div>
+
+                            <div class="col-sm-1">
+                              <label class="control-label">Rate <sup class="text-danger">*</sup></label>
+                              <input class="form-control"
+                                     name="Rate"
+                                     #Rate = "ngModel"
+                                     [disabled]="true"
+                                     [(ngModel)] ="ObjaddbillForm.Sale_rate"
+                                     CompacctDigitonly="true"
+                                     [ngClass]="{'clearance':addbillFormSubmitted && Rate?.errors?.required}"
+                                      required>
+                          </div>
+                          <div class="col-sm-1">
+                            <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                            <input class="form-control"
+                                   name="Qty"
+                                   id='Qty'
+                                   #Qty = "ngModel"
+                                   [(ngModel)] ="ObjaddbillForm.Stock_Qty"
+                                   (keydown)="onKeydownMain($event,'Modifier')"
+                                   [ngClass]="{'clearance':addbillFormSubmitted && Qty?.errors?.required}"
+                                    required
+                                    CompacctDigitonly="true"
+                                    >
+                        </div>
+                         <!-- <div class="col-sm-1">
+                            <label class="control-label">Disc %</label>
+                            <input
+                                  class="form-control"
+                                   name="Max_Discount"
+                                   #Max_Discount = "ngModel"
+                                   [value] = "0"
+                                   id='Disc'
+                                   [(ngModel)] ="ObjaddbillForm.Max_Discount"
+                                   (keydown)= "onKeydownMain($event,'Modifier')"
+                                   CompacctDigitonly="true"
+                                   >
+                        </div> -->
+                        <div class="col-sm-3">
+                          <label class="control-label">Message On Cake</label>
+                          <input class="form-control"
+                             name="Modifier"
+                             #Modifier = "ngModel"
+                             id='Modifier'
+                             [(ngModel)] ="ObjaddbillForm.Modifier"
+                             (keydown)="onKeydownMain($event, 'Flavour')"
+                             [ngClass]="{'clearance':addbillFormSubmitted && Modifier?.errors?.required}"
+                              >
+                      </div>
+                          </div>
+
+                          <div class="form-group">
+                            <div class="col-sm-2" >
+                              <label class="control-label" >Flavour</label>
+                              <select class="form-control"
+                                      name="Flavour"
+                                      id='Flavour'
+                                      #Flavour = "ngModel"
+                                      [(ngModel)] ="ObjaddbillForm.Flavour"
+                                      (keydown)="onKeydownMain($event,'Finishing')">
+                                      <option  [ngValue]="undefined" >Select</option>
+                                <option *ngFor="let option of FlavourList"  [value] ="option.Txn_ID">
+                                  {{option.Field_Value}}
+                                </option>
+                          </select>
+                            </div>
+                            <div class="col-sm-2">
+                              <label class="control-label">Finishing</label>
+                              <select class="form-control"
+                                      name="Finishing"
+                                      id='Finishing'
+                                      #Finishing = "ngModel"
+                                      [(ngModel)] ="ObjaddbillForm.Finishing"
+                                      (keydown)="onKeydownMain($event,'Shape')">
+                                      <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor = "let option of Finishinglist" [value] ="option.Txn_ID">
+                                  {{option.Field_Value}}
+                                </option>
+                          </select>
+                            </div>
+                            <div class="col-sm-2">
+                              <label class="control-label">Shape</label>
+                              <select class="form-control"
+                                      name="Shape"
+                                      id='Shape'
+                                      #Shape = "ngModel"
+                                      [(ngModel)] ="ObjaddbillForm.Shape"
+                                      (keydown)="onKeydownMain($event,'Tier')">
+                                      <option  [ngValue]="undefined">Select</option>
+                                  <option *ngFor = "let option of Shapelist" [value] ="option.Txn_ID">
+                                        {{option.Field_Value}}
+                                  </option>
+                          </select>
+                            </div>
+                            <div class="col-sm-2">
+                              <label class="control-label">Tier</label>
+                              <select class="form-control"
+                                      name="Tier"
+                                      id='Tier'
+                                      #Tier = "ngModel"
+                                      [(ngModel)] ="ObjaddbillForm.Tier"
+                                      (keydown)="onKeydownMain($event,'Base')">
+                                      <option  [ngValue]="undefined">Select</option>
+                                  <option *ngFor = "let option of Tierlist" [value] ="option.Txn_ID">
+                                        {{option.Field_Value}}
+                                  </option>
+                          </select>
+                            </div>
+                            <div class="col-sm-2">
+                              <label class="control-label">Base</label>
+                              <select class="form-control"
+                                      name="Base"
+                                      id='Base'
+                                      #Base = "ngModel"
+                                      [(ngModel)] ="ObjaddbillForm.Base"
+                                      (keydown)="onKeydownMain($event,'Boxes')">
+                                      <option  [ngValue]="undefined">Select</option>
+                                  <option *ngFor = "let option of Baselist" [value] ="option.Txn_ID">
+                                        {{option.Field_Value}}
+                                  </option>
+                          </select>
+                            </div>
+                          <div class="col-sm-2">
+                            <label class="control-label">Boxes</label>
+                            <input class="form-control"
+                                   name="Boxes"
+                                   #Boxes = "ngModel"
+                                   id='Boxes'
+                                   [(ngModel)] ="ObjaddbillForm.Boxes"
+                                   (keydown)="onKeydownMain($event, 'Changes_On_Cake')"
+                                   [ngClass]="{'clearance':addbillFormSubmitted && Modifier?.errors?.required}"
+                                  >
+                          </div>
+                          </div>
+                          <div class="form-group">
+                            <div class="col-sm-2">
+                              <label class="control-label">Changes On Cake</label>
+                              <input class="form-control"
+                                     name="Changes_On_Cake"
+                                     #Changes_On_Cake = "ngModel"
+                                     id='Changes_On_Cake'
+                                     [(ngModel)] ="ObjaddbillForm.Changes_On_Cake"
+                                     (keydown)="onKeydownMain($event, 'Weight_in_Pound')"
+                                     [ngClass]="{'clearance':addbillFormSubmitted && Modifier?.errors?.required}"
+                                    >
+                            </div>
+                            <div class="col-sm-2">
+                              <label class="control-label">Weight in Pound</label>
+                              <input class="form-control"
+                                     name="Weight_in_Pound"
+                                     #Weight_in_Pound = "ngModel"
+                                     id='Weight_in_Pound'
+                                     [(ngModel)] ="ObjaddbillForm.Weight_in_Pound"
+                                     (keydown)="onKeydownMain($event, 'Order_Taken_By')"
+                                     [ngClass]="{'clearance':addbillFormSubmitted && Modifier?.errors?.required}"
+                                    >
+                            </div>
+                            <div class="col-sm-2">
+                              <label class="control-label">Order Taken By</label>
+                              <input class="form-control"
+                                     name="Order_Taken_By"
+                                     #Order_Taken_By = "ngModel"
+                                     id='Order_Taken_By'
+                                     [(ngModel)] ="ObjaddbillForm.Order_Taken_By"
+                                     (keydown)="onKeydownMain($event, 'enter')"
+                                     [ngClass]="{'clearance':addbillFormSubmitted && Modifier?.errors?.required}"
+                                    >
+                            </div>
+                          <div>
+                              <button id="row-Add" class ="btn btn-primary custombutton"    (click)="add(addbillForm.form.valid)">
+                              Add
+                          </button>
+                          </div>
+                        </div>
+
+
+                  <br>
+                  <div class="table-responsive no-padding">
+                      <table class="table table-bordered">
+                          <thead>
+                              <tr style="background-color:#3c8dbc;color:white;" >
+                                  <th>Description</th>
+                                  <th>Qty</th>
+                                  <th>Rate</th>
+                                  <th>Dis %</th>
+                                  <th>Dis Amt</th>
+                                  <th>SGST % / <br>
+                                      SGST Amt</th>
+                                  <!-- <th>SGST Amt</th> -->
+                                  <th>CGST % / <br>
+                                      CGST Amt</th>
+                                  <!-- <th>CGST Amt</th> -->
+                                  <th>IGST % / <br>
+                                      IGST Amt</th>
+                                  <th>Net Amt</th>
+                                  <th >Delete</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <!-- ngRepeat: obj in ctrl.ProductCategoryGST -->
+                                <tr *ngFor="let obj of productSubmit ;let ind = index;">
+                                  <td><b>{{obj.Product_Description}}</b> <br>
+                                      <i *ngIf='obj.Modifier' style="color: rgb(223, 25, 25);">
+                                        {{obj.Modifier}}
+                                      </i> <br>
+                                        Flavour&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;  {{obj.Flavour}} <br>
+                                        Finishing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;  {{obj.Finishing}} <br>
+                                        Shape &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;  {{obj.Shape}} <br>
+                                        Tier &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;  {{obj.Tier}} <br>
+                                        Base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;  {{obj.Base}} <br>
+                                        Boxes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;  {{obj.Boxes}} <br>
+                                        Changes on Cake -&nbsp;  {{obj.Changes_On_Cake}} <br>
+                                        Weight in Pound&nbsp; -&nbsp;  {{obj.Weight_in_Pound}} <br>
+                                        Order Taken By&nbsp;&nbsp;&nbsp; -&nbsp; {{obj.Order_Taken_By}} <br>
+
+                                  </td>
+                                  <td>{{obj.Stock_Qty}}</td>
+                                  <td>{{obj.Sale_rate}}</td>
+                                  <td>{{obj.Max_Discount}}</td>
+                                  <td>{{obj.Dis_Amount}}</td>
+                                  <td>{{obj.SGST_Per}} <br>
+                                      {{obj.SGST_Amount}}</td>
+                                  <!-- <td>{{obj.SGST_Amount}}</td> -->
+                                  <td>{{obj.CGST_Per}} <br>
+                                      {{obj.CGST_Amount}}</td>
+                                  <!-- <td>{{obj.CGST_Amount}}</td> -->
+                                  <td>{{obj.GST_Tax_Per}} <br>
+                                      {{obj.GST_Tax_Per_Amt}}</td>
+                                  <td>{{obj.Net_Amount}}</td>
+                                  <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </fieldset>
+          </form><br class="ng-scope">
+                      <form name="SavePrintForm" #SavePrintForm="ngForm" novalidate>
+
+                              <hr class="box boxboxDivide-primary ng-scope">
+
+                                  <div class="col-sm-4">
+                                  <div class="box box-success2 well2 well-sm2 shadow ">
+                                      <div class="form-group">
+                                      <div class='col-sm-12'>
+                                          <label class="control-label">Customer Mobile <sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                               name="Costomer_Mobile"
+                                               #Costomer_Mobile = "ngModel"
+                                               [(ngModel)] ="Objcustomerdetail.Costomer_Mobile"
+                                               maxlength="10"
+                                               id='Customer'
+                                               [disabled]='CustomerDisabledFlag'
+                                               (keydown)="onKeydownMain($event, 'CustomerName')"
+                                               placeholder="Customer Mobile"
+                                               [ngClass]="{'clearance':SavePrintFormSubmitted && Costomer_Mobile?.errors?.required}"
+                                               required>
+                                      </div>
+                                      <div class='col-sm-12'>
+                                          <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                               name="Customer_Name"
+                                               id='CustomerName'
+                                               #Customer_Name = "ngModel"
+                                               [disabled]='CustomerDisabledFlag'
+                                               (keydown)="onKeydownMain($event, 'Customer_DOB')"
+                                               [(ngModel)] ="Objcustomerdetail.Customer_Name"
+                                               placeholder="Customer Name"
+                                               [ngClass]="{'clearance':SavePrintFormSubmitted && Customer_Name?.errors?.required}"
+                                               required>
+                                      </div>
+                                      <div class='col-sm-12'>
+                                          <label class="control-label">Date of Birth</label>
+                                          <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+                                               id='Customer_DOB'
+                                               name="Customer_DOB"
+                                               #Customer_DOB = "ngModel"
+                                               (keydown)="onKeydownMain($event, 'Customer_Anni')"
+                                               [(ngModel)] ="Objcustomerdetail.Customer_DOB"
+                                               [enabled]='!CustomerDisabledFlag'
+                                               placeholder="dd/MMM/yyyy">
+                                          </ejs-datepicker>
+
+                                      </div>
+                                      <div class='col-sm-12'>
+                                          <label class="control-label">Anniversary</label>
+                                          <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+                                               id='Customer_Anni'
+                                               name="Customer_Anni"
+                                               #Customer_Anni = "ngModel"
+                                               (keydown)="onKeydownMain($event, 'Customer_GST')"
+                                               [(ngModel)] ="Objcustomerdetail.Customer_Anni"
+                                               [enabled]='!CustomerDisabledFlag'
+                                               placeholder="dd/MMM/yyyy">
+                                          </ejs-datepicker>
+
+                                      </div>
+                                      <div class='col-sm-12'>
+                                          <label class="control-label">Customer GST</label>
+                                          <input class="form-control"
+                                               #Customer_Gst
+                                               name = "Customer_GST"
+                                               placeholder = "Customer GST"
+                                               #Customer_GST = "ngModel"
+                                               id='Customer_GST'
+                                               [disabled]='CustomerDisabledFlag'
+                                               (keydown)="onKeydownMain($event, 'Bill_Remarks')"
+                                               (ngModelChange)='checkGSTvalid(Objcustomerdetail.Customer_GST)'
+                                               [(ngModel)] ="Objcustomerdetail.Customer_GST"
+                                               minlength = "15"
+                                               maxlength = "15"
+                                               [ngClass]="{
+                                                 clearance:
+                                                   (GSTvalidFlag) ||
+                                                   (Customer_GST.errors?.minlength && Customer_GST.touched)
+                                               }"
+                                               >
+
+                                      </div>
+                                      <div class='col-sm-12'>
+                                      <label class="control-label">Remarks</label>
+                                      <input class="form-control"
+                                               name="Bill_Remarks"
+                                               #Bill_Remarks = "ngModel"
+                                               id='Bill_Remarks'
+                                               (keydown)="onKeydownMain($event, 'save')"
+                                               [(ngModel)] ="Objcustomerdetail.Bill_Remarks"
+                                               placeholder="Remarks">
+                                      <!-- <textarea
+                                      [rows]="3" [cols]="20" pInputTextarea autoResize="autoResize"
+                                      ></textarea> -->
+                                     </div>
+                                  </div>
+                              </div>
+
+
+                                      </div>
+
+
+
+                                  <div class="col-sm-4">
+                                      <div class="box box-success1 well1 well-sm1 shadow ">
+                                          <div class="form-horizontal">
+                                              <div class="box-body1">
+                                                  <div class="form-group">
+                                                  <div class='col-sm-12'>
+                                                      <label class="control-label">Amount:</label>
+                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                      {{Amount}}
+                                                  </div>
+
+                                                  <div class='col-sm-12'>
+                                                      <label class="control-label">Discount:</label>
+                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                      {{Dis_Amount}}
+                                                  </div>
+                                                  <div class='col-sm-12'>
+                                                      <label class="control-label">Gross Amount:</label>
+                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                      {{Gross_Amount}}
+                                                  </div>
+                                                  <div class='col-sm-12'>
+                                                      <label class="control-label">SGST Amount:</label>
+                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                      {{SGST_Amount}}
+                                                  </div>
+                                                  <div class='col-sm-12'>
+                                                      <label class="control-label">CGST Amount:</label>
+                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                      {{CGST_Amount}}
+                                                  </div>
+                                                  <div class='col-sm-12'>
+                                                      <label class="control-label">IGST Amount:</label>
+                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                      {{GST_Tax_Per_Amt}}
+                                                  </div>
+                                                  <div class='col-sm-12'>
+                                                      <label class="control-label">Net Amount:</label>
+                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                      {{Total}}
+                                                  </div>
+
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      <div class="box box-success1 well1 well-sm1 shadow ">
+                                        <div class="form-horizontal">
+                                            <div class="box-body1">
+                                                <div class="form-group">
+                                                <div class='col-sm-12'>
+                                                    <label class="control-label">Cuppon No</label>
+                                                    &nbsp;&nbsp;&nbsp;
+                                                    <input type="text"
+                                                              size="10"
+                                                              Style ="border: 3px solid #aaa;"
+                                                              name = "cupponno"
+
+
+                                                              >
+
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                                      <button type="button" class="btn btn-success"> Get OTP </button>
+
+                                                </div> <br><br>
+
+                                                <div class='col-sm-12'>
+                                                    <label class="control-label">Enter OTP</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <input type="text"
+                                                            size="10"
+                                                            Style ="border: 3px solid #aaa;"
+                                                            name = "enterotp"
+
+
+                                                            CompacctDigitonly="true">
+
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                                    <button type="button" class="btn btn-warning"> Valid </button>
+
+                                                </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                  </div>
+
+                                  <div class="col-sm-4">
+                                      <div class="box box-success well well-sm shadow ">
+                                          <div class="form-horizontal">
+                                              <div class="box-body">
+                                                  <div class="form-group">
+                                                      <div class='col-sm-12'>
+                                                          <label class="control-label">Total Amount:</label>
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                          {{Total}}
+                                                      </div>
+                                                      <div class='col-sm-12'>
+                                                          <label class="control-label">Rounded Off:</label>
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                          {{Round_Off}}
+                                                      </div>
+                                                      <div class='col-sm-12'>
+                                                          <label class="control-label">Amount Payable:</label>
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                          {{Amount_Payable}}
+                                                      </div>
+                                                      <div class='col-sm-12'>
+                                                          <label class="control-label">Credit to Account:</label>
+                                                          <div class="input-group">
+                                                              <div class="input-group-addon">
+                                                                  <select
+                                                                       name = "Credit"
+                                                                      #Credit_To_Ac_ID = "ngModel"
+                                                                      [(ngModel)] ="ObjcashForm.Credit_To_Ac_ID">
+                                                                      <option [ngValue]="undefined">select</option>
+                                                                      <option *ngFor = "let option of creditlist" [value] ="option.Txn_ID">
+                                                                          {{option.Ledger_Name}}
+                                                                      </option>
+                                                                  </select>
+                                                              </div>
+                                                              <input type="text" class="form-control" id="exampleInputAmount1" placeholder="Amount"
+                                                              name = "credit"
+                                                              #credit = "ngModel"
+                                                                 [(ngModel)] = "ObjcashForm.Credit_To_Amount"
+                                                                 (ngModelChange) = "AmountChange()"
+                                                                 CompacctDigitonly="true">
+                                                            </div>
+                                                      </div>
+                                                      <div class='col-sm-12'>
+                                                          <label class="control-label">Cash Amount:</label>
+                                                          <input class="form-control"
+                                                                 type = "text"
+                                                                 style = "text-align: center"
+                                                                 name="cash"
+                                                                 placeholder="Amount"
+                                                                 #cash = "ngModel"
+                                                                 [(ngModel)] = "ObjcashForm.Cash_Amount"
+                                                                 (ngModelChange) = "AmountChange()"
+                                                                 CompacctDigitonly="true">
+                                                      </div>
+                                                      <div class='col-sm-12'>
+                                                          <label class="control-label">Card Amount: </label>
+                                                          <div class="input-group">
+                                                              <div class="input-group-addon">
+                                                                  <select
+                                                                     name = "Card"
+                                                                     #Card_Ac_ID = "ngModel"
+                                                                     [(ngModel)] ="ObjcashForm.Card_Ac_ID">
+                                                                      <option [ngValue]="undefined">select</option>
+                                                                      <option *ngFor = "let option of cardlist" [value] ="option.Txn_ID">
+                                                                          {{option.Ledger_Name}}
+                                                                      </option>
+                                                                  </select>
+                                                              </div>
+                                                              <input type="text" class="form-control" id="exampleInputAmount" placeholder="Amount"
+                                                              name = "card"
+                                                              #card = "ngModel"
+                                                                 [(ngModel)] = "ObjcashForm.Card_Amount"
+                                                                 (ngModelChange) = "AmountChange()"
+                                                                 CompacctDigitonly="true">
+                                                            </div>
+                                                      </div>
+                                                      <div class='col-sm-12'>
+                                                          <label class="control-label">Total Paid:</label>
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                          {{ObjcashForm.Total_Paid}}
+                                                      </div>
+                                                      <div class='col-sm-12'>
+                                                          <label class="control-label">Net Due:</label>
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                          {{ObjcashForm.Net_Due}}
+                                                      </div>
+
+
+                                                  </div>
+
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+
+
+
+                              <hr class="box boxboxDivide-primary ng-scope">
+
+
+                      </form>
+                      <div class="box-footer">
+                        <button class="btn btn-primary pull-right"
+                        (click) ="saveprintandUpdate()"
+                         id="load"
+                         [disabled]="Spinner">
+                         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                 </button>
+                      </div>
+                      </p-tabPanel>
+                  </p-tabView>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+

@@ -1,0 +1,258 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                            <form name="bagProcessSearchForm" #bagProcessSearchForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                        (click)="searchBagProcess(bagProcessSearchForm.form.valid)"
+                                                        id="load"
+                                                        [disabled]="Spinner">
+                                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                 </button>
+
+                                                      </div>
+                                                  </div>
+                                             </form>
+
+                                            <div class="table-responsive no-padding productTable">
+                                            <p-table [value]="searchBagProcessList"
+                                                     [paginator]="searchBagProcessList.length ? true : false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                </div>
+                                                           </div>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width:5em">Action</th>
+                                                                <th>Doc No</th>
+                                                                <th>Date</th>
+                                                                <th>Truck No</th>
+                                                                <th>Commercial Invoice No</th>
+                                                                <th>Container No</th>
+                                                                <th>Seal No</th>
+                                                                <th>Flexi Tank No</th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+                                                                <td>
+                                                                  <div class="dropdown">
+                                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                                          <i class="fa fa-fw fa-bars"></i>
+                                                                          <span class="caret"></span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu">
+                                                                          <li>
+                                                                              <a  (click)="editProcess(col.Doc_No)">
+                                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                                  Edit Transportation
+                                                                              </a>
+                                                                          </li>
+                                                                          <li>
+                                                                              <a (click)="deleteBagProcess(col)">
+                                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                                  Delete
+                                                                              </a>
+                                                                          </li>
+                                                                      </ul>
+                                                                  </div>
+                                                                </td>
+                                                                <td>{{col.Doc_No}}</td>
+                                                                <td>{{col.Process_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Truck_No }}</td>
+                                                                <td>{{col.Com_Inv_No}}</td>
+                                                                <td>{{col.Container_No}}</td>
+                                                                <td>{{col.Seal_No}}</td>
+                                                                <td>{{col.Flexi_Tank_No}}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+
+                                        </p-tabPanel> -->
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                           <form [formGroup]="contractForm" novalidate>
+                                              <div class="form-group">
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Plant
+                                                    <sup class="text-danger">*</sup></label>
+                                                   <p-dropdown [options]="plantList"
+                                                     formControlName="Cost_Cen_ID"
+                                                     [ngClass]="{'is-invalid': submitted && f.Cost_Cen_ID.errors}"
+                                                     [(ngModel)]="objMachineUses.Cost_Cen_ID"
+                                                     (onChange)="getPlantDetails(objMachineUses.Cost_Cen_ID)"
+                                                     [showClear]="true"
+                                                     [emptyFilterMessage]="'No Vendor Found'"
+                                                     [filter]="true"
+                                                     filterBy="label,value.name"
+                                                     [placeholder]="'Select Plant'"
+                                                     [virtualScroll]="true"
+                                                     >
+                                                 </p-dropdown>
+
+                                                 <div *ngIf="submitted && f.Cost_Cen_ID.errors" class="invalid-feedback">
+                                                   <div *ngIf="f.Cost_Cen_ID.errors.required">Plant is required</div>
+                                                 </div>
+
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Shift <sup class="text-danger">*</sup></label>
+                                                  <select class="form-control"
+                                                          formControlName="Shift_ID"
+                                                          [(ngModel)]="objMachineUses.Shift_ID"
+                                                          [ngClass]="{'is-invalid': submitted && f.Shift_ID.errors}"
+                                                          (ngModelChange)="getMachineData()"
+                                                          >
+                                                          <option [ngValue]="undefined">Select</option>
+                                                           <option *ngFor="let option of shiftList" [ngValue]="option.Shift_ID">{{option.Shift_Name}}</option>
+                                                  </select>
+
+                                                  <div *ngIf="submitted && f.Shift_ID.errors" class="invalid-feedback">
+                                                    <div *ngIf="f.Shift_ID.errors.required">Shift is required</div>
+                                                  </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Date
+                                                    <sup class="text-danger">*</sup></label>
+                                                          <div class="input-group date">
+                                                          <div class="input-group-addon">
+                                                              <i class="fa fa-calendar"></i>
+                                                          </div>
+                                                              <input type="date"
+                                                              class="form-control"
+                                                              formControlName="Process_Date"
+                                                              [ngModel]="ProcessDate | date:'yyyy-MM-dd'"
+                                                              (ngModelChange)="GetProcessDate($event)"
+                                                              >
+                                                      </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Machine  &nbsp;<span class="text-danger">*</span></label>
+                                                <p-dropdown [options]="productList"
+                                                formControlName="Product_ID"
+                                                [ngClass]="{ 'is-invalid': submitted && f.Product_ID.errors }"
+                                                [(ngModel)]="objMachineUses.Product_ID"
+                                                [showClear]="true"
+                                                [emptyFilterMessage]="'No Vendor Found'"
+                                                (onChange)="getProductDetails(objMachineUses.Product_ID)"
+                                                [filter]="true"
+                                                filterBy="label,value.name"
+                                                [placeholder]="'Select Machine'"
+                                                [virtualScroll]="true"
+                                                >
+                                            </p-dropdown>
+                                            <div *ngIf="submitted && f.Product_ID.errors" class="invalid-feedback">
+                                             <div *ngIf="f.Product_ID.errors.required">Machine is required</div>
+                                           </div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Start Time
+                                                  <sup class="text-danger">*</sup></label>
+                                                <!-- <p-calendar formControlName="Start_Date" [(ngModel)]="objMachineUses.Start_Date" [timeOnly]="true" ></p-calendar> -->
+                                                <p-calendar  formControlName="Start_Date" [(ngModel)]="Start_Date" [timeOnly]="true" ></p-calendar>
+
+                                                <div *ngIf="submitted && f.Start_Date.errors" class="invalid-feedback">
+                                                  <div *ngIf="f.Start_Date.errors.required">Start Date is required</div>
+                                              </div>
+                                              </div>
+
+                                              <div class="col-sm-4">
+                                                <label class="control-label">End Time
+                                                  <sup class="text-danger">*</sup></label>
+
+                                                <!-- <p-calendar formControlName="End_Date" [(ngModel)]="objMachineUses.End_Date" [timeOnly]="true" ></p-calendar> -->
+                                                <p-calendar formControlName="End_Date" [(ngModel)]="End_Date" [timeOnly]="true" ></p-calendar>
+
+                                                <div *ngIf="submitted && f.End_Date.errors" class="invalid-feedback">
+                                                  <div *ngIf="f.End_Date.errors.required">End Date is required</div>
+                                              </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="box-footer">
+                                              <button class="btn btn-primary pull-right"
+                                                      (click)="SaveBagProcessMaster()"
+                                                      id="load"
+                                                      [disabled]="Spinner">
+                                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                  <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                              </button>
+                                          </div>
+                                        </form>
+                                  </p-tabPanel>
+                              </p-tabView>
+
+                              <div>
+                              <table class="table table-bordered" *ngIf="machineList.length > 0">
+                                <thead>
+                                  <tr>
+                                    <th>Plant Name</th>
+                                    <th>Machine Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Time Used	</th>
+                                    <!-- <th>Edit</th> -->
+                                    <th>Delete</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let item of machineList; let index = index">
+                                    <td>{{item.Cost_Cen_Name}}</td>
+                                    <td>{{item.Product_Description}}</td>
+                                    <td>{{item.Start_Date | date: 'dd/MM/yyyy'}}</td>
+                                    <td>{{item.End_Date | date: 'dd/MM/yyyy'}}</td>
+                                    <td>{{item.Time_Used}}</td>
+                                    <!-- <td> <span (click)="editRawMaterial(index)" *ngIf="item.Cost_Cen_Main_Type ==='STORE-TANK'"><i class="fa fa-fw fa-pencil"> </i> </span> </td> -->
+                                    <td> <span (click)="deleteMachine(index, item.Efficiency_ID)" > <i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+

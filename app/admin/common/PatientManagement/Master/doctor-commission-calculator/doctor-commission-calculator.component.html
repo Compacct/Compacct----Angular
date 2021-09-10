@@ -1,0 +1,276 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                              <div class="form-group">
+                                <div class="col-sm-3">
+                                  <label class="control-label">Month</label>
+                                  <select class="form-control" [(ngModel)]="searchFormData.month" >
+                                      <!-- <option [ngValue]="undefined">Select</option> -->
+                                      <option value="1">January</option>
+                                      <option value="2"> February</option>
+                                      <option value="3"> March</option>
+                                      <option value="4"> April</option>
+                                      <option value="5"> May</option>
+                                      <option value="6"> June</option>
+                                      <option value="7"> July</option>
+                                      <option value="8"> August</option>
+                                      <option value="9"> September</option>
+                                      <option value="10"> October</option>
+                                      <option value="11"> November</option>
+                                      <option value="12"> December</option>
+                                  </select>
+
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Year</label>
+                                    <select class="form-control" [(ngModel)]="searchFormData.year">
+                                        <!-- <option [ngValue]="undefined">Select</option> -->
+                                        <option value={{prevYear}}>{{prevYear}}</option>
+                                        <option value={{currentYear}}>{{currentYear}}</option>
+                                        <option value={{nextYear}}>{{nextYear}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                  <label class="control-label">Cost Center <sup class="text-danger">*</sup></label>
+                                  <p-dropdown [options]="costCenterList"
+                                  [(ngModel)]="searchFormData.Cost_Cen_ID"
+                                  [showClear]="true"
+                                  [emptyFilterMessage]="'No Cost Center Found'"
+                                  [filter]="true"
+                                  filterBy="label,value.name"
+                                  [placeholder]="'Select Cost Center Name'"
+                                  [virtualScroll]="true"
+                                  >
+                                  </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                              <button class="btn btn-primary pull-right" style="margin-top: 25px;"
+                              (click)="filter()"
+                              > Show Details</button>
+                          </div>
+                        </div>
+
+                           <br/> <br/>
+                            <div class="table-responsive no-padding productTable">
+                              <ng-container *ngIf="searchData.length > 0; else elseTmp">
+                                 <p-table [value]="searchData"
+                                      [paginator]="searchData.length ? true : false" [rows]="10" [rowHover]="true"
+                                      [autoLayout]="true" sortMode="multiple"
+                                      [rowsPerPageOptions]="[10,20,30]"
+                                      [rowHover]="true">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Doctor Name</th>
+                                                <th>Service Amount</th>
+                                                <th>HA Amount</th>
+                                                <th>Total Amount</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                  <div class="dropdown">
+                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                          <i class="fa fa-fw fa-bars"></i>
+                                                          <span class="caret"></span>
+                                                      </button>
+                                                      <ul class="dropdown-menu">
+                                                          <li>
+                                                              <a (click)="edit(col.Doctor_ID)">
+                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                  Edit
+                                                              </a>
+                                                          </li>
+                                                          <!-- <li>
+                                                              <a (click)="deleteBagProcess(col)">
+                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                  Delete
+                                                              </a>
+                                                          </li> -->
+                                                          <li>
+                                                            <a (click)="getPrint(col.Doctor_ID)">
+                                                                <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                Print
+                                                            </a>
+                                                        </li>
+                                                      </ul>
+                                                  </div>
+                                                </td>
+                                                <td>{{col.Doctor_Name}}</td>
+                                                <td>{{col.Service_Amt}}</td>
+                                                <td>{{col.HA_Amt}}</td>
+                                                <td>{{col.Service_Amt + col.HA_Amt}}</td>
+                                                                        </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                        </ng-template>
+                                </p-table>
+                              </ng-container>
+                              <ng-template #elseTmp>
+                               <div *ngIf="dataNotFound" style="color:red; font-size: 17px; text-align: center; "> No data found</div>
+                              </ng-template>
+                            </div>
+
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                  <div class="form-group">
+                                    <div class="col-sm-3">
+                                            <label class="control-label">Month</label>
+                                            <select class="form-control" [(ngModel)]="formData.month" (ngModelChange)="monthChanged()">
+                                                <!-- <option [ngValue]="undefined">Select</option> -->
+                                                <option value="1">January</option>
+                                                <option value="2"> February</option>
+                                                <option value="3"> March</option>
+                                                <option value="4"> April</option>
+                                                <option value="5"> May</option>
+                                                <option value="6"> June</option>
+                                                <option value="7"> July</option>
+                                                <option value="8"> August</option>
+                                                <option value="9"> September</option>
+                                                <option value="10"> October</option>
+                                                <option value="11"> November</option>
+                                                <option value="12"> December</option>
+                                            </select>
+
+                                    </div>
+                                    <div class="col-sm-3">
+                                    <label class="control-label">Year</label>
+                                    <select class="form-control" [(ngModel)]="formData.year">
+                                        <!-- <option [ngValue]="undefined">Select</option> -->
+                                        <option value={{prevYear}}>{{prevYear}}</option>
+                                        <option value={{currentYear}}>{{currentYear}}</option>
+                                        <option value={{nextYear}}>{{nextYear}}</option>
+                                    </select>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                      <label class="control-label">Cost Center <sup class="text-danger">*</sup></label>
+                                      <p-dropdown [options]="costCenterList"
+                                      [(ngModel)]="formData.Cost_Cen_ID"
+                                      [showClear]="true"
+                                      [emptyFilterMessage]="'No Cost Center Found'"
+                                      [filter]="true"
+                                      filterBy="label,value.name"
+                                      [placeholder]="'Select Cost Center Name'"
+                                      [virtualScroll]="true"
+                                      >
+                                      </p-dropdown>
+
+                                </div>
+                                <div class="col-sm-3">
+                                  <button *ngIf="items[1]==='CREATE'" class="btn btn-primary pull-right" style="margin-top: 30px;"
+                                  (click)="showEligibleDoctor()"
+                                  > Show Eligible Doctor</button>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <div class="col-sm-3">
+                                <label class="control-label">Doctors <sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="eligibleDoctors"
+                                [(ngModel)]="formData.Doctor_ID"
+                                [showClear]="true"
+                                [emptyFilterMessage]="'No Doctor Found'"
+                                [filter]="true"
+                                filterBy="label,value.name"
+                                [placeholder]="'Select Doctor Name'"
+                                [virtualScroll]="true"
+                                >
+                                </p-dropdown>
+
+                          </div>
+                          <div class="col-sm-3">
+                            <button *ngIf="items[1]==='CREATE'" class="btn btn-primary pull-right" style="margin-top: 30px;"
+                            (click)="showTransactions()"
+                            > Show Transactions</button>
+                        </div>
+                      </div>
+
+                        <br/> <br/>
+
+                        <ng-container *ngIf="transactions != null && transactions.length > 0 ; else elseTransactionTmp">
+                          <table class="table table-bordered" >
+                            <thead>
+                              <tr>
+                                <th>Type</th>
+                                <th>Patient Name</th>
+                                <th>Mobile</th>
+                                <th>Bill No</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Tax</th>
+                                <th>Discount</th>
+                                <!-- <th>Net</th> -->
+                                <th>Commission</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let item of transactions; let i = index">
+                                <td>{{item.Product_Type}}</td>
+                                <td>{{item.Contact_Name}}</td>
+                                <td>{{item.Mobile}}</td>
+                                <td>{{item.Doc_No}}</td>
+                                <td>{{item.Doc_Date | date:'d MMM y'}}</td>
+                                <td>{{item.Product_Description}}</td>
+                                <td>{{item.Taxable_Amt}}</td>
+                                <td>{{item.Tax_Amt}}</td>
+                                <td>{{item.Discount_Amt}}</td>
+                                <!-- <td>{{item.Net_Amt}}</td> -->
+                                <td>
+                                  <input type="number" class="form-control" name="Commission_Amount" [(ngModel)]="item.Commission_Amount" (ngModelChange)="modelChanged($event)">
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div style="text-align: right;margin-top:30px;font-weight: bold;">Total Amount : {{totalAmount}}</div>
+                        </ng-container>
+                        <ng-template #elseTransactionTmp>
+                          <div *ngIf="transationsNotFound" style="color:red; font-size: 17px; text-align: center; "> No data found</div>
+                         </ng-template>
+
+                        <button class="btn btn-primary pull-right" style="margin-top:30px;"
+                        (click)="onFormSubmit()"
+                        > Save</button>
+
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+          <h3>{{message.summary}}</h3>
+          <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+  </ng-template>
+</p-toast> -->

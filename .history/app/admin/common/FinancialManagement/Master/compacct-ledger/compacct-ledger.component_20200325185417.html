@@ -1,0 +1,250 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast
+  position="center"
+  key="c"
+  (onClose)="onReject()"
+  [modal]="true"
+  [autoZIndex]="true"
+>
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onConfirm()"
+          label="Yes"
+          class="ui-button-success"
+        ></button>
+      </div>
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onReject()"
+          label="No"
+          class="ui-button-secondary"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body">
+          <p-tabView
+            [activeIndex]="tabIndexToView"
+            (onChange)="TabClick($event)"
+          >
+            <p-tabPanel
+              headerStyleClass="compacct-tabs"
+              [header]="items[0]"
+              leftIcon="glyphicon glyphicon-list-alt"
+            >
+
+              <div class="table-responsive no-padding LedgerTable">
+                <p-table
+                  #dt
+                  [columns]="cols"
+                  [value]="LedgerLists"
+                  [paginator]="LedgerLists.length ? true : false"
+                  [rows]="10"
+                  [rowHover]="true"
+                  [autoLayout]="true"
+                  sortMode="multiple"
+                  [rowHover]="true"
+                >
+                  <ng-template pTemplate="caption">
+                    <div class="row">
+                      <div
+                        class="col-sm-3 pull-right"
+                        style="text-align: right"
+                      >
+                        <input
+                          type="text"
+                          pInputText
+                          size="50"
+                          placeholder="Search"
+                          (input)="
+                            dt.filterGlobal($event.target.value, 'contains')
+                          "
+                          class="searchInput form-control"
+                        />
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width:5em">Action</th>
+                      <th
+                        *ngFor="let col of columns"
+                        [pSortableColumn]="col.field"
+                      >
+                        {{ col.header }}
+                        <p-sortIcon
+                          *ngIf="LedgerLists.length"
+                          [field]="col.field"
+                        ></p-sortIcon>
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-list let-columns="columns">
+                    <tr>
+                      <td>
+                        <div class="dropdown">
+                          <button
+                            class="btn btn-default btn-sm tableButton dropdown-toggle"
+                            type="button"
+                            data-toggle="dropdown"
+                            style="height:27px"
+                          >
+                            <i class="fa fa-fw fa-bars"></i>
+                            <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <!--  BILL-->
+                            <li>
+                              <a (click)="EditLeger(list)">
+                                <i class="fa fa-fw fa-pencil"></i>
+                                Edit
+                              </a>
+                            </li>
+
+                            <li>
+                              <a (click)="DeleteLedger(list)">
+                                <i class="fa fa-fw fa-trash"></i>
+                                Delete
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td *ngFor="let col of columns">
+                        {{ list[col.field]
+                            ? list[col.field]
+                            : "-"
+                        }}
+
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template
+                    pTemplate="paginatorright"
+                    *ngIf="LedgerLists.length"
+                    let-state
+                  >
+                    Showing {{ state.first + 1 }} of
+                    {{ state.first + 1 + state.rows }} of
+                    {{ state.totalRecords }}
+                  </ng-template>
+                </p-table>
+              </div>
+            </p-tabPanel>
+            <p-tabPanel
+              headerStyleClass="compacct-tabs"
+              [header]="items[1]"
+              leftIcon="glyphicon glyphicon-floppy-save"
+            >
+                <form #LedgerForm="ngForm" novalidate>
+                  <div class="form-group">
+                    <div class="col-sm-3">
+                      <label class="control-label"
+                        >Group Name &nbsp;<span class="text-danger"
+                          >*</span
+                        ></label
+                      >
+                      <p-dropdown
+                        [options]="AccountingGroupsLists"
+                        name="group"
+                        [(ngModel)]="ObjLedger.Accounting_Group_ID"
+                        [showClear]="true"
+                        [emptyFilterMessage]="' No Group Found'"
+                        (onChange)="
+                        AccountingGrpChange(ObjLedger.Accounting_Group_ID)
+                        "
+                        [filter]="true"
+                        filterBy="label,value.name"
+                        [placeholder]="'Select Group Name'"
+                        [virtualScroll]="true"
+                        itemSize="30"
+                        #group="ngModel"
+                        [styleClass]="
+                          LedgerFormSubmitted && group.errors?.required
+                            ? 'clearance'
+                            : ''
+                        "
+                        [required]="true"
+                      >
+                      </p-dropdown>
+                    </div>
+                    <div class="col-sm-3">
+                      <label class="control-label"
+                        >Ledger Name<span class="text-danger">*</span
+                      ></label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        name="LedgerName"
+                        placeholder="Ledger Name"
+                        #LedgerName="ngModel"
+                        [ngClass]="{'clearance': LedgerFormSubmitted &&  LedgerName?.errors?.required}"
+                        (change)="LedgerNameChange(ObjLedger.Ledger_Name)"
+                        [(ngModel)]="ObjLedger.Ledger_Name"
+                        required
+                      />
+                    </div>
+                    <div class="col-sm-3" *ngIf="ValidGroupFlag">
+                      <label class="control-label">Transaction  Type<sup class="text-danger">*</sup></label>
+                      <p-multiSelect [options]="BankTynLists" [(ngModel)]="SelectedBankTrn" [styleClass]="'compacct-multiselect'" name="banktrn"></p-multiSelect>
+                  </div>
+                  <div class="col-sm-3" *ngIf="ValidGroupFlag">
+                    <label class="control-label"
+                    >Ledger Short Name<span class="text-danger">*</span
+                  ></label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="LedgerSName"
+                    [ngClass]="{'clearance': LedgerFormSubmitted &&  LedgerSName?.errors?.required}"
+                    placeholder="Ledger Short Name"
+                    #LedgerSName="ngModel"
+                    [(ngModel)]="ObjLedger.Ledger_Short_Name"
+                    required
+                  />
+                </div>
+                <div class="col-sm-3" style="margin-top:25px" *ngIf="!ValidGroupFlag">
+                  <p-checkbox name="groupname" binary="true" [(ngModel)]="subledgerVal"></p-checkbox> &nbsp; &nbsp;
+                  <label class="control-label">Allow Subledger<sup class="text-danger"></sup></label>
+              </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <button type="submit"
+                        name='stock'
+                        class="btn btn-primary pull-right"
+                        (click)="SaveLedger(LedgerForm.form.valid)"
+                        id="load"
+                        [disabled]="saveSpinner">
+                        <p-progressSpinner *ngIf="saveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                        <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>&nbsp;{{buttonname}}
+                    </button>
+                    </div>
+                    </div>
+                    </form>
+
+            </p-tabPanel>
+          </p-tabView>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

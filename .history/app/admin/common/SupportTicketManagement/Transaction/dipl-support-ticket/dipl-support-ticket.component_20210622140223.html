@@ -1,0 +1,837 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="fa fa-fw fa-check-circle" style="font-size: 3em;color:green"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="CallTutopiaAppApi()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                  <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="SupportTicketListSearchForm" #SupportTicketListSearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-3">
+                                <label class="control-label"> Status</label>
+                                <select class="form-control"
+                                name="Status"
+                                #Status="ngModel"
+                                [(ngModel)]="ObjSearch.Status_ID"
+                                [ngClass]="{clearance: SupportTktSearchFormSubmitted && Status.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of StatusList" value="{{ option.Status_ID }}" >
+                                  {{ option.Status }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-3">
+                                  <label class="control-label">Period</label>
+
+                                  <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                  </app-compacct-daterangepicker>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label"
+                                  >Assigned To<sup class="text-danger"></sup></label
+                                >
+                                <select
+                                  class="form-control"
+                                  name="Assigned"
+                                  #Assigned="ngModel"
+                                  [(ngModel)]="ObjSearch.Asigned_To"
+                                  [ngClass]="{
+                                    clearance:
+                                    SupportTktSearchFormSubmitted && Assigned.errors?.required
+                                  }"
+                                >
+                                <option *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" [ngValue]="undefined">Select</option>
+                                  <option
+                                    *ngFor="let option of AssignedToList"
+                                    value="{{ option.User_ID }}"
+                                  >
+                                    {{ option.Member_Name }}
+                                  </option>
+                                </select>
+                              </div>
+                              <div class="col-sm-3">
+                                  <button class="btn btn-primary custombutton" data-toggle="modal"
+                                      (click)="SearchSupportTicketList(SupportTicketListSearchForm.form.valid)" id="load"
+                                      [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner"
+                                          [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                          animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner"
+                                          class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                  </button>
+                                  <!-- <button style="margin-right: 30px;" *ngIf='VoucherBillList.length'  (click)="exportexcel(VoucherBillList,'Confirmed_Voucher')"
+                                  class="btn btn-primary custombutton">
+                                  <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                </button> -->
+                              </div>
+                            </div>
+                            <div class="form-group" style="padding:15px" *ngIf="SupportTicketList.length">
+                              <fieldset class="col-md-12">
+                                <legend>Filter</legend>
+                                <div class="form-group">
+                                  <div class="col-sm-3">
+                                    <label class="control-label">Customer Name Filter <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistCust" [(ngModel)]="SelectedDistCust" [virtualScroll]="true"
+                                      itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                                      name="DistCust"></p-multiSelect>
+                                  </div>
+                                  <div class="col-sm-3">
+                                    <label class="control-label">TAT hours <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistTat" [(ngModel)]="SelectedDistTat" [virtualScroll]="true"
+                                      itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                                      name="DistTat"></p-multiSelect>
+                                  </div>
+                                  <div class="col-sm-3">
+                                    <label class="control-label">Assigned To Filter <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistAssignTo" [(ngModel)]="SelectedDistAssignTo" [virtualScroll]="true"
+                                      itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                                      name="DistAssignTo"></p-multiSelect>
+                                  </div>
+                                  <div class="col-sm-3">
+                                    <label class="control-label">Product Name <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistProdName" [(ngModel)]="SelectedDistProdName" [virtualScroll]="true"
+                                      itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                                      name="DistProdName"></p-multiSelect>
+                                  </div>
+                                  <div class="col-sm-2">
+                                    <button style="margin-right: 30px;" (click)="exportexcel(SupportTicketList,'TicketList_')" class="btn btn-primary custombutton">
+                                      <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                    </button>
+                                  </div>
+                              </div>
+                              </fieldset>
+                          </div>
+                        </form>
+
+                        <div class="table-responsive table-id">
+                          <p-table [value]="SupportTicketList" #dt2 [paginator]="SupportTicketList.length ? true : false" [rows]="10"
+                            [autoLayout]="true" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true"
+                            [globalFilterFields]='["Support_ID","Support_Date","Name","Status","TAT_HR","PIN_Code","Assigned_To_Name","Class_Name"]'>
+                            <ng-template pTemplate="caption">
+                              <div class="row">
+                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                  <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                </div>
+                              </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                              <tr>
+                                <th class="text-center">Ticket No</th>
+                                <th>Customer Name</th>
+                                <th>Mobile No</th>
+                                <th>TAT(Hour)</th>
+                                <th>Created On</th>
+                                <th>Laster Updated On</th>
+                                <th>Assigned To</th>
+                                <th>Product Name</th>
+                                <th class="text-center">Update Ticket</th>
+
+
+                              </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-Querylist>
+                              <tr>
+                                <td class="text-center"><b>{{Querylist.Sup_Ticket_ID}}</b>&nbsp;<a title="Ticket Details" class="border-left btn btn-info btn-xs" (click)='ShowTicketDetails(Querylist)'><i class="fa fa-fw fa-info"></i></a></td>
+
+                                <td>{{Querylist.Customer_Name}}</td>
+                                <td>{{Querylist.Customer_Mobile}}</td>
+                                <td  [class]='getTatClass(Querylist.TAT)'>{{Querylist.TAT}}</td>
+                                <td>{{ Querylist.Created_On | date : "dd/MMM/yyyy  h:mm a"}}</td>
+                                <td>{{Querylist.Last_Updated_On  | date : "dd/MMM/yyyy  h:mm a"}}</td>
+                                <td>{{Querylist.Assigned_To_Name}}</td>
+                                <td>{{Querylist.Product_Name}}</td>
+                                <td class="text-center"><a *ngIf='Querylist.Show_Update !== "N"' class="btn btn-reddit btn-sm" (click)='UpdateTicketStatusModal(Querylist)'>
+                                  <i class="fa fa-fw fa-ticket"></i> Update Ticket
+                                </a>
+                              </td>
+
+
+                              </tr>
+                            </ng-template>
+                            <ng-template *ngIf="SupportTicketList.length" pTemplate="paginatorright" let-state>
+                              Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                            </ng-template>
+                          </p-table>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                        <form name="sptTicket" #sptTicket="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-6">
+                                <label class="control-label">Select Customer &nbsp;<span class="text-danger">*</span></label>
+                                <span class="pull-right"><p-radioButton (onClick)='CustomerRadioChanged($event)' name="groupname" label="Lead" value="Lead" [(ngModel)]="CustomerselectedValue"></p-radioButton>
+                                 &nbsp;&nbsp; <p-radioButton (onClick)='CustomerRadioChanged($event)' name="groupname" label="Existing" value="Existing" [(ngModel)]="CustomerselectedValue"></p-radioButton></span>
+                                <p-dropdown
+                                  [options]="ExistingList"
+                                  name="vendor"
+                                  [(ngModel)]="SubledgerID"
+                                  [showClear]="true"
+                                  *ngIf="CustomerselectedValue === 'Existing'"
+                                  [emptyFilterMessage]="' No Existing Customer Found'"
+                                  (onChange)="ChangeExitingCus()"
+                                  [filter]="true"
+                                  filterBy="label,value.name"
+                                  [placeholder]="'Select Existing Customer'"
+                                  [virtualScroll]="true"
+                                  itemSize="30"
+                                  #vendor="ngModel"
+                                  [styleClass]="
+                                  SupportTktFormSubmitted && vendor.errors?.required
+                                      ? 'clearance'
+                                      : ''
+                                  "
+                                  [required]="true"
+                                >
+                                </p-dropdown>
+                                <p-dropdown
+                                  [options]="LeadList"
+                                  name="vendor"
+                                  [(ngModel)]="FootFallID"
+                                  [showClear]="true"
+                                  *ngIf="CustomerselectedValue === 'Lead'"
+                                  [emptyFilterMessage]="' No Lead Customer Found'"
+                                  (onChange)="ChangeLeadCus()"
+                                  [filter]="true"
+                                  filterBy="label,value.name"
+                                  [placeholder]="'Select Lead Customer'"
+                                  [virtualScroll]="true"
+                                  itemSize="30"
+                                  #vendor="ngModel"
+                                  [styleClass]="
+                                  SupportTktFormSubmitted && vendor.errors?.required
+                                      ? 'clearance'
+                                      : ''
+                                  "
+                                  [required]="true"
+                                >
+                                </p-dropdown>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <div class="col-sm-4" *ngIf="CustomerselectedValue === 'Existing'">
+                                <label class="control-label"> Address Caption</label>
+                                <select class="form-control"
+                                name="Address_Caption"
+                                #Address_Caption="ngModel"
+                                [(ngModel)]="SubledgerAdressCap"
+                                (change)='ChangeExistingAdressCaption(SubledgerAdressCap)'
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Address_Caption.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of ExistingAdressCaptionList" value="{{ option.Address_Caption }}" >
+                                  {{ option.Address_Caption }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Address</label>
+                                <textarea class="form-control"
+                                name="Address"
+                                rows="1"
+                                #Address="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Address"
+                                placeholder="Address"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Address.errors?.required}"
+                                required
+                                  >
+                              </textarea>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">PIN<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                     name="Pin"
+                                     #Pin="ngModel"
+                                     [(ngModel)]="ObjSupportTkt.PIN_Code"
+                                     placeholder="PIN"
+                                      minlength="6"
+                                      maxlength="6"
+                                      CompacctDigitonly="true"
+                                      [ngClass]="{'clearance':SupportTktFormSubmitted && Pin?.errors?.required ||
+                                      (Pin.errors?.minlength && Pin.touched)}" required>
+
+                              </div>
+                              <div class="col-sm-4">
+                              <label class="control-label">Contact Person<sup class="text-danger">*</sup></label>
+                                 <input class="form-control"
+                                  name="Person"
+                                  #Person="ngModel"
+                                  [(ngModel)]="ObjSupportTkt.Contact_Peson_Name"
+                                  placeholder="Contact Person"
+                                  [ngClass]="{'clearance':SupportTktFormSubmitted && Person?.errors?.required}" required>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Mobile No.<sup class="text-danger">*</sup></label>
+                                   <input class="form-control"
+                                   name="mobile1"
+                                   #mobile1="ngModel"
+                                   CompacctDigitonly="true"
+                                   [ngClass]="{
+                                     clearance:
+                                       (SupportTktFormSubmitted && mobile1.errors?.required) ||
+                                       (mobile1.errors?.minlength && mobile1.touched)
+                                   }"
+                                   [(ngModel)]="ObjSupportTkt.Customer_Mobile"
+                                   placeholder="Mobile Number"
+                                   minlength="10"
+                                   maxlength="10"
+                                   required>
+                                </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Email<sup class="text-danger">*</sup></label>
+                                   <input class="form-control"
+                                    name="Email"
+                                    #Email="ngModel"
+                                    [(ngModel)]="ObjSupportTkt.Customer_Email"
+                                    placeholder="Email"
+                                    [ngClass]="{'clearance':SupportTktFormSubmitted && Email?.errors?.required}" required>
+                              </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary" />
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label"> Support Location</label>
+                                <select class="form-control"
+                                name="Location"
+                                #Location="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Support_Loation"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Location.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SupportLocationList" value="{{ option.Support_Location }}" >
+                                  {{ option.Support_Location }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Support Charge Type</label>
+                                <select class="form-control"
+                                name="Charge_Type"
+                                #Charge_Type="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Support_Charge_Type"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Charge_Type.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SupportChargeTypeList" value="{{ option.Support_Charge_Type }}" >
+                                  {{ option.Support_Charge_Type }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Call Recieved By</label>
+                                <select class="form-control"
+                                name="Call_Recieved_By"
+                                #Call_Recieved_By="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Call_Recieved_By"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Call_Recieved_By.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option  value="PHONE" >PHONE</option>
+                                <option  value="EMAIL" >EMAIL</option>
+                              </select>
+                              </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary" />
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                  <label class="control-label">Product Name<sup class="text-danger">*</sup></label>
+                                   <input class="form-control"
+                                    name="Product"
+                                    #Product="ngModel"
+                                    [(ngModel)]="ObjSupportTkt.Product_Name"
+                                    placeholder="Product Name"
+                                    [ngClass]="{'clearance':SupportTktFormSubmitted && Product?.errors?.required}" required>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Product Serial No<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Serial"
+                                    #Serial="ngModel"
+                                    [(ngModel)]="ObjSupportTkt.Product_Serial_No"
+                                    placeholder="Product Serial No"
+                                    [ngClass]="{'clearance':SupportTktFormSubmitted && Serial?.errors?.required}" required>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Support Type</label>
+                                <select class="form-control"
+                                name="spt_Type"
+                                #spt_Type="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Support_Type_ID"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && spt_Type.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SupportTypeList" value="{{ option.Support_Type_ID }}" >
+                                  {{ option.Support_Type }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Symptom</label>
+                                <select class="form-control"
+                                name="Symptom"
+                                #Symptom="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Symptom_ID"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Symptom.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SupportSymptomTypeList" value="{{ option.Symptom_ID }}" >
+                                  {{ option.Symptom }}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Brief Description</label>
+                                <textarea class="form-control"
+                                name="Description"
+                                #Description="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Problem_Brief_Description"
+                                placeholder="Brief Description"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Description.errors?.required}"
+                                required
+                                  >
+                              </textarea>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label"> Status</label>
+                                <select class="form-control"
+                                name="Status"
+                                #Status="ngModel"
+                                [(ngModel)]="ObjSupportTkt.Status_ID"
+                                [ngClass]="{clearance: SupportTktFormSubmitted && Status.errors?.required}"
+                                required
+                                  >
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of StatusList" value="{{ option.Status_ID }}" >
+                                  {{ option.Status }}
+                                </option>
+                              </select>
+                              </div>
+                            </div>
+                        </form>
+
+                          <div class="box-footer">
+                            <button class="btn btn-primary pull-right custombutton" data-toggle="modal"
+                                (click)="SaveSupportTicket(sptTicket.form.valid)" id="load" [disabled]="seachSpinner">
+                                <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                    animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!seachSpinner" class="glyphicon glyphicon-floppy-save"></span>&nbsp;Save
+                            </button>
+                        </div>
+
+                    </p-tabPanel>
+                  </p-tabView>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- UPDATE TICKET -->
+<p-dialog header="UPDATE TICKET" [appendTo]="'body'" [visible]="UpdateStatusModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="UpdateStatusUpdate"  #UpdateStatusUpdate="ngForm" novalidate>
+    <div class="row">
+      <div class="col-md-12">
+          <div class="col-md-6">
+            <p-tabView [activeIndex]="0">
+
+              <p-tabPanel headerStyleClass="compacct-tabs"  [header]="'Follow-up'" leftIcon="fa fa-angle-double-right" aria-hidden="true" >
+
+                <div class="form-horizontal">
+                  <div class="box-body ">
+                      <div class="timelinescroll style-3">
+                          <ul class="timeline ">
+                              <li class="time-label" style="margin-bottom: -20px"
+                                  *ngFor="let objMain of distinctDateArray">
+                                  <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
+                                  <ul class="timeline" style="margin: 7px 0 30px 0">
+                                      <li *ngFor="let objSub of getFollowupByDate(objMain)">
+                                          <i class="fa fa-user bg-blue"></i>
+                                          <div class="timeline-item">
+                                              <!-- <span class="time" *ngIf="false"><i class="fa fa-clock-o"></i> 12:05</span> -->
+                                              <div class="timeline-header">
+                                                <a class="btn btn-reddit btn-social  btn-xs">
+                                                  Assigned To  :
+                                                  <i class="fa fa-user-plus"></i>&nbsp;{{objSub.User_Name}}
+                                                </a>
+                                              </div>
+                                              <div class="timeline-body">
+                                                  {{objSub.Last_Remarks}}
+                                              </div>
+                                              <div class="timeline-footer" style="padding-bottom: 10px">
+                                                  <!-- <a class="btn btn-primary btn-social  btn-xs"
+                                                      *ngIf="objSub.CreatedBy != objSub.SentTo_Name">
+                                                      <i class="fa fa-user"></i>&nbsp;{{objSub.SentTo_Name}}
+                                                  </a> -->
+                                                  <div class="btn btn-reddit btn-social  btn-xs" style="white-space: pre-line;width: 75%;">
+                                                    Remarks :
+                                                    <i class="fa fa-comments"></i>&nbsp;{{objSub.Note}}
+                                                </div>
+                                                  <div style="margin-top:0.2em;">
+                                                    <a class="btn btn-danger btn-social  btn-xs">
+                                                      Status :
+                                                      <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Status}}
+                                                    </a>
+                                                  </div>
+
+
+                                                  <a *ngIf="objSub.PDF_File"
+                                                      ng-click="viewPDF(objSub.PDF_File)">
+                                                      <img src="~/PDF_Logo/PDF-logo.png" class='pdf'
+                                                          style="width:20px; height:20px ">
+                                                  </a>
+                                              </div>
+                                          </div>
+                                      </li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+              </p-tabPanel>
+              <p-tabPanel headerStyleClass="compacct-tabs"  [header]="'Ticket Info'" leftIcon="fa fa-info" aria-hidden="true" >
+                <form class="timelinescroll style-3" name="InformModalUpdate"  #InformModalUpdate="ngForm" novalidate>
+                  <h5 class="text-center bg-green-gradient" style="padding: 0.25em;">
+                    Ticket ID : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Sup_Ticket_ID}}</span>&nbsp;&nbsp;|&nbsp;
+                    Ticket Date : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Created_On | date : "dd/MMM/yyyy  h:mm a"}}</span>
+                  </h5>
+                  <div class="form-group">
+                    <div class="col-sm-6">
+                      <label class="control-label">Customer Name</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Customer_Name ? ObjUpdateStatus.Customer_Name : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Mobile No.</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Customer_Mobile ? ObjUpdateStatus.Customer_Mobile : '-'}}</div>
+                    </div>
+
+                    <div class="col-sm-6">
+                      <label class="control-label">Address</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Address ? ObjUpdateStatus.Address : '-'}}</div>
+                    </div>
+
+                    <div class="col-sm-6">
+                      <label class="control-label">Pincode</label>
+                      <div  class="label-t">{{ObjUpdateStatus.PIN_Code ? ObjUpdateStatus.PIN_Code: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Email</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Customer_Email ? ObjUpdateStatus.Customer_Email: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Contact Person</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Contact_Peson_Name ? ObjUpdateStatus.Contact_Peson_Name : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Support Location</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Support_Loation ? ObjUpdateStatus.Support_Loation : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Support Charge Type</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Support_Charge_Type ? ObjUpdateStatus.Support_Charge_Type : '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Call Recieved By</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Call_Recieved_By ? ObjUpdateStatus.Call_Recieved_By: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Product Name</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Product_Name ? ObjUpdateStatus.Product_Name: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Product Serial No</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Product_Serial_No ? ObjUpdateStatus.Product_Serial_No: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Status</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Status ? ObjUpdateStatus.Status: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Support Type</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Support_Type ? ObjUpdateStatus.Support_Type: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Symptom</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Symptom ? ObjUpdateStatus.Symptom: '-'}}</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="control-label">Brief Description</label>
+                      <div  class="label-t">{{ObjUpdateStatus.Problem_Brief_Description ? ObjUpdateStatus.Problem_Brief_Description: '-'}}</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="box-footer">
+                      <h5></h5>
+                    </div>
+                  </div>
+                </form>
+              </p-tabPanel>
+            </p-tabView>
+          </div>
+          <div class="col-md-6">
+            <h5 class="text-center bg-green-gradient" style="padding: 0.25em;">
+              Customer Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Customer_Name}}</span>&nbsp;&nbsp;|&nbsp;
+              Current Status : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Status}}</span>
+            </h5>
+            <div class="form-group">
+              <div class="col-sm-12" >
+                <label class="control-label"
+                >Status<sup class="text-danger">*</sup></label
+              >
+              <select
+                class="form-control"
+                name="Support_Status_ID1"
+                #Support_Status_ID1="ngModel"
+                [(ngModel)]="ObjUpdateStatus.Status_ID"
+                [ngClass]="{
+                  clearance:
+                  UpdateStatusFormSubmit && Support_Status_ID1.errors?.required
+                }"
+                required
+              >
+                <option [ngValue]="undefined">Select</option>
+                <option
+                  *ngFor="let option of StatusList"
+                  value="{{ option.Status_ID }}"
+                >
+                  {{ option.Status }}
+                </option>
+              </select>
+              </div>
+              <div class="col-sm-12">
+                <label class="control-label"
+                  >Assigned To<sup class="text-danger"></sup></label
+                >
+                <select
+                  class="form-control"
+                  name="Assigned11"
+                  #Assigned11="ngModel"
+                  [(ngModel)]="ObjUpdateStatus.Assigned_To"
+                  [ngClass]="{
+                    clearance:
+                    UpdateStatusFormSubmit && Assigned11.errors?.required
+                  }"
+                  required>
+                <option *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" [ngValue]="undefined">Select</option>
+                  <option
+                    *ngFor="let option of AssignedToList"
+                    value="{{ option.User_ID }}"
+                  >
+                    {{ option.Member_Name }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-sm-12"  style="margin-bottom: 1em;">
+                <label class="control-label"
+                >Remarks<sup class="text-danger">*</sup></label
+              >
+              <textarea
+              class="form-control"
+              name="Followup_Remarks1"
+              rows="3"
+              #Followup_Remarks1="ngModel"
+              [(ngModel)]="ObjUpdateStatus.Note"
+              minlength="5"
+              [ngClass]="{
+                clearance:
+                (UpdateStatusFormSubmit && Followup_Remarks1.errors?.required) ||
+                (Followup_Remarks1.errors?.minlength && Followup_Remarks1.touched)
+              }"
+              required></textarea>
+
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+  <!-- <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div> -->
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="UpdateStatusModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="UpdateTicketStatus(UpdateStatusUpdate.form.valid)">
+      UPDATE
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- TICKET DETAILS  -->
+<p-dialog header="TICKET DETAILS" [appendTo]="'body'" [visible]="TicketDetailsModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '88%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="row">
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-horizontal">
+                <div class="box-body ">
+                    <div class="timelinescroll style-3">
+                        <ul class="timeline ">
+                            <li class="time-label" style="margin-bottom: -20px"
+                                *ngFor="let objMain of distinctDateArray">
+                                <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
+                                <ul class="timeline" style="margin: 7px 0 30px 0">
+                                    <li *ngFor="let objSub of getFollowupByDate(objMain)">
+                                        <i class="fa fa-user bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <!-- <span class="time" *ngIf="false"><i class="fa fa-clock-o"></i> 12:05</span> -->
+                                            <div class="timeline-header">
+                                              <a class="btn btn-reddit btn-social  btn-xs">
+                                                Assigned To  :
+                                                <i class="fa fa-user-plus"></i>&nbsp;{{objSub.User_Name}}
+                                              </a>
+                                            </div>
+                                            <div class="timeline-body">
+                                                {{objSub.Last_Remarks}}
+                                            </div>
+                                            <div class="timeline-footer" style="padding-bottom: 10px">
+                                                <!-- <a class="btn btn-primary btn-social  btn-xs"
+                                                    *ngIf="objSub.CreatedBy != objSub.SentTo_Name">
+                                                    <i class="fa fa-user"></i>&nbsp;{{objSub.SentTo_Name}}
+                                                </a> -->
+                                                <div class="btn btn-reddit btn-social  btn-xs" style="white-space: pre-line;width: 75%;">
+                                                    Remarks :
+                                                    <i class="fa fa-comments"></i>&nbsp;{{objSub.Note}}
+                                                </div>
+                                                <div style="margin-top:0.2em;">
+                                                  <a class="btn btn-danger btn-social  btn-xs">
+                                                    Status :
+                                                    <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Status}}
+                                                  </a>
+                                                </div>
+
+
+                                                <a *ngIf="objSub.PDF_File"
+                                                    ng-click="viewPDF(objSub.PDF_File)">
+                                                    <img src="~/PDF_Logo/PDF-logo.png" class='pdf'
+                                                        style="width:20px; height:20px ">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+          <form class="timelinescroll style-3" name="InformModalUpdate" style="margin-top:1em" #InformModalUpdate="ngForm" novalidate>
+            <h5 class="text-center bg-green-gradient" style="padding: 0.25em;">
+              Ticket ID : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Sup_Ticket_ID}}</span>&nbsp;&nbsp;|&nbsp;
+              Ticket Date : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjUpdateStatus?.Created_On | date : "dd/MMM/yyyy  h:mm a"}}</span>
+            </h5>
+            <div class="form-group">
+              <div class="col-sm-6">
+                <label class="control-label">Customer Name</label>
+                <div  class="label-t">{{ObjUpdateStatus.Customer_Name ? ObjUpdateStatus.Customer_Name : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Mobile No.</label>
+                <div  class="label-t">{{ObjUpdateStatus.Customer_Mobile ? ObjUpdateStatus.Customer_Mobile : '-'}}</div>
+              </div>
+
+              <div class="col-sm-6">
+                <label class="control-label">Address</label>
+                <div  class="label-t">{{ObjUpdateStatus.Address ? ObjUpdateStatus.Address : '-'}}</div>
+              </div>
+
+              <div class="col-sm-6">
+                <label class="control-label">Pincode</label>
+                <div  class="label-t">{{ObjUpdateStatus.PIN_Code ? ObjUpdateStatus.PIN_Code: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Email</label>
+                <div  class="label-t">{{ObjUpdateStatus.Customer_Email ? ObjUpdateStatus.Customer_Email: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Contact Person</label>
+                <div  class="label-t">{{ObjUpdateStatus.Contact_Peson_Name ? ObjUpdateStatus.Contact_Peson_Name : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Support Location</label>
+                <div  class="label-t">{{ObjUpdateStatus.Support_Loation ? ObjUpdateStatus.Support_Loation : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Support Charge Type</label>
+                <div  class="label-t">{{ObjUpdateStatus.Support_Charge_Type ? ObjUpdateStatus.Support_Charge_Type : '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Call Recieved By</label>
+                <div  class="label-t">{{ObjUpdateStatus.Call_Recieved_By ? ObjUpdateStatus.Call_Recieved_By: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Product Name</label>
+                <div  class="label-t">{{ObjUpdateStatus.Product_Name ? ObjUpdateStatus.Product_Name: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Product Serial No</label>
+                <div  class="label-t">{{ObjUpdateStatus.Product_Serial_No ? ObjUpdateStatus.Product_Serial_No: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Status</label>
+                <div  class="label-t">{{ObjUpdateStatus.Status ? ObjUpdateStatus.Status: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Support Type</label>
+                <div  class="label-t">{{ObjUpdateStatus.Support_Type ? ObjUpdateStatus.Support_Type: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Symptom</label>
+                <div  class="label-t">{{ObjUpdateStatus.Symptom ? ObjUpdateStatus.Symptom: '-'}}</div>
+              </div>
+              <div class="col-sm-6">
+                <label class="control-label">Brief Description</label>
+                <div  class="label-t">{{ObjUpdateStatus.Problem_Brief_Description ? ObjUpdateStatus.Problem_Brief_Description: '-'}}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="box-footer">
+                <h5></h5>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  <p-footer>
+    <button type="button" (click)="TicketDetailsModalFlag = false" class="btn btn-default">
+      CLOSE
+    </button>
+  </p-footer>
+</p-dialog>

@@ -1,0 +1,326 @@
+<!-- <p-toast key="compacct-toast" baseZIndex="99999"></p-toast> -->
+<p-toast
+  position="center"
+  key="OrderNo"
+  styleClass="custom-orderno-toast"
+  (onClose)="onReject()"
+  [modal]="true"
+  [autoZIndex]="true"
+>
+  <ng-template let-message pTemplate="message">
+    <div class="row" style="text-align: center">
+      <i class="pi pi-id-card" style="font-size: 3em"></i>
+      <!-- <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p> -->
+      <form>
+        <div class="form-group">
+          <div class='col-sm-12'>
+              <label class="control-label">Order No</label>
+              <input class="form-control"
+                   name="oRDER_nO"
+                   #oRDER_nO = "ngModel"
+                   [(ngModel)] ="Objcustomerdetail.Costomer_Mobile"
+                   placeholder="Order No">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <button
+          type="button"
+          pButton
+          (click)="onConfirm()"
+          label="Yes"
+          class="ui-button-success"
+        ></button>
+      </div>
+      <div class="col-sm-6">
+        <button
+          type="button"
+          pButton
+          (click)="onReject()"
+          label="No"
+          class="ui-button-secondary"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<div class="row pos-row" >
+  <div class="col-lg-3 col-xs-6">
+    <div class="small-box bg-aqua">
+      <div class="inner">
+        <h3>{{TopDataList[0]}}</h3>
+        <p>{{TopDataList[0]}}</p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-qrcode"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-xs-6">
+    <div class="small-box bg-green">
+      <div class="inner">
+        <h3>{{TopDataList[1]}}<sup style="font-size: 20px"></sup></h3>
+        <p>{{TopDataList[1]}}</p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-book"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-xs-6">
+    <div class="small-box bg-yellow">
+      <div class="inner">
+        <h3>{{TopDataList[2]}}</h3>
+        <p>{{TopDataList[2]}}</p>
+      </div>
+      <div class="icon">
+        <i class="ion ion-stats-bars"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-xs-6">
+    <div class="small-box bg-red">
+      <div class="inner">
+        <h3>{{TopDataList[3]}}</h3>
+        <p>{{TopDataList[3]}}</p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-calculator"></i>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" style="padding:1em;">
+  <div class="col-sm-6">
+    <div class="row">
+      <div class=" col-sm-6">
+        <div class="info-box bg-blue" (click)='ShowCustomerDetailsPopUp()'>
+          <span class="info-box-icon"><i class="fa fa-shopping-bag"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text" style="font-size: 1.6em;margin-bottom: 1em;">TAKE AWAY</span>
+            <div class="progress">
+              <div class="progress-bar" style="width: 90%"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class=" col-sm-6">
+        <div class="info-box bg-blue" (click)='ShowOnlineDelOrderNo()'>
+          <span class="info-box-icon"><i class="fa fa-cutlery"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text" style="font-size: 1.6em;margin-bottom: 1em;">CUSTOM ORDER</span>
+            <div class="progress">
+              <div class="progress-bar" style="width: 90%"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class=" col-sm-6">
+        <div class="info-box bg-blue">
+          <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text"  style="font-size: 1.6em;margin-bottom: 1em;">Likes</span>
+            <div class="progress">
+              <div class="progress-bar" style="width: 90%"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class=" col-sm-6">
+        <div class="info-box bg-blue">
+          <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text"  style="font-size: 1.6em;margin-bottom: 1em;">Likes</span>
+            <div class="progress">
+              <div class="progress-bar" style="width: 90%"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="box box-primary my-box-widget">
+          <div class="box-header with-border">
+            <h3 class="box-title">HOLD BILL</h3>
+            <div class="box-tools pull-right">
+              <!-- Collapse Button -->
+              <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+              </button>
+            </div>
+            <!-- /.box-tools -->
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            The body of the box
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+            Total : 128
+          </div>
+          <!-- box-footer -->
+        </div>
+      </div>
+      <div class="col-sm-12">
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">HOLD CUSTOM BILL</h3>
+            <div class="box-tools pull-right">
+              <!-- Collapse Button -->
+              <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+              </button>
+            </div>
+            <!-- /.box-tools -->
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            The body of the box
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+            Total : 128
+          </div>
+          <!-- box-footer -->
+        </div>
+        <!-- /.box -->
+      </div>
+      <div class="col-sm-12">
+        <div class="box box-success">
+          <div class="box-header with-border">
+            <h3 class="box-title">OUT FOR DELIVERY</h3>
+            <div class="box-tools pull-right">
+              <!-- Collapse Button -->
+              <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+              </button>
+            </div>
+            <!-- /.box-tools -->
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            The body of the box
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+            Total : 128
+          </div>
+          <!-- box-footer -->
+        </div>
+        <!-- /.box -->
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog header="Customer Details" [appendTo]="'body'"
+ [(visible)]="CustomerDetailsPopUpFlag"
+ [modal]="true" [responsive]="true"
+ [closeOnEscape]="true"
+ [style]="{ width: '40%', minWidth: '200px' }"
+ >
+
+  <form name="CustomerDetailsForm" #CustomerDetailsForm="ngForm" novalidate>
+    <div>
+        <div class="form-group">
+        <div class='col-sm-12'>
+            <label class="control-label">Customer Mobile</label>
+            <input class="form-control"
+                 name="Costomer_Mobile"
+                 #Costomer_Mobile = "ngModel"
+                 [(ngModel)] ="Objcustomerdetail.Costomer_Mobile"
+                 maxlength="10"
+                 id='Customer'
+                 (keydown)="onKeydownMain($event, 'CustomerName')"
+                 placeholder="Customer Mobile">
+        </div>
+        <div class='col-sm-12'>
+            <label class="control-label">Customer Name</label>
+            <input class="form-control"
+                 name="Customer_Name"
+                 id='CustomerName'
+                 #Customer_Name = "ngModel"
+                 (keydown)="onKeydownMain($event, 'Customer_DOB')"
+                 [(ngModel)] ="Objcustomerdetail.Customer_Name"
+                 placeholder="Customer Name">
+        </div>
+        <div class='col-sm-12'>
+            <label class="control-label">Date of Birth</label>
+            <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+               id='Customer_DOB'
+               name="Customer_DOB"
+               #Customer_DOB = "ngModel"
+               (keydown)="onKeydownMain($event, 'Customer_Anni')"
+               [(ngModel)] ="Objcustomerdetail.Customer_DOB"
+               placeholder="dd/MMM/yyyy">
+          </ejs-datepicker>
+        </div>
+
+        <div class='col-sm-12'>
+            <label class="control-label">Anniversary</label>
+            <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+               id='Customer_Anni'
+               name="Customer_Anni"
+               #Customer_Anni = "ngModel"
+               (keydown)="onKeydownMain($event, 'Customer_GST')"
+               [(ngModel)] ="Objcustomerdetail.Customer_Anni"
+               placeholder="dd/MMM/yyyy">
+          </ejs-datepicker>
+
+        </div>
+        <div class='col-sm-12'>
+            <label class="control-label">Customer GST</label>
+            <input class="form-control"
+                 #Customer_Gst
+                 name = "Customer_GST"
+                 placeholder = "Customer GST"
+                 #Customer_GST = "ngModel"
+                 id='Customer_GST'
+                 (keydown)="onKeydownMain($event, 'Bill_Remarks')"
+                 (ngModelChange)='checkGSTvalid(Objcustomerdetail.Customer_GST)'
+                 [(ngModel)] ="Objcustomerdetail.Customer_GST"
+                 minlength = "15"
+                 maxlength = "15"
+                 [ngClass]="{
+                   clearance:
+                     (GSTvalidFlag) ||
+                     (Customer_GST.errors?.minlength && Customer_GST.touched)
+                 }"
+                 >
+
+        </div>
+        <div class='col-sm-12'>
+        <label class="control-label">Remarks</label>
+        <input class="form-control"
+                 name="Bill_Remarks"
+                 #Bill_Remarks = "ngModel"
+                 id='Bill_Remarks'
+                 (keydown)="onKeydownMain($event, 'save')"
+                 [(ngModel)] ="Objcustomerdetail.Bill_Remarks"
+                 placeholder="Remarks">
+        <!-- <textarea
+        [rows]="3" [cols]="20" pInputTextarea autoResize="autoResize"
+        ></textarea> -->
+       </div>
+    </div>
+</div>
+  </form>
+  <p-footer>
+    <button type="button" pButton icon="pi pi-close" (click)="CustomerDetailsPopUpFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" pButton icon="pi pi-check" class="btn btn-primary" (click)="OnCustomerDetailsSubmit(CustomerDetailsForm.form.valid)">
+      OK
+    </button>
+  </p-footer>
+</p-dialog>

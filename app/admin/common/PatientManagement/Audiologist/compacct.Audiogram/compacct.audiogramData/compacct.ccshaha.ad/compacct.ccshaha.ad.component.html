@@ -1,0 +1,665 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<form name="registrationForm5" #registrationForm5="ngForm" novalidate>
+  <div class="form-group">
+    <div class="col-sm-12">
+      <!-- objCCaudiometry.CC_Main_Remarks -->
+      <div layout="column">
+        <!-- <div
+          ckeditor="options"
+          name="htmlcontent"
+          [(ngModel)]="objCCaudiometry.CC_Main_Remarks"
+          ready="onReady()"
+        ></div> -->
+        <p-editor
+          name="htmlcontent"
+          [(ngModel)]="objCCaudiometry.CC_Main_Remarks"
+          [style]="{ height: '120px' }"
+        ></p-editor>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-6">
+      <label class="control-label">C/O</label>
+      <input
+        class="form-control"
+        name="referenceSource"
+        #referenceSource
+        [(ngModel)]="objCCaudiometry.CC_C_O"
+        placeholder="C/O"
+      />
+    </div>
+    <div class="col-sm-6">
+      <label class="control-label">H/O</label>
+      <input
+        class="form-control"
+        name="subreferenceSource"
+        #subreferenceSource
+        [(ngModel)]="objCCaudiometry.CC_H_O"
+        placeholder="H/O"
+      />
+    </div>
+
+    <div class="col-sm-6">
+      <div>
+        <label class="control-label">
+          Discussion
+          <sup class="text-danger">*</sup>
+        </label>
+        <!-- <span
+                  class="btn-sm btn-primary pull-right"
+                  (click)="openAudiNameModal()"
+                  ><span class="glyphicon glyphicon-plus"></span>&nbsp; ADD</span
+                > -->
+      </div>
+      <table class="table  table-bordered table-striped">
+        <thead>
+          <tr style="background-color:#3c8dbc;color:white">
+            <th class="text-center right">RIGHT</th>
+            <th class="text-center left">LEFT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_DISC_RIGHT_1"
+                [(ngModel)]="CC_DISC_RIGHT_1"
+                (change)="changeAudioName(CC_DISC_RIGHT_1, 'CC_DISC_RIGHT_1')"
+                list="CC_DISC_RIGHT_1"
+                class="form-control text-danger"
+                placeholder="Search.."
+              />
+              <datalist id="CC_DISC_RIGHT_1">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_DISC_LEFT_1"
+                [(ngModel)]="CC_DISC_LEFT_1"
+                (change)="changeAudioName(CC_DISC_LEFT_1, 'CC_DISC_LEFT_1')"
+                list="CC_DISC_LEFT_1"
+                class="form-control text-primary"
+                placeholder="Search.."
+              />
+              <datalist id="CC_DISC_LEFT_1">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_DISC_RIGHT_2"
+                [(ngModel)]="CC_DISC_RIGHT_2"
+                (change)="changeAudioName(CC_DISC_RIGHT_2, 'CC_DISC_RIGHT_2')"
+                list="CC_DISC_RIGHT_2"
+                class="form-control text-danger"
+                placeholder="Search.."
+              />
+              <datalist id="CC_DISC_RIGHT_2">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_DISC_LEFT_2"
+                [(ngModel)]="CC_DISC_LEFT_2"
+                (change)="changeAudioName(CC_DISC_LEFT_2, 'CC_DISC_LEFT_2')"
+                list="CC_DISC_LEFT_2"
+                class="form-control text-primary"
+                placeholder="Search.."
+              />
+              <datalist id="CC_DISC_LEFT_2">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_DISC_RIGHT_3"
+                [(ngModel)]="CC_DISC_RIGHT_3"
+                (change)="changeAudioName(CC_DISC_RIGHT_3, 'CC_DISC_RIGHT_3')"
+                list="CC_DISC_RIGHT_3"
+                class="form-control text-danger"
+                placeholder="Search.."
+              />
+              <datalist id="CC_DISC_RIGHT_3">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_DISC_LEFT_3"
+                [(ngModel)]="CC_DISC_LEFT_3"
+                (change)="changeAudioName(CC_DISC_LEFT_3, 'CC_DISC_LEFT_3')"
+                list="CC_DISC_LEFT_3"
+                class="form-control text-primary"
+                placeholder="Search.."
+              />
+              <datalist id="CC_DISC_LEFT_3">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-sm-6">
+      <div>
+        <label class="control-label">
+          Impression
+          <sup class="text-danger">*</sup>
+        </label>
+        <!-- <span class="btn-sm btn-primary pull-right" (click)="openAudiNameModal()"><span
+                            class="glyphicon glyphicon-plus"></span>&nbsp; ADD</span> -->
+      </div>
+      <table class="table  table-bordered table-striped">
+        <thead>
+          <tr style="background-color:#3c8dbc;color:white">
+            <th class="text-center right">RIGHT</th>
+            <th class="text-center left">LEFT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_IMP_RIGHT_1"
+                [(ngModel)]="CC_IMP_RIGHT_1"
+                (change)="changeAudioName(CC_IMP_RIGHT_1, 'CC_IMP_RIGHT_1')"
+                list="CC_IMP_RIGHT_1"
+                class="form-control text-danger"
+                placeholder="select an option "
+              />
+              <datalist id="CC_IMP_RIGHT_1">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_IMP_LEFT_1"
+                [(ngModel)]="CC_IMP_LEFT_1"
+                (change)="changeAudioName(CC_IMP_LEFT_1, 'CC_IMP_LEFT_1')"
+                list="CC_IMP_LEFT_1"
+                class="form-control text-primary"
+                placeholder="select an option "
+              />
+              <datalist id="CC_IMP_LEFT_1">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_IMP_RIGHT_2"
+                [(ngModel)]="CC_IMP_RIGHT_2"
+                (change)="changeAudioName(CC_IMP_RIGHT_2, 'CC_IMP_RIGHT_2')"
+                list="CC_IMP_RIGHT_2"
+                class="form-control text-danger"
+                placeholder="select an option "
+              />
+              <datalist id="CC_IMP_RIGHT_2">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_IMP_LEFT_2"
+                [(ngModel)]="CC_IMP_LEFT_2"
+                (change)="changeAudioName(CC_IMP_LEFT_2, 'CC_IMP_LEFT_2')"
+                list="CC_IMP_LEFT_2"
+                class="form-control text-primary"
+                placeholder="select an option "
+              />
+              <datalist id="CC_IMP_LEFT_2">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_IMP_RIGHT_3"
+                [(ngModel)]="CC_IMP_RIGHT_3"
+                (change)="changeAudioName(CC_IMP_RIGHT_3, 'CC_IMP_RIGHT_3')"
+                list="CC_IMP_RIGHT_3"
+                class="form-control text-danger"
+                placeholder="select an option "
+              />
+              <datalist id="CC_IMP_RIGHT_3">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_IMP_LEFT_3"
+                [(ngModel)]="CC_IMP_LEFT_3"
+                (change)="changeAudioName(CC_IMP_LEFT_3, 'CC_IMP_LEFT_3')"
+                list="CC_IMP_LEFT_3"
+                class="form-control text-primary"
+                placeholder="select an option "
+              />
+              <datalist id="CC_IMP_LEFT_3">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-sm-6">
+      <div>
+        <label class="control-label">
+          Pure Tone
+          <sup class="text-danger">*</sup>
+        </label>
+        <!-- <span
+          class="btn-sm  btn-primary pull-right"
+          (click)="openAudiNameModal()"
+          ><span class="glyphicon glyphicon-plus"></span>&nbsp; ADD</span
+        > -->
+      </div>
+      <table class="table  table-bordered table-striped">
+        <thead>
+          <tr style="background-color:#3c8dbc;color:white">
+            <th class="text-center right">RIGHT</th>
+            <th class="text-center left">LEFT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_PT_RIGHT_1"
+                [(ngModel)]="CC_PT_RIGHT_1"
+                (change)="changeAudioName(CC_PT_RIGHT_1, 'CC_PT_RIGHT_1')"
+                list="CC_PT_RIGHT_1"
+                class="form-control text-danger"
+                placeholder="Search.."
+              />
+              <datalist id="CC_PT_RIGHT_1">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_PT_LEFT_1"
+                [(ngModel)]="CC_PT_LEFT_1"
+                (change)="changeAudioName(CC_PT_LEFT_1, 'CC_PT_LEFT_1')"
+                list="CC_PT_LEFT_1"
+                class="form-control text-primary"
+                placeholder="Search.."
+              />
+              <datalist id="CC_PT_LEFT_1">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+          </tr>
+          <tr>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_PT_RIGHT_2"
+                [(ngModel)]="CC_PT_RIGHT_2"
+                (change)="changeAudioName(CC_PT_RIGHT_2, 'CC_PT_RIGHT_2')"
+                list="CC_PT_RIGHT_2"
+                class="form-control text-danger"
+                placeholder="Search.."
+              />
+              <datalist id="CC_PT_RIGHT_2">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+            <td style="width:50%;">
+              <input
+                type="text"
+                name="CC_PT_LEFT_2"
+                [(ngModel)]="CC_PT_LEFT_2"
+                (change)="changeAudioName(CC_PT_LEFT_2, 'CC_PT_LEFT_2')"
+                list="CC_PT_LEFT_2"
+                class="form-control text-primary"
+                placeholder="Search.."
+              />
+              <datalist id="CC_PT_LEFT_2">
+                <option
+                  *ngFor="let option of AudioNameList"
+                  value="{{ option.TextName }}"
+                ></option>
+              </datalist>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-sm-6">
+      <label class="control-label">Art<sup class="text-danger"></sup></label>
+      <textarea
+        class="form-control"
+        name="art222"
+        placeholder="ART"
+        [(ngModel)]="objCCaudiometry.CC_ART"
+        rows="2"
+      ></textarea>
+    </div>
+    <div class="col-sm-6">
+      <label class="control-label"
+        >Remarks and Others<sup class="text-danger"></sup
+      ></label>
+      <textarea
+        class="form-control"
+        name="remark222"
+        placeholder="Remarks"
+        [(ngModel)]="objCCaudiometry.REMARKS"
+        rows="2"
+      ></textarea>
+    </div>
+    <div class="col-sm-12">
+      <label class="control-label"
+        >Tympanometry Parameters <sup class="text-danger">*</sup></label
+      >
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th style="background-color:transparent;"></th>
+            <th class="text-center right">RIGHT</th>
+            <th class="text-center left">LEFT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <b>{{ CC_TYMP_Text_1 ? CC_TYMP_Text_1 : "-" }}</b>
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_RIGHT_1"
+                name="CC_TYMP_RIGHT_1"
+                #CC_TYMP_RIGHT_1
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_RIGHT_1?.errors?.required
+                }"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_LEFT_1"
+                name="CC_TYMP_LEFT_1"
+                #CC_TYMP_LEFT_1
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_LEFT_1?.errors?.required
+                }"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>{{ CC_TYMP_Text_2 ? CC_TYMP_Text_2 : "-" }}</b>
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_RIGHT_2"
+                name="CC_TYMP_RIGHT_2"
+                #CC_TYMP_RIGHT_2
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_RIGHT_2?.errors?.required
+                }"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_LEFT_2"
+                name="CC_TYMP_LEFT_2"
+                #CC_TYMP_LEFT_2
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_LEFT_2?.errors?.required
+                }"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>{{ CC_TYMP_Text_3 ? CC_TYMP_Text_3 : "-" }}</b>
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_RIGHT_3"
+                name="CC_TYMP_RIGHT_3"
+                #CC_TYMP_RIGHT_3
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_RIGHT_3?.errors?.required
+                }"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_LEFT_3"
+                name="CC_TYMP_LEFT_3"
+                #CC_TYMP_LEFT_3
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_LEFT_3?.errors?.required
+                }"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>{{ CC_TYMP_Text_4 ? CC_TYMP_Text_4 : "-" }}</b>
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_RIGHT_4"
+                name="CC_TYMP_RIGHT_4"
+                #CC_TYMP_RIGHT_4
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_RIGHT_4?.errors?.required
+                }"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_LEFT_4"
+                name="CC_TYMP_LEFT_4"
+                #CC_TYMP_LEFT_4
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_LEFT_4?.errors?.required
+                }"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>{{ CC_TYMP_Text_5 ? CC_TYMP_Text_5 : "-" }}</b>
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_RIGHT_5"
+                name="CC_TYMP_RIGHT_5"
+                #CC_TYMP_RIGHT_5
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_RIGHT_5?.errors?.required
+                }"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_LEFT_5"
+                name="CC_TYMP_LEFT_5"
+                #CC_TYMP_LEFT_5
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_LEFT_5?.errors?.required
+                }"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select
+                class="form-control"
+                name="gender"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_Text_6"
+                (change)="changeText6(objCCaudiometry.CC_TYMP_Text_6)"
+              >
+                <option [ngValue]="undefined">Select</option>
+                <option
+                  *ngFor="let option of text6Parameter"
+                  [ngValue]="option.Para_Name"
+                  >{{ option.Para_Name }}</option
+                >
+              </select>
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_RIGHT_6"
+                name="CC_TYMP_RIGHT_6"
+                [disabled]="disableBoth"
+                #CC_TYMP_RIGHT_6
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_RIGHT_6?.errors?.required
+                }"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objCCaudiometry.CC_TYMP_LEFT_6"
+                name="CC_TYMP_LEFT_6"
+                [disabled]="disableBoth"
+                #CC_TYMP_LEFT_6
+                [ngClass]="{
+                  clearance:
+                    registrationSubmitted5 && CC_TYMP_LEFT_6?.errors?.required
+                }"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-3">
+      <label class="control-label"><sup class="text-danger"></sup></label>
+      <!-- <md-checkbox
+        md-no-ink
+        aria-label="Checkbox No Ink"
+        id="chkR1"
+        class="md-primary"
+        [checked]="check"
+        (click)="check = !check"
+        [disable]="toggleTympanometry"
+        role="checkbox"
+      > 
+        <strong>Tympanometry Report</strong>
+      </md-checkbox> -->
+    </div>
+  </div>
+  <br />
+  <div class="box-footer">
+    <button
+      class="btn btn-primary pull-right"
+      data-toggle="modal"
+      (click)="CCSahaAudiometrySave(registrationForm5.form.valid)"
+      id="load"
+    >
+      <span class="glyphicon glyphicon-save"></span>{{ buttonname }}
+    </button>
+  </div>
+</form>

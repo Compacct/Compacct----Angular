@@ -1,0 +1,284 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+
+                            <form [formGroup]="searchForm">
+                                <div class="form-group">
+                                    <div class="col-md-3">
+                                        <label>Period</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="control-label">Cost Center Name
+                                            <sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="costCenterList" formControlName="Cost_Cen_ID" [ngClass]="{ 'is-invalid': submitted && fval2.Cost_Cen_ID.errors }" [showClear]="true" [emptyFilterMessage]="'No Cost Center Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Cost Center'"
+                                            [virtualScroll]="true" itemSize="30">
+                                        </p-dropdown>
+                                        <div *ngIf="submitted2 && fval2.Cost_Cen_ID.errors" class="invalid-feedback">
+                                            <div *ngIf="fval2.Cost_Cen_ID.errors.required">Cost Center is required</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-primary float-right" style="margin-top: 25px;" (click)="search()">Search</button>
+                                    </div>
+
+                                </div>
+                            </form>
+
+                            <div class="table-responsive no-padding productTable">
+                                <ng-container *ngIf="searchData.length > 0; else elseTmp">
+                                    <p-table [value]="searchData" [paginator]="searchData.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Doc No</th>
+                                                <th>Doc Date</th>
+                                                <th>Patient</th>
+                                                <th>Cost Center</th>
+                                                <th>Total Amount</th>
+                                                <th>Discount </th>
+                                                <th>Remarks</th>
+                                                <!-- <th>Receve Amount</th> -->
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                  <i class="fa fa-fw fa-bars"></i>
+                                                                  <span class="caret"></span>
+                                                              </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="edit(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="delete(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="getPrint(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-file-pdf-o"></i> Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{col.Doc_No}}</td>
+                                                <td>{{col.Doc_Date | date: 'dd/MM/yyyy'}}</td>
+                                                <td>{{col.Patient }}</td>
+                                                <td>{{col.Cost_Cen_ID }}</td>
+                                                <td>{{col.Amount }}</td>
+                                                <td>{{col.Discount}}</td>
+                                                <td>{{col.Remarks}}</td>
+                                                <!-- <td></td> -->
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </ng-container>
+                                <ng-template #elseTmp>
+                                    <div *ngIf="dataNotFound" style="color:red; font-size: 17px; text-align: center; "> No data found</div>
+                                </ng-template>
+                            </div>
+
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form [formGroup]="clinicForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Doc. Date
+                                            <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <!-- <input type="date" class="form-control" formControlName="Doc_Date" [ngModel]="DocDate | date:'yyyy-MM-dd'"> -->
+                                            <input type="date" class="form-control" formControlName="Doc_Date">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center
+                                            <sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="costCenterList" formControlName="Cost_Cen_ID" [ngClass]="{ 'is-invalid': submitted && fval.Cost_Cen_ID.errors }" [showClear]="true" [emptyFilterMessage]="'No Cost Center Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Cost Center'"
+                                            [virtualScroll]="true">
+                                        </p-dropdown>
+                                        <div *ngIf="submitted && fval.Cost_Cen_ID.errors" class="invalid-feedback">
+                                            <div *ngIf="fval.Cost_Cen_ID.errors.required">Cost Center is required</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Patient
+                                                <sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="patientList" formControlName="FOOT_Fall_ID" [ngClass]="{ 'is-invalid': submitted && fval.FOOT_Fall_ID.errors }" [showClear]="true" [emptyFilterMessage]="'No Patient Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Patient'"
+                                            [virtualScroll]="true" itemSize="30">
+                                        </p-dropdown>
+                                        <div *ngIf="submitted && fval.FOOT_Fall_ID.errors" class="invalid-feedback">
+                                            <div *ngIf="fval.FOOT_Fall_ID.errors.required">Patient is required</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Address
+                                        </label>
+                                        <textarea class="form-control" rows="2" formControlName="Address" placeholder="Address"></textarea>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Remarks
+                                        </label>
+                                        <textarea class="form-control" rows="2" formControlName="Remarks" placeholder="Remarks"></textarea>
+                                    </div>
+                                </div>
+
+                                <br/><br/>
+                                <div class="section raw-bgcolor">
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Product Details
+                                            <sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="productList" formControlName="Product_ID" [ngClass]="{ 'is-invalid': submitted && fval.Product_ID.errors }" [showClear]="true" [emptyFilterMessage]="'No Product Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Product'"
+                                                [virtualScroll]="true" (onChange)="getProductDetails()">
+                                            </p-dropdown>
+                                            <div *ngIf="submitted && fval.Product_ID.errors" class="invalid-feedback">
+                                                <div *ngIf="fval.Product_ID.errors.required">Product is required</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Product Specification </label>
+                                            <input type="text" class="form-control" formControlName="Product_Specification" placeholder="Product Specification">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                            <input type="number" class="form-control" formControlName="Qty" placeholder="Qty" [ngClass]="{'is-invalid': submitted && fval.Qty.errors }" (ngModelChange)="rateChange()">
+                                            <div *ngIf="submitted && fval.Qty.errors " class="invalid-feedback">
+                                                <div *ngIf="fval.Qty.errors.required ">Qty is required</div>
+                                                <div *ngIf="!fval.Qty.errors.required && fval.Qty.errors.validZero">Qty should be greater than 0</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Unit </label>
+                                            <input type="text" class="form-control" formControlName="UOM" placeholder="Unit" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Rate <sup class="text-danger">*</sup></label>
+                                            <input type="number" class="form-control" formControlName="Rate" placeholder="Rate" [ngClass]="{'is-invalid': submitted && fval.Rate.errors }" (ngModelChange)="rateChange()">
+                                            <div *ngIf="submitted && fval.Rate.errors" class="invalid-feedback">
+                                                <div *ngIf="fval.Rate.errors.required">Rate is required</div>
+                                                <div *ngIf="!fval.Rate.errors.required && fval.Rate.errors.validZero">Rate should be greater than 0</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Discount </label>
+                                            <input type="number" class="form-control" formControlName="Discount" placeholder="Discount" (ngModelChange)="rateChange()">
+                                            <!-- <div *ngIf="submitted && fval.Rate.errors" class="invalid-feedback">
+                                                <div *ngIf="fval.Rate.errors.required">Rate is required</div>
+                                                <div *ngIf="!fval.Rate.errors.required && fval.Rate.errors.validZero">Rate should be greater than 0</div> 
+                                            </div>                                            -->
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Amount <sup class="text-danger">*</sup></label>
+                                            <input type="number" class="form-control" formControlName="Amount" placeholder="Total Amount" [ngClass]="{ 'is-invalid': submitted && fval.Amount.errors }">
+                                            <div *ngIf="submitted && fval.Amount.errors " class="invalid-feedback">
+                                                <div *ngIf="fval.Amount.errors.required ">Total Amount is required</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Expected Purchase Date
+                                                <sup class="text-danger">*</sup></label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="date" class="form-control" formControlName="Expected_Delivery_Date">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="clearfix mt-15">
+                                    <button class="btn btn-primary pull-right" (click)="addRaw()">Add</button>
+                                </div>
+
+                                <table class="table table-bordered" *ngIf="addRowObj.length > 0">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Details</th>
+                                            <th>Product Specification</th>
+                                            <th>Qty</th>
+                                            <th>Unit</th>
+                                            <th>Rate</th>
+                                            <th>Discount</th>
+                                            <th>Amount</th>
+                                            <th>Expected Purchase Date</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of addRowObj; let index = index">
+                                            <td>{{item.Product_Name}}</td>
+                                            <td>{{item.Product_Specification}}</td>
+                                            <td>{{item.Qty}}</td>
+                                            <td>{{item.UOM}}</td>
+                                            <td>{{item.Rate}}</td>
+                                            <td>{{item.Discount}}</td>
+                                            <td>{{item.Amount}}</td>
+                                            <td>{{item.Expected_Delivery_Date | date: 'dd/MM/yyyy'}}</td>
+                                            <td> <span (click)="deleteRawMaterial(index)"> <i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="saveAdjustment()" id="load" [disabled]="Spinner">
+                                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                            </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                    </p-tabView>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>

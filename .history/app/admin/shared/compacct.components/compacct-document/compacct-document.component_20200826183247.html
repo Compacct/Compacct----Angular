@@ -1,0 +1,164 @@
+<div >
+  <h5 style="
+      padding: 0.5em 1em;
+      background: #c1c1c185;
+      border-top: 5px solid #3c8dbc;
+      border-bottom: 1px solid #c6c6c6;
+      margin-top: 15px;
+      ">
+      <i class="fa fa-fw fa-fax">
+      </i> &nbsp;<strong>{{DocumentType['title']}} :</strong>
+  </h5>
+  <div class="form-group" style="padding: 10px;">
+    <div class="table-responsive no-padding" *ngIf='DocumentType["name"] === "Document"'>
+      <table class="table table-bordered">
+        <thead>
+          <tr style="background-color:#3c8dbc;color:white;">
+            <th>Sl No</th>
+            <th>Name</th>
+            <th>File</th>
+            <th>Description</th>
+            <th>Edit</th>
+            <th>Delete</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of DocumentList;let odd = odd;let index = index" [class.even]="odd">
+            <td>{{ index + 1 }}</td>
+            <td><span *ngIf="EditModeFlag !== index">{{ d.Doc_Name }}</span>
+            <input *ngIf="EditModeFlag === index" class="form-control" [(ngModel)]="d.Doc_Name" placeholder="Document Name" type="text"></td>
+            <td  class="text-center">
+              <div *ngIf="d.URL_Name.includes('pdf')">
+              <a [href]="d.URL_Name"  style="display: block;"
+               target="_blank" ><img src="/PDF_Logo/PDF-logo.png"
+                class='img-rounded pdf' style="width:25px; height:25px "
+                 alt="PDF"></a>
+                </div>
+                <div *ngIf="d.URL_Name.includes('xls')">
+                  <a [href]="d.URL_Name"  style="display: block;"
+                   target="_blank" ><img src="/PDF_Logo/xls.png"
+                    class='img-rounded pdf' style="width:25px; height:25px "
+                     alt="PDF"></a>
+                    </div>
+                    <div *ngIf="d.URL_Name.includes('jpg') || d.URL_Name.includes('png') || d.URL_Name.includes('jpeg')">
+                      <a [href]="d.URL_Name"  style="display: block;"
+                       target="_blank" ><img src="/PDF_Logo/image.png"
+                        class='img-rounded pdf' style="width:25px; height:25px "
+                         alt="PDF"></a>
+                        </div>
+            </td>
+            <td><span *ngIf="EditModeFlag !== index">{{ d.Remarks ? d.Remarks : "-"  }}</span>
+              <textarea *ngIf="EditModeFlag === index"  [(ngModel)]="d.Remarks"  placeholder="Document Description" rows="1" class="form-control" >
+                </textarea>
+            </td>
+            <td class="text-center"> <a *ngIf="EditModeFlag !== index"   (click)="Edit(d , index)"
+              ><div><i class="fa fa-fw fa-pencil"> </i></div>
+            </a>
+            <a (click)="Update(d , index)" *ngIf="EditModeFlag === index"   class="btn btn-success btn-sm"
+              ><div><i class="glyphicon glyphicon-save"> </i>&nbsp; Update</div>
+            </a>
+          </td>
+            <td class="text-center"> <a (click)="Detete(d)"
+              ><div><i class="fa fa-fw fa-trash"> </i></div>
+            </a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-responsive no-padding" *ngIf='DocumentType["name"] === "Document"'>
+      <table class="table table-bordered">
+        <thead>
+          <tr style="background-color:#3c8dbc;color:white;">
+            <th>Sl No</th>
+            <th>Name</th>
+            <th>File</th>
+            <th>Delete</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of DocumentList;let odd = odd;let index = index" [class.even]="odd">
+            <td>{{ index + 1 }}</td>
+            <td><span *ngIf="EditModeFlag !== index">{{ d.Doc_Name }}</span>
+            <input *ngIf="EditModeFlag === index" class="form-control" [(ngModel)]="d.Doc_Name" placeholder="Document Name" type="text"></td>
+            <td  class="text-center">
+              <div *ngIf="d.URL_Name.includes('pdf')">
+              <a [href]="d.URL_Name"  style="display: block;"
+               target="_blank" ><img src="/PDF_Logo/PDF-logo.png"
+                class='img-rounded pdf' style="width:25px; height:25px "
+                 alt="PDF"></a>
+                </div>
+                <div *ngIf="d.URL_Name.includes('xls')">
+                  <a [href]="d.URL_Name"  style="display: block;"
+                   target="_blank" ><img src="/PDF_Logo/xls.png"
+                    class='img-rounded pdf' style="width:25px; height:25px "
+                     alt="PDF"></a>
+                    </div>
+                    <div *ngIf="d.URL_Name.includes('jpg') || d.URL_Name.includes('png') || d.URL_Name.includes('jpeg')">
+                      <a [href]="d.URL_Name"  style="display: block;"
+                       target="_blank" ><img src="/PDF_Logo/image.png"
+                        class='img-rounded pdf' style="width:25px; height:25px "
+                         alt="PDF"></a>
+                        </div>
+            </td>
+            <td class="text-center"> <a (click)="Detete(d)"
+              ><div><i class="fa fa-fw fa-trash"> </i></div>
+            </a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <form name="DocumentForm" #DocumentForm="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-4">
+        <label class="control-label">Document<sup class="text-danger"></sup></label>
+        <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" customUpload="true" [chooseLabel]="'Browse'" multiple="multiple" maxFileSize="50000000"  [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" >
+          <ng-template let-aFile pTemplate='aFile'>
+            <div class="ui-fileupload-row">
+              <div><img [src]="aFile.type.includes('image') ? aFile.objectURL :'/PDF_Logo/PDF-logo.png'" width="50" ></div>
+              <div>{{aFile.name}}</div>
+              <div>{{aFile.size}} bytes</div>
+              <div>
+                  <button type="button" class="btn btn-danger" (click)="onClear($event,aFile)"><i class="fa fa-fw fa-close"></i></button>
+              </div>
+          </div>
+        </ng-template>
+        </p-fileUpload>
+        <!-- <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;" ><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a> -->
+      </div>
+
+      <div *ngFor="let doc of tempDocumentArr">
+        <div class="col-sm-4">
+          <label class="control-label">Document Name<sup class="text-danger">*</sup></label>
+          <input class="form-control"
+                  name="Name"
+                  #Name="ngModel"
+                  [(ngModel)]="doc.Doc_Name"
+                  placeholder="Document Name"
+                  [ngClass]="{'clearance': DocumentFormSubmitted && Name.errors?.required}"
+                  required>
+        </div>
+        <div class="col-sm-4" *ngIf='DocumentType["name"] === "Document"'>
+          <label class="control-label">Document Description<sup class="text-danger"></sup></label>
+          <textarea class="form-control" name="remarks" [(ngModel)]="doc.Remarks" rows="2" placeholder="Document Description"></textarea>
+        </div>
+
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <button class="btn btn-success  pull-right" style="margin-left: 0.5em;" (click)="SendEmail()">  <i class="fa fa-fw fa-mail-forward"></i> Inform and Send Mail </button>
+        <button class="btn btn-primary pull-right"
+        (click)="SaveDocument(DocumentForm.form.valid)"
+        id="load"
+        [disabled]="Spinner">
+        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Upload document
+    </button>
+    <button class="btn btn-warning  pull-right" style="margin-right: 0.5em;" (click)="ClearOutput()">  <i class="fa fa-fw fa-plus-square"></i> New Tender </button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,611 @@
+
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                  <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="fa fa-fw  fa-clock-o">
+                      <div class="row" style="padding-left: 10px;">
+                        <button style="margin-right: 30px;" (click)="GetQuestionlist()" class="btn btn-primary pull-right custombutton">
+                          <span class="fa fa-fw fa-refresh"></span> Refresh
+                        </button>
+                        <div *ngIf="BackupQuestionlist.length" style="margin-top:5px;margin-bottom:10px">
+                          <fieldset class="col-md-12">
+                            <legend>Filter</legend>
+
+                            <div class="form-group">
+                              <div class="col-sm-3">
+                                <label class="control-label">Class <span class="text-danger"></span></label>
+                                <p-multiSelect
+                                [options]="DistClass"
+                                [(ngModel)]="SelectedDistClass"
+                                [virtualScroll]="true"
+                                itemSize="30"
+                                (onChange)='GlobalFilterChangenUpdate()'
+                                [styleClass]="'compacct-multiselect'"
+                                name="Class"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Tutorial <span class="text-danger"></span></label>
+                                <p-multiSelect
+                                [options]="DistTutorial"
+                                [(ngModel)]="SelectedDistTutorial"
+                                [virtualScroll]="true"
+                                itemSize="30"
+                                (onChange)='GlobalFilterChangenUpdate()'
+                                [styleClass]="'compacct-multiselect'"
+                                name="Tutorial"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Assigned To <span class="text-danger"></span></label>
+                                <p-multiSelect
+                                [options]="DistAssignTo"
+                                [(ngModel)]="SelectedDistAssignTo"
+                                [virtualScroll]="true"
+                                itemSize="30"
+                                (onChange)='GlobalFilterChangenUpdate()'
+                                [styleClass]="'compacct-multiselect'"
+                                name="Assigned"></p-multiSelect>
+                              </div>
+
+                              <div class="col-sm-3">
+                                <label class="control-label">Paid <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="[{label :'Yes',value :'Yes'},{label :'No',value :'No'}]" [(ngModel)]="SelectedDistPaid" [virtualScroll]="true" itemSize="30"
+                                  (onChange)='GlobalFilterChangenUpdate()' [styleClass]="'compacct-multiselect'" name="paid"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Subject <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistSubject" [(ngModel)]="SelectedDistSubject" [virtualScroll]="true" itemSize="30"
+                                  (onChange)='GlobalFilterChangenUpdate()' [styleClass]="'compacct-multiselect'" name="Subject"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-8">
+
+                                <button style="margin-right: 30px;" *ngIf='AssignToBtnFlag' (click)="GlobalAssign()" class="btn btn-primary custombutton">
+                                  <span class="fa fa-fw fa-refresh"></span> Assign To
+                                </button>
+                                <div class="btn-group custombutton" *ngIf='AssignToBtnFlag'>
+                                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                    <i class='fa fa-fw fa-external-link'></i>&nbsp;Move To
+                                    <span class="caret"></span>
+                                  </button>
+
+                                  <ul class="dropdown-menu" role="menu">
+                                      <li *ngFor='let bucket of Bucketlist'>
+                                        <a (click)="SaveBucket(0,bucket)">
+                                          <i class="fa fa-comments" aria-hidden="true"></i>
+                                          {{bucket.Bucket_Name}}
+                                        </a>
+                                      </li>
+                                  </ul>
+
+                                </div>
+                                <button style="margin-right: 30px;"  (click)="exportexcel(Questionlist,'Q&A_Pending')"
+                                  class="btn btn-primary custombutton">
+                                  <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                </button>
+                                <p-checkbox styleClass="custombutton" label="Select All" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'"
+                                  [(ngModel)]="SelectAllFlag" (onChange)='SelectAll()' [binary]="true"></p-checkbox>
+                              </div>
+                            </div>
+
+
+
+                          </fieldset>
+                        </div>
+                      </div>
+
+                      <div class="table-responsive table-id">
+                          <p-table [value]="Questionlist" #dt
+                                [paginator]="Questionlist.length ? true : false"  [rows]="100"
+                              [autoLayout]="true"
+                              [rowHover]="true"
+                              [globalFilterFields]='["TAT_HR","Question","Class_Name","Subject_Name","Chapter_Name","Tutorial_Name","Assigned_ON","Student_Name","Mobile","Assigned_To"]'>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                          <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                              </div>
+                                    </div>
+                                  </ng-template>
+                                  <ng-template pTemplate="header">
+                                      <tr>
+                                          <th style="width:5em">Action</th>
+                                          <th *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'">Select</th>
+                                          <th>Serial No.</th>
+                                          <th>Paid</th>
+                                          <th>Assigned To</th>
+                                          <th>Created on</th>
+                                          <th>Question</th>
+                                          <th>Class</th>
+                                          <th>Subject</th>
+                                          <th>Chapter</th>
+                                          <th>Tutorial</th>
+                                          <th>Student Name</th>
+                                          <th>Mobile No</th>
+                                          <th>Tat(Hour)</th>
+                                      </tr>
+                                  </ng-template>
+                                  <ng-template pTemplate="body" let-QnAlist>
+                                      <tr>
+                                          <td>
+                                            <div class="dropdown">
+                                              <button id="dLabel"
+                                               data-toggle="dropdown"
+                                                class="btn btn-default btn-sm tableButton"
+                                                style="height:27px">
+                                                <i class="fa fa-fw fa-bars"></i>
+                                                <span class="caret"></span>
+                                            </button>
+                                              <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                                                <li>
+                                                  <a (click)="GiveAnswer(QnAlist)">
+                                                    <i class="fa fa-upload"> </i>Update Answer</a>
+                                                </li>
+                                                <li *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'">
+                                                  <a (click)="AssignTo(QnAlist)">
+                                                    <i class="fa fa-user-plus"> </i>Assign To</a>
+                                                </li>
+                                                <li class="divider"></li>
+                                                <li class="dropdown-submenu">
+                                                  <a><i class="fa fa-fw fa-external-link"></i>Move To</a>
+                                                  <ul class="dropdown-menu">
+                                                    <li *ngFor='let bucket of Bucketlist'>
+                                                      <a (click)="SaveBucket(QnAlist,bucket)">
+                                                        <i class="fa fa-comments" aria-hidden="true"></i>
+                                                        {{bucket.Bucket_Name}}
+                                                      </a>
+                                                    </li>
+                                                  </ul>
+                                                </li>
+                                              </ul>
+                                            </div>
+                                          </td>
+                                          <td  *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" class="text-center">
+                                            <p-checkbox (onChange)='GlobalAssignToFlag()'  [(ngModel)]="QnAlist['Select_Flag']" [binary]="true"></p-checkbox>
+                                          </td>
+                                          <td class='text-center'>{{QnAlist.SrNo}}</td>
+                                          <td>{{QnAlist.Paid}}</td>
+                                          <td [class]='getTatClass(QnAlist.TAT_HR)'>{{QnAlist.Assigned_To}}</td>
+                                          <td>{{QnAlist.Assigned_ON}}</td>
+                                          <td  style="width:30em">{{QnAlist.Question}}</td>
+                                          <td>{{QnAlist.Class_Name}}</td>
+                                          <td>{{QnAlist.Subject_Name}}</td>
+                                          <td>{{QnAlist.Chapter_Name}}</td>
+                                          <td>{{QnAlist.Tutorial_Name}}</td>
+                                          <td>{{QnAlist.Student_Name}}</td>
+                                          <td>{{QnAlist.Mobile}}</td>
+                                          <td [class]='getTatClass(QnAlist.TAT_HR)'>{{QnAlist.TAT_HR}}</td>
+                                      </tr>
+                                  </ng-template>
+                                  <ng-template pTemplate="paginatorright" *ngIf="Questionlist.length" let-state>
+                                      Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                              </ng-template>
+                          </p-table>
+                      </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-fw fa-check-circle">
+                    <form name="AnswerForm" #AnswerForm="ngForm" novalidate>
+                      <div class="form-group">
+                        <div class="col-sm-4">
+                          <label class="control-label">Period</label>
+
+                          <app-compacct-daterangepicker (DaterangeObj)="getDateRange1($event)"></app-compacct-daterangepicker>
+                        </div>
+                        <div class="col-sm-3">
+                          <button class="btn btn-primary custombutton"  (click)="GetQuestionlistAnswered()"
+                            id="load" [disabled]="seachSpinner1">
+                            <p-progressSpinner *ngIf="seachSpinner1" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                              animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!seachSpinner1" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                          </button>
+                        </div>
+                        </div>
+                        </form>
+                        <div class="row" style="padding-left: 10px;">
+                          <div *ngIf="BackupQuestionlistAnswered.length" style="margin-top:5px;margin-bottom:10px">
+                            <fieldset class="col-md-12">
+                              <legend>Filter</legend>
+
+                              <div class="form-group">
+                                <div class="col-sm-3">
+                                  <label class="control-label">Class <span class="text-danger"></span></label>
+                                  <p-multiSelect [options]="DistClass1" [(ngModel)]="SelectedDistClass1" [virtualScroll]="true" itemSize="30"
+                                    (onChange)='GlobalFilterChangenUpdate1()' [styleClass]="'compacct-multiselect'" name="Class1"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-3">
+                                  <label class="control-label">Tutorial <span class="text-danger"></span></label>
+                                  <p-multiSelect [options]="DistTutorial1" [(ngModel)]="SelectedDistTutorial1" [virtualScroll]="true"
+                                    itemSize="30" (onChange)='GlobalFilterChangenUpdate1()' [styleClass]="'compacct-multiselect'"
+                                    name="Tutorial1"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-3">
+                                  <label class="control-label">Assigned To <span class="text-danger"></span></label>
+                                  <p-multiSelect [options]="DistAssignTo1" [(ngModel)]="SelectedDistAssignTo1" [virtualScroll]="true"
+                                    itemSize="30" (onChange)='GlobalFilterChangenUpdate1()' [styleClass]="'compacct-multiselect'"
+                                    name="Assigned1"></p-multiSelect>
+                                </div>
+
+                                <div class="col-sm-3">
+                                  <label class="control-label">Paid <span class="text-danger"></span></label>
+                                  <p-multiSelect [options]="[{label :'Yes',value :'Yes'},{label :'No',value :'No'}]"
+                                    [(ngModel)]="SelectedDistPaid1" [virtualScroll]="true" itemSize="30" (onChange)='GlobalFilterChangenUpdate1()'
+                                    [styleClass]="'compacct-multiselect'" name="paid1"></p-multiSelect>
+                                </div>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Subject <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistSubject1" [(ngModel)]="SelectedDistSubject1" [virtualScroll]="true" itemSize="30"
+                                  (onChange)='GlobalFilterChangenUpdate1()' [styleClass]="'compacct-multiselect'" name="Subject1"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <button style="margin-right: 30px;" (click)="exportexcel(QuestionlistAnswered,'Q&A_Answered')" class="btn btn-primary custombutton">
+                                  <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                </button>
+                              </div>
+
+                            </fieldset>
+                          </div>
+                        </div>
+                        <div class="table-responsive table-id">
+                          <p-table [value]="QuestionlistAnswered" #dt1 [paginator]="QuestionlistAnswered.length ? true : false" [rows]="10" [autoLayout]="true"
+                            [rowHover]="true"
+                            [globalFilterFields]='["TAT_HR","Question","Class_Name","Subject_Name","Chapter_Name","Tutorial_Name","Assigned_ON","Student_Name","Mobile","Assigned_To"]'>
+                            <ng-template pTemplate="caption">
+                              <div class="row">
+                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                  <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                </div>
+                              </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                              <tr>
+                                <th>Serial No.</th>
+                                <th>Paid</th>
+                                <th>Assigned To</th>
+                                <th>Creation Date</th>
+                                <th>Answered Date</th>
+                                <th>Tat(Hour)</th>
+                                <th>Answer </th>
+                                <th style="width: 30em;">Question</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Chapter</th>
+                                <th>Tutorial</th>
+                                <th>Student Name</th>
+                                <th>Mobile No</th>
+                              </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-QnAlist>
+                              <tr>
+                                <td class='text-center'>{{QnAlist.SrNo}}</td>
+                                <td>{{QnAlist.Paid}}</td>
+                                <td>{{QnAlist.Assigned_To}}</td>
+                                <td>{{QnAlist.Assigned_ON}}</td>
+                                <td>{{QnAlist.Reply_On}}</td>
+                                <td>{{QnAlist.TAT_HR}}</td>
+                                <td>
+                                  <button (click)='showAnswer(QnAlist)' class="btn- btn-primary btn-xs">
+                                    Show Answer
+                                  </button>
+                                </td>
+                                <td style="width:30em">{{QnAlist.Question}}</td>
+                                <td>{{QnAlist.Class_Name}}</td>
+                                <td>{{QnAlist.Subject_Name}}</td>
+                                <td>{{QnAlist.Chapter_Name}}</td>
+                                <td>{{QnAlist.Tutorial_Name}}</td>
+                                <td>{{QnAlist.Student_Name}}</td>
+                                <td>{{QnAlist.Mobile}}</td>
+                              </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorright" *ngIf="QuestionlistAnswered.length" let-state>
+                              Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                            </ng-template>
+                          </p-table>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-fw fa-clone">
+                      <form name="otherForm" #otherForm="ngForm" novalidate>
+                        <div class="form-group">
+                          <div class="col-sm-4">
+                            <label class="control-label">Period</label>
+
+                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange2($event)"></app-compacct-daterangepicker>
+                          </div>
+                          <div class="col-sm-3">
+                            <button class="btn btn-primary custombutton" (click)="GetQuestionlistOther()" id="load"
+                              [disabled]="seachSpinner2">
+                              <p-progressSpinner *ngIf="seachSpinner2" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!seachSpinner2" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="row" style="padding-left: 10px;">
+                        <div *ngIf="BackupQuestionlistOthers.length" style="margin-top:5px;margin-bottom:10px">
+                          <fieldset class="col-md-12">
+                            <legend>Filter</legend>
+
+                            <div class="form-group">
+                              <div class="col-sm-3">
+                                <label class="control-label">Class <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistClass2" [(ngModel)]="SelectedDistClass2" [virtualScroll]="true" itemSize="30"
+                                  (onChange)='GlobalFilterChangenUpdate2()' [styleClass]="'compacct-multiselect'" name="Class2">
+                                </p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Tutorial <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistTutorial2" [(ngModel)]="SelectedDistTutorial2" [virtualScroll]="true"
+                                  itemSize="30" (onChange)='GlobalFilterChangenUpdate2()' [styleClass]="'compacct-multiselect'"
+                                  name="Tutorial2"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Assigned To <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistAssignTo2" [(ngModel)]="SelectedDistAssignTo2" [virtualScroll]="true"
+                                  itemSize="30" (onChange)='GlobalFilterChangenUpdate2()' [styleClass]="'compacct-multiselect'"
+                                  name="Assigned2"></p-multiSelect>
+                              </div>
+
+                              <div class="col-sm-3">
+                                <label class="control-label">Paid <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="[{label :'Yes',value :'Yes'},{label :'No',value :'No'}]"
+                                  [(ngModel)]="SelectedDistPaid2" [virtualScroll]="true" itemSize="30"
+                                  (onChange)='GlobalFilterChangenUpdate2()' [styleClass]="'compacct-multiselect'" name="paid2">
+                                </p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Subject <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistSubject2" [(ngModel)]="SelectedDistSubject2" [virtualScroll]="true" itemSize="30"
+                                  (onChange)='GlobalFilterChangenUpdate2()' [styleClass]="'compacct-multiselect'" name="Subject2"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="control-label">Feedback <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistFeedback2" [(ngModel)]="SelectedDistFeedback2" [virtualScroll]="true" itemSize="30"
+                                  (onChange)='GlobalFilterChangenUpdate2()' [styleClass]="'compacct-multiselect'" name="Feedback2"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-3">
+                                <button style="margin-right: 30px;" (click)="exportexcel(QuestionlistOthers,'Q&A_Others')"
+                                  class="btn btn-primary custombutton">
+                                  <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                </button>
+                              </div>
+                            </div>
+
+
+
+                          </fieldset>
+                        </div>
+                      </div>
+                      <div class="table-responsive table-id">
+                        <p-table [value]="QuestionlistOthers" #dt2 [paginator]="QuestionlistOthers.length ? true : false" [rows]="10"
+                          [autoLayout]="true" [rowHover]="true"
+                          [globalFilterFields]='["TAT_HR","Question","Class_Name","Subject_Name","Chapter_Name","Tutorial_Name","Assigned_ON","Student_Name","Mobile","Assigned_To"]'>
+                          <ng-template pTemplate="caption">
+                            <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                <input type="text" pInputText size="50" placeholder="Search"
+                                  (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                              </div>
+                            </div>
+                          </ng-template>
+                          <ng-template pTemplate="header">
+                            <tr>
+                              <th>Serial No.</th>
+                              <th>Assigned To</th>
+                              <th>Creation Date</th>
+                              <th>Paid</th>
+                              <th>Answered Date</th>
+                              <th>Tat(Hour)</th>
+                              <th>Feedback </th>
+                              <th  style="width: 30em;">Question</th>
+                              <th>Class</th>
+                              <th>Subject</th>
+                              <th>Chapter</th>
+                              <th>Tutorial</th>
+                              <th>Student Name</th>
+                              <th>Mobile No</th>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-QnAlist>
+                            <tr>
+                              <td class='text-center'>{{QnAlist.SrNo}}</td>
+                              <td>{{QnAlist.Assigned_To}}</td>
+                              <td>{{QnAlist.Assigned_ON}}</td>
+                              <td>{{QnAlist.Paid}}</td>
+                              <td>{{QnAlist.Reply_On}}</td>
+                              <td>{{QnAlist.TAT_HR}}</td>
+                              <td>{{QnAlist.Status}}</td>
+                              <td style="width:30em">{{QnAlist.Question}}</td>
+                              <td>{{QnAlist.Class_Name}}</td>
+                              <td>{{QnAlist.Subject_Name}}</td>
+                              <td>{{QnAlist.Chapter_Name}}</td>
+                              <td>{{QnAlist.Tutorial_Name}}</td>
+                              <td>{{QnAlist.Student_Name}}</td>
+                              <td>{{QnAlist.Mobile}}</td>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="paginatorright" *ngIf="QuestionlistOthers.length" let-state>
+                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                          </ng-template>
+                        </p-table>
+                      </div>
+                    </p-tabPanel>
+                  </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- UPDATE ANSWER  -->
+<p-dialog
+  header="UPDATE ANSWER"
+  [appendTo]="'body'"
+  [visible]="AnswerUpdateModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '60%', minWidth: '300px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <form name="AnswerUpdate" #AnswerUpdate="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label"
+        >Question : </label
+      > &nbsp;&nbsp;&nbsp;&nbsp;
+      {{Question}}
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">
+            Answer : <sup class="text-danger">*</sup></label>
+        <textarea
+          name="Answer"
+          #Answer="ngModel"
+          rows='4'
+          [(ngModel)]="ObjAnswer.Reply_Details"
+          [ngClass]="{
+            clearance:
+            AnswerUpdateSubmitted && Answer.errors?.required
+          }"
+          class="form-control"
+          required
+        ></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="box-footer">
+        <label class="control-label"
+        >Is Public : </label>
+      <select
+        name="ispublic"
+        #ispublic="ngModel"
+        [(ngModel)]="ObjAnswer.is_public"
+        [ngClass]="{
+          clearance:
+          AnswerUpdateSubmitted && ispublic.errors?.required
+        }"
+        class="form-control"
+        required
+      >
+      <option value="Y">Yes</option>
+      <option value="N">No</option>
+    </select>
+        <h5></h5>
+      </div>
+    </div>
+  </form>
+
+  <p-footer>
+    <button
+      type="button"
+      (click)="AnswerUpdateModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="CallTutopiaAppApi(AnswerUpdate.form.valid)"
+    >
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- ASSIGN TO -->
+<p-dialog header="ASSIGN TO" [appendTo]="'body'" [visible]="AssignToModal" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="AssignToModalUpdate" style="margin-top:2em" #AssignToModalUpdate="ngForm" novalidate>
+    <div class="form-group" *ngIf="AssignToObj['Assigned_To']">
+      <div class="col-sm-12" style="margin:1em 0;">
+        <label class="control-label">Last Assigned To : </label> &nbsp;&nbsp;&nbsp;&nbsp;
+        {{AssignToObj['Assigned_To']}}
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">
+          Assign To <sup class="text-danger">*</sup></label>
+          <select class="form-control"
+          name='assignTo'
+          #assignTo='ngModel'
+          [ngClass]="{'clearance': AnswerUpdateSubmitted &&  assignTo?.errors?.required}"
+          [(ngModel)]="AssignToObj['User_ID']" required>
+          <option  [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of Userlist" [ngValue]="option.User_ID">{{option.Name}}</option>
+        </select>
+      </div>
+    </div>
+  <div class="form-group">
+    <div class="box-footer">
+      <h5></h5>
+    </div>
+  </div>
+  </form>
+
+  <p-footer>
+    <button type="button" (click)="AssignToModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="button" class="btn btn-primary" (click)="SaveAssignTo(AssignToModalUpdate.form.valid)">
+      SAVE
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- SHOW ANSWER  -->
+<p-dialog
+  header="SHOW ANSWER"
+  [appendTo]="'body'"
+  [visible]="AnswerShowModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '55%', minWidth: '300px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <form name="AnswerUpdate" #AnswerUpdate="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-12" style="margin: 5px;padding: 15px;background: #dedede;">
+        <label class="control-label"
+        >Question : </label
+      > &nbsp;&nbsp;&nbsp;&nbsp;
+      {{Question}}
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12" style="margin: 5px;padding: 15px;background: #c4ffc5;">
+        <label class="control-label"
+        >Answer : </label
+      > &nbsp;&nbsp;&nbsp;&nbsp;
+      {{ObjAnswer.Reply_Details}}
+      </div>
+    </div>
+
+  </form>
+
+  <p-footer>
+    <button
+      type="button"
+      (click)="AnswerShowModal = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+
+  </p-footer>
+</p-dialog>

@@ -1,0 +1,824 @@
+<p-toast key="compacct-toast"  baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                    <form name="StockSearchForm" #StockSearchForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Period</label>
+
+                                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Issuing CostCenter &nbsp;<span class="text-danger">*</span></label>
+                                                <select class="form-control" name="costcenterFrom2"
+                                                        #costcenterFrom2= 'ngModel'
+                                                        [(ngModel)]="ObjSearchStock.F_Cost_Cen_ID"
+                                                        [ngClass]="{'clearance': StockSearchFormSubmitted && costcenterFrom2.errors?.required}"
+                                                        required>
+                                                        <option [ngValue]="undefined">Select</option>
+                                                        <option *ngFor='let option of CustmCostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                    <label class="control-label">CostCenter To</label>
+                                                    <select class="form-control" name="costcenterTo2"
+                                                            #costcenterTo2= 'ngModel'
+                                                            [(ngModel)]="ObjSearchStock.T_Cost_Cen_ID"
+                                                            [ngClass]="{'clearance': StockSearchFormSubmitted && costcenterTo2.errors?.required}">
+                                                            <option  [ngValue]="undefined">Select</option>
+                                                            <option *ngFor='let option of CostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                                    </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                        <button class="btn btn-primary custombutton" data-toggle="modal"
+                                                                (click)="SearchStockBill(StockSearchForm.form.valid)"
+                                                                id="load"
+                                                                [disabled]="seachSpinner">
+                                                                <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                                <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                        </button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <div class="table-responsive no-padding">
+
+                                            <p-table #dt [columns]="cols" [value]="StockBillList"
+                                                        [paginator]="StockBillList.length ? true:false" [rows]="10"
+                                                        [loading]="seachSpinner" [rowHover]="true"
+                                                        [autoLayout]="true" sortMode="multiple"
+                                                        [rowHover]="true">
+                                                        <ng-template pTemplate="caption">
+                                                            <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                    </div>
+                                                            </div>
+
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header" let-columns>
+                                                                <tr>
+                                                                    <th style="width:5em">Action</th>
+                                                                    <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                                                                            {{col.header}}
+                                                                            <p-sortIcon *ngIf="StockBillList.length" [field]="col.field"></p-sortIcon>
+                                                                    </th>
+                                                                </tr>
+
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-list let-columns="columns">
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="dropdown">
+                                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                                            <i class="fa fa-fw fa-bars"></i>
+                                                                            <span class="caret"></span>
+                                                                        </button>
+                                                                        <ul class="dropdown-menu">
+                                                                            <li>
+                                                                                <a (click)="EditStockTransfer(list)">
+                                                                                    <i class="fa fa-fw fa-pencil"></i>
+                                                                                    Edit
+                                                                                </a>
+                                                                            </li>
+                                                                            <li *ngIf="!(list.Eway_Bill_No === 'Not Required')">
+                                                                                    <a (click)="EwayUpdateModal(list)">
+                                                                                        <i class="fa fa-fw fa-upload"></i>
+                                                                                        Update Eway Bill No.
+                                                                                    </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a (click)="GetPDF(list)">
+                                                                                    <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                                    PDF
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a (click)="DeleteStockTransfer(list)">
+                                                                                    <i class="fa fa-fw fa-trash"></i>
+                                                                                    Delete
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    </td>
+                                                                    <td *ngFor="let col of columns">
+                                                                        {{list[col.field] ? list[col.field] : '-'}}
+                                                                </td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" *ngIf="StockBillList.length" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                    </div>
+
+                                </p-tabPanel>
+                                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                    <form  #StockForm="ngForm" novalidate>
+                                        <h5><strong>From CostCente</strong></h5>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="control-label">CostCenter &nbsp;<span class="text-danger">*</span></label>
+                                                <select class="form-control" name="costcenterFrom"
+                                                        #costcenterFrom= 'ngModel'
+                                                        [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_ID"
+                                                        (change)="StockCostCenterFromChange(ObjCostCenterFROM.F_Cost_Cen_ID)"
+                                                        [ngClass]="{'clearance': StockFormSubmitted && costcenterFrom.errors?.required}"
+                                                        [disabled]="ProductInfoListView.length"
+                                                        required>
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option *ngFor='let option of CustmCostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Address<span class="text-danger"></span></label>
+                                                <input class="form-control"
+                                                    type="text"
+                                                    name="address1"
+                                                    placeholder="address 1"
+                                                    #address1= 'ngModel'
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_Address1"
+                                                    [disabled]="true">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Address</label>
+                                                <input class="form-control"
+                                                    type="text"
+                                                    name="address2"
+                                                    #address2= 'ngModel'
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_Address2"
+                                                    [disabled]="true"
+                                                    placeholder="Address 2">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">State&nbsp;<span class="text-danger">*</span></label>
+                                                <input class="form-control"
+                                                    ng-disabled="true"
+                                                    name="costcenterstateFrom"
+                                                    type="text"
+                                                    #costcenterstateFrom= 'ngModel'
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_State"
+                                                    placeholder="State"
+                                                    [ngClass]="{'clearance': StockFormSubmitted && costcenterstateFrom.errors?.required }"
+                                                    required>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label" >GST No</label>
+                                                <input class="form-control"
+                                                    name='gstFrom'
+                                                    #gstFrom="ngModel"
+                                                    [disabled]="true"
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_GST_No"
+                                                    placeholder="GST No">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Location</label>
+                                                <input class="form-control"
+                                                    name="locationFrom"
+                                                    #locationFrom = "ngModel"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_Location"
+                                                    placeholder="Location">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">PIN</label>
+                                                <input class="form-control"
+                                                    name="pinForm"
+                                                    #pinForm="ngModel"
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_PIN"
+                                                    placeholder="PIN"
+                                                    [disabled]="true" />
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">District</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    name="DistForm"
+                                                    #DistForm = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_District"
+                                                    placeholder="District">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Country</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    name="CountryForm"
+                                                    #CountryForm = "ngModel"
+                                                    type="text"
+                                                    (ngModel)="ObjCostCenterFROM.F_Cost_Cen_Country"
+                                                    placeholder="Country">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Mobile</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    name="MobileForm"
+                                                    #MobileForm = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_Mobile"
+                                                    placeholder="Mobile">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Phone</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    name="PhoneForm"
+                                                    #PhoneForm = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_Phone"
+                                                    placeholder="Phone">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Email</label>
+                                                <input class="form-control"
+                                                    type="text"
+                                                    [disabled]="true"
+                                                    rows="2"
+                                                    name="EmailForm"
+                                                    #EmailForm = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_Email1"
+                                                    placeholder="Email">
+                                            </div>
+                                        </div>
+                                        <hr class="box boxboxDivide-primary" />
+                                        <h5><strong>To CostCenter </strong></h5>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="control-label">CostCenter&nbsp;<span class="text-danger">*</span></label>
+                                                <select class="form-control" name="costcenterTo"
+                                                        #costcenterTo='ngModel'
+                                                        [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_ID"
+                                                        (change)="StockCostCenterToChange(ObjCostCenterTO.T_Cost_Cen_ID)"
+                                                        [ngClass]="{'clearance': StockFormSubmitted && costcenterTo.errors?.required}"
+                                                        [disabled]="ProductInfoListView.length"
+                                                        required>
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option *ngFor='let option of CostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Address<span class="text-danger"></span></label>
+                                                <input class="form-control"
+                                                    type="text"
+                                                    name="address1To"
+                                                    placeholder="address 1"
+                                                    #address1To= 'ngModel'
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_Address1"
+                                                    [disabled]="true">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Address</label>
+                                                <input class="form-control"
+                                                    type="text"
+                                                    name="address2To"
+                                                    #address2To= 'ngModel'
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_Address2 "
+                                                    [disabled]="true"
+                                                    placeholder="Address 2">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">State&nbsp;<span class="text-danger">*</span></label>
+                                                <input class="form-control"
+                                                    ng-disabled="true"
+                                                    name="costcenterstateTo"
+                                                    type="text"
+                                                    #costcenterstateTo= 'ngModel'
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_State"
+                                                    placeholder="State"
+                                                    [ngClass]="{'clearance': StockFormSubmitted && costcenterstateTo.errors?.required }"
+                                                    required>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label" >GST No</label>
+                                                <input class="form-control"
+                                                    name="GstTo"
+                                                    #GstTo = "ngModel"
+                                                    [disabled]="true"
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_GST_No"
+                                                    placeholder="GST No">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Location</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    name="LocationTo"
+                                                    #LocationTo = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_Location"
+                                                    placeholder="Location">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">PIN</label>
+                                                <input class="form-control"
+                                                    name="pinTo"
+                                                    #pinTo = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_PIN"
+                                                    placeholder="PIN"
+                                                    [disabled]="true" />
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">District</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    name="DistrictTo"
+                                                    #DistrictTo = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_District"
+                                                    placeholder="District">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Country</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    name="CountryTo"
+                                                    #CountryTo = "ngModel"
+                                                    (ngModel)="ObjCostCenterTO.T_Cost_Cen_Country"
+                                                    placeholder="Country">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Mobile</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    name="MobileTo"
+                                                    #MobileTo = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_Mobile"
+                                                    placeholder="Mobile">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Phone</label>
+                                                <input class="form-control"
+                                                    [disabled]="true"
+                                                    type="text"
+                                                    name="PhoneTo"
+                                                    #PhoneTo = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_Phone"
+                                                    placeholder="Phone">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Email</label>
+                                                <input class="form-control"
+                                                    type="text"
+                                                    [disabled]="true"
+                                                    rows="2"
+                                                    name="EmailTo"
+                                                    #EmailTo = "ngModel"
+                                                    [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_Email1"
+                                                    placeholder="Email">
+                                            </div>
+                                        </div>
+                                        <hr class="box boxboxDivide-primary" />
+                                        <div class="form-group">
+                                            <div class="col-sm-3">
+                                                    <label class="control-label">Doc Date<sup class="text-danger">*</sup></label>
+                                                    <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input type="date"
+                                                            name="docdate"
+                                                            [ngModel]="DocDate | date:'yyyy-MM-dd'"
+                                                            #docdate
+                                                            CompacctFinyearonly="DocDate"
+                                                            (check-fin)="GetDocdate($event)"
+                                                            [ngClass]="{'clearance': StockFormSubmitted && docdate.errors?.required}"
+                                                            (ngModelChange)="GetDocdate($event)"
+                                                            class="form-control"
+                                                            required>
+                                                    </div>
+                                                </div>
+                                            <div class="col-sm-4">
+                                                    <label class="control-label">To Stock Point<sup class="text-danger">*</sup></label>
+
+                                                    <select class="form-control" name="StockPointTo"
+                                                            #StockPointTo='ngModel'
+                                                            [(ngModel)]="ObjCostCenterTO.T_godown_id"
+                                                            ng-options="v.godown_id as v.godown_name for v in ctrl."
+                                                            [disabled]="ProductInfoListView.length"
+                                                            [ngClass]="{'clearance': StockFormSubmitted && StockPointTo.errors?.required}"
+                                                            [disabled]="ProductInfoListView.length"
+                                                            required>
+                                                            <option  [ngValue]="undefined">Select</option>
+                                                            <option *ngFor='let option of GodownToList' [ngValue]="option.godown_id">{{option.godown_name}}</option>
+                                                    </select>
+                                            </div>
+
+                                            <div class="col-sm-2">
+                                                <label class="control-label"> CN No </label>
+                                                <input class="form-control"
+                                                    name="cnnO"
+                                                    #cnnO='ngModel'
+                                                    [(ngModel)]="ObjStockBill.CN_No"
+                                                    placeholder="CN No">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">CN Date</label>
+                                                <div class="input-group date">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="date"
+                                                        name="cndate"
+                                                        #cndate
+                                                        [ngModel]="CNDate | date:'yyyy-MM-dd'"
+                                                        (ngModelChange)="GetCNdate($event)"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                    <label class="control-label"> Other Reference </label>
+                                                    <input class="form-control"
+                                                        name="OtherReference"
+                                                        #OtherReference='ngModel'
+                                                        [(ngModel)]="ObjStockBill.Other_Reference"
+                                                        placeholder="Other Reference">
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label"> Dispatch Through</label>
+                                                <input class="form-control"
+                                                    name="Dispatch"
+                                                    #Dispatch='ngModel'
+                                                    [(ngModel)]="ObjStockBill.Dispatch_Through"
+                                                    placeholder="Dispatch Through">
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <label class="control-label">Payment Terms </label>
+                                                <textarea class="form-control"
+                                                        rows="1"
+                                                        name="paymentTerms"
+                                                        #paymentTerms='ngModel'
+                                                        [(ngModel)]="ObjStockBill.Payment_Terms"
+                                                        placeholder="Payment Terms"></textarea>
+                                            </div>
+
+                                            <div class="col-sm-5">
+                                                <label class="control-label">Remarks </label>
+                                                <textarea class="form-control" style="height: 38px"
+                                                        rows="4"
+                                                        name="remarks"
+                                                        #remarks='ngModel'
+                                                        [(ngModel)]="ObjStockBill.Remarks"
+                                                        placeholder="Remarks"></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <form  #ProductForm="ngForm" novalidate>
+                                        <hr class="box boxboxDivide-primary" />
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Product Details&nbsp;<span class="text-danger">*</span></label>
+                                                <p-dropdown [options]="ProductsList"
+                                                            name="product"
+                                                            [(ngModel)]="SelectedProduct"
+                                                            [showClear]="true"
+                                                            [emptyFilterMessage]="' No Product Found'"
+                                                            (onChange)="ProductChange(SelectedProduct)"
+                                                            [filter]="true"
+                                                            filterBy="label,value.name"
+                                                            [placeholder]="'Select Product'"
+                                                            [virtualScroll]="true"
+                                                            itemSize="30"
+                                                            #product="ngModel"
+                                                            [styleClass]="ProductInfoSubmitted &&  product.errors?.required ? 'clearance' :''"
+                                                            [required]="true">
+                                                        </p-dropdown>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                    <label class="control-label">HSN No<sup class="text-danger"></sup></label>
+                                                    <input class="form-control"
+                                                            name="HSNNo"
+                                                            #HSNNo="ngModel"
+                                                            [ngClass]="{'clearance': ProductInfoSubmitted &&  HSNNo?.errors?.required }"
+                                                            [(ngModel)]="ObjProductInfo.HSL_No"
+                                                            [required]="true"
+                                                            [disabled]="true"
+                                                            placeholder="HSN No" />
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Product Specification<sup class="text-danger"></sup></label>
+                                                <input class="form-control"
+                                                        name="Description"
+                                                        #Description="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Product_Specification"
+                                                        [required]="true"
+                                                        placeholder="Product Specification" />
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="godownname"
+                                                        #godownname="ngModel"
+                                                        [ngClass]="{'clearance': ProductInfoSubmitted &&  godownname?.errors?.required}"
+                                                        [(ngModel)]="ObjProductInfo.F_godown_id"
+                                                        (change)="FromGodownChange(ObjProductInfo.F_godown_id)"
+                                                        [required]="GodownRequire"
+                                                        [disabled]="Godowndisable">
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let option of GodownLists" [ngValue]="option.godown_id">{{option.godown_name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4" *ngIf="BatchShow">
+                                                <label class="control-label">Batch No<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="batchno"
+                                                        #batchno="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Batch_Number"
+                                                        [required]="true"
+                                                        [disabled]="Batchdisabled">
+                                                    <!-- <option  [ngValue]="undefined">Select</option> -->
+                                                    <option *ngFor="let option of BatchList" [ngValue]="option.Batch_No">{{option.Batch_No_Display}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-4" *ngIf="SerialShow">
+                                                <label class="control-label">Serial No<sup class="text-danger">*</sup></label>
+                                                <p-multiSelect [options]="SerialList" [(ngModel)]="SelectedSerialNo" [styleClass]="'compacct-multiselect'" name="serialno"></p-multiSelect>
+                                            </div>
+                                            <!-- || (ObjProductInfo.Qty > tempQty) -->
+                                            <div class="col-sm-2">
+                                                <label class="control-label">Quantity<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="qty"
+                                                        [disabled]="Qtydisable"
+                                                        #qty="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Qty"
+                                                        (change)="CalculateAmount()"
+                                                        [ngClass]="{'clearance': ProductInfoSubmitted &&  qty?.errors?.required }"
+                                                        [required]="true"
+                                                        CompacctDigitonly="true"
+                                                        placeholder="Quantity" />
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Unit<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="unit"
+                                                        #unit="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.UOM"
+                                                        disabled="true"
+                                                        placeholder="Unit" />
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="rate"
+                                                        type="text"
+                                                        [ngClass]="{'clearance': ProductInfoSubmitted &&  rate?.errors?.required }"
+                                                        #rate="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Rate"
+                                                        (change)="CalculateAmount()"
+                                                        CompacctDigitonly="true"
+                                                        [required]="true"
+                                                        placeholder="Rate" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-2">
+                                                <label class="control-label">Total Amount<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="tolamt"
+                                                        #tolamt="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Amount"
+                                                        [disabled]="true"
+                                                        placeholder="Total Amount" />
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
+                                                <select name="distype"
+                                                        #distype="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Discount_Type"
+                                                        class="form-control"
+                                                        (change)="DiscountTypeClean()">
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option value="%"> %</option>
+                                                    <option value="AMT"> AMT</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="control-label">Discount<sup class="text-danger"></sup></label>
+                                                <input class="form-control" name="Discount"
+                                                        #Discount="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Discount"
+                                                        (change)="DiscountTypeChange()"
+                                                        CompacctDigitonly="true"
+                                                        placeholder="Discount" />
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
+                                                <input class="form-control" name="DisAmt"
+                                                        #DisAmt="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Discount_Type_Amount"
+                                                        [disabled]="true"
+                                                        placeholder="Discount Amount" />
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
+                                                <input class="form-control" name="TaxableAmt"
+                                                        #TaxableAmt="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Taxable_Amount"
+                                                        [disabled]="true"
+                                                        placeholder="Taxable Amount" />
+                                            </div>
+                                            <div class="col-sm-3 pull-right">
+                                                <button type="submit"
+                                                        name='stock'
+                                                        class="btn btn-primary custombutton pull-right"
+                                                        (click)="AddProductInfo(ProductForm.form.valid)">
+                                                    <span class="glyphicon glyphicon-plus"></span>&nbsp;Add
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                    <hr class="box boxboxDivide-primary" />
+                                    <div class="table-responsive no-padding">
+                                            <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr style="background-color:#3c8dbc;color:white;">
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl. No.</th>
+                                                            <th nowrap rowspan="2"  class="text-center" style="vertical-align:middle">Product Details</th>
+                                                            <th nowrap rowspan="2"  class="text-center" style="vertical-align:middle">Batch No</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Serial No</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Qty</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Unit</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Rate</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Amt</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount Type</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount Amt</th>
+                                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Taxable Amt</th>
+                                                            <th colspan="2" scope="colgroup"  class="text-center">CGST</th>
+                                                            <th colspan="2" scope="colgroup" class="text-center">SGST</th>
+                                                            <th colspan="2" scope="colgroup" class="text-center">IGST</th>
+                                                            <th nowrap rowspan="2">Delete</th>
+                                                        </tr>
+                                                        <tr style="background-color:#3c8dbc;color:white">
+                                                                <th scope="col" class="text-center">Rate</th>
+                                                                <th scope="col" class="text-center">Amt.</th>
+                                                                <th scope="col" class="text-center">Rate</th>
+                                                                <th scope="col" class="text-center">Amt.</th>
+                                                                <th scope="col" class="text-center">Rate</th>
+                                                                <th scope="col" class="text-center">Amt.</th>
+
+                                                            </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let d of ProductInfoListView let odd=odd , let index = index;" [class.even]="odd">
+                                                            <td>{{index+1}}</td>
+                                                            <td>{{d.Product_Name}}</td>
+                                                            <td>{{d.Batch_Number ? d.Batch_Number:'-'}}</td>
+                                                            <td>{{d.Serial_No ? d.Serial_No:'-'}}</td>
+                                                            <td>{{d.Qty}}</td>
+                                                            <td>{{d.UOM}}</td>
+                                                            <td>{{d.Rate}}</td>
+                                                            <td>{{d.Amount}}</td>
+                                                            <th>{{d.Discount_Type ? d.Discount_Type:'-'}}</th>
+                                                            <th>{{d.Discount ? d.Discount:'-'}}</th>
+                                                            <th>{{d.Discount_Type_Amount ? d.Discount_Type_Amount:'-'}}</th>
+                                                            <th>{{d.Taxable_Amount ? d.Taxable_Amount:'-'}}</th>
+                                                            <td>{{d.CGST_Input_Rate ? d.CGST_Input_Rate:'-'}}</td>
+                                                            <td>{{d.CGST_Input_Amt ? d.CGST_Input_Amt:'-'}}</td>
+                                                            <td>{{d.SGST_Input_Rate ? d.SGST_Input_Rate:'-'}}</td>
+                                                            <td>{{d.SGST_Input_Amt ? d.SGST_Input_Amt:'-'}}</td>
+                                                            <td>{{d.IGST_Input_Rate ? d.IGST_Input_Rate:'-'}}</td>
+                                                            <td>{{d.IGST_Input_Amt ? d.IGST_Input_Amt:'-'}}</td>
+                                                            <td><a (click)="DeleteOtherInfo(index)"><div> <i class="fa fa-fw fa-trash"> </i> </div> </a></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tr>
+                                                        <th class="total-calculation" style="width:30%">Total Amount:</th>
+                                                        <td class="total-calculation">{{ObjStockBill.Total_Amount}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="total-calculation">Discount Amount:</th>
+                                                        <td class="total-calculation">{{ObjStockBill.Discount_Amount }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="total-calculation">Taxable Amount:</th>
+                                                        <td class="total-calculation">{{ObjStockBill.Taxable_Amt }}</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th class="total-calculation">CGST Amount:</th>
+                                                        <td class="total-calculation">{{ObjStockBill.CGST_Amt}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="total-calculation">SGST Amount:</th>
+                                                        <td class="total-calculation">{{ObjStockBill.SGST_Amt}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="total-calculation">IGST Amount:</th>
+                                                        <td class="total-calculation">{{ObjStockBill.IGST_Amt }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="total-calculation">Gross Amount: </th>
+                                                        <td class="total-calculation">{{ObjStockBill.Gross_Amt}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="total-calculation">Rounded Off:</th>
+                                                        <td class="total-calculation">{{ObjStockBill.ROUNDED_OFF }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="total-calculation">Net Amount: </th>
+                                                        <td class="total-calculation">{{ObjStockBill.Net_Amt }}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <button type="submit"
+                                            name='stock'
+                                            class="btn btn-primary pull-right"
+                                            (click)="SaveStockBill(StockForm.form.valid)"
+                                            id="load"
+                                            [disabled]="saveSpinner">
+                                            <p-progressSpinner *ngIf="saveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>&nbsp;{{buttonname}}
+                                        </button>
+                                        </div>
+                                    </div>
+
+                                </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-dialog header="Update Eway Bill" [appendTo]="'body'" [visible]="displayEwayModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '40%', minWidth: '200px'}" [minY]="70"
+[maximizable]="true" [baseZIndex]="10000">
+
+<form name="EwayForm" #EwayForm="ngForm" novalidate>
+    <div class="form-group">
+        <div class="col-sm-12">
+            <label class="control-label"> Date<sup class="text-danger">*</sup></label>
+            <div class="input-group date">
+                <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                </div>
+                <input type="date"
+                    name="EwayDate1"
+                    #EwayDate1="ngModel"
+                    [ngModel]="EwayDateProto | date:'yyyy-MM-dd'"
+                    (ngModelChange)="ewaydatechange($event)"
+                    [ngClass]="{'clearance': EwayFormSubmitted && EwayDate1.errors?.required}"
+                    class="form-control"
+                    required>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-12">
+                <label class="control-label"> Eway Bill No.<sup class="text-danger">*</sup></label>
+                <input class="form-control"
+                    name="EwayBillNo1"
+                    #EwayBillNo1="ngModel"
+                    [ngClass]="{'clearance': EwayFormSubmitted  && EwayBillNo1.errors?.required }"
+                    [(ngModel)]="EwayBillNo"
+                    placeholder="Eway Bill No."
+                        required>
+        </div>
+    </div>
+    <div class="form-group">
+            <div class="col-sm-12">
+                <h2></h2>
+            </div>
+        </div>
+    <br>
+</form>
+
+<p-footer>
+    <button type="button" pButton icon="pi pi-close" (click)="displayEwayModal=false" label="CANCEL" class="ui-button-secondary"></button>
+
+    <button type="button" pButton icon="pi pi-check" (click)="EwayUpdate(EwayForm.form.valid)" label="Update"></button>
+</p-footer>
+</p-dialog>

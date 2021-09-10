@@ -1,0 +1,24 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                  <div class="form-group">
+                    <div class="col-sm-12 text-right">
+                      <span class='pull-left'>Tree View Tools</span>
+                      <button  type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Expand all" (click)="expandAll()"><i class="fa fa-fw fa-expand"></i></button>
+                      <button  type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Collapse all" (click)="collapseAll()"><i class="fa fa-fw fa-compress"></i></button>
+                      <button  type="button" class="btn btn-xs btn-reddit" style="margin-right: 0.2em;" title="View Change" (click)="ToggleView()"><i class="fa fa-fw fa-window-restore"></i></button>
+                    </div>
+                    <div class="col-sm-12" >
+                      <p-tree [value]="TreeDataList" [loading]="loading" layout="{{layoutString}}"></p-tree>
+
+                    </div>
+                  </div>
+                  <button (click)='GetDemo()' class="btn">gg</button>
+                </div>
+            </div>
+          </div>
+      </div>
+  </div>

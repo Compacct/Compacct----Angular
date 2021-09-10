@@ -1,0 +1,639 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+  <div class="col-xs-12">
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                      <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                              <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                <form name="SerachForm" #SerachForm="ngForm" novalidate>
+                                  <div class="form-group">
+
+                                    <div class="col-sm-4">
+                                            <label class="control-label">Name of the Road<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="RoadList"
+                                                  name="product"
+                                                  [(ngModel)]="ObjSearch.Project_Short_Name"
+                                                  [showClear]="true"
+                                                  [emptyFilterMessage]="' No Road Found'"
+                                                  [filter]="true"
+                                                  filterBy="label,value.name"
+                                                  [placeholder]="'Select Road'"
+                                                  [virtualScroll]="true"
+                                                  itemSize="30"
+                                                  #product="ngModel"
+                                                  [styleClass]="SerachFormSubmitted &&  product.errors?.required ? 'clearance' :''"
+                                                  [required]="true">
+                                              </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Agreement Number<sup class="text-danger"></sup></label>
+                                      <input  type="text" class="form-control"
+                                      name="Agreement_Number"
+                                      #Agreement_Number="ngModel"
+                                      [(ngModel)]="ObjSearch.Agreement_Number"
+                                      placeholder="Agreement Number" >
+                                     </div>
+
+                                    <div class="col-sm-3">
+                                      <button class="btn btn-primary custombutton" data-toggle="modal"
+                                              (click)="Search(SerachForm.form.valid)"
+                                              id="load"
+                                              [disabled]="Spinner">
+                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                              <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                      </button>
+                                    </div>
+                                  </div>
+                                </form>
+                                <br>
+                                <div class="table-responsive no-padding productTable">
+                                <p-table #dt [value]="ProjectList"
+                                         [globalFilterFields]="['Tender_Name','Tender_Amount','Tender_Closing_Date','Lead_Status']"
+                                         [paginator]="ProjectList.length ? true:false" [rows]="10" [rowHover]="true"
+                                         [autoLayout]="true" sortMode="multiple"
+                                         [rowsPerPageOptions]="[10,20,30]"
+                                         [rowHover]="true">
+                                           <ng-template pTemplate="caption">
+                                               <div class="row">
+                                                    <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                        </div>
+                                               </div>
+
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width:5em">Action</th>
+                                                    <th>Name of the Road</th>
+                                                    <th>Agreement No</th>
+                                                    <th>Date of Commencement</th>
+                                                    <th>Date of Completion</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col>
+                                                <tr>
+
+                                                    <td>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                    type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                   <li>
+                                                                        <a (click)='EntryRunningBillDetails(col)'>
+                                                                            <i class="fa fa-fw fa-ticket"></i>
+                                                                            Entry Running Bill Details
+                                                                        </a>
+
+                                                                </ul>
+                                                            </div>
+                                                    </td>
+                                                    <td>{{col.Tender_Name ? col.Tender_Name : '-'}}</td>
+                                                    <td>{{col.Agreement_Number ? col.Agreement_Number : '-'}}</td>
+                                                    <td>{{col.Date_of_Commencement  | date: 'dd-MMM-yy' }}</td>
+                                                    <td>{{col.Date_of_Completion  | date: 'dd-MMM-yy'}}</td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template  pTemplate="paginatorright" let-state>
+                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                            </ng-template>
+                                    </p-table>
+                                </div>
+                              </p-tabPanel>
+                              <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                <form name="DailyJobForm" #DailyJobForm="ngForm" novalidate>
+                                  <!-- (Details of Road Header -> ) -->
+                                  <div class="form-group" style="padding: 1.5em;">
+                                    <p-accordion>
+                                    <p-accordionTab header="DETAILS OF ROAD">
+                                      <div class="form-group" >
+                                        <div class="col-sm-12">
+                                          <label class="control-label">Name of the Road<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Tender_Name ? ObjRunningBill.Tender_Name : '-' }}</div>
+
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Agreement No.<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Agreement_Number}}</div>
+
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Agreement Amount<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{CurrencyView(ObjRunningBill.Agreement_Amount)}}</div>
+
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Name of Contractor<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Bidder_Name }}</div>
+
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Date of Commencement<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Date_of_Commencement | date: 'dd/MMM/yy' }}</div>
+
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Date of Completion<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Date_of_Completion  | date: 'dd/MMM/yy' }}</div>
+
+                                        </div>
+
+
+                                      </div>
+                                    </p-accordionTab>
+                                    </p-accordion>
+                                  </div>
+                                  <div class="form-group">
+                                    <div class="col-sm-3">
+                                      <label class="control-label">Sl.No of Running Bill<sup class="text-danger">*</sup></label>
+                                      <span (click)="ToggleRAserial()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                      <select class="form-control"
+                                              name="Serial_No"
+                                              #Serial_No="ngModel"
+                                              [disabled]='RunningDetailList.length'
+                                              [(ngModel)]="ObjRunningBill.Running_Bill_Sl_No_ID"
+                                              (click)='GetPreviousRunningBill()'
+                                              [ngClass]="{'clearance': RunningFormSubmitted && Serial_No.errors?.required}" required>
+                                            <option *ngFor="let option of RAserialNoList" [ngValue]="option.Running_Bill_Sl_No_ID">
+                                                {{option.Running_Bill_Sl_No}}
+                                                </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                      <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                      <div class="input-group date">
+                                        <div class="input-group-addon">
+                                          <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input
+                                        type="date"
+                                        name="ISDDepositdate1"
+                                        #ISDDepositdate1="ngModel"
+                                        [disabled]='RunningDetailList.length'
+                                        [ngModel]="RunningDate | date: 'yyyy-MM-dd'"
+                                        (ngModelChange)="GetRunningDate($event)"
+                                        class="form-control"
+                                      />
+                                      </div>
+                                    </div>
+
+                                    <div class="col-sm-3" style='margin-top: -2px;'>
+                                      <label class="control-label">Main Item Code&nbsp;<span class="text-danger">*</span></label>
+                                      <p-dropdown [options]="ItemList"
+                                                  name="product"
+                                                  [(ngModel)]="SelectedItemCode"
+                                                  [showClear]="true"
+                                                  [emptyFilterMessage]="' No Item Code Found'"
+                                                  (onChange)="ItemCodeChange(SelectedItemCode)"
+                                                  [filter]="true"
+                                                  filterBy="label,value.name"
+                                                  [placeholder]="'Select Item Code'"
+                                                  [virtualScroll]="true"
+                                                  itemSize="30"
+                                                  #product="ngModel"
+                                                  [styleClass]="RunningFormSubmitted &&  product.errors?.required ? 'clearance' :''"
+                                                  [required]="true">
+                                              </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3"  *ngIf="SubItemList.length">
+                                      <label class="control-label">Sub-Item Code&nbsp;<span class="text-danger">*</span></label>
+                                      <p-dropdown [options]="SubItemList"
+                                                  name="product1"
+                                                  [(ngModel)]="SelectedSubItemCode"
+                                                  [showClear]="true"
+                                                  [emptyFilterMessage]="' No Item Code Found'"
+                                                  (onChange)="SubItemCodeChange(SelectedSubItemCode)"
+                                                  [filter]="true"
+                                                  filterBy="label,value.name"
+                                                  [placeholder]="'Select Sub-Item Code'"
+                                                  [virtualScroll]="true"
+                                                  itemSize="30"
+                                                  #product1="ngModel"
+                                                  [styleClass]="RunningFormSubmitted &&  product1.errors?.required ? 'clearance' :''"
+                                                  [required]="true">
+                                              </p-dropdown>
+                                    </div>
+
+                                    <div class='col-sm-3'>
+                                      <label class="control-label">Qnty. Executed upto date<sup class="text-danger">*</sup></label>
+                                      <input type="text"
+                                      class="form-control"
+                                      name="Total_Ex_Qnty "
+                                      #Total_Ex_Qnty ="ngModel"
+                                      [(ngModel)]="ObjRunningBill.Qnty_Executed_Upto_Date"
+                                      CompacctDigitonly="true"
+                                      (change)="check3Digit(ObjRunningBill.Qnty_Executed_Upto_Date,'Qnty_Executed_Upto_Date')"
+                                      placeholder="Qnty. Executed upto date"
+                                      [ngClass]="{clearance: RunningFormSubmitted && Total_Ex_Qnty?.errors?.required }" required/>
+                                    </div>
+                                    <div class='col-sm-3'>
+                                      <label class="control-label">Qnty. Executed of this Bill<sup class="text-danger">*</sup></label>
+                                      <div class="label-t">{{ObjRunningBill.Qnty_Executed_Of_This_Bill}}</div>
+                                      <!-- <input type="text"
+                                      class="form-control"
+                                      name="Total_Ex_Qnty_for_This_Bill "
+                                      #Total_Ex_Qnty_for_This_Bill ="ngModel"
+                                      [(ngModel)]="ObjRunningBill.Qnty_Executed_Of_This_Bill"
+                                      CompacctDigitonly="true"
+                                      (change)="check3Digit(ObjRunningBill.Qnty_Executed_Of_This_Bill,'Qnty_Executed_Of_This_Bill')"
+                                      placeholder="Qnty. Executed of this Bill"
+                                      [ngClass]="{clearance: RunningFormSubmitted && Total_Ex_Qnty_for_This_Bill?.errors?.required }" required/> -->
+                                    </div>
+                                    <div class="col-sm-3">
+                                      <label class="control-label">Unit<sup class="text-danger">*</sup></label>
+                                      <div class="label-t">{{ObjRunningBill.Unit}}</div>
+
+                                    </div>
+                                    <div class='col-sm-3'>
+                                      <label class="control-label">Estimated Rate<sup class="text-danger">*</sup></label>
+                                      <div class="label-t">{{CurrencyView(ObjRunningBill.Estimated_Rate)}}</div>
+                                    </div>
+                                    <div class='col-sm-3'>
+                                      <label class="control-label">Upto Date Amount<sup class="text-danger">*</sup></label>
+                                      <div class="label-t">{{CurrencyUptoDateAmount}}</div>
+                                    </div>
+                                    <div class='col-sm-3'>
+                                      <label class="control-label">This Bill Amount<sup class="text-danger">*</sup></label>
+                                      <div class="label-t">{{CurrencyThisBillAmount}}</div>
+                                    </div>
+                                    <div class='col-sm-3'>
+                                      <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                                      <textarea class='form-control' name="billAmot" [(ngModel)]='ObjRunningBill.Remarks'></textarea>
+                                    </div>
+                                    <div class="col-sm-3">
+                                      <button class="btn btn-primary custombutton" data-toggle="modal"
+                                              (click)="AddRunDetailList(DailyJobForm.form.valid)"
+                                              id="load"
+                                              type='button'
+                                              [disabled]="Spinner">
+                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                              <span *ngIf="!Spinner" class="glyphicon glyphicon-plus"></span>&nbsp;Add
+                                      </button>
+                                      <button class="btn btn-warning custombutton" data-toggle="modal"
+                                      (click)="clearAddData()"
+                                      type='button'
+                                      id="load"
+                                      [disabled]="Spinner"> <span class="glyphicon glyphicon-refresh"></span>&nbsp;Clear   </button>
+                                    </div>
+                                  </div>
+                                  <div class="form-horizontal" style="margin-top:1em">
+                                    <div class='label-t' style="font-weight: 600;text-align: center;"  *ngIf='RunningDetailList.length'>
+                                      Type of Works : {{ObjRunningBill.Running_Bill_Sl_No}}&nbsp;&nbsp;|
+                                      Date : {{ObjRunningBill.RB_Date}}
+                                    </div>
+                                    <div class="table-responsive no-padding">
+                                      <table style='margin-bottom:0px !important' class="table bidopen table-bordered">
+                                        <thead>
+                                          <tr style="background-color:#3c8dbc;color:white;">
+                                            <th
+                                              class="text-center"
+                                              style="vertical-align:middle"
+                                            >
+                                            Action
+                                            </th>
+                                            <th
+                                              class="text-center"
+                                              style="vertical-align:middle"
+                                            >
+                                            Sl No.
+                                            </th>
+                                            <th
+                                              class="text-center"
+                                              style="vertical-align:middle"
+                                            >
+                                            Description of Item
+                                            </th>
+                                            <th
+                                            class="text-center"
+                                            style="vertical-align:middle"
+                                          >
+                                          Qnty. Executed upto date
+                                          </th>
+                                            <th
+                                              class="text-center"
+                                              style="vertical-align:middle"
+                                            >
+                                            Qnty Executed of this Bill
+                                            </th>
+                                            <th
+                                            class="text-center"
+                                            style="vertical-align:middle"
+                                          >
+                                          Unit
+                                            </th>
+                                            <th
+                                              class="text-center"
+                                              style="vertical-align:middle"
+                                            >
+                                            Estimated Rate
+                                            </th>
+
+                                            <th
+                                            class="text-center"
+                                            style="vertical-align:middle"
+                                          >
+                                          Amount
+                                            </th>
+                                            <th
+                                            class="text-center"
+                                            style="vertical-align:middle"
+                                          >
+                                          Remarks
+                                            </th>
+
+                                            <th
+                                            class="text-center"
+                                            style="vertical-align:middle"
+                                          >
+                                          Delete
+                                            </th>
+                                          </tr>
+
+                                        </thead>
+                                        <tbody>
+                                          <tr
+                                            *ngFor="
+                                              let d of RunningDetailList;
+                                              let odd = odd;
+                                              let index = index
+                                            "
+                                            [class.even]="odd"
+                                          >
+                                          <td>
+                                            <a  class="btn btn-primary btn-sm" title='Details of Road' (click)='viewDetailOfRoad(d)'>
+                                              <i class="fa fa-fw fa-info-circle"></i></a>
+
+                                          </td>
+                                            <td>{{ d.Item_Sl_No }}</td>
+                                            <td>{{ d.Sub_Item_Code ? d.Sub_Item_Code : d.Item_Code }}</td>
+                                            <td>{{ d.Qnty_Executed_Upto_Date ? d.Qnty_Executed_Upto_Date : '-'  }}</td>
+                                            <td>{{ d.Qnty_Executed_Of_This_Bill ? d.Qnty_Executed_Upto_Date : '-'  }}</td>
+                                            <td>{{ d.Unit ? d.Unit : '-'  }}</td>
+                                            <td>{{ d.Estimated_Rate ? d.Estimated_Rate : '-'  }}</td>
+                                            <td>{{ d.Upto_Date_Amount ? CurrencyView(d.Upto_Date_Amount): '-'  }}</td>
+                                            <td>{{ d.Remarks ? d.Remarks : '-'  }}</td>
+                                            <td>
+                                              <a (click)="DeleteRunDetails(index)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a>
+                                            </td>
+
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                      <table class="table bidopen table-bordered" *ngIf='RunningDetailList.length'>
+                                        <thead>
+                                          <tr style="background-color:#3c8dbc;color:white;">
+                                            <th scope="col" colspan="2"
+                                              class="text-center"
+                                              style="vertical-align:middle;width:50%;"
+                                            >
+                                           Upto Date Amount
+                                            </th>
+                                            <th scope="col" colspan="2"
+                                              class="text-center"
+                                              style="vertical-align:middle;width:50%;"
+                                            >
+                                            This Bill Amount
+                                            </th>
+
+                                          </tr>
+
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td class='text-left'>Total Amount</td>
+                                            <td style='font-weight:bold;' class='text-right'>{{ ObjRunningBill.Total_This_Bill_Amount_upto ? CurrencyView(ObjRunningBill.Total_This_Bill_Amount_upto) : '-' }}</td>
+                                            <td class='text-left'>Total Amount</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{  ObjRunningBill.Total_This_Bill_Amount ? CurrencyView(ObjRunningBill.Total_This_Bill_Amount) : '-' }}</td>
+                                          </tr>
+                                          <tr>
+                                            <td class='text-left'>Deduction Amount</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{ ObjRunningBill.Quoted_Type + ' | ' + ObjRunningBill.Quoted_Percentage + ' % | '+ CurrencyView(ObjRunningBill.Quoted_Percentage_Amount_This_Bill_upto)}}</td>
+                                            <td class='text-left'>Deduction Amount</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{ ObjRunningBill.Quoted_Type + ' | ' +ObjRunningBill.Quoted_Percentage + ' % | '+  CurrencyView(ObjRunningBill.Quoted_Percentage_Amount_This_Bill) }}</td>
+                                          </tr>
+                                          <tr>
+                                            <td class='text-left'>Total Gross Amount</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{ ObjRunningBill.Total_Gross_Amount_This_Bill_upto ? CurrencyView(ObjRunningBill.Total_Gross_Amount_This_Bill_upto) : '-'  }}</td>
+                                            <td class='text-left'>Total Gross Amount</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{  ObjRunningBill.Total_Gross_Amount_This_Bill ? CurrencyView(ObjRunningBill.Total_Gross_Amount_This_Bill) : '-'  }}</td>
+                                          </tr>
+                                          <tr>
+                                            <td style="vertical-align:middle;">Add GST</td>
+                                            <td style="vertical-align:middle;">
+                                              <div class="input-group" style='width: 50%;float:right;'>
+                                                <input type="text"
+                                                class="form-control"
+                                                name="gst "
+                                                #gst="ngModel"
+                                                [(ngModel)]="ObjRunningBill.GST_Percentage"
+                                                (change)='GetAllCalculation()'
+                                                CompacctDigitonly="true"
+                                                placeholder="GST"
+                                                [ngClass]="{clearance: RunningFormSubmitted && gst?.errors?.required }" required/>
+                                                <div class="input-group-addon"><b>%</b></div>
+                                              </div>
+                                             <span style="float: right;clear: both;font-weight: bold;">{{ObjRunningBill.GST_Amount_This_Bill ? CurrencyView(ObjRunningBill.GST_Amount_This_Bill_upto) : '-'}}</span>
+                                            </td>
+                                            <td  style="vertical-align:middle;">Add GST</td>
+                                            <td style="vertical-align:middle;">
+                                              <div class="input-group"  style='width: 50%;float:right;'>
+                                                <input type="text"
+                                                class="form-control"
+                                                name="gst "
+                                                #gst="ngModel"
+                                                [(ngModel)]="ObjRunningBill.GST_Percentage"
+                                                (change)='GetAllCalculation()'
+                                                CompacctDigitonly="true"
+                                                placeholder="GST"
+                                                [ngClass]="{clearance: RunningFormSubmitted && gst?.errors?.required }" required/>
+                                                <div class="input-group-addon"><b>%</b></div>
+                                              </div>
+                                              <span style="float: right;clear: both;font-weight: bold;">{{ObjRunningBill.GST_Amount_This_Bill ? CurrencyView(ObjRunningBill.GST_Amount_This_Bill) : '-'}}</span>
+                                            </td>
+
+                                          </tr>
+                                          <tr>
+                                            <td class='text-left'>Grand Total Amount</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{ ObjRunningBill.Grand_Total_Amount_This_Bill_upto ? CurrencyView(ObjRunningBill.Grand_Total_Amount_This_Bill_upto) : '-'  }}</td>
+                                            <td class='text-left'>Grand Total Amount</td>
+                                            <td style='font-weight:bold;' class='text-right'>{{ ObjRunningBill.Grand_Total_Amount_This_Bill ? CurrencyView(ObjRunningBill.Grand_Total_Amount_This_Bill) : '-'  }}</td>
+                                          </tr>
+                                          <tr>
+                                            <td class='text-left'>Deduct works value since previous Bill</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{ObjRunningBill.Deduct_Work_Value_upto ? CurrencyView(ObjRunningBill.Deduct_Work_Value_upto)  : '-'}}</td>
+                                            <td class='text-left'>Deduct works value since previous Bill</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{ObjRunningBill.Deduct_Work_Value ? CurrencyView(ObjRunningBill.Deduct_Work_Value)  : '-'}}</td>
+                                          </tr>
+                                          <tr>
+                                            <td class='text-left'>Net Value</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{ObjRunningBill.Net_Value_upto ? CurrencyView(ObjRunningBill.Net_Value_upto)  : '-'}}</td>
+                                            <td class='text-left'>Net Value</td>
+                                            <td style='font-weight:bold;'  class='text-right'>{{ObjRunningBill.Net_Value ? CurrencyView(ObjRunningBill.Net_Value)  : '-'}}</td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+
+                                  <div class="form-group">
+                                    <div class="col-sm-12">
+                                      <button class="btn btn-primary pull-right custombutton"
+                                              id="load"
+                                              type='button'
+                                              (click)='SaveRABill()'
+                                              [disabled]="Spinner">
+                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                              <span *ngIf="!Spinner" class="glyphicon glyphicon-download-alt"></span>&nbsp;Save
+                                      </button>
+
+                                    </div>
+                                  </div>
+                                </form>
+                              </p-tabPanel>
+                            </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-dialog
+  [header]="'Details of Road'"
+  [appendTo]="'body'"
+  [visible]="DetailsOfRoadModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '65%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="50"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+  <div class="form-group" >
+    <div class="col-sm-12">
+      <label class="control-label">Name of the Road<sup class="text-danger">*</sup></label>
+      <div class="label-t">{{DetailsOfRoadViewLabel['Tender_Name'] ? DetailsOfRoadViewLabel['Tender_Name'] : '-' }}</div>
+
+    </div>
+    <div class="col-sm-4">
+      <label class="control-label">Agreement No.<sup class="text-danger">*</sup></label>
+      <div class="label-t">{{DetailsOfRoadViewLabel['Agreement_Number']}}</div>
+
+    </div>
+    <div class="col-sm-4">
+      <label class="control-label">Agreement Amount<sup class="text-danger">*</sup></label>
+      <div class="label-t">{{CurrencyView(DetailsOfRoadViewLabel['Agreement_Amount'])}}</div>
+
+    </div>
+    <div class="col-sm-4">
+      <label class="control-label">Name of Contractor<sup class="text-danger">*</sup></label>
+      <div class="label-t">{{DetailsOfRoadViewLabel['Bidder_Name'] }}</div>
+
+    </div>
+    <div class="col-sm-4">
+      <label class="control-label">Date of Commencement<sup class="text-danger">*</sup></label>
+      <div class="label-t">{{DetailsOfRoadViewLabel['Date_of_Commencement'] | date: 'dd/MMM/yy' }}</div>
+
+    </div>
+
+    <div class="col-sm-4">
+      <label class="control-label">Date of Completion<sup class="text-danger">*</sup></label>
+      <div class="label-t">{{DetailsOfRoadViewLabel['Date_of_Completion']  | date: 'dd/MMM/yy' }}</div>
+
+    </div>
+
+
+  </div>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="DetailsOfRoadModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+
+</p-footer>
+</p-dialog>
+<p-dialog
+  [header]="'Create Sl.No of Running Bill'"
+  [appendTo]="'body'"
+  [visible]="RAserialNoModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="TypeForm"
+#TypeForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-12">
+    <label class="control-label"
+    >Sl.No of Running Bill<sup class="text-danger">*</sup
+  ></label>
+  <input
+        type="text"
+        class="form-control"
+        name="name"
+        #name="ngModel"
+        [(ngModel)]="RAserialNoName"
+        placeholder="Sl.No of Running Bill"
+        allow-pattern="([a-z ]|\.)"
+        [ngClass]="{
+          clearance: RAserialNoSubmitted && name?.errors?.required
+        }"
+        required
+      />
+  </div>
+</div>
+
+</form>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="RAserialNoModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+<button
+type="submit"
+name="bill"
+class="btn btn-primary pull-right custombutton"
+(click)="CreateRAserial(TypeForm.form.valid)"
+id="load2"
+[disabled]="Spinner"
+>
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
+</button>
+</p-footer>
+</p-dialog>

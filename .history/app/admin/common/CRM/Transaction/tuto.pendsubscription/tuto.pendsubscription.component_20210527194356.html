@@ -1,0 +1,460 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                      <p-tabPanel headerStyleClass="compacct-tabs" *ngIf='!WithFootFall' [header]="items[0]" leftIcon="fa fa-check-square-o" aria-hidden="true">
+                        <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label">Date</label>
+
+                                <app-compacct-daterangepicker
+                                (DaterangeObj)="getConfirmDateRange($event)"
+                                [DefaultDateOpt]="'weekwise'">
+                                </app-compacct-daterangepicker>
+
+                              </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Sale Type<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                    name="SaleType2"
+                                    #SaleType2="ngModel"
+                                    [(ngModel)]='SaleType'
+                                    [ngClass]="{'clearance': ConfirmSearchFormSubmitted && SaleType2?.errors?.required}"
+                                    required>
+                                      <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of saletypevalue" value={{option.Sale_Type}}>
+                                          {{option.Sale_Type}}
+                                        </option>
+                                    </select>
+                            </div>
+                              <div class="col-sm-4">
+                                <button
+                                  class="btn btn-primary custombutton"
+                                  data-toggle="modal"
+                                  (click)="GetConfirmList(0)"
+                                  id="load"
+                                  [disabled]="seachSpinner"
+                                >
+                                  <p-progressSpinner
+                                    *ngIf="seachSpinner"
+                                    [style]="{ width: '15px', height: '15px' }"
+                                    strokeWidth="8"
+                                    animationDuration=".5s"
+                                  ></p-progressSpinner>
+                                  <span
+                                    *ngIf="!seachSpinner"
+                                    class="glyphicon glyphicon-search"
+                                  ></span
+                                  >&nbsp;Search
+                                </button>
+                                <button style="margin-right: 30px;" *ngIf='confirmedlist.length'  (click)="exportexcel(confirmedlist,'Confirmed_Suscribtion')"
+                                class="btn btn-primary custombutton">
+                                <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                              </button>
+                              </div>
+                            </div>
+
+                          </form>
+                        <div class="row">
+                            <div class="col-sm-8"><h5><strong></strong></h5></div>
+                            </div>
+                        <div class="table-responsive table-id">
+                            <p-table [value]="confirmedlist" #dt1
+                            [paginator]="confirmedlist.length ? true : false"
+                            [rows]="100"
+                            [loading]="seachSpinner"
+                            [rowHover]="true"
+                            [autoLayout]="true"
+                            sortMode="multiple"
+                            [rowHover]="true"
+                            [globalFilterFields]='["Subscription_Txn_ID","Txn_Date","Contact_Name","Mobile","PINCODE","School","Product_Description","Sale_By","Sale_Amount"]'>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                      <div class="col-sm-3 pull-right" style="text-align: right">
+                                              <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                          </div>
+                                </div>
+
+                              </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th>Order ID</th>
+                                        <th>Date</th>
+                                        <th>Confirm Date</th>
+                                        <th>Registration Date</th>
+                                        <th>Student Name</th>
+                                        <th>Mobile</th>
+                                        <th>Pincode</th>
+                                        <th>School Name</th>
+                                        <th>Product Name</th>
+                                        <th>Sale Amount</th>
+                                        <th>Sale By</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                        <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                              <a *ngIf='col.Doc_No !== "NA"' (click)="GetPDF(col)">
+                                                                <i class="fa fa-print" aria-hidden="true"></i>
+                                                                Print
+                                                            </a>
+                                                        </li>
+                                                        <!--<li>
+                                                            <a (click)="DeleteCostcenter(col)">
+                                                                <i class="fa fa-fw fa-trash"></i>
+                                                                Delete
+                                                            </a>
+                                                        </li>-->
+                                                    </ul>
+                                                </div>
+                                        </td>
+                                        <td>{{col.Subscription_Txn_ID}}</td>
+                                        <td>{{col.Txn_Date | date : 'dd/MMM/yyyy'}}</td>
+                                        <td>{{col.Confirm_Date}}</td>
+                                        <td>{{col.Registration_Date}}</td>
+                                        <td>{{col.Contact_Name}}</td>
+                                        <td>{{col.Mobile}}</td>
+                                        <td>{{col.PINCODE}}</td>
+                                        <td>{{col.School ? col.School :'-'}}</td>
+                                        <td>{{col.Product_Description}}</td>
+                                        <td>{{col.Sale_Amount}}</td>
+                                        <td>{{col.Sale_By}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template
+                                pTemplate="paginatorright"
+                                *ngIf="confirmedlist.length"
+                                let-state
+                              >
+                                Showing {{ state.first + 1 }} of
+                                {{ state.first + 1 + state.rows }} of
+                                {{ state.totalRecords }}
+                              </ng-template>
+                            </p-table>
+
+                        </div>
+                      </p-tabPanel>
+                      <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon= "fa fa-pencil-square-o" aria-hidden="true" >
+                              <form name="SearchForm"  *ngIf='!WithFootFall' #SearchForm="ngForm" novalidate>
+                                  <div class="form-group">
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Date</label>
+
+                                      <app-compacct-daterangepicker
+                                      (DaterangeObj)="getPendingDateRange($event)"
+                                      [DefaultDateOpt]="'weekwise'">
+                                      </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                      <button
+                                        class="btn btn-primary custombutton"
+                                        data-toggle="modal"
+                                        (click)="getAllPendingsubList(2,0)"
+                                        id="load"
+                                        [disabled]="seachSpinner"
+                                      >
+                                        <p-progressSpinner
+                                          *ngIf="seachSpinner"
+                                          [style]="{ width: '15px', height: '15px' }"
+                                          strokeWidth="8"
+                                          animationDuration=".5s"
+                                        ></p-progressSpinner>
+                                        <span
+                                          *ngIf="!seachSpinner"
+                                          class="glyphicon glyphicon-search"
+                                        ></span
+                                        >&nbsp;Search
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                </form>
+                              <div class="row">
+                                  <div class="col-sm-8"><h5><strong></strong></h5></div>
+                                  </div>
+                              <div class="table-responsive table-id">
+                                  <p-table [value]="AllPendingsubList" #dt2
+                                  [paginator]="AllPendingsubList.length ? true : false"
+                                  [rows]="100"
+                                  [loading]="seachSpinner"
+                                  [rowHover]="true"
+                                  [autoLayout]="true"
+                                  sortMode="multiple"
+                                  [rowHover]="true"
+                                  [globalFilterFields]='["Subscription_Txn_ID","Txn_Date","Contact_Name","Mobile","PINCODE","School","Product_Description"]'>
+                                  <ng-template pTemplate="caption">
+                                      <div class="row">
+                                          <div class="col-sm-3 pull-right" style="text-align: right">
+                                                  <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                              </div>
+                                      </div>
+
+                                  </ng-template>
+                                      <ng-template pTemplate="header">
+                                          <tr>
+                                              <th style="width:5em">Action</th>
+                                              <th>Order ID</th>
+                                              <th>Date</th>
+                                              <th>Student Name</th>
+                                              <th>Mobile</th>
+                                              <th>Pincode</th>
+                                              <th>Distributor </th>
+                                              <th>Product Name</th>
+                                          </tr>
+                                      </ng-template>
+                                      <ng-template pTemplate="body" let-col>
+                                          <tr>
+                                              <td>
+                                                      <div class="dropdown">
+                                                          <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                              type="button" data-toggle="dropdown" style="height:27px">
+                                                              <i class="fa fa-fw fa-bars"></i>
+                                                              <span class="caret"></span>
+                                                          </button>
+                                                          <ul class="dropdown-menu">
+                                                              <li>
+                                                                  <a *ngIf='col.Billed  ==="N"' (click)="Billcreation(col)">
+                                                                      <i class="fa fa-fw fa-newspaper-o"></i>
+                                                                      Bill Create
+                                                                  </a>
+                                                                  <a *ngIf='col.Billed  ==="Y" && col.Payment_Confirm ==="N"' (click)="MakePayement(col)">
+                                                                    <i class="fa fa-fw fa-credit-card"></i>
+                                                                    Make Payment
+                                                                </a>
+                                                              </li>
+
+                                                          </ul>
+                                                      </div>
+                                              </td>
+                                              <td>{{col.Subscription_Txn_ID}}</td>
+                                              <td>{{col.Txn_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                              <td>{{col.Contact_Name}}</td>
+                                              <td>{{col.Mobile}}</td>
+                                              <td>{{col.PINCODE}}</td>
+                                              <td>{{col.School ? col.School :'-'}}</td>
+                                              <td>{{col.Product_Description}}</td>
+                                          </tr>
+                                      </ng-template>
+                                      <ng-template
+                                      pTemplate="paginatorright"
+                                      *ngIf="AllPendingsubList.length"
+                                      let-state
+                                    >
+                                      Showing {{ state.first + 1 }} of
+                                      {{ state.first + 1 + state.rows }} of
+                                      {{ state.totalRecords }}
+                                    </ng-template>
+                                  </p-table>
+
+                              </div>
+                      </p-tabPanel>
+                      <p-tabPanel headerStyleClass="compacct-tabs" *ngIf='!WithFootFall' [header]="items[2]" leftIcon="fa fa-exclamation-circle" aria-hidden="true" >
+                          <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                              <div class="form-group">
+                                <div class="col-sm-4">
+                                  <label class="control-label">Date</label>
+
+                                      <app-compacct-daterangepicker
+                                      (DaterangeObj)="getNotConfirmDateRange($event)"
+                                      [DefaultDateOpt]="'weekwise'">
+                                      </app-compacct-daterangepicker>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                  <button
+                                    class="btn btn-primary custombutton"
+                                    data-toggle="modal"
+                                    (click)="getAllPendingsubList(3,0)"
+                                    id="load"
+                                    [disabled]="seachSpinner"
+                                  >
+                                    <p-progressSpinner
+                                      *ngIf="seachSpinner"
+                                      [style]="{ width: '15px', height: '15px' }"
+                                      strokeWidth="8"
+                                      animationDuration=".5s"
+                                    ></p-progressSpinner>
+                                    <span
+                                      *ngIf="!seachSpinner"
+                                      class="glyphicon glyphicon-search"
+                                    ></span
+                                    >&nbsp;Search
+                                  </button>
+                                </div>
+                              </div>
+
+                            </form>
+                          <div class="row">
+                              <div class="col-sm-8"><h5><strong></strong></h5></div>
+                              </div>
+                          <div class="table-responsive table-id">
+                              <p-table [value]="Acnotconflist" #dt3
+                              [paginator]="Acnotconflist.length ? true : false"
+                              [rows]="100"
+                              [loading]="seachSpinner"
+                              [rowHover]="true"
+                              [autoLayout]="true"
+                              sortMode="multiple"
+                              [rowHover]="true"
+                              [globalFilterFields]='["Subscription_Txn_ID","Txn_Date","Contact_Name","Mobile","PINCODE","School","Product_Description"]'>
+                              <ng-template pTemplate="caption">
+                                  <div class="row">
+                                      <div class="col-sm-3 pull-right" style="text-align: right">
+                                              <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                          </div>
+                                  </div>
+
+                              </ng-template>
+                                  <ng-template pTemplate="header">
+                                      <tr>
+                                          <th>Order ID</th>
+                                          <th>Date</th>
+                                          <th>Student Name</th>
+                                          <th>Mobile</th>
+                                          <th>Pincode</th>
+                                          <th>Distributor </th>
+                                          <th>Product Name</th>
+
+                                      </tr>
+                                  </ng-template>
+                                  <ng-template pTemplate="body" let-col>
+                                      <tr>
+                                          <td>{{col.Subscription_Txn_ID}}</td>
+                                          <td>{{col.Txn_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                          <td>{{col.Contact_Name}}</td>
+                                          <td>{{col.Mobile}}</td>
+                                          <td>{{col.PINCODE}}</td>
+                                          <td>{{col.School ? col.School :'-'}}</td>
+                                          <td>{{col.Product_Description}}</td>
+                                      </tr>
+                                  </ng-template>
+                                  <ng-template
+                                  pTemplate="paginatorright"
+                                  *ngIf="Acnotconflist.length"
+                                  let-state
+                                >
+                                  Showing {{ state.first + 1 }} of
+                                  {{ state.first + 1 + state.rows }} of
+                                  {{ state.totalRecords }}
+                                </ng-template>
+                              </p-table>
+
+                          </div>
+
+                      </p-tabPanel>
+                      <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[3]" leftIcon="fa fa-users" aria-hidden="true" >
+                        <!-- <form name="SearchForm4" #SearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker
+                                    (DaterangeObj)="getNotConfirmDateRange($event)"
+                                    [DefaultDateOpt]="'weekwise'">
+                                    </app-compacct-daterangepicker>
+
+                              </div>
+
+                              <div class="col-sm-3">
+                                <button
+                                  class="btn btn-primary custombutton"
+                                  data-toggle="modal"
+                                  (click)="getAllPendingsubList(3,0)"
+                                  id="load"
+                                  [disabled]="seachSpinner"
+                                >
+                                  <p-progressSpinner
+                                    *ngIf="seachSpinner"
+                                    [style]="{ width: '15px', height: '15px' }"
+                                    strokeWidth="8"
+                                    animationDuration=".5s"
+                                  ></p-progressSpinner>
+                                  <span
+                                    *ngIf="!seachSpinner"
+                                    class="glyphicon glyphicon-search"
+                                  ></span
+                                  >&nbsp;Search
+                                </button>
+                              </div>
+                            </div>
+
+                          </form> -->
+                        <div class="row">
+                            <div class="col-sm-8"><h5><strong></strong></h5></div>
+                            </div>
+                        <div class="table-responsive table-id">
+                            <p-table [value]="RegisteredStudentList" #dt4
+                            [paginator]="RegisteredStudentList.length ? true : false"
+                            [rows]="100"
+                            [loading]="seachSpinner"
+                            [rowHover]="true"
+                            [autoLayout]="true"
+                            sortMode="multiple"
+                            [rowHover]="true"
+                            [globalFilterFields]='["Created_On","Name","Mobile_Whatsup","Mobile","City","Class_Name","Ref_Code"]'>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                </div>
+
+                            </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Created on</th>
+                                        <th>Name</th>
+                                        <th>Mobile</th>
+                                        <th>WhatsApp No</th>
+                                        <th>City</th>
+                                        <th>Class </th>
+                                        <th>Ref Code</th>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                      <td>{{col.Created_On}}</td>
+                                        <td>{{col.Name}}</td>
+                                        <td>{{col.Mobile}}</td>
+                                        <td>{{col.Mobile_Whatsup}}</td>
+                                        <td>{{col.City}}</td>
+                                        <td>{{col.Class_Name ? col.Class_Name :'-'}}</td>
+                                        <td>{{col.Ref_Code}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template
+                                pTemplate="paginatorright"
+                                *ngIf="Acnotconflist.length"
+                                let-state
+                              >
+                                Showing {{ state.first + 1 }} of
+                                {{ state.first + 1 + state.rows }} of
+                                {{ state.totalRecords }}
+                              </ng-template>
+                            </p-table>
+
+                        </div>
+
+                    </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

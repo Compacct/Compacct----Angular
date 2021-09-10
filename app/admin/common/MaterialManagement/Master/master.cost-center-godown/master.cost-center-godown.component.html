@@ -1,0 +1,106 @@
+<div class="godown-sec">
+<form name="CostcenterGodownForm" #CostcenterGodownForm="ngForm" novalidate>
+
+  <div class="form-group">
+      <div class="col-sm-4">
+              <label class="control-label">Godown Name<sup class="text-danger">*</sup></label>
+              <input class="form-control"
+                      name="Godown_Name"
+                      #Godown_Name="ngModel"
+                      [(ngModel)]="ObjCostCenterGodown.Godown_Name"
+                      placeholder="Godown Name"
+                      [ngClass]="{'clearance': CostcentergodownFormSubmitted && Godown_Name?.errors?.required}"
+                       required>
+      </div>
+      <div class="col-sm-4">
+        <label class="control-label">Reserved <sup class="text-danger"></sup></label>
+        <br/>
+        <p-radioButton name="group1" value="Y" label="Yes" [(ngModel)]="ObjCostCenterGodown.Reserved" ></p-radioButton>
+       <p-radioButton name="group1" value="N" label="No" class="mar-left" [(ngModel)]="ObjCostCenterGodown.Reserved" ></p-radioButton>
+
+      </div>
+
+      <div class="col-sm-4">
+        <label class="control-label">Support <sup class="text-danger"></sup></label>
+        <br/>
+        <p-radioButton name="group2" value="Y" label="Yes" [(ngModel)]="ObjCostCenterGodown.Support" ></p-radioButton>
+       <p-radioButton name="group2" value="N" label="No" class="mar-left" [(ngModel)]="ObjCostCenterGodown.Support" ></p-radioButton>
+
+      </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-4">
+      <label class="control-label">Product Name
+      </label>
+     <select class="form-control"
+             name="Product_ID"
+             #Product_ID="ngModel"
+             [(ngModel)]="ObjCostCenterGodown.Product_ID"
+            >
+             <option  [ngValue]="undefined">Select</option>
+         <option *ngFor="let option of productList" value={{option.Product_ID}}>
+             {{option.Product_Description}}
+             </option>
+     </select>
+    </div>
+    <div class="col-sm-4">
+
+    </div>
+
+    <div class="col-sm-4">
+
+    </div>
+</div>
+
+  <div class="box-footer">
+      <button class="btn btn-primary pull-right"
+              (click)="SaveCostcenterGodownMaster(CostcenterGodownForm.form.valid)"
+              id="load"
+              [disabled]="Spinner">
+              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+          <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+      </button>
+  </div>
+</form>
+</div>
+
+<div class="table-responsive no-padding" *ngIf="costCenterGodownList.length > 0">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr style="background-color:#3c8dbc;color:white">
+                <th nowrap>Godown Name</th>
+                <th nowrap>Product Name</th>
+                <th nowrap>Reserved </th>
+                <th nowrap>Support </th>
+                <!-- <th nowrap>Edit</th> -->
+                <th nowrap>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let obj of costCenterGodownList">
+
+                <td>{{obj.Godown_Name}}</td>
+                <td>{{obj.Product_Description}}</td>
+                <td>
+                  <ng-container *ngIf="obj.Reserved ==='Y'">
+                    Yes
+                  </ng-container>
+                  <ng-container *ngIf="obj.Reserved ==='N'">
+                      No
+                    </ng-container>
+                </td>
+                <td>
+                  <ng-container *ngIf="obj.Support ==='Y'">
+                      Yes
+                    </ng-container>
+                    <ng-container *ngIf="obj.Support ==='N'">
+                        No
+                    </ng-container>
+                </td>
+                <!-- <td> <a href="" data-toggle="modal" (click)="EditCostcenter(obj)"><i class="fa fa-fw fa-pencil"></i></a></td> -->
+                <td> <a href="" data-toggle="modal" (click)="DeleteCostcenter(obj)"><i class="fa fa-fw fa-trash"></i></a></td>
+            </tr>
+        </tbody>
+    </table>
+  </div>

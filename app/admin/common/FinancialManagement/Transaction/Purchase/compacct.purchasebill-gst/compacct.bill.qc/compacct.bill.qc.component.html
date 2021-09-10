@@ -1,0 +1,256 @@
+<div [ngClass]="overLayFlag ? 'disabledQC' : ''">
+  <div style="margin-top: 10px;"></div>
+
+  <form #QCForm="ngForm" novalidate>
+    <fieldset [disabled]="overLayFlag">
+      <div class="form-group">
+        <div class="col-sm-3">
+          <label class="control-label"
+            >QC Doc Date<sup class="text-danger">*</sup></label
+          >
+          <div class="input-group date">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <input
+              type="date"
+              name="QCDoc_Date"
+              [ngModel]="QCDocDate | date: 'yyyy-MM-dd'"
+              #QCDoc_Date="ngModel"
+              [ngClass]="{
+                clearance: QCFormSubmitted && QCDoc_Date.errors?.required
+              }"
+              (ngModelChange)="GetDocdate($event)"
+              class="form-control"
+              required
+            />
+          </div>
+        </div>
+        <!-- <div class="col-sm-3">
+          <label class="control-label">QC Doc No </label>
+          <input
+            class="form-control"
+            name="Doc_No1"
+            #Doc_No1="ngModel"
+            [disabled]="true"
+            [(ngModel)]="QCDoc_No"
+            placeholder="Doc No"
+          />
+        </div> -->
+        <div class="col-sm-3">
+          <label class="control-label"
+            >QC Cost Center &nbsp;<span class="text-danger">*</span></label
+          >
+          <select
+            class="form-control"
+            name="costcenterQC"
+            #costcenterQC="ngModel"
+            [(ngModel)]="ObjQC.QC_Cost_Cent_ID"
+            [ngClass]="{
+              clearance: QCFormSubmitted && costcenterQC.errors?.required
+            }"
+            required
+          >
+            <option [ngValue]="undefined">Select</option>
+            <option
+              *ngFor="let option of CostCenterList"
+              [ngValue]="option.Cost_Cen_ID"
+              >{{ option.Cost_Cen_Name }}</option
+            >
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-6">
+          <h3></h3>
+          <br />
+        </div>
+      </div>
+
+      <p-table
+        [columns]="QCViewCols"
+        [frozenColumns]="frozenCols"
+        [value]="QCProductList"
+        [scrollable]="true"
+        scrollHeight="100px"
+        *ngIf="(QCProductList | json) != '[]'"
+        frozenWidth="250px"
+      >
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup>
+            <col *ngFor="let col of columns" style="width:200px" />
+          </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th *ngFor="let col of columns">
+              {{ col.header }}
+            </th>
+            <th>Edit</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns">
+              {{ rowData[col.field] ? rowData[col.field] : "-" }}
+            </td>
+            <td style="background: #c1c1c180;" class="text-center">
+              <a
+                style="color: black; cursor: pointer;"
+                (click)="QCModal(rowData)"
+              >
+                <i class="glyphicon glyphicon-edit"></i>
+              </a>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div class="form-group">
+        <div class="col-sm-6">
+          <h3></h3>
+          <br />
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <button
+            type="submit"
+            name="stock"
+            class="btn btn-primary pull-right"
+            (click)="SaveQC(QCForm.form.valid)"
+            id="load"
+            [disabled]="saveSpinner || QCUpdateFlag"
+          >
+            <p-progressSpinner
+              *ngIf="saveSpinner"
+              [style]="{ width: '15px', height: '15px' }"
+              strokeWidth="8"
+              animationDuration=".5s"
+            ></p-progressSpinner>
+            <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span
+            >&nbsp;{{ buttonname }}
+          </button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <!-- Update GRN -->
+  <!--  && (ProtoQCObj | json) != '{}' -->
+  <p-dialog
+    header="Update QC"
+    [visible]="displayQCModal"
+    [closeOnEscape]="true"
+    [closable]="false"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '40%', minWidth: '200px' }"
+    [appendTo]="'body'"
+    style="text-align: left;"
+    [minY]="40"
+    [maximizable]="true"
+    [baseZIndex]="10000"
+  >
+    <form #QCProductForm="ngForm" novalidate>
+      <div class="form-horizontal ">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <label class="control-label"
+              >FFA<span class="text-danger"></span
+            ></label>
+            <input
+              class="form-control"
+              type="text"
+              name="FFA"
+              placeholder="FFA"
+              #FFA="ngModel"
+              [(ngModel)]="ProtoQCObj.QC_FFA"
+            />
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label">Moisture</label>
+            <input
+              class="form-control"
+              type="text"
+              name="Moisture"
+              #Moisture="ngModel"
+              [(ngModel)]="ProtoQCObj.QC_Moisture"
+              placeholder="Moisture"
+            />
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label">Oil Content</label>
+            <input
+              class="form-control"
+              name="QC_Oil_Content"
+              #QC_Oil_Content="ngModel"
+              [(ngModel)]="ProtoQCObj.QC_Oil_Content"
+              placeholder="Oil Content"
+            />
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label">Impurity</label>
+            <input
+              class="form-control"
+              name="QC_ImpurityQC_Impurity"
+              #QC_ImpurityQC_Impurity="ngModel"
+              [(ngModel)]="ProtoQCObj.QC_Impurity"
+              placeholder="Oil Content"
+            />
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label">Dust</label>
+            <input
+              class="form-control"
+              name="Dust"
+              #Dust="ngModel"
+              CompacctDigitonly="true"
+              [(ngModel)]="ProtoQCObj.Dust"
+              placeholder="Dust"
+            />
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label">Husk</label>
+            <input
+              class="form-control"
+              name="Husk"
+              #Husk="ngModel"
+              CompacctDigitonly="true"
+              [(ngModel)]="ProtoQCObj.Husk"
+              placeholder="Husk"
+            />
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label">Remarks</label>
+            <textarea
+              class="form-control"
+              name="QC_Remarks"
+              #QC_Remarks="ngModel"
+              [(ngModel)]="ProtoQCObj.QC_Remarks"
+              placeholder="Remarks"
+            >
+            </textarea>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-6">
+              <h3></h3>
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <p-footer>
+      <button
+        type="button"
+        (click)="onProductConfirm(QCProductForm.form.valid)"
+        class="btn btn-success"
+      >
+        ADD
+      </button>
+      <button type="button" (click)="CloseModal()" class="btn btn-default">
+        CANCEL
+      </button>
+    </p-footer>
+    <br />
+  </p-dialog>
+</div>

@@ -1,0 +1,430 @@
+
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+          <h3>{{message.summary}}</h3>
+          <p >{{message.detail}}</p>
+      </div>
+
+      <div  class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+  </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView1" (onChange)="TabClick1($event)">
+                      <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items1[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                         <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-3">
+                                <label class="control-label">Brand <sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                        name="Brand"
+                                        #Brand="ngModel"
+                                        [(ngModel)]="ObjBrowse.Brand_ID"
+                                        [ngClass]="{'clearance': SearchFormSubmitted && Brand?.errors?.required}"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                 <option *ngFor = "let option of BrandList" [value] ="option.Brand_ID">
+                                    {{option.Brand_INI}}
+                                  </option>
+                            </select>
+                              </div>
+
+                              <div class="col-sm-3">
+                                <button
+                                    type="button"
+                                    (click)="GetBrowseList(SearchForm.form.valid)"
+                                    class="btn btn-primary custombutton1">
+                                    <span class="glyphicon glyphicon-search"></span> Search
+                                </button>
+                              </div>
+                            </div>
+
+                          </form>
+
+                        <div class="table-responsive table-id">
+                            <p-table [value]="BrowseList" #dt5
+                            [paginator] ="true"
+                            [rows] ="100"
+                            [loading] = "seachSpinner"
+                            [rowHover] ="true"
+                            [autoLayout] ="true"
+                            sortMode ="multiple"
+                            [rowsPerPageOptions]="[10,25,50,100]"
+                            [rowHover] ="true"
+                            [globalFilterFields]='["Brand_INI","Final_Product_Type_Name","Final_Product_Description","Final_Product_Qty","Final_Product_UOM"]'>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                      <div class="col-sm-3 pull-right" style="text-align: right">
+                                              <input type="text" pInputText size="50" placeholder="Search" (input) ="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                          </div>
+                                </div>
+
+                              </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th>Brand</th>
+                                        <th>Final Product Type</th>
+                                        <th>Final Product</th>
+                                        <th>Final Product Qty</th>
+                                        <th>Final Product UOM</th>
+                                    </tr>
+                                </ng-template>
+                                 <ng-template pTemplate="body" let-col>
+                                   <tr >
+                                           <td> <!--[class]='col.Toyal_Qty != col.Accepted_Qty ? "text-red-active" : ""' -->
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <!-- <li>
+                                                            <a (click)="view(col)">
+                                                              <i class="fa fa-fw fa-eye" aria-hidden="true"></i>
+                                                               View
+                                                            </a>
+                                                        </li> -->
+                                                        <li>
+                                                              <a (click)="EditBomReciepe(col)">
+                                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li *ngIf= "col.Toyal_Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.To_Cost_Cen_ID">
+                                                          <a (click)="AcceptChallan(col)">
+                                                              <i class="fa fa-check"></i>
+                                                             Accepted Challan
+                                                          </a>
+                                                      </li> -->
+
+                                                         <!-- <li>
+                                                           <a (click)="editmaster(col)">
+                                                              <i class="fa fa-print" aria-hidden="true"></i>
+                                                              Print
+                                                          </a>
+                                                      </li> -->
+                                                        <li>
+                                                            <a (click)="DeleteBom(col)">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                        </td>
+                                        <td>{{col.Brand_INI}}</td>
+                                        <td>{{col.Final_Product_Type_Name}}</td>
+                                        <td>{{col.Final_Product_Description}}</td>
+                                        <td>{{col.Final_Product_Qty}}</td>
+                                        <td>{{col.Final_Product_UOM}}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                            </ng-template>
+                            </p-table>
+
+                        </div>
+
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items1[1]" leftIcon="glyphicon glyphicon-floppy-save" >
+                      <br>
+                      <div class="col-lg-12">
+                      <div class="panel-group"  >
+                        <div class="panel panel-primary">
+
+                          <div class="panel-body">
+                              <form name="BomRecipeForm" #BomRecipeForm="ngForm" novalidate>
+                               <div class="form-group">
+                                <div class="col-sm-2">
+                                  <label class="control-label" >Brand<sup class="text-danger">*</sup></label>
+                                  <select class="form-control"
+                                  name="Brand_ID"
+                                  (change)="SemiFinishedTableData()"
+                                  #Brand_ID="ngModel"
+                                  [(ngModel)]="ObjBomReciepe.Brand_ID"
+                                  [ngClass]="{'clearance': BomRecipeFormSubmitted && Brand_ID?.errors?.required}"
+                                  [attr.disabled] = "editdisableflag ? true : null"
+                                  required>
+                                  <option  [ngValue]="undefined">Select</option>
+                              <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                  {{option.Brand_INI}}
+                                  </option>
+                          </select>
+                                 </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label" >Type of Material <sup class="text-danger">*</sup>
+                                    </label>
+                                  <select class="form-control"
+                                          name="type_of_Material"
+                                          #type_of_Material="ngModel"
+                                          [(ngModel)]="ObjBomReciepe.Type_of_Material"
+                                          [ngClass]="{'clearance': BomRecipeFormSubmitted && type_of_Material?.errors?.required}"
+                                          (change)="GetSelectFinalMaterial()"
+                                          [disabled] = "editdisableflag"
+                                          required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                      <option *ngFor="let option of typeofmateriallist" value="{{option.Material_Type}}">
+                                          {{option.Material_Type}}
+                                      </option>
+                                  </select>
+
+                                  </div>
+                                  <div class="col-sm-3">
+                                    <label class="control-label"
+                                            >Select Final Material <sup class="text-danger">*</sup> &nbsp;
+                                          </label>
+                                          <p-dropdown
+                                            [options]= "selectfinalmateriallist"
+                                            name="final_material"
+                                            [(ngModel)] ="ObjBomReciepe.Product_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="' No Product Found'"
+                                            (onChange)="ProductChange()"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            [resetFilterOnHide] = "true"
+                                            [placeholder]="'Select Product'"
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            #final_material="ngModel"
+                                            [required]="true"
+                                            [disabled] = "editdisableflag"
+                                            [ngClass]="{'clearance': BomRecipeFormSubmitted && final_material?.errors?.required}"
+                                            required>
+                                          </p-dropdown>
+                                       <!-- <label class="control-label">Select Final Material <span class="text-danger">*</span></label>
+                                        <select class="form-control"
+                                           name="final_material"
+                                           #final_material="ngModel"
+                                           [(ngModel)]="ObjBomReciepe.Select_Final_Material"
+                                           [ngClass]="{'clearance': BomRecipeFormSubmitted && final_material?.errors?.required}">
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option *ngFor="let option of selectfinalmateriallist" [value]="option.Product_ID">
+                                                     {{option.Product_Description}}</option>
+                                        </select> -->
+                                    </div>
+                                    <div class="col-sm-2">
+                                      <label class="control-label">Final Material Qty <sup class="text-danger">*</sup></label>
+                                      <input class="form-control"
+                                            name="final_material_Qty"
+                                            #final_material_Qty="ngModel"
+                                            [(ngModel)]="ObjBomReciepe.Final_Material_Qty"
+                                            [ngClass]="{'clearance': BomRecipeFormSubmitted && final_material_Qty?.errors?.required}"
+                                            CompacctDigitonly="true"
+                                            [disabled] = "editdisableflag"
+                                            required>
+                                  </div>
+                                  <div class="col-sm-2">
+                                    <label class="control-label">Final Material UOM <sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                          name="UOM"
+                                          #UOM="ngModel"
+                                          [(ngModel)]="ObjBomReciepe.Final_Material_UOM"
+                                          [ngClass]="{'clearance': BomRecipeFormSubmitted && UOM?.errors?.required}"
+                                          CompacctDigitonly="true"
+                                          [disabled] = "ObjBomReciepe.Final_Material_UOM">
+                                </div>
+                               </div>
+                            </form>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-12">
+                    <div class="panel-group"  >
+                      <div class="panel panel-primary">
+
+                        <div class="panel-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                         <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                           <!-- <form name="RawMaterialForm" #RawMaterialForm="ngForm" novalidate> -->
+                                <div class="form-group">
+                                  <div class="col-sm-3" >
+                                    <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                      <p-multiSelect [options]="DistRMProductType"  [(ngModel)]="SelectedDistRMProductType"
+                                        itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
+                                        name="Product_Type" [resetFilterOnHide] = "true" ></p-multiSelect>
+                                  </div>
+                                  <!-- <div class="col-sm-4">
+                                    <label class="control-label">Product Type <sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                                name="Product_Type_ID"
+                                                (change)="RawMaterialTableData()"
+                                                #Product_Type_ID="ngModel"
+                                                [(ngModel)]="ObjRawMaterial.Product_Type"
+                                                [ngClass]="{'clearance': BomRecipeFormSubmitted && Product_Type_ID?.errors?.required}"
+                                                required>
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                                 {{option.Product_Type}}
+                                              </option>
+                                        </select>
+
+                                  </div> -->
+                                </div>
+
+                              <!-- </form> -->
+                              <br>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="getrawmaterialtabledata" #dt
+                                [paginator] ="true"
+                                [rows] ="100"
+                                [loading] = "seachSpinner"
+                                [rowHover] ="true"
+                                [autoLayout] ="true"
+                                sortMode ="multiple"
+                                [rowsPerPageOptions]="[10,25,50,100]"
+                                [rowHover] ="true"
+                                [globalFilterFields]='["Product_Description","UOM"]'>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                          <div class="col-sm-3 pull-right" style="text-align: right">
+                                                  <input type="text" pInputText size="50" placeholder="Search" (input) ="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                              </div>
+                                    </div>
+
+                                  </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th>Product Type</th>
+                                            <th>Raw Material Description</th>
+                                            <th>UOM</th>
+                                            <th>Qty</th>
+                                        </tr>
+                                    </ng-template>
+                                     <ng-template pTemplate="body" let-col>
+                                       <tr >
+
+                                           <!-- <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td> -->
+                                              <td>{{col.Product_Type}}</td>
+                                              <td>{{col.Product_Description}}</td>
+                                              <td>{{col.UOM}}</td>
+                                              <td><input type="text" [name]="col.Product_ID"  [(ngModel)]='col.Qty'
+                                                 CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                </ng-template>
+                                </p-table>
+
+                            </div>
+
+
+                        </p-tabPanel>
+                         <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt" >
+                         <!-- <form name="SemiFinishedForm" #SemiFinishedForm="ngForm" novalidate> -->
+                                <div class="form-group">
+                                  <div class="col-sm-3">
+                                    <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType"
+                                      itemSize="30" (onChange)='FilterDistSF()'[styleClass]="'compacct-multiselect'"
+                                      name="Product_Type" [resetFilterOnHide] = "true"></p-multiSelect>
+                                  </div>
+                                  <!-- <div class="col-sm-4">
+                                    <label class="control-label">Product Type <sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                                name="product_type"
+                                                (change)="SemiFinishedTableData()"
+                                                #product_type="ngModel"
+                                                [(ngModel)]="ObjSemiFinished.Product_Type"
+                                                [ngClass]="{'clearance': BomRecipeFormSubmitted && product_type?.errors?.required}"
+                                                required>
+                                              <option  [ngValue]="undefined">Select</option>
+                                         <option *ngFor="let option of semifishedprotypellist" value="{{option.Product_Type_ID}}">
+                                              {{option.Product_Type}}
+                                              </option>
+                                          </select>
+
+                                        </div> -->
+                                      </div>
+
+                                    <!-- </form> -->
+                                    <br>
+                                  <div class="table-responsive table-id">
+                                      <p-table [value]="getsemifinishedtabledata" #dt1
+                                      [paginator] ="true"
+                                      [rows] ="100"
+                                      [loading] = "seachSpinner"
+                                      [rowHover] ="true"
+                                      [autoLayout] ="true"
+                                      sortMode ="multiple"
+                                      [rowsPerPageOptions]="[10,25,50,100]"
+                                      [rowHover] ="true"
+                                      [globalFilterFields]='["Product_Description","UOM"]'>
+                                      <ng-template pTemplate="caption">
+                                          <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                        <input type="text" pInputText size="50" placeholder="Search" (input) ="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                    </div>
+                                          </div>
+
+                                        </ng-template>
+                                          <ng-template pTemplate="header">
+                                              <tr>
+                                                  <!-- <th style="width:5em">Action</th> -->
+                                                  <th>Product Type</th>
+                                                  <th>Semi Finished Description</th>
+                                                  <th>UOM</th>
+                                                  <th>Qty</th>
+                                              </tr>
+                                          </ng-template>
+                                           <ng-template pTemplate="body" let-col>
+                                             <tr >
+
+                                                  <td>{{col.Product_Type}}</td>
+                                                  <td>{{col.Product_Description}}</td>
+                                                  <td>{{col.UOM}}</td>
+                                                  <td><input type="text" [name]="col.Product_ID"  [(ngModel)]='col.Qty'
+                                                      CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                              </tr>
+                                          </ng-template>
+                                          <ng-template pTemplate="paginatorright" let-state>
+                                              Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                      </ng-template>
+                                      </p-table>
+
+                                  </div>
+                        </p-tabPanel>
+                  </p-tabView>
+                  </div>
+                  </div>
+                  </div>
+                </div>
+                  <hr>
+                  <div class="box-footer">
+                      <button
+                             type="button"
+                              class="btn btn-primary"
+                              (click) = "this.buttonname === 'Save' ? SaveBomRecipe(BomRecipeForm.form.valid) : UpdateBomRecipe(BomRecipeForm.form.valid)"
+                              id="load"
+                              [disabled]="Spinner">
+                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                          <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                      </button>
+                  </div>
+                </p-tabPanel>
+                </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

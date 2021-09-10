@@ -1,0 +1,358 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<div class="container-fluid" style="margin: 10px auto 20px;">    
+    <form [formGroup]="searchForm">       
+      <div class="form-group">
+          <div class="col-md-3">
+                <label>Period</label>
+                <app-compacct-daterangepicker
+                (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>             
+          </div>
+          <div class="col-md-3">                   
+                <label >Type </label>
+                <select class="form-control" formControlName="Search_Input_Type">
+                    <!-- <option [ngValue]="undefined">Select</option> -->
+                    <option value="Inward"> Inward</option>
+                    <option value="Outward"> Outward</option>
+                </select>                            
+         </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary float-right" style="margin-top: 25px;" (click)="filter()">Search</button>            
+        </div>
+        <div class="col-md-3">            
+            <button type="submit" class="btn btn-primary" style="float: right;margin-top: 25px;" (click)="showMaximizableDialog()">Create</button>       
+        </div> 
+    </div>      
+   </form>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">  
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                <div class="table-responsive no-padding productTable">
+                    <ng-container *ngIf="searchData.length > 0; else elseTmp">
+                        <p-table [value]="searchData"
+                                [paginator]="searchData.length ? true : false" [rows]="10" [rowHover]="true"
+                                [autoLayout]="true" sortMode="multiple"
+                                [rowsPerPageOptions]="[10,20,30]"
+                                [rowHover]="true" [style]="{'width':'2000px','overflow':'auto!important'}">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+                                    </ng-template> 
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Date</th>
+                                            <th>Type</th>
+                                            <th>Patient Name</th>                                          
+                                            <th>Model Name</th>
+                                            <th>Seriel No</th>
+                                            <th>Branch Name</th>
+                                            <th>Supplier</th>
+                                            <th>Courier Name</th>
+                                            <th>POD No</th>
+                                            <th>Description</th>
+                                            <th>Colour</th>
+                                            <th>Accessories</th>
+                                            <th>Ear Side</th>
+                                            <th>Type</th>
+                                            <th>Rec Length</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="edit(col.Inward_Outward_ID)">
+                                                                <i class="fa fa-fw fa-pencil"></i>
+                                                                Edit
+                                                            </a>
+                                                        </li> 
+                                                        <li>
+                                                            <a (click)="delete(i, col.Inward_Outward_ID)">
+                                                                <i class="fa fa-fw fa-trash"></i>
+                                                                Delete
+                                                            </a>
+                                                        </li>                                               
+                                                    </ul>
+                                                </div>
+                                            </td> 
+                                            <td>{{col.Txn_Date | date:'d MMM y'}}</td>
+                                            <td>{{col.Input_Type}}</td>
+                                            <td>{{col.Patient_Name}}</td>                                           
+                                            <td>{{col.Model_Name }}</td>
+                                            <td>{{col.Serial_No}}</td>
+                                            <td>{{col.Brach_Name}}</td>
+                                            <td>{{col.Supplier_Name}}</td>
+                                            <td>{{col.Courier_Name}}</td>
+                                            <td>{{col.POD_No}}</td>
+                                            <td>{{col.Remarks}}</td>
+                                            <td>{{col.NEW_HA_Colour}}</td>
+                                            <td>{{col.NEW_HA_Acc}}</td>
+                                            <td>{{col.NEW_HA_CUS_For_Ear}}</td>
+                                            <td>{{col.NEW_HA_RIC_TYPE}}</td>
+                                            <td>{{col.NEW_HA_RIC_Length}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                    </ng-template>
+                        </p-table>
+                   </ng-container>
+                   <ng-template #elseTmp>
+                    <div *ngIf="dataNotFound" style="color:red; font-size: 17px; text-align: center; "> No data found</div>
+                   </ng-template>
+                </div>                              
+
+              </div>
+          </div>
+      </div>  
+  </div>
+</div> 
+ 
+<p-dialog header="New HA RIC" [(visible)]="displayMaximizable" [modal]="true" [style]="{width: '65vw'}" [maximizable]="true" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  <div class="container-fluid2" style="height:450px; overflow: hidden; overflow-y:auto;">    
+        <form [formGroup]="serviceForm">
+          <div class="row">
+              <div class="col-md-6">
+                  <div class="form-group">                     
+                    <label class="dateLabel">Date <sup class="text-danger">*</sup></label>
+                    <p-calendar formControlName="Txn_Date" placeholder="Date" (onSelect)="dateSelected()" dateFormat="dd/mm/yy" ></p-calendar>
+                    <div *ngIf="submitted && fval.Txn_Date.errors" class="invalid-feedback">
+                      <div *ngIf="fval.Txn_Date.errors.required">Date is required</div>
+                    </div>
+                  </div>
+              </div>
+              <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Type </label>
+                    <select class="form-control" formControlName="Input_Type">
+                        <!-- <option [ngValue]="undefined">Select</option> -->
+                        <option value="Inward"> Inward</option>
+                        <option value="Outward"> Outward</option>
+                    </select>                         
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+                <div class="form-group"> 
+                    <label class="control-label">Model No <sup class="text-danger">*</sup></label>
+                    <p-dropdown [options]="modelList"
+                    formControlName="Model_Name"
+                    [ngClass]="{'is-invalid': submitted && fval.Model_Name.errors}"                   
+                    [showClear]="true"
+                    [emptyFilterMessage]="'No Model No Found'"
+                    [filter]="true"
+                    filterBy="label,value.name"
+                    [placeholder]="'Select Model No'"
+                    [virtualScroll]="true"
+                    >
+                    </p-dropdown>
+                    <div *ngIf="submitted && fval.Model_Name.errors" class="invalid-feedback">
+                      <div *ngIf="fval.Model_Name.errors.required">Model Name is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">                
+                  <label class="control-label">Serial No <sup class="text-danger">*</sup></label>
+                  <input type="text" class="form-control" formControlName="Serial_No" placeholder="Serial No" [ngClass]="{ 'is-invalid': submitted && fval.Serial_No.errors }">
+                  <div *ngIf="submitted && fval.Serial_No.errors " class="invalid-feedback">
+                      <div *ngIf="fval.Serial_No.errors.required ">Serial No is required</div>
+                  </div>              
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+              <div class="form-group"> 
+                  <label class="control-label">Branch <sup class="text-danger">*</sup></label>
+                  <p-dropdown [options]="branchList"
+                  formControlName="Brach_Name"
+                  [ngClass]="{ 'is-invalid': submitted && fval.Brach_Name.errors}"                   
+                  [showClear]="true"
+                  [emptyFilterMessage]="'No Brach Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [placeholder]="'Select Brach Name'"
+                  [virtualScroll]="true"
+                  >
+                  </p-dropdown>
+                  <div *ngIf="submitted && fval.Brach_Name.errors" class="invalid-feedback">
+                    <div *ngIf="fval.Brach_Name.errors.required">Brach Name is required</div>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">Supplier <sup class="text-danger">*</sup></label>
+                  <p-dropdown [options]="supplierList"
+                  formControlName="Supplier_Name"
+                  [ngClass]="{'is-invalid': submitted && fval.Supplier_Name.errors}"                   
+                  [showClear]="true"
+                  [emptyFilterMessage]="'No Supplier Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [placeholder]="'Select Supplier Name'"
+                  [virtualScroll]="true"
+                  >
+                  </p-dropdown>
+                  <div *ngIf="submitted && fval.Supplier_Name.errors" class="invalid-feedback">
+                    <div *ngIf="fval.Supplier_Name.errors.required">Supplier Name is required</div>
+                  </div>         
+              </div>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">               
+                <label class="control-label">Courier Name <sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" formControlName="Courier_Name" placeholder="Courier Name" [ngClass]="{'is-invalid': submitted && fval.Courier_Name.errors}">
+                <div *ngIf="submitted && fval.Courier_Name.errors" class="invalid-feedback">
+                    <div *ngIf="fval.Courier_Name.errors.required">Courier Name is required</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">             
+              <label class="control-label">POD No<sup class="text-danger">*</sup></label>
+              <input type="text" class="form-control" formControlName="POD_No" placeholder="POD No" [ngClass]="{'is-invalid': submitted && fval.POD_No.errors }">
+              <div *ngIf="submitted && fval.POD_No.errors" class="invalid-feedback">
+                  <div *ngIf="fval.POD_No.errors.required">POD No is required</div>
+              </div>                 
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label"> Description <sup class="text-danger">*</sup></label>               
+            <input type="text" class="form-control" formControlName="Remarks" placeholder="Remarks" [ngClass]="{'is-invalid': submitted && fval.Remarks.errors }">
+                <div *ngIf="submitted && fval.Remarks.errors" class="invalid-feedback">
+                  <div *ngIf="fval.Remarks.errors.required">Description is required</div>
+              </div>  
+          </div>
+      </div>     
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+          <div class="form-group">               
+            <label class="control-label">Colour <sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" formControlName="NEW_HA_Colour" placeholder="Colour" [ngClass]="{'is-invalid': submitted && fval.NEW_HA_Colour.errors}">
+            <div *ngIf="submitted && fval.NEW_HA_Colour.errors" class="invalid-feedback">
+                <div *ngIf="fval.NEW_HA_Colour.errors.required">Colour is required</div>
+            </div>
+          </div>
+      </div>
+      <div class="col-md-6">
+          <div class="form-group">             
+            <label class="control-label">Accessories <sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" formControlName="NEW_HA_Acc" placeholder="Accessories" [ngClass]="{'is-invalid': submitted && fval.NEW_HA_Acc.errors}">
+            <div *ngIf="submitted && fval.NEW_HA_Acc.errors" class="invalid-feedback">
+                <div *ngIf="fval.NEW_HA_Acc.errors.required">Accessories is required</div>
+            </div>
+          </div>  
+      </div>
+    </div>  
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">               
+              <label class="control-label">Ear Side </label>
+                <select class="form-control" formControlName="NEW_HA_CUS_For_Ear">
+                    <!-- <option [ngValue]="undefined">Select</option> -->
+                    <option value="LEFT"> LEFT</option>
+                    <option value="RIGHT"> RIGHT</option>
+                </select>                      
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">             
+                <label class="control-label">Patient <sup class="text-danger">*</sup></label>
+                <p-dropdown [options]="patientList"
+                formControlName="Patient_Name"
+                [ngClass]="{ 'is-invalid': submitted && fval.Patient_Name.errors}"                   
+                [showClear]="true"
+                [emptyFilterMessage]="'No Patient Found'"
+                [filter]="true"
+                filterBy="label,value.name"
+                [placeholder]="'Select Patient'"
+                [virtualScroll]="true"
+                >
+                </p-dropdown>
+                <div *ngIf="submitted && fval.Patient_Name.errors" class="invalid-feedback">
+                  <div *ngIf="fval.Patient_Name.errors.required">Patient Name is required</div>
+                </div>
+            </div>
+        </div>
+      </div>  
+
+      <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">               
+                <label class="control-label">Type <sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" formControlName="NEW_HA_RIC_TYPE" placeholder="Type" [ngClass]="{'is-invalid': submitted && fval.NEW_HA_RIC_TYPE.errors}">
+                <div *ngIf="submitted && fval.NEW_HA_RIC_TYPE.errors" class="invalid-feedback">
+                    <div *ngIf="fval.NEW_HA_RIC_TYPE.errors.required">Type is required</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">             
+              <label class="control-label">Length Of Receiver<sup class="text-danger">*</sup></label>
+              <input type="text" class="form-control" formControlName="NEW_HA_RIC_Length" placeholder="Length Of Receiver" [ngClass]="{'is-invalid': submitted && fval.NEW_HA_RIC_Length.errors }">
+              <div *ngIf="submitted && fval.NEW_HA_RIC_Length.errors" class="invalid-feedback">
+                  <div *ngIf="fval.NEW_HA_RIC_Length.errors.required">Length Of Receiver is required</div>
+              </div>                 
+            </div>
+        </div>
+    </div>
+
+    </form>
+  </div>
+  <p-footer>
+      <button type="button " pButton icon="pi pi-check " (click)="onFormSubmit()" label="Save"></button>
+      <button type="button " pButton icon="pi pi-times " (click)="closeMaximizableDialog()" label="Cancel" class="ui-button-secondary"></button>
+  </p-footer>
+</p-dialog>
+
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+          <h3>{{message.summary}}</h3>
+          <p>{{message.detail}}</p>   
+      </div>
+      <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+  </ng-template>  
+</p-toast>      
+
+
+
+

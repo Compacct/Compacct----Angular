@@ -1,0 +1,12 @@
+    <ejs-daterangepicker placeholder='Select a Date range'
+     (change)="rangeSelected(compactDaterange.value)" format="dd-MMM-yyyy"
+      [startDate]="today" [endDate]="today2" #compactDaterange>
+            <e-presets>
+                <e-preset label="Today" [start]='today' [end]='today'></e-preset>
+                <e-preset label="This Week" [start]='weekStart' [end]='weekEnd'></e-preset>
+                <e-preset label="This Month" [start]='monthStart' [end]='monthEnd'></e-preset>
+                <e-preset label="Last Month" [start]='lastStart' [end]='lastEnd'></e-preset>
+                <e-preset label="Last Year" [start]='yearStart' [end]='yearEnd'></e-preset>
+            </e-presets>
+        </ejs-daterangepicker>
+        <!-- ashes@touchstonetieup.com -->

@@ -1,0 +1,448 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}  </h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<p-toast position="center" key="c2" (onClose)="onReject2()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+          <h3>{{message.summary}} </h3>
+          <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject2()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+  </ng-template>
+</p-toast>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                            <!-- <form name="RenewalSearchForm" #RenewalSearchForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                        (click)="searchRenewal(RenewalSearchForm.form.valid)"
+                                                        id="load"
+                                                        [disabled]="Spinner">
+                                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                 </button>
+
+                                                      </div>
+                                                  </div>
+                                             </form> -->
+
+                                      <button class="btn btn-primary"
+                                             (click)="newRenewal()">
+                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-add"></span>New Renewal
+                                     </button>
+
+                                            <div class="table-responsive no-padding productTable">
+                                            <p-table [value]="allRenewals"
+                                                     [paginator]="allRenewals?.length ? true : false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                </div>
+                                                           </div>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width:5em">Action</th>
+                                                                <th>Renewal Type</th>
+                                                                <th>Cost Center Name</th>
+                                                                <th>Issue Date</th>
+                                                                <th>Expiry Date</th>
+                                                                <th>Period Months </th>
+                                                                <th>Old Amount </th>
+                                                                <th>New Amount </th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+                                                                <td>
+                                                                  <div class="dropdown">
+                                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                                          <i class="fa fa-fw fa-bars"></i>
+                                                                          <span class="caret"></span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu">
+                                                                          <li>
+                                                                              <a (click)="Renewal(col.Renewal_ID)">
+                                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                                  Renewal
+                                                                              </a>
+                                                                          </li>
+
+                                                                        <!-- <li>
+                                                                          <a (click)="GetPDF(col)">
+                                                                              <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                              Print
+                                                                          </a>
+                                                                        </li> -->
+                                                                          <!-- <li>
+                                                                              <a (click)="DeleteRenewal(col)">
+                                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                                  Delete
+                                                                              </a>
+                                                                          </li> -->
+                                                                      </ul>
+                                                                  </div>
+                                                                </td>
+
+                                                                <td>{{col.Renewal_Type }}</td>
+                                                                <td>{{col.Cost_Cen_Name }}</td>
+                                                                <td>{{col.Issue_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Exp_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Period_Months}}</td>
+                                                                <td>{{col.Old_Amount}}</td>
+                                                                <td>{{col.New_Amount}}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+
+                                        </p-tabPanel>
+                                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+
+                                        <button class="btn btn-primary"
+                                                (click)="newRenewal()">
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-add"></span>New Renewal
+                                        </button>
+
+                                            <div class="table-responsive no-padding productTable">
+                                            <p-table [value]="pendingRenewals"
+                                                     [paginator]="pendingRenewals?.length ? true : false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                </div>
+                                                           </div>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                              <th style="width:5em">Action</th>
+                                                              <th>Renewal Type</th>
+                                                              <th>Cost Center Name</th>
+                                                              <th>Issue Date</th>
+                                                              <th>Expiry Date</th>
+                                                              <th>Period Months </th>
+                                                              <th>Old Amount </th>
+                                                              <th>New Amount </th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+                                                                <td>
+                                                                  <div class="dropdown">
+                                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                                          <i class="fa fa-fw fa-bars"></i>
+                                                                          <span class="caret"></span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu">
+                                                                          <li>
+                                                                              <a (click)="Renewal(col.Renewal_Txn_ID)">
+                                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                                  Renewal
+                                                                              </a>
+                                                                          </li>
+
+                                                                        <!-- <li>
+                                                                          <a (click)="GetPDF(col)">
+                                                                              <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                              Print
+                                                                          </a>
+                                                                        </li> -->
+                                                                          <!-- <li>
+                                                                              <a (click)="DeleteRenewal(col)">
+                                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                                  Delete
+                                                                              </a>
+                                                                          </li> -->
+                                                                      </ul>
+                                                                  </div>
+                                                                </td>
+
+                                                                <td>{{col.Renewal_Type }}</td>
+                                                                <td>{{col.Cost_Cen_Name }}</td>
+                                                                <td>{{col.Issue_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Exp_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Period_Months}}</td>
+                                                                <td>{{col.Old_Amount}}</td>
+                                                                <td>{{col.New_Amount}}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+                                  </p-tabPanel>
+
+                          <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-floppy-save">
+
+                             <button class="btn btn-primary" (click)="newRenewal()">
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-add"></span>New Renewal
+                            </button>
+
+                                <div class="table-responsive no-padding productTable">
+                                <p-table [value]="expiredRenewals"
+                                         [paginator]="expiredRenewals?.length ? true : false" [rows]="10" [rowHover]="true"
+                                         [autoLayout]="true" sortMode="multiple"
+                                         [rowsPerPageOptions]="[10,20,30]"
+                                         [rowHover]="true">
+                                           <ng-template pTemplate="caption">
+                                               <div class="row">
+                                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                    </div>
+                                               </div>
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                  <th style="width:5em">Action</th>
+                                                  <th>Renewal Type</th>
+                                                  <th>Cost Center Name</th>
+                                                  <th>Issue Date</th>
+                                                  <th>Expiry Date</th>
+                                                  <th>Period Months </th>
+                                                  <th>Old Amount </th>
+                                                  <th>New Amount </th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col>
+                                                <tr>
+                                                    <td>
+                                                      <div class="dropdown">
+                                                          <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                              type="button" data-toggle="dropdown" style="height:27px">
+                                                              <i class="fa fa-fw fa-bars"></i>
+                                                              <span class="caret"></span>
+                                                          </button>
+                                                          <ul class="dropdown-menu">
+                                                              <li>
+                                                                  <a (click)="Renewal(col.Renewal_Txn_ID)">
+                                                                      <i class="fa fa-fw fa-pencil"></i>
+                                                                       Renewal
+                                                                  </a>
+                                                              </li>
+
+                                                            <!-- <li>
+                                                              <a (click)="GetPDF(col)">
+                                                                  <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                  Print
+                                                              </a>
+                                                            </li> -->
+                                                              <!-- <li>
+                                                                  <a (click)="DeleteRenewal(col)">
+                                                                      <i class="fa fa-fw fa-trash"></i>
+                                                                      Delete
+                                                                  </a>
+                                                              </li> -->
+                                                          </ul>
+                                                      </div>
+                                                    </td>
+
+                                                    <td>{{col.Renewal_Type }}</td>
+                                                    <td>{{col.Cost_Cen_Name }}</td>
+                                                    <td>{{col.Issue_Date | date: 'dd/MM/yyyy'}}</td>
+                                                    <td>{{col.Exp_Date | date: 'dd/MM/yyyy'}}</td>
+                                                    <td>{{col.Period_Months}}</td>
+                                                    <td>{{col.Old_Amount}}</td>
+                                                    <td>{{col.New_Amount}}</td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="paginatorright" let-state>
+                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                            </ng-template>
+                                    </p-table>
+                                </div>
+
+                              </p-tabPanel>
+                            </p-tabView>
+
+                            <p-dialog header="{{buttonname}} Renewal" [appendTo]="'body'" [visible]="displayRenewalModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '80%', minWidth: '400px'}" [minY]="70"
+                            [maximizable]="true" [baseZIndex]="10000">
+                              <div class="form-horizontal">
+                              <form [formGroup]="contractForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                          <label class="control-label">Renewal
+                                            <sup class="text-danger">*</sup></label>
+                                          <p-dropdown [options]="renewalList"
+                                            formControlName="Renewal_ID"
+                                            [ngClass]="{'is-invalid': submitted && f.Renewal_ID.errors}"
+                                            [(ngModel)]="objRenewal.Renewal_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="'No Vendor Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            [placeholder]="'Select Renewal'"
+                                            [virtualScroll]="true"
+                                            (onChange)="getCostCenter(objRenewal.Renewal_ID)">
+                                        </p-dropdown>
+                                        <div *ngIf="submitted && f.Renewal_ID.errors" class="invalid-feedback">
+                                          <div *ngIf="f.Renewal_ID.errors.required">Renewal is required</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Cost Center Name
+                                        <sup class="text-danger">*</sup></label>
+                                      <p-dropdown [options]="costCenterList"
+                                        formControlName="Cost_Cent_ID"
+                                        [ngClass]="{'is-invalid': submitted && f.Cost_Cent_ID.errors}"
+                                        [(ngModel)]="objRenewal.Cost_Cent_ID"
+                                        [showClear]="true"
+                                        [emptyFilterMessage]="'No Vendor Found'"
+                                        [filter]="true"
+                                        filterBy="label,value.name"
+                                        [placeholder]="'Select Cost Center Name'"
+                                        [virtualScroll]="true"
+                                        (onChange)="getAmount(objRenewal.Cost_Cent_ID)">
+                                    </p-dropdown>
+                                    <div *ngIf="submitted && f.Cost_Cent_ID.errors" class="invalid-feedback">
+                                      <div *ngIf="f.Cost_Cent_ID.errors.required">Cost Center Name is required</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                  <label class="control-label">Issue Date
+                                    <sup class="text-danger">*</sup></label>
+                                          <div class="input-group date">
+                                          <div class="input-group-addon">
+                                              <i class="fa fa-calendar"></i>
+                                          </div>
+                                              <input type="date"
+                                              class="form-control"
+                                              formControlName="Issue_Date"
+                                              [ngModel]="IssueDate | date:'yyyy-MM-dd'"
+                                              (ngModelChange)="getIssueDate($event)"
+                                              >
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="form-group">
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Period Months
+                                        <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        type="number"
+                                        formControlName="Period_Months"
+                                        [ngClass]="{ 'is-invalid': submitted && f.Period_Months.errors }"
+                                        [(ngModel)]="objRenewal.Period_Months"
+                                        placeholder="Period"
+                                        (ngModelChange)="getExpDate()">
+                                        <div *ngIf="submitted && f.Period_Months.errors" class="invalid-feedback">
+                                          <div *ngIf="f.Period_Months.errors.required">Period is required</div>
+                                          <div *ngIf="f.Period_Months.errors.validZero">Period should be greater than 0.</div>
+                                      </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Expected Date
+                                        <sup class="text-danger">*</sup></label>
+                                              <div class="input-group date">
+                                              <div class="input-group-addon">
+                                                  <i class="fa fa-calendar"></i>
+                                              </div>
+                                                  <input type="date"
+                                                  class="form-control"
+                                                  formControlName="Exp_Date"
+                                                  [ngModel]="ExpectedDate | date:'yyyy-MM-dd'"
+                                                  (ngModelChange)="getExpectedDate($event)"
+                                                  >
+                                          </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Old Amount
+                                        <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        type="number"
+                                        formControlName="Old_Amount"
+                                        [(ngModel)]="objRenewal.Old_Amount"
+                                        placeholder="Old Amount" readonly>
+                                    </div>
+                            </div>
+
+                          <div class="form-group">
+                            <div class="col-sm-4">
+                              <label class="control-label">New Amount
+                                <sup class="text-danger">*</sup></label>
+                                <input class="form-control"
+                                type="number"
+                                formControlName="New_Amount"
+                                [ngClass]="{ 'is-invalid': submitted && f.New_Amount.errors }"
+                                [(ngModel)]="objRenewal.New_Amount"
+                                placeholder="New Amount">
+                                <div *ngIf="submitted && f.New_Amount.errors" class="invalid-feedback">
+                                  <div *ngIf="f.New_Amount.errors.required">New Amount is required</div>
+                                  <div *ngIf="f.New_Amount.errors.validZero">New Amount should be greater than 0.</div>
+                              </div>
+
+                            </div>
+                            <div class="col-sm-4">
+                              <label class="control-label">Remarks
+                                <sup class="text-danger"></sup></label>
+                              <textarea class="form-control" formControlName="Remarks" [(ngModel)]="objRenewal.Remarks" rows="3" id="comment"></textarea>
+                            </div>
+                            <div class="col-sm-4">
+
+                            </div>
+                          </div>
+
+                        </form>
+                      </div>
+
+                      <p-footer>
+                          <button type="button" pButton icon="pi pi-close" (click)="cancelRenewal()" label="CANCEL" class="ui-button-secondary"></button>
+                          <button type="button" pButton icon="pi pi-check" (click)="addRenewal()" label="{{buttonname}}"></button>
+                      </p-footer>
+                  </p-dialog>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+

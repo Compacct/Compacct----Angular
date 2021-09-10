@@ -1,0 +1,10 @@
+/* .ngx-progress-bar {
+  position: absolute !important;
+} */
+.ngx-overlay.loading-foreground {
+  background-color: rgba(40, 40, 40, 0.53) !important;
+}
+.content-wrapper:nth-of-type(2) {
+  position: relative;
+  min-height: 0 !important;
+}

@@ -1,0 +1,21 @@
+#ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
+  width: auto !important;
+}
+.custombutton {
+  margin-top: 25px;
+}
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+.godown-sec{
+  border-top: #d2d6de solid 1px;
+  border-bottom: #d2d6de solid 1px;
+  margin: 15px 0;
+  padding: 15px 0;
+}
+.mar-left{
+  margin-left: 10px;
+}

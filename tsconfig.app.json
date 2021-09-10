@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+	"module": "esnext",
+    "types": []
+  },
+  "exclude": [
+    "src/test.ts",
+    "types",
+    "typings/browser.d.ts",
+    "typings/browser",
+    "node_modules",
+    "typings",
+    "typings/index.d.ts",
+    "types/index.d.ts",
+    "types/modules",
+    "**/*.spec.ts"
+  ]
+}

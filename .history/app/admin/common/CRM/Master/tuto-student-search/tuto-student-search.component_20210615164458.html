@@ -1,0 +1,543 @@
+
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<!-- PAGE 1  -->
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+
+                    <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                        <div class="form-group">
+                          <div class="col-sm-3">
+                            <label class="control-label">Search By<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                name="Search_by"
+                                #Search_by="ngModel"
+                                [(ngModel)]='ObjStusearchForm.Search_BY'
+                                [ngClass]="{'clearance': ConfirmSearchFormSubmitted && Search_by?.errors?.required}"
+                                required>
+                                  <option  [ngValue]="undefined">Select</option>
+                                  <option Value="Mobile">Mobile No</option>
+                                  <option Value="Contact_Name">Name</option>
+                                    <!-- <option *ngFor="let option of saletypevalue" value={{option}}>
+                                      {{option}}
+                                    </option>  -->
+                                </select>
+
+                          </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Search By<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                name="Search1"
+                                #Search1="ngModel"
+                                [(ngModel)]='ObjStusearchForm.Search_Type'
+                                [ngClass]="{'clearance': ConfirmSearchFormSubmitted && Search1?.errors?.required}"
+                                required>
+                                  <option  [ngValue]="undefined">Select</option>
+                                  <option Value="Similar To">Similar To</option>
+                                  <!-- <option Value="Exact">Exact Phase</option> -->
+
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Search<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                                    name="Search"
+                                                    #Search="ngModel"
+                                                    [(ngModel)]="ObjStusearchForm.Search_Value"
+                                                    placeholder="Search Value"
+                                                    [ngClass]="{'clearance': ConfirmSearchFormSubmitted && Search?.errors?.required}"
+                                                     required>
+                            </div>
+                          <div class="col-sm-3">
+                            <button
+                              class="btn btn-primary custombutton"
+                              data-toggle="modal"
+                              (click)="GetSearchList(SearchForm.form.valid)"
+                              id="load"
+                              [disabled]="seachSpinner"
+                            >
+                              <p-progressSpinner
+                                *ngIf="seachSpinner"
+                                [style]="{ width: '15px', height: '15px' }"
+                                strokeWidth="8"
+                                animationDuration=".5s"
+                              ></p-progressSpinner>
+                              <span
+                                *ngIf="!seachSpinner"
+                                class="glyphicon glyphicon-search"
+                              ></span
+                              >&nbsp;Search
+                            </button>
+                          </div>
+                        </div>
+
+                      </form>
+                      <div class="table-responsive table-id">
+                        <p-table #dt
+                        [value]="Searchlist"
+                        [paginator]="Searchlist.length ? true : false"
+                        [rows]="10"
+                        [loading]="seachSpinner"
+                        [rowHover]="true"
+                        [autoLayout]="true"
+                        sortMode="multiple"
+                        [rowsPerPageOptions]="[10,20,30]"
+                        [rowHover]="true"
+                        [globalFilterFields]='["Mobile","Contact_Name","Pin","Class_Name"]'>
+                        <ng-template pTemplate="caption">
+                            <div class="row">
+                                  <div class="col-sm-3 pull-right" style="text-align: right">
+                                          <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                      </div>
+                            </div>
+
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Action</th>
+                                <th>Mobile</th>
+                                <th>Name</th>
+                                <th>PIN</th>
+                                <th>Class</th>
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                            <tr>
+                                <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                type="button" data-toggle="dropdown" style="height:27px">
+                                                <i class="fa fa-fw fa-bars"></i>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                  <li *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'">
+                                                    <a (click)="EditStudentDetails(col)">
+                                                      <i class="fa fa-edit" aria-hidden="true"></i>
+                                                        Edit
+                                                    </a>
+                                                  </li>
+                                                <li>
+                                                      <a (click)="Showdetails(col)">
+                                                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                          Show Details
+                                                    </a>
+                                                </li>
+                                                <!-- <li>
+                                                      <a (click)="showLedger(col)">
+                                                          <i class="fa fa-fw fa-bank"></i>
+                                                        Ledger</a>
+                                                </li> -->
+
+                                              </ul>
+                                        </div>
+                                </td>
+                                <!-- <td>{{col.Txn_Date | date : 'dd/MMM/yyyy'}}</td> -->
+                                <td>{{col.Mobile}}</td>
+                                <td>{{col.Contact_Name}}</td>
+                                <td>{{col.Pin}}</td>
+                                <td>{{col.Class_Name}}</td>
+                                <!-- <td>{{col.School ? col.School :'-'}}</td> -->
+
+                            </tr>
+                        </ng-template>
+                        <ng-template
+                        pTemplate="paginatorright"
+                        let-state>
+                        Showing {{ state.first + 1 }} of
+                        {{ state.first + 1 + state.rows }} of
+                        {{ state.totalRecords }}
+                      </ng-template>
+                        </p-table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DETAILS  -->
+<p-dialog
+  header="DETAILS"
+  [appendTo]="'body'"
+  [visible]="ShowDetailsModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '80%', minWidth: '300px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div id="invoice">
+  <div class="invoice overflow-auto" *ngIf='Studentdetails?.Foot_Fall_ID'>
+ <div class="contacts">
+  <div class="col invoice-to">
+      <h2 class="to">{{Studentdetails['Contact_Name']}}</h2>
+      <div class="mobile">Mobile No: <span class="text-bold">{{Studentdetails['Mobile']}}</span></div>
+      <div class="address">{{Studentdetails['Address']}}</div>
+      <div class="city">{{Studentdetails['City']}} , {{Studentdetails['State']}} , <span class="text-bold">{{Studentdetails['Pin']}}</span></div>
+  </div>
+  <div class="col invoice-details">
+      <h5 class="invoice-id">FootFall ID: {{Studentdetails['Foot_Fall_ID']}}</h5>
+      <div class="classname">Class Name: {{Studentdetails['Class_Name']}}</div>
+  </div>
+</div>
+
+<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+    <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[0]" leftIcon="fa fa-user" aria-hidden="true" >
+
+
+
+        <div class="form-group" >
+         <div class="col-sm-4">
+           <label>Student Name</label>
+           <div  class="label-t">{{Studentdetails['Contact_Name'] ? Studentdetails['Contact_Name'] : '-'}}</div>
+         </div>
+         <div class="col-sm-4">
+          <label>Mobile No</label>
+          <div  class="label-t">{{Studentdetails['Mobile'] ? Studentdetails['Mobile'] : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+          <label>Whatsapp No</label>
+          <div  class="label-t">{{Studentdetails['Mobile_Whatsup'] ? Studentdetails['Mobile_Whatsup'] : '-'}}</div>
+        </div>
+       </div>
+       <div class="form-group">
+        <div class="col-sm-4">
+          <label>Class</label>
+          <div  class="label-t">{{Studentdetails['Class_Name'] ? Studentdetails['Class_Name'] : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+          <label>Address</label>
+          <div  class="label-t">{{Studentdetails['Address'] ? Studentdetails['Address'] : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+          <label>Dealer</label>
+          <div  class="label-t">{{Studentdetails['Dealer'] ? Studentdetails['Dealer'] : '-'}}</div>
+        </div>
+       </div>
+       <div class="form-group">
+
+        <div class="col-sm-4">
+          <label>City</label>
+          <div  class="label-t">{{Studentdetails['City'] ? Studentdetails['City'] : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+          <label>State</label>
+          <div  class="label-t">{{Studentdetails['State'] ? Studentdetails['State'] : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+          <label>PIN</label>
+          <div  class="label-t">{{Studentdetails['Pin'] ? Studentdetails['Pin'] : '-'}}</div>
+        </div>
+       </div>
+
+       <div class="form-group">
+
+        <div class="col-sm-4">
+          <label>Country</label>
+          <div  class="label-t">{{Studentdetails['Country'] ? Studentdetails['Country'] : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+          <label>School</label>
+          <div  class="label-t">{{Studentdetails['School'] ? Studentdetails['School'] : '-'}}</div>
+        </div>
+
+        <div class="col-sm-4">
+          <label>Ref Code</label>
+          <div  class="label-t">{{Studentdetails['Ref_Code'] ? Studentdetails['Ref_Code'] : '-'}}</div>
+        </div>
+      </div>
+
+        <!-- <div class="label-t">
+            <p-table [value]="Studentdetaillist" #dt
+                 [paginator]="Studentdetaillist.length ? true : false"  [rows]="10" [rowHover]="true"
+                 [autoLayout]="true" sortMode="multiple"
+                 [rowHover]="true">
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Name</th>
+                            <th>Class Name</th>
+                            <th>Mobile No</th>
+                            <th>PIN</th>
+                            <th>City</th>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-Stulist>
+                          <tr>
+
+                            <td>{{Stulist.Contact_Name}}</td>
+                            <td>{{Stulist.Class_Name}}</td>
+                            <td>{{Stulist.Mobile}}</td>
+                            <td>{{Stulist.Pin}}</td>
+                            <td>{{Stulist.City}}</td>
+
+                        </tr>
+                    </ng-template>
+
+             </p-table>
+      </div>  -->
+
+    </p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[1]" leftIcon="fa fa-calculator" aria-hidden="true" >
+
+        <div class="table-responsive table-id no-padding">
+            <p-table [value]="Billingdetaillist" #dt2
+                 [paginator]="Billingdetaillist.length ? true : false"  [rows]="10" [rowHover]="true" sortMode="multiple"
+                 [rowsPerPageOptions]="[10,20,30]"
+                 [autoLayout]="true"
+                 [rowHover]="true"
+                 [globalFilterFields]='["Doc_No","Doc_Date","Distributor","Confirm_Date","CGST_Amt","SGST_Amt","IGST_Amt","Net_Amt","Taxable_Amt","Paid_Amount"]'>
+                   <ng-template pTemplate="caption">
+                       <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                </div>
+                       </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th rowspan="2">PDF</th>
+                            <th rowspan="2">Bill No</th>
+                            <th rowspan="2">Bill Date</th>
+                            <th rowspan="2">Distributor</th>
+                            <th rowspan="2">Confirm Date</th>
+                            <th colspan="3" class="text-center">
+                              GST
+                            </th>
+                            <th rowspan="2">Net Amt</th>
+                            <th rowspan="2">Taxable Amt</th>
+                            <th rowspan="2">Paid Amt</th>
+                        </tr>
+                        <tr style="background-color:#3c8dbc;color:white">
+                          <th  class="text-center">CGST</th>
+                          <th  class="text-center">SGST</th>
+                          <th  class="text-center">IGST</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-col>
+                        <tr>
+                            <td>
+                                <a (click)="PrintBill(col)">
+                                    <i class="fa fa-fw fa-file-pdf-o" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                            <td>{{col.Doc_No}}</td>
+                            <td>{{col.Doc_Date ? (col.Doc_Date | date : "dd/MMM/yyyy") : '-'}}</td>
+                            <td>{{col.Distributor ? col.Distributor : '-'}}</td>
+                            <td>{{ col.Confirm_Date ? (col.Confirm_Date | date : "dd/MMM/yyyy") : '-'}}</td>
+                            <td>{{col.CGST_Amt}}</td>
+                            <td>{{col.SGST_Amt}}</td>
+                            <td>{{col.IGST_Amt}}</td>
+                            <td>{{col.Net_Amt}}</td>
+                            <td>{{col.Taxable_Amt}}</td>
+                            <td>{{col.Paid_Amount ? col.Paid_Amount : '-'}}</td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="paginatorright"  *ngIf="Billingdetaillist.length" let-state>
+                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                </ng-template>
+             </p-table>
+        </div>
+
+    </p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[2]" leftIcon="fa fa-credit-card" aria-hidden="true" >
+
+      <div class="table-responsive table-id no-padding">
+          <p-table [value]="Orderdetaillist" #dt3
+               [paginator]="Orderdetaillist.length ? true : false"  [rows]="10" [rowHover]="true" sortMode="multiple"
+               [rowsPerPageOptions]="[10,20,30]"
+               [autoLayout]="true"
+               [rowHover]="true"
+               [globalFilterFields]='["Doc_No","Txn_Date","Sale_Amount","Sale_Status" , "Registration_Date","Contact_Name","Mobile","PINCODE","School","Product_Description","Sale_By","Sale_Amount"]'>
+                 <ng-template pTemplate="caption">
+                     <div class="row">
+                            <div class="col-sm-3 pull-right" style="text-align: right">
+                          <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                              </div>
+                     </div>
+                  </ng-template>
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th>Order No</th>
+                          <th>Sale Status</th>
+                          <th>Confirm Date</th>
+                          <th>Order Date</th>
+                          <th>Registration Date</th>
+                          <th>Student Name</th>
+                          <th>Mobile</th>
+                          <th>Pincode</th>
+                          <th>School Name</th>
+                          <th>Product Name</th>
+                          <th>Sale Amount</th>
+                          <th>Sale By</th>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-col>
+                      <tr>
+                          <td>{{col.Doc_No}}</td>
+                          <td>{{col.Sale_Status}}</td>
+                          <td>{{col.Confirm_Date}}</td>
+                          <td>{{col.Txn_Date}}</td>
+                          <td>{{col.Registration_Date}}</td>
+                          <td>{{col.Contact_Name}}</td>
+                          <td>{{col.Mobile}}</td>
+                          <td>{{col.PINCODE}}</td>
+                          <td>{{col.School ? col.School :'-'}}</td>
+                          <td>{{col.Product_Description}}</td>
+                          <td>{{col.Sale_Amount}}</td>
+                          <td>{{col.Sale_By}}</td>
+
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="paginatorright"  *ngIf="Orderdetaillist.length" let-state>
+                      Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+              </ng-template>
+           </p-table>
+      </div>
+
+  </p-tabPanel>
+</p-tabView>
+</div>
+</div>
+<p-footer>
+  <button
+    type="button"
+    (click)="ShowDetailsModal = false"
+    class="btn btn-default"
+  >
+    CANCEL
+  </button>
+
+</p-footer>
+
+</p-dialog>
+<!-- LEDGER -->
+<p-dialog header="LEDGER" [appendTo]="'body'" [visible]="LedgerModal" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <form name="LedgerModalUpdate" style="margin-top:1em" #LedgerModalUpdate="ngForm" novalidate>
+        <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.objLedgerDetails.Patient_Name}}</span></h5>
+        <div class="form-group">
+          <div class="col-sm-12" style="margin-top: 1.5em;">
+            <label class="control-label">Period</label>
+
+            <app-compacct-daterangepicker
+            (DaterangeObj)="getDateRange($event)">
+            </app-compacct-daterangepicker>
+
+          </div>
+            <div class="col-sm-12">
+                <label class="control-label">
+                    Report Type <sup class="text-danger">*</sup></label>
+                <select class="form-control" name='report' #report='ngModel'
+                    [ngClass]="{'clearance': LedgerSubmitted &&  report?.errors?.required}"
+                    [(ngModel)]="objLedgerDetails.Report_type" required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option value="Detail Print">Detail</option>
+                </select>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="LedgerModal = false" class="btn btn-default">
+            CANCEL
+        </button>
+        <button type="button" class="btn btn-primary" (click)="PrintLedger(LedgerModalUpdate.form.valid)">
+            SHOW
+        </button>
+    </p-footer>
+</p-dialog>
+<!-- STUDENT EDIT -->
+<p-dialog header="EDIT STUDENT" [appendTo]="'body'" [visible]="StudentEditModal" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <form name="StudentEditUpdate" style="margin-top:1em" #StudentEditUpdate="ngForm" novalidate>
+      <h5 class="text-center bg-green-gradient" style="padding: 0.25em;">
+        Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjStudentEdit?.Contact_Name}}</span>&nbsp;&nbsp;
+      </h5>
+      <div class="form-group">
+        <div class="col-sm-12" style="margin-top: 1.5em;">
+          <label class="control-label">Ref Code</label>
+          <input class="form-control"
+          name="Ref_Code"
+          #Ref_Code="ngModel"
+          [(ngModel)]="ObjStudentEdit.Ref_Code"
+          placeholder="Ref Code"
+          [ngClass]="{'clearance': StudentEditFormSubmitted && Ref_Code?.errors?.required}"
+            required>
+
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label">School</label>
+          <input class="form-control"
+          name="school"
+          #school="ngModel"
+          [(ngModel)]="ObjStudentEdit.school"
+          placeholder="School"
+          [ngClass]="{'clearance': StudentEditFormSubmitted && school?.errors?.required}"
+            required>
+
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label">Pin</label>
+          <input class="form-control"
+          name="Pin"
+          #Pin="ngModel"
+          [(ngModel)]="ObjStudentEdit.Pin"
+          placeholder="Pincode"
+          minlength="6"
+          maxlength="6"
+          CompacctDigitonly="true"
+          [ngClass]="{'clearance':StudentEditFormSubmitted && Pin?.errors?.required ||
+          (Pin.errors?.minlength && Pin.touched)}"
+            required>
+
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Class <sup class="text-danger">*</sup></label>
+            <select class="form-control" name='Class_ID' #Class_ID='ngModel'
+                [ngClass]="{'clearance': StudentEditFormSubmitted &&  Class_ID?.errors?.required}"
+                [(ngModel)]="ObjStudentEdit.Class_ID" required>
+                <option [ngValue]="undefined">Select</option>
+                <option *ngFor="let option of ClassList" value={{option.Class_ID}} >
+                {{option.Class_Name}}
+              </option>
+            </select>
+        </div>
+      </div>
+      <div class="form-group">
+          <div class="box-footer">
+              <h5></h5>
+          </div>
+      </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="StudentEditModal = false" class="btn btn-default">
+            CANCEL
+        </button>
+        <button type="button" class="btn btn-primary" (click)="UpdateStudentEditData(StudentEditUpdate.form.valid)">
+            UPDATE
+        </button>
+    </p-footer>
+</p-dialog>

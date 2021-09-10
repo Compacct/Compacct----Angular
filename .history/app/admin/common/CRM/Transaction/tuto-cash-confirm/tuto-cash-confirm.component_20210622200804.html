@@ -1,0 +1,291 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="fa fa-pencil-square-o" >
+                            <form name="cashForm" #cashForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">DEPOSIT DATE</label>
+                                    <div  class="label-t">{{myDate  | date :"dd/MMM/yyyy"}}</div>
+
+                                  </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">BANK AC</label>
+                                    <select class="form-control"
+                                     name= "BANK_AC"
+                                     [(ngModel)]= "Ledger_ID"
+                                     #BANK_AC="ngModel"
+                                     [ngClass]="{
+                                      clearance:
+                                      UpdatecashFormSubmit && BANK_AC.errors?.required
+                                    }"
+                                     required>
+                                     <option [ngValue]="undefined">Select</option>
+                                     <option *ngFor="let option of bankList"  value="{{option.Ledger_ID}}">{{option.Ledger_Name}}</option>
+                                     </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">REMARKS</label>
+                                    <textarea class="form-control" style="margin: 0px -16.6719px 0px 0px; width: 334px;height: 69px;"
+                                   name="Remarks"
+                                   #Remarks="ngModel"
+                                   [ngClass]="{
+                                    clearance:
+                                    UpdatecashFormSubmit && Remarks.errors?.required
+                                  }"
+                                   required
+                                   [(ngModel)]="REMARKS"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="no-padding" style="margin-top: 12px;">
+                            <p-table [value]="studentList"
+                            [paginator]="studentList.length ? true : false" [rows]="100" [rowHover]="true"
+                           [autoLayout]="true" sortMode="multiple"
+                             [rowsPerPageOptions]="[100,200,300]"
+                             [globalFilterFields] = '["Order_Date","Order_No","Contact_Name","Mobile","Amount"]'
+                              [rowHover]="true"
+                              [autoLayout]="true"
+                                    #dt>
+                                    <ng-template pTemplate="caption">
+                                      <div class="row">
+                                           <div class="col-sm-3 pull-right" style="text-align: right">
+                                                   <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                               </div>
+                                      </div>
+
+                                   </ng-template>
+                                       <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>ORDER NO</th>
+                                                <th>ORDER DATE</th>
+                                                <th>STUDENT NAME</th>
+                                                <th>MOBILE NO</th>
+                                                <th>AMOUNT</th>
+                                                <th>CONFIRMATION</th>
+                                             </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                               <td><a class="btn danger" (click)="printOut(col.Order_No)">{{col.Order_No}}</a></td>
+                                                <td>{{col.Order_Date | date :"dd/MMM/yyyy"}}</td>
+                                                <td>{{col.Contact_Name}}</td>
+                                                <td>{{col.Mobile}}</td>
+                                                <td>{{col.Amount}}</td>
+                                                <td><button class="btn btn-primary custombutton" data-toggle="modal"
+                                                    (click)= "saveData(col,cashForm.form.valid)"
+                                                    id="load"
+                                                    >
+                                                    <span class="glyphicon glyphicon-check"></span>&nbsp;CONFIRM
+                                                 </button></td>
+
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                          Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                  </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-check-square-o">
+                        <form name="SearchForm"  #SearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label">Order Date</label>
+
+                                <app-compacct-daterangepicker
+                                (DaterangeObj)="getPendingDateRange($event)"
+                                [DefaultDateOpt]="'weekwise'">
+                                </app-compacct-daterangepicker>
+
+                              </div>
+
+                              <div class="col-sm-3">
+                                <button
+                                 style="margin-top: 25px;"
+                                  class="btn btn-primary custombutton"
+                                  data-toggle="modal"
+                                  (click)="GetSearchFormData()"
+                                   id="load"
+                                  [disabled]="seachSpinner"
+                                >
+                                  <p-progressSpinner
+                                    *ngIf="seachSpinner"
+                                    [style]="{ width: '15px', height: '15px' }"
+                                    strokeWidth="8"
+                                    animationDuration=".5s"
+                                  ></p-progressSpinner>
+                                  <span
+                                    *ngIf="!seachSpinner"
+                                    class="glyphicon glyphicon-search"
+                                  ></span
+                                  >&nbsp;Search
+                                </button>
+                              </div>
+                            </div>
+
+                          </form>
+                          <div class="no-padding" style="margin-top: 12px;">
+                            <p-table [value]="searchDataList"
+                             [paginator]="searchDataList.length ? true : false" [rows]="100" [rowHover]="true"
+                             [autoLayout]="true" sortMode="multiple"
+                             [rowsPerPageOptions]="[100,200,300]"
+                             [globalFilterFields] = '["Order_Date","Order_No","Contact_Name","Mobile","Amount","Deposit_Date","Bank_Name","Remarks"]'
+                             [rowHover]="true"
+                             [autoLayout]="true"
+                                    #dt1>
+                                    <ng-template pTemplate="caption">
+                                      <div class="row">
+                                           <div class="col-sm-3 pull-right" style="text-align: right">
+                                                   <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                               </div>
+                                      </div>
+
+                                   </ng-template>
+                                       <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>DEPOSIT DATE</th>
+                                                <th>ORDER NO</th>
+                                                <th>ORDER DATE</th>
+                                                <th>STUDENT NAME</th>
+                                                <th>MOBILE NO</th>
+                                                <th>AMOUNT</th>
+                                                <th>BANK NAME</th>
+                                                <th>REMARKS</th>
+                                             </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                               <td>{{col.Deposit_Date | date :"dd/MMM/yyyy"}}</td>
+                                                <td><a class="btn danger" (click)="printOut(col.Order_No)">{{col.Order_No}}</a></td>
+                                                <td>{{col.Order_Date | date :"dd/MMM/yyyy"}}</td>
+                                                <td>{{col.Contact_Name}}</td>
+                                                <td>{{col.Mobile}}</td>
+                                                <td>{{col.Amount}}</td>
+                                                <td>{{col.Bank_Name}}</td>
+                                                <td>{{col.Remarks}}</td>
+
+
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                          Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                  </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-dashboard">
+                            <form name="SearchForm"  #SearchForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Order Date</label>
+
+                                        <app-compacct-daterangepicker
+                                        (DaterangeObj)="getloanDateRange($event)"
+                                        [DefaultDateOpt]="'weekwise'">
+                                        </app-compacct-daterangepicker>
+
+                                      </div>
+
+                                      <div class="col-sm-3">
+                                        <button
+                                         style="margin-top: 25px;"
+                                          class="btn btn-primary custombutton"
+                                          data-toggle="modal"
+                                          (click)="GetLoanData()"
+                                           id="load"
+                                          [disabled]="seachSpinner"
+                                        >
+                                          <p-progressSpinner
+                                            *ngIf="seachSpinner"
+                                            [style]="{ width: '15px', height: '15px' }"
+                                            strokeWidth="8"
+                                            animationDuration=".5s"
+                                          ></p-progressSpinner>
+                                          <span
+                                            *ngIf="!seachSpinner"
+                                            class="glyphicon glyphicon-search"
+                                          ></span
+                                          >&nbsp;Search
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                  </form>
+                                  <div class="no-padding" style="margin-top: 12px;">
+                                    <p-table [value]="loanstatusList"
+                                       [paginator]="loanstatusList.length ? true : false" [rows]="100" [rowHover]="true"
+                                       [autoLayout]="true" sortMode="multiple"
+                                       [rowsPerPageOptions]="[100,200,300]"
+                                       [globalFilterFields] = '["Order_Date","Order_No","Contact_Name","Mobile","Loan_Confirmed"]'
+                                       [rowHover]="true"
+                                       [autoLayout]="true"
+                                            #dt2>
+                                            <ng-template pTemplate="caption">
+                                              <div class="row">
+                                                   <div class="col-sm-3 pull-right" style="text-align: right">
+                                                           <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                       </div>
+                                              </div>
+
+                                           </ng-template>
+
+                                               <ng-template pTemplate="header">
+                                                    <tr>
+                                                         <th>Order No</th>
+                                                        <th>Order Date</th>
+                                                        <th>Student Name</th>
+                                                        <th>Student Mobile</th>
+                                                        <th>Loan Status</th>
+                                                     </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-col>
+                                                    <tr>
+                                                       <td><a class="btn danger" (click)="printOut(col.Order_No)">{{col.Order_NO}}</a></td>
+                                                        <td>{{col.Order_Date | date :"dd/MMM/yyyy"}}</td>
+                                                        <td>{{col.Contact_Name}}</td>
+                                                        <td>{{col.Mobile}}</td>
+                                                        <td>{{col.Loan_Confirmed}}</td>
+
+
+
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="paginatorright" let-state>
+                                                  Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                          </ng-template>
+                                        </p-table>
+                                    </div>
+
+
+                        </p-tabPanel>
+                        </p-tabView>
+
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+

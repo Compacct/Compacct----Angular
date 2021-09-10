@@ -1,0 +1,66 @@
+.e-grid .e-headercell, .e-grid .e-detailheadercell{
+  background-color: #367fa9 !important ;
+}
+span.e-headertext ,.e-stackedheadercelldiv {
+  color:white !important ;
+}
+
+.zui-table {
+  width: 100%;
+  border: none;
+  border-right: solid 1px #DDEFEF;
+  border-collapse: separate;
+  border-spacing: 0;
+  font: normal 13px Arial, sans-serif;
+}
+.zui-table thead th {
+  background-color: #DDEFEF;
+  border: none;
+  color: #336B6B;
+  padding: 10px;
+  text-align: left;
+  text-shadow: 1px 1px 1px #fff;
+  white-space: nowrap;
+}
+.zui-table tbody td {
+  border-bottom: solid 1px #DDEFEF;
+  color: #333;
+  padding: 10px;
+  text-shadow: 1px 1px 1px #fff;
+  height: auto;
+  white-space: initial;
+}
+.zui-wrapper {
+  position: relative;
+}
+.zui-scroller {
+  margin-left: 141px;
+  overflow-x: scroll;
+  overflow-y: visible;
+  padding-bottom: 5px;
+  /* width: 300px; */
+}
+.zui-table .zui-sticky-col {
+  border-left: solid 1px #DDEFEF;
+  border-right: solid 1px #DDEFEF;
+  left: 0;
+  position: absolute;
+  top: auto;
+  width: 120px;
+}
+.zui-table .zui-sticky-col2 {
+  border-left: solid 1px #DDEFEF;
+  border-right: solid 1px #DDEFEF;
+  left: 120px;
+  position: absolute;
+  top: auto;
+  width: 120px;
+}
+.zui-table .zui-sticky-col3 {
+  border-left: solid 1px #DDEFEF;
+  border-right: solid 1px #DDEFEF;
+  left: 240px;
+  position: absolute;
+  top: auto;
+  width: 120px;
+}

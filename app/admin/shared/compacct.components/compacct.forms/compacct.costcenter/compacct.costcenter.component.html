@@ -1,0 +1,126 @@
+<div class="form-group">
+    <div class="col-sm-6">
+        <label class="control-label">Cost Center&nbsp;<span class="text-danger">*</span></label>
+        <select class="form-control" name="costcenterTo"
+                #costcenterTo='ngModel'
+                [(ngModel)]="ObjCostCenter.Cost_Cen_ID"
+                (ngModelChange)="CostCenterChange(ObjCostCenter.Cost_Cen_ID)"
+                [ngClass]="{'clearance': CostCenterFormSubmitted && !ObjCostCenter.Cost_Cen_ID }">
+                <option  [ngValue]="undefined">Select</option>
+                <option *ngFor='let option of CostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+        </select>
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">Address<span class="text-danger"></span></label>
+        <input class="form-control"
+            type="text"
+            name="address1To"
+            placeholder="address 1"
+            #address1To= 'ngModel'
+            [(ngModel)]="ObjCostCenter.Cost_Cen_Address1"
+            [disabled]="true">
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">Address</label>
+        <input class="form-control"
+            type="text"
+            name="address2To"
+            #address2To= 'ngModel'
+            [(ngModel)]="ObjCostCenter.Cost_Cen_Address2 "
+            [disabled]="true"
+            placeholder="Address 2">
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">State&nbsp;<span class="text-danger">*</span></label>
+        <input class="form-control"
+            ng-disabled="true"
+            name="costcenterstateTo"
+            type="text"
+            #costcenterstateTo= 'ngModel'
+            [(ngModel)]="ObjCostCenter.Cost_Cen_State"
+            placeholder="State"
+            [ngClass]="{'clearance': CostCenterFormSubmitted  && !ObjCostCenter.Cost_Cen_State }"
+            required>
+    </div>                                          
+    <div class="col-sm-3">
+        <label class="control-label" >GST No</label>
+        <input class="form-control"
+            name="GstTo"
+            #GstTo = "ngModel"
+            [disabled]="true"
+            [(ngModel)]="ObjCostCenter.Cost_Cen_GST_No"
+            placeholder="GST No">
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">Location</label>
+        <input class="form-control"
+            [disabled]="true"
+            type="text"
+            name="LocationTo"
+            #LocationTo = "ngModel"
+            [(ngModel)]="ObjCostCenter.Cost_Cen_Location"
+            placeholder="Location">
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">PIN</label>
+        <input class="form-control"
+            name="pinTo"
+            #pinTo = "ngModel"
+            [(ngModel)]="ObjCostCenter.Cost_Cen_PIN"
+            placeholder="PIN"
+            [disabled]="true" />
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">District</label>
+        <input class="form-control"
+            [disabled]="true"
+            type="text"
+            name="DistrictTo"
+            #DistrictTo = "ngModel"
+            [(ngModel)]="ObjCostCenter.Cost_Cen_District"
+            placeholder="District">
+    </div>                                
+    <div class="col-sm-3">
+        <label class="control-label">Country</label>
+        <input class="form-control"
+            [disabled]="true"
+            type="text"
+            name="CountryTo"
+            #CountryTo = "ngModel"
+            (ngModel)="ObjCostCenter.Cost_Cen_Country"
+            placeholder="Country">
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">Mobile</label>
+        <input class="form-control"
+            [disabled]="true"
+            type="text"
+            name="MobileTo"
+            #MobileTo = "ngModel"
+            [(ngModel)]="ObjCostCenter.Cost_Cen_Mobile"
+            placeholder="Mobile">
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">Phone</label>
+        <input class="form-control"
+            [disabled]="true"
+            type="text"
+            name="PhoneTo"
+            #PhoneTo = "ngModel"
+            [(ngModel)]="ObjCostCenter.Cost_Cen_Phone"
+            placeholder="Phone">
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">Email</label>
+        <input class="form-control"
+            type="text"
+            [disabled]="true"                                                      
+            rows="2"
+            name="EmailTo"
+            #EmailTo = "ngModel"
+            [(ngModel)]="ObjCostCenter.Cost_Cen_Email"
+            placeholder="Email">
+    </div>
+</div> 
+<!-- <app-compacct-costcenter [required]="(PurchaseBillFormSubmitted && PurchaseBillForm.form.valid)" (EmitOnDataInit)="getCostCenterData($event)"></app-compacct-costcenter>
+                                         -->

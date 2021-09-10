@@ -1,0 +1,398 @@
+<div class="row">
+  <div class="col-xs-12">
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                      <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                              <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+
+                                <div class="table-responsive no-padding">
+                                  <p-table [value]="AllCostcenterList" #dt
+                                           [paginator]="AllCostcenterList.length ? true : false" [rows]="10" [rowHover]="true"
+                                           [autoLayout]="true" sortMode="multiple"
+                                           [rowsPerPageOptions]="[10,20,30]"
+                                           [rowHover]="true">
+                                             <ng-template pTemplate="caption">
+                                                 <div class="row">
+                                                      <div class="col-sm-3 pull-right" style="text-align: right">
+                                                              <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                          </div>
+                                                 </div>
+
+                                              </ng-template>
+
+                                              <ng-template pTemplate="header">
+                                                  <tr>
+                                                      <th style="width:5em">Action</th>
+                                                      <th>Cost Center Name</th>
+                                                      <th>Mobile</th>
+                                                      <th>Email</th>
+                                                      <th>Address</th>
+                                                  </tr>
+                                              </ng-template>
+                                              <ng-template pTemplate="body" let-col>
+                                                  <tr>
+
+                                                      <td>
+                                                              <div class="dropdown">
+                                                                  <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                      type="button" data-toggle="dropdown" style="height:27px">
+                                                                      <i class="fa fa-fw fa-bars"></i>
+                                                                      <span class="caret"></span>
+                                                                  </button>
+                                                                  <ul class="dropdown-menu">
+                                                                      <li>
+                                                                          <a (click)="EditCostcenter(col)">
+                                                                              <i class="fa fa-fw fa-pencil"></i>
+                                                                              Edit
+                                                                          </a>
+                                                                      </li>
+                                                                      <li>
+                                                                          <a (click)="DeleteCostcenter(col)">
+                                                                              <i class="fa fa-fw fa-trash"></i>
+                                                                              Delete
+                                                                          </a>
+                                                                      </li>
+                                                                  </ul>
+                                                              </div>
+                                                      </td>
+                                                      <td>{{col.Cost_Cen_Name}}</td>
+                                                      <td>{{col.Mobile}}</td>
+                                                      <td>{{col.Email1 }}</td>
+                                                      <td>{{col.Address1}}</td>
+                                                  </tr>
+                                              </ng-template>
+                                              <ng-template pTemplate="paginatorright" let-state>
+                                                      Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                              </ng-template>-->
+                                  </p-table>
+                                </div>
+
+                              </p-tabPanel>
+                              <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                  <form name="CostcenterForm" #CostcenterForm="ngForm" novalidate>
+
+                                      <div class="form-group">
+                                          <div class="col-sm-4">
+                                                  <label class="control-label">Cost Center Name<sup class="text-danger">*</sup></label>
+                                                  <input class="form-control"
+                                                          name="Cost_Cen_Name"
+                                                          #Cost_Cen_Name="ngModel"
+                                                          [(ngModel)]="ObjCostcenter.Cost_Cen_Name"
+                                                          placeholder="Cost Center name"
+                                                          [ngClass]="{'clearance': CostcenterFormSubmitted && Cost_Cen_Name?.errors?.required}"
+                                                           required>
+                                          </div>
+
+                                          <div class="col-sm-4">
+                                            <label class="control-label">Cost Center Ini<sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                        name="Cost_Cen_Ini"
+                                                        #Cost_Cen_Ini="ngModel"
+                                                        [(ngModel)]="ObjCostcenter.Cost_Cen_Ini"
+                                                        (ngModelChange)="CostCenterIniCheck(ObjCostcenter.Cost_Cen_Ini)"
+                                                        maxlength="5"
+                                                        placeholder="Cost Center Ini"
+                                                        [ngClass]="{'clearance':CostcenterFormSubmitted  && ( ExistNameFlag ||Cost_Cen_Ini?.errors?.required )}"
+                                                         required>
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Address1<sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                                  name="Address1"
+                                                  #Address1="ngModel"
+                                                  [(ngModel)]="ObjCostcenter.Address1"
+                                                  placeholder="Address1"
+                                                  [ngClass]="{'clearance': CostcenterFormSubmitted && Address1?.errors?.required}"
+                                                   required>
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <div class="col-sm-4">
+                                          <label class="control-label">Address2<sup class="text-danger"></sup></label>
+                                          <input class="form-control"
+                                                  name="Address2"
+                                                  #Address2="ngModel"
+                                                  [(ngModel)]="ObjCostcenter.Address2"
+                                                  placeholder="Address2">
+                                      </div>
+                                      <div class="col-sm-4">
+                                              <label class="control-label">Location<sup class="text-danger"></sup></label>
+                                                <input class="form-control"
+                                                type="text"
+                                                placeholder="Location" name="Location" [(ngModel)]="location" #Location="ngModel"
+                                                Compacct-Place (setAddress)="getAddressOnChange($event)"
+                                                >
+                                      </div>
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Country
+                                          </label>
+                                        <select class="form-control"
+                                                name="Country"
+                                                #Country="ngModel"
+                                                [(ngModel)]="ObjCostcenter.Country"
+                                                (change)="CountryChange(ObjCostcenter.Country)"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of CountryList" value={{option.country}}>
+                                                {{option.country}}
+                                                </option>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <div class="col-sm-4">
+                                      <ng-container *ngIf="displayPin">
+                                          <label class="control-label">PIN<sup class="text-danger"></sup></label>
+                                          <input class="form-control"
+                                                      name="PIN"
+                                                      #PIN="ngModel"
+                                                      [(ngModel)]="ObjCostcenter.PIN"
+                                                      placeholder="PIN"
+                                                      (ngModelChange)="stateDistrictChange(ObjCostcenter.PIN)"
+                                                      minlength="6"
+                                                      maxlength="6"
+                                                      CompacctDigitonly="true"
+                                                      [ngClass]="{'clearance': CostcenterFormSubmitted && PIN?.errors?.minlength}"
+                                                 >
+                                      </ng-container>
+                                      <ng-container *ngIf="!displayPin">
+                                          <label class="control-label">ZIP<sup class="text-danger"></sup></label>
+                                          <input class="form-control"
+                                                      name="PIN"
+                                                      #PIN="ngModel"
+                                                      [(ngModel)]="ObjCostcenter.PIN"
+                                                      placeholder="ZIP"
+                                                     >
+                                      </ng-container>
+
+                                  </div>
+                                  <div class="col-sm-4">
+                                      <label class="control-label">State<sup class="text-danger"></sup></label>
+                                      <select class="form-control"
+                                              name="State"
+                                              #State="ngModel"
+                                              [(ngModel)]="ObjCostcenter.State"
+                                              (change)="StateChange(ObjCostcenter.State)"
+                                             >
+                                              <option  [ngValue]="undefined">Select</option>
+                                          <option *ngFor="let option of StateList" value={{option.statename}} >
+                                              {{option.statename}}
+                                              </option>
+                                      </select>
+
+                                  </div>
+                                  <div class="col-sm-4">
+                                      <label class="control-label">District<sup class="text-danger"></sup></label>
+                                      <select class="form-control"
+                                              name="District"
+                                              #District="ngModel"
+                                              [(ngModel)]="ObjCostcenter.District"
+                                              (change)="StateChange(ObjCostcenter.District)"
+
+                                             >
+                                              <option  [ngValue]="undefined" > Select</option>
+                                          <option *ngFor="let option of DistrictList" value={{option.Districtname}} >
+                                              {{option.Districtname}}
+                                              </option>
+                                      </select>
+
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                <div class="col-sm-4">
+                                  <label class="control-label">Mobile No
+                                    <sup class="text-danger"></sup></label>
+                                               <!-- <ng-container *ngIf="displayPin">
+                                                  <p-inputMask name="mobile" placeholder="Mobile"  type="tel"
+                                                  autoClear="true" maxlength="10" unmask="true"
+                                                  [(ngModel)]="ObjCostcenter.Mobile" mask="9999-999-999"></p-inputMask>
+                                               </ng-container>
+                                               <ng-container *ngIf="!displayPin">
+                                                  <input class="form-control"
+                                                  name="Mobile"
+                                                  #Mobile="ngModel"
+                                                  [(ngModel)]="ObjCostcenter.Mobile"
+                                                  placeholder="Mobile"
+                                                   >
+                                               </ng-container> -->
+                                               <input class="form-control"
+                                               name="Mobile"
+                                               #Mobile="ngModel"
+                                               [(ngModel)]="ObjCostcenter.Mobile"
+                                               placeholder="Mobile"
+                                               minlength="10"
+                                               maxlength="10"
+                                                >
+                                </div>
+                                <div class="col-sm-4">
+                                  <label class="control-label">Phone No
+                                    <sup class="text-danger"></sup></label>
+                                  <input class="form-control"
+                                              name="Phone"
+                                              #Phone="ngModel"
+                                              [(ngModel)]="ObjCostcenter.Phone"
+                                              placeholder="Phone"
+                                              minlength="10"
+                                              maxlength="10"
+                                            >
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Email
+                                        <sup class="text-danger"></sup>*</label>
+                                      <input class="form-control"
+                                                  name="Email1"
+                                                  #Email1="ngModel"
+                                                  [(ngModel)]="ObjCostcenter.Email1"
+                                                  placeholder="Email"
+                                                  email="true"
+                                                  [ngClass]="{'clearance': CostcenterFormSubmitted && Email?.errors?.required }"
+                                                  required >
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label">Zone
+
+                                  <sup class="text-danger"></sup></label>
+                                  <input class="form-control"
+                                                name="ZONE"
+                                                #ZONE="ngModel"
+                                                [(ngModel)]="ObjCostcenter.ZONE"
+                                                placeholder="Zone"
+                                                 >
+                              </div>
+                              <div class="col-sm-4">
+                                  <label class="control-label">Category
+                                    <sup class="text-danger">*</sup></label>
+                                   <select class="form-control"
+                                           name="CATEGORY"
+                                           #CATEGORY="ngModel"
+                                           [(ngModel)]="ObjCostcenter.CATEGORY"
+                                           [ngClass]="{'clearance': CostcenterFormSubmitted && CATEGORY?.errors?.required}"
+                                           required>
+                                           <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor="let category of CategoryList" value={{category}}>
+                                           {{category}}
+                                           </option>
+                                   </select>
+
+                              </div>
+                              <div class="col-sm-4">
+                                  <label class="control-label">Sale Target
+
+                                      <sup class="text-danger"></sup></label>
+                                    <input class="form-control"
+                                                name="SALE_TARGET"
+                                                #SALE_TARGET="ngModel"
+                                                [(ngModel)]="ObjCostcenter.SALE_TARGET"
+                                                placeholder="Sale Target"
+                                                CompacctDigitonly="true"
+                                                >
+                              </div>
+                          </div>
+                          <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Parent Cost Center Name
+                                  </label>
+                                 <select class="form-control"
+                                         name="Parent_Cost_Cen_ID"
+                                         #Parent_Cost_Cen_ID="ngModel"
+                                         [(ngModel)]="ObjCostcenter.Parent_Cost_Cen_ID"
+                                        >
+                                         <option  [ngValue]="undefined">Select</option>
+                                     <option *ngFor="let option of AllCostcenterList" value={{option.Cost_Cen_ID}}>
+                                         {{option.Cost_Cen_Name}}
+                                         </option>
+                                 </select>
+                            </div>
+                            <div class="col-sm-4">
+                                  <label class="control-label">Job Work<sup class="text-danger"></sup></label>
+                                  <div class="checkBox">
+                                      <p-checkbox [(ngModel)]="JobWork" name="Job_Work" binary="true"
+                                      ></p-checkbox>
+
+                                  </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <ng-container *ngIf="displayPin">
+                                    <label class="control-label">GST No
+                                        <sup class="text-danger"></sup></label>
+                                      <input class="form-control"
+                                                  name="GST_NO"
+                                                  #GST_NO="ngModel"
+                                                  [(ngModel)]="ObjCostcenter.GST_NO"
+                                                  placeholder="GST No"
+                                                  minlength="15"
+                                                  maxlength="15"
+                                                  [ngClass]="{'clearance': CostcenterFormSubmitted && GST_NO?.errors?.minlength}"
+                                                  >
+                                </ng-container>
+                                <ng-container *ngIf="!displayPin">
+                                    <label class="control-label">GST No
+                                        <sup class="text-danger"></sup></label>
+                                      <input class="form-control"
+                                                  name="GST_NO"
+                                                  #GST_NO="ngModel"
+                                                  [(ngModel)]="ObjCostcenter.GST_NO"
+                                                  placeholder="GST No"
+                                                  >
+                                </ng-container>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-sm-4">
+                              <label class="control-label">Cost Center Type
+                                <sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                       name="Cost_Cen_Type"
+                                       #Cost_Cen_Type="ngModel"
+                                       [(ngModel)]="ObjCostcenter.Cost_Cen_Type"
+                                       [ngClass]="{'clearance': CostcenterFormSubmitted && Cost_Cen_Type?.errors?.required}"
+                                       required>
+                                       <option  [ngValue]="undefined">Select</option>
+                                   <option *ngFor="let CostCenter of CostCenterList" value={{CostCenter.costcenter_ID}}>
+                                       {{CostCenter.cost_cent_name}}
+                                       </option>
+                               </select>
+                          </div>
+                          <div class="col-sm-4">
+
+                                <label class="control-label">Cost Center Logo<sup class="text-danger"></sup></label>
+                                <p-fileUpload #fileInput name="aFile" accept="image/*" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"  ></p-fileUpload>
+                                <a [href]="CostcenterPDFLink" *ngIf="PDFViewFlag" style="display: block;" ><img [src]="CostcenterPDFLink" class='img-rounded pdf' style="width:40px; height:50px " alt="Image"></a>
+
+                               <!-- IMG = {{CostcenterPDFLink}} -->
+                          </div>
+                          <div class="col-sm-4">
+
+                          </div>
+                      </div>
+
+                                      <div class="box-footer">
+                                        <button class="btn btn-primary pull-right"
+                                                (click)="SaveCostcenterMaster(CostcenterForm.form.valid)"
+                                                id="load"
+                                                [disabled]="Spinner">
+                                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                        </button>
+                                    </div>
+
+                                          </form>
+
+
+  </p-tabPanel>
+ </p-tabView>
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>

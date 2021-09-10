@@ -1,0 +1,270 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Patient
+                                            <sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="patientList" [(ngModel)]="footFallID" [showClear]="true" [emptyFilterMessage]="'No Patient Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Patient'" [virtualScroll]="true" itemSize="30">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-8">
+                                    <button class="btn btn-primary" style="margin-top: 30px;" (click)="search()" id="load">
+                                        Search
+                                  </button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive no-padding productTable">
+                                <ng-container *ngIf="searchData.length > 0; else elseTmp">
+                                    <p-table [value]="searchData" [paginator]="searchData.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Date</th>
+                                                <th>From Voucher Type</th>
+                                                <th>From Voucher No</th>
+                                                <th>From Voucher Date</th>
+                                                <th>To Voucher Type</th>
+                                                <th>To Voucher No </th>
+                                                <th>To Voucher Date</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                  <i class="fa fa-fw fa-bars"></i>
+                                                                  <span class="caret"></span>
+                                                              </button>
+                                                        <ul class="dropdown-menu">
+                                                            <!-- <li>
+                                                            <a (click)="editProcess(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit Transportation
+                                                            </a>
+                                                        </li> -->
+                                                            <li>
+                                                                <a (click)="delete(col.Adj_No)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                            <!-- <li>
+                                                                    <a (click)="getPrint(col)">
+                                                                        <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                        Print
+                                                                    </a>
+                                                                </li> -->
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{col.Adj_Date | date: 'dd/MM/yyyy'}}</td>
+                                                <td>{{col.From_Voucher_Type}}</td>
+                                                <td>{{col.From_Voucher_No }}</td>
+                                                <td>{{col.From_Voucher_Date | date: 'dd/MM/yyyy'}}</td>
+                                                <td>{{col.To_Voucher_Type}}</td>
+                                                <td>{{col.To_Voucher_No}}</td>
+                                                <td>{{col.To_Voucher_Date | date: 'dd/MM/yyyy'}}</td>
+                                                <td>{{col.Adj_Amount}}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </ng-container>
+                                <ng-template #elseTmp>
+                                    <div *ngIf="dataNotFound" style="color:red; font-size: 17px; text-align: center; "> No data found</div>
+                                </ng-template>
+                            </div>
+
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form [formGroup]="adjustmentForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Adjustment Date
+                                            <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="date" class="form-control" formControlName="Adj_Date" [ngModel]="DocDate | date:'yyyy-MM-dd'">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Patient
+                                                <sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="patientList" formControlName="Foot_Fall_ID" [ngClass]="{ 'is-invalid': submitted && fval.Foot_Fall_ID.errors }" [showClear]="true" [emptyFilterMessage]="'No Patient Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Patient'"
+                                            [virtualScroll]="true" itemSize="30">
+                                        </p-dropdown>
+                                        <div *ngIf="submitted && fval.Foot_Fall_ID.errors" class="invalid-feedback">
+                                            <div *ngIf="fval.Foot_Fall_ID.errors.required">Patient is required</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center
+                                            <sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="costCenterList" formControlName="Cost_Cen_ID" [ngClass]="{ 'is-invalid': submitted && fval.Cost_Cen_ID.errors }" [showClear]="true" [emptyFilterMessage]="'No Cost Center Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Cost Center'"
+                                            [virtualScroll]="true">
+                                        </p-dropdown>
+                                        <div *ngIf="submitted && fval.Cost_Cen_ID.errors" class="invalid-feedback">
+                                            <div *ngIf="fval.Cost_Cen_ID.errors.required">Cost Center is required</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">From Voucher Type
+                                          <sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="fromVoucherTypeList" formControlName="From_Voucher_Type" [ngClass]="{ 'is-invalid': submitted && fval.From_Voucher_Type.errors }" [showClear]="true" [emptyFilterMessage]="'No Voucher Type Found'" [filter]="true" filterBy="label,value.name"
+                                            [placeholder]="'Select Voucher Type'" [virtualScroll]="true" (onChange)="changeFromVoucherType()">
+                                        </p-dropdown>
+                                        <div *ngIf="submitted && fval.From_Voucher_Type.errors" class="invalid-feedback">
+                                            <div *ngIf="fval.From_Voucher_Type.errors.required">Voucher Type is required</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">From Voucher No
+                                        <sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="voucherNoList" formControlName="From_Voucher_No" [ngClass]="{ 'is-invalid': submitted && fval.From_Voucher_No.errors }" [showClear]="true" [emptyFilterMessage]="'No Voucher No Found'" [filter]="true" filterBy="label,value.name"
+                                            [placeholder]="'Select Voucher No'" [virtualScroll]="true" (onChange)="getFromVoucherDate()">
+                                        </p-dropdown>
+                                        <div *ngIf="submitted && fval.From_Voucher_No.errors" class="invalid-feedback">
+                                            <div *ngIf="fval.From_Voucher_No.errors.required">From Voucher No is required</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Total Adj Amount
+                                          <sup class="text-danger">*</sup></label>
+                                        <input class="form-control" type="number" formControlName="Total_Adj_Amount" [ngClass]="{'is-invalid': submitted && fval.Total_Adj_Amount.errors}" placeholder="Total Adj Amount">
+                                        <div *ngIf="submitted && fval.Total_Adj_Amount.errors" class="invalid-feedback">
+                                            <div *ngIf="fval.Total_Adj_Amount.errors.required">Total Adj Amount is required</div>
+                                            <div *ngIf="!fval.Total_Adj_Amount.errors.required && fval.Total_Adj_Amount.errors.validZero">Total Adj Amount should be greater than 0</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br/><br/>
+                                <div class="section raw-bgcolor">
+                                    <!-- <div class="invalid-feedback" *ngIf="rawMaterialMsg!=''">{{rawMaterialMsg}}</div> -->
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Cost Center
+                                            <sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="costCenterList" formControlName="To_Cost_Cen_ID" [ngClass]="{ 'is-invalid': submitted && fval.To_Cost_Cen_ID.errors }" [showClear]="true" [emptyFilterMessage]="'No Cost Center Found'" [filter]="true" filterBy="label,value.name"
+                                                [placeholder]="'Select Cost Center'" [virtualScroll]="true" (onChange)="getToCostCentName()">
+                                            </p-dropdown>
+                                            <div *ngIf="submitted && fval.To_Cost_Cen_ID.errors" class="invalid-feedback">
+                                                <div *ngIf="fval.To_Cost_Cen_ID.errors.required">Cost Center is required</div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">To Voucher Type
+                                            <sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="toVoucherTypeList" formControlName="To_Voucher_Type" [ngClass]="{ 'is-invalid': submitted && fval.To_Voucher_Type.errors }" [showClear]="true" [emptyFilterMessage]="'No Voucher Type Found'" [filter]="true" filterBy="label,value.name"
+                                                [placeholder]="'Select Voucher Type'" [virtualScroll]="true" (onChange)="changeToVoucherType()">
+                                            </p-dropdown>
+                                            <div *ngIf="submitted && fval.To_Voucher_Type.errors" class="invalid-feedback">
+                                                <div *ngIf="fval.To_Voucher_Type.errors.required">Voucher Type is required</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">To Ref Document  &nbsp;<span class="text-danger">*</span></label>
+                                            <p-dropdown [options]="referenceNoList" formControlName="To_Voucher_No" [ngClass]="{ 'is-invalid': submitted && fval.To_Voucher_No.errors }" [showClear]="true" [emptyFilterMessage]="'No Ref Document Found'" [filter]="true" filterBy="label,value.name"
+                                                [placeholder]="'Select Ref Document'" [virtualScroll]="true" (onChange)="getToVoucherDate()">
+                                            </p-dropdown>
+                                            <div *ngIf="submitted && fval.To_Voucher_No.errors" class="invalid-feedback">
+                                                <div *ngIf="fval.To_Voucher_No.errors.required">To Ref Document is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Total Amount <sup class="text-danger">*</sup></label>
+                                            <input type="number" class="form-control" formControlName="Adj_Amount" placeholder="Total Amount" [ngClass]="{ 'is-invalid': submitted && fval.Adj_Amount.errors }">
+                                            <div *ngIf="submitted && fval.Adj_Amount.errors " class="invalid-feedback">
+                                                <div *ngIf="fval.Adj_Amount.errors.required ">Total Amount is required</div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="clearfix mt-15">
+                                        <button class="btn btn-primary pull-right" (click)="addRaw()">Add</button>
+                                    </div>
+
+                                    <table class="table table-bordered" *ngIf="addRowObj.length > 0">
+                                        <thead>
+                                            <tr>
+                                                <th>Cost Center</th>
+                                                <th>To Voucher Type</th>
+                                                <th>To Ref Document</th>
+                                                <th>Total Amount</th>
+                                                <!-- <th>Edit</th> -->
+                                                <th>Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item of addRowObj; let index = index">
+                                                <td>{{item.To_Cost_Cen_Name}}</td>
+                                                <td>{{item.To_Voucher_Type_Name}}</td>
+                                                <td>{{item.To_Voucher_No}}</td>
+                                                <td>{{item.Adj_Amount}}</td>
+                                                <!-- <td> <span (click)="editRawMaterial(index)" *ngIf="item.Cost_Cen_Main_Type ==='STORE-TANK'"><i class="fa fa-fw fa-pencil"> </i> </span> </td> -->
+                                                <td> <span (click)="deleteRawMaterial(index)"> <i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="saveAdjustment()" id="load" [disabled]="Spinner">
+                                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                            </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                    </p-tabView>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>

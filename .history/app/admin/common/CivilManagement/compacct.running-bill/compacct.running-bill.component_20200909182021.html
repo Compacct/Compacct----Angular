@@ -1,0 +1,229 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+  <div class="col-xs-12">
+      <div class="box box-primary">
+          <div class="form-horizontal">
+              <div class="box-body">
+                      <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                              <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                <form name="SerachForm" #SerachForm="ngForm" novalidate>
+                                  <div class="form-group">
+
+                                    <div class="col-sm-4">
+                                            <label class="control-label">Name of the Road<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="RoadList"
+                                                  name="product"
+                                                  [(ngModel)]="ObjSearch.Project_Short_Name"
+                                                  [showClear]="true"
+                                                  [emptyFilterMessage]="' No Road Found'"
+                                                  [filter]="true"
+                                                  filterBy="label,value.name"
+                                                  [placeholder]="'Select Road'"
+                                                  [virtualScroll]="true"
+                                                  itemSize="30"
+                                                  #product="ngModel"
+                                                  [styleClass]="SerachFormSubmitted &&  product.errors?.required ? 'clearance' :''"
+                                                  [required]="true">
+                                              </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Agreement Number<sup class="text-danger"></sup></label>
+                                      <input  type="text" class="form-control"
+                                      name="Agreement_Number"
+                                      #Agreement_Number="ngModel"
+                                      [(ngModel)]="ObjSearch.Agreement_Number"
+                                      placeholder="Agreement Number" >
+                                     </div>
+
+                                    <div class="col-sm-3">
+                                      <button class="btn btn-primary custombutton" data-toggle="modal"
+                                              (click)="Search(SerachForm.form.valid)"
+                                              id="load"
+                                              [disabled]="Spinner">
+                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                              <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                      </button>
+                                    </div>
+                                  </div>
+                                </form>
+                                <br>
+                                <div class="table-responsive no-padding productTable">
+                                <p-table #dt [value]="ProjectList"
+                                         [globalFilterFields]="['Tender_Name','Tender_Amount','Tender_Closing_Date','Lead_Status']"
+                                         [paginator]="ProjectList.length ? true:false" [rows]="10" [rowHover]="true"
+                                         [autoLayout]="true" sortMode="multiple"
+                                         [rowsPerPageOptions]="[10,20,30]"
+                                         [rowHover]="true">
+                                           <ng-template pTemplate="caption">
+                                               <div class="row">
+                                                    <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                        </div>
+                                               </div>
+
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width:5em">Action</th>
+                                                    <th>Name of the Road</th>
+                                                    <th>Agreement No</th>
+                                                    <th>Date of Commencement</th>
+                                                    <th>Date of Completion</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col>
+                                                <tr>
+
+                                                    <td>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                    type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                   <li>
+                                                                        <a (click)='EntryRunningBillDetails(col)'>
+                                                                            <i class="fa fa-fw fa-ticket"></i>
+                                                                            Entry Running Bill Details
+                                                                        </a>
+
+                                                                </ul>
+                                                            </div>
+                                                    </td>
+                                                    <td>{{col.Tender_Name ? col.Tender_Name : '-'}}</td>
+                                                    <td>{{col.Agreement_Number ? col.Agreement_Number : '-'}}</td>
+                                                    <td>{{col.Date_of_Commencement  | date: 'dd-MMM-yy' }}</td>
+                                                    <td>{{col.Date_of_Completion  | date: 'dd-MMM-yy'}}</td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template  pTemplate="paginatorright" let-state>
+                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                            </ng-template>
+                                    </p-table>
+                                </div>
+                              </p-tabPanel>
+                              <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                <form name="DailyJobForm" #DailyJobForm="ngForm" novalidate>
+                                  <!-- (Details of Road Header -> ) -->
+                                  <div class="form-group" style="padding: 1.5em;">
+                                    <p-accordion>
+                                    <p-accordionTab header="Details of Road">
+                                      <div class="form-group" >
+                                        <div class="col-sm-12 text-center">
+                                          <label class="control-label">Name of the Road<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Tender_Name ? ObjRunningBill.Tender_Name : '-' }}</div>
+
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Agreement Number<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Agreement_Number}}</div>
+
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Date of Commencement<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Date_of_Commencement | date: 'dd-MMM-yy' }}</div>
+
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Agreement Amount<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Agreement_Number}}</div>
+
+                                        </div>
+
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Date of Completion<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Date_of_Completion  | date: 'dd-MMM-yy' }}</div>
+
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Bidders Name<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{ObjRunningBill.Bidder_Name }}</div>
+
+                                        </div>
+
+                                      </div>
+                                    </p-accordionTab>
+                                    </p-accordion>
+                                  </div>
+                                  <div class="form-group">
+                                    <div class="col-sm-3">
+                                      <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                      <div class="input-group date">
+                                        <div class="input-group-addon">
+                                          <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input
+                                        type="date"
+                                        name="ISDDepositdate1"
+                                        #ISDDepositdate1="ngModel"
+                                        [disabled]='RunningDetailList.length'
+                                        [ngModel]="RunningDate | date: 'yyyy-MM-dd'"
+                                        (ngModelChange)="GetRunningDate($event)"
+                                        class="form-control"
+                                      />
+                                      </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                      <label class="control-label">Serial No. of Running Bill<sup class="text-danger">*</sup></label>
+                                      <!-- <span (click)="ToggleStructureType()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span> -->
+                                      <select class="form-control"
+                                              name="Serial_No"
+                                              #Serial_No="ngModel"
+                                              [(ngModel)]="ObjRunningBill.Serial_No"
+                                              [ngClass]="{'clearance': RunningFormSubmitted && Serial_No.errors?.required}" required>
+                                              <option  value="1st RA">1st RA</option>
+                                              <option  value="2nd RA">2nd RA</option>
+                                              <option  value="3rd RA">3rd RA</option>
+                                            <!-- <option *ngFor="let option of StructureTypeDetailList" [ngValue]="option.Structure_ID">
+                                                {{option.structure_at_km +'/'+ option.structure_at_meter +' Km. - '+ option.Structured_Type}}
+                                                </option> -->
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-4"  *ngIf="ObjRunningBill.Serial_No && ObjRunningBill.Date">
+                                      <label class="control-label">Main Item Code&nbsp;<span class="text-danger">*</span></label>
+                                      <p-dropdown [options]="ItemList"
+                                                  name="product"
+                                                  [(ngModel)]="SelectedItemCode"
+                                                  [showClear]="true"
+                                                  [emptyFilterMessage]="' No Item Code Found'"
+                                                  (onChange)="ItemCodeChange(SelectedItemCode)"
+                                                  [filter]="true"
+                                                  filterBy="label,value.name"
+                                                  [placeholder]="'Select Item Code'"
+                                                  [virtualScroll]="true"
+                                                  itemSize="30"
+                                                  #product="ngModel"
+                                                  [styleClass]="RunningFormSubmitted &&  product.errors?.required ? 'clearance' :''"
+                                                  [required]="true">
+                                              </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3" *ngIf="SubItemList.length">
+                                      <label class="control-label">Sub-Item Code&nbsp;<span class="text-danger">*</span></label>
+                                      <p-dropdown [options]="SubItemList"
+                                                  name="product1"
+                                                  [(ngModel)]="SelectedSubItemCode"
+                                                  [showClear]="true"
+                                                  [emptyFilterMessage]="' No Item Code Found'"
+                                                  (onChange)="SubItemCodeChange(SelectedSubItemCode)"
+                                                  [filter]="true"
+                                                  filterBy="label,value.name"
+                                                  [placeholder]="'Select Sub-Item Code'"
+                                                  [virtualScroll]="true"
+                                                  itemSize="30"
+                                                  #product1="ngModel"
+                                                  [styleClass]="RunningFormSubmitted &&  product1.errors?.required ? 'clearance' :''"
+                                                  [required]="true">
+                                              </p-dropdown>
+                                    </div>
+
+                                  </div>
+                                </form>
+                              </p-tabPanel>
+                            </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

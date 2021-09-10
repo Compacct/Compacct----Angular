@@ -1,0 +1,152 @@
+<p-chart
+  type="line"
+  [data]="data"
+  *ngIf="_ChartTypeDynamic === 'LINE'"
+  width="100%"
+  height="70vh"
+  (onDataSelect)="selectData($event)"
+  [options]="BARoptions"
+></p-chart>
+<p-chart
+  type="bar"
+  *ngIf="_ChartTypeDynamic === 'BAR'"
+  [data]="data"
+  width="100%"
+  height="70vh"
+  (onDataSelect)="selectData($event)"
+  [options]="BARoptions"
+></p-chart>
+
+<p-chart
+  type="bar"
+  *ngIf="_ChartTypeDynamic === 'STACKBAR' && stackFlag"
+  [data]="data"
+  width="100%"
+  height="70vh"
+  (onDataSelect)="selectData($event)"
+  [options]="stackoption"
+></p-chart>
+<p-chart
+  type="horizontalBar"
+  *ngIf="_ChartTypeDynamic === 'HORIZONTALBAR'"
+  [data]="data"
+  width="100%"
+  height="90vh"
+  [options]="Horioptions"
+  (onDataSelect)="selectData($event)"
+>
+</p-chart>
+<p-chart
+  type="doughnut"
+  [data]="data"
+  width="100%"
+  height="70vh"
+  *ngIf="_ChartTypeDynamic === 'DOUGHNUT'"
+  (onDataSelect)="selectData($event)"
+  [options]="DoughPolaroption"
+></p-chart>
+<p-chart
+  type="pie"
+  [data]="data"
+  width="100%"
+  height="70vh"
+  *ngIf="_ChartTypeDynamic === 'PIE'"
+  (onDataSelect)="selectData($event)"
+  [options]="PIEoption"
+></p-chart>
+<p-chart
+  type="polarArea"
+  [data]="data"
+  width="100%"
+  height="70vh"
+  *ngIf="_ChartTypeDynamic === 'POLARAREA'"
+  (onDataSelect)="selectData($event)"
+  [options]="DoughPolaroption"
+></p-chart>
+
+<p-dialog
+  header="{{ ChartDetailsTitle }}"
+  [appendTo]="'body'"
+  [visible]="displayChartDetailsModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{
+    width: '70%',
+    minWidth: '200px',
+    maxHeight: '600px',
+    overflow: 'auto'
+  }"
+  style="text-align: center;"
+  [positionTop]="10"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+  <div class="table-responsive no-padding text-center">
+    <p-table
+      #dt
+      [columns]="cols"
+      [value]="ChartDeatilsList"
+      [paginator]="ChartDeatilsList.length ? true : false"
+      [rows]="10"
+      [loading]="seachSpinner"
+      [rowHover]="true"
+      [autoLayout]="true"
+      sortMode="multiple"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="caption">
+        <div class="row">
+          <div class="col-sm-3 pull-right" style="text-align: right">
+            <input
+              type="text"
+              pInputText
+              size="50"
+              placeholder="Search"
+              (input)="dt.filterGlobal($event.target.value, 'contains')"
+              class="searchInput form-control"
+            />
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+            {{ col.header }}
+            <p-sortIcon
+              *ngIf="ChartDeatilsList.length"
+              [field]="col.field"
+            ></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-list let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            {{ list[col.field] ? list[col.field] : "-" }}
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="paginatorright"
+        *ngIf="ChartDeatilsList.length"
+        let-state
+      >
+        Showing {{ state.first + 1 }} of {{ state.first + 1 + state.rows }} of
+        {{ state.totalRecords }}
+      </ng-template>
+    </p-table>
+  </div>
+
+  <br />
+  <p-footer>
+    <button
+      type="button"
+      class="btn btn-default"
+      (click)="displayChartDetailsModal = false"
+    >
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>

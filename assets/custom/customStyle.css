@@ -1,0 +1,297 @@
+/* GLOBAL */
+a[data-link] {
+  cursor:pointer !important;
+}
+.main-header .company-name {
+  float: left;
+  background-color: transparent;
+  background-image: none;
+  padding: 15px 15px;
+  font-family: fontAwesome;
+}
+.ui-tabview {
+  padding: 0 0 !important;
+}
+.dropdown-menu {
+  border-radius: 4px !important;
+  box-shadow: 0px 2px 2px 2px #ddd !important;
+  border: 1px solid #aaa !important;
+}
+.dropdown-menu > li > a{
+    cursor:pointer !important;
+  }
+
+/* Check box container */
+.checkBox {
+  display: block;
+  height: 34px;
+  padding: 6px 0px;
+  font-size: 13px;
+}
+/* fonts */
+  body .ui-widget {
+    font-family: source sans pro, sans-serif !important;
+  }
+body, td, input, textarea{
+  font-family: source sans pro, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #222;
+}
+  body.ui-tabview{
+    padding:0 !important;
+  }
+/* VALIDATION STYLE AND FORM*/
+  .clearance {
+    border: 1px solid red !important;
+  }
+body .ui-inputtext {
+  width: 100% !important;
+  /*border: 1px solid #d2d5de !important;*/
+}
+body .ui-inputtext.clearance {
+  border: 1px solid red !important;
+}
+  /* border: 1px solid #ccc !important;*/
+  body .ui-inputtext:enabled:hover:not(.ui-state-error) {
+    border-color: #3c8dbc !important;
+  }
+.clearance::placeholder{
+  color: red !important;
+  }
+/* PRIME SELECT BOX VALIDATION */
+body .ui-dropdown.clearance {
+  border: 1px solid red !important;
+}
+.form-group {
+  margin-bottom: 1px;
+}
+/* BOX BODY PADDING */
+.box-body{
+  padding-top: 0 !important;
+  padding-left: 0 !important;
+}
+body .ui-tabview .ui-tabview-panels{
+  border:none !important;
+  padding: 0.571em 0.9em !important;
+}
+.ui-tabview.ui-tabview-top > .ui-tabview-nav li{
+    top: 0 !important;
+}
+/* MODAL */
+body .ui-dialog .ui-dialog-titlebar {
+  background-color: #3c8dbc !important;
+  color: white !important;
+}
+body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon{
+  color:white !important;
+}
+
+.ui-dialog-resizable .ui-dialog-content{
+  overflow: hidden !important;
+  overflow-y: scroll !important;
+}
+.form-group {
+  text-align:left;
+}
+/* FIELDSET */
+.ui-fieldset-toggleable .ui-fieldset-legend {
+  width: auto !important;
+  margin-bottom: 0 !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+/* MULTISELECT */
+.compacct-multiselect{
+  width: 100% !important;
+  border: 1px solid #d2d6de !important;
+}
+/* SEARCH FILTER SELECT BOX */
+body .ui-dropdown {
+  width: 100% !important;
+  border: 1px solid #d2d6de !important;
+}
+/* custombutton */
+.custombutton {
+  margin-top: 20px;
+  margin-left: 15px;
+}
+/* BOTTOM TOTAL CONTEXT  */
+.total-calculation{
+  padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}
+
+/* TABS */
+:focus {outline:0 !important;}
+.compacct-tabs{
+  padding: 2px 20px !important;
+    border: 1px solid transparent !important;
+    margin: 0 !important;
+}
+
+body .ui-tabview-right-icon , body .ui-tabview-left-icon  {
+  font-size: 18px;
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+  border-bottom: 2px solid #c1c1c1 !important;
+}
+.ui-tabview.ui-tabview-top .ui-tabview-nav li a {
+  font-weight: normal !important;
+  color: #333333b3 !important;
+}
+.ui-tabview.ui-tabview-top .ui-tabview-nav li.svg-tabs a {
+  padding: 0.1em 0.5em !important;
+}
+.ui-tabview.ui-tabview-top .ui-tabview-nav li:hover a .ui-tabview-right-icon {
+  color: #3c8dbc !important;
+}
+.ui-tabview.ui-tabview-top .ui-tabview-nav li:hover a .ui-tabview-left-icon {
+  color: #3c8dbc !important;
+}
+.compacct-tabs.ui-state-active {
+  border-bottom: 2px solid rgb(255,64,129) !important;
+  background-color: #75757500 !important;
+  box-shadow: inset 1px 1px 20px #73737338;
+}
+.ui-tabview.ui-tabview-top .ui-tabview-nav li.compacct-tabs.ui-state-active > a {
+  color: rgb(1, 122, 217) !important;
+}
+.compacct-tabs-icons{
+    margin: auto;
+    background-repeat: no-repeat;
+    display: inline-block;
+    vertical-align: middle;
+    fill: currentColor;
+    height: 24px;
+    width: 24px;
+    min-height: 24px;
+    min-width: 24px;
+}
+
+/* TABLE */
+table{
+  border-collapse: separate !important;
+}
+.searchInput{
+  padding: 5px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+  text-align: left;
+}
+
+
+.ui-table p-sorticon {
+  float: right;   
+  padding-top: 1px;
+  padding-left: 6px;
+}
+.ui-table-auto-layout > .ui-table-wrapper {
+  width: max-content !important;
+  min-height: 170px !important;
+}
+#ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
+  width: max-content;
+  min-height: 170px !important;
+}
+body .ui-table .ui-sortable-column .ui-sortable-column-icon {
+  color:#ffffff75  !important;
+}
+body .ui-table .ui-table-caption {
+  border:none !important;
+}
+body .ui-table .ui-table-thead > tr > th {
+  color: #ffffff !important;
+    background-color: #3c8dbc !important;
+    display: table-cell !important;
+}
+body .ui-table .ui-table-tbody > tr > td {
+  padding: 8px !important;
+}
+body .ui-table .ui-table-tbody > tr > td {
+  border: 1px solid #ffffff  !important;
+}
+body .ui-paginator {
+  border: none !important;
+  margin-top:1em;
+}
+
+p-paginator > .ui-paginator-bottom.ui-paginator > p-dropdown{
+  display: inline-block !important;
+    position: absolute !important;
+    top: 10px !important;
+    left: 0 !important;
+}
+body .ui-table .ui-table-tbody > tr {
+  background-color: #f9f9f9;
+}
+body .ui-table .ui-table-tbody > tr:nth-child(even) {
+    background-color: #EBEDEF;
+  }
+body .ui-table .ui-table-caption, body .ui-table .ui-table-summary {
+  background-color: #ffffff !important;
+}
+.table-odd {
+  background-color: #f9f9f9;
+}
+.table-even {
+  background-color: #EBEDEF;
+}
+/* DATE RANGE PICKER*/
+.e-input-group-icon.e-range-icon, .e-control-wrapper .e-input-group-icon.e-range-icon{
+    margin:7px !important;
+}
+/* TOAST COMPAACT */
+body .ui-toast .ui-toast-message.ui-toast-message-warn {
+  background-color: #dcdcdc !important;
+}
+.ui-dialog-mask {
+  z-index: 99 !important;
+}
+
+/* DATE TIME PICKER*/
+.ui-calendar{
+    width:100% !important;
+}
+.ui-calendar > .ui-inputtext {
+  width: 85% !important;
+}
+.compacct-svg-icons-browse:before {
+  display: inline-block;
+  content: ' ';
+  background: url(/Scripts/App/GlobalApp/SVG/list.svg);
+  height: 24px;
+  width: 24px;
+  min-height: 24px;
+  min-width: 24px;
+  margin-top: 0.5em;
+}
+.compacct-svg-icons-create:before {
+  display: inline-block;
+  content: ' ';
+  background: url(/Scripts/App/GlobalApp/SVG/create.svg);
+  height: 24px;
+  width: 24px;
+  min-height: 24px;
+  min-width: 24px;
+  margin-top: 0.5em;
+}
+/* Spinner Style */
+  @keyframes ui-progress-spinner-color {
+    100%, 0% {
+      stroke: #c1c1c1;
+  }
+  40% {
+      stroke: #fff;
+  }
+  66% {
+      stroke: #c1c1c1;
+  }
+  80%,
+  90% {
+      stroke: #fff;
+  }
+}

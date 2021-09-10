@@ -1,0 +1,20 @@
+button.e-apply.e-flat.e-primary.e-css.e-lib.e-btn.e-control.e-keyboard {
+  background-color: #28a745 !important;
+}
+.e-daterangepicker.e-popup .e-presets {
+  background-color: #c1c1c16e !important;
+}
+.e-daterangepicker.e-popup .e-presets .e-ul li.e-list-item {
+  font-weight: 500;
+}
+.e-daterangepicker.e-popup.e-preset-wrapper {
+  box-shadow: none;
+  border-color: #c1c1c1;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.e-input-group-icon.e-range-icon,
+.e-control-wrapper .e-input-group-icon.e-range-icon {
+  margin: 0px !important;
+}

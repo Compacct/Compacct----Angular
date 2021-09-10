@@ -1,0 +1,196 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<form name="registrationForm6" #registrationForm6="ngForm" novalidate>
+  <div class="form-group">
+    <div class="col-sm-12">
+      <label class="control-label"><sup class="text-danger"></sup></label>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th style="background-color:transparent;"></th>
+            <th class="text-center ">PTA</th>
+            <th class="text-center">A-PTA</th>
+            <th class="text-center">WEBER</th>
+            <th class="text-center">RINNE</th>
+            <th class="text-center">SDS</th>
+            <th class="text-center">SRT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="text-center">
+            <td style="color:blue"><b>RIGHT</b></td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_PTA_Right"
+                name="Aura_PTA_Right"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_APTA_Right"
+                name="Aura_APTA_Right"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_WEBER_Right"
+                name="Aura_WEBER_Right"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_RINNE_Right"
+                name="Aura_RINNE_Right"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_SDS_Right"
+                name="Aura_SDS_Right"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-danger Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_SRT_Right"
+                name="Aura_SRT_Right"
+              />
+            </td>
+          </tr>
+          <tr class="text-center">
+            <td style="color:red"><b>LEFT</b></td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_PTA_Left"
+                name="Aura_PTA_Left"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_APTA_Left"
+                name="Aura_APTA_Left"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_WEBER_Left"
+                name="Aura_WEBER_Left"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objAuraAudiometry.Aura_RINNE_Left"
+                name="Aura_RINNE_Left"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                (change)="toggleTympanometryReport()"
+                [(ngModel)]="objAuraAudiometry.Aura_SDS_Left"
+                name="Aura_SDS_Left"
+              />
+            </td>
+            <td>
+              <input
+                class="form-control text-primary Tympanometry"
+                [(ngModel)]="objAuraAudiometry.Aura_SRT_Left"
+                name="Aura_SRT_Left"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <hr class="box boxboxDivide-primary" />
+  <div class="form-horizontal" style="padding: 0 15px;">
+    <label class="control-label"
+      >Provisional Diagnosis<sup class="text-danger">*</sup></label
+    >
+    <div class="form-group">
+      <div class="col-sm-6">
+        <label class="control-label"
+          >Right<sup class="text-danger"></sup
+        ></label>
+        <textarea
+          class="form-control"
+          style="color:red"
+          placeholder="Provisional Diagnosis (Right)"
+          [(ngModel)]="objAuraAudiometry.Aura_Provisional_Diagnosis_Right"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="col-sm-6">
+        <label class="control-label">Left<sup class="text-danger"></sup></label>
+        <textarea
+          class="form-control"
+          style="color:blue"
+          placeholder="Provisional Diagnosis (Left)"
+          [(ngModel)]="objAuraAudiometry.Aura_Provisional_Diagnosis_Left"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label"
+          >Recommendations<sup class="text-danger">*</sup></label
+        >
+        <textarea
+          class="form-control"
+          placeholder="Recommendations"
+          [(ngModel)]="objAuraAudiometry.Aura_Recommendations"
+          rows="2"
+        ></textarea>
+      </div>
+      <div class="col-sm-4">
+        <label class="control-label"
+          >Status<span class="text-danger">*</span></label
+        >
+        <select
+          class="form-control"
+          name="Status"
+          #Status_Test_Done
+          [(ngModel)]="objAuraAudiometry.Status_Test_Done"
+          [ngClass]="{
+            clearance:
+              registrationSubmitted6 && Status_Test_Done?.errors?.required
+          }"
+          required
+        >
+          <option value="">Select</option>
+          <option value="Test Done but H.A. not required"
+            >Test Done but H.A. not required</option
+          >
+          <option value="Test Done H.A required but Trial Not Taken"
+            >Test Done H.A required but Trial Not Taken
+          </option>
+          <option value="Test Done H.A Required and Willing to Buy"
+            >Test Done H.A Required and Willing to Buy
+          </option>
+        </select>
+      </div>
+    </div>
+    <br />
+  </div>
+  <div class="box-footer">
+    <button
+      class="btn btn-primary pull-right"
+      data-toggle="modal"
+      (click)="AuraAudiometrySave(registrationForm6.form.valid)"
+      id="load"
+    >
+      <span class="glyphicon glyphicon-save"></span>{{ buttonname }}
+    </button>
+  </div>
+</form>

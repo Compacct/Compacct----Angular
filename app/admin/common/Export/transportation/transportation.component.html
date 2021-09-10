@@ -1,0 +1,491 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                            <form name="bagProcessSearchForm" #bagProcessSearchForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                        (click)="searchBagProcess(bagProcessSearchForm.form.valid)"
+                                                        id="load"
+                                                        [disabled]="Spinner">
+                                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                 </button>
+
+                                                      </div>
+                                                  </div>
+                                             </form>
+
+                                            <div class="table-responsive no-padding productTable">
+                                            <p-table [value]="searchBagProcessList"
+                                                     [paginator]="searchBagProcessList.length ? true : false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                </div>
+                                                           </div>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width:5em">Action</th>
+                                                                <th>Doc No</th>
+                                                                <th>Date</th>
+                                                                <th>Truck No</th>
+                                                                <th>Commercial Invoice No</th>
+                                                                <th>Container No</th>
+                                                                <th>Seal No</th>
+                                                                <th>Flexi Tank No</th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+                                                                <td>
+                                                                  <div class="dropdown">
+                                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                                          <i class="fa fa-fw fa-bars"></i>
+                                                                          <span class="caret"></span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu">
+                                                                          <li>
+                                                                              <a  (click)="editProcess(col.Doc_No)">
+                                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                                  Edit Transportation
+                                                                              </a>
+                                                                          </li>
+                                                                          <li>
+                                                                              <a (click)="deleteBagProcess(col)">
+                                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                                  Delete
+                                                                              </a>
+                                                                          </li>
+                                                                          <!-- <li>
+                                                                            <a (click)="getPrint(col)">
+                                                                                <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                                Print
+                                                                            </a>
+                                                                        </li> -->
+                                                                      </ul>
+                                                                  </div>
+                                                                </td>
+                                                                <td>{{col.Doc_No}}</td>
+                                                                <td>{{col.Doc_Date | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Truck_No }}</td>
+                                                                <td>{{col.Com_Inv_No}}</td>
+                                                                <td>{{col.Container_No}}</td>
+                                                                <td>{{col.Seal_No}}</td>
+                                                                <td>{{col.Flexi_Tank_No}}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+
+                                        </p-tabPanel>
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                           <form [formGroup]="contractForm" novalidate>
+                                              <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Commercial Invoice No.
+                                                        <sup class="text-danger">*</sup></label>
+                                                      <p-dropdown [options]="InvoiceList"
+                                                      formControlName="Com_Inv_No"
+                                                      [ngClass]="{ 'is-invalid': submitted && f.Com_Inv_No.errors }"
+                                                      [(ngModel)]="objRawMaterial.Com_Inv_No"
+                                                      [showClear]="true"
+                                                      [emptyFilterMessage]="'No Vendor Found'"
+                                                      [filter]="true"
+                                                      filterBy="label,value.name"
+                                                      [placeholder]="'Select Plant'"
+                                                      [virtualScroll]="true"
+                                                      >
+                                                  </p-dropdown>
+                                                  <div *ngIf="submitted && f.Com_Inv_No.errors" class="invalid-feedback">
+                                                    <div *ngIf="f.Com_Inv_No.errors.required">Consignee is required</div>
+                                                  </div>
+
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Date
+                                                    <sup class="text-danger">*</sup></label>
+                                                          <div class="input-group date">
+                                                          <div class="input-group-addon">
+                                                              <i class="fa fa-calendar"></i>
+                                                          </div>
+                                                              <input type="date"
+                                                              class="form-control"
+                                                              formControlName="Doc_Date"
+                                                              [ngModel]="DocDate | date:'yyyy-MM-dd'"
+                                                              (ngModelChange)="GetDocdate($event)"
+                                                              >
+                                                      </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Transporter Name
+                                                    <sup class="text-danger">*</sup></label>
+                                                  <p-dropdown [options]="tranpoterList"
+                                                      formControlName="Sub_Ledger_ID"
+                                                      [ngClass]="{ 'is-invalid': submitted && f.Sub_Ledger_ID.errors }"
+                                                      [(ngModel)]="objRawMaterial.Sub_Ledger_ID"
+                                                      [showClear]="true"
+                                                      [emptyFilterMessage]="'No Vendor Found'"
+                                                      [filter]="true"
+                                                      filterBy="label,value.name"
+                                                      [placeholder]="'Select Plant'"
+                                                      [virtualScroll]="true"
+                                                      >
+                                                  </p-dropdown>
+                                                  <div *ngIf="submitted && f.Sub_Ledger_ID.errors" class="invalid-feedback">
+                                                    <div *ngIf="f.Sub_Ledger_ID.errors.required">Sub_Ledger_ID is required</div>
+                                                </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Truck No.                                                      <sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                    type="text"
+                                                    formControlName="Truck_No"
+                                                    [ngClass]="{ 'is-invalid': submitted && f.Truck_No.errors }"
+                                                    [(ngModel)]="objRawMaterial.Truck_No"
+                                                    placeholder="Truck No"
+                                                    >
+                                                    <div *ngIf="submitted && f.Truck_No.errors" class="invalid-feedback">
+                                                      <div *ngIf="f.Truck_No.errors.required">Truck_No is required</div>
+                                                  </div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Container No.
+                                                  <sup class="text-danger">*</sup></label>
+                                                  <input class="form-control"
+                                                  type="text"
+                                                  formControlName="Container_No"
+                                                  [ngClass]="{ 'is-invalid': submitted && f.Container_No.errors }"
+                                                  [(ngModel)]="objRawMaterial.Container_No"
+                                                  placeholder="Container No"
+                                                  >
+                                                  <div *ngIf="submitted && f.Container_No.errors" class="invalid-feedback">
+                                                    <div *ngIf="f.Container_No.errors.required">Container_No is required</div>
+                                                </div>
+                                              </div>
+
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Seal Number
+                                                  <sup class="text-danger">*</sup></label>
+                                                  <input class="form-control"
+                                                  type="text"
+                                                  formControlName="Seal_No"
+                                                  [ngClass]="{ 'is-invalid': submitted && f.Seal_No.errors }"
+                                                  [(ngModel)]="objRawMaterial.Seal_No"
+                                                  placeholder="Seal No"
+                                                  >
+                                                  <div *ngIf="submitted && f.Seal_No.errors" class="invalid-feedback">
+                                                    <div *ngIf="f.Seal_No.errors.required">Seal_No is required</div>
+                                                </div>
+                                              </div>
+                                          </div>
+
+                                          <div class="form-group">
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Flexi Tank No
+                                                </label>
+                                                <input class="form-control"
+                                              type="text"
+                                              formControlName="Flexi_Tank_No"
+                                              [ngClass]="{ 'is-invalid': submitted && f.Flexi_Tank_No.errors }"
+                                              [(ngModel)]="objRawMaterial.Flexi_Tank_No"
+                                              placeholder="Flexi Tank No"
+                                              >
+                                            </div>
+                                            <div class="col-sm-4">
+
+                                            </div>
+
+                                            <div class="col-sm-4">
+
+                                            </div>
+                                        </div>
+
+                                            <div class="section raw-bgcolor">
+
+                                                <div class="invalid-feedback" *ngIf="rawMaterialMsg!=''">{{rawMaterialMsg}}</div>
+                                                <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Cost Center Name
+                                                         <sup class="text-danger">*</sup></label>
+                                                        <p-dropdown [options]="storeTankPlantList"
+                                                          formControlName="Cost_Cen_ID"
+                                                          [ngClass]="{ 'is-invalid': submitted && f.Cost_Cen_ID.errors }"
+                                                          [(ngModel)]="objRawMaterial.Cost_Cen_ID"
+                                                          [showClear]="true"
+                                                          [emptyFilterMessage]="'No Vendor Found'"
+                                                          (onChange)="getGodownForRawMaterial(objRawMaterial.Cost_Cen_ID)"
+                                                          [filter]="true"
+                                                          filterBy="label,value.name"
+                                                          [placeholder]="'Select Cost Center'"
+                                                          [virtualScroll]="true"
+                                                          >
+                                                      </p-dropdown>
+
+                                                      <div *ngIf="submitted && f.Cost_Cen_ID.errors" class="invalid-feedback">
+                                                        <div *ngIf="f.Cost_Cen_ID.errors.required">Cost Center Name is required</div>
+                                                      </div>
+
+                                                 </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Godown<sup class="text-danger">*</sup></label>
+                                                       <select class="form-control"
+                                                         formControlName="Godown_ID"
+                                                         [ngClass]="{ 'is-invalid': submitted && f.Godown_ID.errors }"
+                                                         [(ngModel)]="objRawMaterial.Godown_ID"
+                                                         >
+                                                         <option [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of rawMaterialGodownList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                       </select>
+
+                                                       <div *ngIf="submitted && f.Godown_ID.errors" class="invalid-feedback">
+                                                        <div *ngIf="f.Godown_ID.errors.required">Godown is required</div>
+                                                      </div>
+                                                  </div>
+
+                                                  <div class="col-sm-4">
+                                                     <label class="control-label">Select Product  &nbsp;<span class="text-danger">*</span></label>
+                                                     <p-dropdown [options]="productList"
+                                                     formControlName="Product_ID"
+                                                     [ngClass]="{ 'is-invalid': submitted && f.Product_ID.errors }"
+                                                     [(ngModel)]="objRawMaterial.Product_ID"
+                                                     [showClear]="true"
+                                                     [emptyFilterMessage]="'No Vendor Found'"
+                                                     (onChange)="getBatchNoForRawMaterial(objRawMaterial.Product_ID)"
+                                                     [filter]="true"
+                                                     filterBy="label,value.name"
+                                                     [placeholder]="'Select Product'"
+                                                     [virtualScroll]="true"
+                                                     >
+                                                 </p-dropdown>
+                                                 <div *ngIf="submitted && f.Product_ID.errors" class="invalid-feedback">
+                                                  <div *ngIf="f.Product_ID.errors.required">Product is required</div>
+                                                </div>
+
+                                              </div>
+                                            </div>
+                                                <div class="form-group" >
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Batch <sup class="text-danger">*</sup></label>
+                                                      <select class="form-control"
+                                                              formControlName="Batch_Number"
+                                                              [ngClass]="{ 'is-invalid': submitted && f.Batch_Number.errors }"
+                                                              [(ngModel)]="objRawMaterial.Batch_Number"
+                                                              (change)="getProductDetails(objRawMaterial.Batch_Number)"
+                                                              >
+                                                              <option [ngValue]="undefined">Select</option>
+                                                               <option *ngFor="let option of productBatchno" [ngValue]="option.Batch_No">{{option.Batch_No}}</option>
+                                                      </select>
+                                                      <div *ngIf="submitted && f.Batch_Number.errors" class="invalid-feedback">
+                                                        <div *ngIf="f.Batch_Number.errors.required">Batch_Number is required</div>
+                                                      </div>
+                                                    </div>
+                                                        <div class="col-sm-4">
+                                                          <ng-container *ngIf="Raw_Material_Cost_Cen_Main_Type !=='STORE-TANK'">
+                                                              <label class="control-label">Qty<ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                              <input class="form-control"
+                                                              type="number"
+                                                              formControlName="Qty"
+                                                              [ngClass]="{ 'is-invalid': submitted && f.Qty.errors }"
+                                                              [(ngModel)]="objRawMaterial.Qty"
+                                                              placeholder="Qty"
+                                                              (ngModelChange) ="checkQty(objRawMaterial.Qty)"
+                                                              >
+                                                              <div class="invalid-feedback" *ngIf="checkRawMaterialQtyExist">Raw Material Qty should not more than {{tmp_rawmaterial_qty}}</div>
+
+                                                              <div *ngIf="submitted && f.Qty.errors" class="invalid-feedback">
+
+                                                                <div *ngIf="f.Qty.errors.validZero">Qty should be greater than 0.</div>
+                                                              </div>
+                                                          </ng-container>
+
+                                                          <ng-container *ngIf="Raw_Material_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                            <label class="control-label">Tank Open Height (Inch)<sup class="text-danger">*</sup></label>
+                                                                  <input class="form-control"
+                                                                  type="number"
+                                                                  formControlName="Tank_Open_Hight"
+                                                                  [(ngModel)]="objRawMaterial.Tank_Open_Hight"
+                                                                  placeholder="Tank Open Hight"
+                                                                  readonly>
+                                                            </ng-container>
+
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <ng-container *ngIf="Raw_Material_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                          <label class="control-label">Tank Open Qty <ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container><sup class="text-danger">*</sup></label>
+                                                          <input class="form-control"
+                                                                type="number"
+                                                                formControlName="Tank_Open_Qty"
+                                                                [(ngModel)]="objRawMaterial.Tank_Open_Qty"
+                                                                placeholder="Tank Open Qty" readonly>
+                                                          </ng-container>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group" *ngIf="Raw_Material_Cost_Cen_Main_Type ==='STORE-TANK'">
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                        <input class="form-control"
+                                                        type="number"
+                                                        formControlName="Tank_Close_Hight"
+                                                        [(ngModel)]="objRawMaterial.Tank_Close_Hight"
+                                                        placeholder="Talk Close Hight"
+                                                        (ngModelChange) ="tankCloseQtyForRaw()">
+                                              </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label"> Tank Close Qty<ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container><sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                      type="number"
+                                                      formControlName="Tank_Close_Qty"
+                                                      [(ngModel)]="objRawMaterial.Tank_Close_Qty"
+                                                      placeholder="Tank Close Qty"
+                                                      readonly>
+                                                  </div>
+
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Qty  <ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    type="number"
+                                                    formControlName="Qty"
+                                                    [(ngModel)]="objRawMaterial.Qty"
+                                                    readonly>
+
+                                                  </div>
+                                              </div>
+
+                                                <div class="clearfix mt-15">
+                                                    <button class="btn btn-primary pull-right" (click)="addRawMaterial()">Add</button>
+                                                </div>
+
+                                              <table class="table table-bordered" *ngIf="rawMaterialObj.length > 0">
+                                                <thead>
+                                                  <tr>
+                                                    <th>Product Name</th>
+                                                    <th>Batch No</th>
+                                                    <th>Tank Open Hight</th>
+                                                    <th>Talk Close Hight</th>
+                                                    <th>Tank Open Qty</th>
+                                                    <th>Tank Close Qty</th>
+                                                    <th>Qty</th>
+                                                    <th>UOM</th>
+                                                    <th>Edit</th>
+                                                    <th>Delete</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr *ngFor="let item of rawMaterialObj; let index = index">
+                                                    <td>{{item.Product_Name}}</td>
+                                                    <td>{{item.Batch_Number}}</td>
+                                                    <td>{{item.Tank_Open_Hight}}</td>
+                                                    <td>{{item.Tank_Close_Hight}}</td>
+                                                    <td>{{item.Tank_Open_Qty}}</td>
+                                                    <td>{{item.Tank_Close_Qty}}</td>
+                                                    <td>{{item.Qty}}</td>
+                                                    <td>{{item.UOM}}</td>
+                                                    <td> <span (click)="editRawMaterial(index)" *ngIf="item.Cost_Cen_Main_Type ==='STORE-TANK'"><i class="fa fa-fw fa-pencil"> </i> </span> </td>
+                                                    <td> <span (click)="deleteRawMaterial(index)" > <i class="fa fa-fw fa-trash"> </i> </span> </td>
+                                                  </tr>
+                                                </tbody>
+                                              </table>
+                                              </div>
+
+                                                <div class="box-footer">
+                                                    <button class="btn btn-primary pull-right"
+                                                            (click)="SaveBagProcessMaster()"
+                                                            id="load"
+                                                            [disabled]="Spinner">
+                                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                                    </button>
+                                                </div>
+                                              </form>
+                                        </p-tabPanel>
+                                    </p-tabView>
+
+                                    <p-dialog header="Update Close Height & Qty" [appendTo]="'body'" [visible]="displayEwayModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '40%', minWidth: '200px'}" [minY]="70"
+                                                [maximizable]="true" [baseZIndex]="10000">
+                                                <form name="EwayForm" #EwayForm="ngForm" novalidate>
+
+                                                  <div class="invalid-feedback" *ngIf="rawMaterialMsg!=''">{{rawMaterialMsg}}</div>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label"> Tank Close Hight (Inch)<sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Rawmaterial_Tank_Close_Hight2"
+                                                            [(ngModel)]="objRawMaterial.Tank_Close_Hight"
+                                                            (ngModelChange) ="tankCloseQtyForRaw()"
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <label class="control-label">Tank Close Qty<ng-container *ngIf="objRawMaterial.UOM != undefined">  ({{objRawMaterial.UOM}}) </ng-container> <sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                            type="number"
+                                                            name="Rawmaterial_Tank_Close_Qty2"
+                                                            [(ngModel)]="objRawMaterial.Tank_Close_Qty"
+                                                            placeholder="Tank Close Qty"
+                                                            readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <h2></h2>
+                                                            </div>
+                                                        </div>
+                                                    <br>
+                                                </form>
+
+                                                <p-footer>
+                                                    <button type="button" pButton icon="pi pi-close" (click)="rawMaterialCancel()" label="CANCEL" class="ui-button-secondary"></button>
+                                                    <button type="button" pButton icon="pi pi-check" (click)="rawMaterialUpdate(true)" label="Update"></button>
+                                                </p-footer>
+                                                </p-dialog>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+

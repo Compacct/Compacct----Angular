@@ -1,0 +1,618 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                                            <form name="SeedProcessSearchForm" #SeedProcessSearchForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                        (click)="searchSeedProcess(SeedProcessSearchForm.form.valid)"
+                                                        id="load"
+                                                        [disabled]="Spinner">
+                                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                 </button>
+
+                                                      </div>
+                                                  </div>
+                                             </form>
+
+                                            <div class="table-responsive no-padding seedsTable">
+                                            <p-table [value]="searchSeedProcessList"
+                                                     [paginator]="searchSeedProcessList.length ? true : false" [rows]="10" [rowHover]="true"
+                                                     [autoLayout]="true" sortMode="multiple"
+                                                     [rowsPerPageOptions]="[10,20,30]"
+                                                     [rowHover]="true">
+                                                       <ng-template pTemplate="caption">
+                                                           <div class="row">
+                                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                </div>
+                                                           </div>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="header">
+                                                            <tr>
+                                                                <th style="width:5em">Action</th>
+                                                                <th>Doc No</th>
+                                                                <th>Date</th>
+                                                                <th>Used Bag</th>
+                                                                <th>Used Qty</th>
+                                                                <th>Output Wt </th>
+                                                                <th>From Cost Center </th>
+                                                                <th>To Cost Center </th>
+                                                                <th>Godown</th>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-col>
+                                                            <tr>
+                                                                <td>
+                                                                  <div class="dropdown">
+                                                                      <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                          type="button" data-toggle="dropdown" style="height:27px">
+                                                                          <i class="fa fa-fw fa-bars"></i>
+                                                                          <span class="caret"></span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu">
+                                                                          <li>
+                                                                              <a *ngIf="col.Status ==='PROCESS DONE'" (click)="EditSeedProcess(col.Seed_Process_Doc_No)">
+                                                                                  <i class="fa fa-fw fa-pencil"></i>
+                                                                                  Edit Seed Process
+                                                                              </a>
+                                                                          </li>
+                                                                          <li>
+                                                                            <a *ngIf="col.Status ==='PROCESS DONE'" (click)="createQC(col.Seed_Process_Doc_No)">
+                                                                                <i class="fa fa-fw fa-pencil"></i>
+                                                                                Create QC
+                                                                            </a>
+                                                                              <a *ngIf="col.Status ==='QC DONE'" (click)="createQC(col.Seed_Process_Doc_No)">
+                                                                                <i class="fa fa-fw fa-pencil"></i>
+                                                                                Edit QC
+                                                                            </a>
+                                                                        </li>
+                                                                      <li>
+                                                                        <a (click)="GetPDF(col)">
+                                                                            <i class="fa fa-fw fa-file-pdf-o"></i>
+                                                                            Print
+                                                                        </a>
+                                                                    </li>
+                                                                          <li>
+                                                                              <a (click)="DeleteSeedProcess(col)">
+                                                                                  <i class="fa fa-fw fa-trash"></i>
+                                                                                  Delete
+                                                                              </a>
+                                                                          </li>
+                                                                      </ul>
+                                                                  </div>
+                                                                </td>
+                                                                <td>{{col.Seed_Process_Doc_No}}</td>
+                                                                <td>{{col.dte | date: 'dd/MM/yyyy'}}</td>
+                                                                <td>{{col.Used_Bag }}</td>
+                                                                <td>{{col.Used_Qty}}</td>
+                                                                <td>{{col.Output_Wt}}</td>
+                                                                <td>{{col.From_Cost_Cen_Name}}</td>
+                                                                <td>{{col.To_Cost_Cen_Name }}</td>
+                                                                <td>{{col.GoDown_Name }}</td>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="paginatorright" let-state>
+                                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                        </ng-template>
+                                                </p-table>
+                                            </div>
+
+                                        </p-tabPanel>
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                            <form name="SeedProcessForm" #SeedProcessForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                          <label class="control-label">Doc Date<sup class="text-danger">*</sup></label>
+                                                          <div class="input-group date">
+                                                              <div class="input-group-addon">
+                                                                  <i class="fa fa-calendar"></i>
+                                                              </div>
+                                                              <input type="date"
+                                                                  class="form-control"
+                                                                  name="Seed_Process_Doc_Date"
+                                                                  [ngModel]="DocDate | date:'yyyy-MM-dd'"
+                                                                  #Seed_Process_Doc_Date='ngModel'
+                                                                  (ngModelChange)="GetDocdate($event)"
+                                                                  [ngClass]="{'clearance': SeedProcessFormSubmitted && Seed_Process_Doc_Date.errors?.required}"
+                                                                  required>
+                                                          </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">From Godown  &nbsp;<span class="text-danger">*</span></label>
+                                                      <p-dropdown [options]="costCenterNameList"
+                                                      name="Use_Cost_Cen_ID"
+                                                      [(ngModel)]="ObjSeedProcess.Use_Cost_Cen_ID"
+                                                      [showClear]="true"
+                                                      (onChange)="getGodown(ObjSeedProcess.Use_Cost_Cen_ID)"
+                                                      [emptyFilterMessage]="'No Vendor Found'"
+                                                      [filter]="true"
+                                                      filterBy="label,value.name"
+                                                      [placeholder]="'Select Centers'"
+                                                      [virtualScroll]="true"
+                                                      >
+                                                  </p-dropdown>
+
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">From Stock Point <sup class="text-danger"></sup></label>
+                                                      <select class="form-control"
+                                                      name="Use_Godown_ID"
+                                                      [(ngModel)]="ObjSeedProcess.Use_Godown_ID"
+                                                      required>
+                                                      <option [ngValue]="undefined">Select</option>
+                                                      <option *ngFor="let option of godownList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                    </select>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Select Product  &nbsp;<span class="text-danger">*</span></label>
+                                                      <p-dropdown [options]="productList"
+                                                      name="Product_ID"
+                                                      [(ngModel)]="ObjSeedProcess.Product_ID"
+                                                      [showClear]="true"
+                                                      [emptyFilterMessage]="'No Vendor Found'"
+                                                      (onChange)="getBatchNo(ObjSeedProcess.Product_ID)"
+                                                      [filter]="true"
+                                                      filterBy="label,value.name"
+                                                      [placeholder]="'Select Products'"
+                                                      [virtualScroll]="true"
+                                                      >
+                                                  </p-dropdown>
+
+                                                    </div>
+                                                        <div class="col-sm-4">
+                                                          <label class="control-label">Lot No
+                                                            <sup class="text-danger">*</sup></label>
+                                                            <select class="form-control"
+                                                                    name="Batch_Number"
+                                                                    [(ngModel)]="ObjSeedProcess.Batch_Number"
+                                                                    (change)="getSeedBagQty(ObjSeedProcess.Batch_Number)"
+                                                                   >
+                                                                    <option [ngValue]="undefined">Select</option>
+                                                                    <option *ngFor="let option of productBatchno" [ngValue]="option.Batch_No">{{option.Batch_No_Display}} </option>
+                                                            </select>
+
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Seed Process Qty <sup class="text-danger">*</sup>({{ObjSeedProcess.UOM}})</label>
+                                                      <input class="form-control"
+                                                      type="number"
+                                                      name="Seed_Process_Qty"
+                                                      [(ngModel)]="ObjSeedProcess.Seed_Process_Qty"
+                                                      placeholder="Seed Process Qty"
+                                                      CompacctDigitonly="true"
+                                                      (ngModelChange) ="checkQty(ObjSeedProcess.Seed_Process_Qty)"
+                                                      >
+                                                      <div class="invalid-feedback" *ngIf="checkSeedQtyExist">Seed process qty should not more than {{tmp_Seed_Process_Qty}}</div>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Seed Process Bag <sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                              type="number"
+                                                              name="Seed_Process_Bag"
+                                                              #Seed_Process_Bag="ngModel"
+                                                              [(ngModel)]="ObjSeedProcess.Seed_Process_Bag"
+                                                              (ngModelChange) ="checkBag(ObjSeedProcess.Seed_Process_Bag)"
+                                                              placeholder="Seed Process Bag"
+                                                              CompacctDigitonly="true"
+                                                              [ngClass]="{'clearance': SeedProcessFormSubmitted && (checkBagExist  || Seed_Process_Bag?.errors?.required)}"
+                                                              required>
+                                                              <div class="invalid-feedback" *ngIf="checkBagExist">No. of Bag should not more than {{tmp_Seed_Process_Bag}}</div>
+
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <!-- <label class="control-label">UOM <sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                            type="text"
+                                                            name="UOM"
+                                                            [(ngModel)]="ObjSeedProcess.UOM"
+                                                            readonly> -->
+                                                    </div>
+                                                    <div class="col-sm-4">
+
+                                                    </div>
+                                                </div>
+
+                                          <div class="bag-bgcolor">
+                                                  <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Less Bag (Weight) ({{ObjSeedProcess.Seed_Process_Bag_UOM}})<sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                            type="number"
+                                                            name="Seed_Process_Bag_Damage"
+                                                            [(ngModel)]="ObjSeedProcess.Seed_Process_Bag_Damage"
+                                                            (ngModelChange) ="totalDamage()"
+                                                            placeholder="Less Bag"
+                                                            >
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Less Bag (Count)<sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                              type="number"
+                                                              name="Seed_Process_Bag_Qty"
+                                                              [(ngModel)]="ObjSeedProcess.Seed_Process_Bag_Qty"
+                                                              placeholder="Less Bag">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Select Bag Product  &nbsp;<span class="text-danger">*</span></label>
+                                                      <p-dropdown [options]="consumableList"
+                                                      name="Consum_Product_ID"
+                                                      [(ngModel)]="ObjSeedProcess.Seed_Process_Bag_Product_ID"
+                                                      [showClear]="true"
+                                                      [emptyFilterMessage]="'No Vendor Found'"
+                                                      [filter]="true"
+                                                      (onChange)="getBagProductName(ObjSeedProcess.Seed_Process_Bag_Product_ID)"
+                                                      filterBy="label,value.name"
+                                                      [placeholder]="'Select products'"
+                                                      [virtualScroll]="true"
+                                                      >
+                                                    </p-dropdown>
+                                                    </div>
+                                                </div>
+
+                                                  <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Bag Cost Center Name  &nbsp;<span class="text-danger">*</span></label>
+                                                      <p-dropdown [options]="costCenterNameList"
+                                                      name="Seed_Process_Bag_To_Cost_Cen_ID"
+                                                      [(ngModel)]="ObjSeedProcess.Seed_Process_Bag_To_Cost_Cen_ID"
+                                                      [showClear]="true"
+                                                      (onChange)="getGodownForBag(ObjSeedProcess.Seed_Process_Bag_To_Cost_Cen_ID)"
+                                                      [emptyFilterMessage]="'No Vendor Found'"
+                                                      [filter]="true"
+                                                      filterBy="label,value.name"
+                                                      [placeholder]="'Select Centers'"
+                                                      [virtualScroll]="true"
+                                                      >
+                                                  </p-dropdown>
+
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Bag Godown <sup class="text-danger"></sup></label>
+                                                      <select class="form-control"
+                                                      name="Seed_Process_Bag_To_Godown_ID"
+                                                      [(ngModel)]="ObjSeedProcess.Seed_Process_Bag_To_Godown_ID"
+                                                      required>
+                                                      <option [ngValue]="undefined">Select</option>
+                                                      <option *ngFor="let option of godownBagList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                    </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <!-- <label class="control-label">UOM <sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                            type="text"
+                                                            name="Seed_Process_Bag_UOM"
+                                                            [(ngModel)]="ObjSeedProcess.Seed_Process_Bag_UOM"
+                                                            readonly> -->
+                                                    </div>
+                                                </div>
+
+                                          </div>
+
+                                                <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Less Dust <sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                                 type="number"
+                                                                  name="Seed_Process_Dust_Damage"
+                                                                  #Seed_Process_Dust_Damage="ngModel"
+                                                                  [(ngModel)]="ObjSeedProcess.Seed_Process_Dust_Damage"
+                                                                  placeholder="Less Dust"
+                                                                  CompacctDigitonly="true"
+                                                                  (ngModelChange) ="totalDamage()"
+                                                                  [ngClass]="{'clearance': SeedProcessFormSubmitted && Seed_Process_Dust_Damage?.errors?.required}"
+                                                                  required>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Less Husk <sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                                  type="number"
+                                                                  name="Seed_Process_Husk_Damage"
+                                                                  #Seed_Process_Husk_Damage="ngModel"
+                                                                  [(ngModel)]="ObjSeedProcess.Seed_Process_Husk_Damage"
+                                                                  placeholder="Less Husk"
+                                                                  CompacctDigitonly="true"
+                                                                  (ngModelChange) ="totalDamage()"
+                                                                  [ngClass]="{'clearance': SeedProcessFormSubmitted && Seed_Process_Husk_Damage?.errors?.required}"
+                                                                  required>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Dry <sup class="text-danger"></sup></label>
+                                                      <input class="form-control"
+                                                                  type="number"
+                                                                  name="Seed_Process_Dry_Persentage"
+                                                                  [(ngModel)]="ObjSeedProcess.Seed_Process_Dry_Persentage"
+                                                                  placeholder="Less Bag"
+                                                                  (ngModelChange) ="calDryDamage()"
+                                                                 >
+                                                  </div>
+                                              </div>
+                                              <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                        <label class="control-label">Less Dry <sup class="text-danger"></sup></label>
+                                                        <input class="form-control"
+                                                                type="number"
+                                                                name="Seed_Process_Dry_Damage"
+                                                                [(ngModel)]="ObjSeedProcess.Seed_Process_Dry_Damage"
+                                                                placeholder="Less Dry"
+                                                                readonly>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Seed Process Net Wt <sup class="text-danger">*</sup></label>
+                                                      <input class="form-control"
+                                                              type="number"
+                                                              name="Seed_Process_Net_Wt"
+                                                              [(ngModel)]="ObjSeedProcess.Seed_Process_Net_Wt"
+                                                              placeholder="Seed Process Net Wt"
+                                                              readonly>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">To Cost Center Name  &nbsp;<span class="text-danger">*</span></label>
+                                                    <p-dropdown [options]="costCenterNameList"
+                                                    name="Rcv_Cost_Cen_ID"
+                                                    [(ngModel)]="ObjSeedProcess.Rcv_Cost_Cen_ID"
+                                                    [showClear]="true"
+                                                    (onChange)="getGodownToCostCenter(ObjSeedProcess.Rcv_Cost_Cen_ID)"
+                                                    [emptyFilterMessage]="'No Vendor Found'"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Centers'"
+                                                    [virtualScroll]="true"
+                                                    >
+                                                </p-dropdown>
+                                                  </div>
+                                              </div>
+                                              <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">To Godown <sup class="text-danger">*</sup></label>
+                                                    <select class="form-control"
+                                                    name="Rcv_Godown_ID"
+                                                    [(ngModel)]="ObjSeedProcess.Rcv_Godown_ID"
+                                                    required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let option of godownToCostCenterList" [ngValue]="option.godown_id">{{option.Godown_Name}}</option>
+                                                  </select>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                                                      <input class="form-control"
+                                                          name="Remarks"
+                                                          #Remarks="ngModel"
+                                                          [(ngModel)]="ObjSeedProcess.Remarks"
+                                                          placeholder="Remarks"
+                                                         >
+                                                  </div>
+                                                  <div class="col-sm-4">
+
+                                                  </div>
+                                              </div>
+
+                                                <div class="box-footer">
+                                                    <button class="btn btn-primary pull-right"
+                                                            (click)="SaveSeedProcessMaster(SeedProcessForm.form.valid)"
+                                                            id="load"
+                                                            [disabled]="Spinner">
+                                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                                    </button>
+                                                </div>
+                                            </form>
+
+                                        </p-tabPanel>
+
+                                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" [disabled]="!(buttonname === 'Create QC')" leftIcon="glyphicon glyphicon-floppy-save">
+
+                                          <div class="top-section">
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                      <label class="control-label">Doc Date</label>
+                                                      {{ ObjSeedProcess.Seed_Process_Doc_Date | date:'yyyy-MM-dd'}}
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Lot No </label>
+                                                            {{ObjSeedProcess.Batch_Number}}
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">From Cost Center Name </label>
+                                                    {{Use_Cost_Centre_Name}}
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">From Godown</label>
+                                                      {{Use_GoDown_Name}}
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Product </label>
+                                                        {{Product_Name}}
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Seed Process Qty</label>
+                                                  {{ ObjSeedProcess.Seed_Process_Qty }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Seed Process Bag </label>
+                                                {{ObjSeedProcess.Seed_Process_Bag}}
+
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">UOM</label>
+                                                {{ObjSeedProcess.UOM}}
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Less Bag (Weright)</label>
+                                                {{ObjSeedProcess.Seed_Process_Bag_Damage}}
+                                              </div>
+                                          </div>
+
+                                          <div class="form-group">
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Less Bag (Count)</label>
+                                                {{ObjSeedProcess.Seed_Process_Bag_Qty}}
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Bag Product</label>
+                                              {{ObjSeedProcess.Seed_Process_Bag_Product_Description}}
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Bag Cost Center Name</label>
+                                              {{Bag_Cost_Centre_Name}}
+                                            </div>
+                                        </div>
+
+                                          <div class="form-group">
+                                            <div class="col-sm-4">
+                                                  <label class="control-label">Bag Godown </label>
+                                                  {{Bag_GoDown_Name}}
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Less Husk  </label>
+                                                    {{ObjSeedProcess.Seed_Process_Husk_Damage}}
+
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Dry </label>
+                                                {{ObjSeedProcess.Seed_Process_Dry_Persentage}}
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                          <div class="col-sm-4">
+                                                <label class="control-label">Less Dry</label>
+                                                {{ObjSeedProcess.Seed_Process_Dry_Damage}}
+                                          </div>
+                                          <div class="col-sm-4">
+                                            <label class="control-label">Seed Process Net Wt </label>
+                                                {{ObjSeedProcess.Seed_Process_Net_Wt}}
+
+                                          </div>
+                                          <div class="col-sm-4">
+
+                                          </div>
+                                      </div>
+                                      <div class="form-group">
+                                        <div class="col-sm-4">
+                                              <label class="control-label">To Cost Center Name</label>
+                                            {{Rcv_Cost_Centre_Name}}
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">To Godown </label>
+                                          {{Rcv_GoDown_Name}}
+
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Remarks </label>
+                                            {{ObjSeedProcess.Remarks}}
+                                        </div>
+                                    </div>
+                                  </div>
+
+                                          <form name="SeedProcess3Form" #SeedProcess3Form="ngForm" novalidate>
+                                              <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                        <label class="control-label">FFA  <sup class="text-danger">*</sup></label>
+                                                        <input class="form-control"
+                                                        type="text"
+                                                        name="QC_FFA"
+                                                        [(ngModel)]="ObjSeedProcess.QC_FFA"
+                                                        placeholder="FFA"
+                                                       >
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                           <label class="control-label">Moisture
+                                                              <sup class="text-danger">*</sup></label>
+                                                              <input class="form-control"
+                                                              type="text"
+                                                              name="QC_Moisture"
+                                                              [(ngModel)]="ObjSeedProcess.QC_Moisture"
+                                                              placeholder="Moisture"
+                                                             >
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Oil Content  <sup class="text-danger">*</sup></label>
+                                                           <input class="form-control"
+                                                           type="text"
+                                                           name="QC_Oil_Content"
+                                                           [(ngModel)]="ObjSeedProcess.QC_Oil_Content"
+                                                           placeholder="Oil Content"
+                                                           >
+                                                  </div>
+                                              </div>
+                                              <div class="form-group">
+                                                  <div class="col-sm-4">
+                                                      <label class="control-label">Impurity	  <sup class="text-danger">*</sup></label>
+
+                                                           <input class="form-control"
+                                                           type="text"
+                                                           name="QC_Impurity"
+                                                           [(ngModel)]="ObjSeedProcess.QC_Impurity"
+                                                           placeholder="Impurity"
+                                                          >
+                                                  </div>
+                                                      <div class="col-sm-4">
+                                                          <label class="control-label">Remarks   <sup class="text-danger">*</sup></label>
+                                                          <input class="form-control"
+                                                           type="text"
+                                                           name="QC_Remarks"
+                                                           [(ngModel)]="ObjSeedProcess.QC_Remarks"
+                                                           placeholder="Remarks"
+                                                          >
+                                                  </div>
+                                              </div>
+                                              <div class="box-footer">
+                                                  <button class="btn btn-primary pull-right"
+                                                          (click)="saveCreateQC(SeedProcess3Form.form.valid)"
+                                                          id="load"
+                                                          [disabled]="Spinner">
+                                                          <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                                  </button>
+                                              </div>
+                                          </form>
+
+                                      </p-tabPanel>
+                                    </p-tabView>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+

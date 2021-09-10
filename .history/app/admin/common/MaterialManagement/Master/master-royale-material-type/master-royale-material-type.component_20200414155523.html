@@ -1,0 +1,217 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast
+  position="center"
+  key="c"
+  (onClose)="onReject()"
+  [modal]="true"
+  [autoZIndex]="true"
+>
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onConfirm()"
+          label="Yes"
+          class="ui-button-success"
+        ></button>
+      </div>
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onReject()"
+          label="No"
+          class="ui-button-secondary"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body" style="    padding-left: 15px !important;">
+
+              <form #NewMaterialForm="ngForm" novalidate>
+                <div class="form-group">
+                  <div class="col-sm-6">
+                    <label class="control-label"
+                      >New Material Type &nbsp;<span class="text-danger"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="LedgerName"
+                      placeholder="Enter Your New Material Type"
+                      #NewMateName="ngModel"
+                      [ngClass]="{'clearance': NewMaterialFormSubmitted &&  NewMateName?.errors?.required}"
+                      [(ngModel)]="NewMaterialType"
+                      required
+                    />
+                  </div>
+                  <div class="col-sm-6">
+                    <button type="submit"
+                    name='stock'
+                    class="btn btn-primary custombutton pull-left"
+                    (click)="AddMaterialType(NewMaterialForm.form.valid)"
+                    id="load"
+                    [disabled]="saveSpinner">
+                    <p-progressSpinner *ngIf="saveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                    <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Add
+                </button>
+                  </div>
+                </div>
+                </form>
+                <hr class="box boxboxDivide-primary" />
+              <form #MaterialForm="ngForm" novalidate>
+                <div class="form-group">
+                  <div class="col-sm-4">
+                    <label class="control-label"
+                      >Select Material Type &nbsp;<span class="text-danger"
+                        >*</span
+                      ></label
+                    >
+                    <p-dropdown
+                      [options]="MaterialTypOnlyLists"
+                      name="group"
+                      [(ngModel)]="ObjMaterial.Material_Type"
+                      [showClear]="true"
+                      [emptyFilterMessage]="' No Material Found'"
+                      [filter]="true"
+                      filterBy="label,value.name"
+                      [placeholder]="'Select Material Name'"
+                      [virtualScroll]="true"
+                      itemSize="30"
+                      #group="ngModel"
+                      [styleClass]="
+                      MaterialFormSubmitted && group.errors?.required
+                          ? 'clearance'
+                          : ''
+                      "
+                      [required]="true"
+                    >
+                    </p-dropdown>
+                  </div>
+                  <div class="col-sm-4">
+                    <label class="control-label"
+                      >Material Sub Type<span class="text-danger">*</span
+                    ></label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="LedgerName"
+                      placeholder="Material Sub Type"
+                      #LedgerName="ngModel"
+                      [ngClass]="{'clearance': MaterialFormSubmitted &&  LedgerName?.errors?.required}"
+                      [(ngModel)]="ObjMaterial.Material_Sub_Type"
+                      required
+                    />
+                  </div>
+                  <div class="col-sm-4" style="margin-top:25px">
+                    <p-checkbox name="groupname" binary="true" [(ngModel)]="pmVal"></p-checkbox> &nbsp; &nbsp;
+                    <label class="control-label">Use in Project Management<sup class="text-danger"></sup></label>
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                      <button type="submit"
+                      name='stock'
+                      class="btn btn-primary pull-right"
+                      style="margin: 8px;"
+                      (click)="SaveMaterialType(MaterialForm.form.valid)"
+                      id="load"
+                      [disabled]="saveSpinner">
+                      <p-progressSpinner *ngIf="saveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                      <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>&nbsp;{{buttonname}}
+                  </button>
+                  </div>
+                </div>
+              </form>
+
+              <div class="table-responsive no-padding">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr style="background-color:#3c8dbc;color:white;">
+
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                       Index
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                        Material Type
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                      Material Sub Type
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                        Use to PM
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                        Edit
+                      </th>
+                      <th
+                        class="text-center"
+                        style="vertical-align:middle"
+                      >
+                      Delete
+                      </th>
+
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let d of MaterialTypeLists;
+                        let odd = odd;
+                        let index = index
+                      "
+                      [class.even]="odd"
+                    >
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ d.Material_Type ? d.Material_Type : "-" }}</td>
+                      <td>{{ d.Material_Sub_Type ? d.Material_Sub_Type : "-" }}</td>
+                      <td>{{ d.Use_In_PM === 'Y' ? "Yes" : "No"  }}</td>
+                      <td>
+                        <a (click)="EditMaterialType(d)"
+                          ><div><i class="fa fa-fw fa-pencil"> </i></div>
+                        </a>
+                      </td>
+                      <td>
+                        <a (click)="DeleteMaterialType(d)"
+                          ><div><i class="fa fa-fw fa-trash"> </i></div>
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

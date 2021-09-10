@@ -1,0 +1,171 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body">
+          <div class="col-md-12">
+            <form name="BillSearchForm" #BillSearchForm="ngForm" novalidate>
+              <div class="form-group">
+                <div class="col-sm-4">
+                  <label class="control-label"
+                    >Product Type&nbsp;<span class="text-danger" ></span ></label >
+                  <select
+                  class="form-control"
+                  name="type"
+                  #type="ngModel"
+                  [(ngModel)]="ProductTypeID"
+                  (change)='GetProductSubType(ProductTypeID)'>
+                  <option [ngValue]="undefined">Select</option>
+                  <option
+                    *ngFor="let option of ProductTypeList"
+                    [ngValue]="option.Product_Type_ID"
+                    >{{ option.Product_Type}}</option
+                  >
+                </select>
+                </div>
+                <div class="col-sm-3">
+                  <label class="control-label"
+                    >Product Sub Type &nbsp;<span class="text-danger">*</span></label
+                  >
+                  <select
+                    class="form-control"
+                    name="costcenterQC"
+                    #costcenterQC="ngModel"
+                    [(ngModel)]="ProductSubTypeID">
+                    <option [ngValue]="undefined">Select</option>
+                    <option
+                      *ngFor="let option of ProductSubTypeList"
+                      [ngValue]="option.Product_Sub_Type_ID"
+                      >{{ option.Product_Sub_Type}}</option
+                    >
+                  </select>
+                </div>
+                <div class="col-sm-3">
+                  <button
+                    class="btn btn-primary custombutton"
+                    data-toggle="modal"
+                    (click)="SearchStockReport(BillSearchForm.form.valid)"
+                    id="load"
+                    [disabled]="seachSpinner"
+                  >
+                    <p-progressSpinner
+                      *ngIf="seachSpinner"
+                      [style]="{ width: '15px', height: '15px' }"
+                      strokeWidth="8"
+                      animationDuration=".5s"
+                    ></p-progressSpinner>
+                    <span
+                      *ngIf="!seachSpinner"
+                      class="glyphicon glyphicon-search"
+                    ></span
+                    >&nbsp;Search
+                  </button>
+                </div>
+              </div>
+            </form>
+            <div class="table-responsive no-padding" style='margin-top:1.5em;'>
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr style="background-color:#3c8dbc;color:white">
+                    <ng-container *ngFor='let keys of DynamicKey'>
+                    <th>{{keys}}</th>
+                    </ng-container>
+                    <!-- <th>Product</th>
+                    <th>Product ShortName</th>
+                    <th>Unit</th>
+                    <th>AKS</th>
+                    <th>BFP</th>
+                    <th>BKH</th>
+                    <th>BRT</th>
+                    <th>BUTWAL</th>
+                    <th>CHN</th>
+                    <th>KCL</th>
+                    <th>KRISHNA</th>
+                    <th>KTM</th>
+                    <th>NIRMAL</th>
+                    <th>TA00001</th>
+                    <th>TAPP</th>
+                    <th>VKS</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor='let struc of DistinctStructure'>
+                    <tr style="background: #c1c1c1;">
+                      <td class='text-left'  colspan='100%'>
+                        <a (click)='struc.ToggleFlag = !struc.ToggleFlag' style='cursor:pointer;color:white;'>
+                          <i style="color: dimgrey;" [ngClass]="struc.ToggleFlag ? 'fa fa-fw fa-chevron-circle-down' : 'fa fa-fw fa-chevron-circle-right'"></i>
+                          <b>{{struc.Product_Type}}</b></a></td>
+                    </tr>
+                    <ng-template [ngIf]='struc.ToggleFlag'>
+                      <ng-container *ngFor='let Item of struc.Product_Sub_Type_List;let disIndex = index;'>
+                        <tr style="background:#e0e0e0;">
+                          <td class='text-left' style="font-size:12px;padding-left: 1em;"  colspan='100%'>
+                            <a (click)='Item.ToggleFlag = !Item.ToggleFlag' style='cursor:pointer;color:#222d32;'>
+                              <i style="color: dimgrey;" [ngClass]="Item.ToggleFlag ? 'fa fa-fw fa-chevron-circle-down' : 'fa fa-fw fa-chevron-circle-right'"></i>
+                              <b>{{Item.Product_Sub_Type}}</b>
+                            </a>
+                          </td>
+                        </tr>
+                        <ng-template [ngIf]='Item.ToggleFlag '>
+                            <tr *ngFor='let StockObj of Item.Product_List; let rowIndex = index; let odd = odd;'  [class.even]="odd">
+                              <ng-container *ngFor='let keys of DynamicKey'>
+                                <td>{{StockObj[keys] ? StockObj[keys] : 0}}</td>
+                              </ng-container>
+                              <!-- <td>{{StockObj['Product_ShortName']}}</td>
+                              <td>{{StockObj.Unit}}</td>
+                              <td>{{StockObj.AKS ? StockObj.AKS : 0}}</td>
+                              <td>{{StockObj.BFP ? StockObj.BFP : 0}}</td>
+                              <td>{{StockObj.BKH ? StockObj.BKH : 0}}</td>
+                              <td>{{StockObj.BRT ? StockObj.BRT : 0}}</td>
+                              <td>{{StockObj.BUTWAL ? StockObj.BUTWAL : 0}}</td>
+                              <td>{{StockObj.CHN ? StockObj.CHN : 0}}</td>
+                              <td>{{StockObj.KCL ? StockObj.KCL : 0}}</td>
+                              <td>{{StockObj.KRISHNA ? StockObj.KRISHNA : 0}}</td>
+                              <td>{{StockObj.KTM ? StockObj.KTM : 0}}</td>
+                              <td>{{StockObj.NIRMAL ? StockObj.NIRMAL : 0}}</td>
+                              <td>{{StockObj.TA00001 ? StockObj.TA00001 : 0}}</td>
+                              <td>{{StockObj.TAPP ? StockObj.TAPP : 0}}</td>
+                              <td>{{StockObj.VKS ? StockObj.VKS : 0}}</td> -->
+                            </tr>
+                            <tr>
+                              <td  colspan='14' class='text-right' style='font-size: 1em;font-weight:bold'><strong>Grand Total : </strong> </td>
+                              <td colspan='2' class='text-right' style='font-size: 1em;font-weight:bold;text-align:center;background: #d7f3ff;'> {{GetTotal(Item.Product_List)}}</td>
+                            </tr>
+                        </ng-template>
+                      </ng-container>
+                    </ng-template>
+                  </ng-container>
+
+
+
+
+
+                  <!-- <tr *ngFor="let StockObj of  StockReportList">
+                    <td>{{StockObj['Product_Type']}}</td>
+                    <td>{{StockObj['Product_Sub_Type']}}</td>
+                    <td>{{StockObj['Product']}}</td>
+                    <td>{{StockObj['Product_ShortName']}}</td>
+                    <td>{{StockObj.Unit}}</td>
+                    <td>{{StockObj.AKS ? StockObj.AKS : 0}}</td>
+                    <td>{{StockObj.BFP ? StockObj.BFP : 0}}</td>
+                    <td>{{StockObj.BKH ? StockObj.BKH : 0}}</td>
+                    <td>{{StockObj.BRT ? StockObj.BRT : 0}}</td>
+                    <td>{{StockObj.BUTWAL ? StockObj.BUTWAL : 0}}</td>
+                    <td>{{StockObj.CHN ? StockObj.CHN : 0}}</td>
+                    <td>{{StockObj.KCL ? StockObj.KCL : 0}}</td>
+                    <td>{{StockObj.KRISHNA ? StockObj.KRISHNA : 0}}</td>
+                    <td>{{StockObj.KTM ? StockObj.KTM : 0}}</td>
+                    <td>{{StockObj.NIRMAL ? StockObj.NIRMAL : 0}}</td>
+                    <td>{{StockObj.TA00001 ? StockObj.TA00001 : 0}}</td>
+                    <td>{{StockObj.TAPP ? StockObj.TAPP : 0}}</td>
+                    <td>{{StockObj.VKS ? StockObj.VKS : 0}}</td>
+                  </tr> -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

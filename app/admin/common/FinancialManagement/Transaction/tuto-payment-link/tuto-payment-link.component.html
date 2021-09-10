@@ -1,0 +1,309 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                        <form name="numberSearchForm" #numberSearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Mobile<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Mobile Number" name="mobile" #mobile='ngModel' [(ngModel)]="mobile_number" CompacctDigitonly="true" maxlength="10" minlength="10" [ngClass]="{'clearance': numberSearchFormSubmitted && mobile?.errors?.required}"
+                                        required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData(numberSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                        <p-progressSpinner *ngIf="seachSpinner"
+                                            [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                                            animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner"
+                                            class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label"> Contact Name</label>
+                                <div class="label-t"> {{contactList?.Contact_Name ? contactList?.Contact_Name : '-' }}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label"> City</label>
+                                <div class="label-t">{{contactList?.City ? contactList?.City : '-' }} </div>
+
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label"> Pin</label>
+                                <div class="label-t">{{contactList?.Pin ? contactList?.Pin : '-' }} </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label"> Class Name</label>
+                                <div class="label-t">{{contactList?.Class_Name ? contactList?.Class_Name : '-' }}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label"> Address</label>
+                                <div class="label-t">{{contactList?.Address ? contactList?.Address : '-' }}</div>
+
+                            </div>
+                            <div class="col-sm-4">
+                            </div>
+
+                        </div>
+                        <br>
+                        <div class="table-id no-padding">
+                            <div class='form-group' style='margin-bottom:1em;'>
+                                <div class="col-sm-3">
+                                    <label class="control-label">
+                                        Total Paid Amount <sup class="text-danger">*</sup>
+                                    </label >
+                                    <div  class="label-t">{{ TotalAmount }}</div>
+                                </div>
+                                <button *ngIf='Foot_Fall_ID' class="btn btn-primary btn-sm custombutton" (click)="GetTransactions(Foot_Fall_ID)" id="load">
+                                    <span class="fa fa-fw fa-refresh"></span>&nbsp;
+                                </button>
+                            </div>
+
+                            <p-table [value]="paymentList" [autoLayout]="true" [rowHover]="true" #dt>
+                                <!-- <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search"
+                                                (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template> -->
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Txn Date Time</th>
+                                        <th>PG Inv ID</th>
+                                        <th>Payment Link</th>
+                                        <th>Remarks</th>
+                                        <th>Amount</th>
+                                        <th>Current Status</th>
+                                        <th>Last Update ON</th>
+                                        <th>Payment Type</th>
+                                        <th>Bank Txn ID</th>
+                                        <th>Bank Name</th>
+                                        <th>Payment VPA</th>
+                                        <th>Card Last Four</th>
+                                        <th>Card Name</th>
+                                        <th>Card Network</th>
+                                        <th>Card Type</th>
+                                        <th>Wallet</th>
+                                        <th>File</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr [ngClass]="{'bg-green-gradient': (col.Current_Status === 'PAID')}">
+                                        <td>{{col.Txn_Date_Time  | date : "dd/MMM/yyyy hh:mm a"}}</td>
+                                        <td> <a class='btn btn-xs' (click)='GetPGInvDetails(col.PG_Inv_ID)'>{{col.PG_Inv_ID ? col.PG_Inv_ID : '-'}}</a></td>
+                                        <td>{{col.Payment_Link ? col.Payment_Link : '-'}}</td>
+                                        <td>{{col.Remarks ? col.Remarks : '-'}}</td>
+                                        <td>{{col.Amount ? col.Amount : '-'}}</td>
+                                        <td>{{col.Current_Status ? col.Current_Status : '-'}}</td>
+                                        <td>{{col.Last_Update_ON === "1900-01-01T00:00:00" ? '-' : (col.Last_Update_ON | date : "dd/MMM/yyyy hh:mm a")}}</td>
+                                        <td>{{col.Payment_Type ? col.Payment_Type : '-'}}</td>
+                                        <td>{{col.Bank_Txn_ID ? col.Bank_Txn_ID : '-'}}</td>
+                                        <td>{{col.Bank_Name ? col.Bank_Name : '-'}}</td>
+                                        <td>{{col.Payment_VPA ? col.Payment_VPA : '-'}}</td>
+                                        <td>{{col.Card_Last_Four ? col.Card_Last_Four : '-'}}</td>
+                                        <td>{{col.Card_Name ? col.Card_Name : '-'}}</td>
+                                        <td>{{col.Card_Network ? col.Card_Network : '-'}}</td>
+                                        <td>{{col.Card_Type ? col.Card_Type : '-'}}</td>
+                                        <td>{{col.Wallet ? col.Wallet : '-'}}</td>
+                                        <td>
+                                            <a class='btn btn-xs'
+                                            *ngIf='col.File_URL != "NA"'
+                                            style="cursor: pointer;"
+                                            (click)='OpenInNewTab(col.File_URL)'>
+                                                <i class="fa fa-fw fa-image"></i>
+                                            </a>
+                                            <span *ngIf='col.File_URL == "NA"'>{{col.File_URL ? col.File_URL : '-'}}</span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+
+                            </p-table>
+                        </div>
+                        <form name="numberSearch2Form" #numberSearch2Form="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Amount<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Amount" name="Amountt" #Amountt='ngModel' [(ngModel)]="Amount" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' CompacctDigitonly="true" [ngClass]="{'clearance': numberSearch2FormSubmitted && Amountt?.errors?.required}"
+                                        required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Remarks / For <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea class="form-control" name="Remark" [ngClass]="{'clearance': (numberSearch2FormSubmitted && Remark?.errors?.required) ||
+                                    (Remark.errors?.minlength && Remark.touched)}" #Remark='ngModel' placeholder="Remarks" minlength="10" [(ngModel)]="Remarks" rows='1' required></textarea>
+                                </div>
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GenerateLink(numberSearch2Form.form.valid)" id="load" [disabled]="seachSpinner2" [disabled]="!Foot_Fall_ID">
+                                        <p-progressSpinner *ngIf="seachSpinner2"
+                                            [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                                            animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner2"
+                                            class="fa fa-fw fa-arrow-circle-up"></span>&nbsp;Generate Link
+                                    </button>
+                                    <button class="btn btn-primary custombutton" (click)="showManualPaymentModal()" id="load33" [disabled]="!Foot_Fall_ID">
+                                      
+                                        <span class="fa fa-fw fa-check-square-o"></span>&nbsp; Manual Payment Update
+                                    </button>
+                                </div>
+                            </div>
+                            </form>
+                            <div class="form-group" *ngIf="short_url">
+                                <div class="col-sm-8">
+                                    <label class="control-label">
+                                    Payment Link </label>
+                                    <div class="input-group">
+                                        <input type="text" readonly name='urlsht' class="form-control" [ngModel]='short_url'>
+                                        <span class="input-group-addon" (click)='copyToClipboard(short_url)' [class.bg-aqua-gradient]='!CopiedFlag' [class.bg-green-gradient]='CopiedFlag'>{{
+                                        CopiedFlag ? 'Copied' : 'Copy'}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="clearData()" id="load">
+                                    <span class="fa fa-fw fa-user-plus"></span>&nbsp;Generate Link For New Student
+                                </button>
+                                    <button class="btn btn-primary custombutton" (click)="clearData2()" id="load">
+                                    <span class="fa fa-fw fa-undo"></span>&nbsp;Generate Another Link
+                                </button>
+                                </div>
+
+                            </div>
+                    </p-tabView>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PG Inv Details -->
+    <p-dialog header="PG Inv Details" [appendTo]="'body'" [visible]="PGInvDetailsModalFlag" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+        [maximizable]="true" [baseZIndex]="10000">
+        <form name="TransferLeadModalUpdate" style="margin-top:2em" #TransferLeadModalUpdate="ngForm" novalidate>
+
+            <div class="table table-responsive">
+
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr style="background-color:#3c8dbc;color:white;">
+                            <th>Posted On</th>
+                            <th>Bank Name</th>
+                            <th>Bank Txn_ID</th>
+                            <th>Card Last_4</th>
+                            <th>Card Name</th>
+                            <th>Card Network</th>
+                            <th>Card Type</th>
+                            <th>Payment Method</th>
+                            <th>Payment VPA</th>
+                            <th>Status</th>
+                            <th>Wallet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor='let obj of PGInvDetailsList'>
+                            <td>{{obj.Posted_On === "1900-01-01T00:00:00" ? '-' : (obj.Posted_On | date : "dd/MMM/yyyy hh:mm a")}}</td>
+                            <td>{{obj.Bank_Name ? obj.Bank_Name : '-'}}</td>
+                            <td>{{obj.Bank_Txn_ID ? obj.Bank_Txn_ID : '-'}}</td>
+                            <td>{{obj.Card_Last_4 ? obj.Card_Last_4 : '-'}}</td>
+                            <td>{{obj.Card_Name ? obj.Card_Name : '-'}}</td>
+                            <td>{{obj.Card_Network ? obj.Card_Network : '-'}}</td>
+                            <td>{{obj.Card_Type ? obj.Card_Type : '-'}}</td>
+                            <td>{{obj.Payment_Method ? obj.Payment_Method : '-'}}</td>
+                            <td>{{obj.Payment_VPA ? obj.Payment_VPA : '-'}}</td>
+                            <td>{{obj.Status ? obj.Status : '-'}}</td>
+                            <td>{{obj.Wallet ? obj.Wallet : '-'}}</td>
+
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <div class="box-footer">
+                    <h5></h5>
+                </div>
+            </div>
+        </form>
+
+        <p-footer>
+            <button type="button" (click)="PGInvDetailsModalFlag = false" class="btn btn-default">
+        CLOSE
+    </button>
+        </p-footer>
+    </p-dialog>
+    <!-- MANUAL PAYMENT CONFIRM -->
+    <p-dialog header="MANUAL PAYMENT UPDATE" [appendTo]="'body'" [visible]="ManualPaymentConfirmModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+        [maximizable]="true" [baseZIndex]="10000">
+        <form name="PayementConfirmForm" style="margin-top:1em" #PayementConfirmForm="ngForm" novalidate>
+            <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjManualPaymentCnfm?.Contact_Name}}</span></h5>
+            <div class="form-group">
+                <div class="col-sm-12" style="margin-top: 1.5em;">
+                    <label class="control-label">Amount</label>
+                    <input class="form-control" name="Amount222" CompacctDigitonly="true" #Amount222="ngModel" [(ngModel)]="ObjManualPaymentCnfm.Amount" placeholder="Amount" [ngClass]="{'clearance': ManualPaymentConfirmFormSubmit && Amount222?.errors?.required}" required>
+
+                </div>
+                <div class="col-sm-12">
+                    <label class="control-label">Transaction ID</label>
+                    <input class="form-control" name="Bank_Txn_ID" #Bank_Txn_ID="ngModel" [(ngModel)]="ObjManualPaymentCnfm.Bank_Txn_ID" placeholder="Transaction ID" [ngClass]="{'clearance': ManualPaymentConfirmFormSubmit && Bank_Txn_ID?.errors?.required}" required>
+
+                </div>
+                <div class="col-sm-12">
+                    <label class="control-label">Paid Through</label>
+                    <input class="form-control" name="Bank_Name" #Bank_Name="ngModel" [(ngModel)]="ObjManualPaymentCnfm.Bank_Name" placeholder="Paid Through" [ngClass]="{'clearance':ManualPaymentConfirmFormSubmit && Bank_Name?.errors?.required}" required>
+
+                </div>
+                <div class="col-sm-12">
+                    <label class="control-label">Remarks <sup class="text-danger">*</sup></label>
+                    <textarea class="form-control" name="Remarks22" #Remarks22="ngModel" [(ngModel)]="ObjManualPaymentCnfm.Remarks" placeholder="Remarks" [ngClass]="{'clearance':ManualPaymentConfirmFormSubmit && Remarks22?.errors?.required}" required> </textarea>
+                </div>
+                <div class="col-sm-12">
+                    <label class="control-label">Doc<sup class="text-danger"></sup></label>
+                    <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"></p-fileUpload>
+                    <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="box-footer">
+                    <h5></h5>
+                </div>
+            </div>
+        </form>
+
+        <p-footer>
+            <button type="button" (click)="ManualPaymentConfirmModal = false" class="btn btn-default">
+            CANCEL
+        </button>
+            <button type="button" class="btn btn-primary" (click)="SaveManualPaymentConfirm(PayementConfirmForm.form.valid)">
+            UPDATE
+        </button>
+        </p-footer>
+    </p-dialog>
