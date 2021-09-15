@@ -606,7 +606,7 @@ export class K4cFactoryReturnComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       if(data[0].Status === "Allow"){
-        this.SaveProduct();
+        this.ValidateEntryCheck();
       }
       else if(data[0].Status === "Disallow"){    // Disallow
        this.checkSave = false;
@@ -625,6 +625,31 @@ export class K4cFactoryReturnComponent implements OnInit {
   }
 
  }
+ ValidateEntryCheck(){
+  const obj = {
+    "SP_String": "SP_Validate_Entry",
+    "Report_Name_String": "Validate Issue",
+    "Json_Param_String": this.dataforSaveProduct()
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Validate Entry ===" , data);
+    if(data[0].status === "True") {
+      this.SaveProduct();
+    }
+    else if(data[0].status === "false"){   
+      var productDes = data[0].Product_Description; 
+      var batchn = data[0].Batch_No;
+     this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Insufficient Stock In",
+        detail: productDes  +  ' , '  +  batchn
+      })
+    }
+  })
+}
  SaveProduct(){
   const obj = {
     "SP_String": "SP_Controller_Master",
@@ -694,6 +719,7 @@ export class K4cFactoryReturnComponent implements OnInit {
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
         Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
         REMARKS : "NA",
+        Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
         //Return_Reason_ID : this.ObjProductaddForm.Return_Reason_ID
 
       }

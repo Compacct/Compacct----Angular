@@ -115,7 +115,9 @@
                                     <th>City </th>
                                     <th>Created On</th>
                                     <th>Next Followup</th>
-                                    <th>Action</th>
+                                    <th>Last Followup</th>
+                                    <th>Current Action</th>
+                                    <th>Last Action</th>
                                     <th>Owner</th>
                                     <th>Enq Source </th>
                                     <th>Address</th>
@@ -166,7 +168,9 @@
                                     <td>{{col.City ? col.City : '-'}}</td>
                                     <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
+                                    <td>{{col.Last_Followup_Date | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Current_Action}}</td>
+                                    <td>{{col.Last_Action}}</td>
                                     <td>{{col.Owner}}</td>
                                     <td>{{col.Enq_Source_Name ? col.Enq_Source_Name : '-'}}</td>
                                     <td>{{col.Address ? col.Address : '-'}}</td>

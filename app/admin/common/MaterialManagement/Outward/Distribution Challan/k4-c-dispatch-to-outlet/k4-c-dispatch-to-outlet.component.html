@@ -118,6 +118,12 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                                 <ul class="dropdown-menu">
+                                                                    <li *ngIf="col.Total_Qty === col.Total_Accepted_Qty">
+                                                                        <a (click)="Refresh(col)">
+                                                                            <i class="fa fa-refresh"></i>
+                                                                            Refresh
+                                                                        </a>
+                                                                    </li>
                                                                     <li *ngIf="col.Total_Qty != col.Total_Accepted_Qty">
                                                                         <a (click)="editmaster(col)">
                                                                             <i class="fa fa-fw fa-pencil"></i>
@@ -474,6 +480,7 @@
                                           <td *ngIf="AccQtydis">{{getTotal('Accepted_Qty')}}</td>
                                           <td>{{getTotal('Batch_Qty')}}</td>
                                           <td>{{getTotal('Delivery_Qty')}}</td>
+                                          <td></td>
                                         </tr>
                                     </ng-template>
                             </p-table>

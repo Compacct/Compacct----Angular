@@ -104,13 +104,13 @@
                                                                 </a>
                                                             </li>
                                                             <li *ngIf="col.Is_Visiable == 'Y'">
-                                                                <a (click)="delectMaster(col)">
+                                                                <a (click)="delectMaster(col,Param_Flag)">
                                                                     <i class="fa fa-fw fa-trash" ></i>
                                                                     Delete
                                                                 </a>
                                                             </li>
                                                             <li *ngIf="col.Is_Visiable == 'N'">
-                                                              <a (click)="Active(col)">
+                                                              <a (click)="Active(col,Param_Flag)">
                                                                   <i class="fa fa-power-off"></i>
                                                                   Active
                                                               </a>

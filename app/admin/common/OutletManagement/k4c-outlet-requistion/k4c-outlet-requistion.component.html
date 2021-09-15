@@ -45,6 +45,7 @@
                             <select class="form-control" name=" Cost_Cen_ID_B"
                                     #Cost_Cen_ID_B= 'ngModel'
                                     [(ngModel)]="ObjBrowseData.Cost_Cen_ID_B"
+                                    [attr.disabled] = "Boutletdisableflag ? true : null"
                                     [ngClass]="{'clearance': StockSearchFormSubmitted &&  Cost_Cen_ID_B.errors?.required}"
                                    required
                                    >
@@ -124,6 +125,12 @@
                                                               Cancel
                                                           </a>
                                                       </li>
+                                                      <!-- <li *ngIf ="$CompacctAPI.CompacctCookies.User_Type == 'A'">
+                                                        <a (click)="Cancle(col)">
+                                                            <i class="fa fa-times"></i>
+                                                            Cancel
+                                                        </a>
+                                                    </li> -->
                                                       <li *ngIf="col.Is_Active == 'Y' && col.Can_Cancel =='Y'">
                                                         <a (click)="editmaster(col)">
                                                             <i class="fa fa-fw fa-pencil"></i>
@@ -161,10 +168,10 @@
                                         #Cost_Cen_ID = "ngModel"
                                         [(ngModel)] = "ObjRequistion.Cost_Cen_ID"
                                         (ngModelChange) = "getRequisition()"
-                                        [disabled] = "this.OutletNameList.length === 1"
-                                        [attr.disabled]="disabled? true : null"
+                                        [attr.disabled] = "outletdisableflag ? true : null"
                                         >
-                                            <!-- <option  [ngValue]="undefined">Select</option> -->
+                                            <!-- <option  [ngValue]="undefined">Select</option> [disabled] = "this.OutletNameList.length === 1"
+                                        [attr.disabled]="disabled? true : null"-->
                                             <option *ngFor="let option of OutletNameList" value="{{option.Cost_Cen_ID}}">{{option.Cost_Cen_Name}}</option>
                                       </select>
                                   </div>

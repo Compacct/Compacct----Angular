@@ -815,7 +815,7 @@ saveCheck(){
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      if(data[0].Status === "Allow"){
-       this.saveprintAndUpdate();
+       this.ValidateEntryCheck();
      }
      else if(data[0].Status === "Disallow"){    // Disallow
       this.checkSave = false;
@@ -838,6 +838,32 @@ saveCheck(){
  }
 
 
+}
+ValidateEntryCheck(){
+  const obj = {
+    "SP_String": "SP_Validate_Entry",
+    "Report_Name_String": "Validate Issue",
+    "Json_Param_String": this.getDataForSaveEdit()
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Validate Entry ===" , data);
+    if(data[0].status === "True") {
+      this.saveprintAndUpdate();
+    }
+    else if(data[0].status === "false"){   
+      var productDes = data[0].Product_Description; 
+      var batchn = data[0].Batch_No;
+     this.Spinner = false;
+     this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Insufficient Stock In",
+        detail: productDes   +  ','  +   batchn
+      })
+    }
+  })
 }
 // CREATE AND UPDATE
 saveprintAndUpdate(){

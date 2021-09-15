@@ -50,7 +50,7 @@ export class K4cMasterProductComponent implements OnInit {
   Objbrand: brand = new brand();
   can_popup = false;
   act_popup = false;
-
+  ParamFlaghtml = undefined;
   constructor( private $http: HttpClient ,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -97,8 +97,9 @@ export class K4cMasterProductComponent implements OnInit {
     // this.getProductTypeListRow();
     // console.log("brand Id for page",this.ObjmasterProduct.Brand_ID);
   }
-  Active(masterProduct){
+  Active(masterProduct,ParamFlag){
     this.can_popup = false;
+    this.ParamFlaghtml = ParamFlag;
     this.masterProductId = undefined ;
      if(masterProduct.Product_ID){
       this.act_popup = true;
@@ -115,6 +116,7 @@ export class K4cMasterProductComponent implements OnInit {
 
   }
   onConfirm2(){
+    console.log("ParamFlaghtml",this.ParamFlaghtml);
     console.log(this.ObjmasterProduct.Product_ID)
       if(this.masterProductId){
         const obj = {
@@ -125,8 +127,15 @@ export class K4cMasterProductComponent implements OnInit {
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
           // console.log("del Data===", data[0].Column1)
           if (data[0].Column1 === "done"){
+          
+          
+            if(this.ParamFlaghtml === "Raw Material" || this.ParamFlaghtml === "Store Item"){
+              this.getRowData();
+            }
+            else {
+            this.getBandlist();
+            }
             this.onReject();
-            this.getRowData();
             this.act_popup = false;
             this.compacctToast.clear();
             this.compacctToast.add({
@@ -140,9 +149,10 @@ export class K4cMasterProductComponent implements OnInit {
           }
         })
       }
+      //this.ParamFlaghtml = undefined;
   }
  onConfirm(){
-    // console.log("onConfiem masterProductId",this.masterProductId)
+    console.log("ParamFlaghtml",this.ParamFlaghtml);
     console.log(this.ObjmasterProduct.Product_ID)
       if(this.masterProductId){
         const obj = {
@@ -153,9 +163,15 @@ export class K4cMasterProductComponent implements OnInit {
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
           // console.log("del Data===", data[0].Column1)
           if (data[0].Column1 === "done"){
+          
+            if(this.ParamFlaghtml === "Raw Material" ||  this.ParamFlaghtml === "Store Item"){
+              this.getRowData();
+            }
+            else {
+            this.getBandlist();
+            }
             this.onReject();
-            this.getRowData();
-            this.can_popup = false;
+           this.can_popup = false;
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
@@ -168,7 +184,7 @@ export class K4cMasterProductComponent implements OnInit {
           }
         })
       }
-
+     // this.ParamFlaghtml = undefined;
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -193,6 +209,7 @@ export class K4cMasterProductComponent implements OnInit {
    this.ObjmasterProduct.UOM = this.UOMList.length === 1 ? this.UOMList[0].UOM : undefined;
    this.ObjmasterProduct.Alt_UOM = this.UOMList.length === 1 ? this.UOMList[0].UOM : undefined;
    //this.masterProductFormSubmitted = false;
+  // this.ParamFlaghtml = undefined;
   }
   SaveProductMaster(valid){
       this.masterProductFormSubmitted = true;
@@ -602,11 +619,12 @@ export class K4cMasterProductComponent implements OnInit {
     }
 
   }
-  delectMaster(masterProduct){
+  delectMaster(masterProduct,ParamFlag){
     // console.log("delect masterProduct ===",masterProduct)
-    this.act_popup = false;
+     this.act_popup = false;
      this.masterProductId = undefined ;
      if(masterProduct.Product_ID){
+      this.ParamFlaghtml = ParamFlag;
       this.can_popup = true;
        this.masterProductId = masterProduct.Product_ID ;
        this.compacctToast.clear();

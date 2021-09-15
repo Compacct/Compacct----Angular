@@ -972,7 +972,7 @@ saveCheck(valid){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       if(data[0].Status === "Allow"){
-        this.saveDispatch();
+        this.ValidateEntryCheck();
       }
       else if(data[0].Status === "Disallow"){    // Disallow
         this.checkSave = false;
@@ -991,6 +991,62 @@ saveCheck(valid){
   }
   }
 
+}
+ValidateEntryCheck(){
+  let saveData = [];
+  const ExitsProduct = this.toOutletList.filter( item => Number(item.Cost_Cen_ID) === Number(this.ObjstockTransfer.To_Outlet));
+  if(ExitsProduct.length){
+    this.BrandId = ExitsProduct[0].Brand_ID;
+  }
+
+  if(this.productDetails.length){
+    this.productDetails.forEach(el=>{
+      const saveObj ={
+            Doc_No: "A",
+            Doc_Date: this.DateService.dateConvert(new Date(this.myDate)),
+            Brand_ID: this.BrandId,
+            From_Cost_Cen_ID: Number(this.ObjstockTransfer.From_Outlet),
+            From_godown_id: Number(this.ObjstockTransfer.From_Stock_Point),
+            To_Cost_Cen_ID: Number(this.ObjstockTransfer.To_Outlet),
+            To_godown_id: Number(this.ObjstockTransfer.To_Stock_Point),
+            Product_ID: el.Product_ID,
+            Product_Description: el.Product_Description,
+            Product_Type_ID: el.Product_Type_ID,
+            Batch_NO: el.Batch_NO,
+            Qty: el.Qty,
+            UOM: el.UOM,
+            Remarks: this.ObjstockTransfer.REMARKS ? this.ObjstockTransfer.REMARKS : "NA",
+            User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
+            Material_Type : el.Material_Type,
+            Cost_Cent_ID : Number(this.ObjstockTransfer.From_Outlet),
+            Batch_No: el.Batch_NO,
+      }
+      saveData.push(saveObj)
+    })
+    console.log("saveData",saveData);
+  const obj = {
+    "SP_String": "SP_Validate_Entry",
+    "Report_Name_String": "Validate Issue",
+    "Json_Param_String": JSON.stringify(saveData)
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Validate Entry ===" , data);
+    if(data[0].status === "True") {
+      this.saveDispatch();
+    }
+    else if(data[0].status === "false"){   
+      var productDes = data[0].Product_Description; 
+      var batchn = data[0].Batch_No;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Insufficient Stock In",
+        detail: productDes   +  ' , ' +   batchn
+      })
+    }
+  })
+}
 }
 }
 

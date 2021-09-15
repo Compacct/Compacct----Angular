@@ -324,46 +324,51 @@ export class TutoOrderPaymentComponent implements OnInit {
     }
 
   }
-  addorder(valid){
+  async addorder(valid){
     this.paymentFormSubmitted = true;
     console.log(valid);
     this.getTotalValue();
     const amtValid = this.Objpayment.Amount ? Number(this.Objpayment.Amount) <= Number(this.stdOrderAmount) : true;
     const TotalamtValid = this.totalAmt ? (Number(this.totalAmt) + Number(this.Objpayment.Amount)) <= Number(this.stdOrderAmount) : true;
     const Duplicate = this.checkDup();
-    if(valid && amtValid && TotalamtValid && Duplicate && Number(this.Objpayment.Amount)){
-      console.log("this.TransactionDis",this.TransactionDis);
-    this.PaymentByList.forEach(el=>{
-      if(this.Objpayment.Ledger_ID == el.Ledger_ID){
-          this.Objpayment.Ledger_Name = el.Ledger_Name
-      }
-    })
-    this.backupPaymentTypeList.forEach(el=>{
-      if(this.Objpayment.Bank_Txn_Type_ID == el.Bank_Txn_Type_ID){
-          this.Objpayment.Txn_Type_Name = el.Txn_Type_Name
-      }
-    })
-    this.Objpayment.Transaction_Date = this.delivery_Date;
-    this.adddataList.push({
-      Ledger_ID : this.Objpayment.Ledger_ID,
-      Bank_Txn_Type_ID : this.Objpayment.Bank_Txn_Type_ID,
-      Transaction_Date : this.Objpayment.Transaction_Date,
-      Bank_Name : this.Objpayment.Bank_Name,
-      Bank_Branch_Name : this.Objpayment.Bank_Branch_Name,
-      Amount : this.Objpayment.Amount,
-      Transaction_ID : this.Objpayment.Transaction_ID,
-      Ledger_Name : this.Objpayment.Ledger_Name,
-      Txn_Type_Name : this.Objpayment.Txn_Type_Name
-    })
-    this.Objpayment = new payment();
-    this.paymentFormSubmitted = false;
-    this.getTotalValue();
-    this.Objpayment.Amount = Number(this.stdOrderAmount) - Number(this.totalAmt);
-    if(this.totalAmt == this.stdOrderAmount){
-          this.buttonDis = false;
-          this.addButtonDis = true;
-    }
-  console.log("this.adddataList",this.adddataList);
+    if(valid && amtValid && TotalamtValid && Duplicate && Number(this.Objpayment.Amount) && this.checkImgvalid()){
+        this.Objpayment.File_URL = undefined;
+        if(this.Objpayment.Ledger_ID == "590" && this.ProductPDFFile['size'] && this.stdOrderNO){
+          const imgUploadRes = await this.upload(this.stdOrderNO);
+        }
+        console.log("this.TransactionDis",this.TransactionDis);
+        this.PaymentByList.forEach(el=>{
+          if(this.Objpayment.Ledger_ID == el.Ledger_ID){
+              this.Objpayment.Ledger_Name = el.Ledger_Name
+          }
+        })
+        this.backupPaymentTypeList.forEach(el=>{
+          if(this.Objpayment.Bank_Txn_Type_ID == el.Bank_Txn_Type_ID){
+              this.Objpayment.Txn_Type_Name = el.Txn_Type_Name
+          }
+        })
+        this.Objpayment.Transaction_Date = this.delivery_Date;
+        this.adddataList.push({
+          Ledger_ID : this.Objpayment.Ledger_ID,
+          Bank_Txn_Type_ID : this.Objpayment.Bank_Txn_Type_ID,
+          Transaction_Date : this.Objpayment.Transaction_Date,
+          Bank_Name : this.Objpayment.Bank_Name,
+          Bank_Branch_Name : this.Objpayment.Bank_Branch_Name,
+          Amount : this.Objpayment.Amount,
+          Transaction_ID : this.Objpayment.Transaction_ID,
+          Ledger_Name : this.Objpayment.Ledger_Name,
+          Txn_Type_Name : this.Objpayment.Txn_Type_Name,
+          File_URL : this.Objpayment.File_URL
+        })
+        this.Objpayment = new payment();
+        this.paymentFormSubmitted = false;
+        this.getTotalValue();
+        this.Objpayment.Amount = Number(this.stdOrderAmount) - Number(this.totalAmt);
+        if(this.totalAmt == this.stdOrderAmount){
+              this.buttonDis = false;
+              this.addButtonDis = true;
+        }
+      console.log("this.adddataList",this.adddataList);
     }
     if(!amtValid) {
       this.compacctToast.clear();
@@ -392,6 +397,40 @@ export class TutoOrderPaymentComponent implements OnInit {
         detail: "Payment By Already Exits."
       });
     }
+    if(!this.checkImgvalid()) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Validation Message",
+        detail: "Image Required."
+      });
+    }
+  }
+  async upload(Order_No){
+    const formData: FormData = new FormData();
+        formData.append("file", this.ProductPDFFile);
+    let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Subscription_Payment_File_Upload?code=00B7bmC0PzSrrPGWsDduj4PGqm0teKd/00C01ilcDIflY9Y8VQIRqQ==&&ConTyp='+this.ProductPDFFile['type']+'&ext='+this.ProductPDFFile['name'].split('.').pop()+'&Order_No='+Order_No ,{ 
+                  method: 'POST',
+                  body: formData // This is your file object
+                });
+    let responseText = await response.text();
+    if(JSON.parse(responseText).status === "TRUE"){
+      this.Objpayment.File_URL = JSON.parse(responseText).message;
+    }
+    console.log(this.Objpayment.File_URL)
+  };
+  checkImgvalid() {
+    let tempFlag = true;
+    if(this.Objpayment.Ledger_ID == "590"){
+      tempFlag = false;
+      if(this.ProductPDFFile['size']) {
+        tempFlag = true;
+      }
+    }else {
+      tempFlag = true;
+    }
+    return tempFlag;
   }
   checkDup(){
     let flag = true;
@@ -440,7 +479,8 @@ export class TutoOrderPaymentComponent implements OnInit {
       Bank_Branch_Name : el.Bank_Branch_Name ? el.Bank_Branch_Name : "",
       Bank_Txn_Type_ID : el.Bank_Txn_Type_ID,
       Txn_Type_Name : el.Txn_Type_Name,
-      User_ID: this.$CompacctAPI.CompacctCookies.User_ID
+      User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
+      File_URL: el.File_URL,
        })
 
     });

@@ -46,6 +46,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
   AuthorizedList = [];
   BackupSearchedlist = [];
   todayDate : any = new Date();
+  LastPurDate : any = new Date();
+  ovaldisabled = false;
   //filteredData = [];
 
   constructor(
@@ -106,7 +108,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
      //this.ObjProductaddForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     // console.log("Doc_Date =",this.DateService.dateConvert(new Date(this.myDate)))
     const TempObj = {
-      Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
+      Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID : this.ObjPurchasePlan.Product_Type ? this.ObjPurchasePlan.Product_Type : 0
     }
       const obj = {
@@ -136,7 +138,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   GetIndentProduct(){
     this.Productlist = [];
     const TempObj ={
-      Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
+      Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID  : this.ObjPurchasePlan.Product_Type ? this.ObjPurchasePlan.Product_Type : 0
     }
     const obj = {
@@ -178,7 +180,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
      //this.ObjProductaddForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     // console.log("Doc_Date =",this.DateService.dateConvert(new Date(this.myDate)))
     const TempObj = {
-      Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
+      Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID : this.ObjPurchasePlan.Product_Type ? this.ObjPurchasePlan.Product_Type : 0
     }
       const obj = {
@@ -205,7 +207,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   GetIndentProductChange(){
     this.Productlist = [];
     const TempObj ={
-      Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
+      Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID  : this.ObjPurchasePlan.Product_Type ? this.ObjPurchasePlan.Product_Type : 0
     }
     const obj = {
@@ -275,7 +277,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
    this.ObjPurchasePlan.Last_Purchase_Qty = productObj.Last_Puchase_Qty;
    this.ObjPurchasePlan.Current_Stock =  productObj.Current_Stock;
    this.ObjPurchasePlan.Due_Payment = productObj.Due_Payment;
-   this.ObjPurchasePlan.Monthly_Req_Value =  productObj.Monthly_Req_Value;
+   this.ObjPurchasePlan.Weekly_Avg_Cons =  productObj.Weekly_Avg_Cons;
    this.ObjPurchasePlan.Estimated_Time_Of_Delivery = productObj.Estimated_Time_Of_Delivery;
    this.ObjPurchasePlan.GST_Tax_Per = productObj.GST_Tax_Per;
   }
@@ -300,12 +302,18 @@ export class K4cPurchasePlaningComponent implements OnInit {
       console.log("vendor list======",this.vendorlist);
     });
  }
+  OrderValueChange(){
+    var ordervalue = 0;
+    ordervalue = Number(this.ObjPurchasePlan.Sale_rate * this.ObjPurchasePlan.Stock_Qty);
+    this.ObjPurchasePlan.Order_Value = ordervalue;
+    this.ovaldisabled = true;
+  }
   addProduct(valid){
     this.PurchaseFormSubmitted = true;
     if(valid){
       var Amount = Number(this.ObjPurchasePlan.Stock_Qty * this.ObjPurchasePlan.Sale_rate);
-      var AmtWithGST = Number(Amount * Number(this.ObjPurchasePlan.GST_Tax_Per) / 100);
-      var lastpurchaseGST = Number(Number(this.ObjPurchasePlan.Last_Purchase_Rate * this.ObjPurchasePlan.Last_Purchase_Qty * Number(this.ObjPurchasePlan.GST_Tax_Per)) / 100);
+      // var AmtWithGST = Number(Amount * Number(this.ObjPurchasePlan.GST_Tax_Per) / 100);
+      // var lastpurchaseGST = Number(Number(this.ObjPurchasePlan.Last_Purchase_Rate * this.ObjPurchasePlan.Last_Purchase_Qty * Number(this.ObjPurchasePlan.GST_Tax_Per)) / 100);
       var PT = this.producttypelist.filter((el) => el.Product_Type_ID == this.ObjPurchasePlan.Product_Type)[0];
       var VV = this.vendorlist.filter((elem) => elem.Sub_Ledger_ID == this.ObjPurchasePlan.Vendor)[0];
       var productObj = {
@@ -314,19 +322,23 @@ export class K4cPurchasePlaningComponent implements OnInit {
       Product_Type : this.ObjPurchasePlan.Product_Type ? PT.Product_Type : '-',
       Product_ID : this.ObjPurchasePlan.Product_ID,
       Product_Description : this.ObjPurchasePlan.Product_Description,
-      Last_Purchase_Rate : this.ObjPurchasePlan.Last_Purchase_Rate,
+      UOM : this.ObjPurchasePlan.UOM,
+      Weekly_Avg_Cons : this.ObjPurchasePlan.Weekly_Avg_Cons,
+      Weekly_Cons_Value : this.ObjPurchasePlan.Weekly_Cons_Value,
+      Last_Puchase_Date : this.DateService.dateConvert(new Date(this.LastPurDate)),
       Last_Puchase_Qty : this.ObjPurchasePlan.Last_Purchase_Qty,
-      Last_Purchase_With_GST : Number(lastpurchaseGST),
+      Last_Purchase_Rate : this.ObjPurchasePlan.Last_Purchase_Rate,
+      //Last_Purchase_With_GST : Number(lastpurchaseGST),
       Current_Stock : this.ObjPurchasePlan.Current_Stock,
       Due_Payment : this.ObjPurchasePlan.Due_Payment,
-      Monthly_Req_Value : this.ObjPurchasePlan.Monthly_Req_Value,
-      Estimated_Time_Of_Delivery : this.ObjPurchasePlan.Estimated_Time_Of_Delivery,
+      Stock_Qty : this.ObjPurchasePlan.Stock_Qty,
       Sale_rate : this.ObjPurchasePlan.Sale_rate,
-      Stock_Qty :  this.ObjPurchasePlan.Stock_Qty,
-      Amount : Number(Amount),
-      Total_Amount_With_GST : Number(AmtWithGST),
-      Indent_Qty : this.ObjPurchasePlan.Indent_Qty ? this.ObjPurchasePlan.Indent_Qty : '-',
-      UOM : this.ObjPurchasePlan.UOM,
+      // Order_Qty :  this.ObjPurchasePlan.Stock_Qty,
+      // Current_Rate : this.ObjPurchasePlan.Sale_rate,
+      Order_Value : Number(Amount),
+      Estimated_Time_Of_Delivery : this.ObjPurchasePlan.Estimated_Time_Of_Delivery,
+      //Total_Amount_With_GST : Number(AmtWithGST),
+     // Indent_Qty : this.ObjPurchasePlan.Indent_Qty ? this.ObjPurchasePlan.Indent_Qty : '-',
       Remarks : this.ObjPurchasePlan.Remarks ? this.ObjPurchasePlan.Remarks : '-',
      // Vendor :  VV.Sub_Ledger_Name ? VV.Sub_Ledger_Name : this.ObjPurchasePlan.Vendor,
       Vendor :  this.localpurchaseFLag ? "Local Purchase" : VV.Sub_Ledger_Name,
@@ -350,26 +362,50 @@ export class K4cPurchasePlaningComponent implements OnInit {
             Product_Type : item.Product_Type,
             Product_ID : item.Product_ID,
             Product_Description : item.Product_Description,
-            Last_Purchase_Rate : item.Last_Purchase_Rate,
-            Last_Puchase_Qty : item.Last_Puchase_Qty,
-            Last_Purchase_With_GST : item.Last_Purchase_With_GST,
-            Current_Stock : item.Current_Stock,
+            UOM : item.UOM,
+            Weekly_Avg_Cons : Number(item.Weekly_Avg_Cons),
+            Weekly_Cons_Value : Number(item.Weekly_Cons_Value),
+            Last_Puchase_Date : item.Last_Puchase_Date,
+            Last_Puchase_Qty : Number(item.Last_Puchase_Qty),
+            Last_Purchase_Rate : Number(item.Last_Purchase_Rate),
+           // Last_Purchase_With_GST : item.Last_Purchase_With_GST,
+            Current_Stock : Number(item.Current_Stock),
             Due_Payment : item.Due_Payment,
-            Monthly_Req_Value : item.Monthly_Req_Value,
-            Estimated_Time_Of_Delivery : item.Estimated_Time_Of_Delivery,
+            //Order_Qty : item.Stock_Qty,
+            //Current_Rate : item.Sale_rate,
+            Stock_Qty : Number(item.Stock_Qty),
+            Rate : Number(item.Sale_rate),
+            Order_Value : item.Order_Value,
+            Estimated_Time_Of_Delivery : Number(item.Estimated_Time_Of_Delivery),
             Indent_Qty : 0,
-            Order_Qty : item.Stock_Qty,
-            Rate : item.Sale_rate,
-            Amount : item.Amount,
-            Total_Amount_With_GST : item.Total_Amount_With_GST,
+            //Total_Amount_With_GST : item.Total_Amount_With_GST,
             Remarks : item.Remarks,
-            Vendor_Name : item.Vendor
+            Vendor_Name : item.Vendor,
+
+            GST_PER	 : 0,
+            Last_Purchase_With_GST	: 0,
+            Monthly_Req_Value	 : 0,
+            Order_Qty	: Number(item.Stock_Qty),
+            Amount	: item.Order_Value,
+            Total_Amount_With_GST	: 0,
+            Created_By	: '',
+            Created_On	: '',
+            Autho_One	 : '',
+            Autho_Two	: '',
+            Autho_Two_Staus	: 'NA',
+            Ref_PO_Doc_No	: 'NA',
+            Ref_PO_Doc_Date	: '',
+            Confirm_Qty	: 0,
+            Confirm_Rate	: 0,
+            Confirm_Amount	: 0,
+            Confirm_Amount_With_GST	 : 0,
+
         }
 
         const TempObj = {
          // UOM : "PCS",
           Doc_No : "A",
-          Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
+          Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
           User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
           Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
           //Return_Reason_ID : this.ObjProductaddForm.Return_Reason_ID
@@ -502,7 +538,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     // this.Return_reason = undefined;
     if(DocNo.Doc_No){
     this.ObjBrowse.Doc_No = DocNo.Doc_No;
-    this.AuthPoppup = true;
+    // this.AuthPoppup = true;
     //this.ViewPoppup = true;
     //this.tabIndexToView = 1;
      //console.log("this.EditDoc_No ", this.Adv_Order_No );
@@ -534,6 +570,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       this.AuthorizedList[i].Confirm_Amount = this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate;
       this.AuthorizedList[i].Confirm_Amount_With_GST = ((this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate) * this.AuthorizedList[i].GST_PER) / 100;
       }
+      this.AuthPoppup = true;
     })
    }
    confirmamountcalculate(indx){
@@ -638,7 +675,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
     this.getproduct();
     this.uomdisabeld = false;
     //this.productaddSubmit = [];
-    this.CurrentDate = new Date();
+    this.todayDate = new Date();
+    this.LastPurDate = new Date();
+    this.ovaldisabled = false;
   }
 
 
@@ -665,9 +704,11 @@ class PurchasePlan {
   Last_Purchase_With_GST : number;
   Current_Stock : number;
   Due_Payment : any;
-  Monthly_Req_Value : number;
+  Weekly_Avg_Cons : number;
+  Weekly_Cons_Value : number;
   Estimated_Time_Of_Delivery : string;
   GST_Tax_Per : any;
+  Order_Value : number;
   // From_godown_id : string;
   // To_godown_id : string;
   // To_Cost_Cen_ID : string;

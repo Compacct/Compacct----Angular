@@ -138,11 +138,11 @@
                                             <input class="form-control" type='number' name="Amount" #Amount="ngModel" [(ngModel)]="Objpayment.Amount" (keyup)="preventInput($event)" CompacctDigitonly="true" (ngModelChange)="getPaymentTypedata()" min="0" max='5' [disabled]="aftersave" [ngClass]="{'clearance': paymentFormSubmitted && Amount?.errors?.required}"
                                                 required>
                                         </div>
-                                        <!-- <div class='col-sm-4' *ngIf='Objpayment.Ledger_ID == "590"'>
+                                        <div class='col-sm-4' *ngIf='Objpayment.Ledger_ID == "590"'>
                                             <label class="control-label">Doc<sup class="text-danger"></sup></label>
                                             <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"></p-fileUpload>
                                             <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
-                                        </div> -->
+                                        </div>
                                         <div class="col-sm-2">
                                             <button class="btn btn-primary custombutton" data-toggle="modal" style="margin-top: 25px;" (click)="addorder(paymentForm.form.valid)" id="load">
                                         <span  class="glyphicon glyphicon-plus"></span>&nbsp;Add

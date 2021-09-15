@@ -6,6 +6,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { connected } from 'process';
+declare var $: any;
 
 
 @Component({
@@ -45,6 +46,8 @@ export class OutletTxnBankDepositComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    $(".content-header").removeClass("collapse-pos");
+    $(".content").removeClass("collapse-pos");
     this.Transfer_To = ["Bank / Collection" , "HO"]
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({

@@ -35,6 +35,14 @@ export class IssueStockAdjustmentComponent implements OnInit {
   SearchFormSubmitted = false;
   checkSave = false;
   BrandDisable = false;
+  Doc_No = undefined;
+  ViewList = [];
+  ViewPoppup = false;
+  Doc_date = undefined;
+  Cost_Cent_ID = undefined;
+  Godown_ID = undefined;
+  BrandId = undefined;
+  remarks = undefined;
 
   constructor(
     private Header: CompacctHeader,
@@ -172,9 +180,9 @@ export class IssueStockAdjustmentComponent implements OnInit {
      // this.productlist[0].Issue_Qty = this.productlist[0].batch_Qty
        console.log(" product List ===",this.productlist);
        this.IssueStockFormSubmitted = false;
-       for(let i = 0; i < this.productlist.length ; i++){
-        this.productlist[i].Issue_Qty = this.productlist[i].batch_Qty
-       }
+      //  for(let i = 0; i < this.productlist.length ; i++){
+      //   this.productlist[i].Issue_Qty = this.productlist[i].batch_Qty
+      //  }
     })
   }
   }
@@ -304,18 +312,53 @@ const obj = {
  })
  }
   }
+  View(DocNo){
+    this.Doc_No = undefined;
+    if(DocNo.Doc_No){
+    this.Doc_No = DocNo.Doc_No;
+    // this.AuthPoppup = true;
+    //this.ViewPoppup = true;
+    //this.tabIndexToView = 1;
+     //console.log("this.EditDoc_No ", this.Adv_Order_No );
+    this.getdataforview(this.Doc_No);;
+    }
+  }
+  getdataforview(DocNo){
+    this.ViewList = [];
+    const obj = {
+      "SP_String": "SP_Issue_Stock_Adjustment",
+      "Report_Name_String": "Get_Data_Issue_Stock_Adjustment",
+      "Json_Param_String": JSON.stringify([{Doc_No : this.Doc_No}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ViewList = data;
+       this.Doc_No = data[0].Doc_No;
+       this.Doc_date = new Date(data[0].Doc_Date);
+       this.BrandId = data[0].Brand_Name;
+       this.Cost_Cent_ID = data[0].Location;
+       this.Godown_ID = data[0].godown_name;
+       this.remarks = data[0].Narration;
+      // this.To_outlet = data[0].From_Location1;
+      // this.Batchno = data[0].Batch_No;
+      // this.Return_reason = data[0].Return_Reason;
+      console.log("this.Viewlist  ===",this.ViewList);
+
+      this.ViewPoppup = true;
+    })
+  }
   clearData(){
     if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
       this.ObjIssueStockAd.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
       this.ObjBrowse.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
       this.BrandDisable = true;
     } else {
-       this.ObjBrowse.Brand_ID = undefined;
+       //this.ObjBrowse.Brand_ID = undefined;
        this.ObjIssueStockAd.Brand_ID = undefined;
        this.BrandDisable = false;
     }
     //this.ObjBrowse.Brand_ID = undefined;
-    this.Searchedlist = [];
+    //this.Searchedlist = [];
     //this.ObjIssueStockAd.Brand_ID = undefined;
     this.ObjIssueStockAd.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.getGodown();

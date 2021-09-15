@@ -518,16 +518,15 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
       }
       this.DynamicRedirectTo(obj);
     }
-    if(val === 'dayendprocess') {
-      const obj = {
-        //Redirect_To : './Outlet_Fund_Movement',
-        //Browse_Flag : true
-      }
-      this.DynamicRedirectTo(obj);
-    }
     if(val === 'bankcollection') {
       const obj = {
         Redirect_To : './Outlet_Txn_Bank_Deposit',
+      }
+      this.DynamicRedirectTo(obj);
+    }
+    if(val === 'dayendprocess') {
+      const obj = {
+        Redirect_To : './K4C_Day_End_Process',
       }
       this.DynamicRedirectTo(obj);
     }

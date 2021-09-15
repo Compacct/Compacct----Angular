@@ -91,6 +91,9 @@ export class K4CDispatchToOutletComponent implements OnInit {
   SelectedIndent: any;
   TIndentList = [];
   BackUpproductDetails = [];
+  Refreshlist = [];
+  RefreshData = [];
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -352,13 +355,20 @@ export class K4CDispatchToOutletComponent implements OnInit {
   showDialog() {
     this.displaysavepopup = true;
     this.filteredData = [];
-    this.BackUpproductDetails.forEach(obj => {
-      if(obj.Delivery_Qty && Number(obj.Delivery_Qty) !== 0 ){
-      //  console.log(filteredData.push(obj.Product_ID));
-      this.filteredData.push(obj);
-       // console.log("this.filteredData===",this.filteredData);
-    }
-   })
+  //   this.BackUpproductDetails.forEach(obj => {
+  //     if(obj.Delivery_Qty && Number(obj.Delivery_Qty) !== 0 ){
+  //     //  console.log(filteredData.push(obj.Product_ID));
+  //     this.filteredData.push(obj);
+  //      // console.log("this.filteredData===",this.filteredData);
+  //   }
+  //  })
+   this.productDetails.forEach(obj => {
+    if(obj.Delivery_Qty && Number(obj.Delivery_Qty) !== 0 ){
+    //  console.log(filteredData.push(obj.Product_ID));
+    this.filteredData.push(obj);
+     // console.log("this.filteredData===",this.filteredData);
+  }
+ })
   }
   // FOR SAVE DISPATCH
   getReqNo(){
@@ -379,6 +389,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   }
   saveDispatch(){
    console.log("saveqty",this.saveqty());
+   console.log("this.BackUpproductDetails",this.BackUpproductDetails);
   if(this.BackUpproductDetails.length && this.saveqty()){
 
     if(this.doc_no){
@@ -409,8 +420,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
             Accept_Reason : el.Accepted_Qty === el.Delivery_Qty ? 'NA' : el.Accept_Reason,
             Status : "Updated",
             Material_Type : "Finished",
-            Total_Qty : Number(this.getTotal('Delivery_Qty')),
-            Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty'))
+            Total_Qty : Number(this.getTotalValue('Delivery_Qty')),
+            Total_Accepted_Qty : Number(this.getTotalValue('Accepted_Qty'))
           }
           this.saveData.push(saveObj)
         }
@@ -607,7 +618,8 @@ console.log("Objdispatch",this.Objdispatch);
         UOM: item.UOM,
          };
 
-      this.productDetails.splice(index, 0, obj)
+      this.productDetails.splice(index, 0, obj);
+      this.BackUpproductDetails.splice(index,0,obj);
       })
     } else {
       ProductArrValid.forEach(item=>{
@@ -629,6 +641,18 @@ console.log("Objdispatch",this.Objdispatch);
         Rate: item.Sale_rate,
         Delivery_Qty : Number(this.Objadditem.Issue_Qty),
         UOM: item.UOM,
+         })
+         this.BackUpproductDetails.push({
+          Product_Type_ID : item.Product_Type_ID,
+          product_type : item.Product_Type,
+          product_id : item.Product_ID,
+          Product_Description : item.Product_Description,
+          Batch_No : batch_id,
+          Batch_Qty : batch_qty,
+          Req_Qty :item.Req_Qty,
+          Rate: item.Sale_rate,
+          Delivery_Qty : Number(this.Objadditem.Issue_Qty),
+          UOM: item.UOM,
          })
       })
     }
@@ -852,12 +876,131 @@ GetIndentdist(){
   this.EditList.forEach((item) => {
     if (DIndentBy.indexOf(item.Req_No) === -1) {
       DIndentBy.push(item.Req_No);
-       this.IndentFilter.push({ label: item.Req_No, value: item.Req_No });
+       this.IndentFilter.push({ label: item.Req_No_with_name, value: item.Req_No });
        this.SelectedIndent.push(item.Req_No);
       console.log("this.TimerangeFilter", this.IndentFilter);
     }
   });
 }
+// Refresh(DocNo){
+//  // this.clearData();
+//   if(DocNo.Doc_No){
+//    // this.indentno = DocNo.Indent_No;
+//   this.geteditmaster(DocNo);
+//   this.Refreshdata(DocNo);
+//   }
+// }
+Refresh(obj){  
+  this.refreshEditmaster(obj.Doc_No);
+     
+}
+refreshEditmaster(DocNo){
+  const obj = {
+         "SP_String": "SP_Production_Voucher",
+         "Report_Name_String": "Refresh Distribution Challan",
+         "Json_Param_String": JSON.stringify([{Doc_No : DocNo}])
+       }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log("From Api",data);
+       this.Refreshlist = data;
+       var Challan_No = data[0].Column1;
+       console.log("this.Refreshlist",this.Refreshlist);
+       if(data[0].Column1){
+       this.compacctToast.clear();
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Distribution Challan No. " + Challan_No,
+           detail: "Succesfully Updated"
+         });
+       }
+        console.log("this.Objdispatch",this.productDetails);
+    
+      })
+}
+
+// refreshEditmaster(DocNo){
+//   this.EditList = [];
+//   const obj = {
+//     "SP_String": "SP_Production_Voucher",
+//     "Report_Name_String": "Get Dispatch Details For Edit",
+//     "Json_Param_String": JSON.stringify([{Doc_No : DocNo}])
+//   }
+//   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//     console.log("From Api",data);
+//     this.EditList = data;
+//     console.log("this.EditList",this.EditList);
+//    this.doc_no = data[0].Doc_No;
+//    this.ChallanDate =  new Date(data[0].Doc_Date);
+//    this.Objdispatch.Brand_ID = data[0].Brand_ID;
+//    this.getCostcenter();
+//    this.Objdispatch.Cost_Cen_ID = data[0].To_Cost_Cen_ID;
+//    this.GetFromGodown();
+//    this.Objdispatch.From_Godown_ID = data[0].F_Godown_ID;
+//    this.Objdispatch.Vehicle_Details = data[0].Vehicle_Details;
+//    this.Objdispatch.REMARKS = data[0].REMARKS;
+//    this.Objdispatch.USER_ID = data[0].USER_ID;
+//    this.Objdispatch.Fin_Year_ID = data[0].Fin_Year_ID;
+//    this.Objdispatch.F_Cost_Cen_ID = data[0].F_Cost_Cen_ID;
+//    this.todayDate = data[0].Indent_Date;
+//    this.indentno = data[0].Indent_No;
+//     this.EditList.forEach(el=>{
+//       this.productDetails.push({
+//         Delivery_Qty : el.Qty,
+//         Product_Description : el.Product_Description,
+//         product_id : el.Product_ID,
+//         Rate : el.Rate,
+//         Req_Qty : el.Req_Qty,
+//         UOM : el.UOM,
+//         Batch_No : el.Batch_No,
+//         Batch_Qty : el.bln_Qty,
+//         Batch_No_Show : el.Batch_No_Show,
+//         Accepted_Qty : el.Accepted_Qty ? el.Accepted_Qty : 0,
+//         Accept_Reason_ID : el.Accept_Reason_ID,
+//         Accept_Reason : el.Accept_Reason ? el.Accept_Reason : '-',
+//         product_type : el.Product_Type,
+//         Req_No : el.Req_No,
+//         Total_Qty : this.totalqty,
+//         Total_Accepted_Qty : this.acctotalqty
+//       });
+//     })
+//     this.BackUpproductDetails = [...this.productDetails];
+//     this.BackupIndentList = this.IndentNoList;
+//     this.GetIndentdist();
+//     const DReqBy = [];
+//     const DReqObj = [];
+//     this.EditList.forEach((item) => {
+//       if (DReqBy.indexOf(item.Req_No) === -1) {
+//         DReqBy.push(item.Req_No);
+//         DReqObj.push({Req_No : item.Req_No})
+//       }
+//     });
+//     console.log("this.RefreshData",this.EditList);
+//     const obj = {
+//      "SP_String": "SP_Production_Voucher",
+//      "Report_Name_String": "Add K4C Txn Distribution",
+//      "Json_Param_String": JSON.stringify(this.EditList),
+//      "Json_1_String" : JSON.stringify(DReqObj)
+//    }
+//  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//    console.log("From Api",data);
+//    this.Refreshlist = data;
+//    var Challan_No = data[0].Doc_No;
+//    console.log("this.Refreshlist",this.Refreshlist);
+//    if(data[0].Doc_No){
+//    this.compacctToast.clear();
+//       this.compacctToast.add({
+//        key: "compacct-toast",
+//        severity: "success",
+//        summary: "Distribution Challan No. " + Challan_No,
+//        detail: "Succesfully Update"
+//      });
+//    }
+//  })
+//     console.log("this.Objdispatch",this.productDetails);
+
+//   })
+// }
 
 getBrand(){
   console.log("CompacctCookies",this.$CompacctAPI.CompacctCookies);
@@ -889,7 +1032,7 @@ GetBatch(){
   }
   const obj = {
     "SP_String": "SP_Controller_Master",
-    "Report_Name_String": "Get_Product_Wise_Batch",
+    "Report_Name_String": "Get_Product_Wise_Batch_For_Dispatch",
     "Json_Param_String": JSON.stringify([tempObj])
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -939,7 +1082,8 @@ GetSelectedBatchqty() {
      //if(valid){
       this.SpinnerShow = true;
      const TempObj = {
-       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate))
+       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
+       Brand_ID : this.Objdispatch.Brand_ID
       }
     const obj = {
      "SP_String": "SP_Production_Voucher_New",
@@ -978,7 +1122,7 @@ GetSelectedBatchqty() {
      this.BackupIndentList.forEach((item) => {
        if (DIndent.indexOf(item.Req_No) === -1) {
          DIndent.push(item.Req_No);
-         this.IndentFilter.push({ label: item.Req_No , value: item.Req_No });
+         this.IndentFilter.push({ label: item.Req_No + '(' + item.cost_cen_name + ')' , value: item.Req_No });
          console.log("this.IndentFilter", this.IndentFilter);
        }
      });

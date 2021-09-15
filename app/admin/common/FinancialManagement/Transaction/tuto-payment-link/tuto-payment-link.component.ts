@@ -135,10 +135,8 @@ export class TutoPaymentLinkComponent implements OnInit {
         const obj = new HttpParams()
           .set("Foot_Fall_ID", this.Foot_Fall_ID)
           .set("Amount", this.Amount)
-          .set(
-            "PG_Remarks",
-            this.Remarks ? this.Remarks : "NA"
-          );
+          .set("PG_Remarks", this.Remarks ? this.Remarks : "NA" )
+          .set("User_ID", this.$CompacctAPI.CompacctCookies.User_ID );
         this.$http
           .get("/Create_Payment_Link/Tutopia_PG_DS_Get_Link_Tutopia", { params: obj })
           .subscribe((data: any) => {

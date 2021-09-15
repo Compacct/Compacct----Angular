@@ -126,7 +126,7 @@
                                                                             Edit
                                                                         </a>
                                                                     </li>
-                                                                    <li *ngIf="col.Qty != col.Accepted_Qty && col.Accepted_Qty === 0 && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.From_Cost_Cen_ID">
+                                                                    <li *ngIf="col.Accepted_Qty === 0 && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.From_Cost_Cen_ID">
                                                                         <a (click)="deleteStock(col)">
                                                                             <i class="fa fa-fw fa-trash"></i>
                                                                             Delete

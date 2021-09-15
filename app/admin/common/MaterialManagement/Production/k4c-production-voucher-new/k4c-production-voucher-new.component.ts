@@ -316,7 +316,8 @@ export class K4cProductionVoucherNewComponent implements OnInit {
    // this.RawMaterialIssueFormSubmitted = true;
     //if(valid){
     const TempObj = {
-      Doc_Date : this.DateService.dateConvert(new Date(this.todayDate))
+      Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
+      Brand_ID : this.Objproduction.Brand_ID
      }
    const obj = {
     "SP_String": "SP_Production_Voucher_New",
@@ -350,7 +351,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     this.BackupIndentList.forEach((item) => {
       if (DIndent.indexOf(item.Req_No) === -1) {
         DIndent.push(item.Req_No);
-        this.IndentFilter.push({ label: item.Req_No , value: item.Req_No });
+        this.IndentFilter.push({ label: item.Req_No + '(' + item.cost_cen_name + ')' , value: item.Req_No });
         console.log("this.IndentFilter", this.IndentFilter);
       }
     });
@@ -874,7 +875,7 @@ const obj = {
   this.TostockPoint = undefined;
   if(DocNo.Doc_No){
   this.Objproduction.Doc_No = DocNo.Doc_No;
-  this.ViewPoppup = true;
+  //this.ViewPoppup = true;
   // console.log("VIew ==", this.Objproduction.Doc_No);
   this.GetEditProduction(this.Objproduction.Doc_No);
   //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
@@ -962,7 +963,8 @@ const obj = {
 
     // console.log("this.editList  ===",data);
     // console.log("edit From_Process_IDe ===" , this.Objproduction.From_Process_ID)
-
+    
+    this.ViewPoppup = true;
   })
   }
   GetIndentdist(){
@@ -973,7 +975,7 @@ const obj = {
     this.editList.forEach((item) => {
       if (DIndentBy.indexOf(item.Req_No) === -1) {
         DIndentBy.push(item.Req_No);
-         this.IndentFilter.push({ label: item.Req_No, value: item.Req_No });
+         this.IndentFilter.push({ label: item.Req_No_with_name , value: item.Req_No });
          this.SelectedIndent.push(item.Req_No);
         console.log("this.TimerangeFilter", this.IndentFilter);
       }

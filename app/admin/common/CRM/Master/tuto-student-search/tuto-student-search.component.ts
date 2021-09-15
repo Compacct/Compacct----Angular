@@ -845,6 +845,7 @@ export class TutoStudentSearchComponent implements OnInit {
     this.transferLeadSubmitted = false;
     if(obj.Foot_Fall_ID){
       this.objFollowupDetails.Foot_Fall_ID = obj.Foot_Fall_ID;
+      this.objFollowupDetails.frd_viewd = 'Fresh';
       this.TransferLeadModal = true;
     }
   }
@@ -877,6 +878,7 @@ export class TutoStudentSearchComponent implements OnInit {
       Followup_Action: "Tele Call",
       Status: "Forward Lead",
       Used: 'N',
+      frd_viewd : this.objFollowupDetails.frd_viewd,
       Sent_To: this.objFollowupDetails.Sent_To,
       Posted_On: this.DateService.dateTimeConvert(new Date()),
       Next_Followup: this.DateService.dateTimeConvert(new Date(this.NxtFollowupDate2)),
@@ -1021,4 +1023,5 @@ class Followup {
   Fathers_Occupation: String;
   Pin: String;
   School: String;
+  frd_viewd: String;
   }

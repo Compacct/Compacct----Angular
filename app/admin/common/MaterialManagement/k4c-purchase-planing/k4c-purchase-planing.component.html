@@ -185,18 +185,21 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th>Product Description</th>
+                                            <th>Weekly Avg. Cons</th>
+                                            <th>Weekly Cons Value</th>
+                                            <th>Last Purchase Date</th>
                                             <th>Last Purchase Qty</th>
                                             <th>Last Purchase Rate</th>
-                                            <th>Last Purchase With Gst</th>
+                                            <!-- <th>Last Purchase With Gst</th> -->
                                             <th>Current Stock</th>
                                             <th>Due Payment</th>
-                                            <th>Monthly Req Value</th>
-                                            <th>Estimate Time Of Delivery(In Day)</th>
+                                            <!-- <th>Monthly Req Value</th> -->
                                             <th>Indent Qty</th>
                                             <th>Order Qty</th>
                                             <th>Rate</th>
                                             <th>Amount</th>
-                                            <th>Total Amount With GST</th>
+                                            <!-- <th>Total Amount With GST</th> -->
+                                            <th>Estimate Time Of Delivery(In Day)</th>
                                             <th>Confirm Qty</th>
                                             <th>Confirm Rate</th>
                                             <th>Confirm Amount</th>
@@ -209,18 +212,21 @@
                                         <tr>
 
                                             <td>{{col.Product_Description}}</td>
+                                            <td>{{col.Weekly_Avg_Cons}}</td>
+                                            <td>{{col.Weekly_Cons_Value}}</td>
+                                            <td>{{col.Last_Puchase_Date | date : 'dd/MMM/yyyy'}}</td>
                                             <td>{{col.Last_Puchase_Qty}}</td>
                                             <td>{{col.Last_Purchase_Rate}}</td>
-                                            <td>{{col.Last_Purchase_With_GST}}</td>
+                                            <!-- <td>{{col.Last_Purchase_With_GST}}</td> -->
                                             <td>{{col.Current_Stock}}</td>
                                             <td>{{col.Due_Payment}}</td>
-                                            <td>{{col.Monthly_Req_Value}}</td>
-                                            <td>{{col.Estimated_Time_Of_Delivery}}</td>
+                                            <!-- <td>{{col.Weekly_Avg_Cons}}</td> -->
                                             <td>{{col.Indent_Qty}}</td>
                                             <td>{{col.Order_Qty}}</td>
                                             <td>{{col.Rate}}</td>
                                             <td>{{col.Amount}}</td>
-                                            <td>{{col.Total_Amount_With_GST}}</td>
+                                            <!-- <td>{{col.Total_Amount_With_GST}}</td> -->
+                                            <td>{{col.Estimated_Time_Of_Delivery}}</td>
                                             <!-- <td>{{col.Confirm_Qty}}</td> -->
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Qty' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <!-- <td>{{col.Confirm_Rate}}</td> -->
@@ -232,10 +238,10 @@
 
                                         </tr>
                                         <tr *ngIf='rowIndex === (AuthorizedList.length - 1)'>
-                                          <td colspan="11" >Total</td>
+                                          <td colspan="11" class = "text-right">Total</td>
                                           <td>{{getTotalValue('Amount')}}</td>
-                                          <td>{{getTotalValue('Total_Amount_With_GST')}}</td>
-                                          <td colspan="2" class="text-center">-</td>
+                                          <!-- <td>{{getTotalValue('Total_Amount_With_GST')}}</td> -->
+                                          <td colspan="3" class="text-center">-</td>
                                           <td>{{getTotalValue('Confirm_Amount')}}</td>
                                           <td>{{getTotalValue('Confirm_Amount_With_GST')}}</td>
                                         </tr>
@@ -260,17 +266,17 @@
                                     <div class="panel-body">
                                         <form name="PurchaseForm" #PurchaseForm="ngForm" novalidate>
                                             <div class="form-group">
-                                              <div class="col-sm-2">
-                                                <label class="control-label">Date</label>
+                                              <div class="col-sm-3">
+                                                <label class="control-label">Date <sup class="text-danger">*</sup></label>
                                                 <ejs-datepicker  [format]="'dd/MMM/yyyy'"
                                                       [(value)] = 'todayDate'
                                                 ></ejs-datepicker>
                                               </div>
-                                                <div class="col-sm-2">
-                                                    <label class="control-label">Product Type</label>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Product Type <sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="producttype" #producttype="ngModel" [(ngModel)]="ObjPurchasePlan.Product_Type" (change)='ProductTypeChange()' [ngClass]="{'clearance': PurchaseFormSubmitted && producttype?.errors?.required}">
                                       <option  [ngValue]="undefined">Select</option>
-                                        <option *ngFor = "let option of producttypelist" value="{{option.Product_Type_ID}}">
+                                        <option *ngFor = "let option of producttypelist" value= "{{option.Product_Type_ID}}">
                                           {{option.Product_Type}}
                                         </option>
                                   </select>
@@ -286,76 +292,116 @@
                                                     <label class="control-label">Product <sup class="text-danger">*</sup> &nbsp;
                                       <span><a (click)="ProductDropdownChange()">{{data}}</a></span>
                                     </label>
-                                                    <p-dropdown [options]="Productlist" name="Product" [(ngModel)]="ObjPurchasePlan.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                    <p-dropdown [options]="Productlist" name="Product" [(ngModel)] ="ObjPurchasePlan.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                         [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #Product="ngModel" [required]="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Product?.errors?.required}" required>
                                                     </p-dropdown>
                                                 </div>
-                                                <div class="col-sm-1">
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">UOM <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]= "ObjPurchasePlan.UOM" [(disabled)]="uomdisabeld" [ngClass]="{'clearance':PurchaseFormSubmitted && uom?.errors?.required}" required>
+                                                </div>
+                                                <!-- <div class="col-sm-1">
                                                     <label class="control-label">Rate <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="rate" #rate="ngModel" [(ngModel)]="ObjPurchasePlan.Sale_rate" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && rate?.errors?.required}" required>
+                                                    <input class="form-control" name="rate" #rate="ngModel" [(ngModel)]= "ObjPurchasePlan.Sale_rate" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && rate?.errors?.required}" required>
                                                 </div>
                                                 <div class="col-sm-1">
                                                     <label class="control-label">Qty <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjPurchasePlan.Stock_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Qty?.errors?.required}" required>
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <label class="control-label">UOM <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]="ObjPurchasePlan.UOM" [(disabled)]="uomdisabeld" [ngClass]="{'clearance':PurchaseFormSubmitted && uom?.errors?.required}" required>
-                                                </div>
+                                                    <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]= "ObjPurchasePlan.Stock_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Qty?.errors?.required}" required>
+                                                </div> -->
                                             </div>
                                             <div class="form-group">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Weekly Avg. consumption <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="weekavgcons" #weekavgcons="ngModel" [(ngModel)]= "ObjPurchasePlan.Weekly_Avg_Cons" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && weekavgcons?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Weekly consumption Value<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="weekconsval" #weekconsval="ngModel" [(ngModel)]= "ObjPurchasePlan.Weekly_Cons_Value" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && weekconsval?.errors?.required}" required>
+                                                </div>
+                                                <!-- <div class="col-sm-4">
                                                     <label class="control-label">Select Vendor <sup class="text-danger">*</sup></label>
                                                     <div class="col-sm-2 pull-right" style="width:170px;">
                                                         <small><b>Local Purchase</b></small>
                                                         <p-checkbox [(ngModel)]='localpurchaseFLag' name='localpurchase' (onChange)='checkboxchange()' [binary]="true"></p-checkbox>
 
                                                     </div>
-                                                    <select class="form-control" name="vendor" #vendor="ngModel" [(ngModel)]="ObjPurchasePlan.Vendor" [(disabled)]="vendordisabled" [ngClass]="{'clearance': PurchaseFormSubmitted && vendor?.errors?.required}" required>
-                                <option  [ngValue]="undefined">Select</option>
-                                  <option *ngFor = "let option of vendorlist" value="{{option.Sub_Ledger_ID}}">
-                                    {{option.Sub_Ledger_Name}}
-                                  </option>
-                            </select>
+                                                    <select class="form-control" name="vendor" #vendor="ngModel" [(ngModel)]= "ObjPurchasePlan.Vendor" [(disabled)]= "vendordisabled" [ngClass]="{'clearance': PurchaseFormSubmitted && vendor?.errors?.required}" required>
+                                                   <option  [ngValue]="undefined">Select</option>
+                                                     <option *ngFor = "let option of vendorlist" value= "{{option.Sub_Ledger_ID}}">
+                                                       {{option.Sub_Ledger_Name}}
+                                                     </option>
+                                               </select>
+                                                </div> -->
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Last Purchase Date <sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+                                                          [(value)] = 'LastPurDate'
+                                                    ></ejs-datepicker>
+                                                  </div>
+                                                  <div class="col-sm-2">
+                                                    <label class="control-label">Last Purchase Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="lastPurQty" #lastPurQty="ngModel" [(ngModel)]= "ObjPurchasePlan.Last_Purchase_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && lastPurQty?.errors?.required}" required>
                                                 </div>
                                                 <div class="col-sm-2">
                                                   <label class="control-label">Last Purchase Rate <sup class="text-danger">*</sup></label>
-                                                  <input class="form-control" name="lastPurrate" #lastPurrate="ngModel" [(ngModel)]="ObjPurchasePlan.Last_Purchase_Rate" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && lastPurrate?.errors?.required}" required>
+                                                  <input class="form-control" name="lastPurrate" #lastPurrate="ngModel" [(ngModel)]= "ObjPurchasePlan.Last_Purchase_Rate" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && lastPurrate?.errors?.required}" required>
                                               </div>
-                                              <div class="col-sm-2">
-                                                  <label class="control-label">Last Purchase Qty <sup class="text-danger">*</sup></label>
-                                                  <input class="form-control" name="lastPurQty" #lastPurQty="ngModel" [(ngModel)]="ObjPurchasePlan.Last_Purchase_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && lastPurQty?.errors?.required}" required>
-                                              </div>
+
                                               <!-- <div class="col-sm-3">
                                                 <label class="control-label">Last Purchase With Gst <sup class="text-danger">*</sup></label>
                                                 <input class="form-control" name="lastPurgstQty" #lastPurgstQty="ngModel" [(ngModel)]="ObjPurchasePlan.Last_Purchase_With_GST" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && lastPurgstQty?.errors?.required}" required>
                                             </div> -->
 
-                                            <div class="col-sm-2">
-                                              <label class="control-label">Current Stock <sup class="text-danger">*</sup></label>
-                                              <input class="form-control" name="currentstock" #currentstock="ngModel" [(ngModel)]="ObjPurchasePlan.Current_Stock" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && currentstock?.errors?.required}" required>
-                                          </div>
-                                          <div class="col-sm-2">
-                                              <label class="control-label">Due Payment <sup class="text-danger">*</sup></label>
-                                              <input class="form-control" name="duepayment" #duepayment="ngModel" [(ngModel)]="ObjPurchasePlan.Due_Payment"  [ngClass]="{'clearance':PurchaseFormSubmitted && duepayment?.errors?.required}" required>
-                                          </div>
+
                                             </div>
                                             <div class="form-group">
-                                            <div class="col-sm-3">
-                                              <label class="control-label">Monthly Req Value <sup class="text-danger">*</sup></label>
-                                              <input class="form-control" name="monreqvalue" #monreqvalue="ngModel" [(ngModel)]="ObjPurchasePlan.Monthly_Req_Value" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && monreqvalue?.errors?.required}" required>
-                                          </div>
-                                          <div class="col-sm-4">
-                                            <label class="control-label">Estimate Time Of Delivery(In Day) <sup class="text-danger">*</sup></label>
-                                            <input class="form-control" name="estimedel" #estimedel="ngModel" [(ngModel)]="ObjPurchasePlan.Estimated_Time_Of_Delivery" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && estimedel?.errors?.required}" required>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Current Stock <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="currentstock" #currentstock="ngModel" [(ngModel)]= "ObjPurchasePlan.Current_Stock" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && currentstock?.errors?.required}" required>
+                                                </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Due Payment <sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="duepayment" #duepayment="ngModel" [(ngModel)]= "ObjPurchasePlan.Due_Payment"  [ngClass]="{'clearance':PurchaseFormSubmitted && duepayment?.errors?.required}" required>
                                         </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Order Qty <sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]= "ObjPurchasePlan.Stock_Qty" (change)='OrderValueChange()' CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Qty?.errors?.required}" required>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Current Rate <sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="rate" #rate="ngModel" [(ngModel)]= "ObjPurchasePlan.Sale_rate" (change)='OrderValueChange()' CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && rate?.errors?.required}" required>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Order Value <sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="Ovalue" #Ovalue="ngModel" [(ngModel)]= "ObjPurchasePlan.Order_Value" [disabled] = "ovaldisabled" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Ovalue?.errors?.required}" required>
+                                        </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Estimate Time Of Delivery(In Day) <sup class="text-danger">*</sup></label>
+                                              <input class="form-control" name="estimedel" #estimedel="ngModel" [(ngModel)]= "ObjPurchasePlan.Estimated_Time_Of_Delivery" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && estimedel?.errors?.required}" required>
+                                          </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Remarks</label>
-                                            <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjPurchasePlan.Remarks" [ngClass]="{'clearance':PurchaseFormSubmitted && Remarks?.errors?.required}"></textarea>
+                                            <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]= "ObjPurchasePlan.Remarks" [ngClass]="{'clearance':PurchaseFormSubmitted && Remarks?.errors?.required}"></textarea>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Select Vendor <sup class="text-danger">*</sup></label>
+                                            <div class="col-sm-2 pull-right" style="width:170px;">
+                                                <small><b>Local Purchase</b></small>
+                                                <p-checkbox [(ngModel)]='localpurchaseFLag' name='localpurchase' (onChange)='checkboxchange()' [binary]="true"></p-checkbox>
+
+                                            </div>
+                                            <select class="form-control" name="vendor" #vendor="ngModel" [(ngModel)]= "ObjPurchasePlan.Vendor" [(disabled)]= "vendordisabled" [ngClass]="{'clearance': PurchaseFormSubmitted && vendor?.errors?.required}" required>
+                                           <option  [ngValue]="undefined">Select</option>
+                                             <option *ngFor = "let option of vendorlist" value= "{{option.Sub_Ledger_ID}}">
+                                               {{option.Sub_Ledger_Name}}
+                                             </option>
+                                       </select>
                                         </div>
 
-                                        <div class="col-sm-2">
-                                            <button id="row-Add" class="btn btn-primary custombutton2" (click)="addProduct(PurchaseForm.form.valid)">
+                                        <div class="col-sm-1">
+                                            <button id="row-Add" class="btn btn-primary custombutton2" (click)= "addProduct(PurchaseForm.form.valid)">
                                           <!-- <i class="fa fa-fw fa-add"></i>&nbsp; Add --> Add
                                             </button>
                                         </div>
@@ -374,19 +420,25 @@
                                         <tr style="background-color:#4fa1d1;color:white;">
                                             <th>Product Type</th>
                                             <th>Product Description</th>
-                                            <th>Last Purchase Rate</th>
+                                            <th>UOM</th>
+                                            <th>Weekly Avg. Cons</th>
+                                            <th>Weekly Cons Value</th>
+                                            <th>Last Purchase Date</th>
                                             <th>Last Purchase Qty</th>
-                                            <th>Last Purchase With Gst</th>
+                                            <th>Last Purchase Rate</th>
                                             <th>Current Stock</th>
                                             <th>Due Payment</th>
-                                            <th>Monthly Req Value</th>
-                                            <th>Estimate Time Of Delivery(In Day)</th>
-                                            <th>Indent Qty</th>
                                             <th>Order Oty</th>
+                                            <th>Current Rate</th>
+                                            <th>Order Value</th>
+                                            <th>Estimate Time Of Delivery(In Day)</th>
+                                            <th>Remarks</th>
+                                            <!-- <th>Last Purchase With Gst</th>
+                                            <th>Monthly Req Value</th>
+                                            <th>Indent Qty</th>
                                             <th>Rate</th>
                                             <th>Amount</th>
-                                            <th>Total Amount With GST</th>
-                                            <th>Remarks</th>
+                                            <th>Total Amount With GST</th> -->
                                             <th>Vendor</th>
                                         </tr>
                                     </thead>
@@ -395,20 +447,26 @@
                                             <!--let ind = index; -->
                                             <td>{{obj.Product_Type}}</td>
                                             <td>{{obj.Product_Description}}</td>
+                                            <td>{{obj.UOM}}</td>
+                                            <td>{{obj.Weekly_Avg_Cons}}</td>
+                                            <td>{{obj.Weekly_Cons_Value}}</td>
+                                            <td>{{obj.Last_Puchase_Date}}</td>
                                             <td>{{obj.Last_Puchase_Qty}}</td>
                                             <td>{{obj.Last_Purchase_Rate}}</td>
-                                            <td>{{obj.Last_Purchase_With_GST}}</td>
                                             <td>{{obj.Current_Stock}}</td>
                                             <td>{{obj.Due_Payment}}</td>
-                                            <td>{{obj.Monthly_Req_Value}}</td>
+                                            <td>{{obj.Stock_Qty}}</td>
+                                            <td>{{obj.Sale_rate}}</td>
+                                            <td>{{obj.Order_Value}}</td>
                                             <td>{{obj.Estimated_Time_Of_Delivery}}</td>
+                                            <td>{{obj.Remarks}}</td>
+                                            <!-- <td>{{obj.Last_Purchase_With_GST}}</td>
                                             <td>{{obj.Indent_Qty}}</td>
-                                            <td>{{obj.Stock_Qty}}  {{obj.UOM}}</td>
+                                            <td>{{obj.Stock_Qty}}</td>
                                             <td>{{obj.Sale_rate}}</td>
                                             <td>{{obj.Amount}}</td>
-                                            <td>{{obj.Total_Amount_With_GST}}</td>
+                                            <td>{{obj.Total_Amount_With_GST}}</td> -->
                                             <!-- <td>{{obj.UOM}}</td> -->
-                                            <td>{{obj.Remarks}}</td>
                                             <td>{{obj.Vendor}}</td>
                                             <!-- <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
                                         </tr>

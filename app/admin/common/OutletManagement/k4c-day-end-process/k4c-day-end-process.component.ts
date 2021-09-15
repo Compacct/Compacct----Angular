@@ -51,6 +51,8 @@ export class K4cDayEndProcessComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    $(".content-header").removeClass("collapse-pos");
+    $(".content").removeClass("collapse-pos");
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
       Header: "Day End Process",
@@ -110,7 +112,7 @@ export class K4cDayEndProcessComponent implements OnInit {
       this.Spinner = false;
     })
     }
-    
+
   }
   GetProDate(){
     const obj = {
@@ -118,7 +120,7 @@ export class K4cDayEndProcessComponent implements OnInit {
       "Report_Name_String": "GET_Bill_Date"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      
+
       this.myDate =  new Date(data[0].Bill_Date);
       this.Datevalue = new Date(data[0].Bill_Date);
       console.log("Datevalue",this.Datevalue);
@@ -130,7 +132,7 @@ export class K4cDayEndProcessComponent implements OnInit {
       const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 1);
       this.maxDate = this.Datevalue;
       console.log("maxDate==", this.maxDate)
-      
+
     })
   }
   GetCostCenter(){
@@ -208,7 +210,7 @@ export class K4cDayEndProcessComponent implements OnInit {
               detail: msg
             });
       }
-     
+
     }else{
       const msgarr = sameValArr.length === 0 ? "ENTER AMOUNT" : "SELECT CLOSEING STOCK UPDATED"
       this.compacctToast.clear();
@@ -219,7 +221,7 @@ export class K4cDayEndProcessComponent implements OnInit {
               detail: msgarr
             });
     }
-   
+
   }
 
   saveCheck(){

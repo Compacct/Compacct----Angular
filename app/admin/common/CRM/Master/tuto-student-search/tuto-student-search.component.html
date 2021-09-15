@@ -943,6 +943,15 @@
 
         <div class="form-group">
             <div class="col-sm-12">
+                <label style='display: block;' class="control-label">Forward Viewed Lead As <sup class="text-danger">*</sup></label>
+                <div class='text-left'>
+                    <p-radioButton name="groupname" label="Fresh" value="Fresh" [(ngModel)]="objFollowupDetails.frd_viewd"></p-radioButton>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <p-radioButton name="groupname" value="As it is" label="Tele-call" [(ngModel)]="objFollowupDetails.frd_viewd"></p-radioButton>
+                </div>
+
+
+            </div>
+            <div class="col-sm-12">
                 <label class="control-label">
                     Forward To <sup class="text-danger">*</sup></label>
                 <select class="form-control" name='ForwardTo' #ForwardTo='ngModel' [ngClass]="{'clearance': transferLeadSubmitted &&  ForwardTo?.errors?.required}" [(ngModel)]="objFollowupDetails.Sent_To" required>

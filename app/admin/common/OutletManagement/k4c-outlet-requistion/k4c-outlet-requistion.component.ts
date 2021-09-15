@@ -62,6 +62,9 @@ export class K4cOutletRequistionComponent implements OnInit {
   ObjRequistion: Requistion = new Requistion();
   ObjRequistionSave: RequistionSave = new RequistionSave();
   ObjBrowseData: BrowseData = new BrowseData();
+  Boutletdisableflag = false;
+  outletdisableflag = false;
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -124,22 +127,33 @@ export class K4cOutletRequistionComponent implements OnInit {
 GetOutletName(){
   const obj = {
     "SP_String": "SP_Controller_Master",
-    "Report_Name_String": "Get Sale Requisition Outlet",
+    "Report_Name_String": "Get - Cost Center Name All",
     "Json_Param_String": JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}])
    // "Json_Param_String": JSON.stringify([{User_ID : 61}])
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    // console.log("OutletNameList  ===",data);
      this.OutletNameList = data;
-     this.ObjBrowseData.Cost_Cen_ID_B = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
-     this.ObjRequistion.Cost_Cen_ID = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
-     if(this.OutletNameList.length === 1){
+     //this.ObjBrowseData.Cost_Cen_ID_B = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
+    // this.ObjRequistion.Cost_Cen_ID = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
+     //this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     if(this.OutletNameList.length){
 
       this.disinput = true;
       this.getRequisition();
 
- }
-
+  }
+  if(this.$CompacctAPI.CompacctCookies.User_Type === 'A'){
+    this.ObjBrowseData.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.Boutletdisableflag = false;
+    this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.outletdisableflag = false;
+    } else {
+      this.ObjBrowseData.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.Boutletdisableflag = true;
+      this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.outletdisableflag = true;
+    }
 
   })
 }
@@ -174,9 +188,18 @@ TabClick(e) {
 }
 clearData(){
   //this.ObjRequistion= new Requistion();
-  this.ObjBrowseData.Cost_Cen_ID_B = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
-  this.ObjRequistion.Cost_Cen_ID = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
-  if(this.OutletNameList.length === 1 && this.buttonname === "Create"){
+  if(this.$CompacctAPI.CompacctCookies.User_Type === 'A'){
+    this.ObjBrowseData.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.Boutletdisableflag = false;
+    this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.outletdisableflag = false;
+    } else {
+      this.ObjBrowseData.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.Boutletdisableflag = true;
+      this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.outletdisableflag = true;
+    }
+  if(this.OutletNameList.length && this.buttonname === "Create"){
 
     this.disinput = true;
     this.getRequisition();
@@ -580,6 +603,35 @@ Cancle(row){
 }
  onConfirm(){
   console.log("cen_popup");
+  if(this.$CompacctAPI.CompacctCookies.User_Type === 'A'){
+    if(this.requistionId){
+      const TempObj ={
+        Req_No_Gen : this.requistion_no_gen
+      }
+      const obj = {
+        "SP_String": "SP_Controller_Master",
+        "Report_Name_String": "Cancle Requisition From Admin Side",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         console.log("del Data===", data[0].Column1);
+        if (data[0].Column1 === "Done"){
+          this.onReject();
+         // this.getRowData();
+         this.can_popup = false;
+         this.valid = true;
+         this.SearchStockBill(this.valid);
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Indent No: " + this.requistionId.toString(),
+            detail: "Succesfully Cancel"
+          });
+         }
+      })
+    }
+  } else {
   if(this.requistionId){
       const TempObj ={
         Req_No_Gen : this.requistion_no_gen
@@ -615,7 +667,7 @@ Cancle(row){
         }
       })
     }
-
+  }
 }
 Active(row){
   var tempId = row.Req_No;
