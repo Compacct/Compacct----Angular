@@ -109,6 +109,7 @@ import { K4cDayEndProcessComponent } from './common/OutletManagement/k4c-day-end
 import { TutoDsDashboardComponent } from './common/CRM/Report/tuto-ds-dashboard/tuto-ds-dashboard.component';
 import { UpdateExpiryComponent } from './common/OutletManagement/update-expiry/update-expiry.component';
 import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/closing-stock-with-expiry-date/closing-stock-with-expiry-date.component';
+import { TutoSaleTreeFieldComponent } from './common/CRM/Master/tuto-sale-tree-field/tuto-sale-tree-field.component';
 
 
 const layoutRoutes: Routes = [
@@ -627,6 +628,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                       component: ClosingStockWithExpiryDateComponent,
                                       data: {title: 'Closing Stock With Expiry'}
                                       },
+                                      {
+                                        path: 'BL_CRM_Master_SalesTeam_Field_Sales',
+                                        component: TutoSaleTreeFieldComponent,
+                                        data: {title: 'Sales Tree Field Sales'}
+                                        },
                                   {
                                     path: 'Tutopia_DS_Dashboard',
                                     component: TutoDsDashboardComponent,

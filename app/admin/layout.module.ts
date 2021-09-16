@@ -190,6 +190,7 @@ import { K4cDayEndProcessComponent } from './common/OutletManagement/k4c-day-end
 import { TutoDsDashboardComponent } from './common/CRM/Report/tuto-ds-dashboard/tuto-ds-dashboard.component';
 import { UpdateExpiryComponent } from './common/OutletManagement/update-expiry/update-expiry.component';
 import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/closing-stock-with-expiry-date/closing-stock-with-expiry-date.component';
+import { TutoSaleTreeFieldComponent } from './common/CRM/Master/tuto-sale-tree-field/tuto-sale-tree-field.component';
 
 
 @NgModule({
@@ -321,7 +322,8 @@ import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/c
     K4cDayEndProcessComponent,
     TutoDsDashboardComponent,
     UpdateExpiryComponent,
-    ClosingStockWithExpiryDateComponent
+    ClosingStockWithExpiryDateComponent,
+    TutoSaleTreeFieldComponent
   ],
   imports: [
     CommonModule,

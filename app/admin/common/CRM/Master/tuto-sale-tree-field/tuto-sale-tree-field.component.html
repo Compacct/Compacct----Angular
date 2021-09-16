@@ -1,0 +1,93 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-header with-border">
+                    <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("Zonal Head")'>
+                  <span class="glyphicon glyphicon-plus"></span> Create Zonal Head
+                </button>
+                    <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("ASP")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create ASP
+                  </button>
+                    <button class="btn btn-primary btn-sm" (click)='OpenSaleFieldModal("School")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create School
+                  </button>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-12 text-right" style="margin: 0.5em 0;">
+                            <span class='pull-left'>Tree View Tools</span>
+                            <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Expand all" (click)="expandAll()"><i class="fa fa-fw fa-expand"></i></button>
+                            <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Collapse all" (click)="collapseAll()"><i class="fa fa-fw fa-compress"></i></button>
+                            <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="View Change" (click)="ToggleView()"><i class="fa fa-fw fa-arrows"></i></button>
+                        </div>
+                        <div class="col-sm-12">
+                            <!-- <p-tree  scrollHeight="300px" (onNodeSelect)='GetSelectedMember($event.node)' [value]="TreeDataList" [loading]="loading" layout="{{layoutString}}"></p-tree> -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- DYNAMIC POPUP  -->
+<p-dialog [header]="'Create '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="CreateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <form name="CreateSalesUpdate" #CreateSalesUpdate="ngForm" novalidate>
+        <div class="form-group">
+
+            <div class="col-sm-12">
+                <label class="control-label">Member Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="Name" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">User Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="User name" name="User_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Password<sup class="text-danger">*</sup></label>
+                <input type="password" placeholder="Password" class="form-control" name="pass" #pass="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass.errors?.required}" maxlength="10" required>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
+                <label class="control-label">Location<sup class="text-danger">*</sup></label>
+                <input type="text" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Area" class="form-control" required>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
+                <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" required>
+                 </textarea>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">PIN<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="ObjSaleField.Pin_Code" placeholder="PIN" (ngModelChange)="stateDistrictChange(ObjSaleField.Pin_Code)" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && Pin?.errors?.required ||
+                      (Pin.errors?.minlength && Pin.touched)}" required>
+
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">District<sup class="text-danger">*</sup></label>
+                <select class="form-control" name="District" #District="ngModel" [(ngModel)]="ObjSaleField.District" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && District?.errors?.required ||
+                      (District.errors?.minlength && District.touched)}" required>
+
+                       <option  [ngValue]="undefined" > Select</option>
+                         <option *ngFor="let option of DistrictList" value={{option.Districtname}} >
+                          {{option.Districtname}}
+                        </option>
+                    </select>
+
+            </div>
+
+
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="CreateFieldModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+        <button type="button" class="btn btn-primary" (click)="SaveUpdateField(CreateSalesUpdate.form.valid)">
+      SAVE
+    </button>
+    </p-footer>
+</p-dialog>
