@@ -28,6 +28,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
   ToCostCenterList=[];
   ToGoDownList=[];
   saveData = [];
+  savenprintData = [];
   FromGodownList = [];
   GetAllDataList = [];
   inputBoxDisabled = false;
@@ -45,6 +46,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
   to_Stock_Point = false;
   viewpopUp = false;
   viewData:any = {};
+  Adv_Order_No: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -110,6 +112,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Column1 ===",data[0].Column1);
       var tempID = data[0].Column1;
+      //this.Adv_Order_No = data[0].Column1;
       if(data[0].Column1){
         this.SearchProduction();
         this.compacctToast.clear();
@@ -120,6 +123,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
          detail: "Advance Production Entry Succesfully"
         });
        this.clearData();
+       //this.SaveNPrint();
        this.onReject()
       }
       else {
@@ -140,6 +144,22 @@ export class K4cAdvanceProductionComponent implements OnInit {
    this.clearData();
     })
   }
+  // savenprintOrderNo(){
+  //   this.ProductDetailsList.forEach(el =>{
+  //       const savenprintObj = {
+  //         Adv_Order_No : el.Adv_Order_No
+  //       }
+  //       this.savenprintData.push({savenprintObj})
+  //       console.log("savenprintData",savenprintObj);
+  //   })
+  // }
+  // SaveNPrint() {
+  //   if (this.Adv_Order_No) {
+  //     window.open("/Report/Crystal_Files/K4C/Adv_Production_Voucher_Print_New.aspx?DocNo=" + this.Adv_Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  //  );
+  //   }
+  //   //console.log('Doc_No ==', this.Objcustomerdetail.Adv_Order_No)
+  // }
    onReject() {
     this.compacctToast.clear("c");
   }
@@ -302,6 +322,13 @@ export class K4cAdvanceProductionComponent implements OnInit {
        console.log("GetAllDataList",this.GetAllDataList)
        this.seachSpinner = false;
       })
+  }
+  Browseprint(Objp){
+    console.log("Print",Objp.Adv_Order_No);
+  if (Objp.Adv_Order_No) {
+    window.open("/Report/Crystal_Files/K4C/Adv_Production_Voucher_Print_New.aspx?DocNo=" + Objp.Adv_Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+    );
+  }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {

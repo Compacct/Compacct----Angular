@@ -107,6 +107,8 @@ import { K4cPurchasePlaningComponent } from './common/MaterialManagement/k4c-pur
 import { K4cOutletStockReportComponent } from './common/OutletManagement/k4c-outlet-stock-report/k4c-outlet-stock-report.component';
 import { K4cDayEndProcessComponent } from './common/OutletManagement/k4c-day-end-process/k4c-day-end-process.component';
 import { TutoDsDashboardComponent } from './common/CRM/Report/tuto-ds-dashboard/tuto-ds-dashboard.component';
+import { UpdateExpiryComponent } from './common/OutletManagement/update-expiry/update-expiry.component';
+import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/closing-stock-with-expiry-date/closing-stock-with-expiry-date.component';
 
 
 const layoutRoutes: Routes = [
@@ -615,7 +617,16 @@ data: {title: 'K4C_Outlet_Requisition'}
                                   path: 'K4C_Day_End_Process',
                                   component: K4cDayEndProcessComponent,
                                   data: {title: 'Day End Process'}
-                                  },
+                                  },{
+                                    path: 'Update_Expiry',
+                                    component: UpdateExpiryComponent,
+                                    data: {title: 'Updated Expiry'}
+                                    },
+                                    {
+                                      path: 'Closing_Stock_With_Expiry_Date',
+                                      component: ClosingStockWithExpiryDateComponent,
+                                      data: {title: 'Closing Stock With Expiry'}
+                                      },
                                   {
                                     path: 'Tutopia_DS_Dashboard',
                                     component: TutoDsDashboardComponent,

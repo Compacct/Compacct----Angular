@@ -188,6 +188,8 @@ import { K4cPurchasePlaningComponent } from './common/MaterialManagement/k4c-pur
 import { K4cOutletStockReportComponent } from './common/OutletManagement/k4c-outlet-stock-report/k4c-outlet-stock-report.component';
 import { K4cDayEndProcessComponent } from './common/OutletManagement/k4c-day-end-process/k4c-day-end-process.component';
 import { TutoDsDashboardComponent } from './common/CRM/Report/tuto-ds-dashboard/tuto-ds-dashboard.component';
+import { UpdateExpiryComponent } from './common/OutletManagement/update-expiry/update-expiry.component';
+import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/closing-stock-with-expiry-date/closing-stock-with-expiry-date.component';
 
 
 @NgModule({
@@ -317,7 +319,9 @@ import { TutoDsDashboardComponent } from './common/CRM/Report/tuto-ds-dashboard/
     K4cPurchasePlaningComponent,
     K4cOutletStockReportComponent,
     K4cDayEndProcessComponent,
-    TutoDsDashboardComponent
+    TutoDsDashboardComponent,
+    UpdateExpiryComponent,
+    ClosingStockWithExpiryDateComponent
   ],
   imports: [
     CommonModule,

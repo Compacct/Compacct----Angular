@@ -70,6 +70,7 @@
                                                     <th style="width:5em">Action</th>
                                                     <th>Doc Date</th>
                                                     <th>Doc No</th>
+                                                    <th>Adv Order No</th>
                                                     <th>Brand</th>
                                                     <th>Material Type</th>
                                                     <th>Production Stock Point</th>
@@ -90,6 +91,12 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                                 <ul class="dropdown-menu">
+                                                                  <li >
+                                                                    <a (click)="Browseprint(col)">
+                                                                        <i class="fa fa-fw fa-print"></i>
+                                                                        Print
+                                                                    </a>
+                                                                  </li>
                                                                     <li >
                                                                         <a (click)="editmaster(col)">
                                                                             <i class="fa fa-fw fa-pencil"></i>
@@ -107,6 +114,7 @@
                                                     </td>
                                                     <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
                                                     <td>{{col.Doc_No }}</td>
+                                                    <td>{{col.Adv_Order_No}}</td>
                                                     <td>{{col.Brand_INI}}</td>
                                                     <td>{{col.Material_Type}}</td>
                                                     <td>{{col.Production_Stock_Point}}</td>
@@ -196,13 +204,15 @@
                                     <div class="table-responsive no-padding" style="overflow-x: hidden !important">
                                         <p-table
                                                 [value]="ProductDetailsList"
-                                                [globalFilterFields]="['Product_Description','Requisition_Qty','UOM']"
-                                                 [rowHover]="true"
-                                                 #dt>
+                                                [rows]="100" [rowHover]="true"
+                                                [autoLayout]="true" sortMode="multiple"
+                                                [globalFilterFields]="['Adv_Order_No','Customer_Name','Customer_Mobile','Product_Description','Order_Date','Cost_Center_Name','Del_Date','Del_Date_Time','Qty','Weight_in_Pound','Avd_qty']"
+                                                [rowHover]="true"
+                                                 #dt1>
                                                    <ng-template pTemplate="caption">
                                                        <div class="row">
                                                             <div class="col-sm-3 pull-left" style="text-align: left ">
-                                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                                                 </div>
                                                        </div>
 
@@ -210,8 +220,9 @@
                                                     <ng-template pTemplate="header">
                                                         <tr>
                                                             <th style="width:5em">Action</th>
-                                                            <th >Order No</th>
-                                                            <th>Product Description</th>
+                                                            <th>Order No</th>
+                                                            <th>Customer Name / Mobile No</th>
+                                                            <th style="width:15em">Product Description</th>
                                                             <th>Order Date</th>
                                                             <th >Delivery Outlet</th>
                                                             <th >Delivery Date Time</th>
@@ -247,7 +258,31 @@
                                                                 </div>
                                                         </td>
                                                             <td>{{col.Adv_Order_No}}</td>
-                                                            <td>{{col.Product_Description}}</td>
+                                                            <td>{{col.Customer_Name}} ({{col.Customer_Mobile}})</td>
+                                                            <td><b>{{col.Product_Description}}</b><br>
+
+                                                            <i><tr *ngIf="col.Product_Modifier">Message 1 -<td>{{col.Product_Modifier}}</td></tr>
+                                                              <tr *ngIf="col.Product_Modifier_1">Message 2 -<td>{{col.Product_Modifier_1}}</td></tr>
+                                                              <tr *ngIf="col.Product_Modifier_2">Message 3 -<td>{{col.Product_Modifier_2}}</td></tr>
+                                                              <tr *ngIf="col.Product_Modifier_3">Message 4 -<td>{{col.Product_Modifier_3}}</td></tr>
+                                                              <tr *ngIf="col.Product_Modifier_4">Message 5 -<td>{{col.Product_Modifier_4}}</td></tr></i><br>
+                                                              <!-- <i><tr><td *ngIf="col.Product_Modifier"> Message 1 - {{col.Product_Modifier}}</td>
+                                                                     <td *ngIf="col.Product_Modifier_1"> Message 2 - {{col.Product_Modifier_1}}</td>
+                                                                     <td *ngIf="col.Product_Modifier_2"> Message 3 - {{col.Product_Modifier_2}}</td></tr></i><br>
+                                                              <i><tr><td *ngIf="col.Product_Modifier_3"> Message 4 -{{col.Product_Modifier_3}}</td></tr>
+                                                                     <td *ngIf="col.Product_Modifier_4"> Message 5 -{{col.Product_Modifier_4}}</td></tr></i><br>  -->
+
+                                                              <!-- <tr *ngIf="col.Flavour">Flavour -<td class="text-muted">{{col.Flavour}}</td></tr>
+                                                              <tr *ngIf="col.Finishing">Finishing -<td class="text-muted">{{col.Finishing}}</td></tr>
+                                                              <tr *ngIf="col.Shape">Shape -<td class="text-muted">{{col.Shape}}</td></tr>
+                                                              <tr *ngIf="col.Tier">Tier -<td class="text-muted">{{col.Tier}}</td></tr>
+                                                              <tr *ngIf="col.Base">Base -<td class="text-muted">{{col.Base}}</td></tr>
+                                                              <tr *ngIf="col.Boxes">Boxes -<td class="text-muted">{{col.Boxes}}</td></tr>
+                                                              <tr *ngIf="col.Changes_on_Cake">Changes On Cake -<td class="text-muted">{{col.Changes_on_Cake}}</td></tr>
+                                                              <tr *ngIf="col.Order_Taken_By">Order Taken By -<td class="text-muted">{{col.Order_Taken_By}}</td></tr> -->
+
+                                                            </td>
+
                                                             <td>{{col.Order_Date | date : 'dd/MMM/yyyy'}}</td>
                                                             <td>{{col.Cost_Center_Name}}</td>
                                                             <td>{{col.Del_Date | date : 'dd/MMM/yyyy'}} - {{col.Del_Date_Time}}</td>

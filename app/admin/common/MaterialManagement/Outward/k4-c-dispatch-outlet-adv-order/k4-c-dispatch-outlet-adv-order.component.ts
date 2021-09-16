@@ -442,6 +442,13 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       console.log("else GetAllDataList",this.GetAllDataList)
       }
   }
+  Browseprint(Objp){
+    console.log("Print",Objp.Adv_Order_No);
+  if (Objp.Adv_Order_No) {
+    window.open("/Report/Crystal_Files/K4C/Adv_Custom_Order_Dispatch.aspx?DocNo=" + Objp.Adv_Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+    );
+  }
+  }
 
 }
 class advDispat{

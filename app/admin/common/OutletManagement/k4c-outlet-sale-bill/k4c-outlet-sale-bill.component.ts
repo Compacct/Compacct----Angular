@@ -850,8 +850,8 @@ ValidateEntryCheck(){
     if(data[0].status === "True") {
       this.saveprintAndUpdate();
     }
-    else if(data[0].status === "false"){   
-      var productDes = data[0].Product_Description; 
+    else if(data[0].status === "false"){
+      var productDes = data[0].Product_Description;
       var batchn = data[0].Batch_No;
      this.Spinner = false;
      this.ngxService.stop();
@@ -1268,6 +1268,15 @@ getadvorderdetails(Adv_Order_No){
             Product_ID : element.Product_ID,
             Product_Description : element.Product_Description,
             Modifier : element.Product_Modifier,
+            Flavour : element.Flavour,
+            Finishing : element.Finishing,
+            Shape : element.Shape,
+            Tier : element.Tier,
+            Boxes : element.Boxes,
+            Base :  element.Base,
+            Changes_on_Cake : element.Changes_on_Cake,
+            Order_Taken_By : element.Order_Taken_By,
+            Weight_in_Pound : element.Weight_in_Pound,
             Net_Price : Number(element.Adv_Rate),
             Batch_No : element.Batch_No,
             Stock_Qty :  Number(element.Qty),

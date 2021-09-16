@@ -875,7 +875,7 @@ const obj = {
   this.TostockPoint = undefined;
   if(DocNo.Doc_No){
   this.Objproduction.Doc_No = DocNo.Doc_No;
-  //this.ViewPoppup = true;
+  this.ViewPoppup = true;
   // console.log("VIew ==", this.Objproduction.Doc_No);
   this.GetEditProduction(this.Objproduction.Doc_No);
   //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
@@ -963,8 +963,7 @@ const obj = {
 
     // console.log("this.editList  ===",data);
     // console.log("edit From_Process_IDe ===" , this.Objproduction.From_Process_ID)
-    
-    this.ViewPoppup = true;
+
   })
   }
   GetIndentdist(){
