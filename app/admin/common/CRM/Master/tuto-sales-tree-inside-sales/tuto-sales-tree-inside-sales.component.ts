@@ -5,14 +5,16 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 
+
 @Component({
-  selector: 'app-tuto-sale-tree-field',
-  templateUrl: './tuto-sale-tree-field.component.html',
-  styleUrls: ['./tuto-sale-tree-field.component.css'],
+  selector: 'app-tuto-sales-tree-inside-sales',
+  templateUrl: './tuto-sales-tree-inside-sales.component.html',
+  styleUrls: ['./tuto-sales-tree-inside-sales.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class TutoSaleTreeFieldComponent implements OnInit {
+export class TutoSalesTreeInsideSalesComponent implements OnInit {
+
   CreateFieldModal = false;
   CreateFieldModalFormSubmitted = false;
   CreateFieldModalTitle = '';
@@ -37,8 +39,8 @@ export class TutoSaleTreeFieldComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Sales Tree Field Sales",
-      Link: " Channel Sale -> Sales Tree Field Sales"
+      Header: "Sales Team Inside Sales",
+      Link: " Channel Sale -> Sales Team Inside Sales"
     });
     console.log('gg');
     this.GetAllWBdistrict();
@@ -69,7 +71,7 @@ export class TutoSaleTreeFieldComponent implements OnInit {
         });
     }
   }
-  GetIntroducerList(SupDeptName,obj2?){
+  GetIntroducerList(SupDeptName){
     this.IntroducerList = [];
     const obj = {
       "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
@@ -83,9 +85,6 @@ export class TutoSaleTreeFieldComponent implements OnInit {
         element['value'] = element.Member_ID;
       });
       this.IntroducerList = data;
-      if(obj2 && obj2.Intro_Member_ID) {
-        this.ObjSaleField.Intro_Member_ID = obj2.Intro_Member_ID;
-      }
       this.CreateFieldModal = true;
     });
   } 
@@ -123,22 +122,18 @@ export class TutoSaleTreeFieldComponent implements OnInit {
       this.CurrentNode = e;
     }
   }
-  
   nodeSelect(event) {
+   console.log(event.node.label);
+  }
+  nodeUnselect(event) {
     console.log(event.node.label);
-    if(event.node.Sub_Dept === "DISTRIBUTOR"){
-      this.OpenSaleFieldModal(event.node.Sub_Dept, event.node)
-    }
-   }
-   nodeUnselect(event) {
-     console.log(event.node.label);
-   }
+  }
    GetTreeData(){
     this.loading = true;
     const obj = {
      "SP_String": "SP_Tree_New",
-     "Report_Name_String": "Member Tree ASP",
-     "Json_Param_String": JSON.stringify([{"User_ID": this.$CompacctAPI.CompacctCookies.User_ID,"MEM_Type" : 'channelsales'}])
+     "Report_Name_String": "Member Tree TS",
+     "Json_Param_String": JSON.stringify([{"User_ID": this.$CompacctAPI.CompacctCookies.User_ID,"MEM_Type" : 'sales'}])
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      console.log("tree",data);
@@ -181,22 +176,22 @@ export class TutoSaleTreeFieldComponent implements OnInit {
     this.ObjSaleField.Member_ID = '0';
     this.ObjSaleField.Sales_Type = undefined;
     this.IntroducerTitle = undefined;
-    if(type === 'Zonal Head') {      
-      this.IntroducerTitle = 'Channel Head';
+    if(type === 'LEAD MANAGER') {      
+      this.IntroducerTitle = 'Admin';
     }
-    if(type === 'ASP') {      
-      this.IntroducerTitle = 'Distributor';
+    if(type === 'RM') {      
+      this.IntroducerTitle = 'LEAD MANAGER';
     }
-    if(type === 'School') {      
-      this.IntroducerTitle = 'ASP';
+    if(type === 'SALES HEAD') {      
+      this.IntroducerTitle = 'RM';
     }
-    if(type === 'DISTRIBUTOR') {      
-      this.IntroducerTitle = 'Zonal Head';
+    if(type === 'TELE SALES') {      
+      this.IntroducerTitle = 'SALES HEAD';
     }
-    if(obj && obj.Intro_Member_ID) {
-      this.ObjSaleField.Member_ID = obj.Member_ID;
+    if(obj) {
+      this.ObjSaleField = obj;
       this.ObjSaleField.Sales_Type = type;
-      this.GetIntroducerList(type,obj);
+      this.GetIntroducerList(type);
     } else {
       this.CreateFieldModalTitle = type;
       this.ObjSaleField.Sales_Type = type;
@@ -217,12 +212,12 @@ export class TutoSaleTreeFieldComponent implements OnInit {
           let Type:String = this.ObjSaleField.Sales_Type;
           this.ClearData();
           this.GetTreeData();
-          this.CreateFieldModal = false;
+          this.CreateFieldModal = false;         
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
-            summary: '' + Type,
+            summary: ''+ Type,
             detail:  "Succesfully Created"
           });
 
@@ -243,6 +238,7 @@ export class TutoSaleTreeFieldComponent implements OnInit {
     this.ObjSaleField = new SalesTreeField();
     this.CreateFieldModalFormSubmitted = false;
     this.IntroducerList = [];
+
     if(this.locationInput) {
       this.locationInput.nativeElement.value = '';
     }  
@@ -253,7 +249,6 @@ export class TutoSaleTreeFieldComponent implements OnInit {
 class SalesTreeField {
   Member_ID:String;   
   Member_Name:String;
-  Contact_Name:String;
   School_Location:String;
   School_Address:String;
   District :String;

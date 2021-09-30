@@ -7,6 +7,9 @@
                     <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("Zonal Head")'>
                   <span class="glyphicon glyphicon-plus"></span> Create Zonal Head
                 </button>
+                    <!-- <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("DISTRIBUTOR")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create DISTRIBUTOR
+                  </button> -->
                     <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("ASP")'>
                     <span class="glyphicon glyphicon-plus"></span> Create ASP
                   </button>
@@ -17,13 +20,13 @@
                 <div class="box-body">
                     <div class="form-group">
                         <div class="col-sm-12 text-right" style="margin: 0.5em 0;">
-                            <span class='pull-left'>Tree View Tools</span>
+                            <!-- <span class='pull-left'>Tree View Tools</span> -->
                             <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Expand all" (click)="expandAll()"><i class="fa fa-fw fa-expand"></i></button>
                             <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Collapse all" (click)="collapseAll()"><i class="fa fa-fw fa-compress"></i></button>
                             <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="View Change" (click)="ToggleView()"><i class="fa fa-fw fa-arrows"></i></button>
                         </div>
                         <div class="col-sm-12">
-                            <!-- <p-tree  scrollHeight="300px" (onNodeSelect)='GetSelectedMember($event.node)' [value]="TreeDataList" [loading]="loading" layout="{{layoutString}}"></p-tree> -->
+                            <p-tree scrollHeight="300px" selectionMode="single" [(selection)]="selectedFile" (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)" [value]="TreeDataList" [loading]="loading" layout="{{layoutString}}"></p-tree>
 
                         </div>
                     </div>
@@ -33,18 +36,47 @@
     </div>
 </div>
 <!-- DYNAMIC POPUP  -->
-<p-dialog [header]="'Create '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="CreateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;"
+<p-dialog [header]="'Create '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="CreateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }" style="text-align: center;"
     [minY]="70" [maximizable]="true" [baseZIndex]="10000">
     <form name="CreateSalesUpdate" #CreateSalesUpdate="ngForm" novalidate>
-        <div class="form-group">
-
+        <div class="form-group" style='padding-bottom: 12em;'>
             <div class="col-sm-12">
-                <label class="control-label">Member Name<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control" placeholder="Name" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required>
+                <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger"
+                    >*</span
+                  ></label
+                >
+                <p-dropdown
+                  [options]="IntroducerList"
+                  name="Introducer"
+                  [(ngModel)]="ObjSaleField.Intro_Member_ID"
+                  [showClear]="true"
+                  [emptyFilterMessage]="' No Introducer Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [placeholder]="'Select Introducer'"
+                  [virtualScroll]="true"
+                  itemSize="30"
+                  #Introducer="ngModel"
+                  [styleClass]="
+                  CreateFieldModalFormSubmitted && Introducer.errors?.required
+                      ? 'clearance'
+                      : ''
+                  "
+                  [required]="true"
+                >
+                </p-dropdown>
+              </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"|| CreateFieldModalTitle === "School"'>
+                <label class="control-label">{{CreateFieldModalTitle}} Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle + ' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required>
             </div>
             <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"'>
                 <label class="control-label">User Name<sup class="text-danger">*</sup></label>
                 <input type="text" class="form-control" placeholder="User name" name="User_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Contact Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name.errors?.required}" required>
             </div>
             <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"'>
                 <label class="control-label">Password<sup class="text-danger">*</sup></label>
@@ -56,12 +88,12 @@
             </div>
             <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
                 <label class="control-label">Address<sup class="text-danger">*</sup></label>
-                <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" required>
+                <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.School_Address" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" required>
                  </textarea>
             </div>
             <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP"'>
                 <label class="control-label">PIN<sup class="text-danger">*</sup></label>
-                <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="ObjSaleField.Pin_Code" placeholder="PIN" (ngModelChange)="stateDistrictChange(ObjSaleField.Pin_Code)" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && Pin?.errors?.required ||
+                <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="ObjSaleField.PIN_Code" placeholder="PIN" (ngModelChange)="stateDistrictChange(ObjSaleField.PIN_Code)" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && Pin?.errors?.required ||
                       (Pin.errors?.minlength && Pin.touched)}" required>
 
             </div>

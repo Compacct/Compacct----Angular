@@ -199,18 +199,18 @@
                             <div  class="label-t">{{FprocessName}}</div>
 
                     </div>
-                       <div class="col-sm-4">
+                       <!-- <div class="col-sm-4">
                          <label class="control-label">Product Type</label>
                              <div  class="label-t">{{Producttype}}</div>
 
-                     </div>
-                    </div>
-                     <div class="form-group">
+                     </div> -->
                      <div class="col-sm-4">
                       <label class="control-label">Shift</label>
                           <div  class="label-t">{{Vshift}}</div>
 
                   </div>
+                    </div>
+                     <div class="form-group">
                   <div class="col-sm-4">
                     <label class="control-label">From Stock Point</label>
                         <div  class="label-t">{{FstockPoint}}</div>
@@ -240,6 +240,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
+                                           <th>Product Type</th>
                                            <th>Product Name</th>
                                            <th>Batch No</th>
                                            <th>Total Qty</th>
@@ -247,7 +248,7 @@
                                     </ng-template>
                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
                                         <tr>
-
+                                           <td>{{col.Product_Type}}</td>
                                            <td>{{col.Product_Description}}</td>
                                            <td>{{col.Batch_NO ? col.Batch_NO : '-'}}</td>
                                            <td>{{col.Qty}}</td>

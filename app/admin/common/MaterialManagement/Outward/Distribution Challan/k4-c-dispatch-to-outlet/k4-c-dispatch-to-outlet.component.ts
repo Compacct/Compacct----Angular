@@ -140,6 +140,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
     this.ObjBrowseData.Brand_ID = undefined;
     this.ObjBrowseData.Cost_Cen_ID = undefined;
     this.clearData();
+    this.todayDate = new Date();
+    this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     this.SelectedIndent = [];
     this.IndentFilter = [];
   }
@@ -168,6 +170,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
              detail: "Succesfully Deleted"
            });
            this.clearData();
+           this.todayDate = new Date();
+           this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
          }
        })
     }
@@ -186,8 +190,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
   this.DispatchFormSubmit = false;
   this.reqNumber = undefined;
   this.Objadditem.Issue_Qty = undefined;
-  this.Objadditem.Product_ID = undefined;
-  this.Objadditem.Batch_No = undefined;
+  //this.Objadditem.Product_ID = undefined;
+  //this.Objadditem.Batch_No = undefined;
   this.RequistionSearchFormSubmit = false;
   this.BatchList = [];
   this.itemList = [];
@@ -195,8 +199,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
   this.reqQTYdis = true;
   this.AccQtydis = false;
   this.EditList = [];
-  this.todayDate = new Date();
-  this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+  // this.todayDate = new Date();
+  // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   //this.SelectedIndent = [];
   // this.IndentNoList = [];
   // this.BackupIndentList = [];
@@ -452,6 +456,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.items = ["BROWSE", "CREATE"];
       this.buttonname = "Create";
       this.clearData()
+      this.todayDate = new Date();
+      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
       this.ObjBrowseData.Cost_Cen_ID = this.Objdispatch.Cost_Cen_ID;
       this.ObjBrowseData.Brand_ID = this.Objdispatch.Brand_ID;
       this.searchData(true);
@@ -464,6 +470,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.clearData();
+     this.todayDate = new Date();
+     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     }
 
     else{
@@ -525,6 +533,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.items = ["BROWSE", "CREATE"];
       this.buttonname = "Create";
       this.clearData()
+      this.todayDate = new Date();
+      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
       this.ObjBrowseData.Cost_Cen_ID = this.Objdispatch.Cost_Cen_ID;
       this.ObjBrowseData.Brand_ID = this.Objdispatch.Brand_ID;
       this.searchData(true);
@@ -546,6 +556,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.clearData();
+     this.todayDate = new Date();
+     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
 
     }
   }
@@ -787,6 +799,8 @@ searchData(valid){
       this.GetAllDataList = data;
       console.log("this.GetAllDataList",this.GetAllDataList);
       this.clearData();
+      this.todayDate = new Date();
+      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
      // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
     })
   }
@@ -804,6 +818,8 @@ editmaster(masterProduct){
   this.productDetails = [];
   //this.BackUpproductDetails = [];
   this.clearData();
+  this.todayDate = new Date();
+  this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   this.outLetDis = true;
   if(masterProduct.Doc_No){
   this.tabIndexToView = 1;
@@ -890,9 +906,9 @@ GetIndentdist(){
 //   this.Refreshdata(DocNo);
 //   }
 // }
-Refresh(obj){  
+Refresh(obj){
   this.refreshEditmaster(obj.Doc_No);
-     
+
 }
 refreshEditmaster(DocNo){
   const obj = {
@@ -915,7 +931,7 @@ refreshEditmaster(DocNo){
          });
        }
         console.log("this.Objdispatch",this.productDetails);
-    
+
       })
 }
 
@@ -1295,6 +1311,8 @@ clearbutton(){
 //  this.adDisabled = true;
   this.itemList = [];
   this.clearData();
+  this.todayDate = new Date();
+  this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   this.todayDate = new Date();
   this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   this.SelectedIndent = [];

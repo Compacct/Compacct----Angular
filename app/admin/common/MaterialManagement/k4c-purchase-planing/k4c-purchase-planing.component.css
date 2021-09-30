@@ -34,9 +34,12 @@ textarea.form-control {
     margin-top: 28px;
     /* margin-left: 130px; */
   }
-  .custombutton1 {
+  /* .custombutton1 {
     margin-top: 28px;
-  }
+  } */
+  .custombutton3 {
+    margin-top: 28px;
+   }
   .pullright2 {
     margin-left: -80px;
      /* margin-top: 25px; */
@@ -49,7 +52,10 @@ div.label-t {
   background: rgb(206 216 216 / 51%);
 }
 .text-red-active > td {
-  color:red;
+   color:red;
+}
+.bg-color{
+  background-color : #F5B7B1 !important ;
 }
 .custombutton2 {
   margin-top: 30px;

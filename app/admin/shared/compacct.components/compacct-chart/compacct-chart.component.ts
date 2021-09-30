@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, ViewEncapsulation } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 declare var $: any;
 import * as Chart from "chart.js";
@@ -9,7 +9,8 @@ import "chartjs-plugin-datalabels";
 @Component({
   selector: "app-compacct-chart",
   templateUrl: "./compacct-chart.component.html",
-  styleUrls: ["./compacct-chart.component.css"]
+  styleUrls: ["./compacct-chart.component.css"],
+  encapsulation: ViewEncapsulation.None
 })
 export class CompacctChartComponent implements OnInit {
   data: any;
@@ -24,6 +25,7 @@ export class CompacctChartComponent implements OnInit {
   displayChartDetailsModal = false;
   ChartDetailsTitle = "Chart";
   ChartDeatilsList = [];
+  ChartColList = [];
   BARoptions: any;
   Horioptions: any;
   PIEoption: any;
@@ -305,6 +307,15 @@ export class CompacctChartComponent implements OnInit {
         })
         .subscribe((data: any) => {
           this.ChartDeatilsList = data ? JSON.parse(data) : [];
+          const keyslist = this.ChartDeatilsList.length ? Object.keys(this.ChartDeatilsList[0]) : [];
+          if(keyslist.length){
+            this.ChartColList = [];
+            keyslist.forEach(item =>{
+              const hobj = { field: item, header: item.replace(/_/g,' ') };
+              this.ChartColList.push(hobj);
+            })
+            
+          }
           this.seachSpinner = false;
         });
     }

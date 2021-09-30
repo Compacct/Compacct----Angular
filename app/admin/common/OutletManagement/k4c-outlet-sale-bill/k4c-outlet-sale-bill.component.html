@@ -139,7 +139,7 @@
                                                                   Print
                                                               </a>
                                                           </li>
-                                                            <li *ngIf='col.Cancel_Bill === "N" && col.Can_Cancel == "Y"'>
+                                                            <li *ngIf='col.Cancel_Bill === "N" && col.Can_Cancel == "Y" && $CompacctAPI.CompacctCookies.User_Type == "A"'>
                                                                 <a (click)="Cancle(col)">
                                                                     <i class="fa fa-times" aria-hidden="true"></i>
                                                                     Cancle

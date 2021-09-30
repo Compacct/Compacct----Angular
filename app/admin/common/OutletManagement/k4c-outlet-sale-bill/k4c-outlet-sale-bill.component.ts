@@ -305,7 +305,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
       To_Date : end,
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
       Menu_Ref_Id : this.$CompacctAPI.CompacctCookies.Menu_Ref_ID,
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+      Cost_Cen_ID : this.ObjaddbillForm.Browseroutlet
     }
     const obj = {
       "SP_String": "SP_Controller_Master",
@@ -374,7 +374,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
 getcostcenid(){
   const obj = {
     "SP_String": "SP_Controller_Master",
-    "Report_Name_String": "Get Sale Requisition Outlet",
+    "Report_Name_String": "Get - Cost Center Name All",
     "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
     //"Json_Param_String": JSON.stringify([{User_ID : 61}])
    }
@@ -384,7 +384,9 @@ getcostcenid(){
    //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
    this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
    if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
-   this.ObjaddbillForm.Browseroutlet = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+   this.ObjaddbillForm.Browseroutlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+   } else {
+    this.ObjaddbillForm.Browseroutlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
    }
    //console.log("this.ObjaddbillForm.BroeItem",this.ObjaddbillForm.BroeItem);
 

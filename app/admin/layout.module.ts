@@ -191,6 +191,9 @@ import { TutoDsDashboardComponent } from './common/CRM/Report/tuto-ds-dashboard/
 import { UpdateExpiryComponent } from './common/OutletManagement/update-expiry/update-expiry.component';
 import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/closing-stock-with-expiry-date/closing-stock-with-expiry-date.component';
 import { TutoSaleTreeFieldComponent } from './common/CRM/Master/tuto-sale-tree-field/tuto-sale-tree-field.component';
+import { TutoSalesTreeInsideSalesComponent } from './common/CRM/Master/tuto-sales-tree-inside-sales/tuto-sales-tree-inside-sales.component';
+import { TutoCrmLeadFieldSaleComponent } from './common/CRM/Transaction/tuto-crm-lead-field-sale/tuto-crm-lead-field-sale.component';
+
 
 
 @NgModule({
@@ -323,7 +326,9 @@ import { TutoSaleTreeFieldComponent } from './common/CRM/Master/tuto-sale-tree-f
     TutoDsDashboardComponent,
     UpdateExpiryComponent,
     ClosingStockWithExpiryDateComponent,
-    TutoSaleTreeFieldComponent
+    TutoSaleTreeFieldComponent,
+    TutoSalesTreeInsideSalesComponent,
+    TutoCrmLeadFieldSaleComponent
   ],
   imports: [
     CommonModule,

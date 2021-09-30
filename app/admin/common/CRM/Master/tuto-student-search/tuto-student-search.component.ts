@@ -159,14 +159,14 @@ export class TutoStudentSearchComponent implements OnInit {
   GetStudentdetails(){
     this.Studentdetails = undefined;
     const tempObj = {
-      Foot_Fall_ID: this.ObjStusearchForm.Foot_Fall_ID
+      Lead_ID: this.ObjStusearchForm.Lead_ID
     };
 
     const obj = {
       "Report_Name" : "Get_Student_Details",
       "Json_Param_String" : JSON.stringify([tempObj])
     }
-    this.GlobalAPI.CommonTaskData(obj).subscribe((data:any)=>{
+    this.GlobalAPI.CommonPostData(obj,'Create_Common_task_Tutopia_Call?Report_Name=Get_Student_Details').subscribe((data:any)=>{
       this.Studentdetails = data ? data[0] : [];
 
      })
@@ -206,13 +206,13 @@ export class TutoStudentSearchComponent implements OnInit {
   GetFollowupList(){
     this.FollowupList = [];
     const Objtemp = {
-      Foor_Fall_ID : this.ObjStusearchForm.Foot_Fall_ID
+      Lead_ID : this.ObjStusearchForm.Lead_ID
     };
     const objj = {
       "Report_Name" : "Get_Followup_Details_Foot_Fall_ID_Wise",
       "Json_Param_String" : JSON.stringify([Objtemp])
     }
-    this.GlobalAPI.CommonTaskData(objj).subscribe((data:any)=>{
+    this.GlobalAPI.CommonPostData(objj,'Create_Common_task_Tutopia_Call?Report_Name=Get_Followup_Details_Foot_Fall_ID_Wise').subscribe((data:any)=>{
       this.FollowupList = data.length ? data : [];
       console.log(this.FollowupList)
 
@@ -263,10 +263,14 @@ export class TutoStudentSearchComponent implements OnInit {
         });
   }
   GetActionList() {
-    this.$http
-      .get(this.url.apiGetActionTaken)
+    const obj = {
+      "SP_String": "SP_Controller",
+      "Report_Name_String": "GET_Action_Type"
+    }
+    this.GlobalAPI.CommonPostData(obj,'/Tutopia_Call_Common_SP_For_All')
       .subscribe((data: any) => {
-        const tempActionTaken = $.grep(data, function (value:any) { return value.Request_Type !== "Visit Customer" && value.Request_Type !== "Direct Appointment"; });
+        console.log(data);
+        const tempActionTaken = data.length ? $.grep(data, function (value:any) { return value.Request_Type !== "Visit Customer" && value.Request_Type !== "Direct Appointment"; }) : [];
         this.ActionList = tempActionTaken;
       });
   }
@@ -279,14 +283,17 @@ export class TutoStudentSearchComponent implements OnInit {
     this.Orderdetaillist = [];
     this.FollowupList = [];
     this.Billingdetaillist = [];
-    if(obj.Foot_Fall_ID){
+    if(obj.Lead_ID){
       this.ObjStusearchForm.Foot_Fall_ID = obj.Foot_Fall_ID;
+      this.ObjStusearchForm.Lead_ID = obj.Lead_ID;
       this.GetStudentdetails();
-      this.GetBillingdetaillist();
-      this.GetOrderdetaillist();
       this.GetFollowupList();
-      this.GetSupportQuestionDumplist();
-      this.GetSupportTicketDumplist();
+      if(obj.Foot_Fall_ID.toString() !== '0') {
+        this.GetBillingdetaillist();
+        this.GetOrderdetaillist();
+        this.GetSupportQuestionDumplist();
+        this.GetSupportTicketDumplist();
+        }
       setTimeout(()=>{
         this.ShowDetailsModal = true;
       },900);
@@ -733,15 +740,16 @@ export class TutoStudentSearchComponent implements OnInit {
     this.objFollowupDetails = new Followup();
     this.NxtFollowupDate = new Date();
     this.folloupFormSubmit = false;
-    if (obj.Foot_Fall_ID) {
+    if (obj.Lead_ID) {
       this.objFollowupDetails = obj;
       this.objFollowUpCreation.Foot_Fall_ID = obj.Foot_Fall_ID;
+      this.objFollowUpCreation.Lead_ID = obj.Lead_ID;
       this.objFollowUpCreation.School = obj.School;
       this.objFollowUpCreation.Pin = obj.Pin;
       this.objFollowUpCreation.Current_Action = 'Tele Call';
       this.objFollowUpCreation.Followup_Action = 'Tele Call';
       this.TutopiaDemoActionFlag = false;
-      this.GetFollowupDetails(obj.Foot_Fall_ID);
+      this.GetFollowupDetails(obj.Lead_ID);
       this.FollowupModal = true;
     }
 
@@ -752,9 +760,9 @@ export class TutoStudentSearchComponent implements OnInit {
           const obj = {
             "SP_String": "Tutopia_Followup_SP",
             "Report_Name_String": "Browse Followup Tutopia",
-            "Json_1_String": '[{"Foot_Fall_ID":' + footFallID+'}]'
+            "Json_1_String": '[{"Lead_ID":' + footFallID+'}]'
           }
-          this.GlobalAPI.postData(obj).subscribe(function (data) {
+          this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Browse Followup Tutopia').subscribe(function (data) {
                 ctrl.followUpLists = data.length ? data:[];
                 for (let i = 0; i < ctrl.followUpLists.length; i++) {
                     distinctDateArrayTemp.push(ctrl.followUpLists[i].Posted_On_C);
@@ -795,13 +803,19 @@ export class TutoStudentSearchComponent implements OnInit {
     if (valid) {
       this.objFollowUpCreation.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
       this.objFollowUpCreation.Next_Followup = this.DateService.dateTimeConvert(new Date(this.NxtFollowupDate));
+      const arrAction = this.ActionList.filter(item=> item.Request_Type == this.objFollowUpCreation.Current_Action);
+      if(arrAction.length){
+         this.objFollowUpCreation.Request_Type_id = arrAction[0].Request_Type_id;
+       this.objFollowUpCreation.Request_Type = arrAction[0].Request_Type;
+       this.objFollowUpCreation.Call_Req = arrAction[0].Call_Req;
+      }
       console.log(this.objFollowUpCreation)
       const obj = {
             "SP_String": "Tutopia_Followup_SP",
             "Report_Name_String": "Save Followup Tutopia",
             "Json_1_String": JSON.stringify([this.objFollowUpCreation])
           }
-          this.GlobalAPI.postData(obj).subscribe((data) => {
+          this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Save Followup Tutopia').subscribe((data) => {
               if (data[0].Column1) {
                 this.saveTutopiaViewStatus(this.objFollowUpCreation);
                 this.compacctToast.clear();
@@ -843,8 +857,9 @@ export class TutoStudentSearchComponent implements OnInit {
     this.NxtFollowupDate2 = new Date();
     this.objFollowupDetails = new Followup();
     this.transferLeadSubmitted = false;
-    if(obj.Foot_Fall_ID){
+    if(obj.Lead_ID){
       this.objFollowupDetails.Foot_Fall_ID = obj.Foot_Fall_ID;
+      this.objFollowupDetails.Lead_ID = obj.Lead_ID;
       this.objFollowupDetails.frd_viewd = 'Fresh';
       this.TransferLeadModal = true;
     }
@@ -872,6 +887,7 @@ export class TutoStudentSearchComponent implements OnInit {
     let tempArr = [];
     const obj = {
       Foot_Fall_ID: this.objFollowupDetails.Foot_Fall_ID,
+      Lead_ID: this.objFollowupDetails.Lead_ID,
       User_ID:  this.$CompacctAPI.CompacctCookies.User_ID,
       Current_Action: "Tele Call",
       Followup_Details: "Forward From" + " " +  this.$CompacctAPI.CompacctCookies.User_Name,
@@ -975,6 +991,7 @@ class StusearchForm{
   Search_Type = "Similar To";
   Search_Value : string;
   Foot_Fall_ID : number;
+  Lead_ID:String;
 }
 
  class Studetail{
@@ -1012,6 +1029,7 @@ class StudentEdit {
 }
 class Followup {
   Foot_Fall_ID: String;
+  Lead_ID: String;
   Contact_Name:string;
   User_ID: String;
   Current_Action: String;
@@ -1024,4 +1042,7 @@ class Followup {
   Pin: String;
   School: String;
   frd_viewd: String;
+  Request_Type_id:String;
+  Request_Type:String;
+  Call_Req:string;
   }

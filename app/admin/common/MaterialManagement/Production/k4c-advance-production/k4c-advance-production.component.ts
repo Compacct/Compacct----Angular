@@ -162,6 +162,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
   // }
    onReject() {
     this.compacctToast.clear("c");
+    this.saveData = []
   }
   getBrand(){
     const obj = {

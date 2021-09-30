@@ -134,6 +134,28 @@ export class ReceiveDistributionChallanComponent implements OnInit {
         ? this.DateService.dateConvert(new Date(this.ObjBrowseData.To_Date))
         : this.DateService.dateConvert(new Date());
     if(valid){
+      if(this.ObjBrowseData.Material_Type === "Store Item"){
+        const tempDate = {
+          Material_Type : this.ObjBrowseData.Material_Type,
+          From_Date :start,
+          To_Date :end,
+          Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+          //Cost_Cen_ID :30
+          Brand_ID  : 0
+        }
+  
+       const obj = {
+        "SP_String": "SP_Store_Item_Indent",
+        "Report_Name_String": "Get Dispatch Details For Accept Challan Store Item",
+        "Json_Param_String": JSON.stringify([tempDate])
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.GetAllDataList = data;
+        console.log("this.GetAllDataList",this.GetAllDataList);
+        this.DistributionSearchFormSubmitted = false;
+       // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
+      })
+      } else {
       const tempDate = {
         Material_Type : this.ObjBrowseData.Material_Type,
         From_Date :start,
@@ -156,6 +178,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     })
   }
   }
+  }
   editmaster(masterProduct){
 
    this.clearData();
@@ -171,6 +194,34 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     }
   }
   geteditmaster(masterProduct){
+    if(this.ObjBrowseData.Material_Type === "Store Item"){
+      const obj = {
+        "SP_String": "SP_Store_Item_Indent",
+        "Report_Name_String": "Get Data For Accepted Receive Distribution Challan",
+        "Json_Param_String": JSON.stringify([{Doc_No : masterProduct.Doc_No}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("Api EditList",data);
+        this.productDetails = data;
+        this.DocNO = data[0].Doc_No,
+        this.FromStokePoint = data[0].From_godown_name,
+        this.date = new Date(data[0].Doc_Date),
+        this.fromCostId = data[0].F_Cost_Cen_ID;
+        this.fromGodownId = data[0].F_Godown_ID;
+        this.Indent_Date = data[0].Indent_Date;
+        this.Material_Type = data[0].Material_Type;
+        this.Adv_Order_No = data[0].Adv_Order_No;
+        this.Indent_Date_To = data[0].Indent_Date_To;
+        this.Indent_Date_From = data[0].Indent_Date_From;
+  
+        for(let i = 0; i < this.productDetails.length ; i++){
+          this.selectBox(i);
+        }
+        console.log("this.EditList",this.productDetails);
+       this.tabEdit = true;
+  
+      })
+    } else {
 
     const obj = {
       "SP_String": "SP_Production_Voucher",
@@ -219,6 +270,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
      this.tabEdit = true;
 
     })
+  }
   }
   getTotal(key){
     let TotalAmt = 0;

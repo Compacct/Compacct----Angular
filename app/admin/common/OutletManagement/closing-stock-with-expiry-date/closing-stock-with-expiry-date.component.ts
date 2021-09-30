@@ -44,6 +44,7 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
   remarks = undefined;
   CostCenter = [];
   GodownId = [];
+  godown_name = undefined;
 
   constructor(
     private Header: CompacctHeader,
@@ -288,7 +289,7 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
         const TempObj = {
           Doc_No : "A",
           Doc_Date : this.DateService.dateConvert(new Date(this.ClosingDate)),
-          Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+          Cost_Cen_ID	: this.ObjClosingStockExpAd.Cost_Cen_ID,
           godown_id : this.ObjClosingStockExpAd.godown_id,
           User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
           Process_ID : 100,
@@ -417,6 +418,7 @@ const obj = {
        this.Doc_date = new Date(data[0].Doc_Date);
        this.BrandId = data[0].Brand_Name;
        this.Cost_Cent_ID = data[0].Location;
+       this.godown_name = data[0].godown_name;
       // this.remarks = data[0].Narration
       console.log("this.Viewlist  ===",this.ViewList);
 
@@ -428,7 +430,9 @@ const obj = {
     this.ClosingDate = new Date;
     this.ObjClosingStockExpAd.Brand_ID = undefined;
     this.ObjClosingStockExpAd.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    this.ObjClosingStockExpAd.godown_id = undefined;
+    //this.ObjClosingStockExpAd.godown_id = undefined;
+    this.getGodown();
+    this.ObjClosingStockExpAd.godown_id = this.GodownId.length === 1 ? this.GodownId[0].godown_id : undefined;
     this.ObjClosingStockExpAd.Product_ID = undefined;
     this.ObjClosingStockExpAd.Batch_No = [];
   // this.ObjClosingStockExpAd.Exp_Date_Time = [];

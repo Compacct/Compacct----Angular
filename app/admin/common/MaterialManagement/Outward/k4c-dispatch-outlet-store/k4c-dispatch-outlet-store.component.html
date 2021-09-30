@@ -115,24 +115,18 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                                 <ul class="dropdown-menu">
-                                                                    <!-- <li *ngIf="col.Total_Qty != col.Total_Accepted_Qty">
+                                                                    <li *ngIf="col.Total_Qty != col.Total_Accepted_Qty">
                                                                         <a (click)="editmaster(col)">
                                                                             <i class="fa fa-fw fa-pencil"></i>
                                                                             Edit
                                                                         </a>
-                                                                    </li> -->
-                                                                    <li >
-                                                                        <a >
-                                                                            <i class="fa fa-fw fa-pencil"></i>
-                                                                            Edit
-                                                                        </a>
                                                                     </li>
-                                                                    <!-- <li>
+                                                                    <li>
                                                                       <a (click)="Print(col.Doc_No)">
                                                                           <i class="fa fa-print"></i>
                                                                           Print
                                                                       </a>
-                                                                  </li> -->
+                                                                  </li>
                                                                     <li *ngIf="col.Total_Accepted_Qty === 0"> <!-- col.Total_Qty != col.Total_Accepted_Qty && -->
                                                                         <a (click)="deleteDispatch(col)">
                                                                             <i class="fa fa-fw fa-trash"></i>
@@ -172,7 +166,7 @@
                                           <select class="form-control"
                                                   name="Brand_ID"
                                                   #Brand_ID="ngModel"
-                                                  [(ngModel)]="Objdispatch.Brand_ID"
+                                                  [(ngModel)] ="Objdispatch.Brand_ID"
                                                   (change)="getCostcenter()"
                                                   [ngClass]="{'clearance': OutletFormSubmit && Brand_ID?.errors?.required}"
                                                   [disabled] = "inputBoxDisabled"
@@ -190,7 +184,7 @@
                                                 <select class="form-control"
                                                    name="Cost_Cen_ID_te"
                                                    #Cost_Cen_ID_te="ngModel"
-                                                   [(ngModel)]='Objdispatch.Cost_Cen_ID'
+                                                   [(ngModel)] ='Objdispatch.Cost_Cen_ID'
                                                    [ngClass]="{'clearance': OutletFormSubmit && Cost_Cen_ID_te?.errors?.required}"
                                                    (change)="Getgodown()"
                                                    [attr.disabled]="inputBoxDisabled? true : null"
@@ -234,6 +228,7 @@
                             </div>
 
                         </div>
+                        <div class='form-group'>
                         <div class="col-lg-6">
                         <div class="panel-group">
                             <div class="panel panel-primary">
@@ -246,7 +241,7 @@
                                         <select class="form-control"
                                             name="From_Godown_ID"
                                             #From_Godown_ID="ngModel"
-                                            [(ngModel)]="Objdispatch.From_Godown_ID"
+                                            [(ngModel)] ="Objdispatch.From_Godown_ID"
                                             [disabled] = "outLetDis"
                                             [ngClass]="{'clearance' : DispatchFormSubmit && From_Godown_ID.errors?.required}"
                                              [attr.disabled]="From_Godown_ID_Dis? true : null"
@@ -294,16 +289,17 @@
                                    </div>
                                    <div class="form-group">
                                       <div class="col-sm-6"></div>
+                                      <!-- (click) = "GetshowProduct(OutletForm.form.valid,DispatchForm.form.valid)" -->
                                       <div class="col-sm-3">
                                         <button
                                         type="button"
                                          class="btn btn-primary pull-right"
                                          style="margin-top: 38px"
-                                         (click) = "GetshowProduct(OutletForm.form.valid,DispatchForm.form.valid)"
+                                         (click) = "GetIndentList()"
                                          id="load"
-                                         [disabled]="SpinnerShow"
-                                         [disabled]="inputBoxDisabled">
-                                         <p-progressSpinner *ngIf="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         [disabled] ="SpinnerShow"
+                                         [disabled] ="inputBoxDisabled">
+                                         <p-progressSpinner *ngIf ="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                      <span *ngIf="!SpinnerShow" class="glyphicon glyphicon-save"></span> Show
                                  </button>
                                       </div>
@@ -334,7 +330,7 @@
                                   <div class="panel-body">
                                       <form name="AdditioanForm" #AdditioanForm="ngForm" novalidate>
                                        <div class="form-group">
-                                        <div class="col-sm-4 ">
+                                        <div class="col-sm-6 ">
                                             <label class="control-label">Product Type</label>
                                             <select class="form-control"
                                                    name="Product_Type_ID"
@@ -352,7 +348,7 @@
                                                 [showClear]="true" [emptyFilterMessage]="' No Item Found'"
                                                 [filter]="true" filterBy="label,value.name" [resetFilterOnHide] = "true"
                                                 [placeholder]="'Select Item'" [virtualScroll]="true" itemSize="30" #Product_ID="ngModel"
-
+                                                (ngModelChange)="GetBatch()"
                                                 [styleClass]="
                                                 AdditioanFormSubmit && Product_ID.errors?.required
                                                   ? 'clearance'
@@ -362,7 +358,21 @@
                                             </p-dropdown>
                                             <!-- <label class="control-label" >Indent Qty : {{reqNumber}}</label> -->
                                             </div>
-                                            <div class="col-sm-2">
+                                        </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-6 ">
+                                                    <label class="control-label">Batch No</label>
+                                                    <select class="form-control"
+                                                           name="Batch_No"
+                                                           #Batch_No="ngModel"
+                                                           [(ngModel)] ='Objadditem.Batch_No'
+                                                           [ngClass]="{'clearance': AdditioanFormSubmit && Batch_No?.errors?.required}"
+                                                            required>
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                              <option *ngFor ="let option of BatchList" [value]="option.Batch_NO">{{option.Batch_No_Show}}</option>
+                                                        </select>
+                                                 </div>
+                                            <div class="col-sm-4">
                                               <label class="control-label">QTY</label>
                                               <input type="text"
                                               name="Issue_Qty"
@@ -383,20 +393,37 @@
                                             data-toggle="modal"
                                             (click) = "addDispatch(AdditioanForm.form.valid)"
                                             id="load"
-                                           [disabled]="Spinner"
-                                           [disabled]="adDisabled"
+                                           [disabled]= "Spinner"
+                                           [disabled]= "true"
                                              >
                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                          <span *ngIf="!Spinner" class="glyphicon glyphicon-plus"></span>Add
-                                     </button>
+                                      </button> <!-- [disabled]= "adDisabled" -->
                                     </div>
                                   </div>
                                 </div>
                             </div>
                     </div>
-
-
-
+                </div>
+                    <div class='form-group'>
+                        <div class="col-sm-4">
+                            <label class="control-label">Indent List<sup class="text-danger">*</sup> &nbsp;
+                        </label>
+                            <p-multiSelect itemSize="30"
+                                       [options]="IndentFilter"
+                                       [styleClass]="'compacct-multiselect'"
+                                       name="indentn"
+                                       [(ngModel)]="SelectedIndent"
+                                       [filter]="true"
+                                       filterBy="label,value.name"
+                                       (onChange)="filterIndentList()"
+                                       [resetFilterOnHide]="true">
+                          </p-multiSelect>
+      
+                        </div>
+                    </div>
+                    <br>
+                
                     <div class="clearfix"></div>
 
                    <div class="no-padding">
@@ -420,9 +447,9 @@
                                             <th>Product Description</th>
                                             <th>UOM</th>
                                             <th  *ngIf="reqQTYdis">Indent Qty</th>
-
-                                             <th *ngIf="!reqQTYdis">Accepted Qty</th>
-
+                                            <th>Batch No</th>
+                                            <th *ngIf="!reqQTYdis">Accepted Qty</th>
+                                            <th>Batch Qty</th>
                                             <th>Issue Qty</th>
                                             <th *ngIf="EditList.length">Accept Reason</th>
                                          </tr>
@@ -439,9 +466,11 @@
                                                 <td>{{col.Product_Description}}</td>
                                                 <td>{{col.UOM}}</td>
                                                 <td *ngIf="reqQTYdis">{{col.Req_Qty}}</td>
+                                                <td>{{col.Batch_No}}</td>
                                                <td *ngIf="AccQtydis">{{col.Accepted_Qty}}</td>
-
+                                               <td>{{col.Batch_Qty}}</td>
                                             <td><input type="text" [name]="col.Product_ID"  [(ngModel)]='col.Delivery_Qty'
+                                                (ngModelChange)='qtyChq(col)'
                                                  [ngClass]="{'clearance' : flag}"
                                                 CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td *ngIf="EditList.length">{{col.Accept_Reason}}</td>

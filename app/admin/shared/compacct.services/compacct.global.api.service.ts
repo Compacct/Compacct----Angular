@@ -47,4 +47,30 @@ export class CompacctGlobalApiService {
     const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
     return this.http.post(`/Common/New_Common_task?Report_Name=`+ParamObj.Report_Name,obj ,httpOptions).pipe(map((data:any) => data ? JSON.parse(data) : []));
   }
+  CommonPostData(ParamObj,URL) {
+    const obj = {
+      'SP_String': ParamObj.SP_String,
+      'Report_Name_String':  ParamObj.Report_Name_String,
+      'Json_Param_String': ParamObj.Json_Param_String ? ParamObj.Json_Param_String : 'NA',
+      'Json_1_String': ParamObj.Json_1_String ? ParamObj.Json_1_String : 'NA',
+      'Json_2_String': ParamObj.Json_2_String ? ParamObj.Json_2_String : 'NA' ,
+      'Json_3_String': ParamObj.Json_3_String ? ParamObj.Json_3_String : 'NA',
+      'Json_4_String': ParamObj.Json_4_String ? ParamObj.Json_4_String : 'NA'
+    }
+  const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+    return this.http.post(`/Common/`+URL,obj , httpOptions).pipe(map((data:any) => data ? JSON.parse(data) : []));
+  }
+  tutopiacallapis(ParamObj) {
+    const obj = {
+      'SP_String': ParamObj.SP_String,
+      'Report_Name_String':  ParamObj.Report_Name_String,
+      'Json_Param_String': ParamObj.Json_Param_String ? ParamObj.Json_Param_String : 'NA',
+      'Json_1_String': ParamObj.Json_1_String ? ParamObj.Json_1_String : 'NA',
+      'Json_2_String': ParamObj.Json_2_String ? ParamObj.Json_2_String : 'NA' ,
+      'Json_3_String': ParamObj.Json_3_String ? ParamObj.Json_3_String : 'NA',
+      'Json_4_String': ParamObj.Json_4_String ? ParamObj.Json_4_String : 'NA'    
+    }
+  const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+    return this.http.post(`/Common/Tutopia_Call_Common_SP_For_All`,obj , httpOptions).pipe(map((data:any) => data ? JSON.parse(data) : []));
+  }
 }

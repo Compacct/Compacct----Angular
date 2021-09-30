@@ -48,6 +48,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   SelectedProductType :any = [];
   Param_Flag ='';
   CostCentId_Flag : any;
+  MaterialType_Flag = '';
 
   constructor(
     private Header: CompacctHeader,
@@ -65,11 +66,12 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
       // console.log(params);
       this.Param_Flag = params['Name'];
       this.CostCentId_Flag = params['Cost_Cen_ID'];
+      this.MaterialType_Flag = params['Material_Type']
        console.log (this.CostCentId_Flag);
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
-      Header: "Raw Material Stock Transfer - " + this.Param_Flag,
-      Link: " Material Management -> Raw Material Stock Transfer - " + this.Param_Flag
+      Header: this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag,
+      Link: " Material Management -> " + this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag
     });
     this.GetFromCostCen();
     this.GetToCostCen();
@@ -91,7 +93,8 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   }
    GetFromCostCen(){
     const tempObj = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Material_Type : this.MaterialType_Flag
     }
     const obj = {
       "SP_String": "SP_Raw_Material_Stock_Transfer",
@@ -108,7 +111,8 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   GetFromGodown(){
     if(this.ObjRawMateriali.From_Cost_Cen_ID){
       const tempObj = {
-        Cost_Cen_ID : this.ObjRawMateriali.From_Cost_Cen_ID
+        Cost_Cen_ID : this.ObjRawMateriali.From_Cost_Cen_ID,
+        Material_Type : this.MaterialType_Flag
       }
       const obj = {
         "SP_String": "SP_Raw_Material_Stock_Transfer",
@@ -130,10 +134,14 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
 
   }
   GetToCostCen(){
+    const tempObj = {
+      User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+      Material_Type : this.MaterialType_Flag
+    }
     const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Get - Cost Center Name All",
-      "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+      "Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.Tocostcenlist = data;
@@ -146,7 +154,8 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   GetToGodown(){
     if(this.ObjRawMateriali.To_Cost_Cen_ID){
       const tempObj = {
-        Cost_Cen_ID : this.ObjRawMateriali.To_Cost_Cen_ID
+        Cost_Cen_ID : this.ObjRawMateriali.To_Cost_Cen_ID,
+        Material_Type : this.MaterialType_Flag
       }
       const obj = {
         "SP_String": "SP_Raw_Material_Stock_Transfer",
@@ -167,14 +176,15 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
 
   }
 
-  // INDENT LIST DROPDOWN
+  // FOR PRODUCT TABLE
   GetIndentList(valid){
     this.RawMaterialIssueFormSubmitted = true;
     if(valid){
       this.ShowSpinner = true;
     const TempObj = {
       Cost_Cen_ID : this.ObjRawMateriali.From_Cost_Cen_ID,
-      Godown_ID : this.ObjRawMateriali.From_godown_id
+      Godown_ID : this.ObjRawMateriali.From_godown_id,
+      Material_Type : this.MaterialType_Flag
      }
    const obj = {
     "SP_String": "SP_Raw_Material_Stock_Transfer",
@@ -243,7 +253,8 @@ GetProductType(){
             Cost_Cen_ID : this.ObjRawMateriali.From_Cost_Cen_ID,
             Godown_ID : this.ObjRawMateriali.From_godown_id,
             To_Cost_Cen_ID : this.ObjRawMateriali.To_Cost_Cen_ID,
-            To_Godown_ID : this.ObjRawMateriali.To_godown_id
+            To_Godown_ID : this.ObjRawMateriali.To_godown_id,
+            Material_Type : this.MaterialType_Flag
             }
       Arr.push(Dobj)
         }

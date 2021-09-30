@@ -110,6 +110,9 @@ import { TutoDsDashboardComponent } from './common/CRM/Report/tuto-ds-dashboard/
 import { UpdateExpiryComponent } from './common/OutletManagement/update-expiry/update-expiry.component';
 import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/closing-stock-with-expiry-date/closing-stock-with-expiry-date.component';
 import { TutoSaleTreeFieldComponent } from './common/CRM/Master/tuto-sale-tree-field/tuto-sale-tree-field.component';
+import { TutoSalesTreeInsideSalesComponent } from "./common/CRM/Master/tuto-sales-tree-inside-sales/tuto-sales-tree-inside-sales.component";
+import { TutoCrmLeadFieldSaleComponent } from './common/CRM/Transaction/tuto-crm-lead-field-sale/tuto-crm-lead-field-sale.component';
+
 
 
 const layoutRoutes: Routes = [
@@ -633,11 +636,20 @@ data: {title: 'K4C_Outlet_Requisition'}
                                         component: TutoSaleTreeFieldComponent,
                                         data: {title: 'Sales Tree Field Sales'}
                                         },
+                                        {
+                                          path: 'BL_CRM_Master_SalesTeam_Inside_Sales',
+                                          component: TutoSalesTreeInsideSalesComponent,
+                                          data: {title: 'Sales Team Inside Sales'}
+                                          },
                                   {
                                     path: 'Tutopia_DS_Dashboard',
                                     component: TutoDsDashboardComponent,
                                     data: {title: 'DS Dashboard'}
-                                    }
+                                    },{
+                                      path: 'Tutopia_CRM_Lead_Field_Sales',
+                                      component: TutoCrmLeadFieldSaleComponent,
+                                      data: {title: 'Followup Management (Channel Sale)'}
+                                      }
                           
       /*{
            path: '404',
