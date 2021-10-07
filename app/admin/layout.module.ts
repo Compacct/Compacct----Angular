@@ -82,6 +82,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule ,OWL_DATE_TIME_FORMATS, OWL_
 import { CookieService } from "ngx-cookie-service";
 import { CompacctCommonApi } from "./shared/compacct.services/common.api.service";
 import { CompacctHeader } from "./shared/compacct.services/common.header.service";
+import { CompacctGetDistinctService } from "./shared/compacct.services/compacct-get-distinct.service";
 import { DateTimeConvertService } from "./shared/compacct.global/dateTime.service";
 import { CompacctGlobalUrlService } from "./shared/compacct.global/global.service.service";
 import { MasterProductComponent } from "./common/MaterialManagement/Master/master.product/master.product.component";
@@ -193,6 +194,9 @@ import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/c
 import { TutoSaleTreeFieldComponent } from './common/CRM/Master/tuto-sale-tree-field/tuto-sale-tree-field.component';
 import { TutoSalesTreeInsideSalesComponent } from './common/CRM/Master/tuto-sales-tree-inside-sales/tuto-sales-tree-inside-sales.component';
 import { TutoCrmLeadFieldSaleComponent } from './common/CRM/Transaction/tuto-crm-lead-field-sale/tuto-crm-lead-field-sale.component';
+import { TutoTempCrmLeadComponent } from './common/CRM/Master/tuto-temp-crm-lead/tuto-temp-crm-lead.component';
+import { TutoWebDemLeadFollowupComponent } from './common/CRM/Transaction/tuto-web-dem-lead-followup/tuto-web-dem-lead-followup.component';
+import { TutoAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-audit-lead-followup/tuto-audit-lead-followup.component';
 
 
 
@@ -328,7 +332,10 @@ import { TutoCrmLeadFieldSaleComponent } from './common/CRM/Transaction/tuto-crm
     ClosingStockWithExpiryDateComponent,
     TutoSaleTreeFieldComponent,
     TutoSalesTreeInsideSalesComponent,
-    TutoCrmLeadFieldSaleComponent
+    TutoCrmLeadFieldSaleComponent,
+    TutoTempCrmLeadComponent,
+    TutoWebDemLeadFollowupComponent,
+    TutoAuditLeadFollowupComponent
   ],
   imports: [
     CommonModule,
@@ -376,6 +383,7 @@ import { TutoCrmLeadFieldSaleComponent } from './common/CRM/Transaction/tuto-crm
     CompacctGlobalApiService,
     CompacctCommonApi,
     CompacctHeader,
+    CompacctGetDistinctService,
     CompacctAccountJournal,
     DateTimeConvertService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},

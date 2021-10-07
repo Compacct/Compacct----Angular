@@ -6,16 +6,17 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { MessageService } from "primeng/api";
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-
 import * as moment from "moment";
+import { CompacctGetDistinctService } from '../../../../shared/compacct.services/compacct-get-distinct.service';
 @Component({
-  selector: 'app-tuto-crm-lead-field-sale',
-  templateUrl: './tuto-crm-lead-field-sale.component.html',
-  styleUrls: ['./tuto-crm-lead-field-sale.component.css'],
+  selector: 'app-tuto-web-dem-lead-followup',
+  templateUrl: './tuto-web-dem-lead-followup.component.html',
+  styleUrls: ['./tuto-web-dem-lead-followup.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class TutoCrmLeadFieldSaleComponent implements OnInit {
+export class TutoWebDemLeadFollowupComponent implements OnInit {
+
   url = window["config"];
   leadFollowUpList = [];
   leadFollowUpListBackup = [];
@@ -66,12 +67,18 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   PinList = [];
   Appointment_ForList = [];
   DaysList = [];
+  StatusList = [];
+  TCNAMEList = [];
+  RMNAMEList = [];
   RegisterList = [{ label: 'REGISTERED', value: '1' }, { label: 'UN REGSITERED', value: '0' }]
 
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
   SelectedDaysFilterList = [];
   SelectedRegisterFilterList = [];
+  SelectedStatusFilterList = [];
+  SelectedTCNAMEListFilterList = [];
+  SelectedRMNAMEListFilterList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -89,9 +96,17 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   
   NextFollowupFilter: any;
   NextFollowupFilterSelected: any;
-
+  
   CallDetailsModalFlag = false;
   CallDetailsObj: any = {};
+  ForwardLeadObj = new ForwardLead();
+  AppoSlotList = [];
+  ResceduleLeadObj = new ResceduleLead();
+  ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+  ResceduleLeadModal = false;
+  ResceduleLeadSubmitted = false;
+  from_date:any;
+  to_date:any;
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -99,7 +114,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     public $CompacctAPI: CompacctCommonApi,
     private DateService: DateTimeConvertService,
-    private compacctToast: MessageService) { 
+    private compacctToast: MessageService,
+    private Distinct :CompacctGetDistinctService) { 
       this.route.queryParams.subscribe(params => {
         console.log(params);
         if(params.User && params.Action) {
@@ -114,13 +130,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   ngOnInit() {
     console.log('working')
     this.Header.pushHeader({
-      Header: "Appointment Management (Field Sales)",
-      Link: "CRM -> Appointment Management (Field Sales)"
+      Header: "Web Demo Followup",
+      Link: "CRM -> Web Demo Followup"
     });
     this.items = ["Student Detail","Followup Details", "Billing Details","Order Details ","Support Question Dump","Support Ticket Dump"];
     // this.GetUserList();
     this.GetActionList();
    // this.GetSalesUserList();
+   this.GetAppoSlotList();
     this.GetAllUserList();
     this.GetActionListFollowupCreate();
   }
@@ -162,7 +179,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   GetActionListFollowupCreate() {
     const obj = {
       "SP_String": "SP_Controller",
-      "Report_Name_String": "GET_Action_Type_Channel"
+      "Report_Name_String": "Get_Action_Type_Web_Demo"
     }
     this.GlobalAPI.CommonPostData(obj,'/Tutopia_Call_Common_SP_For_All')
       .subscribe((data: any) => {
@@ -184,7 +201,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   }
   GetAllUserList() {
     const obj = {
-      "Report_Name": "Get_Direct_Sale_Users ",
+      "Report_Name": "Get_Web_Demo_Users",
       "Json_Param_String" : JSON.stringify([{USER_ID :this.$CompacctAPI.CompacctCookies.User_ID}])
     }
     this.GlobalAPI
@@ -205,7 +222,17 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     //         this.AllUserList = data.length ? data : [];
     //     });
   }
-  
+  GetAppoSlotList() {
+    const obj = {
+      "SP_String":"SP_Appointment",
+      "Report_Name_String": "GET_Time_Slot"
+    }
+    this.GlobalAPI
+        .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+        .subscribe((data: any) => {
+          this.AppoSlotList = data.length ? data : [];
+        });
+  }
   GetFilteredItems () {
     // this.SelectedDealerFilterList = [];
     // this.SelectedViewdFilterList = [];
@@ -233,10 +260,17 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let PinFilter = [];
     let AppointmentForFilter = [];
     let DaysFilter = [];
+    let statsusFilter = [];
+    let TCFilter = [];
+    let RMFilter = [];
 
     this.PinList = [];
-  this.Appointment_ForList = [];
-  this.DaysList = [];
+    this.Appointment_ForList = [];
+    this.DaysList = [];
+    this.StatusList = [];
+    this.TCNAMEList = [];
+    this.RMNAMEList = [];
+    
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -249,6 +283,18 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       if (DaysFilter.indexOf(item.Days) === -1) {
         DaysFilter.push(item.Days);
         this.DaysList.push({ label: item.Days, value: item.Days });
+      }
+      if (statsusFilter.indexOf(item.Status) === -1) {
+        statsusFilter.push(item.Status);
+        this.StatusList.push({ label: item.Status, value: item.Status });
+      }
+      if (TCFilter.indexOf(item.TC_Name) === -1) {
+        TCFilter.push(item.TC_Name);
+        this.TCNAMEList.push({ label: item.TC_Name, value: item.TC_Name });
+      }
+      if (RMFilter.indexOf(item.RM_Name) === -1) {
+        RMFilter.push(item.RM_Name);
+        this.RMNAMEList.push({ label: item.RM_Name, value: item.RM_Name });
       }
     });
   }
@@ -267,6 +313,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let AppointmentForFilter = [];
     let DaysFilter = [];
     let RegisterFilter = [];
+    let statsusFilter = [];
+    let TCFilter = [];
+    let RMFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -279,6 +328,18 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     if (this.SelectedDaysFilterList.length) {
       searchFields.push('Days');
       DaysFilter = this.SelectedDaysFilterList;
+    }
+    if (this.SelectedStatusFilterList.length) {
+      searchFields.push('Status');
+      statsusFilter = this.SelectedStatusFilterList;
+    }
+    if (this.SelectedTCNAMEListFilterList.length) {
+      searchFields.push('TC_Name');
+      TCFilter = this.SelectedTCNAMEListFilterList;
+    }
+    if (this.SelectedRMNAMEListFilterList.length) {
+      searchFields.push('RM_Name');
+      RMFilter = this.SelectedRMNAMEListFilterList;
     }
     if(this.SelectedRegisterFilterList.length) {
       searchFields.push('Foot_Fall_ID');
@@ -293,6 +354,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           && (AppointmentForFilter.length ? AppointmentForFilter.includes(e['Appointment_For']) : true)
           && (DaysFilter.length ? DaysFilter.includes(e['Days']) : true)
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
+          && (statsusFilter.length ? statsusFilter.includes(e['Status']) : true)
+          && (TCFilter.length ? TCFilter.includes(e['TC_Name']) : true)
+          && (RMFilter.length ? RMFilter.includes(e['RM_Name']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];
@@ -320,6 +384,13 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     return returnBol;
   }
   }
+  // FOR SEARCH
+  getDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.from_date = dateRangeObj[0];
+      this.to_date = dateRangeObj[1];
+    }
+  }
   SaerchFollowup(valid) {
     this.SearchFormSubmitted = true;
     this.leadFollowUpList = [];
@@ -329,14 +400,20 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       this.seachSpinner = true;
       this.ObjSearch.User_ID = this.ObjSearch.User_ID ? this.ObjSearch.User_ID : '0';
       this.ObjSearch.Current_Action = this.ObjSearch.Current_Action ? this.ObjSearch.Current_Action : '';
-      
+      const tempObj = {
+        'From_Date': this.from_date  ? this.DateService.dateConvert(new Date(this.from_date))
+        : this.DateService.dateConvert(new Date()),
+        'To_Date' : this.to_date  ? this.DateService.dateConvert(new Date(this.to_date))
+        : this.DateService.dateConvert(new Date()),
+        'User_ID' : this.ObjSearch.User_ID
+      }
       const obj = {
-        "Json_Param_String" : JSON.stringify([{ 'User_ID' : this.ObjSearch.User_ID}])
+        "Json_Param_String" : JSON.stringify([tempObj])
       }
      // this.GetFilteredItems();
       const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
       this.$http
-          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Channel sale Student Follow-up v3",obj)
+          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Web Demo Student Follow-up",obj)
           .subscribe((data: any) => {
             const SortData = data ? JSON.parse(data) : [];
             SortData.sort(function(a:any,b:any){
@@ -399,7 +476,34 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         }
     }
   }
+  // MOBILE CALL 
+  CallTutopiaApp (obj) {
+    if(obj.Mobile) {
+      const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
 
+      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message",{Phone_No : obj.Mobile, User_ID : this.$CompacctAPI.CompacctCookies.User_ID},{ headers, responseType: 'text'}).subscribe((res: any) => {
+        console.log(res)
+       if(res.toUpperCase().includes('ERROR')) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured In Tutopia Call API."
+          });
+       } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: obj.Mobile,
+          detail: "Check the call in Call center software."
+        });
+
+       }
+      });
+    }
+  }
   // CHANGE
   LeadTransferCheckBoxChanged() {
     this.LeadTransferModalBtn = false;
@@ -735,10 +839,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
 
   // FORWARD LEAD
   OpenForwardModal() {
-    this.NxtFollowupDate = new Date();
+    this.ForwardLeadObj = new ForwardLead();
     this.transferLeadSubmitted = false;
     this.TransferLeadModal = true;
-    this.objFollowupDetails.frd_viewd = 'Fresh';
   }
   SaveForwardTo(valid) {
      this.transferLeadSubmitted = true;
@@ -765,23 +868,69 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       if (this.leadFollowUpList[i].Selected) {
           const obj = {
             Foot_Fall_ID: this.leadFollowUpList[i].Foot_Fall_ID,
-            Lead_ID :  this.leadFollowUpList[i].Lead_ID,
-            User_ID:  this.$CompacctAPI.CompacctCookies.User_ID,
-            Current_Action: "Tele Call",
-            Followup_Details: "Forward From" + " " +  this.$CompacctAPI.CompacctCookies.User_Name,
-            Followup_Action: "Tele Call",
-            Status: "Forward Lead",
-            Used: 'N',
-            frd_viewd : this.objFollowupDetails.frd_viewd,
-            Sent_To: this.objFollowupDetails.Sent_To,
-            Posted_On: this.DateService.dateTimeConvert(new Date()),
-            Next_Followup: this.DateService.dateTimeConvert(new Date(this.NxtFollowupDate)),
+            Appo_To_User_ID :  this.ForwardLeadObj.Appo_To_User_ID,
+            From_User_ID:  this.$CompacctAPI.CompacctCookies.User_ID,
+            Appo_ID: this.leadFollowUpList[i].Appo_ID,
           };
           tempArr.push(obj);
         }
     }
     console.log(tempArr)
     return { Followup_Branch_String: JSON.stringify(tempArr) };
+  }
+  // Rescedule 
+  ShowRescedule(obj) {
+    this.ResceduleLeadObj = new ResceduleLead();
+    this.ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+    this.ResceduleLeadSubmitted = false;
+    if(obj.Lead_ID) {
+      this.ResceduleLeadObj.Appo_ID = obj.Appo_ID;
+      this.ResceduleLeadObj.Appo_To_User_ID = obj.Appo_To_User_ID;
+      this.ResceduleLeadObj.Demo_Type = 'WEB';
+      this.ResceduleLeadModal = true;
+    }
+
+  }
+  SaveRescedule(valid) {
+    this.ResceduleLeadSubmitted = true;
+    if(valid) {
+      this.ResceduleLeadObj.Appo_Date = this.DateService.dateConvert(new Date(this.ResceduleAppoDate));
+      console.log(this.ResceduleLeadObj)
+      const obj = {
+        "SP_String":"SP_Appointment",
+        "Report_Name_String": "Followup_Web_Appointment",
+        "Json_Param_String" : JSON.stringify([this.ResceduleLeadObj])
+      }
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.GlobalAPI
+          .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+          .subscribe((data: any) => { 
+            console.log(data);
+      if (data[0].Remarks.includes('Already Engaged')) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "error",
+          detail: data[0].Remarks
+        });
+      } else {
+        this.SaerchFollowup(true);
+        this.ResceduleLeadModal = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ResceduleLeadObj.Appo_ID,
+          detail: "Succesfully Rescedule."
+        });
+        this.ResceduleLeadObj = new ResceduleLead();
+        this.ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+        this.ResceduleLeadSubmitted = false;
+      }
+    })
+    }
+    
   }
 }
 class Search {
@@ -815,4 +964,16 @@ class Studetail{
   Pin : string;
   City : string;
 
+}
+class ForwardLead{
+  Appo_ID:String;
+  Appo_To_User_ID:String;
+  From_User_ID:String;
+}
+class ResceduleLead{
+  Appo_ID:String;
+  Demo_Type:String;
+  Appo_Date:String;
+  Appo_Time_Slot_ID:String;
+  Appo_To_User_ID:String;
 }

@@ -116,12 +116,13 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Action</th>
+                                    <th>Approve</th>
                                     <th>Status</th>
                                     <th>Regsiter</th>
                                     <th>Appo Date</th>
                                     <th>Days</th>
                                     <th>Appo Slot</th>
-                                    <th>Name</th>
+                                    <th><span style="margin-right: 200px;">Name</span></th>
                                     <th>Mobile</th>
                                     <th>Alternative Mobile No.</th>
                                     <th>Pin </th>
@@ -149,7 +150,7 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li *ngIf='col.Status === "AUDIT DONE"'>
+                                                <li>
                                                     <a (click)="FollowUpPopup(col)"> <i class="fa fa-commenting-o"> </i>Followup</a>
                                                 </li>
                                                 <li>
@@ -179,6 +180,10 @@
                                     <!-- <td class="text-center">
                                         <p-checkbox [(ngModel)]="col.Selected" (onChange)='LeadTransferCheckBoxChanged()' [binary]="true"></p-checkbox>
                                     </td> -->
+                                    <td class='text-center'>
+                                        <button class="btn btn-xs btn-success" style='margin-right:0.3em' (click)="ApproveAudit('PENDING',col)"><i class="fa fa-fw fa-check"></i></button>
+                                        <button class="btn btn-xs btn-pinterest" (click)="ApproveAudit('AUDITOR DISAPPROVED',col)"><i class="fa fa-fw fa-close"></i></button>
+                                    </td>
                                     <td><span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span></td>
                                     <td>
                                         <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
@@ -187,8 +192,12 @@
                                     <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
                                     <td>{{col.Days}}</td>
                                     <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
+
                                     <td>{{col.Contact_Name ? col.Contact_Name :'-'}}</td>
-                                    <td><a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a></td>
+                                    <td>
+                                        <!-- <a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a> -->
+                                        <a (click)='CallTutopiaApp(col)'><i class="fa fa-fw fa-phone-square"></i>&nbsp;{{col.Mobile}}</a>
+                                    </td>
                                     <td>{{col.ALT_Mobile ? col.ALT_Mobile : '-'}}</td>
                                     <td>{{col.Pin ? col.Pin : '-' }}</td>
                                     <td>{{col.Address ? col.Address : '-'}}</td>
@@ -228,7 +237,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="form-horizontal">
                         <div class="box-body ">
                             <div class="timelinescroll style-3">
@@ -259,10 +268,11 @@
                                                           Remarks :
                                                             <i class="fa fa-comments"></i>&nbsp;
                                                         </a> -->
+                                                        <br>
                                                         <a class="btn btn-danger btn-social  btn-xs">
                                                             Action Taken :
                                                             <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Current_Action}}
-                                                        </a> <br>
+                                                        </a><br>
                                                         <div *ngIf='objFollowUpCreation?.Lead_ID && objSub?.Call_ID  && objSub?.Call_ID.toString() !=="0"' (click)='GetCallDetails(objSub)' class="btn btn-soundcloud btn-social  btn-xs" style="margin-top:0.5em;">
                                                             <i class="fa fa-info-circle"></i>&nbsp;CALL DETAILS
                                                         </div>
@@ -279,7 +289,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="form-horizontal">
                         <div class="box-body">
                             <form name="followup" role="form" novalidate>
@@ -316,38 +326,9 @@
                                         <input type="datetime-local" class="form-control" id="NextFollowup" #NextFollowup="ngModel" name="NextFollowup" [ngModel]="NxtFollowupDate | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="NxtFollowupDate = $event" [ngClass]="{'clearance':folloupFormSubmit && NextFollowup?.errors?.required}"
                                             [min]="TodayDate" required>
                                     </div>
-                                    <!-- <div class="col-sm-12">
-                                        <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
-                                        <p class="input-group">
-                                            <input type="text" name="nextfolloupFollowUpCreation" class="form-control"
-                                                placeholder="Next Followup Date" datetime-picker="dd/MM/yyyy HH:mm"
-                                                [(ngModel)]="nextFollowUpForFollowupCreation.data"
-                                                datepicker-options="datePickerForFollowUp.config"
-                                                is-open="nextFollowUpForFollowupCreation.open"
-                                                [ngClass]="{'clearance': folloupFormSubmit && followup.nextfolloupFollowUpCreation.$error.required ||(folloupFormSubmit && nextFollowUpForFollowupCreation.date==null)}"
-                                                required />
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default"
-                                                    (click)="openCalendar($event, 'nextFollowUpForFollowupCreation')">
-                                                    <i class="fa fa-calendar"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                    </div> -->
-
                                 </div>
                                 <div class="form-group">
-                                    <!-- @*<div class="col-sm-6">
-                                        <label class="control-label">Next Action<sup class="text-danger">*</sup></label>
-                                        <select class="form-control"
-                                            [ngClass]="{'clearance':folloupFormSubmit && followup.nextactionFollowUpCreation.$error.required}"
-                                            name="nextactionFollowUpCreation"
-                                            [(ngModel)]="objFollowUpCreation.Followup_Action" required>
-                                            <option value="">Select</option>
-                                            <option *ngFor=" let data of nextActionLists" value="{{data.Request_Type}}">
-                                                {{data.Request_Type}}</option>
-                                        </select>
-                                    </div>*@ -->
+                                
                                     <div class="col-sm-6">
                                         <label class="control-label">Status<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="statusFollowUpCreation" #statusFollowUpCreation="ngModel" [ngClass]="{'clearance':folloupFormSubmit && statusFollowUpCreation?.errors?.required}" [(ngModel)]="objFollowUpCreation.Status" (change)="changeStatusForFollowupCreation(objFollowUpCreation.Status)"
@@ -372,7 +353,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </form>
@@ -827,6 +808,7 @@
     </p-footer>
 
 </p-dialog>
+
 <!-- CALL DETAILS -->
 <p-dialog header="CALL DETAILS" [appendTo]="'body'" [visible]="CallDetailsModalFlag" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">

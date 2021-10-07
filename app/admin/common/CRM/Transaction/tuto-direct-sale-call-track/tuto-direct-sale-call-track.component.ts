@@ -31,7 +31,7 @@ export class TutoDirectSaleCallTrackComponent implements OnInit {
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Call Status",
-      Link: "CRM -> Call Status"
+      Link: "CRM -> Call Status "
     });
     this.getdashboarddetails();
   }
@@ -45,7 +45,7 @@ export class TutoDirectSaleCallTrackComponent implements OnInit {
         'Json_3_String' : 'NA',
         'Json_4_String' : 'NA'
       }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
          console.log(data);
          if(data.length) {
           this.DynamicHeader = Object.keys(data[0]);

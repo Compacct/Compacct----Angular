@@ -142,7 +142,8 @@
                             </div>
                             <div class="col-sm-2">
                                 <label class="control-label">Amount <sup class="text-danger">*</sup></label>
-                                <input (change)="AmountChange()" class="form-control" name="Net_Price" #Net_Price='ngModel' [(ngModel)]="ObjDSProduct.Rate" CompacctDigitonly="true" [ngClass]="{'clearance':DSProductFormSubmitted && Net_Price.errors?.required}" required>
+                                <input (change)="AmountChange()" [disabled]='AmtDisabledFlag' class="form-control" name="Net_Price" #Net_Price='ngModel' [(ngModel)]="ObjDSProduct.Rate" CompacctDigitonly="true" [ngClass]="{'clearance':DSProductFormSubmitted && Net_Price.errors?.required}"
+                                    required>
                             </div>
                             <div class="col-sm-4">
                                 <button class="btn btn-primary custombutton" (click)="AddProduct(addProductForm.form.valid)"> ADD</button>

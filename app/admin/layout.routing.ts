@@ -112,6 +112,11 @@ import { ClosingStockWithExpiryDateComponent } from './common/OutletManagement/c
 import { TutoSaleTreeFieldComponent } from './common/CRM/Master/tuto-sale-tree-field/tuto-sale-tree-field.component';
 import { TutoSalesTreeInsideSalesComponent } from "./common/CRM/Master/tuto-sales-tree-inside-sales/tuto-sales-tree-inside-sales.component";
 import { TutoCrmLeadFieldSaleComponent } from './common/CRM/Transaction/tuto-crm-lead-field-sale/tuto-crm-lead-field-sale.component';
+import { TutoTempCrmLeadComponent } from './common/CRM/Master/tuto-temp-crm-lead/tuto-temp-crm-lead.component';
+import { TutoWebDemLeadFollowupComponent } from './common/CRM/Transaction/tuto-web-dem-lead-followup/tuto-web-dem-lead-followup.component';
+import { TutoAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-audit-lead-followup/tuto-audit-lead-followup.component';
+
+
 
 
 
@@ -640,16 +645,30 @@ data: {title: 'K4C_Outlet_Requisition'}
                                           path: 'BL_CRM_Master_SalesTeam_Inside_Sales',
                                           component: TutoSalesTreeInsideSalesComponent,
                                           data: {title: 'Sales Team Inside Sales'}
-                                          },
-                                  {
-                                    path: 'Tutopia_DS_Dashboard',
-                                    component: TutoDsDashboardComponent,
-                                    data: {title: 'DS Dashboard'}
-                                    },{
+                                          } ,{
                                       path: 'Tutopia_CRM_Lead_Field_Sales',
                                       component: TutoCrmLeadFieldSaleComponent,
                                       data: {title: 'Followup Management (Channel Sale)'}
-                                      }
+                                      } ,{
+                                        path: 'Tutoipa_BL_CRM_Temp_To_New_Lead',
+                                        component: TutoTempCrmLeadComponent,
+                                        data: {title: 'Followup Management (Channel Sale)'}
+                                        },
+                                      {
+                                        path: 'Tutopia_DS_Dashboard',
+                                        component: TutoDsDashboardComponent,
+                                        data: {title: 'DS Dashboard'}
+                                        },
+                                        {
+                                          path: 'Tutopia_Web_Demo_Followup',
+                                          component: TutoWebDemLeadFollowupComponent,
+                                          data: {title: 'Web Demo Followup'}
+                                          },
+                                          {
+                                            path: 'Tutopia_Audit_Appointment',
+                                            component: TutoAuditLeadFollowupComponent,
+                                            data: {title: 'Audit Appointment'}
+                                            }
                           
       /*{
            path: '404',

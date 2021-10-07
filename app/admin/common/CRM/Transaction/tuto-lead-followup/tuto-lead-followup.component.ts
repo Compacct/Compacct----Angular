@@ -81,6 +81,9 @@ export class TutoLeadFollowupComponent implements OnInit {
   
   NextFollowupFilter: any;
   NextFollowupFilterSelected: any;
+
+  CallDetailsModalFlag = false;
+  CallDetailsObj: any = {};
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -320,7 +323,34 @@ export class TutoLeadFollowupComponent implements OnInit {
     this.PaginationObj = e;
     console.log(this.PaginationObj);
   }
+ // MOBILE CALL 
+  CallTutopiaApp (obj) {
+    if(obj.Mobile) {
+      const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
 
+      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message",{Phone_No : obj.Mobile, User_ID : this.$CompacctAPI.CompacctCookies.User_ID},{ headers, responseType: 'text'}).subscribe((res: any) => {
+        console.log(res)
+       if(res.toUpperCase().includes('ERROR')) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured In Tutopia Call API."
+          });
+       } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: obj.Mobile,
+          detail: "Check the call in Call center software."
+        });
+
+       }
+      });
+    }
+  }
   // CHANGE
   LeadTransferCheckBoxChanged() {
     this.LeadTransferModalBtn = false;
@@ -391,6 +421,7 @@ export class TutoLeadFollowupComponent implements OnInit {
     this.objFollowupDetails = new Followup();
     this.NxtFollowupDate = new Date();
     this.folloupFormSubmit = false;
+    this.CallDetailsObj = {};
     if (obj.Lead_ID) {
       this.objFollowupDetails = obj;
       this.objFollowUpCreation.Foot_Fall_ID = obj.Foot_Fall_ID;
@@ -464,7 +495,28 @@ export class TutoLeadFollowupComponent implements OnInit {
       },900);
     }
   }
-
+  // GET CALL DETAILS 
+  GetCallDetails (objSub) {
+    this.CallDetailsObj = {};
+    if(objSub.Call_ID){
+      this.$http.post("/Tutopia_CRM_Lead/Call_Audio_Check?Call_ID="+ objSub.Call_ID,{}).subscribe((res: any) => {
+        console.log(res);
+        if(res.data.length) {
+          this.CallDetailsObj = res.data[0];
+          this.CallDetailsModalFlag = true;
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured In Tutopia Call Details API."
+          });
+        }
+        
+      });
+    }
+  }
    //  DETAILS
   TabClick(e){
     console.log(e)

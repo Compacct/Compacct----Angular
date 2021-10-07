@@ -165,7 +165,10 @@
                                     <td class="text-center">
                                         <p-checkbox [(ngModel)]="col.Selected" (onChange)='LeadTransferCheckBoxChanged()' [binary]="true"></p-checkbox>
                                     </td>
-                                    <td><a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a></td>
+                                    <td>
+                                        <!-- <a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a> -->
+                                        <a (click)='CallTutopiaApp(col)'><i class="fa fa-fw fa-phone-square"></i>&nbsp;{{col.Mobile}}</a>
+                                    </td>
                                     <td>{{col.Mobile_Whatsup ? col.Mobile_Whatsup : '-'}}</td>
                                     <td>{{col.Contact_Name ? col.Contact_Name :'-'}}</td>
                                     <td>{{col.Class_Name ? col.Class_Name : '-'}}</td>
@@ -241,6 +244,10 @@
                                                             Action Taken :
                                                             <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Current_Action}}
                                                         </a>
+                                                        <br>
+                                                        <div *ngIf='objFollowUpCreation?.Lead_ID && objSub?.Call_ID && objSub?.Call_ID.toString() !=="0"' (click)='GetCallDetails(objSub)' class="btn btn-soundcloud btn-social  btn-xs" style="margin-top:0.5em;">
+                                                            <i class="fa fa-info-circle"></i>&nbsp;CALL DETAILS
+                                                        </div>
                                                         <a *ngIf="objSub.PDF_File" ng-click="viewPDF(objSub.PDF_File)">
                                                             <img src="~/PDF_Logo/PDF-logo.png" class='pdf' style="width:20px; height:20px ">
                                                         </a>
@@ -801,4 +808,43 @@
 
     </p-footer>
 
+</p-dialog>
+<!-- CALL DETAILS -->
+<p-dialog header="CALL DETAILS" [appendTo]="'body'" [visible]="CallDetailsModalFlag" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="CALLFORM" style="margin-top:2em" #CALLFORM="ngForm" novalidate>
+
+        <div class="form-group">
+            <div class='col-sm-12 text-center' *ngIf="CallDetailsObj['location']">
+                <label style='display: block;' class="control-label">Audio <sup class="text-danger">*</sup></label>
+                <audio id="Test_Audio" controls>              
+                    <source [src]="CallDetailsObj['location']"
+                            type="audio/mpeg">
+                </audio>
+            </div>
+            <div class="col-sm-12">
+                <label style='display: block;' class="control-label">Call Length <sup class="text-danger">*</sup></label>
+                <div class="label-t">{{CallDetailsObj['length_in_sec'] ? CallDetailsObj['length_in_sec'] + ' Sec' : '-'}}</div>
+
+
+            </div>
+            <div class="col-sm-12">
+                <label style='display: block;' class="control-label">Call Started In <sup class="text-danger">*</sup></label>
+                <div class="label-t">{{CallDetailsObj['start_time'] ? (CallDetailsObj['start_time'] | date : "dd/MMM/yyy hh:mm a") : '-'}}</div>
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="CallDetailsModalFlag = false" class="btn btn-default">
+            CLOSE
+        </button>
+    </p-footer>
 </p-dialog>

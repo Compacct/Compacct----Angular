@@ -6,7 +6,7 @@ import { DateTimeConvertService } from "../../../../shared/compacct.global/dateT
 import { CompacctCommonApi } from "../../../../shared/compacct.services/common.api.service";
 import { MessageService } from "primeng/api";
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
-import { NavigationExtras, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-tuto-ds-bill',
@@ -30,6 +30,7 @@ export class TutoDsBillComponent implements OnInit {
 
   AmtMin = 0;
   AmtMax =0;
+  AmtDisabledFlag = false;
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -38,7 +39,21 @@ export class TutoDsBillComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
     private $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService) { }
+    private route: ActivatedRoute,
+    private compacctToast: MessageService) { 
+      this.route.queryParams.subscribe((val:any) => {
+        if(val.Mobile) {
+          this.AmtDisabledFlag = false;
+          this.ObjDSBill.Mobile_No = window.atob(val['Mobile']);
+          this.GetStudentsDetails();
+          if(val.From === 'Y') {
+            this.AmtDisabledFlag = true;
+          }
+        }
+      } ); 
+
+
+    }
 
   ngOnInit() {
     this.Header.pushHeader({
@@ -155,6 +170,11 @@ export class TutoDsBillComponent implements OnInit {
         this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
         this.AmtMin = Number(ProductObjArr[0].DS_Min_Bill_Amt);
         this.AmtMax = Number(ProductObjArr[0].DI_Max_Bill_Amt);
+        if(this.AmtDisabledFlag) {
+          this.AmtMin =  ProductObjArr[0].Sale_rate;
+          this.AmtMax =  ProductObjArr[0].Sale_rate;
+          this.ObjDSProduct.Rate = ProductObjArr[0].Sale_rate;
+        }
       }
     }
   }

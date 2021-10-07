@@ -654,415 +654,434 @@ export class StocktransferComponent implements OnInit {
     this.CalculateRoundedOff();
   };
 
-  // ADD / UPDATE / SEARCH
-  AddProductInfo(valid) {
-    this.ProductInfoSubmitted = true;
-    this.ProductInfoRequired = true;
-    if (valid) {
-      if (this.ObjCostCenterTO.T_godown_id) {
-        const ProdList = this.NativeProductList.map(x => Object.assign({}, x));
-        const prodCodeID = this.ObjProductInfo.Product_ID;
-        const TempServiceFlag = $.grep(ProdList, function(value) {
-          return value.Product_ID === prodCodeID;
-        })[0];
-        if ((this.ObjProductInfo.Batch_Number !== "" && this.ObjProductInfo.Batch_Number !== undefined) || (TempServiceFlag.Is_Service && this.databaseName === 'GN_SHCPL_Patna'))
-         {
-          if (
-            this.ObjCostCenterFROM.F_Cost_Cen_State &&
-            this.ObjCostCenterTO.T_Cost_Cen_State
-          ) {
+    // ADD / UPDATE / SEARCH
+  async AddProductInfo(valid) {
+      this.ProductInfoSubmitted = true;
+      this.ProductInfoRequired = true;
+      if (valid) {
+        if (this.ObjCostCenterTO.T_godown_id) {
+          const ProdList = this.NativeProductList.map(x => Object.assign({}, x));
+          const prodCodeID = this.ObjProductInfo.Product_ID;
+          const TempServiceFlag = $.grep(ProdList, function(value) {
+            return value.Product_ID === prodCodeID;
+          })[0];
+          if ((this.ObjProductInfo.Batch_Number !== "" && this.ObjProductInfo.Batch_Number !== undefined) || (TempServiceFlag.Is_Service && this.databaseName === 'GN_SHCPL_Patna'))
+          {
             if (
-              this.ObjCostCenterFROM.F_Cost_Cen_GST_No.toUpperCase() ===
-              this.ObjCostCenterTO.T_Cost_Cen_GST_No.toUpperCase()
+              this.ObjCostCenterFROM.F_Cost_Cen_State &&
+              this.ObjCostCenterTO.T_Cost_Cen_State
             ) {
-              this.ObjProductInfo.IGST_Rate = 0;
-              this.ObjProductInfo.CGST_Rate = 0;
-              this.ObjProductInfo.SGST_Rate = 0;
+              if (
+                this.ObjCostCenterFROM.F_Cost_Cen_GST_No.toUpperCase() ===
+                this.ObjCostCenterTO.T_Cost_Cen_GST_No.toUpperCase()
+              ) {
+                this.ObjProductInfo.IGST_Rate = 0;
+                this.ObjProductInfo.CGST_Rate = 0;
+                this.ObjProductInfo.SGST_Rate = 0;
 
-              this.ObjProductInfo.IGST_Input_Rate = 0;
-              this.ObjProductInfo.IGST_Input_Amt = 0;
+                this.ObjProductInfo.IGST_Input_Rate = 0;
+                this.ObjProductInfo.IGST_Input_Amt = 0;
 
-              this.ObjProductInfo.IGST_Output_Rate = 0;
-              this.ObjProductInfo.IGST_Output_Amt = 0;
+                this.ObjProductInfo.IGST_Output_Rate = 0;
+                this.ObjProductInfo.IGST_Output_Amt = 0;
 
-              this.ObjProductInfo.CGST_Input_Rate = 0;
-              this.ObjProductInfo.CGST_Input_Amt = 0;
+                this.ObjProductInfo.CGST_Input_Rate = 0;
+                this.ObjProductInfo.CGST_Input_Amt = 0;
 
-              this.ObjProductInfo.CGST_Output_Rate = 0;
-              this.ObjProductInfo.CGST_Output_Amt = 0;
+                this.ObjProductInfo.CGST_Output_Rate = 0;
+                this.ObjProductInfo.CGST_Output_Amt = 0;
 
-              this.ObjProductInfo.SGST_Input_Rate = 0;
-              this.ObjProductInfo.SGST_Input_Amt = 0;
+                this.ObjProductInfo.SGST_Input_Rate = 0;
+                this.ObjProductInfo.SGST_Input_Amt = 0;
 
-              this.ObjProductInfo.SGST_Output_Rate = 0;
-              this.ObjProductInfo.SGST_Output_Amt = 0;
-            } else if (
-              this.ObjCostCenterFROM.F_Cost_Cen_State.toUpperCase() ===
-              this.ObjCostCenterTO.T_Cost_Cen_State.toUpperCase()
-            ) {
-              this.ObjProductInfo.CGST_Input_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.CGST_Input_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.CGST_Output_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.CGST_Output_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.SGST_Input_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.SGST_Input_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.SGST_Output_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.SGST_Output_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.IGST_Input_Rate = 0;
-              this.ObjProductInfo.IGST_Input_Amt = 0;
+                this.ObjProductInfo.SGST_Output_Rate = 0;
+                this.ObjProductInfo.SGST_Output_Amt = 0;
+              } else if (
+                this.ObjCostCenterFROM.F_Cost_Cen_State.toUpperCase() ===
+                this.ObjCostCenterTO.T_Cost_Cen_State.toUpperCase()
+              ) {
+                this.ObjProductInfo.CGST_Input_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.CGST_Input_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.CGST_Output_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.CGST_Output_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.SGST_Input_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.SGST_Input_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.SGST_Output_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.SGST_Output_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.IGST_Input_Rate = 0;
+                this.ObjProductInfo.IGST_Input_Amt = 0;
 
-              this.ObjProductInfo.IGST_Output_Rate = 0;
-              this.ObjProductInfo.IGST_Output_Amt = 0;
-              this.ObjProductInfo.IGST_Rate = 0;
-            } else {
-              this.ObjProductInfo.IGST_Input_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.IGST_Input_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.IGST_Output_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.IGST_Output_Rate) /
-                  100
-                ).toFixed(2)
-              );
+                this.ObjProductInfo.IGST_Output_Rate = 0;
+                this.ObjProductInfo.IGST_Output_Amt = 0;
+                this.ObjProductInfo.IGST_Rate = 0;
+              } else {
+                this.ObjProductInfo.IGST_Input_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.IGST_Input_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.IGST_Output_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.IGST_Output_Rate) /
+                    100
+                  ).toFixed(2)
+                );
 
-              this.ObjProductInfo.CGST_Input_Rate = 0;
-              this.ObjProductInfo.CGST_Input_Amt = 0;
+                this.ObjProductInfo.CGST_Input_Rate = 0;
+                this.ObjProductInfo.CGST_Input_Amt = 0;
 
-              this.ObjProductInfo.CGST_Output_Rate = 0;
-              this.ObjProductInfo.CGST_Output_Amt = 0;
+                this.ObjProductInfo.CGST_Output_Rate = 0;
+                this.ObjProductInfo.CGST_Output_Amt = 0;
 
-              this.ObjProductInfo.SGST_Input_Rate = 0;
-              this.ObjProductInfo.SGST_Input_Amt = 0;
+                this.ObjProductInfo.SGST_Input_Rate = 0;
+                this.ObjProductInfo.SGST_Input_Amt = 0;
 
-              this.ObjProductInfo.SGST_Output_Rate = 0;
-              this.ObjProductInfo.SGST_Output_Amt = 0;
-              this.ObjProductInfo.CGST_Rate = 0;
-              this.ObjProductInfo.SGST_Rate = 0;
-            }
+                this.ObjProductInfo.SGST_Output_Rate = 0;
+                this.ObjProductInfo.SGST_Output_Amt = 0;
+                this.ObjProductInfo.CGST_Rate = 0;
+                this.ObjProductInfo.SGST_Rate = 0;
+              }
 
-            this.ProductInfoListProto.push(this.ObjProductInfo);
-            this.ProductInfoListView = this.ProductInfoListProto;
-            this.ProductInfoSubmitted = false;
-            this.ProductInfoRequired = false;
-            this.BatchShow = true;
-            this.Batchdisabled = true;
-            this.SerialShow = false;
-            this.GodownRequire = false;
-            this.Batchdropdown = false;
-            this.GodownLists = [];
-            this.BatchList = [];
-            this.SelectedProduct = "";
-
-            this.CalculateTotalAmount();
-            this.CalculateDiscount();
-            this.CalculateTaxableAmount();
-            this.CalculateIGST();
-            this.CalculateSGSTAmount();
-            this.CalculateCGSTAmount();
-            this.CalculateGrossAmount();
-            this.CalculateNetAmount();
-            this.CalculateRoundedOff();
-
-            if (Number(this.ObjProductInfo.F_godown_id) === 0) {
-              this.ObjProductInfo = new ProductInfo();
-              this.ObjProductInfo.F_godown_id = 0;
-            } else {
-              this.ObjProductInfo = new ProductInfo();
-            }
-          } else {
-            this.compacctToast.clear();
-            this.compacctToast.add({
-              key: "compacct-toast",
-              severity: "error",
-              summary: "Warn Message",
-              detail: "Please choose From/To Costcenter."
-            });
-          }
-        } else if (this.SelectedSerialNo.length !== 0) {
-          if (!Number(this.ObjProductInfo.MRP)) {
-            this.ObjProductInfo.MRP = 0;
-          }
-          if (!Number(this.ObjProductInfo.Rate)) {
-            this.ObjProductInfo.Rate = 0;
-          }
-          if (!Number(this.ObjProductInfo.Amount)) {
-            this.ObjProductInfo.Amount = 0;
-          }
-          if (Number(this.ObjProductInfo.F_godown_id) === 0) {
-            this.ObjProductInfo.F_godown_id = 0;
-            this.ObjProductInfo.godown_name = "-";
-          }
-          if (
-            this.ObjCostCenterFROM.F_Cost_Cen_State &&
-            this.ObjCostCenterTO.T_Cost_Cen_State
-          ) {
-            // && ctrl.compositeGST == "No"
-            if (
-              this.ObjCostCenterFROM.F_Cost_Cen_GST_No.toUpperCase() ===
-              this.ObjCostCenterTO.T_Cost_Cen_GST_No.toUpperCase()
-            ) {
-              this.ObjProductInfo.IGST_Rate = 0;
-              this.ObjProductInfo.CGST_Rate = 0;
-              this.ObjProductInfo.SGST_Rate = 0;
-              this.ObjProductInfo.IGST_Input_Rate = 0;
-              this.ObjProductInfo.IGST_Input_Amt = 0;
-
-              this.ObjProductInfo.IGST_Output_Rate = 0;
-              this.ObjProductInfo.IGST_Output_Amt = 0;
-
-              this.ObjProductInfo.CGST_Input_Rate = 0;
-              this.ObjProductInfo.CGST_Input_Amt = 0;
-
-              this.ObjProductInfo.CGST_Output_Rate = 0;
-              this.ObjProductInfo.CGST_Output_Amt = 0;
-
-              this.ObjProductInfo.SGST_Input_Rate = 0;
-              this.ObjProductInfo.SGST_Input_Amt = 0;
-
-              this.ObjProductInfo.SGST_Output_Rate = 0;
-              this.ObjProductInfo.SGST_Output_Amt = 0;
-            } else if (
-              this.ObjCostCenterFROM.F_Cost_Cen_State.toUpperCase() ===
-              this.ObjCostCenterTO.T_Cost_Cen_State.toUpperCase()
-            ) {
-              this.ObjProductInfo.CGST_Input_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.CGST_Input_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.CGST_Output_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.CGST_Output_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.SGST_Input_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.SGST_Input_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.SGST_Output_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.SGST_Output_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.IGST_Input_Rate = 0;
-              this.ObjProductInfo.IGST_Input_Amt = 0;
-
-              this.ObjProductInfo.IGST_Output_Rate = 0;
-              this.ObjProductInfo.IGST_Output_Amt = 0;
-              this.ObjProductInfo.IGST_Rate = 0;
-            } else {
-              this.ObjProductInfo.IGST_Input_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.IGST_Input_Rate) /
-                  100
-                ).toFixed(2)
-              );
-              this.ObjProductInfo.IGST_Output_Amt = parseFloat(
-                (
-                  (this.ObjProductInfo.Taxable_Amount *
-                    this.ObjProductInfo.IGST_Output_Rate) /
-                  100
-                ).toFixed(2)
-              );
-
-              this.ObjProductInfo.CGST_Input_Rate = 0;
-              this.ObjProductInfo.CGST_Input_Amt = 0;
-
-              this.ObjProductInfo.CGST_Output_Rate = 0;
-              this.ObjProductInfo.CGST_Output_Amt = 0;
-
-              this.ObjProductInfo.SGST_Input_Rate = 0;
-              this.ObjProductInfo.SGST_Input_Amt = 0;
-
-              this.ObjProductInfo.SGST_Output_Rate = 0;
-              this.ObjProductInfo.SGST_Output_Amt = 0;
-              this.ObjProductInfo.CGST_Rate = 0;
-              this.ObjProductInfo.SGST_Rate = 0;
-            }
-            const k = this.ObjProductInfo;
-            for (let i = 0; i < this.SelectedSerialNo.length; i++) {
-              const ser = this.SelectedSerialNo[i];
-              this.ObjProductInfo.Serial_No = ser;
               this.ProductInfoListProto.push(this.ObjProductInfo);
-              // console.log(ctrl.ObjOthersInfo.Serial_No)
-              //  ctrl.ObjOthersInfo.Serial_No = undefined;
-              const d = this.ObjProductInfo;
-              this.ObjProductInfo = new ProductInfo();
+              this.ProductInfoListView = this.ProductInfoListProto;
+              this.ProductInfoSubmitted = false;
+              this.ProductInfoRequired = false;
+              this.BatchShow = true;
+              this.Batchdisabled = true;
+              this.SerialShow = false;
+              this.GodownRequire = false;
+              this.Batchdropdown = false;
+              this.GodownLists = [];
+              this.BatchList = [];
+              this.SelectedProduct = "";
 
-              this.ObjProductInfo.Product_ID = d.Product_ID;
-              this.ObjProductInfo.Product_Name = d.Product_Name;
-              this.ObjProductInfo.Product_Specification =
-                d.Product_Specification;
-              this.ObjProductInfo.Qty = d.Qty;
-              this.ObjProductInfo.UOM = d.UOM;
-              this.ObjProductInfo.MRP = d.MRP;
-              this.ObjProductInfo.Rate = d.Rate;
-              this.ObjProductInfo.Amount = d.Amount;
+              this.CalculateTotalAmount();
+              this.CalculateDiscount();
+              this.CalculateTaxableAmount();
+              this.CalculateIGST();
+              this.CalculateSGSTAmount();
+              this.CalculateCGSTAmount();
+              this.CalculateGrossAmount();
+              this.CalculateNetAmount();
+              this.CalculateRoundedOff();
 
-              this.ObjProductInfo.Cat_ID = d.Cat_ID;
-              this.ObjProductInfo.Cat_Name = d.Cat_Name;
-              this.ObjProductInfo.F_godown_id = d.F_godown_id;
-              this.ObjProductInfo.godown_name = d.godown_name;
-              this.ObjProductInfo.Ledger_ID = d.Ledger_ID;
-
-              this.ObjProductInfo.HSL_No = d.HSL_No;
-              this.ObjProductInfo.Discount_Type = d.Discount_Type;
-              this.ObjProductInfo.Discount = d.Discount;
-              this.ObjProductInfo.Discount_Type_Amount = d.Discount_Type_Amount;
-              this.ObjProductInfo.Taxable_Amount = d.Taxable_Amount;
-              this.ObjProductInfo.CGST_Rate = d.CGST_Rate;
-              this.ObjProductInfo.SGST_Rate = d.SGST_Rate;
-              this.ObjProductInfo.IGST_Rate = d.IGST_Rate;
-
-              this.ObjProductInfo.CGST_Amount = d.CGST_Amount;
-              this.ObjProductInfo.SGST_Amount = d.SGST_Amount;
-              this.ObjProductInfo.IGST_Amount = d.IGST_Amount;
-
-              this.ObjProductInfo.IGST_Input_Ledger_ID = d.IGST_Input_Ledger_ID;
-              this.ObjProductInfo.IGST_Input_Rate = d.IGST_Rate;
-              this.ObjProductInfo.IGST_Input_Amt = d.IGST_Input_Amt;
-
-              this.ObjProductInfo.IGST_Output_Ledger_ID =
-                d.IGST_Output_Ledger_ID;
-              this.ObjProductInfo.IGST_Output_Rate = d.IGST_Rate;
-              this.ObjProductInfo.IGST_Output_Amt = d.IGST_Output_Amt;
-
-              this.ObjProductInfo.CGST_Input_Ledger_ID = d.CGST_Input_Ledger_ID;
-              this.ObjProductInfo.CGST_Input_Rate = d.CGST_Rate;
-              this.ObjProductInfo.CGST_Input_Amt = d.CGST_Input_Amt;
-
-              this.ObjProductInfo.CGST_Output_Ledger_ID =
-                d.CGST_Output_Ledger_ID;
-              this.ObjProductInfo.CGST_Output_Rate = d.CGST_Rate;
-              this.ObjProductInfo.CGST_Output_Amt = d.CGST_Output_Amt;
-
-              this.ObjProductInfo.SGST_Input_Ledger_Id = d.SGST_Input_Ledger_Id;
-              this.ObjProductInfo.SGST_Input_Rate = d.SGST_Rate;
-              this.ObjProductInfo.SGST_Input_Amt = d.SGST_Input_Amt;
-
-              this.ObjProductInfo.SGST_Output_Ledger_ID =
-                d.SGST_Output_Ledger_ID;
-              this.ObjProductInfo.SGST_Output_Rate = d.SGST_Rate;
-              this.ObjProductInfo.SGST_Output_Amt = d.SGST_Output_Amt;
-
-              this.ObjProductInfo.Discount_Ledger_ID = d.Discount_Ledger_ID;
-
-              this.ObjProductInfo.Product_ID_AO = d.Product_ID_AO;
-              this.ObjProductInfo.Qty_AO = d.Qty_AO;
-              this.ObjProductInfo.Previous_Doc_No = d.Previous_Doc_No;
-
-              //   var d = ctrl.ObjOthersInfo;
+              if (Number(this.ObjProductInfo.F_godown_id) === 0) {
+                this.ObjProductInfo = new ProductInfo();
+                this.ObjProductInfo.F_godown_id = 0;
+              } else {
+                this.ObjProductInfo = new ProductInfo();
+              }
+            } else {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Warn Message",
+                detail: "Please choose From/To Costcenter."
+              });
             }
-            this.ProductInfoListView = this.ProductInfoListProto;
-            this.CalculateTotalAmount();
-            this.CalculateDiscount();
-            this.CalculateTaxableAmount();
-            this.CalculateIGST();
-            this.CalculateSGSTAmount();
-            this.CalculateCGSTAmount();
-            this.CalculateGrossAmount();
-            this.CalculateNetAmount();
-            this.CalculateRoundedOff();
+          } else if (this.SelectedSerialNo.length !== 0) {
+            if (!Number(this.ObjProductInfo.MRP)) {
+              this.ObjProductInfo.MRP = 0;
+            }
+            if (!Number(this.ObjProductInfo.Rate)) {
+              this.ObjProductInfo.Rate = 0;
+            }
+            if (!Number(this.ObjProductInfo.Amount)) {
+              this.ObjProductInfo.Amount = 0;
+            }
+            if (Number(this.ObjProductInfo.F_godown_id) === 0) {
+              this.ObjProductInfo.F_godown_id = 0;
+              this.ObjProductInfo.godown_name = "-";
+            }
+            if (
+              this.ObjCostCenterFROM.F_Cost_Cen_State &&
+              this.ObjCostCenterTO.T_Cost_Cen_State
+            ) {
+              // && ctrl.compositeGST == "No"
+              if (
+                this.ObjCostCenterFROM.F_Cost_Cen_GST_No.toUpperCase() ===
+                this.ObjCostCenterTO.T_Cost_Cen_GST_No.toUpperCase()
+              ) {
+                this.ObjProductInfo.IGST_Rate = 0;
+                this.ObjProductInfo.CGST_Rate = 0;
+                this.ObjProductInfo.SGST_Rate = 0;
+                this.ObjProductInfo.IGST_Input_Rate = 0;
+                this.ObjProductInfo.IGST_Input_Amt = 0;
 
-            this.ProductInfoSubmitted = false;
-            this.ProductInfoRequired = false;
-            this.BatchShow = true;
-            this.Batchdisabled = true;
-            this.SerialShow = false;
-            this.GodownRequire = false;
-            this.Batchdropdown = false;
-            this.SerialList = [];
-            this.GodownLists = [];
-            this.ObjProductInfo = new ProductInfo();
-            this.ProductChange(k.Product_ID);
-            this.ObjProductInfo.Product_ID = k.Product_ID;
-            this.ObjProductInfo.Product_Name = k.Product_Name;
-            this.ObjProductInfo.Product_Specification = k.Product_Specification;
-            this.ObjProductInfo.Qty = k.Qty;
-            this.ObjProductInfo.UOM = k.UOM;
-            this.ObjProductInfo.MRP = k.MRP;
-            this.ObjProductInfo.Rate = k.Rate;
-            this.ObjProductInfo.Amount = k.Amount;
+                this.ObjProductInfo.IGST_Output_Rate = 0;
+                this.ObjProductInfo.IGST_Output_Amt = 0;
 
-            this.ObjProductInfo.Cat_ID = k.Cat_ID;
-            this.ObjProductInfo.Cat_Name = k.Cat_Name;
-            this.ObjProductInfo.F_godown_id = k.F_godown_id;
-            this.FromGodownChange(k.F_godown_id);
-            this.ObjProductInfo.godown_name = k.godown_name;
-            this.ObjProductInfo.Ledger_ID = k.Ledger_ID;
+                this.ObjProductInfo.CGST_Input_Rate = 0;
+                this.ObjProductInfo.CGST_Input_Amt = 0;
 
-            this.ObjProductInfo.HSL_No = k.HSL_No;
-            this.ObjProductInfo.Discount_Type = k.Discount_Type;
-            this.ObjProductInfo.Discount = k.Discount;
-            this.ObjProductInfo.Discount_Type_Amount = k.Discount_Type_Amount;
-            this.ObjProductInfo.Taxable_Amount = k.Taxable_Amount;
-            this.ObjProductInfo.Discount_Ledger_ID = k.Discount_Ledger_ID;
+                this.ObjProductInfo.CGST_Output_Rate = 0;
+                this.ObjProductInfo.CGST_Output_Amt = 0;
 
-            this.ObjProductInfo.Product_ID_AO = k.Product_ID_AO;
-            this.ObjProductInfo.Qty_AO = k.Qty_AO;
-            this.ObjProductInfo.Previous_Doc_No = k.Previous_Doc_No;
+                this.ObjProductInfo.SGST_Input_Rate = 0;
+                this.ObjProductInfo.SGST_Input_Amt = 0;
 
-            this.SelectedSerialNo = [];
+                this.ObjProductInfo.SGST_Output_Rate = 0;
+                this.ObjProductInfo.SGST_Output_Amt = 0;
+              } else if (
+                this.ObjCostCenterFROM.F_Cost_Cen_State.toUpperCase() ===
+                this.ObjCostCenterTO.T_Cost_Cen_State.toUpperCase()
+              ) {
+                this.ObjProductInfo.CGST_Input_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.CGST_Input_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.CGST_Output_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.CGST_Output_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.SGST_Input_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.SGST_Input_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.SGST_Output_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.SGST_Output_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.IGST_Input_Rate = 0;
+                this.ObjProductInfo.IGST_Input_Amt = 0;
+
+                this.ObjProductInfo.IGST_Output_Rate = 0;
+                this.ObjProductInfo.IGST_Output_Amt = 0;
+                this.ObjProductInfo.IGST_Rate = 0;
+              } else {
+                this.ObjProductInfo.IGST_Input_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.IGST_Input_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+                this.ObjProductInfo.IGST_Output_Amt = parseFloat(
+                  (
+                    (this.ObjProductInfo.Taxable_Amount *
+                      this.ObjProductInfo.IGST_Output_Rate) /
+                    100
+                  ).toFixed(2)
+                );
+
+                this.ObjProductInfo.CGST_Input_Rate = 0;
+                this.ObjProductInfo.CGST_Input_Amt = 0;
+
+                this.ObjProductInfo.CGST_Output_Rate = 0;
+                this.ObjProductInfo.CGST_Output_Amt = 0;
+
+                this.ObjProductInfo.SGST_Input_Rate = 0;
+                this.ObjProductInfo.SGST_Input_Amt = 0;
+
+                this.ObjProductInfo.SGST_Output_Rate = 0;
+                this.ObjProductInfo.SGST_Output_Amt = 0;
+                this.ObjProductInfo.CGST_Rate = 0;
+                this.ObjProductInfo.SGST_Rate = 0;
+              }
+              const k = this.ObjProductInfo;
+              for (let i = 0; i < this.SelectedSerialNo.length; i++) {
+                const ser = this.SelectedSerialNo[i];
+                let falg = await this.CheckSerialNoValid(ser);
+                console.log('Serial no Check : ', falg ,ser );
+                if(falg === 'YES') {
+                  this.ObjProductInfo.Serial_No = ser;
+                  this.ProductInfoListProto.push(this.ObjProductInfo);
+                  // console.log(ctrl.ObjOthersInfo.Serial_No)
+                  //  ctrl.ObjOthersInfo.Serial_No = undefined;
+                  const d = this.ObjProductInfo;
+                  this.ObjProductInfo = new ProductInfo();
+
+                  this.ObjProductInfo.Product_ID = d.Product_ID;
+                  this.ObjProductInfo.Product_Name = d.Product_Name;
+                  this.ObjProductInfo.Product_Specification =
+                    d.Product_Specification;
+                  this.ObjProductInfo.Qty = d.Qty;
+                  this.ObjProductInfo.UOM = d.UOM;
+                  this.ObjProductInfo.MRP = d.MRP;
+                  this.ObjProductInfo.Rate = d.Rate;
+                  this.ObjProductInfo.Amount = d.Amount;
+
+                  this.ObjProductInfo.Cat_ID = d.Cat_ID;
+                  this.ObjProductInfo.Cat_Name = d.Cat_Name;
+                  this.ObjProductInfo.F_godown_id = d.F_godown_id;
+                  this.ObjProductInfo.godown_name = d.godown_name;
+                  this.ObjProductInfo.Ledger_ID = d.Ledger_ID;
+
+                  this.ObjProductInfo.HSL_No = d.HSL_No;
+                  this.ObjProductInfo.Discount_Type = d.Discount_Type;
+                  this.ObjProductInfo.Discount = d.Discount;
+                  this.ObjProductInfo.Discount_Type_Amount = d.Discount_Type_Amount;
+                  this.ObjProductInfo.Taxable_Amount = d.Taxable_Amount;
+                  this.ObjProductInfo.CGST_Rate = d.CGST_Rate;
+                  this.ObjProductInfo.SGST_Rate = d.SGST_Rate;
+                  this.ObjProductInfo.IGST_Rate = d.IGST_Rate;
+
+                  this.ObjProductInfo.CGST_Amount = d.CGST_Amount;
+                  this.ObjProductInfo.SGST_Amount = d.SGST_Amount;
+                  this.ObjProductInfo.IGST_Amount = d.IGST_Amount;
+
+                  this.ObjProductInfo.IGST_Input_Ledger_ID = d.IGST_Input_Ledger_ID;
+                  this.ObjProductInfo.IGST_Input_Rate = d.IGST_Rate;
+                  this.ObjProductInfo.IGST_Input_Amt = d.IGST_Input_Amt;
+
+                  this.ObjProductInfo.IGST_Output_Ledger_ID =
+                    d.IGST_Output_Ledger_ID;
+                  this.ObjProductInfo.IGST_Output_Rate = d.IGST_Rate;
+                  this.ObjProductInfo.IGST_Output_Amt = d.IGST_Output_Amt;
+
+                  this.ObjProductInfo.CGST_Input_Ledger_ID = d.CGST_Input_Ledger_ID;
+                  this.ObjProductInfo.CGST_Input_Rate = d.CGST_Rate;
+                  this.ObjProductInfo.CGST_Input_Amt = d.CGST_Input_Amt;
+
+                  this.ObjProductInfo.CGST_Output_Ledger_ID =
+                    d.CGST_Output_Ledger_ID;
+                  this.ObjProductInfo.CGST_Output_Rate = d.CGST_Rate;
+                  this.ObjProductInfo.CGST_Output_Amt = d.CGST_Output_Amt;
+
+                  this.ObjProductInfo.SGST_Input_Ledger_Id = d.SGST_Input_Ledger_Id;
+                  this.ObjProductInfo.SGST_Input_Rate = d.SGST_Rate;
+                  this.ObjProductInfo.SGST_Input_Amt = d.SGST_Input_Amt;
+
+                  this.ObjProductInfo.SGST_Output_Ledger_ID =
+                    d.SGST_Output_Ledger_ID;
+                  this.ObjProductInfo.SGST_Output_Rate = d.SGST_Rate;
+                  this.ObjProductInfo.SGST_Output_Amt = d.SGST_Output_Amt;
+
+                  this.ObjProductInfo.Discount_Ledger_ID = d.Discount_Ledger_ID;
+
+                  this.ObjProductInfo.Product_ID_AO = d.Product_ID_AO;
+                  this.ObjProductInfo.Qty_AO = d.Qty_AO;
+                  this.ObjProductInfo.Previous_Doc_No = d.Previous_Doc_No;
+                } else {
+                  this.compacctToast.clear();
+                  this.compacctToast.add({
+                    key: "compacct-toast",
+                    severity: "error",
+                    summary: "Serial No Check",
+                    detail: ser + " : Is not exits for this product. ",
+                    life : 5000
+                  });
+                }
+              }
+              this.ProductInfoListView = this.ProductInfoListProto;
+              this.CalculateTotalAmount();
+              this.CalculateDiscount();
+              this.CalculateTaxableAmount();
+              this.CalculateIGST();
+              this.CalculateSGSTAmount();
+              this.CalculateCGSTAmount();
+              this.CalculateGrossAmount();
+              this.CalculateNetAmount();
+              this.CalculateRoundedOff();
+
+              this.ProductInfoSubmitted = false;
+              this.ProductInfoRequired = false;
+              this.BatchShow = true;
+              this.Batchdisabled = true;
+              this.SerialShow = false;
+              this.GodownRequire = false;
+              this.Batchdropdown = false;
+              this.SerialList = [];
+              this.GodownLists = [];
+              this.ObjProductInfo = new ProductInfo();
+              this.ProductChange(k.Product_ID);
+              this.ObjProductInfo.Product_ID = k.Product_ID;
+              this.ObjProductInfo.Product_Name = k.Product_Name;
+              this.ObjProductInfo.Product_Specification = k.Product_Specification;
+              this.ObjProductInfo.Qty = k.Qty;
+              this.ObjProductInfo.UOM = k.UOM;
+              this.ObjProductInfo.MRP = k.MRP;
+              this.ObjProductInfo.Rate = k.Rate;
+              this.ObjProductInfo.Amount = k.Amount;
+
+              this.ObjProductInfo.Cat_ID = k.Cat_ID;
+              this.ObjProductInfo.Cat_Name = k.Cat_Name;
+              this.ObjProductInfo.F_godown_id = k.F_godown_id;
+              this.FromGodownChange(k.F_godown_id);
+              this.ObjProductInfo.godown_name = k.godown_name;
+              this.ObjProductInfo.Ledger_ID = k.Ledger_ID;
+
+              this.ObjProductInfo.HSL_No = k.HSL_No;
+              this.ObjProductInfo.Discount_Type = k.Discount_Type;
+              this.ObjProductInfo.Discount = k.Discount;
+              this.ObjProductInfo.Discount_Type_Amount = k.Discount_Type_Amount;
+              this.ObjProductInfo.Taxable_Amount = k.Taxable_Amount;
+              this.ObjProductInfo.Discount_Ledger_ID = k.Discount_Ledger_ID;
+
+              this.ObjProductInfo.Product_ID_AO = k.Product_ID_AO;
+              this.ObjProductInfo.Qty_AO = k.Qty_AO;
+              this.ObjProductInfo.Previous_Doc_No = k.Previous_Doc_No;
+
+              this.SelectedSerialNo = [];
+            }
           }
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Please choose To Stock Point."
+          });
         }
       } else {
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-          detail: "Please choose To Stock Point."
-        });
-      }
-    } else {
-      if (
-        !this.ObjCostCenterTO.T_Cost_Cen_ID ||
-        !this.ObjCostCenterFROM.F_Cost_Cen_ID
-      ) {
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-          detail: "Please choose From/To Costcenter."
-        });
+        if (
+          !this.ObjCostCenterTO.T_Cost_Cen_ID ||
+          !this.ObjCostCenterFROM.F_Cost_Cen_ID
+        ) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Please choose From/To Costcenter."
+          });
+        }
       }
     }
+  async CheckSerialNoValid(id) {
+    const url = 'Common/Check_Serial_with_cost_center?Serial_No='+ id +'&Product_ID='+this.ObjProductInfo.Product_ID+'&Cost_Cen_ID='+ this.ObjCostCenterFROM.F_Cost_Cen_ID
+    const res = await fetch(url,{ 
+      method: 'GET',
+    });
+    let responseText = await res.text();
+    return responseText;
   }
 
   SaveStockBill(valid) {

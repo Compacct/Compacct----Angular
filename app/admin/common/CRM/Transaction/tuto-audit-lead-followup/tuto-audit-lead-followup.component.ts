@@ -6,16 +6,18 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { MessageService } from "primeng/api";
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-
 import * as moment from "moment";
+import { stat } from 'fs';
+
 @Component({
-  selector: 'app-tuto-crm-lead-field-sale',
-  templateUrl: './tuto-crm-lead-field-sale.component.html',
-  styleUrls: ['./tuto-crm-lead-field-sale.component.css'],
+  selector: 'app-tuto-audit-lead-followup',
+  templateUrl: './tuto-audit-lead-followup.component.html',
+  styleUrls: ['./tuto-audit-lead-followup.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class TutoCrmLeadFieldSaleComponent implements OnInit {
+export class TutoAuditLeadFollowupComponent implements OnInit {
+
   url = window["config"];
   leadFollowUpList = [];
   leadFollowUpListBackup = [];
@@ -89,7 +91,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   
   NextFollowupFilter: any;
   NextFollowupFilterSelected: any;
-
+  
   CallDetailsModalFlag = false;
   CallDetailsObj: any = {};
   constructor(  private Header: CompacctHeader,
@@ -114,8 +116,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   ngOnInit() {
     console.log('working')
     this.Header.pushHeader({
-      Header: "Appointment Management (Field Sales)",
-      Link: "CRM -> Appointment Management (Field Sales)"
+      Header: "Audit Appointment",
+      Link: "CRM -> Audit Appointment"
     });
     this.items = ["Student Detail","Followup Details", "Billing Details","Order Details ","Support Question Dump","Support Ticket Dump"];
     // this.GetUserList();
@@ -162,7 +164,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   GetActionListFollowupCreate() {
     const obj = {
       "SP_String": "SP_Controller",
-      "Report_Name_String": "GET_Action_Type_Channel"
+      "Report_Name_String": "Get_Action_Type_Web_Demo"
     }
     this.GlobalAPI.CommonPostData(obj,'/Tutopia_Call_Common_SP_For_All')
       .subscribe((data: any) => {
@@ -184,7 +186,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   }
   GetAllUserList() {
     const obj = {
-      "Report_Name": "Get_Direct_Sale_Users ",
+      "Report_Name": "Get_Auditor_Users",
       "Json_Param_String" : JSON.stringify([{USER_ID :this.$CompacctAPI.CompacctCookies.User_ID}])
     }
     this.GlobalAPI
@@ -336,7 +338,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
      // this.GetFilteredItems();
       const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
       this.$http
-          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Channel sale Student Follow-up v3",obj)
+          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Auditor Student Follow-up",obj)
           .subscribe((data: any) => {
             const SortData = data ? JSON.parse(data) : [];
             SortData.sort(function(a:any,b:any){
@@ -399,7 +401,34 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         }
     }
   }
+  // MOBILE CALL 
+  CallTutopiaApp (obj) {
+    if(obj.Mobile) {
+      const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
 
+      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message",{Phone_No : obj.Mobile, User_ID : this.$CompacctAPI.CompacctCookies.User_ID},{ headers, responseType: 'text'}).subscribe((res: any) => {
+        console.log(res)
+       if(res.toUpperCase().includes('ERROR')) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured In Tutopia Call API."
+          });
+       } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: obj.Mobile,
+          detail: "Check the call in Call center software."
+        });
+
+       }
+      });
+    }
+  }
   // CHANGE
   LeadTransferCheckBoxChanged() {
     this.LeadTransferModalBtn = false;
@@ -564,6 +593,41 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           });
         }
       });
+    }
+  }
+  ApproveAudit (status ,col) {
+    if(status && col.Appo_ID) {
+      const TempObj = {
+        Appo_ID : col.Appo_ID,
+        User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+        Status : status
+      }
+      const obj = {
+        "SP_String": "Tutopia_Create_Common_SP",
+        "Report_Name_String": "Update Auditor Pending Status",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.CommonPostData(obj,'Create_Common_task_Tutopia_Call?Report_Name=Update Auditor Pending Status').subscribe((data) => {
+          if (data[0].Column1) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'Student ID : ' + col.Lead_ID,
+              detail: "Succesfully Saved."
+            });
+            this.SaerchFollowup(true);
+        }
+        else {
+            this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured"
+          });
+        }
+        });
     }
   }
    //  DETAILS
@@ -816,3 +880,4 @@ class Studetail{
   City : string;
 
 }
+
