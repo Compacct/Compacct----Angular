@@ -75,6 +75,14 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
   SelectedDaysFilterList = [];
   SelectedRegisterFilterList = [];
 
+  
+  SelectedDemoTypeFilterList = [];
+  SelectedTCNAMEListFilterList = [];
+  SelectedRMNAMEListFilterList = [];
+  DemoTypeList = [];
+  TCNAMEList = [];
+  RMNAMEList = [];
+
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
   Lead_ID = undefined;
@@ -94,6 +102,19 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
   
   CallDetailsModalFlag = false;
   CallDetailsObj: any = {};
+
+  AppoSlotList = [];
+  ResceduleLeadObj = new ResceduleLead();
+  ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+  ResceduleLeadModal = false;
+  ResceduleLeadSubmitted = false;
+  from_date:any;
+  to_date:any;
+
+  EditLeadModal = false;
+  EditLeadFormSubmitted = false;
+  LeadEditObj = new Lead();
+  ClassList = [];
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -124,6 +145,8 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     this.GetActionList();
    // this.GetSalesUserList();
     this.GetAllUserList();
+    this.GetAppoSlotList();
+    this.GetClassList()
     this.GetActionListFollowupCreate();
   }
   GetUserList() {
@@ -207,6 +230,17 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     //         this.AllUserList = data.length ? data : [];
     //     });
   }
+  GetAppoSlotList() {
+    const obj = {
+      "SP_String":"SP_Appointment",
+      "Report_Name_String": "GET_Time_Slot"
+    }
+    this.GlobalAPI
+        .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+        .subscribe((data: any) => {
+          this.AppoSlotList = data.length ? data : [];
+        });
+  }
   
   GetFilteredItems () {
     // this.SelectedDealerFilterList = [];
@@ -235,10 +269,16 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     let PinFilter = [];
     let AppointmentForFilter = [];
     let DaysFilter = [];
+    let DemoTypeFilter = [];
+    let TCFilter = [];
+    let RMFilter = [];
 
     this.PinList = [];
-  this.Appointment_ForList = [];
-  this.DaysList = [];
+    this.Appointment_ForList = [];
+    this.DaysList = [];  
+    this.DemoTypeList = [];
+    this.TCNAMEList = [];
+    this.RMNAMEList = [];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -251,6 +291,18 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
       if (DaysFilter.indexOf(item.Days) === -1) {
         DaysFilter.push(item.Days);
         this.DaysList.push({ label: item.Days, value: item.Days });
+      }      
+      if (DemoTypeFilter.indexOf(item.Demo_Type) === -1) {
+        DemoTypeFilter.push(item.Demo_Type);
+        this.DemoTypeList.push({ label: item.Demo_Type, value: item.Demo_Type });
+      }
+      if (TCFilter.indexOf(item.TC_Name) === -1) {
+        TCFilter.push(item.TC_Name);
+        this.TCNAMEList.push({ label: item.TC_Name, value: item.TC_Name });
+      }
+      if (RMFilter.indexOf(item.RM_Name) === -1) {
+        RMFilter.push(item.RM_Name);
+        this.RMNAMEList.push({ label: item.RM_Name, value: item.RM_Name });
       }
     });
   }
@@ -269,6 +321,9 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     let AppointmentForFilter = [];
     let DaysFilter = [];
     let RegisterFilter = [];
+    let DemoTypeFilter = [];
+    let TCFilter = [];
+    let RMFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -281,6 +336,18 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     if (this.SelectedDaysFilterList.length) {
       searchFields.push('Days');
       DaysFilter = this.SelectedDaysFilterList;
+    }
+    if (this.SelectedDemoTypeFilterList.length) {
+      searchFields.push('Demo_Type');
+      DemoTypeFilter = this.SelectedDemoTypeFilterList;
+    }
+    if (this.SelectedTCNAMEListFilterList.length) {
+      searchFields.push('TC_Name');
+      TCFilter = this.SelectedTCNAMEListFilterList;
+    }
+    if (this.SelectedRMNAMEListFilterList.length) {
+      searchFields.push('RM_Name');
+      RMFilter = this.SelectedRMNAMEListFilterList;
     }
     if(this.SelectedRegisterFilterList.length) {
       searchFields.push('Foot_Fall_ID');
@@ -295,6 +362,9 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
           && (AppointmentForFilter.length ? AppointmentForFilter.includes(e['Appointment_For']) : true)
           && (DaysFilter.length ? DaysFilter.includes(e['Days']) : true)
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
+          && (DemoTypeFilter.length ? DemoTypeFilter.includes(e['Demo_Type']) : true)
+          && (TCFilter.length ? TCFilter.includes(e['TC_Name']) : true)
+          && (RMFilter.length ? RMFilter.includes(e['RM_Name']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];
@@ -322,6 +392,13 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     return returnBol;
   }
   }
+  // FOR SEARCH
+  getDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.from_date = dateRangeObj[0];
+      this.to_date = dateRangeObj[1];
+    }
+  }
   SaerchFollowup(valid) {
     this.SearchFormSubmitted = true;
     this.leadFollowUpList = [];
@@ -331,9 +408,15 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
       this.seachSpinner = true;
       this.ObjSearch.User_ID = this.ObjSearch.User_ID ? this.ObjSearch.User_ID : '0';
       this.ObjSearch.Current_Action = this.ObjSearch.Current_Action ? this.ObjSearch.Current_Action : '';
-      
+      const tempObj = {
+        'From_Date': this.from_date  ? this.DateService.dateConvert(new Date(this.from_date))
+        : this.DateService.dateConvert(new Date()),
+        'To_Date' : this.to_date  ? this.DateService.dateConvert(new Date(this.to_date))
+        : this.DateService.dateConvert(new Date()),
+        'User_ID' : this.ObjSearch.User_ID
+      }
       const obj = {
-        "Json_Param_String" : JSON.stringify([{ 'User_ID' : this.ObjSearch.User_ID}])
+        "Json_Param_String" : JSON.stringify([tempObj])
       }
      // this.GetFilteredItems();
       const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
@@ -847,6 +930,130 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     console.log(tempArr)
     return { Followup_Branch_String: JSON.stringify(tempArr) };
   }
+   // Rescedule 
+   ShowRescedule(obj) {
+    this.ResceduleLeadObj = new ResceduleLead();
+    this.ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+    this.ResceduleLeadSubmitted = false;
+    if(obj.Lead_ID) {
+      this.ResceduleLeadObj.Appo_ID = obj.Appo_ID;
+      this.ResceduleLeadObj.Appo_To_User_ID = obj.Appo_To_User_ID;
+      this.ResceduleLeadObj.Demo_Type = 'WEB';
+      this.ResceduleLeadModal = true;
+    }
+
+  }
+  SaveRescedule(valid) {
+    this.ResceduleLeadSubmitted = true;
+    if(valid) {
+      this.ResceduleLeadObj.Appo_Date = this.DateService.dateConvert(new Date(this.ResceduleAppoDate));
+      console.log(this.ResceduleLeadObj)
+      const obj = {
+        "SP_String":"SP_Appointment",
+        "Report_Name_String": "Followup_Web_Appointment",
+        "Json_Param_String" : JSON.stringify([this.ResceduleLeadObj])
+      }
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.GlobalAPI
+          .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+          .subscribe((data: any) => { 
+            console.log(data);
+      if (data[0].Remarks.includes('Already Engaged')) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "error",
+          detail: data[0].Remarks
+        });
+      } else {
+        this.SaerchFollowup(true);
+        this.ResceduleLeadModal = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ResceduleLeadObj.Appo_ID,
+          detail: "Succesfully Rescedule."
+        });
+        this.ResceduleLeadObj = new ResceduleLead();
+        this.ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+        this.ResceduleLeadSubmitted = false;
+      }
+    })
+    }
+    
+  }
+  // EDIT LEAD
+  GetClassList(){
+    this.seachSpinner = true;
+    const obj = {
+      "Report_Name": "List_Class "
+    }
+    this.GlobalAPI
+        .CommonTaskData(obj)
+        .subscribe((data: any) => {
+          this.ClassList = data.length ? data : [];
+          this.seachSpinner = false;
+    });
+  }
+  LeadEditModal(obj) {
+    this.EditLeadModal = false;
+    this.EditLeadFormSubmitted = false;
+    this.LeadEditObj = new Lead();
+    if(obj.Lead_ID) {
+      this.LeadEditObj.Contact_Name = obj.Contact_Name;
+      this.LeadEditObj.Lead_ID = obj.Lead_ID;
+      this.LeadEditObj.Mobile = obj.Mobile;
+      this.LeadEditObj.Pin = obj.Pin;
+      this.LeadEditObj.Address = obj.Address;
+      this.LeadEditObj.ALT_Mobile = obj.ALT_Mobile;
+      this.LeadEditObj.Class_ID = obj.Class_ID;
+      this.LeadEditObj.School_Name = obj.School_Name;
+      this.EditLeadModal = true;
+    }
+
+  }
+  UpdatedLead(valid) {
+    this.EditLeadFormSubmitted = true;
+    if(valid) {
+      console.log(this.LeadEditObj)
+      const obj = {
+        "SP_String":"SP_Appointment",
+        "Report_Name_String": "Followup_Web_Appointment",
+        "Json_Param_String" : JSON.stringify([this.LeadEditObj])
+      }
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.GlobalAPI
+          .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+          .subscribe((data: any) => { 
+            console.log(data);
+            if (data[0].Remarks.includes('Already Engaged')) {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "error",
+                detail: data[0].Remarks
+              });
+            } else {
+              this.SaerchFollowup(true);
+              this.ResceduleLeadModal = false;
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'Student ID : ' + this.LeadEditObj.Lead_ID,
+                detail: "Succesfully Rescedule."
+              });
+              this.EditLeadModal = false;
+              this.EditLeadFormSubmitted = false;
+              this.LeadEditObj = new Lead();
+            }
+    })
+    }
+    
+  }
 }
 class Search {
   User_ID: any;
@@ -880,4 +1087,20 @@ class Studetail{
   City : string;
 
 }
-
+class ResceduleLead{
+  Appo_ID:String;
+  Demo_Type:String;
+  Appo_Date:String;
+  Appo_Time_Slot_ID:String;
+  Appo_To_User_ID:String;
+}
+class Lead{
+  Contact_Name:string;
+  Lead_ID:string;
+  Class_ID:string;
+  Address:string;
+  Pin:string;
+  School_Name:string;
+  ALT_Mobile:String;
+  Mobile:string;
+}

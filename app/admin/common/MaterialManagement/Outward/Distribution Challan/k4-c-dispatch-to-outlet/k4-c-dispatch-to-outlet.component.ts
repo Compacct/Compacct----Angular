@@ -93,6 +93,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   BackUpproductDetails = [];
   Refreshlist = [];
   RefreshData = [];
+  editIndentList = [];
 
   constructor(
     private $http: HttpClient,
@@ -199,6 +200,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   this.reqQTYdis = true;
   this.AccQtydis = false;
   this.EditList = [];
+  this.editIndentList = [];
   // this.todayDate = new Date();
   // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   //this.SelectedIndent = [];
@@ -814,6 +816,7 @@ getTotalValue(key){
 
   return Amtval ? Amtval.toFixed(2) : '-';
 }
+// EDIT
 editmaster(masterProduct){
   this.productDetails = [];
   //this.BackUpproductDetails = [];
@@ -833,6 +836,7 @@ editmaster(masterProduct){
   this.reqQTYdis = false;
   this.AccQtydis = true;
   this.geteditmaster(masterProduct);
+  this.getIndentForEdit(masterProduct);
   }
 }
 geteditmaster(masterProduct){
@@ -884,20 +888,69 @@ geteditmaster(masterProduct){
 
   })
 }
+getIndentForEdit(masterProduct){
+  this.editIndentList = [];
+  const obj = {
+    "SP_String": "SP_Production_Voucher",
+    "Report_Name_String": "Get Req No Dispatch Details For Edit",
+    "Json_Param_String": JSON.stringify([{Doc_No : masterProduct.Doc_No}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.editIndentList = data;
+    this.GetIndentdist();
+  })
+}
 GetIndentdist(){
   let DIndentBy = [];
   this.IndentFilter = [];
   this.SelectedIndent =[];
   //this.SelectedDistOrderBy1 = [];
-  this.EditList.forEach((item) => {
+  this.editIndentList.forEach((item) => {
     if (DIndentBy.indexOf(item.Req_No) === -1) {
       DIndentBy.push(item.Req_No);
-       this.IndentFilter.push({ label: item.Req_No_with_name, value: item.Req_No });
+       this.IndentFilter.push({ label: item.Req_No + '(' + item.Location + ')', value: item.Req_No });
        this.SelectedIndent.push(item.Req_No);
       console.log("this.TimerangeFilter", this.IndentFilter);
     }
   });
 }
+// geteditReqNo(){
+//   if(this.SelectedIndent.length) {
+//     let Rarr =[]
+//     this.SelectedIndent.forEach(el => {
+//       if(el){
+//         const Dobj = {
+//           Req_No : el,
+//           Outlet_ID: Number(this.Objdispatch.Cost_Cen_ID),
+//           Dispatch_Outlet_ID: Number(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID),
+//           Dispatch_Godown_ID: Number(this.Objdispatch.From_Godown_ID),
+//           Challan_Date : this.DateService.dateConvert(new Date(this.ChallanDate)),
+//           Indent_Date : this.DateService.dateConvert(new Date(this.todayDate))
+//           }
+//           Rarr.push(Dobj)
+//       }
+
+//   });
+//     console.log("Table Data ===", Rarr)
+//     return Rarr.length ? JSON.stringify(Rarr) : '';
+//   }
+// }
+// GetProductionproforEdit(){
+//   this.OutletFormSubmit = true;
+//   this.DispatchFormSubmit = true;
+//     const obj = {
+//       "SP_String": "SP_Production_Voucher",
+//       "Report_Name_String": "Get Requisition Data for dispatch challan",
+//       "Json_Param_String": this.geteditReqNo()
+//     }
+//     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//       this.productDetails = data;
+//       //this.SpinnerShow = false;
+//       this.BackUpproductDetails = [...this.productDetails];
+//       console.log("this.productDetails",this.productDetails);
+//     })
+
+// }
 // Refresh(DocNo){
 //  // this.clearData();
 //   if(DocNo.Doc_No){
@@ -1099,7 +1152,9 @@ GetSelectedBatchqty() {
       this.SpinnerShow = true;
      const TempObj = {
        Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
-       Brand_ID : this.Objdispatch.Brand_ID
+       Brand_ID : this.Objdispatch.Brand_ID,
+       To_Cost_Cen_ID : this.Objdispatch.Cost_Cen_ID,
+       Material_Type : 'Finished'
       }
     const obj = {
      "SP_String": "SP_Production_Voucher_New",
@@ -1149,11 +1204,16 @@ GetSelectedBatchqty() {
      let DIndent = [];
      this.TIndentList = [];
      //const temparr = this.ProductionlList.filter((item)=> item.Qty);
-     if(!this.EditList.length){
+     if (!this.EditList.length){
       this.BackUpproductDetails =[];
       this.productDetails = [];
       this.GetshowProduct(true,true);
       }
+      // if(this.editIndentList.length){
+      //   this.BackUpproductDetails =[];
+      // this.productDetails = [];
+      //   this.GetProductionproforEdit();
+      //   }
     //  this.productDetails = [];
     //  this.GetshowProduct(true,true);
      if (this.SelectedIndent.length) {

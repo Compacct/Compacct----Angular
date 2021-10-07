@@ -121,7 +121,7 @@ export class OutletStockTransferComponent implements OnInit {
     this.AdditioanFormSubmit = false;
     this.flag = false;
     this.itemList = [];
-
+    this.BatchList = [];
   }
   // Refresh(){
   //   this.ObjstockTransfer= new stockTransfer();
@@ -189,6 +189,7 @@ GetfromStokePoint(){
  })
 }
 getMaterialType() {
+  this.BatchList = [];
     const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String": "Get material Type",
@@ -225,13 +226,14 @@ getMaterialType() {
 
 GetProduct(){       // PRODUCT DROPDOWN
 
-  if(this.Objadditem.Material_Type === "Finished"){
+  if(this.ObjstockTransfer.Material_Type === "Finished"){
+    this.BatchList = [];
     this.itemList = [];
     this.DisabledBatch = false;
     const tempObj = {
       Cost_Cen_ID: this.ObjstockTransfer.From_Outlet,
       Product_Type_ID:0,
-      Material_Type : this.Objadditem.Material_Type
+      Material_Type : this.ObjstockTransfer.Material_Type
     }
   const obj = {
     "SP_String": "SP_Outlet_Stock_Transfer",
@@ -250,13 +252,14 @@ GetProduct(){       // PRODUCT DROPDOWN
   console.log("this.itemList",this.itemList);
  })
 }
-if(this.Objadditem.Material_Type === "Store Item"){
+if(this.ObjstockTransfer.Material_Type === "Store Item"){
+  this.BatchList = [];
   this.itemList = [];
-  this.DisabledBatch = true;
+  //this.DisabledBatch = true;
   const Objtemp = {
     Cost_Cen_ID: this.ObjstockTransfer.From_Outlet,
     Product_Type_ID:0,
-    Material_Type : this.Objadditem.Material_Type
+    Material_Type : this.ObjstockTransfer.Material_Type
   }
   const obj = {
     "SP_String": "SP_Outlet_Stock_Transfer",
@@ -278,22 +281,23 @@ if(this.Objadditem.Material_Type === "Store Item"){
  })
 }
 }
-ProductChange() {
-  //if(this.ObjProductaddForm.Material_Type === "Store Item"){
-    if(this.Objadditem.Product_ID) {
-      const ctrl = this;
-    const productObj = $.grep(ctrl.NativeitemList,function(item) {return item.Product_ID == ctrl.Objadditem.Product_ID})[0];
-     console.log(productObj);
-     //this.Objadditem.Product_Description = productObj.Product_Description;
-    // this.ObjProductaddForm.Net_Price =  productObj.Sale_rate;
-     this.Objadditem.Avl_Qty = productObj.Avl_Qty;
-    }
-    }
+// ProductChange() {
+//   //if(this.ObjProductaddForm.Material_Type === "Store Item"){
+//     if(this.Objadditem.Product_ID) {
+//       const ctrl = this;
+//     const productObj = $.grep(ctrl.NativeitemList,function(item) {return item.Product_ID == ctrl.Objadditem.Product_ID})[0];
+//      console.log(productObj);
+//      //this.Objadditem.Product_Description = productObj.Product_Description;
+//     // this.ObjProductaddForm.Net_Price =  productObj.Sale_rate;
+//      this.Objadditem.Avl_Qty = productObj.Avl_Qty;
+//     }
+//     }
 async GetBatchCommon(obj) {
   const response = await this.$http.post('/Common/Common_SP_For_All',obj).toPromise();
 return response;
 }
 async GetBatch(){
+  this.BatchList = [];
 const tempObj = {
      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,  //2
      Product_ID  : this.Objadditem.Product_ID,  //3388
@@ -331,7 +335,7 @@ let batch_id:any;
 let batch_show:any;
 let batch_qty :any;
 this.AdditioanFormSubmit = true;
-if(this.Objadditem.Material_Type === "Finished"){       // Finished Product Add
+//if(this.Objadditem.Material_Type === "Finished"){       // Finished Product Add
 if(valid && this.GetSelectedBatchqty()){
 this.BatchList.forEach(el=>{
   if(el.Batch_NO === this.Objadditem.Batch_No){
@@ -362,56 +366,45 @@ if(ProductArrValid.length){
    Batch_NO: batch_id,
    Qty: Number(this.Objadditem.Issue_Qty),
    UOM: item.UOM,
-   Material_Type : item.Material_Type
+   //Material_Type : item.Material_Type
    })
   })
   this.Objadditem= new additem();
   this.AdditioanFormSubmit = false;
   this.itemList = [];
 }
+console.log("product details",this.productDetails)
+//}
 }
-}
-if(this.Objadditem.Material_Type === "Store Item"){      // Store Product Add
-  if(valid && this.GetAvlQty()){
-    const ProductArrValid = this.NativeitemList.filter( item => Number(item.Product_ID) === Number(this.Objadditem.Product_ID));
+// if(this.Objadditem.Material_Type === "Store Item"){      // Store Product Add
+//   if(valid && this.GetAvlQty()){
+//     const ProductArrValid = this.NativeitemList.filter( item => Number(item.Product_ID) === Number(this.Objadditem.Product_ID));
 
-    // const ExitsProduct = this.productDetails.filter( item => Number(item.product_id) === Number(this.Objadditem.Product_ID));
-    if(ProductArrValid.length){
-      ProductArrValid.forEach(item=>{
-        var prdIndex = this.productDetails.findIndex( ({Product_ID}) => Product_ID === item.Product_ID)
-        if(prdIndex != -1) {
-          this.productDetails[prdIndex].Qty = this.productDetails[prdIndex].Qty +  Number(this.Objadditem.Issue_Qty);
-        } else {
-          this.productDetails.push({
-            // Brand_ID: this.BrandId,
-            Product_ID: item.Product_ID,
-            Product_Description : item.Product_Description,
-            Product_Type_ID: item.Product_Type_ID,
-            Batch_NO: "NA",
-            Qty: Number(this.Objadditem.Issue_Qty),
-            UOM: item.UOM,
-            Material_Type : item.Material_Type
-            })
-        }
-      })
-      this.Objadditem= new additem();
-      this.AdditioanFormSubmit = false;
-      this.itemList = [];
-    }
-    //this.productDetails.forEach(item => {
-      // if(item.Product_ID == this.Objadditem.Product_ID && item.Modifier == this.Objadditem.Modifier) {
-      //   item.Product_ID = Number(item.Product_ID) + Number( ProductArrValid.Product_ID);
-      // item.Max_Discount = Number(item.Max_Discount) + Number(productObj.Max_Discount);
-      // item.Amount = Number(item.Amount) + Number(productObj.Amount);
-      // item.Gross_Amount = Number(item.Gross_Amount) + Number(productObj.Gross_Amount);
-      // item.Dis_Amount = Number(item.Dis_Amount) + Number(productObj.Dis_Amount);
-      // item.SGST_Amount = (Number(item.SGST_Amount) + Number(productObj.SGST_Amount)).toFixed(2);
-      // item.CGST_Amount = (Number(item.CGST_Amount) + Number(productObj.CGST_Amount)).toFixed(2);
-      // item.Net_Amount = (Number(item.Net_Amount) + Number(productObj.Net_Amount)).toFixed(2);
-      // }
-    //})
-    }
-}
+//     // const ExitsProduct = this.productDetails.filter( item => Number(item.product_id) === Number(this.Objadditem.Product_ID));
+//     if(ProductArrValid.length){
+//       ProductArrValid.forEach(item=>{
+//         var prdIndex = this.productDetails.findIndex( ({Product_ID}) => Product_ID === item.Product_ID)
+//         if(prdIndex != -1) {
+//           this.productDetails[prdIndex].Qty = this.productDetails[prdIndex].Qty +  Number(this.Objadditem.Issue_Qty);
+//         } else {
+//           this.productDetails.push({
+//             // Brand_ID: this.BrandId,
+//             Product_ID: item.Product_ID,
+//             Product_Description : item.Product_Description,
+//             Product_Type_ID: item.Product_Type_ID,
+//             Batch_NO: "NA",
+//             Qty: Number(this.Objadditem.Issue_Qty),
+//             UOM: item.UOM,
+//             Material_Type : item.Material_Type
+//             })
+//         }
+//       })
+//       this.Objadditem= new additem();
+//       this.AdditioanFormSubmit = false;
+//       this.itemList = [];
+//     }
+//     }
+// }
 }
 searchArray(arr,key) {
   return arr
@@ -450,25 +443,25 @@ GetSelectedBatchqty() {
       return true;
     }
   }
-  GetAvlQty () {
-    const avlqtyarr = this.NativeitemList.filter(item=> item.Avl_Qty === this.Objadditem.Avl_Qty);
-      if(avlqtyarr.length) {
-        if(this.Objadditem.Issue_Qty <=  avlqtyarr[0].Avl_Qty) {
-          return true;
-        } else {
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Quantity can't be more than available quantity "
-          });
-          return false;
-        }
-      } else {
-        return true;
-      }
-  }
+  // GetAvlQty () {
+  //   const avlqtyarr = this.NativeitemList.filter(item=> item.Avl_Qty === this.Objadditem.Avl_Qty);
+  //     if(avlqtyarr.length) {
+  //       if(this.Objadditem.Issue_Qty <=  avlqtyarr[0].Avl_Qty) {
+  //         return true;
+  //       } else {
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //           key: "compacct-toast",
+  //           severity: "error",
+  //           summary: "Warn Message",
+  //           detail: "Quantity can't be more than available quantity "
+  //         });
+  //         return false;
+  //       }
+  //     } else {
+  //       return true;
+  //     }
+  // }
 saveDispatch(){
   let saveData = [];
   const ExitsProduct = this.toOutletList.filter( item => Number(item.Cost_Cen_ID) === Number(this.ObjstockTransfer.To_Outlet));
@@ -494,7 +487,8 @@ saveDispatch(){
             UOM: el.UOM,
             Remarks: this.ObjstockTransfer.REMARKS ? this.ObjstockTransfer.REMARKS : "NA",
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
-            Material_Type : el.Material_Type
+           // Material_Type : el.Material_Type
+            Material_Type : this.ObjstockTransfer.Material_Type
       }
       saveData.push(saveObj)
     })
@@ -1017,7 +1011,8 @@ ValidateEntryCheck(){
             UOM: el.UOM,
             Remarks: this.ObjstockTransfer.REMARKS ? this.ObjstockTransfer.REMARKS : "NA",
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
-            Material_Type : el.Material_Type,
+            // Material_Type : el.Material_Type,
+            Material_Type : this.ObjstockTransfer.Material_Type,
             Cost_Cent_ID : Number(this.ObjstockTransfer.From_Outlet),
             Batch_No: el.Batch_NO,
       }
@@ -1056,12 +1051,12 @@ class stockTransfer{
   To_Outlet : any;
   To_Stock_Point : any = undefined;
   REMARKS : any;
+  Material_Type : string;
 }
 class additem {
   Product_ID = 0;
   Issue_Qty: number;
   Batch_No:any;
-  Material_Type : string;
   Avl_Qty : number;
   }
   class BrowseData {

@@ -94,6 +94,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   SelectedIndent : any;
   TIndentList = [];
   Cost_Cen_Id: any;
+  editIndentList = [];;
 
   constructor(
     private Header: CompacctHeader,
@@ -317,7 +318,8 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     //if(valid){
     const TempObj = {
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
-      Brand_ID : this.Objproduction.Brand_ID
+      Brand_ID : this.Objproduction.Brand_ID,
+      Material_Type : 'Finished'
      }
    const obj = {
     "SP_String": "SP_Production_Voucher_New",
@@ -367,6 +369,11 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     this.ProductionlList = [];
       this.GetProductionpro();
       }
+      if(this.editList.length){
+        this.BackUpProductionlList =[];
+      this.ProductionlList = [];
+        this.GetProductionproforEdit();
+        }
     if (this.SelectedIndent.length) {
       this.TIndentList.push('Req_No');
       DIndent = this.SelectedIndent;
@@ -422,7 +429,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
       //   Date : this.DateService.dateConvert(new Date(this.todayDate)),
       //   Req_No : this.Objproduction.indentNo.toString()
       // }
-      if(this.dataforproduct()){
+      //if(this.dataforproduct()){
       const obj = {
         "SP_String": "SP_Production_Voucher_New",
         "Report_Name_String": "GET_Production_Products",
@@ -436,7 +443,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
         this.BackUpProductionlList = [...this.ProductionlList];
          console.log("Production List ===",this.ProductionlList);
       })
-    }
+   // }
 
   }
   onFilterChange(eve: any) {
@@ -881,7 +888,7 @@ const obj = {
   //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
   }
   }
-
+  // EDIT
   EditProduction(DocNo){
    // console.log("editmaster ==",DocNo);
   this.AddProDetails = [];
@@ -895,6 +902,7 @@ const obj = {
   this.buttonname = "Update";
   // console.log("this.EditDoc_No ==", this.Objproduction.Doc_No);
   this.GetEditProduction(this.Objproduction.Doc_No);
+  this.getIndentForEdit(this.Objproduction.Doc_No);
   //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
   }
   }
@@ -966,19 +974,69 @@ const obj = {
 
   })
   }
+  getIndentForEdit(Doc_No){
+    this.editIndentList = [];
+    const obj = {
+      "SP_String": "SP_Production_Voucher_New",
+      "Report_Name_String": "Get REQ NO For PV Edit",
+      "Json_Param_String": JSON.stringify([{Doc_No : this.Objproduction.Doc_No}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editIndentList = data;
+      this.GetIndentdist();
+    })
+  }
   GetIndentdist(){
     let DIndentBy = [];
     this.IndentFilter = [];
     this.SelectedIndent =[];
     //this.SelectedDistOrderBy1 = [];
-    this.editList.forEach((item) => {
+    this.editIndentList.forEach((item) => {
       if (DIndentBy.indexOf(item.Req_No) === -1) {
         DIndentBy.push(item.Req_No);
-         this.IndentFilter.push({ label: item.Req_No_with_name , value: item.Req_No });
+         this.IndentFilter.push({ label: item.Req_No + '(' + item.Location + ')' , value: item.Req_No });
          this.SelectedIndent.push(item.Req_No);
         console.log("this.TimerangeFilter", this.IndentFilter);
       }
     });
+  }
+  geteditReqNo(){
+    if(this.SelectedIndent.length) {
+      let Rarr =[]
+      this.SelectedIndent.forEach(el => {
+        if(el){
+          const Dobj = {
+            Req_No : el,
+            Product_Type_ID : 0,
+            Date : this.DateService.dateConvert(new Date(this.todayDate)),
+            Brand_ID : this.Objproduction.Brand_ID
+            }
+            Rarr.push(Dobj)
+        }
+
+    });
+      console.log("Table Data ===", Rarr)
+      return Rarr.length ? JSON.stringify(Rarr) : '';
+    }
+  }
+  GetProductionproforEdit(){
+      //this.checkBoxdis = false;
+      this.allProductsCheck = false;
+      const obj = {
+        "SP_String": "SP_Production_Voucher_New",
+        "Report_Name_String": "GET_Production_Products_For_PV_Edit",
+        "Json_Param_String": this.geteditReqNo()
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.ProductionlList = data;
+        this.ProductionlList.forEach(el=>{
+          el['Qty'] = el.req_qty ? el.req_qty : undefined;
+        })
+        this.BackUpProductionlList = [...this.ProductionlList];
+         console.log("Production List ===",this.ProductionlList);
+      })
+   // }
+
   }
   PrintProVoucher(obj){
     if (obj.Doc_No) {
@@ -1045,6 +1103,7 @@ const obj = {
   this.Objproduction.Brand_ID = undefined;
   this.Objproduction.Process_ID = undefined;
   this.editList = [];
+  this.editIndentList = [];
   //const obj = {...this.Objproduction}
   this.Objproduction.Doc_No = undefined;
   this.Objproduction.From_Process_ID = undefined;
@@ -1104,7 +1163,8 @@ const obj = {
     this.Objproduction.From_godown_id = undefined;
     this.Objproduction.Product_Type_ID = undefined;
     this.Objproduction.Shift = this.SiftList.length === 2 ? this.SiftList[0].Shift_ID : undefined;
-    this.Objproduction.To_godown_id = this.ToGodownList.length === 3 ? this.ToGodownList[0].godown_id : undefined;
+   // this.Objproduction.To_godown_id = this.ToGodownList.length === 3 ? this.ToGodownList[0].godown_id : undefined;
+    this.Objproduction.To_godown_id = this.ToGodownList.length  ? this.ToGodownList[0].godown_id : undefined;
     this.GetProDate();
     this.ProductionlList = [];
     this.BackUpProductionlList = [];

@@ -1011,8 +1011,9 @@ GetIndentList(){
    const TempObj = {
     // Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
      From_Date : start,
-     To_Date : end
+     To_Date : end,
      //Brand_ID : this.Objdispatch.Brand_ID
+     Material_Type : 'Store Item'
     }
   const obj = {
    "SP_String": "SP_Store_Item_Indent",

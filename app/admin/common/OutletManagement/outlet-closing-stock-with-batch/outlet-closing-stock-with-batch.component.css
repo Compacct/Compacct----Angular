@@ -1,0 +1,42 @@
+div.table-responsive.table-id > p-table > div > div {
+    width: auto !important;
+  }
+  div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+  }
+  .box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+  }
+  .ta-editor {
+    min-height: 160px;
+  }
+  body .ui-widget {
+    font-family: source sans pro, sans-serif !important;
+  }
+  textarea.form-control {
+    height: auto;
+  }
+  .btn {
+    border: red;
+  }
+  .box.boxboxDivide-primary {
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset;
+  }
+  .pull-right {
+  float: right!important;
+  margin-right: 20px;
+  }
+  .custombutton {
+    margin-top: 28px;
+    margin-left: 15px;
+  }
+  .custombutton1 {
+    margin-top: 28px;
+    margin-left: 15px;
+  }
+  

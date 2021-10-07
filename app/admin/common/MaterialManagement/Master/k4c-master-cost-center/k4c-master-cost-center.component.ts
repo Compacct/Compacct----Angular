@@ -562,6 +562,7 @@ class Costcenter {
   Parent_Cost_Cen_ID: any;
   Cost_Cen_Logo: any;
   GST_NO: string;
+  FSSAI_NO: string;
   Cost_Cen_Type: string;
   Sub_Ledger_ID: string;
   COST_CEN_TYPE = "Others" ;

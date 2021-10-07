@@ -69,6 +69,8 @@ export class K4cRawMaterialIssueComponent implements OnInit {
     });
     this.GetFromCostCen();
     this.GetToCostCen();
+    this.clearData();
+    this.Searchedlist = [];
     //this.ObjRawMateriali.To_Cost_Cen_ID = String(this.CostCentId_Flag);
   })
   }
@@ -180,7 +182,7 @@ export class K4cRawMaterialIssueComponent implements OnInit {
     this.ProductList = [];
     if(valid){
     const TempObj = {
-      Cost_Cen_ID : this.ObjRawMateriali.To_Cost_Cen_ID,
+      Cost_Cen_ID : this.ObjRawMateriali.From_Cost_Cen_ID,
       Godown_ID : this.ObjRawMateriali.From_godown_id
      }
    const obj = {

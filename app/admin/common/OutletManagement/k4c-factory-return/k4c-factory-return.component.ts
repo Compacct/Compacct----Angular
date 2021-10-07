@@ -254,7 +254,7 @@ export class K4cFactoryReturnComponent implements OnInit {
      if(this.ObjSaveForm.Material_Type === "Store Item"){
       this.selectProduct = [];
       this.BatchNo = [];
-      this.DisabledBatch = true;
+     // this.DisabledBatch = true;
       const Objtemp = {
        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
        Product_Type_ID : 0,
@@ -284,7 +284,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   this.BatchNo =[];
   // this.ExpiredProductFLag = false;
   // this.ExpiredProducts();
- if(this.ObjSaveForm.Material_Type === "Finished"){
+ //if(this.ObjSaveForm.Material_Type === "Finished"){
  if(this.ObjProductaddForm.Product_ID) {
    const ctrl = this;
    if(this.ExpiredProductFLag){
@@ -298,17 +298,17 @@ export class K4cFactoryReturnComponent implements OnInit {
    this.ObjProductaddForm.Net_Price =  productObj.Sale_rate;
   // //this.ObjaddbillForm.Stock_Qty = productObj.Stock_Qty;
   }
-  } else {
+  //} else {
   //if(this.ObjProductaddForm.Material_Type === "Store Item"){
-    if(this.ObjProductaddForm.Product_ID) {
-      const ctrl = this;
-    const productObj = $.grep(ctrl.selectProduct,function(item) {return item.Product_ID == ctrl.ObjProductaddForm.Product_ID})[0];
-     //console.log(productObj);
-     this.ObjProductaddForm.Product_Description = productObj.Product_Description;
-     this.ObjProductaddForm.Net_Price =  productObj.Sale_rate;
-     this.ObjProductaddForm.Avl_Qty = productObj.Avl_Qty;
-    }
-    }
+    // if(this.ObjProductaddForm.Product_ID) {
+    //   const ctrl = this;
+    // const productObj = $.grep(ctrl.selectProduct,function(item) {return item.Product_ID == ctrl.ObjProductaddForm.Product_ID})[0];
+    //  //console.log(productObj);
+    //  this.ObjProductaddForm.Product_Description = productObj.Product_Description;
+    //  this.ObjProductaddForm.Net_Price =  productObj.Sale_rate;
+    //  this.ObjProductaddForm.Avl_Qty = productObj.Avl_Qty;
+    // }
+    // }
   }
   getexpiredproduct(){
     this.ObjProductaddForm = new ProductaddForm();
@@ -316,7 +316,8 @@ export class K4cFactoryReturnComponent implements OnInit {
     //if(this.ObjaddbillForm.Cost_Cen_ID){
      //this.ObjProductaddForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     // console.log("Doc_Date =",this.DateService.dateConvert(new Date(this.myDate)))
-    if(this.ObjSaveForm.Material_Type === "Finished"){
+    // if(this.ObjSaveForm.Material_Type === "Finished"  && this.ExpiredProductFLag || 
+    //    this.ObjSaveForm.Material_Type === "Store Item"  && this.ExpiredProductFLag){
       this.selectProduct = [];
       this.BatchNo = [];
       this.DisabledBatch = false;
@@ -349,7 +350,7 @@ export class K4cFactoryReturnComponent implements OnInit {
 
 
      });
-    }
+   // }
   }
   getBatchNo(){
   //console.log('Product Id ==',this.ObjProductaddForm.Product_ID)
@@ -453,7 +454,7 @@ export class K4cFactoryReturnComponent implements OnInit {
 
   addProduct(valid){
   this.RFactoryaddFormSubmitted = true;
-  if(this.ObjSaveForm.Material_Type === "Finished"){     // FINISHED PRODUCT ADD
+ // if(this.ObjSaveForm.Material_Type === "Finished"){     // FINISHED PRODUCT ADD
   if(valid && this.GetSelectedBatchqty()){
     var RR = this.ReturnReasonid.find(Return_Reason => Return_Reason.Return_Reason_ID == this.ObjSaveForm.Return_Reason_ID);
      //var ExitsProduct = this.ReturnReasonid.filter( item => Number(item.Return_Reason_ID) === Number(this.ObjProductaddForm.Return_Reason_ID));
@@ -485,58 +486,58 @@ export class K4cFactoryReturnComponent implements OnInit {
   //   return value.Return_Reason_ID != 1;
   // });
   // this.ReturnReasonid = ReturnReasonid1;
-   }
+  // }
   }
-  if(this.ObjSaveForm.Material_Type === "Store Item"){   // STORE ITEM PRODUCT ADD
-    if(valid && this.GetAvlQty()){
-      var RR = this.ReturnReasonid.find(Return_Reason => Return_Reason.Return_Reason_ID == this.ObjSaveForm.Return_Reason_ID);
-       //var ExitsProduct = this.ReturnReasonid.filter( item => Number(item.Return_Reason_ID) === Number(this.ObjProductaddForm.Return_Reason_ID));
-      //console.log("ExitsProduct",ExitsProduct);
-      var Objproduct = {
-      Product_ID : this.ObjProductaddForm.Product_ID,
-      Product_Description : this.ObjProductaddForm.Product_Description,
-      Net_Price : this.ObjProductaddForm.Net_Price,
-      Stock_Qty :  this.ObjProductaddForm.Stock_Qty,
-      Batch_No : "NA",
-      Return_Reason : RR.Return_Reason,
-      //Return_Reason : ExitsProduct.item,
-      Return_Reason_ID : this.ObjSaveForm.Return_Reason_ID,
-      Material_Type : this.ObjSaveForm.Material_Type
-    };
-   // this.productaddSubmit.push(Objproduct);
-    var sameProdTypeFlag = false;
-  this.productaddSubmit.forEach(item => {
-    //console.log('enter select');
-    //console.log(item.Product_ID);
-    //console.log(this.ObjaddbillForm.Product_ID);
-    //console.log(item.Product_ID == this.ObjaddbillForm.Product_ID);
-    if(item.Product_ID == this.ObjProductaddForm.Product_ID && item.Return_Reason_ID == this.ObjSaveForm.Return_Reason_ID) {
-      //console.log('select item true');
-      item.Stock_Qty = Number(item.Stock_Qty) + Number( Objproduct.Stock_Qty);
+  // if(this.ObjSaveForm.Material_Type === "Store Item"){   // STORE ITEM PRODUCT ADD
+  //   if(valid){
+  //     var RR = this.ReturnReasonid.find(Return_Reason => Return_Reason.Return_Reason_ID == this.ObjSaveForm.Return_Reason_ID);
+  //      //var ExitsProduct = this.ReturnReasonid.filter( item => Number(item.Return_Reason_ID) === Number(this.ObjProductaddForm.Return_Reason_ID));
+  //     //console.log("ExitsProduct",ExitsProduct);
+  //     var Objproduct = {
+  //     Product_ID : this.ObjProductaddForm.Product_ID,
+  //     Product_Description : this.ObjProductaddForm.Product_Description,
+  //     Net_Price : this.ObjProductaddForm.Net_Price,
+  //     Stock_Qty :  this.ObjProductaddForm.Stock_Qty,
+  //     Batch_No : "NA",
+  //     Return_Reason : RR.Return_Reason,
+  //     //Return_Reason : ExitsProduct.item,
+  //     Return_Reason_ID : this.ObjSaveForm.Return_Reason_ID,
+  //     Material_Type : this.ObjSaveForm.Material_Type
+  //   };
+  //  // this.productaddSubmit.push(Objproduct);
+  //   var sameProdTypeFlag = false;
+  // this.productaddSubmit.forEach(item => {
+  //   //console.log('enter select');
+  //   //console.log(item.Product_ID);
+  //   //console.log(this.ObjaddbillForm.Product_ID);
+  //   //console.log(item.Product_ID == this.ObjaddbillForm.Product_ID);
+  //   if(item.Product_ID == this.ObjProductaddForm.Product_ID && item.Return_Reason_ID == this.ObjSaveForm.Return_Reason_ID) {
+  //     //console.log('select item true');
+  //     item.Stock_Qty = Number(item.Stock_Qty) + Number( Objproduct.Stock_Qty);
 
-      sameProdTypeFlag = true;
-    }
-    // count = count + Number(item.Net_Amount);
-  });
+  //     sameProdTypeFlag = true;
+  //   }
+  //   // count = count + Number(item.Net_Amount);
+  // });
 
-  if(sameProdTypeFlag == false) {
-   this.productaddSubmit.push(Objproduct);
-  }
+ // if(sameProdTypeFlag == false) {
+ //  this.productaddSubmit.push(Objproduct);
+ // }
 
- console.log("this.productSubmit",this.productaddSubmit);
-    this.getReturnReason("N");
+ //console.log("this.productSubmit",this.productaddSubmit);
+   // this.getReturnReason("N");
     //console.log("Product Submit",this.productaddSubmit);
-    this.RFactoryaddFormSubmitted = false;
-    this.ObjProductaddForm = new ProductaddForm();
-    this.BatchNo = [];
+    // this.RFactoryaddFormSubmitted = false;
+    // this.ObjProductaddForm = new ProductaddForm();
+    // this.BatchNo = [];
     // this.exProdFlag = false;
     // this.ExpiredProductFLag = false;
     // var ReturnReasonid1 = this.ReturnReasonid.filter(function(value, index, arr){
     //   return value.Return_Reason_ID != 1;
     // });
     // this.ReturnReasonid = ReturnReasonid1;
-     }
-  }
+  //    }
+  // }
  }
  GetSelectedBatchqty () {
   const sameproductwithbatch = this.productaddSubmit.filter(item=> item.Batch_No === this.ObjProductaddForm.Batch_No && item.Product_ID === this.ObjProductaddForm.Product_ID );
@@ -572,25 +573,25 @@ export class K4cFactoryReturnComponent implements OnInit {
     this.productaddSubmit.splice(index,1)
 
   }
-  GetAvlQty () {
-    const avlqtyarr = this.selectProduct.filter(item=> item.Avl_Qty === this.ObjProductaddForm.Avl_Qty);
-      if(avlqtyarr.length) {
-        if(this.ObjProductaddForm.Stock_Qty <=  avlqtyarr[0].Avl_Qty) {
-          return true;
-        } else {
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Quantity can't be more than available quantity "
-          });
-          return false;
-        }
-      } else {
-        return true;
-      }
-  }
+  // GetAvlQty () {
+  //   const avlqtyarr = this.selectProduct.filter(item=> item.Avl_Qty === this.ObjProductaddForm.Avl_Qty);
+  //     if(avlqtyarr.length) {
+  //       if(this.ObjProductaddForm.Stock_Qty <=  avlqtyarr[0].Avl_Qty) {
+  //         return true;
+  //       } else {
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //           key: "compacct-toast",
+  //           severity: "error",
+  //           summary: "Warn Message",
+  //           detail: "Quantity can't be more than available quantity "
+  //         });
+  //         return false;
+  //       }
+  //     } else {
+  //       return true;
+  //     }
+  // }
 
   // DAY END CHECK
  saveCheck(){
@@ -671,6 +672,7 @@ export class K4cFactoryReturnComponent implements OnInit {
      });
      //this.clearData();
      this.productaddSubmit =[];
+     this.RFactoryaddFormSubmitted = false;
     // this.ExpiredProductFLag = true;
      if(this.ExpiredProductFLag){
        this.getReturnReason("Y");

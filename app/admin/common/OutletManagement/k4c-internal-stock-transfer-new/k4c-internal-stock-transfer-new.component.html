@@ -124,6 +124,7 @@
                              </div>
                          </p-tabPanel>
                          <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"  leftIcon="glyphicon glyphicon-floppy-save" >
+                          <div class = "form-group">
                            <form name="IntStockForm" #IntStockForm="ngForm" novalidate>
                            <div class="col-lg-6">
                              <div class="panel-group"  >
@@ -266,7 +267,7 @@
                           </div>
                           <div class="col-sm-6">
                             <button class="btn btn-primary" style="margin-top: 25px;" data-toggle="modal"
-                            (click)="GetProductsName(IntStockForm.form.valid)"
+                            (click)="GetProductionNoList(IntStockForm.form.valid)"
                             id="load"
                             >
                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
@@ -279,7 +280,24 @@
                             </div>
                         </div>
                        </form>
+                       </div>
                        <br>
+                       <div class = "form-group">
+                       <div class="col-sm-4">
+                        <label class="control-label">Production List<sup class="text-danger">*</sup> &nbsp;
+                    </label>
+                        <p-multiSelect itemSize="30"
+                                   [options]="ProductionFilter"
+                                   [styleClass]="'compacct-multiselect'"
+                                   name="indentn"
+                                   [(ngModel)]="SelectedProduction"
+                                   [filter]="true"
+                                   filterBy="label,value.name"
+                                   (onChange)="filterProductionList()"
+                                   [resetFilterOnHide]="true">
+                      </p-multiSelect>
+                    </div>
+                  </div>
                        <div class="clearfix"></div>
                      <div class="table-responsive no-padding">
                         <p-table [value]="ProductNamelList"

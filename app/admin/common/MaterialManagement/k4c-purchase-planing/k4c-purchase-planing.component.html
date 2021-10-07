@@ -117,9 +117,9 @@
                                                         </li>
 
                                                         <!-- <li>
-                                                              <a (click)="editmaster(col)">
-                                                                  <i class="fa fa-print" aria-hidden="true"></i>
-                                                                  Print
+                                                              <a (click)="exportoexcel(ViewList,'Purchase_Planning')">
+                                                                  <i class="glyphicon glyphicon-save" aria-hidden="true"></i>
+                                                                  export to excel
                                                               </a>
                                                           </li> -->
                                                         <!-- <li *ngIf = "col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
@@ -372,9 +372,9 @@
 
 
                           <p-footer>
-                              <!-- <button type="button" (click)="Approved()" class="btn btn-success">
-                            <i class="fa fa-check"></i>&nbsp;  Approved
-                          </button> -->
+                              <button type="button" (click)="exportoexcel(ViewList,'Purchase_Planning')" class="btn btn-success">
+                            <i class="glyphicon glyphicon-save"></i>&nbsp;  export to excel
+                          </button>
                               <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
                              <i class="fa fa-close"></i>&nbsp;  Close
                            </button>

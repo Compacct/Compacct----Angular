@@ -154,7 +154,7 @@ export class K4cFactoryRequisitionComponent implements OnInit {
       To_Date : end,
       Cost_Cen_ID : this.ObjBrowseRequi.Location ? this.ObjBrowseRequi.Location : 0,
       Is_Active : this.ObjBrowseRequi.Status,
-      Brand_ID : this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0
+      Brand_ID : 0 //this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0
     }
     const obj = {
       "SP_String": "SP_Production_Voucher",
@@ -219,7 +219,7 @@ export class K4cFactoryRequisitionComponent implements OnInit {
       From_Date : start,
       To_Date : end,
       Cost_Cen_ID : this.ObjBrowseRequi.Location ? this.ObjBrowseRequi.Location : 0,
-      Brand_ID : this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0
+      Brand_ID : 0 //this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0
     }
     const obj = {
       "SP_String": "SP_Production_Voucher",
@@ -258,7 +258,7 @@ export class K4cFactoryRequisitionComponent implements OnInit {
       From_Date : start,
       To_Date : end,
       Cost_Cen_ID : this.ObjBrowseRequi.Location ? this.ObjBrowseRequi.Location : 0,
-      Brand_ID : this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0
+      Brand_ID : 0 //this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0
     }
     const obj = {
       "SP_String": "SP_Production_Voucher",

@@ -7,6 +7,7 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { Router } from '@angular/router';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-purchase-planing',
@@ -52,6 +53,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   ovaldisabled = false;
   ViewPoppup = false;
   ViewList = [];
+  exceldataList = [];
   //filteredData = [];
 
   constructor(
@@ -678,6 +680,32 @@ export class K4cPurchasePlaningComponent implements OnInit {
        this.ViewPoppup = true;
     })
    }
+  //   excel(DocNo){
+  //   this.Doc_no = undefined;
+  //   this.Doc_date = undefined;
+  //   if(DocNo.Doc_No){
+  //   this.ObjBrowse.Doc_No = DocNo.Doc_No;
+  //   //this.ViewPoppup = true;
+  //   this.getexceldata(this.ObjBrowse.Doc_No);;
+  //   }
+  //  }
+  //  getexceldata(Doc_No){
+  //   //console.log(this.ObjBrowse.Doc_No);
+  //   const obj = {
+  //     "SP_String": "SP_Purchase_Planning",
+  //     "Report_Name_String": "Get Data For Approved",
+  //     "Json_Param_String": JSON.stringify([{Doc_No : this.ObjBrowse.Doc_No}])
+
+  //   }
+  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //     this.exceldataList = data;
+  //   })
+  //  }
+   exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
    Authorized(DocNo){
     //this.clearData();
     //this.filteredData = [];

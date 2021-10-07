@@ -229,6 +229,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
       this.inputBoxDisabled = true;
     this.datepic = false;
     const tempObj = {
+      Brand_ID : this.Objproduction.Brand_ID,
       Delivery_Date : this.DateService.dateConvert(new Date (this.Reject_Date)),
       Process_ID : 100
     }

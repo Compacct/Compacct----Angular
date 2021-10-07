@@ -896,7 +896,7 @@ saveprintAndUpdate(){
   return false;
 }
 
-  if((this.ObjcashForm.Wallet_Ac_ID == undefined && this.ObjcashForm.Wallet_Amount) ||
+  if((!this.ObjcashForm.Wallet_Ac_ID && this.ObjcashForm.Wallet_Amount) ||
      (!this.ObjcashForm.Wallet_Amount && this.ObjcashForm.Wallet_Ac_ID )){
       this.Spinner = false;
       this.ngxService.stop();
@@ -909,7 +909,7 @@ saveprintAndUpdate(){
     });
     return false;
   }
-  if((this.ObjcashForm.Credit_To_Ac_ID == undefined && this.ObjcashForm.Credit_To_Amount) ||
+  if((!this.ObjcashForm.Credit_To_Ac_ID && this.ObjcashForm.Credit_To_Amount) ||
      (!this.ObjcashForm.Credit_To_Amount && this.ObjcashForm.Credit_To_Ac_ID )){
       this.Spinner = false;
       this.ngxService.stop();

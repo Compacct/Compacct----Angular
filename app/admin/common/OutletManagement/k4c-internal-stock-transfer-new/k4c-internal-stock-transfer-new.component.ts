@@ -61,6 +61,14 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   BDate: Date;
   DateProlist = [];
   ProDate : any = Date;
+  ProductionList = [] ;
+  BackupProductionList = [];
+  ProductionFilter = [];
+  SelectedProduction : any;
+  TProductionList = [];
+  Cost_Cen_Id: any;
+  BackUpProductNamelList = [];
+  editProNoList = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -93,6 +101,8 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.clearData();
     this.Objproduction.Product_Type_ID = undefined;
+    this.SelectedProduction = [];
+    this.ProductionFilter = [];
   }
 
   //CREATE START
@@ -235,23 +245,45 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
       console.log("maxDate==", this.maxDate)
     })
   }
-  GetProductsName(valid){
+  // FOR PRODUCT NAME DROPDOWN
+  dataforproduct(){
+    if(this.SelectedProduction.length) {
+      let Arr =[]
+      this.SelectedProduction.forEach(el => {
+        if(el){
+          const Dobj = {
+            Doc_No : el,
+            Brand_ID : this.Objproduction.Brand_ID,
+            Product_Type_ID : this.Objproduction.Product_Type_ID ? this.Objproduction.Product_Type_ID : 0,
+            From_Cost_Cen_ID : this.Objproduction.From_Cost_Cen_ID,
+            From_godown_id : this.Objproduction.From_godown_id,
+            Date : this.DateService.dateConvert(new Date(this.ProDate))
+            }
+           Arr.push(Dobj)
+        }
+
+    });
+      console.log("Table Data ===", Arr)
+      return Arr.length ? JSON.stringify(Arr) : '';
+    }
+  }
+  GetProductsName(){
     console.log("Objproduction.Product_Type_ID",this.Objproduction.Product_Type_ID);
    this.IntStockFormFormSubmitted = true;
-   console.log("valid",valid);
-    if(valid){
+   //console.log("valid",valid);
+    //if(valid){
       this.ProductNamelList = [];
-      const tempObj = {
-        Brand_ID : this.Objproduction.Brand_ID,
-        Product_Type_ID : this.Objproduction.Product_Type_ID ? this.Objproduction.Product_Type_ID : 0,
-        From_Cost_Cen_ID : this.Objproduction.From_Cost_Cen_ID,
-        From_godown_id : this.Objproduction.From_godown_id,
-        Date : this.DateService.dateConvert(new Date(this.ProDate))
-      }
+      // const tempObj = {
+      //   Brand_ID : this.Objproduction.Brand_ID,
+      //   Product_Type_ID : this.Objproduction.Product_Type_ID ? this.Objproduction.Product_Type_ID : 0,
+      //   From_Cost_Cen_ID : this.Objproduction.From_Cost_Cen_ID,
+      //   From_godown_id : this.Objproduction.From_godown_id,
+      //   Date : this.DateService.dateConvert(new Date(this.ProDate))
+      // }
       const obj = {
         "SP_String": "SP_Production_Voucher_New",
         "Report_Name_String": "GET_Production_Products",
-        "Json_Param_String": JSON.stringify([tempObj])
+        "Json_Param_String": this.dataforproduct()
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         //this.ProductionlList = data;
@@ -260,8 +292,82 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
          this.ProductNamelList.forEach(el=>{
            el['Transfer_Qty'] = el.batch_Qty;
          })
+         this.BackUpProductNamelList = [...this.ProductNamelList];
       })
-    }
+   // }
+   }
+   GetProductionNoList(valid){
+    // this.RawMaterialIssueFormSubmitted = true;
+     if(valid){
+     const TempObj = {
+      Doc_Date : this.DateService.dateConvert(new Date(this.ProDate))
+      }
+    const obj = {
+     "SP_String": "SP_Production_Voucher_New",
+     "Report_Name_String" : "Get Production no For Internal Stock Trans",
+    "Json_Param_String": JSON.stringify([TempObj])
+ 
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     // if(data.length) {
+     //   data.forEach(element => {
+     //     element['label'] = element.Req_No,
+     //     element['value'] = element.Req_No
+     //   });
+       this.ProductionList = data;
+       this.BackupProductionList = data;
+      // this.Cost_Cen_Id = data[0].Cost_Cen_ID;
+     // } else {
+     //   this.IndentNoList = [];
+ 
+     //  }
+    // this.RawMaterialIssueFormSubmitted = false;
+    console.log("this.ProductionList======",this.ProductionList);
+    this.GetProduction();
+   })
+   }
+   }
+   GetProduction(){
+     let DProduction = [];
+     this.ProductionFilter = [];
+     this.SelectedProduction = [];
+     this.BackupProductionList.forEach((item) => {
+       if (DProduction.indexOf(item.Production_No) === -1) {
+        DProduction.push(item.Production_No);
+         this.ProductionFilter.push({ label: item.Production_No , value: item.Production_No });
+         console.log("this.ProductionFilter", this.ProductionFilter);
+       }
+     });
+     this.BackupProductionList = [...this.ProductionList];
+   }
+   filterProductionList() {
+     //console.log("SelectedTimeRange", this.SelectedTimeRange);
+     let DProduction = [];
+     this.TProductionList = [];
+     //const temparr = this.ProductionlList.filter((item)=> item.Qty);
+     //if(!this.editList.length && !this.editProNoList.length){
+     this.BackUpProductNamelList =[];
+     this.ProductNamelList = [];
+       this.GetProductsName();
+     //  }
+     if (this.SelectedProduction.length) {
+       this.TProductionList.push('Production_No');
+       DProduction = this.SelectedProduction;
+     }
+     if(this.editList.length) {
+       this.ProductNamelList = [];
+       if (this.TProductionList.length) {
+         let LeadArr = this.BackUpProductNamelList.filter(function (e) {
+           return (DProduction.length ? DProduction.includes(e['Production_No']) : true)
+         });
+         this.ProductNamelList = LeadArr.length ? LeadArr : [];
+       } else {
+         this.ProductNamelList = [...this.BackUpProductNamelList];
+         console.log("else Get Production list", this.ProductionList)
+       }
+     }
+ 
+ 
    }
 
   GetBatchNo(){
@@ -392,7 +498,6 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
    })
   }
   SaveIntStocktr(){
-
     console.log("saveqty",this.saveqty());
     if(this.saveqty()){
     if(Number(this.Objproduction.From_Cost_Cen_ID) == Number(this.Objproduction.To_Cost_Cen_ID) &&
@@ -401,7 +506,8 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String" : "Add Internal Stock Transfer",
-     "Json_Param_String": this.dataforSaveIntStocktr()
+     "Json_Param_String": this.dataforSaveIntStocktr(),
+     "Json_1_String" : this.getProductionNo()
 
     }
     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
@@ -422,7 +528,8 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
        }
        this.clearData();
        this.displaysavepopup = false;
-
+       this.SelectedProduction = [];
+       this.ProductionFilter = [];
       } else{
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -457,12 +564,28 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
 
          }
   }
+  getProductionNo(){
+    if(this.SelectedProduction.length) {
+      let Rarr =[]
+      this.SelectedProduction.forEach(el => {
+        if(el){
+          const Dobj = {
+            Production_No : el
+            }
+            Rarr.push(Dobj)
+        }
+
+    });
+      console.log("Table Data ===", Rarr)
+      return Rarr.length ? JSON.stringify(Rarr) : '';
+    }
+  }
   dataforSaveIntStocktr(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.Objproduction.Doc_Date = this.DateService.dateConvert(new Date(this.Datevalue));
-    if(this.ProductNamelList.length) {
+    if(this.BackUpProductNamelList.length) {
       let tempArr =[]
-      this.ProductNamelList.forEach(item => {
+      this.BackUpProductNamelList.forEach(item => {
         if(item.Transfer_Qty && Number(item.Transfer_Qty) !== 0){
         const obj = {
             Product_Type_ID : item.Product_Type_ID,
@@ -556,6 +679,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     this.buttonname = "Update";
     // console.log("this.EditDoc_No ==", this.Objproduction.Doc_No);
     this.GetEditIntStock(this.Objproduction.Doc_No);
+    this.getProNoForEdit(this.Objproduction.Doc_No);
     }
   }
   GetEditIntStock(Doc_No){
@@ -601,7 +725,36 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
              this.ProductNamelList.push(productObj);
         });
         // console.log("this.editList  ===",data);
+        this.BackUpProductNamelList = [...this.ProductNamelList];
+        //this.backUpproductList = this.productList;
+        this.BackupProductionList = this.ProductionList;
+        this.GetProductiondist();
       })
+  }
+  getProNoForEdit(Doc_No){
+    const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Get PV NO For IST Edit",
+      "Json_Param_String": JSON.stringify([{Doc_No : this.Objproduction.Doc_No}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editProNoList = data;
+      this.GetProductiondist();
+    })
+  }
+  GetProductiondist(){
+    let DIndentBy = [];
+    this.ProductionFilter = [];
+    this.SelectedProduction =[];
+    //this.SelectedDistOrderBy1 = [];
+    this.editProNoList.forEach((item) => {
+      if (DIndentBy.indexOf(item.Production_No) === -1) {
+        DIndentBy.push(item.Production_No);
+         this.ProductionFilter.push({ label: item.Production_No , value: item.Production_No });
+         this.SelectedProduction.push(item.Production_No);
+        console.log("this.TimerangeFilter", this.ProductionFilter);
+      }
+    });
   }
   PrintStock(obj){
     if (obj.Doc_No) {

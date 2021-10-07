@@ -437,10 +437,10 @@
                                     </option>
                               </select>
                                         </div>
-                                        <div class="col-sm-2" *ngIf="ObjSaveForm.Material_Type === 'Store Item'">
+                                        <!-- <div class="col-sm-2" *ngIf="ObjSaveForm.Material_Type === 'Store Item'">
                                             <label class="control-label">Available Qty <sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="AvlQty" #AvlQty="ngModel" [(ngModel)]="ObjProductaddForm.Avl_Qty" CompacctDigitonly="true" disabled="true" [ngClass]="{'clearance':RFactoryaddFormSubmitted && AvlQty?.errors?.required}">
-                                        </div>
+                                        </div> -->
                                         <div class="col-sm-1">
                                             <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjProductaddForm.Stock_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':RFactoryaddFormSubmitted && Qty?.errors?.required}" required>

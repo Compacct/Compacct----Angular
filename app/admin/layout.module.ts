@@ -197,6 +197,8 @@ import { TutoCrmLeadFieldSaleComponent } from './common/CRM/Transaction/tuto-crm
 import { TutoTempCrmLeadComponent } from './common/CRM/Master/tuto-temp-crm-lead/tuto-temp-crm-lead.component';
 import { TutoWebDemLeadFollowupComponent } from './common/CRM/Transaction/tuto-web-dem-lead-followup/tuto-web-dem-lead-followup.component';
 import { TutoAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-audit-lead-followup/tuto-audit-lead-followup.component';
+import { OutletClosingStockWithBatchComponent } from './common/OutletManagement/outlet-closing-stock-with-batch/outlet-closing-stock-with-batch.component';
+import { K4cAdvOrderInternalStockTransferComponent } from './common/MaterialManagement/k4c-adv-order-internal-stock-transfer/k4c-adv-order-internal-stock-transfer.component';
 
 
 
@@ -335,7 +337,9 @@ import { TutoAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-au
     TutoCrmLeadFieldSaleComponent,
     TutoTempCrmLeadComponent,
     TutoWebDemLeadFollowupComponent,
-    TutoAuditLeadFollowupComponent
+    TutoAuditLeadFollowupComponent,
+    OutletClosingStockWithBatchComponent,
+    K4cAdvOrderInternalStockTransferComponent
   ],
   imports: [
     CommonModule,

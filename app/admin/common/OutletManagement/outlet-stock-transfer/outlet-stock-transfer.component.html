@@ -244,7 +244,7 @@
                                           <select class="form-control"
                                                   name="materialtype"
                                                   #materialtype="ngModel"
-                                                  [(ngModel)]="Objadditem.Material_Type"
+                                                  [(ngModel)]="ObjstockTransfer.Material_Type"
                                                   (ngModelChange)= "GetProduct()"
                                                   [ngClass]="{'clearance':AdditioanFormSubmit && materialtype?.errors?.required}"
                                                   required>
@@ -260,7 +260,7 @@
                                                 [showClear]="true" [emptyFilterMessage]="' No Item Found'"
                                                 [filter]="true" filterBy="label,value.name" [resetFilterOnHide] = "true"
                                                 [placeholder]="'Select Item'" [virtualScroll]="true" itemSize="30" #Product_ID="ngModel"
-                                                (ngModelChange)='Objadditem.Material_Type === "Store Item" ? ProductChange() : GetBatch()'
+                                                (ngModelChange)='GetBatch()'
                                                 [styleClass]="
                                                 AdditioanFormSubmit && Product_ID.errors?.required
                                                   ? 'clearance'
@@ -283,7 +283,7 @@
                                                           <option *ngFor="let option of BatchList" [value]="option.Batch_NO">{{option.Batch_No_Show}}</option>
                                                     </select>
                                              </div>
-                                             <div class="col-sm-2" *ngIf = "Objadditem.Material_Type === 'Store Item'">
+                                             <!-- <div class="col-sm-2" *ngIf = "Objadditem.Material_Type === 'Store Item'">
                                               <label class="control-label">Available Qty <sup class="text-danger">*</sup></label>
                                               <input class="form-control"
                                                     name="AvlQty"
@@ -293,7 +293,7 @@
                                                     disabled = "true"
                                                     [ngClass]="{'clearance':AdditioanFormSubmit && AvlQty?.errors?.required}"
                                                     >
-                                             </div>
+                                             </div> -->
 
                                            <div class="col-sm-1">
                                             <label class="control-label">QTY</label>

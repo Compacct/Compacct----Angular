@@ -136,8 +136,8 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
     this.items = ["Student Detail","Followup Details", "Billing Details","Order Details ","Support Question Dump","Support Ticket Dump"];
     // this.GetUserList();
     this.GetActionList();
-   // this.GetSalesUserList();
-   this.GetAppoSlotList();
+    // this.GetSalesUserList();
+    this.GetAppoSlotList();
     this.GetAllUserList();
     this.GetActionListFollowupCreate();
   }
