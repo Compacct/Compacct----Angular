@@ -997,19 +997,29 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
           this.seachSpinner = false;
     });
   }
+  ClassChange() {
+    this.LeadEditObj.Class_Name_Choose = undefined;
+    if(this.LeadEditObj.Class_ID) {
+      const ARR = this.ClassList.filter(i=> i.Class_ID.toString() === this.LeadEditObj.Class_ID.toString())[0];
+      if(ARR.length) {
+        this.LeadEditObj.Class_Name_Choose = ARR[0].Class_Name;
+      }
+    }
+  }
   LeadEditModal(obj) {
     this.EditLeadModal = false;
     this.EditLeadFormSubmitted = false;
     this.LeadEditObj = new Lead();
-    if(obj.Lead_ID) {
+    if(obj.Lead_ID) { 
       this.LeadEditObj.Contact_Name = obj.Contact_Name;
       this.LeadEditObj.Lead_ID = obj.Lead_ID;
       this.LeadEditObj.Mobile = obj.Mobile;
-      this.LeadEditObj.Pin = obj.Pin;
-      this.LeadEditObj.Address = obj.Address;
-      this.LeadEditObj.ALT_Mobile = obj.ALT_Mobile;
-      this.LeadEditObj.Class_ID = obj.Class_ID;
-      this.LeadEditObj.School_Name = obj.School_Name;
+      this.LeadEditObj.Pin = obj.Pin ? obj.Pin : undefined;
+      this.LeadEditObj.Address = obj.Address ? obj.Address : undefined;
+      this.LeadEditObj.ALT_Mobile = obj.ALT_Mobile ? obj.ALT_Mobile : undefined;
+      this.LeadEditObj.Class_ID = obj.Class_ID ? obj.Class_ID : undefined;
+      this.LeadEditObj.School = obj.School_Name ? obj.School_Name : undefined;
+      this.LeadEditObj.Class_Name_Choose = obj.Class_Name ? obj.Class_Name : undefined;
       this.EditLeadModal = true;
     }
 
@@ -1019,24 +1029,16 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     if(valid) {
       console.log(this.LeadEditObj)
       const obj = {
-        "SP_String":"SP_Appointment",
-        "Report_Name_String": "Followup_Web_Appointment",
+        "SP_String":"Tutopia_Create_Common_SP",
+        "Report_Name_String": "Update_BL_CRM_Txn_Enq",
         "Json_Param_String" : JSON.stringify([this.LeadEditObj])
       }
       const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
       this.GlobalAPI
-          .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+          .CommonPostData(obj,'Create_Common_task_Tutopia_Call?Report_Name=Update_BL_CRM_Txn_Enq')
           .subscribe((data: any) => { 
             console.log(data);
-            if (data[0].Remarks.includes('Already Engaged')) {
-              this.compacctToast.clear();
-              this.compacctToast.add({
-                key: "compacct-toast",
-                severity: "error",
-                summary: "error",
-                detail: data[0].Remarks
-              });
-            } else {
+            if (data[0].Column1) {
               this.SaerchFollowup(true);
               this.ResceduleLeadModal = false;
               this.compacctToast.clear();
@@ -1044,11 +1046,20 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
                 key: "compacct-toast",
                 severity: "success",
                 summary: 'Student ID : ' + this.LeadEditObj.Lead_ID,
-                detail: "Succesfully Rescedule."
+                detail: "Succesfully Updated."
               });
               this.EditLeadModal = false;
               this.EditLeadFormSubmitted = false;
               this.LeadEditObj = new Lead();
+            } else {
+              
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "error",
+                detail: "error"
+              });
             }
     })
     }
@@ -1099,8 +1110,9 @@ class Lead{
   Lead_ID:string;
   Class_ID:string;
   Address:string;
+  Class_Name_Choose :string;
   Pin:string;
-  School_Name:string;
+  School:string;
   ALT_Mobile:String;
   Mobile:string;
 }

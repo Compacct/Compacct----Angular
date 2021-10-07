@@ -183,11 +183,11 @@
                                                         <i class="fa fa-file-text-o" aria-hidden="true"></i> Show Details
                                                     </a>
                                                 </li>
-                                                <li>
+                                                <!-- <li>
                                                     <a (click)="ShowRescedule(col)">
                                                         <i class="fa fa-refresh" aria-hidden="true"></i> Rescedule
                                                     </a>
-                                                </li>
+                                                </li> -->
                                                 <li>
                                                     <a (click)="LeadEditModal(col)">
                                                         <i class="fa fa-pencil" aria-hidden="true"></i> Edit Lead
@@ -900,12 +900,12 @@
                 <input class="form-control" name="ALT_Mobile" #ALT_Mobile="ngModel" CompacctDigitonly="true" minlength="10" maxlength="10" [(ngModel)]="LeadEditObj.ALT_Mobile" placeholder="ALT Mobile">
             </div>
             <div class="col-sm-12">
-                <label class="control-label">School Name</label>
-                <input class="form-control" name="School" #School="ngModel" [(ngModel)]="LeadEditObj.School_Name" placeholder="School Name">
+                <label class="control-label">School Name<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="School" disabled='true' required #School="ngModel" [(ngModel)]="LeadEditObj.School" placeholder="School Name">
             </div>
             <div class="col-sm-12">
                 <label class="control-label">Class<sup class="text-danger">*</sup></label>
-                <select class="form-control" name="Class_ID" #Class_ID="ngModel" [(ngModel)]='LeadEditObj.Class_ID' [ngClass]="{'clearance': EditLeadFormSubmitted && Class_ID?.errors?.required}" required>
+                <select class="form-control" name="Class_ID" #Class_ID="ngModel" required [(ngModel)]='LeadEditObj.Class_ID' (change)='ClassChange()' [ngClass]="{'clearance': EditLeadFormSubmitted && Class_ID?.errors?.required}" required>
                   <option  [ngValue]="undefined">Select</option>
                     <option *ngFor="let option of ClassList" value={{option.Class_ID}}>
                       {{option.Class_Name}}
@@ -913,8 +913,8 @@
                 </select>
             </div>
             <div class="col-sm-12">
-                <label class="control-label">Address</label>
-                <textarea class="form-control" name="Address" row='2' #Address="ngModel" [(ngModel)]="LeadEditObj.Address" placeholder="Address"> </textarea>
+                <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                <textarea class="form-control" name="Address" row='2' #Address="ngModel" required [(ngModel)]="LeadEditObj.Address" placeholder="Address"> </textarea>
 
             </div>
             <div class="col-sm-12">
@@ -937,7 +937,7 @@
         <button type="button" (click)="EditLeadModal = false" class="btn btn-default">
             CLOSE
         </button>
-        <button type="button" class="btn btn-primary" (click)="SaveRescedule(updateLeadModalUpdate.form.valid)">
+        <button type="button" class="btn btn-primary" (click)="UpdatedLead(updateLeadModalUpdate.form.valid)">
             SAVE
         </button>
     </p-footer>
