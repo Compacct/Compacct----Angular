@@ -120,6 +120,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
       // console.log("Brand List ===",this.BrandList);
      })
    }
+   onReject(){}
    GetProductType(){
      //console.log("brand id ==", this.Objproduction.Brand_ID)
      const tempObj = {

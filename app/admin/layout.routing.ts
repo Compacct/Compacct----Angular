@@ -117,6 +117,11 @@ import { TutoWebDemLeadFollowupComponent } from './common/CRM/Transaction/tuto-w
 import { TutoAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-audit-lead-followup/tuto-audit-lead-followup.component';
 
 
+import { OutletClosingStockWithBatchComponent } from './common/OutletManagement/outlet-closing-stock-with-batch/outlet-closing-stock-with-batch.component';
+import { K4cAdvOrderInternalStockTransferComponent } from './common/MaterialManagement/k4c-adv-order-internal-stock-transfer/k4c-adv-order-internal-stock-transfer.component';
+
+
+
 
 
 
@@ -668,7 +673,16 @@ data: {title: 'K4C_Outlet_Requisition'}
                                             path: 'Tutopia_Audit_Appointment',
                                             component: TutoAuditLeadFollowupComponent,
                                             data: {title: 'Audit Appointment'}
-                                            }
+                                            },{
+                                              path: 'Outlet_Closing_Stock_With_Batch',
+                                              component: OutletClosingStockWithBatchComponent,
+                                              data: {title: 'Outlet Closing Stock With Batch'}
+                                              },
+                                              {
+                                                path: 'Adv_Order_Internal_Stock_Transfer',
+                                                component: K4cAdvOrderInternalStockTransferComponent,
+                                                data: {title: 'Advance Order Internal Stock Transfer'}
+                                                }
                           
       /*{
            path: '404',
