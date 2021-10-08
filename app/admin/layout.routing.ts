@@ -394,7 +394,7 @@ data: {title: 'K4C_Outlet_Requisition'}
     {
       path: 'K4C_Dispatch_to_Outlet',
       component: K4CDispatchToOutletComponent,
-      data: {title: 'Distribution Challan  anil'}
+      data: {title: 'Distribution Challan'}
       },  
        {
         path: 'K4C_Outlet_Sale_Bill',
@@ -677,7 +677,7 @@ data: {title: 'K4C_Outlet_Requisition'}
                                               path: 'Outlet_Closing_Stock_With_Batch',
                                               component: OutletClosingStockWithBatchComponent,
                                               data: {title: 'Outlet Closing Stock With Batch'}
-                                              },
+                                              },   
                                               {
                                                 path: 'Adv_Order_Internal_Stock_Transfer',
                                                 component: K4cAdvOrderInternalStockTransferComponent,
