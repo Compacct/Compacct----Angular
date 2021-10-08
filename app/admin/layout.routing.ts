@@ -395,7 +395,7 @@ data: {title: 'K4C_Outlet_Requisition'}
       path: 'K4C_Dispatch_to_Outlet',
       component: K4CDispatchToOutletComponent,
       data: {title: 'Distribution Challan'}
-      },
+      },   
        {
         path: 'K4C_Outlet_Sale_Bill',
         component: K4cOutletSaleBillComponent,
