@@ -119,7 +119,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
        //this.GetProductType();
       // console.log("Brand List ===",this.BrandList);
      })
-   }
+   } 
    onReject(){}
    onConfirm(){}
    GetProductType(){
