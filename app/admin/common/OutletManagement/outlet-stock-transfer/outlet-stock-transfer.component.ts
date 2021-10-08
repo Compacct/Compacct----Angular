@@ -369,9 +369,12 @@ if(ProductArrValid.length){
    //Material_Type : item.Material_Type
    })
   })
-  this.Objadditem= new additem();
+  //this.Objadditem= new additem();
+  this.Objadditem.Product_ID = undefined;
+  this.BatchList = [];
+  this.Objadditem.Issue_Qty = undefined;
   this.AdditioanFormSubmit = false;
-  this.itemList = [];
+  //this.itemList = [];
 }
 console.log("product details",this.productDetails)
 //}

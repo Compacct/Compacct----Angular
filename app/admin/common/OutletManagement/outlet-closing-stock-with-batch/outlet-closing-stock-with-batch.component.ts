@@ -313,7 +313,7 @@ const tempobj = {
   From_Date : start,
   To_Date : end,
   Brand_ID : this.ObjBrowse.Brand_ID,
-  //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+  Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID ? this.ObjBrowse.Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
 }
 const obj = {
   "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
@@ -486,4 +486,5 @@ class OTclosingwithbatch {
   start_date : Date ;
   end_date : Date;
   Brand_ID : string;
+  Cost_Cen_ID : string;
 }
