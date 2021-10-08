@@ -15,7 +15,7 @@
 
                             </div> -->
                             <div class="col-sm-4">
-                                <label class="control-label">Period</label>
+                                <label class="control-label">Booking Date Period</label>
 
                                 <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
                             </div>
@@ -83,6 +83,10 @@
                                         <label class="control-label">Type Of Demo <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="DemoTypeList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDemoTypeFilterList" [styleClass]="'compacct-multiselect'" name="status"></p-multiSelect>
                                     </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Auditor Name <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="AuditorFilterList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAuditorFilterList" [styleClass]="'compacct-multiselect'" name="status"></p-multiSelect>
+                                    </div>
                                     <!-- <div class="col-sm-3">
                                         <label class="control-label">City <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="CityList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCityFilterList" [styleClass]="'compacct-multiselect'" name="CityList"></p-multiSelect>
@@ -137,6 +141,7 @@
                                     <th>Status</th>
                                     <th>Regsiter</th>
                                     <th>Appo Date</th>
+                                    <th>Booking Date</th>
                                     <th>Days</th>
                                     <th>Appo Slot</th>
                                     <th><span style="margin-right: 200px;">Name</span></th>
@@ -150,6 +155,7 @@
                                     <th>Type Of Demo</th>
                                     <th>TC Name</th>
                                     <th>RM Name</th>
+                                    <th>Auditor Name</th>
                                     <!-- <th>Viewed </th> 
                                     <th>City </th>
                                     <th>Created On</th>
@@ -220,6 +226,7 @@
                                         <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
                                     </td>
                                     <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
+                                    <td>{{col.Booking_Date}}</td>
                                     <td>{{col.Days}}</td>
                                     <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
 
@@ -237,6 +244,7 @@
                                     <td>{{col.Demo_Type ? col.Demo_Type : '-'}}</td>
                                     <td>{{col.TC_Name ? col.TC_Name : '-'}}</td>
                                     <td>{{col.RM_Name ? col.RM_Name : '-'}}</td>
+                                    <td>{{col.Auditor_Name ? col.Auditor_Name : '-'}}</td>
                                     <!-- <td>{{col.City ? col.City : '-'}}</td>
                                     <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
