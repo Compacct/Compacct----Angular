@@ -149,11 +149,11 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li *ngIf='col.Status === "AUDIT DONE"'>
+                                                <li *ngIf='col.Status === "PENDING"'>
                                                     <a (click)="FollowUpPopup(col)"> <i class="fa fa-commenting-o"> </i>Followup</a>
                                                 </li>
                                                 <li>
-                                                    <a (click)="Billcreation(col)" *ngIf='col.Mobile && col.Foot_Fall_ID.toString() !== "0"'>
+                                                    <a (click)="Billcreation(col)" *ngIf='col.Status === "PENDING" && col.Mobile && col.Foot_Fall_ID.toString() !== "0"'>
                                                         <i class="fa fa-fw fa-newspaper-o"></i> Create Bill
                                                     </a>
                                                 </li>

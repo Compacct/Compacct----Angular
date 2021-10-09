@@ -951,7 +951,7 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     if(obj.Lead_ID) {
       this.ResceduleLeadObj.Appo_ID = obj.Appo_ID;
       this.ResceduleLeadObj.Appo_To_User_ID = obj.Appo_To_User_ID;
-      this.ResceduleLeadObj.Demo_Type = 'WEB';
+      this.ResceduleLeadObj.Demo_Type = obj.Demo_Type;
       this.ResceduleLeadModal = true;
     }
 
@@ -963,7 +963,7 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
       console.log(this.ResceduleLeadObj)
       const obj = {
         "SP_String":"SP_Appointment",
-        "Report_Name_String": "Followup_Web_Appointment",
+        "Report_Name_String": "Audit Reschedule",
         "Json_Param_String" : JSON.stringify([this.ResceduleLeadObj])
       }
       const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };

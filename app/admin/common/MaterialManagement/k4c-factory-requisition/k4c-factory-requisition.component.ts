@@ -148,14 +148,22 @@ export class K4cFactoryRequisitionComponent implements OnInit {
       ? this.DateService.dateConvert(new Date(this.ObjBrowseRequi.end_date))
       : this.DateService.dateConvert(new Date());
      //if(this.ObjBrowseRequi.Status != undefined){
+      let bandid = 0;
+       if(this.Param_Flag ==='Finished') {
+        bandid = this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0;
+       } 
+       if (this.Param_Flag === 'Store Item') {
+        bandid = this.ObjBrowseRequi.Location ? 0 : this.ObjBrowseRequi.Brand_ID;
+       }
     const tempobj = {
       Material_Type : this.Param_Flag,
       From_Date : start,
       To_Date : end,
       Cost_Cen_ID : this.ObjBrowseRequi.Location ? this.ObjBrowseRequi.Location : 0,
       Is_Active : this.ObjBrowseRequi.Status,
-      Brand_ID : 0 //this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0
+      Brand_ID :bandid
     }
+    
     const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String": "Browse Requisition For Factory",
