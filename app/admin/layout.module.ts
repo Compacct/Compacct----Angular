@@ -199,7 +199,9 @@ import { TutoWebDemLeadFollowupComponent } from './common/CRM/Transaction/tuto-w
 import { TutoAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-audit-lead-followup/tuto-audit-lead-followup.component';
 import { OutletClosingStockWithBatchComponent } from './common/OutletManagement/outlet-closing-stock-with-batch/outlet-closing-stock-with-batch.component';
 import { K4cAdvOrderInternalStockTransferComponent } from './common/MaterialManagement/k4c-adv-order-internal-stock-transfer/k4c-adv-order-internal-stock-transfer.component';
-
+import { TutoPostSaleAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-post-sale-audit-lead-followup/tuto-post-sale-audit-lead-followup.component';
+import { TutoBdaReportComponent } from './common/CRM/Transaction/tuto-bda-report/tuto-bda-report.component';
+import { TutoSchoolRequestDetailsComponent } from './common/CRM/Master/tuto-school-request-details/tuto-school-request-details.component';
 
 
 @NgModule({
@@ -339,7 +341,10 @@ import { K4cAdvOrderInternalStockTransferComponent } from './common/MaterialMana
     TutoWebDemLeadFollowupComponent,
     TutoAuditLeadFollowupComponent,
     OutletClosingStockWithBatchComponent,
-    K4cAdvOrderInternalStockTransferComponent
+    K4cAdvOrderInternalStockTransferComponent,
+    TutoPostSaleAuditLeadFollowupComponent,
+    TutoBdaReportComponent,
+    TutoSchoolRequestDetailsComponent
   ],
   imports: [
     CommonModule,

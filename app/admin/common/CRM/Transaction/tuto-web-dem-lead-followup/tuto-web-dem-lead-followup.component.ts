@@ -581,8 +581,11 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
       this.objFollowUpCreation.Lead_ID = obj.Lead_ID;
       this.objFollowUpCreation.School = obj.School;
       this.objFollowUpCreation.Pin = obj.Pin;
+      this.objFollowUpCreation.Appo_ID = obj.Appo_ID ? obj.Appo_ID : '0';
       this.objFollowUpCreation.Current_Action = 'Tele Call';
       this.objFollowUpCreation.Followup_Action = 'Tele Call';
+      this.objFollowUpCreation.Status = 'Keep it in My Own Followup';
+      this.changeStatusForFollowupCreation(this.objFollowUpCreation.Status);
       this.TutopiaDemoActionFlag = false;
       this.GetFollowupDetails(obj.Lead_ID);
       this.FollowupModal = true;
@@ -796,10 +799,10 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
       console.log(this.objFollowUpCreation)
       const obj = {
             "SP_String": "Tutopia_Followup_SP",
-            "Report_Name_String": "Save Followup Tutopia",
+            "Report_Name_String": "Followup Save Web Demo",
             "Json_1_String": JSON.stringify([this.objFollowUpCreation])
           }
-          this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Save Followup Tutopia').subscribe((data) => {
+          this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Followup Save Web Demo').subscribe((data) => {
               if (data[0].Column1) {
                 this.saveTutopiaViewStatus(this.objFollowUpCreation);
                 this.compacctToast.clear();
@@ -938,6 +941,7 @@ class Search {
   Current_Action: String;
 }
 class Followup {
+  Appo_ID:string;
 Foot_Fall_ID: String;
 Lead_ID: String;
 Contact_Name:string;

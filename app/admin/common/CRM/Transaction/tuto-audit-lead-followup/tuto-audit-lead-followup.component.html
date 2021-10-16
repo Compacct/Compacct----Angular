@@ -147,6 +147,7 @@
                                     <th><span style="margin-right: 200px;">Name</span></th>
                                     <th>Mobile</th>
                                     <th>Alternative Mobile No.</th>
+                                    <th>Class</th>
                                     <th>Pin </th>
                                     <th>Address</th>
                                     <th>Landmark</th>
@@ -236,6 +237,7 @@
                                         <a (click)='CallTutopiaApp(col)'><i class="fa fa-fw fa-phone-square"></i>&nbsp;{{col.Mobile}}</a>
                                     </td>
                                     <td>{{col.ALT_Mobile ? col.ALT_Mobile : '-'}}</td>
+                                    <td>{{col.Class_Name ? col.Class_Name : '-'}}</td>
                                     <td>{{col.Pin ? col.Pin : '-' }}</td>
                                     <td>{{col.Address ? col.Address : '-'}}</td>
                                     <td>{{col.Landmark ? col.Landmark : '-'}}</td>
@@ -961,7 +963,8 @@
                 <audio id="Test_Audio" controls>              
                     <source [src]="CallDetailsObj['location']"
                             type="audio/mpeg">
-                </audio>
+                </audio><br>
+                <a [href]="CallDetailsObj['location']" target="_blank" class="btn btn-linkedin"><i class="fa fa-fw fa-link"></i> &nbsp;Link</a>
             </div>
             <div class="col-sm-12">
                 <label style='display: block;' class="control-label">Call Length <sup class="text-danger">*</sup></label>

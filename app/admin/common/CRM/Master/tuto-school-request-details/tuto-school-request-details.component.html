@@ -1,0 +1,68 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+<div class="no-padding">
+    <p-table [value]="addSchool"
+            [globalFilterFields]="['Start_From','End_To','Dist_Sale_Commission']"
+             [rowHover]="true"
+             [autoLayout]="true"
+
+             #dt1>
+       
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>School Name</th>
+                        <th>Area</th>
+                         <th>Address</th>
+                         <th>PIN Code</th>
+                         <th>District</th>
+                         <th>Updated On</th>
+                        <th>Updated By</th>
+                        <th>Posted On</th>
+                        <th></th>
+                      </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-col let-i="rowIndex">
+                    <tr>
+                     <td>{{col.School_Name}}</td>
+                      <td>{{col.Area}}</td>
+                      <td>{{col.Address}}</td>
+                     <td>{{col.PIN_Code}}</td>
+                     <td>{{col.District}}</td>
+                      <td>{{col.Updated_On}}</td>
+                     <td>{{col.Updated_By}}</td>
+                     <td>{{col.Posted_On}}</td>
+                <td><button *ngIf = "col.Update_Status === 'N'" class="btn btn-primary custombtn" (click)="update(col)"  type="button" >
+                    Update
+            </button>
+        </td>
+                     </tr>
+                </ng-template>
+        </p-table>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>

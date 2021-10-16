@@ -900,6 +900,14 @@
     <form name="CALLFORM" style="margin-top:2em" #CALLFORM="ngForm" novalidate>
 
         <div class="form-group">
+            <div class='col-sm-12 text-center' *ngIf="CallDetailsObj['location']">
+                <label style='display: block;' class="control-label">Audio <sup class="text-danger">*</sup></label>
+                <audio id="Test_Audio" controls>              
+                    <source [src]="CallDetailsObj['location']"
+                            type="audio/mpeg">
+                </audio><br>
+                <a [href]="CallDetailsObj['location']" target="_blank" class="btn btn-linkedin"><i class="fa fa-fw fa-link"></i> &nbsp;Link</a>
+            </div>
             <div class="col-sm-12">
                 <label style='display: block;' class="control-label">Call Length <sup class="text-danger">*</sup></label>
                 <div class="label-t">{{CallDetailsObj['length_in_sec'] ? CallDetailsObj['length_in_sec'] + ' Sec' : '-'}}</div>
@@ -911,12 +919,6 @@
                 <div class="label-t">{{CallDetailsObj['start_time'] ? (CallDetailsObj['start_time'] | date : "dd/MMM/yyy hh:mm a") : '-'}}</div>
 
 
-            </div>
-            <div class='col-sm-12' *ngIf="CallDetailsObj['location']">
-                <audio id="Test_Audio" controls>              
-                    <source [src]="CallDetailsObj['location']"
-                            type="audio/mpeg">
-                </audio>
             </div>
         </div>
         <div class="form-group">

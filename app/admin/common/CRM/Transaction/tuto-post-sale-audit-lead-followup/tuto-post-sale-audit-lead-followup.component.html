@@ -6,15 +6,19 @@
                 <div class="box-body">
                     <form name="SearchForm" #SearchForm="ngForm" novalidate>
                         <div class="form-group">
-                            <div class="col-sm-3">
+                            <!-- <div class="col-sm-3">
                                 <label class="control-label">Current Action<sup class="text-danger"></sup></label>
                                 <select class="form-control" name="action" #action="ngModel" [(ngModel)]='ObjSearch.Current_Action' [ngClass]="{'clearance': SearchFormSubmitted && action?.errors?.required}">
                                     <option [ngValue]="undefined">Select</option>
                                     <option *ngFor="let option of ActionList2" [ngValue]="option.Request_Type">{{ option.Request_Type }}</option>
                                 </select>
 
-                            </div>
+                            </div> -->
+                            <div class="col-sm-4">
+                                <label class="control-label">Booking Date Period</label>
 
+                                <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                            </div>
                             <div class="col-sm-4">
                                 <label class="control-label">User&nbsp;<span class="text-danger"></span></label>
                                 <p-dropdown [options]="UserList" name="User_ID" [(ngModel)]="ObjSearch.User_ID" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select User'" [virtualScroll]="true" itemSize="30" #User_ID="ngModel"
@@ -30,7 +34,7 @@
                                 </select>
 
                             </div> -->
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <button class="btn btn-primary custombutton" (click)="SaerchFollowup(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                     <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
                                         animationDuration=".5s"></p-progressSpinner>
@@ -39,9 +43,9 @@
                                 <button class="btn btn-primary custombutton" *ngIf='LeadTransferModalBtn && leadFollowUpList.length' (click)='OpenForwardModal()'>
                                     <i class="fa fa-fw fa-forward"></i> Forward Lead
                                 </button>
-                                <div *ngIf='leadFollowUpList.length' style="position: absolute;top: 50%;right: 25px;">
+                                <!-- <div *ngIf='leadFollowUpList.length' style="position: absolute;top: 50%;right: 25px;">
                                     <p-checkbox (onChange)='SelectAllLeadChanged()' [(ngModel)]="SelectAllLead" name='selectAll' label="Select All" [binary]="true"></p-checkbox>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         <div *ngIf="leadFollowUpListBackup.length" class="form-group" style="padding:15px">
@@ -55,6 +59,35 @@
                                         <p-multiSelect [options]="PinList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedPinFilterList" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
+                                        <label class="control-label">Appointment For <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="Appointment_ForList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAppointmentForFilterList" [styleClass]="'compacct-multiselect'" name="Appointment"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Days <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DaysList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDaysFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Register <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="RegisterList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedRegisterFilterList" [styleClass]="'compacct-multiselect'" name="RegisterL"></p-multiSelect>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <label class="control-label">RM <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="RMNAMEList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedRMNAMEListFilterList" [styleClass]="'compacct-multiselect'" name="rm"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">TC <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="TCNAMEList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedTCNAMEListFilterList" [styleClass]="'compacct-multiselect'" name="tc"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Type Of Demo <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DemoTypeList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDemoTypeFilterList" [styleClass]="'compacct-multiselect'" name="status"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Auditor Name <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="AuditorFilterList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAuditorFilterList" [styleClass]="'compacct-multiselect'" name="status"></p-multiSelect>
+                                    </div>
+                                    <!-- <div class="col-sm-3">
                                         <label class="control-label">City <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="CityList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCityFilterList" [styleClass]="'compacct-multiselect'" name="CityList"></p-multiSelect>
                                     </div>
@@ -62,7 +95,6 @@
                                         <label class="control-label">Class <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="Class_NameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedClassFilterList" [styleClass]="'compacct-multiselect'" name="Class"></p-multiSelect>
                                     </div>
-
                                     <div class="col-sm-3">
                                         <label class="control-label">Viewed <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="ViewedList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedViewdFilterList" [styleClass]="'compacct-multiselect'" name="Viewed"></p-multiSelect>
@@ -83,7 +115,7 @@
                                             </div>
                                             <input type="date" name="NextFollowDate" #NextFollowDate="ngModel" [ngModel]="NextFollowupFilter | date: 'yyyy-MM-dd'" (ngModelChange)="NextFollowDateFilterChange($event)" class="form-control" />
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
 
                             </fieldset>
@@ -105,14 +137,27 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Action</th>
-                                    <th>Viewed </th>
+                                    <th>Approve</th>
+                                    <th>Status</th>
                                     <th>Regsiter</th>
-                                    <th class="text-center">Select</th>
+                                    <th>Appo Date</th>
+                                    <th>Booking Date</th>
+                                    <th>Days</th>
+                                    <th>Appo Slot</th>
+                                    <th><span style="margin-right: 200px;">Name</span></th>
                                     <th>Mobile</th>
-                                    <th>WhatsApp No.</th>
-                                    <th>Name</th>
-                                    <th>Class Name</th>
+                                    <th>Alternative Mobile No.</th>
+                                    <th>Class</th>
                                     <th>Pin </th>
+                                    <th>Address</th>
+                                    <th>Landmark</th>
+                                    <th>Appointment Type</th>
+                                    <th>Appointment For</th>
+                                    <th>Type Of Demo</th>
+                                    <th>TC Name</th>
+                                    <th>RM Name</th>
+                                    <th>Auditor Name</th>
+                                    <!-- <th>Viewed </th> 
                                     <th>City </th>
                                     <th>Created On</th>
                                     <th>Next Followup</th>
@@ -120,10 +165,7 @@
                                     <th>Current Action</th>
                                     <th>Last Action</th>
                                     <th>Owner</th>
-                                    <th>Enq Source </th>
-                                    <th>Address</th>
-                                    <th>School Name</th>
-                                    <th>Dealer</th>
+                                    <th>Enq Source </th> -->
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-col>
@@ -138,52 +180,84 @@
                                                 <li>
                                                     <a (click)="FollowUpPopup(col)"> <i class="fa fa-commenting-o"> </i>Followup</a>
                                                 </li>
-                                                <li>
-                                                    <a (click)="Billcreation(col)" *ngIf='col.Mobile'>
+                                                <!-- <li>
+                                                    <a (click)="Billcreation(col)" *ngIf='col.Mobile && col.Foot_Fall_ID.toString() !== "0"'>
                                                         <i class="fa fa-fw fa-newspaper-o"></i> Create Bill
                                                     </a>
-                                                </li>
+                                                </li> -->
                                                 <li>
                                                     <a (click)="Showdetails(col)">
                                                         <i class="fa fa-file-text-o" aria-hidden="true"></i> Show Details
                                                     </a>
                                                 </li>
+                                                <!-- <li>
+                                                    <a (click)="ShowRescedule(col)">
+                                                        <i class="fa fa-refresh" aria-hidden="true"></i> Rescedule
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a (click)="LeadEditModal(col)">
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i> Edit Lead
+                                                    </a>
+                                                </li> -->
                                                 <!-- <li><a (click)="RedirectPendingSubscriptionTutopia(col.Foot_Fall_ID)"><i
                                                             class="fa fa-fw fa fa-exchange"></i>Pending Subscription</a></li> -->
 
                                             </ul>
                                         </div>
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         <span class="badge bg-red-active" *ngIf="col.Viewed == 'Y'"> VIEWED</span>
                                         <span class="badge bg-blue-gradient" *ngIf="col.Viewed == 'N'"> NEW</span>
                                     </td>
                                     <td>
                                         <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
                                         <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
-                                    </td>
-                                    <td class="text-center">
+                                    </td> -->
+                                    <!-- <td class="text-center">
                                         <p-checkbox [(ngModel)]="col.Selected" (onChange)='LeadTransferCheckBoxChanged()' [binary]="true"></p-checkbox>
+                                    </td> -->
+                                    <td class='text-center'>
+                                        <div *ngIf='col.Status === "POST SALE AUDIT"'>
+                                            <button class="btn btn-xs btn-success" style='margin-right:0.3em' (click)="ApproveAudit('Y',col)"><i class="fa fa-fw fa-check"></i></button>
+                                            <button class="btn btn-xs btn-pinterest" (click)="ApproveAudit('N',col)"><i class="fa fa-fw fa-close"></i></button>
+                                        </div>
+                                       
                                     </td>
+                                    <td><span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span></td>
+                                    <td>
+                                        <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
+                                        <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
+                                    </td>
+                                    <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
+                                    <td>{{col.Booking_Date}}</td>
+                                    <td>{{col.Days}}</td>
+                                    <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
+
+                                    <td>{{col.Contact_Name ? col.Contact_Name :'-'}}</td>
                                     <td>
                                         <!-- <a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a> -->
                                         <a (click)='CallTutopiaApp(col)'><i class="fa fa-fw fa-phone-square"></i>&nbsp;{{col.Mobile}}</a>
                                     </td>
-                                    <td>{{col.Mobile_Whatsup ? col.Mobile_Whatsup : '-'}}</td>
-                                    <td>{{col.Contact_Name ? col.Contact_Name :'-'}}</td>
+                                    <td>{{col.ALT_Mobile ? col.ALT_Mobile : '-'}}</td>
                                     <td>{{col.Class_Name ? col.Class_Name : '-'}}</td>
                                     <td>{{col.Pin ? col.Pin : '-' }}</td>
-                                    <td>{{col.City ? col.City : '-'}}</td>
+                                    <td>{{col.Address ? col.Address : '-'}}</td>
+                                    <td>{{col.Landmark ? col.Landmark : '-'}}</td>
+                                    <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
+                                    <td>{{col.Appointment_For ? col.Appointment_For : '-'}}</td>
+                                    <td>{{col.Demo_Type ? col.Demo_Type : '-'}}</td>
+                                    <td>{{col.TC_Name ? col.TC_Name : '-'}}</td>
+                                    <td>{{col.RM_Name ? col.RM_Name : '-'}}</td>
+                                    <td>{{col.Auditor_Name ? col.Auditor_Name : '-'}}</td>
+                                    <!-- <td>{{col.City ? col.City : '-'}}</td>
                                     <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Last_Followup_Date | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Current_Action}}</td>
                                     <td>{{col.Last_Action}}</td>
                                     <td>{{col.Owner}}</td>
-                                    <td>{{col.Enq_Source_Name ? col.Enq_Source_Name : '-'}}</td>
-                                    <td>{{col.Address ? col.Address : '-'}}</td>
-                                    <td>{{col.School ? col.School : '-'}}</td>
-                                    <td>{{col.Dealer ? col.Dealer : '-'}}</td>
+                                    <td>{{col.Enq_Source_Name ? col.Enq_Source_Name : '-'}}</td> -->
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="paginatorleft" let-state>
@@ -209,7 +283,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="form-horizontal">
                         <div class="box-body ">
                             <div class="timelinescroll style-3">
@@ -240,12 +314,12 @@
                                                           Remarks :
                                                             <i class="fa fa-comments"></i>&nbsp;
                                                         </a> -->
+                                                        <br>
                                                         <a class="btn btn-danger btn-social  btn-xs">
                                                             Action Taken :
                                                             <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Current_Action}}
-                                                        </a>
-                                                        <br>
-                                                        <div *ngIf='objFollowUpCreation?.Lead_ID && objSub?.Call_ID && objSub?.Call_ID.toString() !=="0"' (click)='GetCallDetails(objSub)' class="btn btn-soundcloud btn-social  btn-xs" style="margin-top:0.5em;">
+                                                        </a><br>
+                                                        <div *ngIf='objFollowUpCreation?.Lead_ID && objSub?.Call_ID  && objSub?.Call_ID.toString() !=="0"' (click)='GetCallDetails(objSub)' class="btn btn-soundcloud btn-social  btn-xs" style="margin-top:0.5em;">
                                                             <i class="fa fa-info-circle"></i>&nbsp;CALL DETAILS
                                                         </div>
                                                         <a *ngIf="objSub.PDF_File" ng-click="viewPDF(objSub.PDF_File)">
@@ -261,7 +335,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="form-horizontal">
                         <div class="box-body">
                             <form name="followup" role="form" novalidate>
@@ -298,38 +372,9 @@
                                         <input type="datetime-local" class="form-control" id="NextFollowup" #NextFollowup="ngModel" name="NextFollowup" [ngModel]="NxtFollowupDate | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="NxtFollowupDate = $event" [ngClass]="{'clearance':folloupFormSubmit && NextFollowup?.errors?.required}"
                                             [min]="TodayDate" required>
                                     </div>
-                                    <!-- <div class="col-sm-12">
-                                        <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
-                                        <p class="input-group">
-                                            <input type="text" name="nextfolloupFollowUpCreation" class="form-control"
-                                                placeholder="Next Followup Date" datetime-picker="dd/MM/yyyy HH:mm"
-                                                [(ngModel)]="nextFollowUpForFollowupCreation.data"
-                                                datepicker-options="datePickerForFollowUp.config"
-                                                is-open="nextFollowUpForFollowupCreation.open"
-                                                [ngClass]="{'clearance': folloupFormSubmit && followup.nextfolloupFollowUpCreation.$error.required ||(folloupFormSubmit && nextFollowUpForFollowupCreation.date==null)}"
-                                                required />
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default"
-                                                    (click)="openCalendar($event, 'nextFollowUpForFollowupCreation')">
-                                                    <i class="fa fa-calendar"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                    </div> -->
-
                                 </div>
                                 <div class="form-group">
-                                    <!-- @*<div class="col-sm-6">
-                                        <label class="control-label">Next Action<sup class="text-danger">*</sup></label>
-                                        <select class="form-control"
-                                            [ngClass]="{'clearance':folloupFormSubmit && followup.nextactionFollowUpCreation.$error.required}"
-                                            name="nextactionFollowUpCreation"
-                                            [(ngModel)]="objFollowUpCreation.Followup_Action" required>
-                                            <option value="">Select</option>
-                                            <option *ngFor=" let data of nextActionLists" value="{{data.Request_Type}}">
-                                                {{data.Request_Type}}</option>
-                                        </select>
-                                    </div>*@ -->
+                                
                                     <div class="col-sm-6">
                                         <label class="control-label">Status<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="statusFollowUpCreation" #statusFollowUpCreation="ngModel" [ngClass]="{'clearance':folloupFormSubmit && statusFollowUpCreation?.errors?.required}" [(ngModel)]="objFollowUpCreation.Status" (change)="changeStatusForFollowupCreation(objFollowUpCreation.Status)"
@@ -354,7 +399,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </form>
@@ -808,6 +853,107 @@
 
     </p-footer>
 
+</p-dialog>
+
+<!-- Rescedule -->
+<p-dialog header="Rescedule Appo" [appendTo]="'body'" [visible]="ResceduleLeadModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="ResceduleLeadModalUpdate" style="margin-top:2em" #ResceduleLeadModalUpdate="ngForm" novalidate>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Next Appo Date<sup class="text-danger">*</sup></label>
+                <input type="date" class="form-control" id="NextAppoDate-2" name="NextAppoDate" #NextAppoDate='ngModel' [ngModel]="ResceduleAppoDate | date:'yyyy-MM-dd'" (ngModelChange)="ResceduleAppoDate = $event" [min]="TodayDate" [ngClass]="{'clearance': ResceduleLeadSubmitted &&  NextAppoDate?.errors?.required}"
+                    required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">
+                    Appo Slot <sup class="text-danger">*</sup></label>
+                <select class="form-control" name='Time_Slot_Name' #Time_Slot_Name='ngModel' [ngClass]="{'clearance': transferLeadSubmitted &&  Time_Slot_Name?.errors?.required}" [(ngModel)]="ResceduleLeadObj.Appo_Time_Slot_ID" required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of AppoSlotList" [ngValue]="option.Time_Slot_ID">{{option.Time_Slot_Name}}</option>
+                </select>
+            </div>
+            <!-- <div class="col-sm-12">
+                <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
+                <input type="datetime-local" class="form-control" id="Next-Followup-2" name="NextFollowup2" #NextFollowup2='ngModel' [ngModel]="NxtFollowupDate | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="NxtFollowupDate = $event" [min]="TodayDate" [ngClass]="{'clearance': transferLeadSubmitted &&  NextFollowup2?.errors?.required}"
+                    required>
+            </div> -->
+
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="ResceduleLeadModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button type="button" class="btn btn-primary" (click)="SaveRescedule(ResceduleLeadModalUpdate.form.valid)">
+            SAVE
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- Edit -->
+<p-dialog header="Edit Lead" [appendTo]="'body'" [visible]="EditLeadModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="updateLeadModalUpdate" style="margin-top:2em" #updateLeadModalUpdate="ngForm" novalidate>
+        <div class="form-group" *ngIf='LeadEditObj?.Contact_Name'>
+            <div class="col-sm-12" style="padding: 0.5em 0;background-color: #0080002e;text-align: center;border-radius: 5px;">
+                <b>{{LeadEditObj.Contact_Name.toUpperCase()}}</b> / {{LeadEditObj.Mobile ? LeadEditObj.Mobile : '-'}}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Alt No</label>
+                <input class="form-control" name="ALT_Mobile" #ALT_Mobile="ngModel" CompacctDigitonly="true" minlength="10" maxlength="10" [(ngModel)]="LeadEditObj.ALT_Mobile" placeholder="ALT Mobile">
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">School Name<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="School" disabled='true' required #School="ngModel" [(ngModel)]="LeadEditObj.School" placeholder="School Name">
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Class<sup class="text-danger">*</sup></label>
+                <select class="form-control" name="Class_ID" #Class_ID="ngModel" required [(ngModel)]='LeadEditObj.Class_ID' (change)='ClassChange()' [ngClass]="{'clearance': EditLeadFormSubmitted && Class_ID?.errors?.required}" required>
+                  <option  [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of ClassList" value={{option.Class_ID}}>
+                      {{option.Class_Name}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                <textarea class="form-control" name="Address" row='2' #Address="ngModel" required [(ngModel)]="LeadEditObj.Address" placeholder="Address"> </textarea>
+
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">PIN<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="EditPin" #EditPin="ngModel" [(ngModel)]="LeadEditObj.Pin" placeholder="PIN" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':updateLeadModalUpdate && EditPin?.errors?.required ||
+                    (LeadEditObj.Pin && EditPin.errors?.minlength && EditPin.touched)}" required>
+
+            </div>
+
+
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="EditLeadModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button type="button" class="btn btn-primary" (click)="UpdatedLead(updateLeadModalUpdate.form.valid)">
+            SAVE
+        </button>
+    </p-footer>
 </p-dialog>
 <!-- CALL DETAILS -->
 <p-dialog header="CALL DETAILS" [appendTo]="'body'" [visible]="CallDetailsModalFlag" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"

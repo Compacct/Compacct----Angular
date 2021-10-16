@@ -115,12 +115,11 @@ import { TutoCrmLeadFieldSaleComponent } from './common/CRM/Transaction/tuto-crm
 import { TutoTempCrmLeadComponent } from './common/CRM/Master/tuto-temp-crm-lead/tuto-temp-crm-lead.component';
 import { TutoWebDemLeadFollowupComponent } from './common/CRM/Transaction/tuto-web-dem-lead-followup/tuto-web-dem-lead-followup.component';
 import { TutoAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-audit-lead-followup/tuto-audit-lead-followup.component';
-
-
 import { OutletClosingStockWithBatchComponent } from './common/OutletManagement/outlet-closing-stock-with-batch/outlet-closing-stock-with-batch.component';
 import { K4cAdvOrderInternalStockTransferComponent } from './common/MaterialManagement/k4c-adv-order-internal-stock-transfer/k4c-adv-order-internal-stock-transfer.component';
-
-
+import { TutoPostSaleAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-post-sale-audit-lead-followup/tuto-post-sale-audit-lead-followup.component';
+import { TutoBdaReportComponent } from './common/CRM/Transaction/tuto-bda-report/tuto-bda-report.component';
+import { TutoSchoolRequestDetailsComponent } from './common/CRM/Master/tuto-school-request-details/tuto-school-request-details.component';
 
 
 
@@ -681,9 +680,21 @@ data: {title: 'K4C_Outlet_Requisition'}
                                               {
                                                 path: 'Adv_Order_Internal_Stock_Transfer',
                                                 component: K4cAdvOrderInternalStockTransferComponent,
-                                                data: {title: 'Advance Order Internal Stock Transfer vv'}
-                                                }
-                          
+                                                data: {title: 'Advance Order Internal Stock Transfer'}
+                                                },{
+                                                  path: 'Tutopia_Post_Sales_Audit',
+                                                  component: TutoPostSaleAuditLeadFollowupComponent,
+                                                  data: {title: 'POST SALE AUDIT'}
+                                                  },   
+                                                  {
+                                                    path: 'Tutopia_BDA_Report',
+                                                    component: TutoBdaReportComponent,
+                                                    data: {title: 'BDA Report'}
+                                                    },{
+                                                      path: 'Tutopia_School_Request_Details',
+                                                      component: TutoSchoolRequestDetailsComponent,
+                                                      data: {title: 'School Request'}
+                                                      },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

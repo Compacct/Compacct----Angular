@@ -6,16 +6,18 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { MessageService } from "primeng/api";
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-
 import * as moment from "moment";
+import { stat } from 'fs';
+
 @Component({
-  selector: 'app-tuto-crm-lead-field-sale',
-  templateUrl: './tuto-crm-lead-field-sale.component.html',
-  styleUrls: ['./tuto-crm-lead-field-sale.component.css'],
+  selector: 'app-tuto-post-sale-audit-lead-followup',
+  templateUrl: './tuto-post-sale-audit-lead-followup.component.html',
+  styleUrls: ['./tuto-post-sale-audit-lead-followup.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class TutoCrmLeadFieldSaleComponent implements OnInit {
+export class TutoPostSaleAuditLeadFollowupComponent implements OnInit {
+
   url = window["config"];
   leadFollowUpList = [];
   leadFollowUpListBackup = [];
@@ -73,6 +75,15 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   SelectedDaysFilterList = [];
   SelectedRegisterFilterList = [];
 
+  
+  SelectedDemoTypeFilterList = [];
+  SelectedTCNAMEListFilterList = [];
+  SelectedRMNAMEListFilterList = [];
+  SelectedAuditorFilterList = [];
+  DemoTypeList = [];
+  TCNAMEList = [];
+  RMNAMEList = [];
+  AuditorFilterList = [];
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
   Lead_ID = undefined;
@@ -89,9 +100,22 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   
   NextFollowupFilter: any;
   NextFollowupFilterSelected: any;
-
+  
   CallDetailsModalFlag = false;
   CallDetailsObj: any = {};
+
+  AppoSlotList = [];
+  ResceduleLeadObj = new ResceduleLead();
+  ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+  ResceduleLeadModal = false;
+  ResceduleLeadSubmitted = false;
+  from_date:any;
+  to_date:any;
+
+  EditLeadModal = false;
+  EditLeadFormSubmitted = false;
+  LeadEditObj = new Lead();
+  ClassList = [];
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -114,14 +138,16 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   ngOnInit() {
     console.log('working')
     this.Header.pushHeader({
-      Header: "Appointment Management (Field Sales)",
-      Link: "CRM -> Appointment Management (Field Sales)"
+      Header: "Post Sale Audit",
+      Link: "CRM -> Post Sale Audit"
     });
     this.items = ["Student Detail","Followup Details", "Billing Details","Order Details ","Support Question Dump","Support Ticket Dump"];
     // this.GetUserList();
     this.GetActionList();
    // this.GetSalesUserList();
     this.GetAllUserList();
+    this.GetAppoSlotList();
+    this.GetClassList()
     this.GetActionListFollowupCreate();
   }
   GetUserList() {
@@ -162,7 +188,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   GetActionListFollowupCreate() {
     const obj = {
       "SP_String": "SP_Controller",
-      "Report_Name_String": "GET_Action_Type_Channel"
+      "Report_Name_String": "Get_Action_Type_Web_Demo"
     }
     this.GlobalAPI.CommonPostData(obj,'/Tutopia_Call_Common_SP_For_All')
       .subscribe((data: any) => {
@@ -184,7 +210,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   }
   GetAllUserList() {
     const obj = {
-      "Report_Name": "Get_Direct_Sale_Users ",
+      "Report_Name": "Get_Auditor_Users",
       "Json_Param_String" : JSON.stringify([{USER_ID :this.$CompacctAPI.CompacctCookies.User_ID}])
     }
     this.GlobalAPI
@@ -204,6 +230,17 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     //     .subscribe((data: any) => {
     //         this.AllUserList = data.length ? data : [];
     //     });
+  }
+  GetAppoSlotList() {
+    const obj = {
+      "SP_String":"SP_Appointment",
+      "Report_Name_String": "GET_Time_Slot"
+    }
+    this.GlobalAPI
+        .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+        .subscribe((data: any) => {
+          this.AppoSlotList = data.length ? data : [];
+        });
   }
   
   GetFilteredItems () {
@@ -233,10 +270,18 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let PinFilter = [];
     let AppointmentForFilter = [];
     let DaysFilter = [];
+    let DemoTypeFilter = [];
+    let TCFilter = [];
+    let RMFilter = [];
+    let AuFilter = [];
 
     this.PinList = [];
-  this.Appointment_ForList = [];
-  this.DaysList = [];
+    this.Appointment_ForList = [];
+    this.DaysList = [];  
+    this.DemoTypeList = [];
+    this.TCNAMEList = [];
+    this.RMNAMEList = [];
+    this.AuditorFilterList = [];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -249,6 +294,22 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       if (DaysFilter.indexOf(item.Days) === -1) {
         DaysFilter.push(item.Days);
         this.DaysList.push({ label: item.Days, value: item.Days });
+      }      
+      if (DemoTypeFilter.indexOf(item.Demo_Type) === -1) {
+        DemoTypeFilter.push(item.Demo_Type);
+        this.DemoTypeList.push({ label: item.Demo_Type, value: item.Demo_Type });
+      }
+      if (TCFilter.indexOf(item.TC_Name) === -1) {
+        TCFilter.push(item.TC_Name);
+        this.TCNAMEList.push({ label: item.TC_Name, value: item.TC_Name });
+      }
+      if (RMFilter.indexOf(item.RM_Name) === -1) {
+        RMFilter.push(item.RM_Name);
+        this.RMNAMEList.push({ label: item.RM_Name, value: item.RM_Name });
+      }
+      if (AuFilter.indexOf(item.Auditor_Name) === -1) {
+        AuFilter.push(item.Auditor_Name);
+        this.AuditorFilterList.push({ label: item.Auditor_Name, value: item.Auditor_Name });
       }
     });
   }
@@ -267,6 +328,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let AppointmentForFilter = [];
     let DaysFilter = [];
     let RegisterFilter = [];
+    let DemoTypeFilter = [];
+    let TCFilter = [];
+    let RMFilter = [];
+    let AuFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -280,9 +345,25 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       searchFields.push('Days');
       DaysFilter = this.SelectedDaysFilterList;
     }
+    if (this.SelectedDemoTypeFilterList.length) {
+      searchFields.push('Demo_Type');
+      DemoTypeFilter = this.SelectedDemoTypeFilterList;
+    }
+    if (this.SelectedTCNAMEListFilterList.length) {
+      searchFields.push('TC_Name');
+      TCFilter = this.SelectedTCNAMEListFilterList;
+    }
+    if (this.SelectedRMNAMEListFilterList.length) {
+      searchFields.push('RM_Name');
+      RMFilter = this.SelectedRMNAMEListFilterList;
+    }
     if(this.SelectedRegisterFilterList.length) {
       searchFields.push('Foot_Fall_ID');
       RegisterFilter = this.SelectedRegisterFilterList;
+    }
+    if (this.SelectedAuditorFilterList.length) {
+      searchFields.push('Auditor_Name');
+      AuFilter = this.SelectedAuditorFilterList;
     }
     const ctrl = this;
     this.leadFollowUpList = [];
@@ -293,6 +374,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           && (AppointmentForFilter.length ? AppointmentForFilter.includes(e['Appointment_For']) : true)
           && (DaysFilter.length ? DaysFilter.includes(e['Days']) : true)
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
+          && (DemoTypeFilter.length ? DemoTypeFilter.includes(e['Demo_Type']) : true)
+          && (TCFilter.length ? TCFilter.includes(e['TC_Name']) : true)
+          && (RMFilter.length ? RMFilter.includes(e['RM_Name']) : true)
+          && (AuFilter.length ? AuFilter.includes(e['Auditor_Name']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];
@@ -320,6 +405,13 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     return returnBol;
   }
   }
+  // FOR SEARCH
+  getDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.from_date = dateRangeObj[0];
+      this.to_date = dateRangeObj[1];
+    }
+  }
   SaerchFollowup(valid) {
     this.SearchFormSubmitted = true;
     this.leadFollowUpList = [];
@@ -329,14 +421,20 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       this.seachSpinner = true;
       this.ObjSearch.User_ID = this.ObjSearch.User_ID ? this.ObjSearch.User_ID : '0';
       this.ObjSearch.Current_Action = this.ObjSearch.Current_Action ? this.ObjSearch.Current_Action : '';
-      
+      const tempObj = {
+        'From_Date': this.from_date  ? this.DateService.dateConvert(new Date(this.from_date))
+        : this.DateService.dateConvert(new Date()),
+        'To_Date' : this.to_date  ? this.DateService.dateConvert(new Date(this.to_date))
+        : this.DateService.dateConvert(new Date()),
+        'User_ID' : this.ObjSearch.User_ID
+      }
       const obj = {
-        "Json_Param_String" : JSON.stringify([{ 'User_ID' : this.ObjSearch.User_ID}])
+        "Json_Param_String" : JSON.stringify([tempObj])
       }
      // this.GetFilteredItems();
       const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
       this.$http
-          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Channel sale Student Follow-up v3",obj)
+          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Post Sale Auditor Student Follow-up",obj)
           .subscribe((data: any) => {
             const SortData = data ? JSON.parse(data) : [];
             SortData.sort(function(a:any,b:any){
@@ -399,7 +497,34 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         }
     }
   }
+  // MOBILE CALL 
+  CallTutopiaApp (obj) {
+    if(obj.Mobile) {
+      const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
 
+      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message",{Phone_No : obj.Mobile, User_ID : this.$CompacctAPI.CompacctCookies.User_ID},{ headers, responseType: 'text'}).subscribe((res: any) => {
+        console.log(res)
+       if(res.toUpperCase().includes('ERROR')) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured In Tutopia Call API."
+          });
+       } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: obj.Mobile,
+          detail: "Check the call in Call center software."
+        });
+
+       }
+      });
+    }
+  }
   // CHANGE
   LeadTransferCheckBoxChanged() {
     this.LeadTransferModalBtn = false;
@@ -476,12 +601,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       this.objFollowUpCreation.Foot_Fall_ID = obj.Foot_Fall_ID;
       this.objFollowUpCreation.Lead_ID = obj.Lead_ID;
       this.objFollowUpCreation.School = obj.School;
-      this.objFollowUpCreation.Appo_ID = obj.Appo_ID ? obj.Appo_ID : '0';
       this.objFollowUpCreation.Pin = obj.Pin;
       this.objFollowUpCreation.Current_Action = 'Tele Call';
       this.objFollowUpCreation.Followup_Action = 'Tele Call';
-      this.objFollowUpCreation.Status = 'Keep it in My Own Followup';
-      this.changeStatusForFollowupCreation(this.objFollowUpCreation.Status);
       this.TutopiaDemoActionFlag = false;
       this.GetFollowupDetails(obj.Lead_ID);
       this.FollowupModal = true;
@@ -567,6 +689,40 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           });
         }
       });
+    }
+  }
+  ApproveAudit (status ,col) {
+    if(status && col.Appo_ID) {
+      const TempObj = {
+        Appo_ID : col.Appo_ID,
+        Status : status
+      }
+      const obj = {
+        "SP_String": "Tutopia_Create_Common_SP",
+        "Report_Name_String": "Update Post_Sale_Audit Pending Status",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.CommonPostData(obj,'Create_Common_task_Tutopia_Call?Report_Name=Update Auditor Pending Status').subscribe((data) => {
+          if (data[0].Column1) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'Student ID : ' + col.Lead_ID,
+              detail: "Succesfully Saved."
+            });
+            this.SaerchFollowup(true);
+        }
+        else {
+            this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured"
+          });
+        }
+        });
     }
   }
    //  DETAILS
@@ -695,10 +851,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       console.log(this.objFollowUpCreation)
       const obj = {
             "SP_String": "Tutopia_Followup_SP",
-            "Report_Name_String": "Followup Save Field Sale",
+            "Report_Name_String": "Save Followup Tutopia",
             "Json_1_String": JSON.stringify([this.objFollowUpCreation])
           }
-          this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Followup Save Field Sale').subscribe((data) => {
+          this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Save Followup Tutopia').subscribe((data) => {
               if (data[0].Column1) {
                 this.saveTutopiaViewStatus(this.objFollowUpCreation);
                 this.compacctToast.clear();
@@ -786,13 +942,147 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     console.log(tempArr)
     return { Followup_Branch_String: JSON.stringify(tempArr) };
   }
+   // Rescedule 
+   ShowRescedule(obj) {
+    this.ResceduleLeadObj = new ResceduleLead();
+    this.ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+    this.ResceduleLeadSubmitted = false;
+    if(obj.Lead_ID) {
+      this.ResceduleLeadObj.Appo_ID = obj.Appo_ID;
+      this.ResceduleLeadObj.Appo_To_User_ID = obj.Appo_To_User_ID;
+      this.ResceduleLeadObj.Demo_Type = obj.Demo_Type;
+      this.ResceduleLeadModal = true;
+    }
+
+  }
+  SaveRescedule(valid) {
+    this.ResceduleLeadSubmitted = true;
+    if(valid) {
+      this.ResceduleLeadObj.Appo_Date = this.DateService.dateConvert(new Date(this.ResceduleAppoDate));
+      console.log(this.ResceduleLeadObj)
+      const obj = {
+        "SP_String":"SP_Appointment",
+        "Report_Name_String": "Audit Reschedule",
+        "Json_Param_String" : JSON.stringify([this.ResceduleLeadObj])
+      }
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.GlobalAPI
+          .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+          .subscribe((data: any) => { 
+            console.log(data);
+      if (data[0].Remarks.includes('Already Engaged')) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "error",
+          detail: data[0].Remarks
+        });
+      } else {
+        this.SaerchFollowup(true);
+        this.ResceduleLeadModal = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ResceduleLeadObj.Appo_ID,
+          detail: "Succesfully Rescedule."
+        });
+        this.ResceduleLeadObj = new ResceduleLead();
+        this.ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+        this.ResceduleLeadSubmitted = false;
+      }
+    })
+    }
+    
+  }
+  // EDIT LEAD
+  GetClassList(){
+    this.seachSpinner = true;
+    const obj = {
+      "Report_Name": "List_Class "
+    }
+    this.GlobalAPI
+        .CommonTaskData(obj)
+        .subscribe((data: any) => {
+          this.ClassList = data.length ? data : [];
+          this.seachSpinner = false;
+    });
+  }
+  ClassChange() {
+    this.LeadEditObj.Class_Name_Choose = undefined;
+    if(this.LeadEditObj.Class_ID) {
+      const ARR = this.ClassList.filter(i=> i.Class_ID.toString() === this.LeadEditObj.Class_ID.toString())[0];
+      if(ARR.length) {
+        this.LeadEditObj.Class_Name_Choose = ARR[0].Class_Name;
+      }
+    }
+  }
+  LeadEditModal(obj) {
+    this.EditLeadModal = false;
+    this.EditLeadFormSubmitted = false;
+    this.LeadEditObj = new Lead();
+    if(obj.Lead_ID) { 
+      this.LeadEditObj.Contact_Name = obj.Contact_Name;
+      this.LeadEditObj.Lead_ID = obj.Lead_ID;
+      this.LeadEditObj.Mobile = obj.Mobile;
+      this.LeadEditObj.Pin = obj.Pin ? obj.Pin : undefined;
+      this.LeadEditObj.Address = obj.Address ? obj.Address : undefined;
+      this.LeadEditObj.ALT_Mobile = obj.ALT_Mobile ? obj.ALT_Mobile : undefined;
+      this.LeadEditObj.Class_ID = obj.Class_ID ? obj.Class_ID : undefined;
+      this.LeadEditObj.School = obj.School_Name ? obj.School_Name : undefined;
+      this.LeadEditObj.Class_Name_Choose = obj.Class_Name ? obj.Class_Name : undefined;
+      this.EditLeadModal = true;
+    }
+
+  }
+  UpdatedLead(valid) {
+    this.EditLeadFormSubmitted = true;
+    if(valid) {
+      console.log(this.LeadEditObj)
+      const obj = {
+        "SP_String":"Tutopia_Create_Common_SP",
+        "Report_Name_String": "Update_BL_CRM_Txn_Enq",
+        "Json_Param_String" : JSON.stringify([this.LeadEditObj])
+      }
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.GlobalAPI
+          .CommonPostData(obj,'Create_Common_task_Tutopia_Call?Report_Name=Update_BL_CRM_Txn_Enq')
+          .subscribe((data: any) => { 
+            console.log(data);
+            if (data[0].Column1) {
+              this.SaerchFollowup(true);
+              this.ResceduleLeadModal = false;
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'Student ID : ' + this.LeadEditObj.Lead_ID,
+                detail: "Succesfully Updated."
+              });
+              this.EditLeadModal = false;
+              this.EditLeadFormSubmitted = false;
+              this.LeadEditObj = new Lead();
+            } else {
+              
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "error",
+                detail: "error"
+              });
+            }
+    })
+    }
+    
+  }
 }
 class Search {
   User_ID: any;
   Current_Action: String;
 }
 class Followup {
-  Appo_ID:String;
 Foot_Fall_ID: String;
 Lead_ID: String;
 Contact_Name:string;
@@ -819,4 +1109,22 @@ class Studetail{
   Pin : string;
   City : string;
 
+}
+class ResceduleLead{
+  Appo_ID:String;
+  Demo_Type:String;
+  Appo_Date:String;
+  Appo_Time_Slot_ID:String;
+  Appo_To_User_ID:String;
+}
+class Lead{
+  Contact_Name:string;
+  Lead_ID:string;
+  Class_ID:string;
+  Address:string;
+  Class_Name_Choose :string;
+  Pin:string;
+  School:string;
+  ALT_Mobile:String;
+  Mobile:string;
 }
