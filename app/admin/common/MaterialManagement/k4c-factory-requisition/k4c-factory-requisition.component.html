@@ -1,5 +1,5 @@
-
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
 <!-- <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
@@ -25,48 +25,35 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" > -->
-                            <form name="RequisitionSearchForm" #RequisitionSearchForm="ngForm" novalidate>
-                                <div class="form-group">
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Date <sup class="text-danger">*</sup></label>
-                                            <app-compacct-daterangepicker
-                                                  (DaterangeObj)="getDateRange($event)"
-                                                  [HardCodeDateOpt]="initDate">
-                                            </app-compacct-daterangepicker>
-                                    </div>
-                                    <div class="col-sm-3">
-                                      <label class="control-label">Brand <sup class="text-danger">*</sup></label>
-                                      <select class="form-control"
-                                              name="Brand"
-                                              (change)="getlocation()"
-                                              #Brand="ngModel"
-                                              [(ngModel)]="ObjBrowseRequi.Brand_ID"
-                                              [ngClass]="{'clearance':RequisitionSearchFormSubmitted && Brand?.errors?.required}"
-                                              >
+                        <form name="RequisitionSearchForm" #RequisitionSearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date <sup class="text-danger">*</sup></label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Brand <sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="Brand" (change)="getlocation()" #Brand="ngModel" [(ngModel)]="ObjBrowseRequi.Brand_ID" [ngClass]="{'clearance':RequisitionSearchFormSubmitted && Brand?.errors?.required}">
                                               <option  [ngValue]="undefined">Select</option>
                                        <option *ngFor = "let option of BrandList" [value] ="option.Brand_ID">
                                           {{option.Brand_INI}}
                                         </option>
                                   </select>
-                                    </div>
-                                    <div class="col-sm-3">
-                                      <label class="control-label">Location</label>
-                                      <select class="form-control"
-                                              name="location"
-                                              #location="ngModel"
-                                              [(ngModel)]="ObjBrowseRequi.Location">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Location</label>
+                                    <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjBrowseRequi.Location">
                                               <option  [ngValue]="undefined">Select</option>
                                        <option *ngFor = "let option of LocationList" [value] ="option.Cost_Cen_ID">
                                           {{option.Location}}
                                         </option>
                                   </select>
-                                    </div>
-                                    <div class="col-sm-3" >
-                                      <label class="control-label">Status <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DistStatus"  [(ngModel)]="SelectedDistStatus"
-                                          itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
-                                          name="Status" [resetFilterOnHide] = "true" [disabled] = "shopwiselist.length"></p-multiSelect>
-                                      <!-- <label class="control-label">Status <sup class="text-danger">*</sup></label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Status <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistStatus" [(ngModel)]="SelectedDistStatus" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Status" [resetFilterOnHide]="true" [disabled]="shopwiselist.length"></p-multiSelect>
+                                    <!-- <label class="control-label">Status <sup class="text-danger">*</sup></label>
                                        <select class="form-control"
                                               name="status"
                                               #status="ngModel"
@@ -81,10 +68,10 @@
                                           {{option.Name}}
                                         </option>
                                   </select> -->
-                                    </div>
+                                </div>
 
-                                    <!-- <div class="col-sm-3"> -->
-                                        <!-- <div>
+                                <!-- <div class="col-sm-3"> -->
+                                <!-- <div>
                                             <button class="btn btn-primary custombutton" data-toggle="modal"
                                           (click)="ShowRequisition(RequisitionSearchForm.form.valid)"
                                           id="load"
@@ -94,32 +81,22 @@
                                           <span *ngIf="!seachSpinner" ></span>&nbsp;Show Requisition
                                        </button>
                                         </div> -->
-                                    <!-- </div> -->
-                                  </div> <br>
-                                    <div class="form-group">
-                                      <div class = "text-right">
-                                        <button
-                                          type="button"
-                                          (click)="ShowRequisition()"
-                                           class="btn btn-primary">
+                                <!-- </div> -->
+                            </div> <br>
+                            <div class="form-group">
+                                <div class="text-right">
+                                    <button type="button" (click)="ShowRequisition()" class="btn btn-primary">
                                            <span class="glyphicon glyphicon-search"></span>  Show Indent
                                         </button> &nbsp;&nbsp;
-                                      <button
-                                          type="button"
-                                           (click)="getShopWiseReq()"
-                                           class="btn btn-warning">
+                                    <button type="button" (click)="getShopWiseReq()" class="btn btn-warning">
                                            <span class="glyphicon glyphicon-search"></span> Shop Wise Pending Indent
                                         </button> &nbsp;&nbsp;
-                                        <button
-                                          type="button"
-                                           class="btn btn-success"
-                                           (click)="exportexcel(dataforexcellist,'Pending_Requisition')"
-                                           [disabled] = "!shopwiselist.length">
+                                    <button type="button" class="btn btn-success" (click)="exportexcel(dataforexcellist,'Pending_Requisition')" [disabled]="!shopwiselist.length">
                                            <span class="glyphicon glyphicon-save"></span> Download Pending Indent
                                         </button>
-                                      </div>
-                                    </div>
-                                <!-- <div  class="form-group" *ngIf='BackupSearchedlist.length' style="padding:15px">
+                                </div>
+                            </div>
+                            <!-- <div  class="form-group" *ngIf='BackupSearchedlist.length' style="padding:15px">
 
                                   <fieldset class="col-md-12">
                                     <legend>Filter</legend>
@@ -141,96 +118,28 @@
 
                                   </fieldset>
                                 </div> -->
-                            </form>
-                            <div class="table-responsive no-padding">
-                                <p-table
-                                        *ngIf="Showlist.length"
-                                         [value]="Showlist"
-                                         [paginator]="Showlist.length ? true : false" [rows]="100" [rowHover]="true"
-                                         [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[100,200,300]"
-                                         [globalFilterFields]='DynamicHeader'
-                                         [rowHover]="true"
-                                         #dt>
-                                           <ng-template pTemplate="caption">
-                                               <div class="row">
-                                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                        </div>
-                                               </div>
-
-                                            </ng-template>
-                                            <ng-template pTemplate="header">
-                                                 <tr>
-                                                  <!-- <th style="width:5em">Action</th> -->
-                                                  <th *ngFor="let option of DynamicHeader" >{{option.replace('_',' ')}}</th>
-                                              </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-col>
-                                                <tr>
-
-                                                    <!-- <td>
-                                                            <div class="dropdown">
-                                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle"
-                                                                    type="button" data-toggle="dropdown" style="height:27px">
-                                                                    <i class="fa fa-fw fa-bars"></i>
-                                                                    <span class="caret"></span>
-                                                                </button>
-                                                                <ul class="dropdown-menu">
-                                                                    <li >
-                                                                        <a (click)="EditProduction(col)">
-                                                                            <i class="fa fa-fw fa-pencil"></i>
-                                                                            Edit
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a (click)="DeleteProduction(col)">
-                                                                            <i class="fa fa-fw fa-trash"></i>
-                                                                            Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                    </td> -->
-
-                                                    <ng-container *ngFor="let option of DynamicHeader" data->
-                                                      <td>{{col[option]}}</td>
-                                                    </ng-container>
-                                                 </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="paginatorright" let-state>
-                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                                            </ng-template>
-                                    </p-table>
+                        </form>
+                        <div class="table-responsive no-padding">
+                            <p-table *ngIf="Showlist.length" [value]="Showlist" [paginator]="Showlist.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]='DynamicHeader' [rowHover]="true"
+                                #dt>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
                                     </div>
-                                    <div class="table-responsive no-padding">
-                                    <p-table
-                                    *ngIf="shopwiselist.length"
-                                         [value]="shopwiselist"
-                                         [paginator]="shopwiselist.length ? true : false" [rows]="100" [rowHover]="true"
-                                         [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[100,200,300]"
-                                         [globalFilterFields]='DynamicHeader'
-                                         [rowHover]="true"
-                                         #dt>
-                                           <ng-template pTemplate="caption">
-                                               <div class="row">
-                                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                        </div>
-                                               </div>
 
-                                            </ng-template>
-                                            <ng-template pTemplate="header">
-                                                 <tr>
-                                                  <!-- <th style="width:5em">Action</th> -->
-                                                  <th *ngFor="let option of DynamicHeader1" >{{option.replace('_',' ')}}</th>
-                                              </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-col>
-                                                <tr>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <!-- <th style="width:5em">Action</th> -->
+                                        <th *ngFor="let option of DynamicHeader">{{option.replace('_',' ')}}</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
 
-                                                    <!-- <td>
+                                        <!-- <td>
                                                             <div class="dropdown">
                                                                 <button class="btn btn-default btn-sm tableButton dropdown-toggle"
                                                                     type="button" data-toggle="dropdown" style="height:27px">
@@ -254,19 +163,73 @@
                                                             </div>
                                                     </td> -->
 
-                                                    <ng-container *ngFor="let option of DynamicHeader1" data->
-                                                      <td>{{col[option]}}</td>
-                                                    </ng-container>
-                                                 </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="paginatorright" let-state>
-                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                                            </ng-template>
-                                    </p-table>
-                                </div>
-                            <!-- </p-tabPanel> -->
+                                        <ng-container *ngFor="let option of DynamicHeader" data->
+                                            <td>{{col[option]}}</td>
+                                        </ng-container>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <div class="table-responsive no-padding">
+                            <p-table *ngIf="shopwiselist.length" [value]="shopwiselist" [paginator]="shopwiselist.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]='DynamicHeader'
+                                [rowHover]="true" #dt>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
 
-                        </p-tabView>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <!-- <th style="width:5em">Action</th> -->
+                                        <th *ngFor="let option of DynamicHeader1">{{option.replace('_',' ')}}</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+
+                                        <!-- <td>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                    type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li >
+                                                                        <a (click)="EditProduction(col)">
+                                                                            <i class="fa fa-fw fa-pencil"></i>
+                                                                            Edit
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a (click)="DeleteProduction(col)">
+                                                                            <i class="fa fa-fw fa-trash"></i>
+                                                                            Delete
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                    </td> -->
+
+                                        <ng-container *ngFor="let option of DynamicHeader1" data->
+                                            <td>{{col[option]}}</td>
+                                        </ng-container>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <!-- </p-tabPanel> -->
+
+                    </p-tabView>
 
                 </div>
             </div>
