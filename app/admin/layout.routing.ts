@@ -129,7 +129,7 @@ import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tend
 
 const layoutRoutes: Routes = [
   {
-    path: "   ",
+    path: "",
     component: AppLayoutComponent,
     data: { title: "Dashboard" },
     children: [
