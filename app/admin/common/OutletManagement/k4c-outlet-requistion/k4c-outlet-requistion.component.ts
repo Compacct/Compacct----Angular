@@ -669,6 +669,7 @@ Cancle(row){
     }
   }
 }
+
 Active(row){
   var tempId = row.Req_No;
   this.can_popup = false;
