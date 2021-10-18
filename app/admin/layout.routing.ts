@@ -120,6 +120,9 @@ import { K4cAdvOrderInternalStockTransferComponent } from './common/MaterialMana
 import { TutoPostSaleAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-post-sale-audit-lead-followup/tuto-post-sale-audit-lead-followup.component';
 import { TutoBdaReportComponent } from './common/CRM/Transaction/tuto-bda-report/tuto-bda-report.component';
 import { TutoSchoolRequestDetailsComponent } from './common/CRM/Master/tuto-school-request-details/tuto-school-request-details.component';
+import { CompacctRunningBillComponent } from "./common/CivilManagement/compacct.running-bill/compacct.running-bill.component";
+import { CompacctCivildailyJobComponent } from "./common/CivilManagement/compacct.civildaily-job/compacct.civildaily-job.component";
+import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tender/compacct.tender.component";
 
 
 
@@ -694,7 +697,22 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                       path: 'Tutopia_School_Request_Details',
                                                       component: TutoSchoolRequestDetailsComponent,
                                                       data: {title: 'School Request'}
-                                                      },
+                                                      }
+                                                      ,{
+                                                        path: 'BL_Txn_Civil_Running_Bill_Details',
+                                                        component: CompacctRunningBillComponent,
+                                                        data: {title: 'Running Bill Details'}
+                                                        }
+                                                        ,{
+                                                          path: 'BL_Txn_Civil_Daily_Job',
+                                                          component: CompacctCivildailyJobComponent,
+                                                          data: {title: 'Daily Progress Report (Civil) '}
+                                                          }
+                                                          ,{
+                                                            path: 'BL_CRM_Txn_Enq_Tender',
+                                                            component: CompacctTenderComponent,
+                                                            data: {title: 'Tender '}
+                                                            },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

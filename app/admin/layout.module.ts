@@ -202,7 +202,9 @@ import { K4cAdvOrderInternalStockTransferComponent } from './common/MaterialMana
 import { TutoPostSaleAuditLeadFollowupComponent } from './common/CRM/Transaction/tuto-post-sale-audit-lead-followup/tuto-post-sale-audit-lead-followup.component';
 import { TutoBdaReportComponent } from './common/CRM/Transaction/tuto-bda-report/tuto-bda-report.component';
 import { TutoSchoolRequestDetailsComponent } from './common/CRM/Master/tuto-school-request-details/tuto-school-request-details.component';
-
+import { CompacctRunningBillComponent } from "./common/CivilManagement/compacct.running-bill/compacct.running-bill.component";
+import { CompacctCivildailyJobComponent } from "./common/CivilManagement/compacct.civildaily-job/compacct.civildaily-job.component";
+import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tender/compacct.tender.component";
 
 @NgModule({
   declarations: [
@@ -344,7 +346,10 @@ import { TutoSchoolRequestDetailsComponent } from './common/CRM/Master/tuto-scho
     K4cAdvOrderInternalStockTransferComponent,
     TutoPostSaleAuditLeadFollowupComponent,
     TutoBdaReportComponent,
-    TutoSchoolRequestDetailsComponent
+    TutoSchoolRequestDetailsComponent,
+    CompacctTenderComponent,
+    CompacctCivildailyJobComponent,
+    CompacctRunningBillComponent
   ],
   imports: [
     CommonModule,
