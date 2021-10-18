@@ -29,7 +29,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   godowndisableflag = false;
   productlist = [];
   flag = false;
-  myDate = new Date;
+  BillDate : Date;
+  dateList: any;
   OTclosingstockwithbatchFormSubmitted = false;
   ObjBrowse : Browse  = new Browse();
   Searchedlist = [];
@@ -62,6 +63,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       Header: "Outlet Closing Stock With Batch",
       Link: "Outlet -> Outlet Closing Stock With Batch"
     });
+    this.getbilldate();
     this.GetBrand();
     this.getCostCenter();
   }
@@ -72,6 +74,22 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
   }
+  getbilldate(){
+    const obj = {
+     "SP_String": "SP_Controller_Master",
+     "Report_Name_String": "Get - Outlet Bill Date",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.dateList = data;
+   //console.log("this.dateList  ===",this.dateList);
+  this.BillDate =  new Date(data[0].Outlet_Bill_Date);
+   // on save use this
+  // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
+
+ })
+}
   GetBrand(){
     this.BrandList = [];
     if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
@@ -225,7 +243,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       let tempArr =[];
       const TempObj = {
         Doc_No	 : this.Doc_No ? this.Doc_No : "A",
-        Doc_Date : this.DateService.dateConvert(new Date(this.myDate)),
+        Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
         Cost_Cen_ID	: this.ObjOTclosingwithbatch.Cost_Cen_ID,
         Godown_ID	: this.ObjOTclosingwithbatch.godown_id,
         //Narration	: this.ObjOTclosingwithbatch.Remarks,
@@ -355,7 +373,7 @@ const obj = {
           this.ObjOTclosingwithbatch.Brand_ID = data[0].Brand_ID;
             this.ObjOTclosingwithbatch.Cost_Cen_ID = data[0].Cost_Cen_ID;
             this.ObjOTclosingwithbatch.godown_id = data[0].godown_id;
-            this.myDate = data[0].Doc_Date;
+            this.BillDate = data[0].Doc_Date;
             data.forEach(element => {
               const  productObj = {
                Product_Type_ID : element.Product_Type_ID,
@@ -473,6 +491,7 @@ const obj = {
     this.ObjOTclosingwithbatch.Remarks = [];
     this.productlist = [];
     this.editList = [];
+    this.getbilldate();
   }
 
 }
