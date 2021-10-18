@@ -328,7 +328,7 @@ export class TutoLeadFollowupComponent implements OnInit {
     if(obj.Mobile) {
       const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
 
-      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message",{Phone_No : obj.Mobile, User_ID : this.$CompacctAPI.CompacctCookies.User_ID},{ headers, responseType: 'text'}).subscribe((res: any) => {
+      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message?Phone_No="+obj.Mobile+"&User_ID="+this.$CompacctAPI.CompacctCookies.User_ID,{},{ headers, responseType: 'text'}).subscribe((res: any) => {
         console.log(res)
        if(res.toUpperCase().includes('ERROR')) {
           this.compacctToast.clear();

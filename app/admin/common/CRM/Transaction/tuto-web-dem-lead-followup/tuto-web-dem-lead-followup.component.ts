@@ -70,6 +70,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
   StatusList = [];
   TCNAMEList = [];
   RMNAMEList = [];
+  ReqTypeList = [];
   RegisterList = [{ label: 'REGISTERED', value: '1' }, { label: 'UN REGSITERED', value: '0' }]
 
   SelectedPinFilterList = [];
@@ -79,6 +80,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
   SelectedStatusFilterList = [];
   SelectedTCNAMEListFilterList = [];
   SelectedRMNAMEListFilterList = [];
+  SelectedReqTypeFilterList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -263,6 +265,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
     let statsusFilter = [];
     let TCFilter = [];
     let RMFilter = [];
+    let ReqTypeFilter = [];
 
     this.PinList = [];
     this.Appointment_ForList = [];
@@ -270,6 +273,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
     this.StatusList = [];
     this.TCNAMEList = [];
     this.RMNAMEList = [];
+    this.ReqTypeList = [];
     
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
@@ -296,6 +300,10 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
         RMFilter.push(item.RM_Name);
         this.RMNAMEList.push({ label: item.RM_Name, value: item.RM_Name });
       }
+      if (ReqTypeFilter.indexOf(item.Request_Type) === -1) {
+        ReqTypeFilter.push(item.Request_Type);
+        this.ReqTypeList.push({ label: item.Request_Type, value: item.Request_Type });
+      }
     });
   }
   NextFollowDateFilterChange(e) {
@@ -316,6 +324,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
     let statsusFilter = [];
     let TCFilter = [];
     let RMFilter = [];
+    let ReqTypeFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -345,6 +354,10 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
       searchFields.push('Foot_Fall_ID');
       RegisterFilter = this.SelectedRegisterFilterList;
     }
+    if(this.SelectedReqTypeFilterList.length) {
+      searchFields.push('Request_Type');
+      ReqTypeFilter = this.SelectedReqTypeFilterList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -357,6 +370,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
           && (statsusFilter.length ? statsusFilter.includes(e['Status']) : true)
           && (TCFilter.length ? TCFilter.includes(e['TC_Name']) : true)
           && (RMFilter.length ? RMFilter.includes(e['RM_Name']) : true)
+          && (ReqTypeFilter.length ? ReqTypeFilter.includes(e['Request_Type']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];
@@ -481,7 +495,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
     if(obj.Mobile) {
       const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
 
-      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message",{Phone_No : obj.Mobile, User_ID : this.$CompacctAPI.CompacctCookies.User_ID},{ headers, responseType: 'text'}).subscribe((res: any) => {
+      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message?Phone_No="+obj.Mobile+"&User_ID="+this.$CompacctAPI.CompacctCookies.User_ID,{},{ headers, responseType: 'text'}).subscribe((res: any) => {
         console.log(res)
        if(res.toUpperCase().includes('ERROR')) {
           this.compacctToast.clear();

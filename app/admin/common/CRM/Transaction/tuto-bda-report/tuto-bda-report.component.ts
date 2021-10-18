@@ -137,7 +137,7 @@ GetReportNameList() {
     "SP_String": "sp_Tutopia_Sales_Report",
     "Report_Name_String": "GET_Tutopia_Sales_Report"
   }
-  this.GlobalAPI.CommonPostData(obj,'/Tutopia_Call_Common_SP_For_All')
+  this.GlobalAPI.postData(obj)
      .subscribe((data: any) => {
          this.ReportNameList = data.length ? data : [];
      
@@ -340,10 +340,10 @@ GetReportNameList() {
       }
       //this.GetFilteredItems();
       const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
-      this.GlobalAPI.CommonPostData(obj,'/Tutopia_Call_Common_SP_For_All')
+      this.GlobalAPI.postData(obj)
           .subscribe((data: any) => {
             const SortData = data.length ? data : [];
-            this.DynamicHeader = Object.keys(SortData[0]);
+            this.DynamicHeader = SortData.length ? Object.keys(SortData[0]) : [];
             SortData.sort(function(a:any,b:any){
               return new Date(b.Next_Followup).valueOf() - new Date(a.Next_Followup).valueOf();
             });
@@ -372,7 +372,7 @@ GetReportNameList() {
     if(obj.Mobile) {
       const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
 
-      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message",{Phone_No : obj.Mobile, User_ID : this.$CompacctAPI.CompacctCookies.User_ID},{ headers, responseType: 'text'}).subscribe((res: any) => {
+      this.$http.post("/Tutopia_Web_Demo_Followup/Call_Check_Message?Phone_No="+obj.Mobile+"&User_ID="+this.$CompacctAPI.CompacctCookies.User_ID,{},{ headers, responseType: 'text'}).subscribe((res: any) => {
         console.log(res)
        if(res.toUpperCase().includes('ERROR')) {
           this.compacctToast.clear();
