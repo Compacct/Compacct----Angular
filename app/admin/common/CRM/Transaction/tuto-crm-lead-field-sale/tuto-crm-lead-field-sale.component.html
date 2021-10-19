@@ -66,6 +66,16 @@
                                         <label class="control-label">Register <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="RegisterList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedRegisterFilterList" [styleClass]="'compacct-multiselect'" name="RegisterL"></p-multiSelect>
                                     </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Zonal Sales Head <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="ZonalSalesHeadList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedZonalSalesFilterList" [styleClass]="'compacct-multiselect'" name="zonal"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button *ngIf="leadFollowUpListBackup.length" (click)="exportexcel(leadFollowUpList,'Lead_Field_Sales')" class="btn btn-primary custombutton">
+                                            <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                          </button>
+                                    </div>
+                                    
                                     <!-- <div class="col-sm-3">
                                         <label class="control-label">City <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="CityList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCityFilterList" [styleClass]="'compacct-multiselect'" name="CityList"></p-multiSelect>
@@ -129,6 +139,7 @@
                                     <th>Landmark</th>
                                     <th>Appointment Type</th>
                                     <th>Appointment For</th>
+                                    <th>Zonal Sales Head</th>
                                     <!-- <th>Viewed </th> 
                                     <th>City </th>
                                     <th>Created On</th>
@@ -195,6 +206,7 @@
                                     <td>{{col.Landmark ? col.Landmark : '-'}}</td>
                                     <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
                                     <td>{{col.Appointment_For ? col.Appointment_For : '-'}}</td>
+                                    <td>{{col.Zonal_Sales_Head ? col.Zonal_Sales_Head : '-'}}</td>
                                     <!-- <td>{{col.City ? col.City : '-'}}</td>
                                     <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>

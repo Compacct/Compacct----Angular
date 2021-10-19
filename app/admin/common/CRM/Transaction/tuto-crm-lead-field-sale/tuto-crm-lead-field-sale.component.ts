@@ -8,6 +8,7 @@ import { DateTimeConvertService } from '../../../../shared/compacct.global/dateT
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 import * as moment from "moment";
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-tuto-crm-lead-field-sale',
   templateUrl: './tuto-crm-lead-field-sale.component.html',
@@ -67,11 +68,13 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   Appointment_ForList = [];
   DaysList = [];
   RegisterList = [{ label: 'REGISTERED', value: '1' }, { label: 'UN REGSITERED', value: '0' }]
+  ZonalSalesHeadList = [];
 
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
   SelectedDaysFilterList = [];
   SelectedRegisterFilterList = [];
+  SelectedZonalSalesFilterList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -92,6 +95,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
 
   CallDetailsModalFlag = false;
   CallDetailsObj: any = {};
+  
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -233,10 +237,12 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let PinFilter = [];
     let AppointmentForFilter = [];
     let DaysFilter = [];
+    let ZonalSalesFilter = [];
 
     this.PinList = [];
   this.Appointment_ForList = [];
   this.DaysList = [];
+  this.ZonalSalesHeadList = [];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -249,6 +255,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       if (DaysFilter.indexOf(item.Days) === -1) {
         DaysFilter.push(item.Days);
         this.DaysList.push({ label: item.Days, value: item.Days });
+      }
+      if (ZonalSalesFilter.indexOf(item.Zonal_Sales_Head) === -1) {
+        ZonalSalesFilter.push(item.Zonal_Sales_Head);
+        this.ZonalSalesHeadList.push({ label: item.Zonal_Sales_Head, value: item.Zonal_Sales_Head });
       }
     });
   }
@@ -267,6 +277,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let AppointmentForFilter = [];
     let DaysFilter = [];
     let RegisterFilter = [];
+    let ZonalSalesFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -284,6 +295,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       searchFields.push('Foot_Fall_ID');
       RegisterFilter = this.SelectedRegisterFilterList;
     }
+    if (this.SelectedZonalSalesFilterList.length) {
+      searchFields.push('Zonal_Sales_Head');
+      ZonalSalesFilter = this.SelectedZonalSalesFilterList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -292,6 +307,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         return ((PinFilter.length ? PinFilter.includes(e['Pin']) : true)
           && (AppointmentForFilter.length ? AppointmentForFilter.includes(e['Appointment_For']) : true)
           && (DaysFilter.length ? DaysFilter.includes(e['Days']) : true)
+          && (ZonalSalesFilter.length ? ZonalSalesFilter.includes(e['Zonal_Sales_Head']) : true)
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
           );
       });
@@ -786,6 +802,12 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     console.log(tempArr)
     return { Followup_Branch_String: JSON.stringify(tempArr) };
   }
+  // EXPORT TO EXCEL
+exportexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
 }
 class Search {
   User_ID: any;
