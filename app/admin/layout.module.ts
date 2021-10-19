@@ -63,6 +63,8 @@ import {FieldsetModule} from 'primeng/fieldset';
 import {TreeModule} from 'primeng/tree';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {TooltipModule} from 'primeng/tooltip';
+import {DataViewModule} from 'primeng/dataview';
+import {PanelModule} from 'primeng/panel';
 // SPINNER
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 // SYN
@@ -205,6 +207,8 @@ import { TutoSchoolRequestDetailsComponent } from './common/CRM/Master/tuto-scho
 import { CompacctRunningBillComponent } from "./common/CivilManagement/compacct.running-bill/compacct.running-bill.component";
 import { CompacctCivildailyJobComponent } from "./common/CivilManagement/compacct.civildaily-job/compacct.civildaily-job.component";
 import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tender/compacct.tender.component";
+import { CrmLeadOpportunitiesComponent } from './common/CRM/Transaction/crm-lead-opportunities/crm-lead-opportunities.component';
+import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-task-details/crm-lead-task-details.component';
 
 @NgModule({
   declarations: [
@@ -349,7 +353,9 @@ import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tend
     TutoSchoolRequestDetailsComponent,
     CompacctTenderComponent,
     CompacctCivildailyJobComponent,
-    CompacctRunningBillComponent
+    CompacctRunningBillComponent,
+    CrmLeadOpportunitiesComponent,
+    CrmLeadTaskDetailsComponent
   ],
   imports: [
     CommonModule,
@@ -388,7 +394,9 @@ import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tend
     PivotFieldListAllModule,
     ProgressBarModule,
     TreeModule,
-    SelectButtonModule
+    SelectButtonModule,
+    DataViewModule,
+    PanelModule
   ],
   exports: [],
   providers: [

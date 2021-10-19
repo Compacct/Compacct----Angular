@@ -123,6 +123,8 @@ import { TutoSchoolRequestDetailsComponent } from './common/CRM/Master/tuto-scho
 import { CompacctRunningBillComponent } from "./common/CivilManagement/compacct.running-bill/compacct.running-bill.component";
 import { CompacctCivildailyJobComponent } from "./common/CivilManagement/compacct.civildaily-job/compacct.civildaily-job.component";
 import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tender/compacct.tender.component";
+import { CrmLeadOpportunitiesComponent } from './common/CRM/Transaction/crm-lead-opportunities/crm-lead-opportunities.component';
+import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-task-details/crm-lead-task-details.component';
 
 
 
@@ -712,7 +714,15 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                             path: 'BL_CRM_Txn_Enq_Tender',
                                                             component: CompacctTenderComponent,
                                                             data: {title: 'Tender '}
-                                                            },
+                                                            },{
+                                                              path: 'BL_CRM_Lead_Interaction_Nepal',
+                                                              component: CrmLeadOpportunitiesComponent,
+                                                              data: {title: 'All Opportunities '}
+                                                              },{
+                                                                path: 'BL_CRM_Lead_Details_Nepal',
+                                                                component: CrmLeadTaskDetailsComponent,
+                                                                data: {title: 'Lead Details '}
+                                                                },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)
