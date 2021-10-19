@@ -273,15 +273,15 @@
                                                   CompacctDigitonly="true"
                                                   [disabled] = "AQtyflag"
                                                   class="form-control" style="width: 71px;" /></td> -->
-                                            <td >{{col.Remarks}}</td>
+                                            <td>{{col.Remarks}}</td>
                                             <!-- <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks'  [disabled] = "true"   class="form-control" style="width: 200px;" /></td> -->
 
                                         </tr>
                                         <tr *ngIf='i === (editList.length - 1)'>
-                                          <td colspan="3" class = "text-right">Total</td>
-                                          <td>{{getTotal('Qty')}}</td>
-                                          <td>{{getTotal('Accepted_Qty')}}</td>
-                                          <td></td>
+                                            <td colspan="3" class="text-right">Total</td>
+                                            <td>{{getTotal('Qty')}}</td>
+                                            <td>{{getTotal('Accepted_Qty')}}</td>
+                                            <td></td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
@@ -355,15 +355,15 @@
                                                             [disabled] = "Qtyflag"
                                                             class="form-control" style="width: 71px;" /></td> -->
                                             <!-- <td>{{col.Accepted_Qty}}</td> -->
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" (ngModelChange) = "changeRemarks(col)" class="form-control" style="width: 71px;" /></td>
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks'  [disabled] = "col.Accepted_Qty == col.Qty"   class="form-control" style="width: 200px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" (ngModelChange)="changeRemarks(col)" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.Accepted_Qty == col.Qty" class="form-control" style="width: 200px;" /></td>
 
                                         </tr>
                                         <tr *ngIf='i === (editList.length - 1)'>
-                                          <td colspan="3" class = "text-right">Total</td>
-                                          <td>{{getTotal('Qty')}}</td>
-                                          <td>{{getTotal('Accepted_Qty')}}</td>
-                                          <td></td>
+                                            <td colspan="3" class="text-right">Total</td>
+                                            <td>{{getTotal('Qty')}}</td>
+                                            <td>{{getTotal('Accepted_Qty')}}</td>
+                                            <td></td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
@@ -406,7 +406,8 @@
 
                                         <div class="col-sm-3">
                                             <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjSaveForm.Material_Type" (ngModelChange)="getselectproduct()" [ngClass]="{'clearance':RFactoryaddFormSubmitted && materialtype?.errors?.required}" required>
+                                            <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjSaveForm.Material_Type" (ngModelChange)="getselectproduct()" [ngClass]="{'clearance':RFactoryaddFormSubmitted && materialtype?.errors?.required}" [disabled]="MTdisabled"
+                                                required>
                                         <option  [ngValue]="undefined">Select</option>
                                  <option *ngFor = "let option of mattypelist" [value] ="option.Material_Type">
                                     {{option.Material_Type}}

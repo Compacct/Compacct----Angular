@@ -64,6 +64,8 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       // console.log(params);
+      this.clearData();
+      this.Searchedlist = [];
       this.Param_Flag = params['Name'];
       this.CostCentId_Flag = params['Cost_Cen_ID'];
       this.MaterialType_Flag = params['Material_Type']

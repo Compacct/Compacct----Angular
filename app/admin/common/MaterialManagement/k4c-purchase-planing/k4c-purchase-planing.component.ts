@@ -110,8 +110,14 @@ export class K4cPurchasePlaningComponent implements OnInit {
     // let producttypelist = [];
     this.ObjMPtype.Product_Type = undefined;
     this.ObjPurchasePlan.Product_ID = undefined;
+    let Mtype;
+       if(this.ObjMPtype.Material_Type ==='Store Item - N/Saleable') {
+        Mtype = 'Store Item - Saleable';
+       } else {
+        Mtype = this.ObjMPtype.Material_Type;
+       }
     const TempObj = {
-      Material_Type : this.ObjMPtype.Material_Type,
+      Material_Type : Mtype,
     }
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -238,7 +244,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
      this.GetIndentProduct()
 
    }
-   if(this.ObjMPtype.Material_Type == "Store Item" && this.data == "(Show Requisition Products)"){
+   if(this.ObjMPtype.Material_Type == "Store Item - N/Saleable" && this.data == "(Show Requisition Products)"){
+    this.GetStoreIndentProduct()
+
+  }
+  if(this.ObjMPtype.Material_Type == "Store Item - Saleable" && this.data == "(Show Requisition Products)"){
     this.GetStoreIndentProduct()
 
   }
@@ -341,7 +351,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
      this.GetIndentProductChange()
 
    }
-   if(this.ObjMPtype.Material_Type == "Store Item" && this.data == "(Show All Products)"){
+   if(this.ObjMPtype.Material_Type == "Store Item - N/Saleable" && this.data == "(Show All Products)"){
+    this.GetStoreIndentProductChange()
+
+  }
+  if(this.ObjMPtype.Material_Type == "Store Item - Saleable" && this.data == "(Show All Products)"){
     this.GetStoreIndentProductChange()
 
   }

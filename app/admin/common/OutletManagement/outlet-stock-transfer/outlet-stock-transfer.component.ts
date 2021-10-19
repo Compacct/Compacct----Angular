@@ -71,6 +71,7 @@ export class OutletStockTransferComponent implements OnInit {
   mattypelist = [];
   RequistionSearchFormSubmit = false;
   DisabledBatch = false;
+  MTdisabled = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -122,6 +123,7 @@ export class OutletStockTransferComponent implements OnInit {
     this.flag = false;
     this.itemList = [];
     this.BatchList = [];
+    this.MTdisabled = false;
   }
   // Refresh(){
   //   this.ObjstockTransfer= new stockTransfer();
@@ -226,7 +228,7 @@ getMaterialType() {
 
 GetProduct(){       // PRODUCT DROPDOWN
 
-  if(this.ObjstockTransfer.Material_Type === "Finished"){
+  //if(this.ObjstockTransfer.Material_Type === "Finished"){
     this.BatchList = [];
     this.itemList = [];
     this.DisabledBatch = false;
@@ -251,35 +253,35 @@ GetProduct(){       // PRODUCT DROPDOWN
   });
   console.log("this.itemList",this.itemList);
  })
-}
-if(this.ObjstockTransfer.Material_Type === "Store Item"){
-  this.BatchList = [];
-  this.itemList = [];
-  //this.DisabledBatch = true;
-  const Objtemp = {
-    Cost_Cen_ID: this.ObjstockTransfer.From_Outlet,
-    Product_Type_ID:0,
-    Material_Type : this.ObjstockTransfer.Material_Type
-  }
-  const obj = {
-    "SP_String": "SP_Outlet_Stock_Transfer",
-    "Report_Name_String": "Get outlet Stock Transfer Store Item Product",
-    "Json_Param_String": JSON.stringify([Objtemp])
- }
- this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-   this.NativeitemList = data;
-   console.log("store product ",this.NativeitemList )
-   this.NativeitemList.forEach(el => {
-    this.itemList.push({
-      label: el.Product_Description,
-      value: el.Product_ID
-    });
-    //this.Objadditem.Avl_Qty = data[0].Avl_Qty;
-  });
-  console.log("this.itemList",this.itemList);
-  //this.ProductChange();
- })
-}
+//}
+// if(this.ObjstockTransfer.Material_Type === "Store Item"){
+//   this.BatchList = [];
+//   this.itemList = [];
+//   //this.DisabledBatch = true;
+//   const Objtemp = {
+//     Cost_Cen_ID: this.ObjstockTransfer.From_Outlet,
+//     Product_Type_ID:0,
+//     Material_Type : this.ObjstockTransfer.Material_Type
+//   }
+//   const obj = {
+//     "SP_String": "SP_Outlet_Stock_Transfer",
+//     "Report_Name_String": "Get outlet Stock Transfer Store Item Product",
+//     "Json_Param_String": JSON.stringify([Objtemp])
+//  }
+//  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//    this.NativeitemList = data;
+//    console.log("store product ",this.NativeitemList )
+//    this.NativeitemList.forEach(el => {
+//     this.itemList.push({
+//       label: el.Product_Description,
+//       value: el.Product_ID
+//     });
+//     //this.Objadditem.Avl_Qty = data[0].Avl_Qty;
+//   });
+//   console.log("this.itemList",this.itemList);
+//   //this.ProductChange();
+//  })
+// }
 }
 // ProductChange() {
 //   //if(this.ObjProductaddForm.Material_Type === "Store Item"){
@@ -366,7 +368,7 @@ if(ProductArrValid.length){
    Batch_NO: batch_id,
    Qty: Number(this.Objadditem.Issue_Qty),
    UOM: item.UOM,
-   //Material_Type : item.Material_Type
+   Material_Type : item.Material_Type
    })
   })
   //this.Objadditem= new additem();
@@ -374,6 +376,7 @@ if(ProductArrValid.length){
   this.BatchList = [];
   this.Objadditem.Issue_Qty = undefined;
   this.AdditioanFormSubmit = false;
+  this.MTdisabled = true;
   //this.itemList = [];
 }
 console.log("product details",this.productDetails)
@@ -490,8 +493,8 @@ saveDispatch(){
             UOM: el.UOM,
             Remarks: this.ObjstockTransfer.REMARKS ? this.ObjstockTransfer.REMARKS : "NA",
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
-           // Material_Type : el.Material_Type
-            Material_Type : this.ObjstockTransfer.Material_Type
+            Material_Type : el.Material_Type
+           // Material_Type : this.ObjstockTransfer.Material_Type
       }
       saveData.push(saveObj)
     })

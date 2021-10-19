@@ -79,6 +79,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   From_cost_cen_ID = undefined;
   To_cost_cen_ID = undefined;
   Remarksdisabled = false;
+  MTdisabled = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -215,7 +216,7 @@ export class K4cFactoryReturnComponent implements OnInit {
     //if(this.ObjaddbillForm.Cost_Cen_ID){
      //this.ObjProductaddForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     // console.log("Doc_Date =",this.DateService.dateConvert(new Date(this.myDate)))
-    if(this.ObjSaveForm.Material_Type === "Finished"){
+    //if(this.ObjSaveForm.Material_Type === "Finished"){
       this.selectProduct = [];
       this.BatchNo = [];
       this.DisabledBatch = false;
@@ -225,7 +226,7 @@ export class K4cFactoryReturnComponent implements OnInit {
        Doc_Type : "Sale_Bill",
       // Doc_Date : this.DateService.dateConvert(new Date(this.myDate)),
        Product_Type_ID : 0,
-       bill_type : '',
+       bill_type : 'RTF',
        Material_Type : this.ObjSaveForm.Material_Type
       }
       const obj = {
@@ -249,36 +250,36 @@ export class K4cFactoryReturnComponent implements OnInit {
 
 
      });
-    }
+    //}
     this.selectProduct = [];
-     if(this.ObjSaveForm.Material_Type === "Store Item"){
-      this.selectProduct = [];
-      this.BatchNo = [];
-     // this.DisabledBatch = true;
-      const Objtemp = {
-       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-       Product_Type_ID : 0,
-       Material_Type : this.ObjSaveForm.Material_Type
-      }
-      const obj = {
-        "SP_String": "SP_Outlet_Stock_Transfer",
-        "Report_Name_String": "Get outlet Stock Transfer Store Item Product",
-        "Json_Param_String": JSON.stringify([Objtemp])
-     }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      if(data.length) {
-        data.forEach(element => {
-          element['label'] = element.Product_Description,
-          element['value'] = element.Product_ID
-        });
-        this.selectProduct = data;
-      } else {
-        this.selectProduct = [];
+    //  if(this.ObjSaveForm.Material_Type === "Store Item"){
+    //   this.selectProduct = [];
+    //   this.BatchNo = [];
+    //  // this.DisabledBatch = true;
+    //   const Objtemp = {
+    //    Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    //    Product_Type_ID : 0,
+    //    Material_Type : this.ObjSaveForm.Material_Type
+    //   }
+    //   const obj = {
+    //     "SP_String": "SP_Outlet_Stock_Transfer",
+    //     "Report_Name_String": "Get outlet Stock Transfer Store Item Product",
+    //     "Json_Param_String": JSON.stringify([Objtemp])
+    //  }
+    //  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //   if(data.length) {
+    //     data.forEach(element => {
+    //       element['label'] = element.Product_Description,
+    //       element['value'] = element.Product_ID
+    //     });
+    //     this.selectProduct = data;
+    //   } else {
+    //     this.selectProduct = [];
 
-      }
-       console.log("Store Product======",this.selectProduct);
-     })
-    }
+    //   }
+    //    console.log("Store Product======",this.selectProduct);
+    //  })
+    // }
   }
   ProductChange() {
   this.BatchNo =[];
@@ -480,6 +481,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   this.RFactoryaddFormSubmitted = false;
   this.ObjProductaddForm = new ProductaddForm();
   this.BatchNo = [];
+  this.MTdisabled = true;
   // this.exProdFlag = false;
   // this.ExpiredProductFLag = false;
   // var ReturnReasonid1 = this.ReturnReasonid.filter(function(value, index, arr){
@@ -673,6 +675,7 @@ export class K4cFactoryReturnComponent implements OnInit {
      //this.clearData();
      this.productaddSubmit =[];
      this.RFactoryaddFormSubmitted = false;
+     this.MTdisabled = false;
     // this.ExpiredProductFLag = true;
      if(this.ExpiredProductFLag){
        this.getReturnReason("Y");
@@ -1120,6 +1123,7 @@ onReject(){
   //this.ObjSaveForm = new SaveForm();
   this.BatchNo = [];
   this.RFactoryaddFormSubmitted = false;
+  this.MTdisabled = false;
   //this.ObjSaveForm.Cost_Cent_ID = this.Cost_Center.length === 1 ? this.Cost_Center[0].Cost_Cent_ID : undefined;
   //this.ObjSaveForm.Godown_ID = this.toGodownList.length ? this.toGodownList[0].godown_id : undefined;
   this.ObjSaveForm.Return_Reason_ID = this.ReturnReasonid.length ? this.ReturnReasonid[0].Return_Reason_ID : undefined;
