@@ -38,6 +38,9 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
   TaskObj = new task();
   QueryStringFootfall = undefined;
   QueryStringUserID = undefined;
+  docdate:any;
+  LeadDateNepal = '';
+  autocomplete:any;
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
