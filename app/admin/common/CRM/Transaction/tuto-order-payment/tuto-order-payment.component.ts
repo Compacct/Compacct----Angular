@@ -559,7 +559,10 @@ export class TutoOrderPaymentComponent implements OnInit {
     const TempObj = {
       "order_id": this.Param_Flag,
       "payment_detail": "Paid",
-      "payment_txn_id": this.stdOrderNO
+      "payment_txn_id": this.stdOrderNO,
+      "confirmed_by" : this.$CompacctAPI.CompacctCookies.User_Name,
+      "cancelled_by" : this.$CompacctAPI.CompacctCookies.User_Name,
+      "edited_by" : this.$CompacctAPI.CompacctCookies.User_Name,
     };
     this.$http
       .post("https://api.tutopia.in/api/crm/v1/subscription/confirm", TempObj, httpOptions)

@@ -92,7 +92,11 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   }
   this.GlobalAPI.postData(objj)
       .subscribe((data: any) => {
+        data.sort(function(a, b) { 
+          return a.Status_ID - b.Status_ID  ||  a.Status.localeCompare(b.Status);
+        });
         this.StatusList = data;
+
       });
   }
   GetStatusWiseColor(status) {

@@ -605,7 +605,10 @@ export class TutoAccCashBankConfirmComponent implements OnInit {
       const TempObj = {
         "order_id": this.TutopiaAppObj.Subscription_Txn_ID,
         "payment_detail": "Paid",
-        "payment_txn_id": this.TutopiaAppObj.Order_No
+        "payment_txn_id": this.TutopiaAppObj.Order_No,
+        "confirmed_by" : this.$CompacctAPI.CompacctCookies.User_Name,
+        "cancelled_by" : this.$CompacctAPI.CompacctCookies.User_Name,
+        "edited_by" : this.$CompacctAPI.CompacctCookies.User_Name,
       };
       this.$http
         .post("https://api.tutopia.in/api/crm/v1/subscription/confirm", TempObj, httpOptions)
