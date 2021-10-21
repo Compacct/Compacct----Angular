@@ -47,6 +47,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   remarks = undefined;
   editList = [];
   del_doc_no: any;
+  minDate:Date;
+  maxDate:Date;
 
   constructor(
     private Header: CompacctHeader,
@@ -84,7 +86,16 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.dateList = data;
    //console.log("this.dateList  ===",this.dateList);
-  this.BillDate =  new Date(data[0].Outlet_Bill_Date);
+   this.BillDate =  new Date(data[0].Outlet_Bill_Date);
+      console.log("Datevalue",this.BillDate);
+      let Datetemp:Date =  new Date(data[0].Outlet_Bill_Date)
+      const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 1);
+      this.minDate = new Date(Timetemp);
+      console.log("minDate==", this.minDate)
+      let tempDate:Date =  new Date(data[0].Outlet_Bill_Date)
+      const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 1);
+      this.maxDate = this.BillDate;
+      console.log("maxDate==", this.maxDate)
    // on save use this
   // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
 

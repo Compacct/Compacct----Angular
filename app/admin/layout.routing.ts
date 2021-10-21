@@ -125,6 +125,7 @@ import { CompacctCivildailyJobComponent } from "./common/CivilManagement/compacc
 import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tender/compacct.tender.component";
 import { CrmLeadOpportunitiesComponent } from './common/CRM/Transaction/crm-lead-opportunities/crm-lead-opportunities.component';
 import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-task-details/crm-lead-task-details.component';
+import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManagement/Production/k4c-stock-adjustment-store-items/k4c-stock-adjustment-store-items.component';
 
 
 
@@ -722,7 +723,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                 path: 'BL_CRM_Lead_Details_Nepal',
                                                                 component: CrmLeadTaskDetailsComponent,
                                                                 data: {title: 'Lead Details '}
-                                                                },
+                                                                },{
+                                                                  path: 'Stock_Adjustment_for_Store_Items',
+                                                                  component: K4cStockAdjustmentStoreItemsComponent,
+                                                                  data: {title: 'Stock Adjustment For Store Items '}
+                                                                  },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)
