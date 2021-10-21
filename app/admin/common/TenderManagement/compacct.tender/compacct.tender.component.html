@@ -200,8 +200,18 @@
                                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                                             <form name="TenderForm" #TenderForm="ngForm" novalidate>
                                                 <div class="form-group">
+                                                  <h5 style="
+                                                  padding: 0.5em 1em;
+                                                  background: #c1c1c185;
+                                                  border-top: 5px solid #3c8dbc;
+                                                  border-bottom: 1px solid #c6c6c6;
+                                                  margin-top: 15px;
+                                                  ">
+                                                  <i class="fa fa-fw fa-fax">
+                                                  </i> &nbsp;<strong>Tender Information :</strong>
+                                              </h5>
                                                     <div class="col-sm-4">
-                                                            <label class="control-label">Tender Organization<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
                                                             <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                             <select class="form-control"
                                                                     name="Organization"
@@ -213,6 +223,34 @@
                                                                     {{option.Tender_Organization}}
                                                                     </option>
                                                             </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Tender Calling Div<sup class="text-danger">*</sup></label>
+                                                      <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                      <select class="form-control"
+                                                              name="Organization"
+                                                              #Organization="ngModel"
+                                                              [(ngModel)]="ObjTender.Tender_Org_ID"
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && Organization.errors?.required}" required>
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of tenderOrgList" [ngValue]="option.Tender_Org_ID">
+                                                              {{option.Tender_Organization}}
+                                                              </option>
+                                                      </select>
+                                                     </div>
+                                                   <div class="col-sm-4">
+                                                <label class="control-label">Tender Execution Div<sup class="text-danger">*</sup></label>
+                                                <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                <select class="form-control"
+                                                        name="Organization"
+                                                        #Organization="ngModel"
+                                                        [(ngModel)]="ObjTender.Tender_Org_ID"
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && Organization.errors?.required}" required>
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let option of tenderOrgList" [ngValue]="option.Tender_Org_ID">
+                                                        {{option.Tender_Organization}}
+                                                        </option>
+                                                </select>
                                                     </div>
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Reference Number<sup class="text-danger">*</sup></label>
@@ -262,19 +300,18 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                      <label class="control-label">Work Title<sup class="text-danger">*</sup></label>
+                                                      <label class="control-label"> 800 CHRS<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
                                                               name="Name"
                                                               #Name="ngModel"
                                                               [(ngModel)]="ObjTender.Tender_Name"
                                                               (change)='CheckIfTenderNameExist()'
-                                                              placeholder="Work Title / Tender Name"
+                                                              placeholder="800 CHRS"
                                                               [ngClass]="{'clearance': TenderFormSubmitted && Name.errors?.required}" required>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                      <label class="control-label">Form of Contract<sup class="text-danger">*</sup></label>
-                                                      <span (click)="ToggleContact()" class="btn-vk pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
-                                                      <select class="form-control"
+                                                      <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                                       <select class="form-control"
                                                               name="Contact"
                                                               #Contact="ngModel"
                                                               [(ngModel)]="ObjTender.Form_Of_Contract_ID"
@@ -286,7 +323,7 @@
                                                       </select>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                      <label class="control-label">Location</label>
+                                                      <label class="control-label">Work Location</label>
                                                       <input
                                                         class="form-control"
                                                         #location
@@ -308,7 +345,7 @@
                                                       />
                                                       <!-- (change)="GetStateDistrict(ObjLead.Pin)" -->
                                                     </div>
-                                                    <div class="col-sm-4">
+                                                    <!-- <div class="col-sm-4">
                                                       <label class="control-label">Payment Mode<sup class="text-danger">*</sup></label>
                                                       <span (click)="TogglePayment()" class="btn-vk pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                       <select class="form-control"
@@ -321,7 +358,7 @@
                                                               {{option.Tender_Payment_Mode}}
                                                               </option>
                                                       </select>
-                                                    </div>
+                                                    </div> -->
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Value In ₹<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
@@ -352,7 +389,31 @@
                                                   </i> &nbsp;<strong>Tender Fee Details :</strong>
                                               </h5>
 
-
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Payment Mode <sup class="text-danger">*</sup></label>
+                                                <input class="form-control"
+                                                    name="EMD"
+                                                    #EMD="ngModel"
+                                                    CompacctDigitonly="true"
+                                                    [(ngModel)]="EMDAmount"
+                                                    (change)="TenderEMDChange(EMDAmount)"
+                                                    (focus)="onFocusInEvent('EMDAmount',EMDAmount)"
+                                                    (focusout)="onFocusOutEvent('EMDAmount',EMDAmount)"
+                                                    placeholder="Payment Mode"
+                                                    autocomplete="off"
+                                                    [ngClass]="{'clearance': TenderFormSubmitted && EMD.errors?.required}" required>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Tender Acc Voucher No <sup class="text-danger">*</sup></label>
+                                                <span (click)="ToggleOrganization()" style="margin-left: 6px;" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i>Choose</span>
+                                                <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i>Create</span>
+                                                <input class="form-control"
+                                                        name="PayableAt"
+                                                        #PayableAt="ngModel"
+                                                        [(ngModel)]="ObjTender.T_Fee_Payable_At"
+                                                        placeholder="Tender Acc Voucher No  "
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && PayableAt.errors?.required}" disabled>
+                                              </div>
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Fee In ₹<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
@@ -387,18 +448,28 @@
                                                               [ngClass]="{'clearance': TenderFormSubmitted && PayableAt.errors?.required}" required>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                      <label class="control-label">Tender Fee Exemption Allowed <sup class="text-danger">*</sup></label>
-                                                      <input class="form-control"
+                                                      <label class="control-label">Tender Fees Exemption Allowed <sup class="text-danger">*</sup></label>
+                                                      <!-- <input class="form-control"
+                                                              name="Exemption"
+                                                              #Exemption="ngModel"
+                                                              [(ngModel)]="ObjTender.T_Fee_exm_Allowed"
+                                                              placeholder="Tender Fee Exemption Allowed "
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && Exemption.errors?.required}" required> -->
+                                                              <select class="form-control"
                                                               name="Exemption"
                                                               #Exemption="ngModel"
                                                               [(ngModel)]="ObjTender.T_Fee_exm_Allowed"
                                                               placeholder="Tender Fee Exemption Allowed "
                                                               [ngClass]="{'clearance': TenderFormSubmitted && Exemption.errors?.required}" required>
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option ngValue="Y">Yes</option>
+                                                          <option ngValue="N">Yes</option>
+                                                      </select>
                                                     </div>
 
                                                 </div>
-                                                <div class="form-group">
-                                                  <div class="col-sm-4">
+                                                <!-- <div class="form-group"> -->
+                                                  <!-- <div class="col-sm-4">
                                                     <label class="control-label">Information Form<sup class="text-danger"></sup></label>
                                                     <select class="form-control"
                                                             name="Information"
@@ -410,8 +481,8 @@
                                                             {{option.Enq_Source_Name}}
                                                             </option>
                                                     </select>
-                                                  </div>
-                                                  <div class="col-sm-4" *ngIf="ObjTender.Enq_Source_ID === 246 || ObjTender.Enq_Source_ID === 236">
+                                                  </div> -->
+                                                  <!-- <div class="col-sm-4" *ngIf="ObjTender.Enq_Source_ID === 246 || ObjTender.Enq_Source_ID === 236">
                                                     <label class="control-label" *ngIf="ObjTender.Enq_Source_ID === 246">Website<sup class="text-danger">*</sup></label>
                                                     <label class="control-label" *ngIf="ObjTender.Enq_Source_ID === 236">Name<sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
@@ -420,8 +491,8 @@
                                                             [(ngModel)]="ObjTender.Enq_Source_Detail "
                                                             [placeholder]="ObjTender.Enq_Source_ID === 236 ? 'Name':'Website'"
                                                             [ngClass]="{'clearance': TenderFormSubmitted && enqSRCDetail.errors?.required}" required>
-                                                  </div>
-                                                  <div class="col-sm-4" *ngIf=" ObjTender.Enq_Source_ID === 236">
+                                                  </div> -->
+                                                  <!-- <div class="col-sm-4" *ngIf=" ObjTender.Enq_Source_ID === 236">
                                                     <label class="control-label" >Mobile<sup class="text-danger">*</sup></label>
                                                       <div class="input-group">
                                                         <div class="input-group-addon">
@@ -432,7 +503,7 @@
                                                             [ngClass]="{'clearance': TenderFormSubmitted && code.errors?.required}">
                                                         <option *ngFor="let option of CountryCodeList" [title]="option.name" [ngValue]="option.dial_code">
                                                             {{option.dial_code}}
-                                                            <!-- +' - '+option.name -->
+                                                            
                                                             </option>
                                                     </select>
                                                         </div>
@@ -444,7 +515,7 @@
                                                               placeholder="Mobile No."
                                                               [ngClass]="{'clearance': TenderFormSubmitted && Mobile.errors?.required}" required>
                                                     </div>
-                                                  </div>
+                                                  </div> -->
                                                   <!-- <div class="col-sm-4">
                                                     <label class="control-label">Tender Published Date<sup class="text-danger">*</sup></label>
                                                     <div class="input-group date">
@@ -493,7 +564,7 @@
                                                         [ngClass]="{'clearance': TenderFormSubmitted && Tenderopendate.errors?.required}" required  />
                                                     </div>
                                                   </div> -->
-                                                  <div class="col-sm-4">
+                                                  <!-- <div class="col-sm-4">
                                                     <label class="control-label">Tender Published Date & Time<sup class="text-danger">*</sup></label>
                                                     <div class="input-group date">
                                                       <div class="input-group-addon">
@@ -525,7 +596,7 @@
                                                       [(ngModel)]="TenderOpenDate" [owlDateTime]="open">
                                                      <owl-date-time [hour12Timer]='true' #open></owl-date-time>
                                                     </div>
-                                                  </div>
+                                                  </div> -->
                                                   <!-- <div class="col-sm-4">
                                                     <label class="control-label">Bid Submission Date<sup class="text-danger">*</sup></label>
                                                     <div class="input-group date">
@@ -537,7 +608,7 @@
                                                      <owl-date-time [hour12Timer]='true' #dt5></owl-date-time>
                                                   </div>
                                                   </div> -->
-                                                  <div class="col-sm-4">
+                                                  <!-- <div class="col-sm-4">
                                                     <label class="control-label">Period Of Work (Days)<sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
                                                             name="Work"
@@ -547,8 +618,8 @@
                                                             (change)="TenderPeriodOfWorkChange(PeriodOfWork)"
                                                             placeholder="Period Of Work (Days)"
                                                             [ngClass]="{'clearance': TenderFormSubmitted && Work.errors?.required}" required>
-                                                  </div>
-                                                </div>
+                                                  </div> -->
+                                                <!-- </div> -->
                                                 <div class="form-group" style="border-bottom: 3px solid #3c8dbc;
                                                 padding-bottom: 1em;">
                                                   <h5 style="
@@ -562,7 +633,7 @@
                                                     </i> &nbsp;<strong>EMD Fee Details :</strong>
                                                   </h5>
                                                   <div class="col-sm-4">
-                                                    <label class="control-label">EMD Amount In ₹<sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">Payment Mode<sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
                                                     name="EMD"
                                                     #EMD="ngModel"
@@ -571,21 +642,23 @@
                                                     (change)="TenderEMDChange(EMDAmount)"
                                                     (focus)="onFocusInEvent('EMDAmount',EMDAmount)"
                                                     (focusout)="onFocusOutEvent('EMDAmount',EMDAmount)"
-                                                    placeholder="EMD Amount In ₹"
+                                                    placeholder="Payment Mode"
                                                     autocomplete="off"
                                                     [ngClass]="{'clearance': TenderFormSubmitted && EMD.errors?.required}" required>
                                                    </div>
                                                    <div class="col-sm-4">
-                                                    <label class="control-label">EMD Through BG/ST or EMD Exemption Allowed <sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">EMD Acc Voucher No <sup class="text-danger">*</sup></label>
+                                                    <span (click)="ToggleOrganization()" style ="margin-left: 6px;" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i>Choose</span>
+                                                    <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i>Create</span>
                                                     <input class="form-control"
-                                                            name="EMDExemption"
-                                                            #EMDExemption="ngModel"
-                                                            [(ngModel)]="ObjTender.EMD_Through_BG_SD"
-                                                            placeholder="EMD Through BG/ST or EMD Exemption Allowed  "
-                                                            [ngClass]="{'clearance': TenderFormSubmitted && EMDExemption.errors?.required}" required>
+                                                            name="PayableAt"
+                                                            #PayableAt="ngModel"
+                                                            [(ngModel)]="ObjTender.T_Fee_Payable_At"
+                                                            placeholder="EMD Acc Voucher No"
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && PayableAt.errors?.required}" disabled >
                                                   </div>
 
-                                                  <div class="col-sm-4">
+                                                  <!-- <div class="col-sm-4">
                                                     <label class="control-label">EMD Fee Type <sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
                                                             name="FeeType"
@@ -593,8 +666,8 @@
                                                             [(ngModel)]="ObjTender.EMD_fee_Type"
                                                             placeholder="EMD Fee Type "
                                                             [ngClass]="{'clearance': TenderFormSubmitted && FeeType.errors?.required}" required>
-                                                  </div>
-                                                  <div class="col-sm-4">
+                                                  </div> -->
+                                                  <!-- <div class="col-sm-4">
                                                     <label class="control-label">EMD Percentage <sup class="text-danger">*</sup></label>
                                                     <div class="input-group">
                                                       <input class="form-control"
@@ -606,9 +679,9 @@
                                                       <div class="input-group-addon"><b>%</b></div>
 
                                                     </div>
-                                                  </div>
+                                                  </div> -->
                                                    <div class="col-sm-4">
-                                                    <label class="control-label">EMD Payable To <sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">EMD Fees Payable To <sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
                                                             name="EMDPayable"
                                                             #EMDPayable="ngModel"
@@ -617,7 +690,7 @@
                                                             [ngClass]="{'clearance': TenderFormSubmitted && EMDPayable.errors?.required}" required>
                                                   </div>
                                                    <div class="col-sm-4">
-                                                    <label class="control-label">EMD Payable At <sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">EMD Fees Payable At <sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
                                                             name="EMDPayableAt"
                                                             #EMDPayableAt="ngModel"
@@ -625,8 +698,210 @@
                                                             placeholder="EMD Payable At  "
                                                             [ngClass]="{'clearance': TenderFormSubmitted && EMDPayableAt.errors?.required}" required>
                                                   </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">EMD Fees Exemption Allowed <sup class="text-danger">*</sup></label>
+                                                      <!-- <input class="form-control"
+                                                              name="Exemption"
+                                                              #Exemption="ngModel"
+                                                              [(ngModel)]="ObjTender.T_Fee_exm_Allowed"
+                                                              placeholder="Tender Fee Exemption Allowed "
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && Exemption.errors?.required}" required> -->
+                                                              <select class="form-control"
+                                                              name="Exemption"
+                                                              #Exemption="ngModel"
+                                                              [(ngModel)]="ObjTender.T_Fee_exm_Allowed"
+                                                              placeholder="Tender Fee Exemption Allowed "
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && Exemption.errors?.required}" required>
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option ngValue="Y">Yes</option>
+                                                          <option ngValue="N">Yes</option>
+                                                      </select>
+                                                  </div>
+                                                  
                                                 </div>
-                                                <div class="form-group">
+                                                <div class="form-group" style="border-bottom: 3px solid #3c8dbc;
+                                                padding-bottom: 1em;">
+                                                  <h5 style="
+                                                  padding: 0.5em 1em;
+                                                  background: #c1c1c185;
+                                                  border-top: 5px solid #3c8dbc;
+                                                  border-bottom: 1px solid #c6c6c6;
+                                                  margin-top: 15px;
+                                                  ">
+                                                    <i class="fa fa-fw fa-fax">
+                                                    </i> &nbsp;<strong>Performance Security Details :</strong>
+                                                  </h5>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Payment Mode<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    name="EMD"
+                                                    #EMD="ngModel"
+                                                    CompacctDigitonly="true"
+                                                    [(ngModel)]="EMDAmount"
+                                                    (change)="TenderEMDChange(EMDAmount)"
+                                                    (focus)="onFocusInEvent('EMDAmount',EMDAmount)"
+                                                    (focusout)="onFocusOutEvent('EMDAmount',EMDAmount)"
+                                                    placeholder="Payment Mode"
+                                                    autocomplete="off"
+                                                    [ngClass]="{'clearance': TenderFormSubmitted && EMD.errors?.required}" required>
+                                                   </div>
+                                                   <div class="col-sm-4">
+                                                    <label class="control-label">Performance Acc Voucher No <sup class="text-danger">*</sup></label>
+                                                    <span (click)="ToggleOrganization()" style ="margin-left: 6px;" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i>Choose</span>
+                                                    <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i>Create</span>
+                                                    <input class="form-control"
+                                                            name="PayableAt"
+                                                            #PayableAt="ngModel"
+                                                            [(ngModel)]="ObjTender.T_Fee_Payable_At"
+                                                            placeholder="Performance Acc Voucher No"
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && PayableAt.errors?.required}" disabled>
+                                                  </div>
+
+                                                  <!-- <div class="col-sm-4">
+                                                    <label class="control-label">EMD Fee Type <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                            name="FeeType"
+                                                            #FeeType="ngModel"
+                                                            [(ngModel)]="ObjTender.EMD_fee_Type"
+                                                            placeholder="EMD Fee Type "
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && FeeType.errors?.required}" required>
+                                                  </div> -->
+                                                  <!-- <div class="col-sm-4">
+                                                    <label class="control-label">EMD Percentage <sup class="text-danger">*</sup></label>
+                                                    <div class="input-group">
+                                                      <input class="form-control"
+                                                      name="Percentage"
+                                                      #Percentage="ngModel"
+                                                      [(ngModel)]="ObjTender.EMD_Persentage"
+                                                      placeholder="EMD Percentage"
+                                                      [ngClass]="{'clearance': TenderFormSubmitted && FeeType.errors?.required}" required>
+                                                      <div class="input-group-addon"><b>%</b></div>
+
+                                                    </div>
+                                                  </div> -->
+                                                   <div class="col-sm-4">
+                                                    <label class="control-label">Performance Security Fees Payable To  <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                            name="EMDPayable"
+                                                            #EMDPayable="ngModel"
+                                                            [(ngModel)]="ObjTender.EMD_Payable_To"
+                                                            placeholder="EMD Payable To"
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && EMDPayable.errors?.required}" required>
+                                                  </div>
+                                                   <div class="col-sm-4">
+                                                    <label class="control-label">Performance Security Fees Payable At <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                            name="EMDPayableAt"
+                                                            #EMDPayableAt="ngModel"
+                                                            [(ngModel)]="ObjTender.EMD_Payable_At"
+                                                            placeholder="EMD Payable At  "
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && EMDPayableAt.errors?.required}" required>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Performance Security Fees Exemption Allowed  <sup class="text-danger">*</sup></label>
+                                                    <!-- <input class="form-control"
+                                                            name="Exemption"
+                                                            #Exemption="ngModel"
+                                                            [(ngModel)]="ObjTender.T_Fee_exm_Allowed"
+                                                            placeholder="Tender Fee Exemption Allowed "
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && Exemption.errors?.required}" required> -->
+                                                            <select class="form-control"
+                                                            name="Exemption"
+                                                            #Exemption="ngModel"
+                                                            [(ngModel)]="ObjTender.T_Fee_exm_Allowed"
+                                                            placeholder="Tender Fee Exemption Allowed "
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && Exemption.errors?.required}" required>
+                                                            <option  [ngValue]="undefined">Select</option>
+                                                        <option ngValue="Y">Yes</option>
+                                                        <option ngValue="N">Yes</option>
+                                                    </select>
+                                                  </div>
+                                                 
+                                                </div>
+                                                <div class="form-group" style="border-bottom: 3px solid #3c8dbc;
+                                                padding-bottom: 1em;">
+                                                <h5 style="
+                                                padding: 0.5em 1em;
+                                                background: #c1c1c185;
+                                                border-top: 5px solid #3c8dbc;
+                                                border-bottom: 1px solid #c6c6c6;
+                                                margin-top: 15px;
+                                                ">
+                                                  <i class="fa fa-fw fa-fax">
+                                                  </i> &nbsp;<strong>Tender Publishing Details :</strong>
+                                                </h5>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Information Form<sup class="text-danger"></sup></label>
+                                                  <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                  <select class="form-control"
+                                                          name="Information"
+                                                          #Information="ngModel"
+                                                          [(ngModel)]="ObjTender.Enq_Source_ID"
+                                                          [ngClass]="{'clearance': TenderFormSubmitted && Information.errors?.required}">
+                                                          <option  [ngValue]="undefined">Select</option>
+                                                      <option *ngFor="let option of informList" [ngValue]="option.Enq_Source_ID">
+                                                          {{option.Enq_Source_Name}}
+                                                          </option>
+                                                  </select>
+                                                </div>
+                                                
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Tender Published Date & Time<sup class="text-danger">*</sup></label>
+                                                  <div class="input-group date">
+                                                    <div class="input-group-addon">
+                                                      <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input class="form-control" [owlDateTimeTrigger]="pub"   name="pub_Date_Submission"
+                                                    [(ngModel)]="TenderPublishDate" [owlDateTime]="pub">
+                                                   <owl-date-time [hour12Timer]='true' #pub></owl-date-time>
+                                                  </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Bid Submission End Date & Time<sup class="text-danger">*</sup></label>
+                                                  <div class="input-group date">
+                                                    <div class="input-group-addon">
+                                                      <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input class="form-control" [owlDateTimeTrigger]="end"   name="END_Date_Submission"
+                                                    [(ngModel)]="TenderEndDate" [owlDateTime]="end">
+                                                   <owl-date-time [hour12Timer]='true' #end></owl-date-time>
+                                                  </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Bid Opening Date & Time<sup class="text-danger">*</sup></label>
+                                                  <div class="input-group date">
+                                                    <div class="input-group-addon">
+                                                      <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input class="form-control" [owlDateTimeTrigger]="open"   name="Date_Submission"
+                                                    [(ngModel)]="TenderOpenDate" [owlDateTime]="open">
+                                                   <owl-date-time [hour12Timer]='true' #open></owl-date-time>
+                                                  </div>
+                                                </div>
+                                                <!-- <div class="col-sm-4">
+                                                  <label class="control-label">Bid Submission Date<sup class="text-danger">*</sup></label>
+                                                  <div class="input-group date">
+                                                    <div class="input-group-addon">
+                                                      <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input class="form-control" [owlDateTimeTrigger]="dt5"   name="Date_Submission"
+                                                    [(ngModel)]="TenderOpenDate" [owlDateTime]="dt5">
+                                                   <owl-date-time [hour12Timer]='true' #dt5></owl-date-time>
+                                                </div>
+                                                </div> -->
+                                                <div class="col-sm-4">
+                                                  <label class="control-label">Period Of Work (Days)<sup class="text-danger">*</sup></label>
+                                                  <input class="form-control"
+                                                          name="Work"
+                                                          #Work="ngModel"
+                                                          CompacctDigitonly="true"
+                                                          [(ngModel)]="PeriodOfWork"
+                                                          (change)="TenderPeriodOfWorkChange(PeriodOfWork)"
+                                                          placeholder="Period Of Work (Days)"
+                                                          [ngClass]="{'clearance': TenderFormSubmitted && Work.errors?.required}" required>
+                                                </div>
+                                                </div>
+                                                <!-- <div class="form-group">
                                                   <div class="col-sm-12">
                                                     <label class="control-label">Elegibility<sup class="text-danger"></sup></label>
                                                     <p-editor [(ngModel)]="ObjTender.Elegibility" name="Elegibility" [style]="{'height':'150px'}"></p-editor>
@@ -648,7 +923,7 @@
                                                     <label class="control-label">Remarks<sup class="text-danger"></sup></label>
                                                     <textarea class="form-control" name="Remarks" [(ngModel)]="ObjTender.Remarks" rows="2" placeholder="Remarks"></textarea>
                                                   </div>
-                                                </div>
+                                                </div> -->
                                                 <div class="box-footer">
                                                     <button class="btn btn-primary pull-right"
                                                             type="button"
