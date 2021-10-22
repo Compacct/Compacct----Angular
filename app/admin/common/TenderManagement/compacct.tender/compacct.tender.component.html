@@ -181,6 +181,12 @@
                                                                                       Delete Tender
                                                                                   </a>
                                                                               </li>
+                                                                              <li>
+                                                                                <a (click)="OpenEstimate(col)">
+                                                                                    <i class="fa fa-fw fa-pencil"></i>
+                                                                                    Estimate Management
+                                                                                </a>
+                                                                            </li>
                                                                           </ul>
                                                                       </div>
                                                               </td>
@@ -226,7 +232,8 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Calling Div<sup class="text-danger">*</sup></label>
-                                                      <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                      <span (click)="Tender_Calling_Div_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                    
                                                       <select class="form-control"
                                                               name="Organization"
                                                               #Organization="ngModel"
@@ -240,7 +247,7 @@
                                                      </div>
                                                    <div class="col-sm-4">
                                                 <label class="control-label">Tender Execution Div<sup class="text-danger">*</sup></label>
-                                                <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                <span (click)="Tender_Execution_Div_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                 <select class="form-control"
                                                         name="Organization"
                                                         #Organization="ngModel"
@@ -273,7 +280,8 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Type<sup class="text-danger">*</sup></label>
-                                                      <span (click)="ToggleType()" class="btn-vk pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                      <span (click)="Tender_Type_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                               
                                                       <select class="form-control"
                                                               name="Type"
                                                               #Type="ngModel"
@@ -287,7 +295,7 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">Tender Category<sup class="text-danger">*</sup></label>
-                                                        <span (click)="ToggleCategory()" class="btn-vk pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                        <span (click)="Tender_Category_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                         <select class="form-control"
                                                                 name="Category"
                                                                 #Category="ngModel"
@@ -466,7 +474,40 @@
                                                           <option ngValue="N">Yes</option>
                                                       </select>
                                                     </div>
-
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
+                                                      <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                          <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input
+                                                          type="date"
+                                                          name="Tenderissuedate"
+                                                          #Tenderissuedate="ngModel"
+                                                          [ngModel]="TenderIssueDate | date: 'yyyy-MM-dd'"
+                                                          (ngModelChange)="TenderIssueDate = $event"
+                                                          class="form-control"
+                                                          [ngClass]="{'clearance': TenderFormSubmitted && Tenderissuedate.errors?.required}"
+                                                          required  />
+                                                      </div>
+                                                    </div> 
+                                                    <div class="col-sm-4">
+                                                      <label class="control-label">Date of Expiry <sup class="text-danger"></sup></label>
+                                                      <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                          <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input
+                                                          type="date"
+                                                          name="Tenderexpirydate"
+                                                          #Tenderexpirydate="ngModel"
+                                                          [ngModel]="TenderExpiryDate | date: 'yyyy-MM-dd'"
+                                                          (ngModelChange)="TenderExpiryDate = $event"
+                                                          class="form-control"
+                                                          [ngClass]="{'clearance': TenderFormSubmitted && Tenderexpirydate.errors?.required}"
+                                                            />
+                                                      </div>
+                                                    </div> 
                                                 </div>
                                                 <!-- <div class="form-group"> -->
                                                   <!-- <div class="col-sm-4">
@@ -717,7 +758,40 @@
                                                           <option ngValue="N">Yes</option>
                                                       </select>
                                                   </div>
-                                                  
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
+                                                    <div class="input-group date">
+                                                      <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                      </div>
+                                                      <input
+                                                        type="date"
+                                                        name="EMDissuedate"
+                                                        #EMDissuedate="ngModel"
+                                                        [ngModel]="EMDIssueDate | date: 'yyyy-MM-dd'"
+                                                        (ngModelChange)="EMDIssueDate = $event"
+                                                        class="form-control"
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate.errors?.required}"
+                                                        required  />
+                                                    </div>
+                                                  </div> 
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Date of Expiry <sup class="text-danger"></sup></label>
+                                                    <div class="input-group date">
+                                                      <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                      </div>
+                                                      <input
+                                                        type="date"
+                                                        name="EMDexpirydate"
+                                                        #EMDexpirydate="ngModel"
+                                                        [ngModel]="EMDExpiryDate | date: 'yyyy-MM-dd'"
+                                                        (ngModelChange)="EMDExpiryDate = $event"
+                                                        class="form-control"
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && EMDexpirydate.errors?.required}"
+                                                          />
+                                                    </div>
+                                                  </div> 
                                                 </div>
                                                 <div class="form-group" style="border-bottom: 3px solid #3c8dbc;
                                                 padding-bottom: 1em;">
@@ -816,6 +890,40 @@
                                                         <option ngValue="N">Yes</option>
                                                     </select>
                                                   </div>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
+                                                    <div class="input-group date">
+                                                      <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                      </div>
+                                                      <input
+                                                        type="date"
+                                                        name="Performanceissuedate"
+                                                        #Performanceissuedate="ngModel"
+                                                        [ngModel]="PerformanceIssueDate | date: 'yyyy-MM-dd'"
+                                                        (ngModelChange)="PerformanceIssueDate = $event"
+                                                        class="form-control"
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && Performanceissuedate.errors?.required}"
+                                                        required  />
+                                                    </div>
+                                                  </div> 
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">Date of Expiry <sup class="text-danger"></sup></label>
+                                                    <div class="input-group date">
+                                                      <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                      </div>
+                                                      <input
+                                                        type="date"
+                                                        name="Performanceexpirydate"
+                                                        #Performanceexpirydate="ngModel"
+                                                        [ngModel]="PerformanceExpiryDate | date: 'yyyy-MM-dd'"
+                                                        (ngModelChange)="PerformanceExpiryDate = $event"
+                                                        class="form-control"
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && Performanceexpirydate.errors?.required}"
+                                                          />
+                                                    </div>
+                                                  </div> 
                                                  
                                                 </div>
                                                 <div class="form-group" style="border-bottom: 3px solid #3c8dbc;
@@ -831,7 +939,7 @@
                                                   </i> &nbsp;<strong>Tender Publishing Details :</strong>
                                                 </h5>
                                                 <div class="col-sm-4">
-                                                  <label class="control-label">Information Form<sup class="text-danger"></sup></label>
+                                                  <label class="control-label">Information From<sup class="text-danger"></sup></label>
                                                   <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                   <select class="form-control"
                                                           name="Information"
@@ -1918,6 +2026,217 @@
                 </div>
             </div>
         </div>
+        <p-overlayPanel 
+        [dismissable]="true" [showCloseIcon]="true"
+        [appendTo]="'body'"
+        (onShow)='CreateLightBoxSubmitted = false;'
+        [baseZIndex]="9999999" #Tender_Calling_Div_Name>
+        <div class="form-horizontal">
+          <form
+          name="OrgForm"
+          #OrgForm="ngForm"
+          novalidate
+          >
+          <div class="form-group">
+            <div class="col-sm-12">
+              <label class="control-label">Tender Calling Div<sup class="text-danger">*</sup ></label>
+            <input
+                  type="text"
+                  class="form-control"
+                  name="name"
+                  #name="ngModel"
+                  [(ngModel)]="TenderCallingDiv"
+                  placeholder="Tender Calling Div"
+                  allow-pattern="([a-z ]|\.)"
+                  [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}"
+                  required
+                />
+            </div>
+            <button (click)='LightBoxSave("TenderCallingDiv","Tender_Calling_Div_Name")'
+             class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+             [disabled]="Spinner"
+             >
+             <p-progressSpinner
+               *ngIf="Spinner"
+               [style]="{ width: '15px', height: '15px' }"
+               strokeWidth="8"
+               animationDuration=".5s"
+             ></p-progressSpinner>
+              <i class="fa fa-fw  fa-plus"></i>  Create</button>
+          </div>
+          
+          </form>
+          </div>
+      </p-overlayPanel>
+      <p-overlayPanel 
+      [dismissable]="true" [showCloseIcon]="true"
+      [appendTo]="'body'"
+      (onShow)='CreateLightBoxSubmitted = false;'
+      [baseZIndex]="9999999" #Tender_Execution_Div_Name>
+      <div class="form-horizontal">
+        <form
+        name="OrgForm"
+        #OrgForm="ngForm"
+        novalidate
+        >
+        <div class="form-group">
+          <div class="col-sm-12">
+            <label class="control-label">Tender Execution Div<sup class="text-danger">*</sup ></label>
+          <input
+                type="text"
+                class="form-control"
+                name="name"
+                #name="ngModel"
+                [(ngModel)]="TenderExecutionDiv"
+                placeholder="Tender Execution Div"
+                allow-pattern="([a-z ]|\.)"
+                [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}"
+                required
+              />
+          </div>
+          <button (click)='LightBoxSave("TenderExecutionDiv","Tender_Execution_Div_Name")'
+           class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+           [disabled]="Spinner"
+           >
+           <p-progressSpinner
+             *ngIf="Spinner"
+             [style]="{ width: '15px', height: '15px' }"
+             strokeWidth="8"
+             animationDuration=".5s"
+           ></p-progressSpinner>
+            <i class="fa fa-fw  fa-plus"></i>  Create</button>
+        </div>
+        
+        </form>
+        </div>
+    </p-overlayPanel>
+    <p-overlayPanel 
+    [dismissable]="true" [showCloseIcon]="true"
+    [appendTo]="'body'"
+    (onShow)='CreateLightBoxSubmitted = false;'
+    [baseZIndex]="9999999" #Tender_Type_Name>
+    <div class="form-horizontal">
+      <form
+      name="OrgForm"
+      #OrgForm="ngForm"
+      novalidate
+      >
+      <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label">Tender Type<sup class="text-danger">*</sup ></label>
+        <input
+              type="text"
+              class="form-control"
+              name="name"
+              #name="ngModel"
+              [(ngModel)]="TenderType"
+              placeholder="Tender Type"
+              allow-pattern="([a-z ]|\.)"
+              [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}"
+              required
+            />
+        </div>
+        <button (click)='LightBoxSave("TenderType","Tender_Type_Name")'
+         class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+         [disabled]="Spinner"
+         >
+         <p-progressSpinner
+           *ngIf="Spinner"
+           [style]="{ width: '15px', height: '15px' }"
+           strokeWidth="8"
+           animationDuration=".5s"
+         ></p-progressSpinner>
+          <i class="fa fa-fw  fa-plus"></i>  Create</button>
+      </div>
+      
+      </form>
+      </div>
+  </p-overlayPanel>
+  <p-overlayPanel 
+  [dismissable]="true" [showCloseIcon]="true"
+  [appendTo]="'body'"
+  (onShow)='CreateLightBoxSubmitted = false;'
+  [baseZIndex]="9999999" #Tender_Category_Name>
+  <div class="form-horizontal">
+    <form
+    name="OrgForm"
+    #OrgForm="ngForm"
+    novalidate
+    >
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">Tender Category<sup class="text-danger">*</sup ></label>
+      <input
+            type="text"
+            class="form-control"
+            name="name"
+            #name="ngModel"
+            [(ngModel)]="TenderCategory"
+            placeholder="Tender Category"
+            allow-pattern="([a-z ]|\.)"
+            [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}"
+            required
+          />
+      </div>
+      <button (click)='LightBoxSave("TenderCategory","Tender_Category_Name")'
+       class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+       [disabled]="Spinner"
+       >
+       <p-progressSpinner
+         *ngIf="Spinner"
+         [style]="{ width: '15px', height: '15px' }"
+         strokeWidth="8"
+         animationDuration=".5s"
+       ></p-progressSpinner>
+        <i class="fa fa-fw  fa-plus"></i>  Create</button>
+    </div>
+    
+    </form>
+    </div>
+</p-overlayPanel>
+<p-overlayPanel 
+  [dismissable]="true" [showCloseIcon]="true"
+  [appendTo]="'body'"
+  (onShow)='CreateLightBoxSubmitted = false;'
+  [baseZIndex]="9999999" #Tender_Payment_Mode>
+  <div class="form-horizontal">
+    <form
+    name="OrgForm"
+    #OrgForm="ngForm"
+    novalidate
+    >
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">Payment Mode<sup class="text-danger">*</sup ></label>
+      <input
+            type="text"
+            class="form-control"
+            name="name"
+            #name="ngModel"
+            [(ngModel)]="TenderPaymentMode1"
+            placeholder="Payment Mode"
+            allow-pattern="([a-z ]|\.)"
+            [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}"
+            required
+          />
+      </div>
+      <button (click)='LightBoxSave("TenderPaymentMode1","Tender_Payment_Mode")'
+       class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+       [disabled]="Spinner"
+       >
+       <p-progressSpinner
+         *ngIf="Spinner"
+         [style]="{ width: '15px', height: '15px' }"
+         strokeWidth="8"
+         animationDuration=".5s"
+       ></p-progressSpinner>
+        <i class="fa fa-fw  fa-plus"></i>  Create</button>
+    </div>
+    
+    </form>
+    </div>
+</p-overlayPanel>
+
 <p-dialog
 [header]="'Create Category'"
 [appendTo]="'body'"
@@ -3527,4 +3846,370 @@ novalidate
       CANCEL
     </button>
   </p-footer>
+</p-dialog>
+<!-- ESITMATE -->
+<p-dialog
+  [header]="'Estimate Management'"
+  [appendTo]="'body'"
+  [visible]="EstimateModalFlag"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '75%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+  <form name="EstimateForm" #EstimateForm="ngForm" novalidate>
+  <div class="form-group" style="padding: 0 1em;" >
+    <div class="col-sm-6">
+      <label class="control-label">Estimate Group Name&nbsp;<span class="text-danger" >*</span></label>
+      <span (click)="ToggleEstimateGrp()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+    
+      <p-dropdown
+      [options]="EstimateGroupList"
+      name="EstimateGroup"
+      [(ngModel)]="ObjEstimate.Budget_Group_ID"
+      [showClear]="true"
+      [emptyFilterMessage]="' No Estimate Group Found'"
+      (onChange)="EstimateGroupChange(ObjEstimate.Budget_Group_ID)"
+      [filter]="true"
+      filterBy="label,value.name"
+      [placeholder]="'Select Estimate Group'"
+      [virtualScroll]="true"
+      itemSize="30"
+      #EstimateGroup="ngModel"
+      [styleClass]="
+      EstimateInfoSubmitted && EstimateGroup.errors?.required? 'clearance': ''"
+      [required]="true"
+    >
+    </p-dropdown>
+    </div>
+    <div class="col-sm-6">
+      <label class="control-label">Estimate Sub Group Name&nbsp;<span class="text-danger" >*</span></label>
+      <span (click)="ToggleEstimateSubGrp()" *ngIf='ObjEstimate.Budget_Group_ID' class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+      <p-dropdown
+      [options]="EstimateSubGroupList"
+      name="EstimateSubGroup"
+      [(ngModel)]="ObjEstimate.Budget_Sub_Group_ID"
+      [showClear]="true"
+      [emptyFilterMessage]="' No Estimate Sub Group Found'"
+      (onChange)="EstimateSubGroupChange(ObjEstimate.Budget_Sub_Group_ID)"
+      [filter]="true"
+      filterBy="label,value.name"
+      [placeholder]="'Select Estimate Sub Group'"
+      [virtualScroll]="true"
+      itemSize="30"
+      #EstimateSubGroup="ngModel"
+      [styleClass]="
+      EstimateInfoSubmitted && EstimateSubGroup.errors?.required? 'clearance': ''"
+      [required]="true"
+    >
+    </p-dropdown>
+    </div>
+    <div class="col-sm-3">
+      <label class="control-label">Enter Product Details</label><br />
+      <p-radioButton name="groupname" #groupname='ngModel' value="No" (onClick)='Cleardata3()' label="No" [(ngModel)]="ObjEstimate.Product_Req"></p-radioButton> &nbsp;&nbsp;&nbsp;
+      <p-radioButton name="groupname" #groupname='ngModel' value="Yes" (onClick)='Cleardata3()' label="Yes" [(ngModel)]="ObjEstimate.Product_Req"></p-radioButton>
+                                      
+    </div>
+    <div class="col-sm-6" *ngIf='ObjEstimate.Product_Req ==="Yes"'>
+      <label class="control-label">Product&nbsp;<span class="text-danger" >*</span></label>
+      <p-dropdown
+      [options]="EstimateGroupProductList"
+      name="EstimateGroupProduct"
+      [(ngModel)]="ObjEstimate.Product_ID"
+      [showClear]="true"
+      [emptyFilterMessage]="' No Product Found'"
+      (onChange)="EstimateGroupProductChange(ObjEstimate.Product_ID)"
+      [filter]="true"
+      filterBy="label,value.name"
+      [placeholder]="'Select Product'"
+      [virtualScroll]="true"
+      itemSize="30"
+      #EstimateGroupProduct="ngModel"
+      [styleClass]="
+      EstimateInfoSubmitted && EstimateGroupProduct.errors?.required? 'clearance': ''"
+      [required]="true"
+    >
+    </p-dropdown>
+    </div>
+    <div class="col-sm-3">
+      <label class="control-label">Qty<sup class="text-danger">*</sup></label >
+      <input
+        class="form-control"
+        name="Qty"
+        #Qty="ngModel"
+        [(ngModel)]="ObjEstimate.Qty"
+        (change)="CalculateEstimateAmount()"
+        CompacctDigitonly="true"
+        [ngClass]="{clearance: EstimateInfoSubmitted && Qty?.errors?.required}"
+        placeholder="Qty"
+        [required]="true"
+      />
+    </div>
+    <div class="col-sm-3">
+      <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+      <input
+        class="form-control"
+        name="unit"
+        #unit="ngModel"
+        [(ngModel)]="ObjEstimate.UOM"
+        CompacctDigitonly="true"
+        [ngClass]="{clearance: EstimateInfoSubmitted && unit?.errors?.required}"
+        placeholder="Unit"
+        [required]="true"
+      />
+    </div>
+    <div class="col-sm-3">
+      <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+      <input
+        class="form-control"
+        name="rate"
+        type="text"
+        [ngClass]="{clearance:EstimateInfoSubmitted && rate?.errors?.required }"
+        #rate="ngModel"
+        [(ngModel)]="ObjEstimate.Rate"
+        (change)="CalculateEstimateAmount()"
+        CompacctDigitonly="true"
+        [required]="true"
+        placeholder="Rate"
+      />
+    </div>
+    <div class="col-sm-3">
+      <label class="control-label"> Amount<sup class="text-danger">*</sup></label>
+      <input
+        class="form-control"
+        name="tolamt"
+        #tolamt="ngModel"
+        (change)="CalculateEstimateAmount()"
+        [(ngModel)]="ObjEstimate.Amount"
+        placeholder="Total Amount"
+        [disabled]='true'
+      />
+    </div>
+    <div class="col-sm-3">
+      <button class="btn btn-primary custombutton"
+      (click)="AddEstimate(EstimateForm.form.valid)">    
+      <span class="glyphicon glyphicon-add"></span>&nbsp;Add
+  </button>
+    </div>
+  </div>
+  <div class="form-group" style="margin-top:2.5em;padding: 0 1em;" >
+    <div class="table-responsive no-padding">
+     
+   <table  class="table table-bordered">
+     <thead>
+    <tr style="background-color:#3c8dbc;color:white;" >
+        <th>SL No.</th>
+        <th>Group Name</th>
+        <th>SL No.</th>
+        <th>Sub Group Name</th>
+        <th>Product</th>
+        <th >Qty</th>
+        <th>UOM</th>
+        <th>Rate</th>
+        <th>AMOUNT</th>
+     </tr>
+    </thead>
+    <tbody *ngIf='ShowAddedEstimateProductList.length'>
+
+      <ng-container *ngFor="let data of ShowAddedEstimateProductList">    
+          <tr>
+            <td [attr.rowspan]="data.No_of_Child">{{data.Sl_No}}</td>
+            <td [attr.rowspan]="data.No_of_Child">{{data.Root_Parent_Name}}</td>
+          <ng-container *ngFor="let rowData of data.items; ">
+              <td [attr.rowspan]="rowData.items.length">{{data.Sl_No}}</td>
+              <td [attr.rowspan]="rowData.items.length">{{data.Root_Parent_Name}}</td>
+                <ng-container *ngFor="let rowData2 of rowData.items; let i= index;" >
+                  <td  *ngIf="i===0">{{ rowData2.Product_ID }}</td>
+                  <td  *ngIf="i===0">{{ rowData2.Qty ? rowData2.Qty : '-' }}</td>
+                  <td  *ngIf="i===0">{{ rowData2.UOM ? rowData2.UOM : "-" }}</td>
+                  <td  *ngIf="i===0">{{ rowData2.Rate ? rowData2.Rate : "-" }}</td>
+                  <td  *ngIf="i===0">{{ rowData2.Amount ? rowData2.Amount : "-" }}</td>  
+                </ng-container> 
+          </ng-container>
+        </tr>
+        <ng-container *ngFor="let rowData of data.items; ">
+          <ng-container *ngFor="let rowData2 of rowData.items; let i= index;">
+            <tr *ngIf="i!=0">
+            <td>{{ rowData2.Product_ID }}</td>
+            <td>{{ rowData2.Qty ? rowData2.Qty : '-' }}</td>
+            <td>{{ rowData2.UOM ? rowData2.UOM : "-" }}</td>
+            <td>{{ rowData2.Rate ? rowData2.Rate : "-" }}</td>
+            <td>{{ rowData2.Amount ? rowData2.Amount : "-" }}</td>  
+            </tr>
+          </ng-container>  
+      </ng-container>  
+  </ng-container>
+
+      
+    </tbody>
+   </table>
+    
+    </div>
+  </div>
+    
+
+  </form>
+</div>
+  <p-footer>
+    <button
+      type="button"
+      (click)="EstimateModalFlag = false"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog
+  [header]="'Create Estimate Group'"
+  [appendTo]="'body'"
+  [visible]="EstimateGrpModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="EstimategrForm"
+#EstimategrForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-12">
+    <label class="control-label"
+    >Estimate Group Name<sup class="text-danger">*</sup
+  ></label>
+  <input
+        type="text"
+        class="form-control"
+        name="name"
+        #name="ngModel"
+        [(ngModel)]="EstimateGrpName"
+        placeholder="Estimate Group Name"
+        allow-pattern="([a-z ]|\.)"
+        [ngClass]="{
+          clearance: EstimateGrpSubmitted && name?.errors?.required
+        }"
+        required
+      />
+  </div>
+</div>
+
+</form>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="EstimateGrpModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+<button
+type="submit"
+name="bill"
+class="btn btn-primary pull-right custombutton"
+(click)="CreateEstimateGrp(EstimategrForm.form.valid)"
+id="load2"
+[disabled]="Spinner"
+>
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
+</button>
+</p-footer>
+</p-dialog>
+<p-dialog
+  [header]="'Create Estimate Sub Group'"
+  [appendTo]="'body'"
+  [visible]="EstimateSubGrpModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="EstimateSubgrForm"
+#EstimateSubgrForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-12">
+    <label class="control-label"
+    >Estimate Group Sub Name<sup class="text-danger">*</sup
+  ></label>
+  <input
+        type="text"
+        class="form-control"
+        name="name"
+        #name="ngModel"
+        [(ngModel)]="EstimateSubGrpName"
+        placeholder="Estimate Group Sub Name"
+        allow-pattern="([a-z ]|\.)"
+        [ngClass]="{
+          clearance: EstimateSubGrpSubmitted && name?.errors?.required
+        }"
+        required
+      />
+  </div>
+</div>
+
+</form>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="EstimateGrpModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+<button
+type="submit"
+name="bill"
+class="btn btn-primary pull-right custombutton"
+(click)="CreateEstimateSubGrp(EstimateSubgrForm.form.valid)"
+id="load2"
+[disabled]="Spinner"
+>
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
+</button>
+</p-footer>
 </p-dialog>

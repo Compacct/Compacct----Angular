@@ -41,8 +41,11 @@ div.label-t{
   width: 50%;
 }
 
-// adjusts font, color and other elements of the toast window if needed
+/* // adjusts font, color and other elements of the toast window if needed */
 .boqExcel-toast .ui-toast-message-content {
   font-family: 'Courier New', Courier, monospace;
   background: #FFD07B;
+}
+.ui-radiobutton{
+  margin-right: 1em;
 }

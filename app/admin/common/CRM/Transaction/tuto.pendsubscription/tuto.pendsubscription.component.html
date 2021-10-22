@@ -431,6 +431,12 @@
                                   itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
                                   name="Assigned3"></p-multiSelect>
                               </div>
+                              <div class="col-sm-3" *ngIf='BackupRegisteredStudentList.length'>
+                                <label class="control-label">Payment Status <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistPaymentStatus" [(ngModel)]="SelectedDistPaymentStatus" [virtualScroll]="true"
+                                  itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                                  name="Payment"></p-multiSelect>
+                              </div>
                             </div>
 
                           </form>
@@ -466,6 +472,8 @@
                                         <th>Class </th>
                                         <th>Ref Code</th>
                                         <th>Subscribed</th>
+                                        <th>Payment Status</th>
+                                        <th>Paid Amount</th>
 
                                     </tr>
                                 </ng-template>
@@ -479,6 +487,8 @@
                                         <td>{{col.Class_Name ? col.Class_Name :'-'}}</td>
                                         <td>{{col.Ref_Code}}</td>
                                         <td>{{col.Subscribed}}</td>
+                                        <td>{{col.Payment_Status}}</td>
+                                        <td>{{col.Paid_Amount}}</td>
                                     </tr>
                                 </ng-template>
                                 <ng-template

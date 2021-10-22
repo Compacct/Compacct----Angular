@@ -65,6 +65,8 @@ import {SelectButtonModule} from 'primeng/selectbutton';
 import {TooltipModule} from 'primeng/tooltip';
 import {DataViewModule} from 'primeng/dataview';
 import {PanelModule} from 'primeng/panel';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
+
 // SPINNER
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 // SYN
@@ -396,7 +398,8 @@ import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-t
     TreeModule,
     SelectButtonModule,
     DataViewModule,
-    PanelModule
+    PanelModule,
+    OverlayPanelModule
   ],
   exports: [],
   providers: [

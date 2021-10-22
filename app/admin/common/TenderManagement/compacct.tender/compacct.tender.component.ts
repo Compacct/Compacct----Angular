@@ -8,6 +8,7 @@ import * as moment from "moment";
 declare var $:any;
 import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
+import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 
 @Component({
   selector: 'app-compacct.tender',
@@ -179,11 +180,48 @@ export class CompacctTenderComponent implements OnInit {
   BOQExcelGrandTotal = undefined;
   BOQExcelLessTotal = undefined;
   BOQExcelQuote = undefined;
+
+  TenderIssueDate = new Date();
+  TenderExpiryDate = new Date();
+  EMDIssueDate = new Date();
+  EMDExpiryDate = new Date();
+  PerformanceIssueDate = new Date();
+  PerformanceExpiryDate = new Date();
+  // Estimate
+  EstimateModalFlag = false;
+  EstimateInfoSubmitted = false;
+  ObjEstimate:any = {};
+  EstimateGroupList = [];
+  EstimateSubGroupList = [];
+  EstimateGroupProductList = [];
+  AddedEstimateProductList = [];
+  ShowAddedEstimateProductList = [];
+
+  EstimateGrpSubmitted = false;
+  EstimateGrpName = undefined;
+  EstimateGrpModal = false;
+
+  EstimateSubGrpSubmitted = false;
+EstimateSubGrpName = undefined;
+EstimateSubGrpModal = false;
+rowGroupMetadata: any;
+rowGroupMetadata2: any;
+
+CreateLightBoxSubmitted = false;
+TenderCallingDiv = undefined;
+TenderExecutionDiv = undefined;
+TenderType = undefined;
+TenderCategory = undefined;
+TenderPaymentMode1 = undefined;
+TenderCallingDivList = [];
+TenderExecutionDivList = [];
+TenderInfoEnqList = [];
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
+    private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService) { }
 
   ngOnInit() {
@@ -204,6 +242,11 @@ export class CompacctTenderComponent implements OnInit {
     this.GetAuthorityList();
     this.GetReasonList();
     this.GetFinancialYearList();
+
+    this.GetEstimateGroup();
+    this.GetTenderCallingDiv();
+    this.GetTenderInfoEnqSRC();
+    this.GetTenderExecutionDiv();
   }
 
    // INIT DATA
@@ -3129,6 +3172,357 @@ BOQUploader(fileData) {
   // this.$http.post(endpoint, formData).subscribe(data => {
   //   console.log(data);
   // });
+}
+
+
+// ESTIMATE
+ToggleEstimateGrp(){
+  this.EstimateGrpSubmitted = false;
+  this.EstimateGrpName = undefined;
+  this.EstimateGrpModal = true;
+  this.Spinner = false;
+ }
+ CreateEstimateGrp(valid){
+  this.EstimateGrpSubmitted = true;
+  if(valid) {
+    this.Spinner = true;
+    const temp = {
+      Budget_Group_Name : this.EstimateGrpName      
+    }
+    const obj = {
+      "SP_String": "SP_Tender_Management_All",
+      "Report_Name_String": "Budget_Group_Create",
+      "Json_Param_String" : JSON.stringify([temp]) 
+    }
+    this.GlobalAPI
+        .postData(obj)
+        .subscribe((data: any) => {
+          console.log(data)
+      if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: "Succesfully Budget Group Created"
+          });
+        this.GetEstimateGroup();
+        this.EstimateGrpSubmitted = false;
+        this.EstimateGrpName = undefined;
+        this.EstimateGrpModal = false;
+        this.EstimateSubGroupList = [];
+        this.Spinner = false;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      });
+  }
+ }
+ ToggleEstimateSubGrp(){
+  this.EstimateSubGrpSubmitted = false;
+  this.EstimateSubGrpName = undefined;
+  this.EstimateSubGrpModal = true;
+  this.Spinner = false;
+   if(this.ObjEstimate.Budget_Group_ID) {
+    this.EstimateSubGrpModal = true;
+   }
+ }
+ CreateEstimateSubGrp(valid){
+  this.EstimateSubGrpSubmitted = true;
+  if(valid) {
+    this.Spinner = true;
+    const temp = {
+      Budget_Group_ID : this.ObjEstimate.Budget_Group_ID,
+      Budget_Sub_Group_Name : this.EstimateSubGrpName
+    }
+    const obj = {
+      "SP_String": "SP_Tender_Management_All",
+      "Report_Name_String": "Budget_Sub_Group_Create",
+      "Json_Param_String" : JSON.stringify([temp]) 
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log(data)
+      if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: "Succesfully Budget Group Created"
+          });
+        this.EstimateGroupChange(this.ObjEstimate.Budget_Group_ID);
+        this.EstimateSubGrpSubmitted = false;
+        this.EstimateSubGrpName = undefined;
+        this.EstimateSubGrpModal = false;
+        this.Spinner = false;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      });
+  }
+ }
+
+
+GetEstimateGroup(){
+    const obj = {
+      "SP_String": "SP_Tender_Management_All",
+      "Report_Name_String": "Get_Budget_Group_Name",
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log(data)
+          data.forEach(el => {
+              el['label'] = el.Budget_Group_Name;
+              el['value'] = el.Budget_Group_ID;
+          });
+          this.EstimateGroupList = data;
+    });
+}
+EstimateGroupChange(id){
+  this.EstimateSubGroupList = [];
+  this.ObjEstimate.Budget_Group_Name = undefined;
+  this.ObjEstimate.Budget_Sub_Group_ID = undefined;
+  this.ObjEstimate.Budget_Sub_Group_Name = undefined;
+  if(id) {
+    this.ObjEstimate.Budget_Group_Name = this.EstimateGroupList.filter(ob => ob.Budget_Group_ID.toString() === id.toString())[0].Budget_Group_Name;
+    const obj = {
+      "SP_String": "SP_Tender_Management_All",
+      "Report_Name_String": "Get_Budget_Sub_Group_Name",
+      "Json_Param_String" : JSON.stringify([{'Budget_Group_ID': id }])
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log(data)
+          data.forEach(el => {
+            el['label'] = el.Budget_Sub_Group_Name;
+            el['value'] = el.Budget_Sub_Group_ID;
+        });
+          this.EstimateSubGroupList = data;
+    });
+  }
+  
+}
+EstimateSubGroupChange(id){
+  this.ObjEstimate.Budget_Sub_Group_Name = undefined;
+  if(id) {
+    this.ObjEstimate.Budget_Sub_Group_Name = this.EstimateSubGroupList.filter(ob => ob.Budget_Sub_Group_ID.toString() === id.toString())[0].Budget_Sub_Group_Name;
+    
+  }
+}
+OpenEstimate(obj){
+  this.EstimateInfoSubmitted = false;
+  if(obj) {
+    this.EstimateModalFlag = true;
+  }
+}
+CalculateEstimateAmount() {
+  this.ObjEstimate.Amount = undefined;
+  if(this.ObjEstimate.Qty && this.ObjEstimate.Rate) {
+    this.ObjEstimate.Amount = (Number(this.ObjEstimate.Rate) * Number(this.ObjEstimate.Qty)).toFixed(2);
+  }
+}
+Cleardata3() {
+}
+AddEstimate(valid){
+  this.EstimateInfoSubmitted = true;
+  if(valid) {
+      this.ShowAddedEstimateProductList = [];
+    const extimateObj = {...this.ObjEstimate};
+    extimateObj.items = [];
+    this.ObjEstimate = {};
+    this.AddedEstimateProductList.push(extimateObj);
+      this.EstimateInfoSubmitted = false;
+      this.ShowAddedEstimateProductList = this.getNestedChildren(this.AddedEstimateProductList)
+    console.log(this.ShowAddedEstimateProductList)
+    
+  }
+
+}
+getNestedChildren(arr) {
+  var out = []
+  var WholeArr = [];
+  for (var i = 0; i < arr.length; i++) {
+    var count = 0;
+    var out2 = []
+      if(out.indexOf(arr[i]['Budget_Group_ID']) === -1) {
+        out.push(arr[i]['Budget_Group_ID']);
+        const ParentDub =  arr.filter(obj => obj.Budget_Group_ID == arr[i].Budget_Group_ID);
+        let childParent = [];
+        let childDubLength = 0;
+        if(ParentDub.length) {
+           for (var k = 0; k < ParentDub.length; k++) {
+            var count = 0;
+              if(out2.indexOf(ParentDub[k]['Budget_Sub_Group_ID']) === -1) {
+                out2.push(ParentDub[k]['Budget_Sub_Group_ID']);
+                const childDub =  ParentDub.filter(obj => obj.Budget_Group_ID == arr[i].Budget_Group_ID && obj.Budget_Sub_Group_ID == ParentDub[k].Budget_Sub_Group_ID);
+                childDubLength = childDub.length; 
+                childParent.push({ 
+                  'Sl_No' : (out.length).toString() + 'a' ,
+                  'Child_Parent_ID' : ParentDub[k]['Budget_Sub_Group_ID'],
+                  'Child_Parent_Name' :ParentDub[k]['Budget_Sub_Group_Name'],
+                  'items' : childDub
+                })
+              }
+            }
+        } else {
+          const childDub =  ParentDub.filter(obj => obj.Budget_Group_ID == arr[i].Budget_Group_ID && obj.Budget_Sub_Group_ID == arr[i].Budget_Sub_Group_ID);
+          childDubLength = childDub.length;
+          childParent.push({ 
+          'Sl_No' : (out.length).toString() + 'a' ,
+          'Child_Parent_ID' : arr[i]['Budget_Sub_Group_ID'],
+          'Child_Parent_Name' : arr[i]['Budget_Sub_Group_Name'],
+          'items' : childDub
+        })
+        }
+        
+        const RootObj = { 
+          'Sl_No' : (out.length).toString() ,
+          'Root_Parent_ID' : arr[i]['Budget_Group_ID'],
+          'Root_Parent_Name' : arr[i]['Budget_Group_Name'],
+          'No_of_Child' : childDubLength,
+          'items' : childParent
+        }
+        WholeArr.push(RootObj);
+      } else {
+
+      }
+  }
+  return WholeArr
+}
+updateRowGroupMetaData() {
+  this.rowGroupMetadata = {};
+  if (this.AddedEstimateProductList) {
+      for (let i = 0; i < this.AddedEstimateProductList.length; i++) {
+          let rowData = this.AddedEstimateProductList[i];
+          let Budget_Group_ID = rowData.Budget_Group_ID;
+          if (i == 0) {
+              this.rowGroupMetadata[Budget_Group_ID] = { index: 0, size: 1 };
+          }
+          else {
+              let previousRowData = this.AddedEstimateProductList[i - 1];
+              let previousRowGroup = previousRowData.Budget_Group_ID;
+              if (Budget_Group_ID === previousRowGroup)
+                  this.rowGroupMetadata[Budget_Group_ID].size++;
+              else
+                  this.rowGroupMetadata[Budget_Group_ID] = { index: i, size: 1 };
+          }
+      }
+  }
+  console.log(this.rowGroupMetadata)
+}
+GetEstimateByGroup(){
+  let arr = [];
+  if(this.AddedEstimateProductList.length) {
+    const MatchedGroupArr = this.AddedEstimateProductList.filter(ob => ob.Budget_Group_ID.toString() === this.ObjEstimate.Budget_Group_ID.toString());
+    if(MatchedGroupArr.length) {
+
+    } else {
+    this.AddedEstimateProductList.push(this.ObjEstimate);
+    this.ObjEstimate = {};
+    this.EstimateInfoSubmitted = false;
+  }
+}
+}
+SaveEsitimate(valid){
+
+}
+
+// NEW 
+GetTenderCallingDiv() {
+  this.$http
+    .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Calling_Div_Json")
+    .subscribe((data: any) => {
+      this.TenderCallingDivList = data ? JSON.parse(data) : [];
+    });
+}
+GetTenderInfoEnqSRC() {
+  this.$http
+    .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Enq_Source_Json")
+    .subscribe((data: any) => {
+      this.TenderInfoEnqList = data ? JSON.parse(data) : [];
+    });
+}
+GetTenderExecutionDiv() {
+  this.$http
+    .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Execution_Div_Json")
+    .subscribe((data: any) => {
+      this.TenderExecutionDivList = data ? JSON.parse(data) : [];
+    });
+}
+
+LightBoxSave(val,field) {
+  console.log(val)
+  if(this[val]) {
+    const obj = {};obj[field] = this[val];
+    let UrlAddress;
+    let refreshFunction;
+    if(field === 'Tender_Calling_Div_Name') {
+      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Calling_Div'
+      refreshFunction = 'GetTenderCallingDiv';
+    }
+    if(field === 'Tender_Execution_Div_Name') {
+      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Execution_Div'
+      refreshFunction = 'GetTenderCallingDiv';
+    }
+    if(field === 'Tender_Type_Name') {
+      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Type'
+      refreshFunction = 'GetTypeList';
+    }
+    if(field === 'Tender_Category_Name') {
+      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Category'
+      refreshFunction = 'GetTenderCategoryList';
+    }
+    if(field === 'Tender_Payment_Mode') {
+      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Payment_Type'
+      refreshFunction = 'GetPaymentList';
+    }
+    if(field === 'Enq_Source_Name') {
+      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Enq_Source'
+      refreshFunction = 'GetTenderCallingDiv';
+    }
+    this.Spinner = true;
+    this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+      console.log(data)
+    if (data.success) {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "",
+          detail: "Succesfully "+field+" Created"
+        });
+      this[refreshFunction]();
+      this.CreateLightBoxSubmitted = false;
+      this[val] = undefined;
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+    });
+
+  }
 }
 }
 class Tender{

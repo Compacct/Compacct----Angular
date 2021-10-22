@@ -36,6 +36,8 @@ export class TutoPendsubscriptionComponent implements OnInit {
   BackupRegisteredStudentList = [];
   DistSubscribed =[];
   SelectedDistSubscribed =[];
+  DistPaymentStatus =[];
+  SelectedDistPaymentStatus =[];
   searchFields =[];
   OrderNo = undefined;
   constructor(
@@ -115,6 +117,8 @@ export class TutoPendsubscriptionComponent implements OnInit {
     this.RegisteredStudentList = [];
     this.DistSubscribed =[];
     this.SelectedDistSubscribed =[];
+    this.DistPaymentStatus =[];
+    this.SelectedDistPaymentStatus =[];
     this.searchFields =[];
     const start = this.RegisStudentsearchObj.Start_Date
     ? this.DateService.dateConvert(new Date(this.RegisStudentsearchObj.Start_Date))
@@ -142,28 +146,41 @@ export class TutoPendsubscriptionComponent implements OnInit {
   }
   GetDistinct() {
     let DSubscribed = [];
+    let DPaymentStatus = [];
   this.DistSubscribed =[];
   this.SelectedDistSubscribed =[];
+  this.DistPaymentStatus =[];
+  this.SelectedDistPaymentStatus =[];
   this.searchFields =[];
     this.RegisteredStudentList.forEach((item) => {
       if (DSubscribed.indexOf(item.Subscribed) === -1) {
         DSubscribed.push(item.Subscribed);
         this.DistSubscribed.push({ label: item.Subscribed, value: item.Subscribed });
       }
+      if (DPaymentStatus.indexOf(item.Payment_Status) === -1) {
+        DPaymentStatus.push(item.Payment_Status);
+        this.DistPaymentStatus.push({ label: item.Payment_Status, value: item.Payment_Status });
+      }
     });
     this.BackupRegisteredStudentList = [...this.RegisteredStudentList];
   }
   FilterDist() {
     let DSubscribed = [];
+    let DPaymentStatus = [];
     this.searchFields = [];
     if (this.SelectedDistSubscribed.length) {
       this.searchFields.push('Subscribed');
       DSubscribed = this.SelectedDistSubscribed;
     }
+    if (this.SelectedDistPaymentStatus.length) {
+      this.searchFields.push('Payment_Status');
+      DPaymentStatus = this.SelectedDistPaymentStatus;
+    }
     this.RegisteredStudentList = [];
     if (this.searchFields.length) {
       let LeadArr = this.BackupRegisteredStudentList.filter(function (e) {
-        return (DSubscribed.length ? DSubscribed.includes(e['Subscribed']) : true)
+        return ((DSubscribed.length ? DSubscribed.includes(e['Subscribed']) : true)
+        && (DPaymentStatus.length ? DPaymentStatus.includes(e['Payment_Status']) : true))
       });
       this.RegisteredStudentList = LeadArr.length ? LeadArr : [];
     } else {
