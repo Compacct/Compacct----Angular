@@ -198,7 +198,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     this.mismatch = true;
     const sameValArr = this.paymentList.filter(item=> item.Total_Amount !== Number(item.Amount) );
     if(this.paymentList.length && this.closeingstatus){
-      if( !sameValArr.length && this.closeingUpdate === this.closeingstatus){
+      if( !sameValArr.length && this.closeingUpdate === this.closeingstatus && this.closeingUpdate === "YES"){
         this.saveCheck();
       } else{
         const msg = this.closeingUpdate !== this.closeingstatus ? "CLOSEING STOCK UPDATED MISMATCHED" : "AMOUNT MISMATCHED"
@@ -279,7 +279,7 @@ export class K4cDayEndProcessComponent implements OnInit {
           key: "compacct-toast",
           severity: "success",
           summary: "Succesfully ",
-          detail: "Dat End Prosess Succesfully Save"
+          detail: "Day End Process Succesfully Saved"
         });
       }
     })

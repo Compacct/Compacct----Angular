@@ -36,6 +36,11 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
   NoPhoneFlag = false;
   takeawayflag = false;
   NoPhonedisable = false;
+  dateList: any;
+  billdate: Date;
+  PreviousDate: any;
+  EODCheckFlag = false; 
+  EODstatus: any;
 
 
   constructor( private Header: CompacctHeader,
@@ -63,6 +68,8 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     this.GetTodaysDel();
     this.GetHoldBill();
     this.GetHoldOrder();
+    this.getbilldate();
+    this.EODCheck();
   }
   ngOnDestroy() {
     if ($(".content-header").hasClass("hide-pos")) {
@@ -235,7 +242,17 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     this.GSTvalidFlag = false;
     this.ClickedOnlineLedger = {};
     this.CustomerDetailsFormSubmitted = false;
-    this.CustomerDetailsPopUpFlag = true;
+    if (this.EODstatus === "YES"){
+      this.CustomerDetailsPopUpFlag = true;
+    } else {
+        this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Cannot found EOD In Previous Date ",
+            //detail: "Previous Date"
+          })
+    }
     this.locationInput.nativeElement.value = '';
     this.NoPhonedisable = false;
     this.NoPhoneFlag = false;
@@ -395,6 +412,43 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     return flag;
 
   }
+  getbilldate(){
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Outlet Bill Date",
+      //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.dateList = data;
+    //console.log("this.dateList  ===",this.dateList);
+     this.billdate =  new Date(data[0].Outlet_Bill_Date);
+     this.PreviousDate = this.DateService.dateConvert(new Date(this.billdate));
+     console.log("this.billdate  ===",this.PreviousDate);
+    //  let Datetemp:Date =  new Date(data[0].Outlet_Bill_Date)
+    //   const Timetemp =  Datetemp.getDate() - 1;
+    //   this.PreviousDate = new Date(Timetemp);
+    //   console.log("minDate==", this.PreviousDate)
+    // on save use this
+   // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
+
+  })
+  }
+  EODCheck(){
+    const TempObj = {
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Date : this.PreviousDate
+   }
+    const obj = {
+      "SP_String": "SP_K4C_Day_End_Process",
+      "Report_Name_String": "Check_Day_End",
+      "Json_Param_String": JSON.stringify([TempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.EODstatus = data[0].Status;
+      console.log("EOD status ===" , this.EODstatus);
+    })
+  }
 
   OnCustomerDetailsSubmit(valid) {
     this.CustomerDetailsFormSubmitted = true;
@@ -466,7 +520,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
         Browse_Flag : true
       }
       this.DynamicRedirectTo(obj);
-    }
+    } 
     if(val === 'order') {
       const obj = {
         Redirect_To : './K4C_Outlet_Advance_Order',
@@ -474,21 +528,22 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
       }
       this.DynamicRedirectTo(obj);
     }
-    if(val === 'factory') {
+    if(val === 'factory' && this.EODstatus === "YES") {
       const obj = {
         Redirect_To : './K4C_Factory_Return',
         //Browse_Flag : false
         //Create_Flag : true
       }
       this.DynamicRedirectTo(obj);
+    } else {
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Cannot found EOD In Previous Date ",
+          //detail: "Previous Date"
+        })
     }
-    // if(val === 'Browsefactory') {
-    //   const obj = {
-    //     Redirect_To : './K4C_Factory_Return',
-    //     Browse_Flag : true
-    //   }
-    //   this.DynamicRedirectTo(obj);
-    // }
     if(val === 'requisition') {
       const obj = {
         Redirect_To : './K4C_Outlet_Requisition',
@@ -503,12 +558,20 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
       }
       this.DynamicRedirectTo(obj);
     }
-    if(val === 'outletstocktrancfer') {
+    if(val === 'outletstocktrancfer' && this.EODstatus === "YES") {
       const obj = {
         Redirect_To : './K4C_Outlet_Stock_Transfer',
         //Browse_Flag : true
       }
       this.DynamicRedirectTo(obj);
+    } else {
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Cannot found EOD In Previous Date ",
+          //detail: "Previous Date"
+        })
     }
     if(val === 'viewstock') {
       const obj = {

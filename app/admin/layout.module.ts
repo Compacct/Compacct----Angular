@@ -211,6 +211,7 @@ import { CompacctCivildailyJobComponent } from "./common/CivilManagement/compacc
 import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tender/compacct.tender.component";
 import { CrmLeadOpportunitiesComponent } from './common/CRM/Transaction/crm-lead-opportunities/crm-lead-opportunities.component';
 import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-task-details/crm-lead-task-details.component';
+import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManagement/Production/k4c-stock-adjustment-store-items/k4c-stock-adjustment-store-items.component';
 
 @NgModule({
   declarations: [
@@ -357,7 +358,8 @@ import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-t
     CompacctCivildailyJobComponent,
     CompacctRunningBillComponent,
     CrmLeadOpportunitiesComponent,
-    CrmLeadTaskDetailsComponent
+    CrmLeadTaskDetailsComponent,
+    K4cStockAdjustmentStoreItemsComponent
   ],
   imports: [
     CommonModule,

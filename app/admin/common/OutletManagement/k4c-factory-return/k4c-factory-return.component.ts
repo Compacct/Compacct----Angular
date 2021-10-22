@@ -213,6 +213,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   getselectproduct(){
     this.ObjProductaddForm = new ProductaddForm();
     this.selectProduct = [];
+    this.MTdisabled = true;
     //if(this.ObjaddbillForm.Cost_Cen_ID){
      //this.ObjProductaddForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     // console.log("Doc_Date =",this.DateService.dateConvert(new Date(this.myDate)))
@@ -481,7 +482,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   this.RFactoryaddFormSubmitted = false;
   this.ObjProductaddForm = new ProductaddForm();
   this.BatchNo = [];
-  this.MTdisabled = true;
+  //this.MTdisabled = true;
   // this.exProdFlag = false;
   // this.ExpiredProductFLag = false;
   // var ReturnReasonid1 = this.ReturnReasonid.filter(function(value, index, arr){
@@ -1137,6 +1138,26 @@ onReject(){
   }
 
 
+ }
+ clearbutton(){
+  this.ObjSaveForm.Material_Type = undefined;
+  this.ObjProductaddForm = new ProductaddForm();
+  //this.ObjSaveForm = new SaveForm();
+  this.BatchNo = [];
+  this.RFactoryaddFormSubmitted = false;
+  this.MTdisabled = false;
+  this.productaddSubmit = [];
+  //this.ObjSaveForm.Cost_Cent_ID = this.Cost_Center.length === 1 ? this.Cost_Center[0].Cost_Cent_ID : undefined;
+  //this.ObjSaveForm.Godown_ID = this.toGodownList.length ? this.toGodownList[0].godown_id : undefined;
+  this.ObjSaveForm.Return_Reason_ID = this.ReturnReasonid.length ? this.ReturnReasonid[0].Return_Reason_ID : undefined;
+  this.ExpiredProductFLag = false;
+  this.getReturnReason("N");
+  if(this.ObjSaveForm.Material_Type) {
+    this.getselectproduct();
+  } else {
+    this.ObjSaveForm.Material_Type = undefined;
+    this.selectProduct = [];
+  }
  }
 
 

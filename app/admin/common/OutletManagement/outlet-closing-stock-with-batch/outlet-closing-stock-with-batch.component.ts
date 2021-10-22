@@ -47,6 +47,9 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   remarks = undefined;
   editList = [];
   del_doc_no: any;
+  minDate:Date;
+  maxDate:Date;
+  EODstatus: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -58,6 +61,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    $(".content-header").removeClass("collapse-pos");
+    $(".content").removeClass("collapse-pos");
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
       Header: "Outlet Closing Stock With Batch",
@@ -84,7 +89,16 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.dateList = data;
    //console.log("this.dateList  ===",this.dateList);
-  this.BillDate =  new Date(data[0].Outlet_Bill_Date);
+   this.BillDate =  new Date(data[0].Outlet_Bill_Date);
+      console.log("Datevalue",this.BillDate);
+      let Datetemp:Date =  new Date(data[0].Outlet_Bill_Date)
+      const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 1);
+      this.minDate = new Date(Timetemp);
+      console.log("minDate==", this.minDate)
+      let tempDate:Date =  new Date(data[0].Outlet_Bill_Date)
+      const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 1);
+      this.maxDate = this.BillDate;
+      console.log("maxDate==", this.maxDate)
    // on save use this
   // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
 
@@ -180,14 +194,46 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
 
     });
   }
-  GetProduct(valid){
+  EODCheck(valid){
+    this.productlist = [];
     this.OTclosingstockwithbatchFormSubmitted = true;
-    if(valid){
+    if(valid) {
+    const TempObj = {
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Date : this.DateService.dateConvert(new Date(this.BillDate))
+   }
+    const obj = {
+      "SP_String": "SP_K4C_Day_End_Process",
+      "Report_Name_String": "Check_Closing_Stock_Status",
+      "Json_Param_String": JSON.stringify([TempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.EODstatus = data;
+      console.log("EOD status ===" , this.EODstatus);
+      if (data[0].Closing_Stock_Status === "NO") {
+        this.GetProduct();
+      } 
+      else if (data[0].Closing_Stock_Status === "YES") {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Already Saved !",
+          detail: "Please go to browse and update"
+        })
+      }
+    })
+   }
+  }
+  GetProduct(){
+    // this.OTclosingstockwithbatchFormSubmitted = true;
+    // if(valid){
     const tempObj = {
       Brand_ID : this.ObjOTclosingwithbatch.Brand_ID,
       Cost_Cen_ID : this.ObjOTclosingwithbatch.Cost_Cen_ID,
       From_godown_id : this.ObjOTclosingwithbatch.godown_id,
-      Product_Type_ID : 0
+      Product_Type_ID : 0,
+      Bill_Date : this.DateService.dateConvert(new Date(this.BillDate))
     }
     const obj = {
       "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
@@ -203,7 +249,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         this.productlist[i].Closing_Qty = this.productlist[i].batch_Qty
        }
     })
-  }
+ // }
   }
   getTotalValue(key){
     let Amtval = 0;
