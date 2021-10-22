@@ -39,8 +39,8 @@
                                         <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="Brand" #Brand="ngModel" [(ngModel)]="ObjBrowse.Brand_ID" [ngClass]="{'clearance': SearchFormSubmitted && Brand?.errors?.required}" required>
                                   <option  [ngValue]="undefined">Select</option>
-                              <option *ngFor="let option of BrandList" value="{{option.value}}">
-                                  {{option.Name}}
+                              <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                  {{option.Brand_INI}}
                               </option>
                           </select>
                                     </div>
@@ -161,8 +161,8 @@
                                                         <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="ObjStockAdStoreItems.Brand_ID" (change)="getCostCenter()" [ngClass]="{'clearance': StockAdjStoreItemsFormSubmitted && Brand_ID?.errors?.required}" [disabled]="BrandDisable"
                                                             required>
                                              <option  [ngValue]="undefined">Select</option>
-                                         <option *ngFor="let option of BrandList" value="{{option.value}}">
-                                             {{option.Name}}
+                                         <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                             {{option.Brand_INI}}
                                          </option>
                               </select>
                                                     </div>
@@ -189,7 +189,7 @@
                                                     </div>
                                                     <div class="col-sm-2">
                                                         <label class="control-label">Remarks</label>
-                                                        <textarea class="form-control" name="Remark" #Ramark="ngModel" [(ngModel)]="ObjStockAdStoreItems.Remarks" [ngClass]="{'clearance':StockAdjStoreItemsFormSubmitted && Remark?.errors?.required}"></textarea>
+                                                        <textarea class="form-control" name="Remark" #Remark="ngModel" [(ngModel)]="ObjStockAdStoreItems.Remarks" [ngClass]="{'clearance':StockAdjStoreItemsFormSubmitted && Remark?.errors?.required}"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">

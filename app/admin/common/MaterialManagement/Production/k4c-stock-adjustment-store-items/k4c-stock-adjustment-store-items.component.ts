@@ -59,7 +59,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
-      Header: "Stock Adjustment (Store Items)",
+      Header: "Receive Stock Adjustment (Store Items)",
       Link: "Material Management -> Stock Adjustment (Store Items)"
     });
     this.GetBrand();
@@ -73,72 +73,72 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
   }
+//   GetBrand(){
+//     console.log("Brand ===", this.BrandList)
+//       this.BrandList =[
+//         {value : "1" , Name : "C4C"},
+//         {value : "2" , Name : "K4C"},
+//         {value : "Without Brand" , Name : "Without Brand"}
+//       ];
+// }
   GetBrand(){
-    console.log("Brand ===", this.BrandList)
-      this.BrandList =[
-        {value : "1" , Name : "C4C"},
-        {value : "2" , Name : "K4C"},
-        {value : "Without Brand" , Name : "Without Brand"}
-      ];
-}
-  // GetBrand(){
-  //   this.BrandList = [];
-  //   if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
-  //     const obj = {
-  //       "SP_String": "SP_Issue_Stock_Adjustment",
-  //       "Report_Name_String": "GET_Brand_For_Outlet",
-  //       "Json_Param_String": JSON.stringify([{Cost_Cent_ID:this.$CompacctAPI.CompacctCookies.Cost_Cen_ID}])
-  //     }
-  //     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //       this.BrandList = data;
-  //       this.ObjStockAdStoreItems.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
-  //       this.ObjBrowse.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
-  //       //this.ObjIssueStockAd.Brand_ID = data[0].Brand_INI;
-  //       this.BrandDisable = true;
-  //       this.GetProduct();
-  //        console.log("Brand List ===",this.BrandList);
-  //     })
-  //   } else {
-  //   const obj = {
-  //     "SP_String": "SP_Issue_Stock_Adjustment",
-  //     "Report_Name_String": "Get - Brand"
-  //   }
-  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //     this.BrandList = data;
-  //     //this.Objproduction.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
-  //     this.BrandDisable = false;
-  //      //console.log("Brand List ===",this.BrandList);
-  //   })
-  // }
-  // }
+    this.BrandList = [];
+    if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
+      const obj = {
+        "SP_String": "SP_Issue_Stock_Adjustment",
+        "Report_Name_String": "GET_Brand_For_Outlet",
+        "Json_Param_String": JSON.stringify([{Cost_Cent_ID:this.$CompacctAPI.CompacctCookies.Cost_Cen_ID}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.BrandList = data;
+        this.ObjStockAdStoreItems.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
+        this.ObjBrowse.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
+        //this.ObjIssueStockAd.Brand_ID = data[0].Brand_INI;
+        this.BrandDisable = true;
+        this.GetProduct();
+         console.log("Brand List ===",this.BrandList);
+      })
+    } else {
+    const obj = {
+      "SP_String": "SP_Issue_Stock_Adjustment",
+      "Report_Name_String": "Get - Brand"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.BrandList = data;
+      //this.Objproduction.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
+      this.BrandDisable = false;
+       //console.log("Brand List ===",this.BrandList);
+    })
+  }
+  }
   
   getCostCenter(){
     this.ObjStockAdStoreItems.Cost_Cen_ID = undefined;
-    if (this.ObjStockAdStoreItems.Brand_ID ==='Without Brand') {
-    const obj = {
-      "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Cost Center Name All",
-      "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
-      //"Json_Param_String": JSON.stringify([{User_ID : 61}])
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.CostCenter = data;
-    // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
-     //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
-    // this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    // this.costcentdisableflag = true;
-     this.getGodown();
-     this.GetProduct();
-    //  } else {
-    //   this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    //   this.costcentdisableflag = false;
-    //   this.getGodown();
-    //   this.GetProduct();
-    //  }
-      console.log("this.Outletid ======",this.CostCenter);
+  //   if (this.ObjStockAdStoreItems.Brand_ID ==='Without Brand') {
+  //   const obj = {
+  //     "SP_String": "SP_Controller_Master",
+  //     "Report_Name_String": "Get - Cost Center Name All",
+  //     "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+  //     //"Json_Param_String": JSON.stringify([{User_ID : 61}])
+  //    }
+  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //    this.CostCenter = data;
+  //   // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
+  //    //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
+  //   // this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  //   // this.costcentdisableflag = true;
+  //    this.getGodown();
+  //    this.GetProduct();
+  //   //  } else {
+  //   //   this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  //   //   this.costcentdisableflag = false;
+  //   //   this.getGodown();
+  //   //   this.GetProduct();
+  //   //  }
+  //     console.log("this.Outletid ======",this.CostCenter);
 
-    });
-  } else {
+  //   });
+  // } else {
     const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Get - Outlet For Distribution",
@@ -148,21 +148,21 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("costcenterList  ===",data);
       this.CostCenter = data;
-     // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
-        //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
-       // this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-       // this.costcentdisableflag = true;
+     if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
+      //  this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
+      // this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+       this.costcentdisableflag = true;
         this.getGodown();
         this.GetProduct();
-        // } else {
-        //  this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-        //  this.costcentdisableflag = false;
-        //  this.getGodown();
-        //  this.GetProduct();
-        // }
+         } else {
+        // this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+         this.costcentdisableflag = false;
+         this.getGodown();
+         this.GetProduct();
+        }
          console.log("this.Outletid ======",this.CostCenter);
          });
-  }
+ // }
   }
   getGodown(){
     const obj = {
@@ -193,13 +193,13 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
        }
     const TempObj = {
       Brand_ID : Brand,
-      From_Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-      From_godown_id : this.ObjStockAdStoreItems.godown_id,
-      Product_Type_ID : 0
+      // From_Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      // From_godown_id : this.ObjStockAdStoreItems.godown_id,
+      // Product_Type_ID : 0
      }
      const obj = {
       "SP_String": "SP_Issue_Stock_Adjustment",
-      "Report_Name_String": "GET_Products_For_Rcv",
+      "Report_Name_String": "GET_Products_For_Rcv_Store_Items",
      "Json_Param_String": JSON.stringify([TempObj])
 
     }
@@ -242,7 +242,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
     }
     const obj = {
       "SP_String": "SP_Issue_Stock_Adjustment",
-      "Report_Name_String": "Get_expire_Date_time_Respect_to_Batch",
+      "Report_Name_String": "Get_expire_Date_time_Respect_to_Batch_store_item",
       "Json_Param_String": JSON.stringify([tempobj])
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -260,7 +260,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
       key: "c",
       sticky: true,
       severity: "warn",
-      summary: "Batch not found in Production! Want to create?",
+      summary: "Batch not found in Purchase challan! Want to create?",
       detail: "Confirm to proceed"
       });
       }
@@ -357,7 +357,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
         Doc_Date : this.DateService.dateConvert(new Date(this.myDate)),
         Cost_Cen_ID	: this.ObjStockAdStoreItems.Cost_Cen_ID,
         godown_id	: this.ObjStockAdStoreItems.godown_id,
-        Narration	: this.ObjStockAdStoreItems.Remarks,
+        Narration	: this.ObjStockAdStoreItems.Remarks ? this.ObjStockAdStoreItems.Remarks : null,
         User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
         Process_ID : 100,
         Brand_ID : this.ObjStockAdStoreItems.Brand_ID,
@@ -390,7 +390,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
     //if(valid){
       const obj = {
         "SP_String": "SP_Issue_Stock_Adjustment",
-        "Report_Name_String" : "Save_Receive_Stock_Movement",
+        "Report_Name_String" : "Save_Receive_Stock_Movement_Store_Items",
        "Json_Param_String": this.GetDataForSave()
 
       }
@@ -449,7 +449,7 @@ const tempobj = {
 }
 const obj = {
   "SP_String": "SP_Issue_Stock_Adjustment",
-  "Report_Name_String": "Browse_Receive_Stock_Adjustment",
+  "Report_Name_String": "Browse_Receive_Stock_Adjustment_Store_Item",
   "Json_Param_String": JSON.stringify([tempobj])
 }
  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -475,7 +475,7 @@ const obj = {
     this.ViewList = [];
     const obj = {
       "SP_String": "SP_Issue_Stock_Adjustment",
-      "Report_Name_String": "Get_Data_Rcv_Stock_Adjustment",
+      "Report_Name_String": "Get_Data_Rcv_Stock_Adjustment_Store_Item",
       "Json_Param_String": JSON.stringify([{Doc_No : this.Doc_No}])
 
     }
@@ -496,16 +496,16 @@ const obj = {
     })
   }
   clearData(){
-    // if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
-    //   this.ObjStockAdStoreItems.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
-    //   this.ObjBrowse.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
-    //   this.BrandDisable = true;
-    // } else {
+    if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
+      this.ObjStockAdStoreItems.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
+      this.ObjBrowse.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
+      this.BrandDisable = true;
+    } else {
        this.ObjBrowse.Brand_ID = undefined;
        this.ObjStockAdStoreItems.Brand_ID = undefined;
        this.BrandDisable = false;
        this.ProductList = [];
-    // }
+     }
     this.Searchedlist = [];
     this.ObjStockAdStoreItems.Cost_Cen_ID = undefined;
     this.getGodown();
