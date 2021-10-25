@@ -5,6 +5,7 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
+import { CompacctGetDistinctService } from '../../../../shared/compacct.services/compacct-get-distinct.service';
 import * as XLSX from 'xlsx';
 import { MessageService } from 'primeng/api';
 @Component({
@@ -20,6 +21,7 @@ export class TutoPendsubscriptionComponent implements OnInit {
   AllPendingsubList = [];
   Acnotconflist = [];
   confirmedlist = [];
+  Backupconfirmedlist = [];
   seachSpinner = false;
   ConfirmSearchFormSubmitted = false;
   start_date:any;
@@ -49,6 +51,7 @@ export class TutoPendsubscriptionComponent implements OnInit {
     private compacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
+    private GetDistinctItems :CompacctGetDistinctService
   ) { }
 
   ngOnInit() {
@@ -117,8 +120,6 @@ export class TutoPendsubscriptionComponent implements OnInit {
     this.RegisteredStudentList = [];
     this.DistSubscribed =[];
     this.SelectedDistSubscribed =[];
-    this.DistPaymentStatus =[];
-    this.SelectedDistPaymentStatus =[];
     this.searchFields =[];
     const start = this.RegisStudentsearchObj.Start_Date
     ? this.DateService.dateConvert(new Date(this.RegisStudentsearchObj.Start_Date))
@@ -146,41 +147,28 @@ export class TutoPendsubscriptionComponent implements OnInit {
   }
   GetDistinct() {
     let DSubscribed = [];
-    let DPaymentStatus = [];
   this.DistSubscribed =[];
   this.SelectedDistSubscribed =[];
-  this.DistPaymentStatus =[];
-  this.SelectedDistPaymentStatus =[];
   this.searchFields =[];
     this.RegisteredStudentList.forEach((item) => {
       if (DSubscribed.indexOf(item.Subscribed) === -1) {
         DSubscribed.push(item.Subscribed);
         this.DistSubscribed.push({ label: item.Subscribed, value: item.Subscribed });
       }
-      if (DPaymentStatus.indexOf(item.Payment_Status) === -1) {
-        DPaymentStatus.push(item.Payment_Status);
-        this.DistPaymentStatus.push({ label: item.Payment_Status, value: item.Payment_Status });
-      }
     });
     this.BackupRegisteredStudentList = [...this.RegisteredStudentList];
   }
   FilterDist() {
     let DSubscribed = [];
-    let DPaymentStatus = [];
     this.searchFields = [];
     if (this.SelectedDistSubscribed.length) {
       this.searchFields.push('Subscribed');
       DSubscribed = this.SelectedDistSubscribed;
     }
-    if (this.SelectedDistPaymentStatus.length) {
-      this.searchFields.push('Payment_Status');
-      DPaymentStatus = this.SelectedDistPaymentStatus;
-    }
     this.RegisteredStudentList = [];
     if (this.searchFields.length) {
       let LeadArr = this.BackupRegisteredStudentList.filter(function (e) {
-        return ((DSubscribed.length ? DSubscribed.includes(e['Subscribed']) : true)
-        && (DPaymentStatus.length ? DPaymentStatus.includes(e['Payment_Status']) : true))
+        return (DSubscribed.length ? DSubscribed.includes(e['Subscribed']) : true)
       });
       this.RegisteredStudentList = LeadArr.length ? LeadArr : [];
     } else {
@@ -267,6 +255,9 @@ export class TutoPendsubscriptionComponent implements OnInit {
   }
   GetConfirmList(recordID){
     this.confirmedlist = [];
+    this.DistPaymentStatus =[];
+    this.Backupconfirmedlist = [];
+    this.SelectedDistPaymentStatus =[];
     this.ConfirmSearchFormSubmitted = true;
     if(this.SaleType) {
       this.seachSpinner = true;
@@ -294,6 +285,8 @@ export class TutoPendsubscriptionComponent implements OnInit {
               .subscribe((data: any) => {
                console.log(data);
                 this.confirmedlist = data.length ? data : [];
+                this.Backupconfirmedlist = data.length ? data : [];
+                this.DistPaymentStatus = this.GetDistinctItems.GetMultipleDistinct(this.Backupconfirmedlist,['Payment_Status'])[0];
                 this.seachSpinner = false;
               });
       // const url = recordID  ? 'Tutopia_Pending_Subscription/Get_Confirm_details_With_Foot_fall_ID?Foot_Fall_ID=' + recordID : 'Tutopia_Pending_Subscription/Get_Confirm_details?User_ID='+this.$CompacctAPI.CompacctCookies.User_ID;
@@ -307,7 +300,23 @@ export class TutoPendsubscriptionComponent implements OnInit {
     }
 
   }
-
+  FilterDist2() {
+    let DPaymentStatus = [];
+    let searchFields = [];
+    if (this.SelectedDistPaymentStatus.length) {
+      searchFields.push('Payment_Status');
+      DPaymentStatus = this.SelectedDistPaymentStatus;
+    }
+    this.confirmedlist = [];
+    if (searchFields.length) {
+      let LeadArr = this.Backupconfirmedlist.filter(function (e) {
+        return (DPaymentStatus.length ? DPaymentStatus.includes(e['Payment_Status']) : true)
+      });
+      this.confirmedlist = LeadArr.length ? LeadArr : [];
+    } else {
+      this.confirmedlist = this.Backupconfirmedlist;
+    }
+  }
   Billcreation(col) {
     // const CommonLink = "/Tutopia_Retail_Txn_SALE_Bill_cum_challan_GST/Index?subledger_id=14899&salesman=N&checkAppo=N&cat_id=0&salesman_type=Doctor&salesRefCap=Audiologist&Bill_Type=Others&recordid=" + window.btoa(col.Foot_Fall_ID) + '&Subscription_Txn_ID='+ window.btoa(col.Subscription_Txn_ID)
     // const DirectSalesLink = "/Tutopia_Retail_Txn_SALE_Bill_cum_challan_GST/Index?subledger_id=14899&salesman=N&checkAppo=N&cat_id=0&salesman_type=Doctor&salesRefCap=Audiologist&Bill_Type=Others&recordid=" + window.btoa(col.Foot_Fall_ID) + '&Subscription_Txn_ID='+ window.btoa(col.Subscription_Txn_ID) +'&TutopiaDirect=true'
