@@ -231,6 +231,7 @@ SelectedDTCategory = [];
 SelectedDTState = [];
 SelectedDTLocation = [];
 TenderDocID = undefined;
+StateList = [];
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -264,9 +265,17 @@ TenderDocID = undefined;
     this.GetTenderInfoEnqSRC();
     this.GetTenderExecutionDiv();
     this.GetProduct();
+    this.GetStateList();
   }
 
    // INIT DATA
+   GetStateList() {
+    this.$http
+    .get("/Common/Get_State_List")
+    .subscribe((data: any) => {
+      this.StateList = data.length ? data : [];
+    });
+   }
    GetTenderOrgList() {
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Organization_Json")
@@ -953,12 +962,12 @@ TenderDocID = undefined;
       .subscribe((data: any) => {
         this.TenderList = data.length ? JSON.parse(data) : [];
         this.BackupTenderList = data.length ? JSON.parse(data) : [];
-        const distARR = this.GetDistinctItems.GetMultipleDistinct(this.BackupTenderList,['Tender Authority','Tender Category','State','Location']);
+        const distARR = this.GetDistinctItems.GetMultipleDistinct(this.BackupTenderList,['Tender Authority','Tender Calling Div','Tender Category','State','Location']);
         this.DTAutorityList = distARR[0];
-        this.DTCallingDivList = [];
-        this.DTCategoryList = distARR[1];
-        this.DTStateList = distARR[2];
-        this.DTLocationList = distARR[3];
+        this.DTCallingDivList = distARR[1];
+        this.DTCategoryList = distARR[2];
+        this.DTStateList = distARR[3];
+        this.DTLocationList = distARR[4];
         this.Spinner = false;
         this.TenderSearchForm = false;
       });

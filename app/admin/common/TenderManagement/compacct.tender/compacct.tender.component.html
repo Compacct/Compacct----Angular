@@ -389,11 +389,11 @@
                                                        <select class="form-control"
                                                               name="Contact"
                                                               #Contact="ngModel"
-                                                              [(ngModel)]="ObjTender.Form_Of_Contract_ID"
+                                                              [(ngModel)]="ObjTender.State"
                                                               [ngClass]="{'clearance': TenderFormSubmitted && Contact.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
-                                                          <option *ngFor="let option of ContractList" [ngValue]="option.Form_Of_Contract_ID">
-                                                              {{option.Form_Of_Contract}}
+                                                          <option *ngFor="let option of StateList" [ngValue]="option.State">
+                                                              {{option.State}}
                                                               </option>
                                                       </select>
                                                     </div>
@@ -498,7 +498,7 @@
                                                         #PayableAt="ngModel"
                                                         [(ngModel)]="ObjTender.T_Fee_Transaction_Ref_No"
                                                         placeholder="Tender Acc Voucher No  "
-                                                        [ngClass]="{'clearance': TenderFormSubmitted && PayableAt.errors?.required}" disabled>
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && PayableAt.errors?.required}">
                                               </div>
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Fee In ₹<sup class="text-danger">*</sup></label>
@@ -785,7 +785,7 @@
                                                             #EMD_Transaction_Ref_No="ngModel"
                                                             [(ngModel)]="ObjTender.EMD_Transaction_Ref_No"
                                                             placeholder="EMD Acc Voucher No"
-                                                            [ngClass]="{'clearance': TenderFormSubmitted && EMD_Transaction_Ref_No.errors?.required}" disabled >
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && EMD_Transaction_Ref_No.errors?.required}" >
                                                   </div>
 
                                                   <!-- <div class="col-sm-4">
@@ -928,7 +928,7 @@
                                                             #PSD_Acc_Voucher_No="ngModel"
                                                             [(ngModel)]="ObjTender.PSD_Acc_Voucher_No"
                                                             placeholder="Performance Acc Voucher No"
-                                                            [ngClass]="{'clearance': TenderFormSubmitted && PSD_Acc_Voucher_No.errors?.required}" disabled>
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && PSD_Acc_Voucher_No.errors?.required}">
                                                   </div>
 
                                                   <!-- <div class="col-sm-4">
