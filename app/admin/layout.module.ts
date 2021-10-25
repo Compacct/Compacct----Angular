@@ -212,6 +212,7 @@ import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tend
 import { CrmLeadOpportunitiesComponent } from './common/CRM/Transaction/crm-lead-opportunities/crm-lead-opportunities.component';
 import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-task-details/crm-lead-task-details.component';
 import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManagement/Production/k4c-stock-adjustment-store-items/k4c-stock-adjustment-store-items.component';
+import { TutoWebDemoTeamComponent } from './common/CRM/Transaction/tuto-web-demo-team/tuto-web-demo-team.component';
 
 @NgModule({
   declarations: [
@@ -359,7 +360,8 @@ import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManageme
     CompacctRunningBillComponent,
     CrmLeadOpportunitiesComponent,
     CrmLeadTaskDetailsComponent,
-    K4cStockAdjustmentStoreItemsComponent
+    K4cStockAdjustmentStoreItemsComponent,
+    TutoWebDemoTeamComponent
   ],
   imports: [
     CommonModule,
