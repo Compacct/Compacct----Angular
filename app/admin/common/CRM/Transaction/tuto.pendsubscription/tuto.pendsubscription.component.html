@@ -73,8 +73,14 @@
                                 <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
                               </button>
                               </div>
+                              <div class="col-sm-4" *ngIf='Backupconfirmedlist.length'>
+                                <label class="control-label">Payment Status <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistPaymentStatus" [(ngModel)]="SelectedDistPaymentStatus" [virtualScroll]="true"
+                                  itemSize="30" (onChange)='FilterDist2()' [styleClass]="'compacct-multiselect'"
+                                  name="Payment"></p-multiSelect>
+                              </div>
                             </div>
-
+                            
                           </form>
                         <div class="row">
                             <div class="col-sm-8"><h5><strong></strong></h5></div>
@@ -113,6 +119,8 @@
                                         <th>Sale Amount</th>
                                         <th>Sale By</th>
                                         <th>Is Blocked</th>
+                                        <th>Payment Status</th>
+                                        <th>Paid Amount</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
@@ -152,6 +160,8 @@
                                         <td>{{col.Sale_Amount}}</td>
                                         <td>{{col.Sale_By}}</td>
                                         <td>{{col.IS_Blocked}}</td>
+                                        <td>{{col.Payment_Status}}</td>
+                                        <td>{{col.Paid_Amount}}</td>
                                     </tr>
                                 </ng-template>
                                 <ng-template
@@ -431,12 +441,7 @@
                                   itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
                                   name="Assigned3"></p-multiSelect>
                               </div>
-                              <div class="col-sm-3" *ngIf='BackupRegisteredStudentList.length'>
-                                <label class="control-label">Payment Status <span class="text-danger"></span></label>
-                                <p-multiSelect [options]="DistPaymentStatus" [(ngModel)]="SelectedDistPaymentStatus" [virtualScroll]="true"
-                                  itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
-                                  name="Payment"></p-multiSelect>
-                              </div>
+                              
                             </div>
 
                           </form>
@@ -472,8 +477,6 @@
                                         <th>Class </th>
                                         <th>Ref Code</th>
                                         <th>Subscribed</th>
-                                        <th>Payment Status</th>
-                                        <th>Paid Amount</th>
 
                                     </tr>
                                 </ng-template>
@@ -487,8 +490,6 @@
                                         <td>{{col.Class_Name ? col.Class_Name :'-'}}</td>
                                         <td>{{col.Ref_Code}}</td>
                                         <td>{{col.Subscribed}}</td>
-                                        <td>{{col.Payment_Status}}</td>
-                                        <td>{{col.Paid_Amount}}</td>
                                     </tr>
                                 </ng-template>
                                 <ng-template

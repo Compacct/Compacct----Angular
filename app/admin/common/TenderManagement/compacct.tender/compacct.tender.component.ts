@@ -4,6 +4,7 @@ import { MessageService } from "primeng/api";
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
+import {CompacctGetDistinctService } from "../../../shared/compacct.services/compacct-get-distinct.service"
 import * as moment from "moment";
 declare var $:any;
 import * as XLSX from 'xlsx';
@@ -30,6 +31,7 @@ export class CompacctTenderComponent implements OnInit {
   TenderSearchForm = false;
   TenderFormSubmitted = false;
   TenderList = [];
+  BackupTenderList = [];
   TenderOpenDate = new Date();
   TenderEndDate =  new Date();;
   TenderPublishDate = new Date();
@@ -216,13 +218,27 @@ TenderPaymentMode1 = undefined;
 TenderCallingDivList = [];
 TenderExecutionDivList = [];
 TenderInfoEnqList = [];
+
+DTAutorityList = [];
+DTCallingDivList = [];
+DTCategoryList = [];
+DTStateList = [];
+DTLocationList = [];
+
+SelectedDTAutority = [];
+SelectedDTCallingDiv = [];
+SelectedDTCategory = [];
+SelectedDTState = [];
+SelectedDTLocation = [];
+TenderDocID = undefined;
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     private GlobalAPI: CompacctGlobalApiService,
-    private compacctToast: MessageService) { }
+    private compacctToast: MessageService,
+    private GetDistinctItems :CompacctGetDistinctService) { }
 
   ngOnInit() {
     this.Header.pushHeader({
@@ -247,6 +263,7 @@ TenderInfoEnqList = [];
     this.GetTenderCallingDiv();
     this.GetTenderInfoEnqSRC();
     this.GetTenderExecutionDiv();
+    this.GetProduct();
   }
 
    // INIT DATA
@@ -909,43 +926,121 @@ TenderInfoEnqList = [];
  }
 
  // Search
+ changeSearchType() {
+  this.ObjSearch.From_Date = undefined;
+  this.ObjSearch.To_Date = undefined;
+  this.ObjSearch.Search_Text = undefined;
+ }
  SearchTender(valid) {
   this.TenderSearchForm = true;
   this.TenderList = [];
   this.TenderId = undefined;
+  this.BackupTenderList = []
+  this.DTAutorityList = [];
+  this.DTCallingDivList = [];
+  this.DTCategoryList = [];
+  this.DTStateList = [];
+  this.DTLocationList = [];
   if (valid) {
     this.Spinner = true;
     const obj = new HttpParams()
-    .set("Date_Type", this.ObjSearch.Date_Type)
+    .set("Search_Type", this.ObjSearch.Search_Type)
     .set("From_Date", this.ObjSearch.From_Date ?  this.DateService.dateConvert(new Date(this.ObjSearch.From_Date)) : this.DateService.dateConvert(new Date()))
     .set("To_Date", this.ObjSearch.To_Date ?  this.DateService.dateConvert(new Date(this.ObjSearch.To_Date)) : this.DateService.dateConvert(new Date()))
-    .set("Tender_Org_ID",this.ObjSearch.Tender_Org_ID ? this.ObjSearch.Tender_Org_ID : '0');
+    .set("Search_Text",this.ObjSearch.Search_Text ? this.ObjSearch.Search_Text : undefined);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_All_Tender_Browse", { params: obj })
       .subscribe((data: any) => {
         this.TenderList = data.length ? JSON.parse(data) : [];
+        this.BackupTenderList = data.length ? JSON.parse(data) : [];
+        const distARR = this.GetDistinctItems.GetMultipleDistinct(this.BackupTenderList,['Tender Authority','Tender Category','State','Location']);
+        this.DTAutorityList = distARR[0];
+        this.DTCallingDivList = [];
+        this.DTCategoryList = distARR[1];
+        this.DTStateList = distARR[2];
+        this.DTLocationList = distARR[3];
         this.Spinner = false;
         this.TenderSearchForm = false;
       });
   }
   }
+  FilterDist() {
+    let DTAutority = [];
+    let DTCallingDiv = [];
+    let DTCategory = [];
+    let DTState = [];
+    let DTLocation = [];
+    let searchFields = [];
+    
+
+    if (this.SelectedDTAutority.length) {
+      searchFields.push('Tender Authority');
+      DTAutority = this.SelectedDTAutority;
+    }
+    if (this.SelectedDTCallingDiv.length) {
+      //searchFields.push('Tender Authority');
+      //DTCallingDiv = this.SelectedDTCallingDiv;
+    }
+    if (this.SelectedDTCategory.length) {
+      searchFields.push('Tender Category');
+      DTCategory = this.SelectedDTCategory;
+    }
+    if (this.SelectedDTState.length) {
+      searchFields.push('State');
+      DTState = this.SelectedDTState;
+    }
+    if (this.SelectedDTLocation.length) {
+      searchFields.push('Location');
+      DTLocation = this.SelectedDTLocation;
+    }
+    this.TenderList = [];
+    if (searchFields.length) {
+      let LeadArr = this.BackupTenderList.filter(function (e) {
+        return ((DTAutority.length ? DTAutority.includes(e['Tender Authority']) : true) &&
+        (DTCallingDiv.length ? DTCallingDiv.includes(e['Subscribed']) : true) &&
+        (DTCategory.length ? DTCategory.includes(e['Tender Category']) : true) &&
+        (DTState.length ? DTState.includes(e['State']) : true) &&
+        (DTLocation.length ? DTLocation.includes(e['Location']) : true)
+        )
+      });
+      this.TenderList = LeadArr.length ? LeadArr : [];
+    } else {
+      this.TenderList = this.BackupTenderList;
+    }
+  }
 // Save
   SaveTenderMaster(valid) {
   this.TenderFormSubmitted = true;
-  if (valid && this.IntimationSelect.length) {
+  if (valid ) {
   this.Spinner = true;
   this.ObjTender.Tender_Opening_Date = this.ObjTender.Tender_Opening_Date ? this.ObjTender.Tender_Opening_Date : this.DateService.dateTimeConvert(new Date(this.TenderOpenDate));
-  this.ObjTender.Tender_Closing_Date = this.ObjTender.Tender_Closing_Date ? this.ObjTender.Tender_Closing_Date : this.DateService.dateTimeConvert(new Date(this.TenderEndDate));
+  this.ObjTender.Tender_Closing_Date = '01/01/1900'
   this.ObjTender.Tender_Publish_Date = this.ObjTender.Tender_Publish_Date ? this.ObjTender.Tender_Publish_Date : this.DateService.dateTimeConvert(new Date(this.TenderPublishDate));
+
+  this.ObjTender.T_Fee_Date_of_Issue = this.ObjTender.T_Fee_Date_of_Issue ? this.ObjTender.T_Fee_Date_of_Issue : this.DateService.dateConvert(new Date(this.TenderIssueDate));
+  this.ObjTender.T_Fee_Date_of_Expiry = this.ObjTender.T_Fee_Date_of_Expiry ? this.ObjTender.T_Fee_Date_of_Expiry : this.DateService.dateConvert(new Date(this.TenderExpiryDate));
+  this.ObjTender.EMD_Date_of_Issue = this.ObjTender.EMD_Date_of_Issue ? this.ObjTender.EMD_Date_of_Issue : this.DateService.dateConvert(new Date(this.EMDIssueDate));
+  this.ObjTender.EMD_Date_of_Expiry = this.ObjTender.EMD_Date_of_Expiry ? this.ObjTender.EMD_Date_of_Expiry : this.DateService.dateConvert(new Date(this.EMDExpiryDate));
+  this.ObjTender.PSD_Date_of_Issue = this.ObjTender.PSD_Date_of_Issue ? this.ObjTender.PSD_Date_of_Issue : this.DateService.dateConvert(new Date(this.PerformanceIssueDate));
+  this.ObjTender.PSD_Date_of_Expiry = this.ObjTender.PSD_Date_of_Expiry ? this.ObjTender.PSD_Date_of_Expiry : this.DateService.dateConvert(new Date(this.PerformanceExpiryDate));
+
   this.ObjTender.Posted_On = this.DateService.dateTimeConvert(new Date());
   this.ObjTender.User_ID =  this.commonApi.CompacctCookies.User_ID;
   this.ObjTender.Cost_Cen_ID =  this.commonApi.CompacctCookies.Cost_Cen_ID;
+  this.ObjTender.Tender_Doc_ID =  this.ObjTender.Tender_Doc_ID ? this.ObjTender.Tender_Doc_ID : 0;
   const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Insert_Enq_Tender";
   const obj = { Enq_Tender_String: JSON.stringify([this.ObjTender]) };
   this.$http.post(UrlAddress, obj).subscribe((data: any) => {
     if (data.success) {
-      this.FootfalID = data.Foot_Fall_ID;
-      this.FecthTask(data.Foot_Fall_ID);
+      this.FootfalID = data.Tender_Doc_ID;
+      // this.FecthTask(data.Tender_Doc_ID);
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Tender Doc ID  :" +  this.FootfalID,
+          detail: "Tender for "+this.ObjTender.Tender_Name+" of " + this.GetOrgName(this.ObjTender.Tender_Org_ID)+" Saved Successfully"
+        });
       console.group("Compacct V2");
       console.log("%c  Tender Sucess:", "color:green;");
       console.log("/BL_CRM_Txn_Enq_Tender/Insert_Enq_Tender");
@@ -960,15 +1055,15 @@ TenderInfoEnqList = [];
     }
   });
   } else {
-    if(!this.IntimationSelect.length){
-      this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-          detail: "No Intimation Found, Please Choose a Intimation "
-        });
-    }
+    // if(!this.IntimationSelect.length){
+    //   this.compacctToast.clear();
+    //     this.compacctToast.add({
+    //       key: "compacct-toast",
+    //       severity: "error",
+    //       summary: "Warn Message",
+    //       detail: "No Intimation Found, Please Choose a Intimation "
+    //     });
+    // }
   }
   }
   SaveTask(obj){
@@ -1135,7 +1230,7 @@ TenderInfoEnqList = [];
     this.TenderPublishDate = new Date(obj.Tender_Publish_Date);
     this.ObjTender.Tender_Publish_Date =  this.DateService.dateTimeConvert(new Date(obj.Tender_Publish_Date));
     this.TenderEndDate =  new Date(obj.Tender_Closing_Date);
-    this.ObjTender.Tender_Closing_Date =  this.DateService.dateTimeConvert(new Date(obj.Tender_Closing_Date));
+    // this.ObjTender.Tender_Closing_Date =  this.DateService.dateTimeConvert(new Date(obj.Tender_Closing_Date));
     this.TenderOpenDate = new Date(obj.Tender_Opening_Date);
     this.ObjTender.Tender_Opening_Date =  this.DateService.dateTimeConvert(new Date(obj.Tender_Opening_Date));
     //this.GetEditMasterTender(obj);
@@ -3276,7 +3371,22 @@ ToggleEstimateGrp(){
   }
  }
 
-
+GetProduct(){
+  const obj = {
+    "SP_String": "SP_Tender_Management_All",
+    "Report_Name_String": "Get_Product_Name",
+  }
+  this.GlobalAPI
+      .getData(obj)
+      .subscribe((data: any) => {
+        console.log(data)
+        data.forEach(el => {
+            el['label'] = el.Product_Description;
+            el['value'] = el.Product_ID;
+        });
+        this.EstimateGroupProductList = data;
+  });
+}
 GetEstimateGroup(){
     const obj = {
       "SP_String": "SP_Tender_Management_All",
@@ -3325,9 +3435,21 @@ EstimateSubGroupChange(id){
     
   }
 }
+EstimateGroupProductChange(id) {
+  this.ObjEstimate.Product_Description = undefined;
+  this.ObjEstimate.UOM = undefined;
+  if(id) {
+    const arr = this.EstimateGroupProductList.filter(ob => ob.Product_ID.toString() === id.toString());
+    this.ObjEstimate.Product_Description = arr[0].Product_Description;
+    this.ObjEstimate.UOM =arr[0].UOM;
+  }
+}
 OpenEstimate(obj){
   this.EstimateInfoSubmitted = false;
-  if(obj) {
+  this.TenderDocID = undefined;
+  if(obj.Tender_Doc_ID) {
+    this.ObjEstimate = {};
+    this.TenderDocID = obj.Tender_Doc_ID;
     this.EstimateModalFlag = true;
   }
 }
@@ -3337,7 +3459,10 @@ CalculateEstimateAmount() {
     this.ObjEstimate.Amount = (Number(this.ObjEstimate.Rate) * Number(this.ObjEstimate.Qty)).toFixed(2);
   }
 }
-Cleardata3() {
+Cleardata3() {  
+  this.ObjEstimate.Product_ID = undefined;
+  this.ObjEstimate.Product_Description = undefined;
+  this.ObjEstimate.UOM = undefined;
 }
 AddEstimate(valid){
   this.EstimateInfoSubmitted = true;
@@ -3346,9 +3471,12 @@ AddEstimate(valid){
     const extimateObj = {...this.ObjEstimate};
     extimateObj.items = [];
     this.ObjEstimate = {};
-    this.AddedEstimateProductList.push(extimateObj);
-      this.EstimateInfoSubmitted = false;
-      this.ShowAddedEstimateProductList = this.getNestedChildren(this.AddedEstimateProductList)
+    this.AddedEstimateProductList.push(extimateObj);    
+    this.AddedEstimateProductList.sort(function(a, b){
+        return parseFloat(a.Budget_Group_ID) - parseFloat(b.Budget_Group_ID);
+      });
+    this.EstimateInfoSubmitted = false;
+    this.ShowAddedEstimateProductList = this.getNestedChildren(this.AddedEstimateProductList);
     console.log(this.ShowAddedEstimateProductList)
     
   }
@@ -3364,29 +3492,28 @@ getNestedChildren(arr) {
         out.push(arr[i]['Budget_Group_ID']);
         const ParentDub =  arr.filter(obj => obj.Budget_Group_ID == arr[i].Budget_Group_ID);
         let childParent = [];
-        let childDubLength = 0;
         if(ParentDub.length) {
            for (var k = 0; k < ParentDub.length; k++) {
             var count = 0;
               if(out2.indexOf(ParentDub[k]['Budget_Sub_Group_ID']) === -1) {
                 out2.push(ParentDub[k]['Budget_Sub_Group_ID']);
                 const childDub =  ParentDub.filter(obj => obj.Budget_Group_ID == arr[i].Budget_Group_ID && obj.Budget_Sub_Group_ID == ParentDub[k].Budget_Sub_Group_ID);
-                childDubLength = childDub.length; 
                 childParent.push({ 
-                  'Sl_No' : (out.length).toString() + 'a' ,
+                  'Sl_No' :(out.length).toString() +'.'+ (out2.length).toString() ,
                   'Child_Parent_ID' : ParentDub[k]['Budget_Sub_Group_ID'],
                   'Child_Parent_Name' :ParentDub[k]['Budget_Sub_Group_Name'],
+                  'Total_Sub_Group_Amt' : this.TotalByProperty(childDub,'Amount'),
                   'items' : childDub
                 })
               }
             }
         } else {
           const childDub =  ParentDub.filter(obj => obj.Budget_Group_ID == arr[i].Budget_Group_ID && obj.Budget_Sub_Group_ID == arr[i].Budget_Sub_Group_ID);
-          childDubLength = childDub.length;
           childParent.push({ 
-          'Sl_No' : (out.length).toString() + 'a' ,
+          'Sl_No' : (out.length).toString() +'.1' ,
           'Child_Parent_ID' : arr[i]['Budget_Sub_Group_ID'],
           'Child_Parent_Name' : arr[i]['Budget_Sub_Group_Name'],
+          'Total_Sub_Group_Amt' : this.TotalByProperty(childDub,'Amount'),          
           'items' : childDub
         })
         }
@@ -3395,7 +3522,9 @@ getNestedChildren(arr) {
           'Sl_No' : (out.length).toString() ,
           'Root_Parent_ID' : arr[i]['Budget_Group_ID'],
           'Root_Parent_Name' : arr[i]['Budget_Group_Name'],
-          'No_of_Child' : childDubLength,
+          'No_of_Child' : ParentDub.length,
+          'Total_Group_Amt' : this.TotalByProperty(ParentDub,'Amount'), 
+          'Total_Amt' : this.TotalByProperty(arr,'Amount'), 
           'items' : childParent
         }
         WholeArr.push(RootObj);
@@ -3405,6 +3534,11 @@ getNestedChildren(arr) {
   }
   return WholeArr
 }
+TotalByProperty(items, prop){
+  return items.reduce( function(a, b){
+      return Number(a) + Number(b[prop]);
+  }, 0);
+};
 updateRowGroupMetaData() {
   this.rowGroupMetadata = {};
   if (this.AddedEstimateProductList) {
@@ -3439,11 +3573,90 @@ GetEstimateByGroup(){
   }
 }
 }
-SaveEsitimate(valid){
-
+SaveEsitimate(){
+  if(this.ShowAddedEstimateProductList.length) {
+   // this.ObjEstimate.Appo_Date = this.DateService.dateConvert(new Date(this.ResceduleAppoDate));
+   const tempArr = this.FetchEstimateObj();
+    console.log(tempArr);
+    
+    const obj = {
+      "SP_String":"SP_Tender_Management_All",
+      "Report_Name_String": "Tender_Estimation_Create",
+      "Json_Param_String" : JSON.stringify(tempArr)
+    }
+    const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+    this.GlobalAPI
+        .postData(obj)
+        .subscribe((data: any) => { 
+          console.log(data);
+    if (data[0].Column1) {
+      this.SearchTender(true);
+      this.EstimateInfoSubmitted = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Estimate Management ' ,
+        detail: "Succesfully Save."
+      });
+      this.ObjEstimate = {};
+      this.TenderDocID = undefined;
+      this.EstimateModalFlag = false;
+    } else {
+      
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "error",
+        detail: data[0].Remarks
+      });
+    }
+  })
+  }
+  if(!this.ShowAddedEstimateProductList.length) {    
+    this.EstimateInfoSubmitted = true;
+  }
 }
-
+FetchEstimateObj () {
+  let tempArr = [];
+  for (var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+    const temp = this.ShowAddedEstimateProductList[i];
+    if(temp.items.length){
+      for (var k = 0; k < temp.items.length; k++) {
+        const temp2 = temp.items[k];
+        let slno = temp2.Sl_No;
+        if(temp2.items.length){
+          for (var h = 0; h < temp2.items.length; h++) {
+            const e =  temp2.items[h];  
+            if(e && e.Budget_Group_ID){
+              const tempObj = {
+                Sl_No	: slno,
+                Budget_Group_ID: e.Budget_Group_ID,
+                Budget_Sub_Group_ID: e.Budget_Sub_Group_ID,
+                Product_ID: e.Product_ID,
+                Product_Description	: e.Product_Description,
+                Esimate_Qty:e.Qty,
+                Estimate_UOM:e.UOM,
+                Estimate_Rate:e.Rate,	
+                Estimate_Amt:e.Amount,
+                Tender_Doc_ID : this.TenderDocID
+              }
+              tempArr.push(tempObj);
+            }     
+          
+          }
+      }
+    }
+    
+  }
+}
+return tempArr;
+}
 // NEW 
+RedirectVoucherAcc() {  
+  window.open("/ACC_Txn_Acc_Journal?Voucher_Type_ID=2");
+}
 GetTenderCallingDiv() {
   this.$http
     .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Calling_Div_Json")
@@ -3478,7 +3691,7 @@ LightBoxSave(val,field) {
     }
     if(field === 'Tender_Execution_Div_Name') {
       UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Execution_Div'
-      refreshFunction = 'GetTenderCallingDiv';
+      refreshFunction = 'GetTenderExecutionDiv';
     }
     if(field === 'Tender_Type_Name') {
       UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Type'
@@ -3527,6 +3740,7 @@ LightBoxSave(val,field) {
 }
 class Tender{
   Foot_Fall_ID = 0;
+  Tender_Doc_ID= 0;
   Tender_ID:string;
   Cost_Cen_ID:string;
   User_ID:string;
@@ -3536,10 +3750,10 @@ class Tender{
   Tender_Category_ID:string;
   Tender_Amount	:number;
   Tender_Name:string;
-  Elegibility:string;
+  Elegibility = '';
   Tender_Opening_Date:string;
   Tender_Closing_Date:string;
-  Corrigendum	:string;
+  Corrigendum	 = '';
   Remarks	:string;
   Lead_Status = 'Tender Created';
   EMD_Amount:number;
@@ -3548,22 +3762,44 @@ class Tender{
   Enq_Source_Detail:string;
   Tender_Ref_No:string;
   Tender_Type_ID: string;
-  Form_Of_Contract_ID:string;
+  Form_Of_Contract_ID	 = '0';
   Location:string;
   Pin_Code:string;
-  Tender_Payment_Mode_ID:string;
+  Tender_Payment_Mode_ID	 = '0';
   Tender_Publish_Date:string;
   Period_Of_Work:string;
-  EMD_Through_BG_SD:string;
-  EMD_fee_Type :string;
-  EMD_Persentage:string;
+  EMD_Through_BG_SD	 = '';
+  EMD_fee_Type	 = '';
+  EMD_Persentage	 = '';
   EMD_Payable_To:string;
   EMD_Payable_At:string;
   T_Fee_Payable_At:string;
   T_Fee_Payable_To:string;
   T_Fee_exm_Allowed :string;
   dial_code = '+91';
-  Enq_Source_Mobile:string;
+  Enq_Source_Mobile	 = ''
+
+  Tender_Calling_Div_ID  :string;            
+  Tender_Execution_Div_ID :string;                  
+  State :string;        
+  T_Fee_Payment_Mode:string;       
+  T_Fee_Transaction_Ref_No:string; 
+  EMD_Payment_Mode:string; 
+  EMD_Transaction_Ref_No:string; 
+  EMD_Fees_Exemption_Allowed:string; 
+  PSD_Payment_Mode:string; 
+  PSD_Acc_Voucher_No:string;    
+  PSD_Payable_To	 :string;   
+  PSD_Payable_At	:string;  
+  PSD__Fees_Exemption_Allowed	:string;
+  Tender_Publishing_Info_From:string;
+
+  EMD_Date_of_Issue	:string;
+EMD_Date_of_Expiry	:string;
+T_Fee_Date_of_Issue	:string;
+T_Fee_Date_of_Expiry	:string;
+PSD_Date_of_Issue		:string;
+PSD_Date_of_Expiry	:string;	
 }
 class Task{
   Task_ID= 0;
@@ -3585,6 +3821,8 @@ class Search{
   Date_Type:string;
   Tender_Closing_Date:string;
   Tender_Org_ID: string;
+  Search_Type:string;
+  Search_Text:string;
 }
 
 class EMD{
