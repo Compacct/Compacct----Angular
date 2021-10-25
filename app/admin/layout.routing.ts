@@ -126,6 +126,7 @@ import { CompacctTenderComponent } from "./common/TenderManagement/compacct.tend
 import { CrmLeadOpportunitiesComponent } from './common/CRM/Transaction/crm-lead-opportunities/crm-lead-opportunities.component';
 import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-task-details/crm-lead-task-details.component';
 import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManagement/Production/k4c-stock-adjustment-store-items/k4c-stock-adjustment-store-items.component';
+import { TutoWebDemoTeamComponent } from './common/CRM/Transaction/tuto-web-demo-team/tuto-web-demo-team.component';
 
 
 
@@ -727,7 +728,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   path: 'Stock_Adjustment_for_Store_Items',
                                                                   component: K4cStockAdjustmentStoreItemsComponent,
                                                                   data: {title: 'Stock Adjustment For Store Items '}
-                                                                  },
+                                                                  },{
+                                                                    path: 'Tutopia_Web_Demo_Team',
+                                                                    component: TutoWebDemoTeamComponent,
+                                                                    data: {title: 'Tutopia Web Demo Team '}
+                                                                    },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)
