@@ -263,6 +263,23 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     // this.CustMob.applyFocus()
     // this.CustMob.click();
   }
+  ShowCustomerDetailsadvPopUp (val) {
+    this.Objcustomerdetail = new Customerdetail();
+    this.Objcustomerdetail.Redirect_To = val;
+    this.GSTvalidFlag = false;
+    this.ClickedOnlineLedger = {};
+    this.CustomerDetailsFormSubmitted = false;
+    this.CustomerDetailsPopUpFlag = true;
+    this.locationInput.nativeElement.value = '';
+    this.NoPhonedisable = false;
+    this.NoPhoneFlag = false;
+    setTimeout(function(){
+      const elem  = document.getElementById('Customer');
+      elem.focus();
+    },500)
+    // this.CustMob.applyFocus()
+    // this.CustMob.click();
+  }
   ShowOnlineDelOrderNo (obj) {
     this.ClickedOnlineLedger = {};
     if(obj.Txn_ID){
