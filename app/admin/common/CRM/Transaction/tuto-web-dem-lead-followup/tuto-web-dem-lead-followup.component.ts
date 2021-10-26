@@ -66,7 +66,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
 
   PinList = [];
   Appointment_ForList = [];
-  DaysList = [];
+  DAppoSlotList = [];
   StatusList = [];
   TCNAMEList = [];
   RMNAMEList = [];
@@ -75,7 +75,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
 
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
-  SelectedDaysFilterList = [];
+  SelectedAppoSlotFilterList = [];
   SelectedRegisterFilterList = [];
   SelectedStatusFilterList = [];
   SelectedTCNAMEListFilterList = [];
@@ -109,6 +109,8 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
   ResceduleLeadSubmitted = false;
   from_date:any;
   to_date:any;
+  DisabledNextFollowup = false;
+  ForwardResceduleLeadModal = false;
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -261,7 +263,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
   GetDistinct() {
     let PinFilter = [];
     let AppointmentForFilter = [];
-    let DaysFilter = [];
+    let SlotFilter = [];
     let statsusFilter = [];
     let TCFilter = [];
     let RMFilter = [];
@@ -269,7 +271,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
 
     this.PinList = [];
     this.Appointment_ForList = [];
-    this.DaysList = [];
+    this.DAppoSlotList = [];
     this.StatusList = [];
     this.TCNAMEList = [];
     this.RMNAMEList = [];
@@ -284,9 +286,9 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
         AppointmentForFilter.push(item.Appointment_For);
         this.Appointment_ForList.push({ label: item.Appointment_For, value: item.Appointment_For });
       }
-      if (DaysFilter.indexOf(item.Days) === -1) {
-        DaysFilter.push(item.Days);
-        this.DaysList.push({ label: item.Days, value: item.Days });
+      if (SlotFilter.indexOf(item.Appo_Time_Slot) === -1) {
+        SlotFilter.push(item.Appo_Time_Slot);
+        this.DAppoSlotList.push({ label: item.Appo_Time_Slot, value: item.Appo_Time_Slot });
       }
       if (statsusFilter.indexOf(item.Status) === -1) {
         statsusFilter.push(item.Status);
@@ -319,7 +321,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
 
     let PinFilter = [];
     let AppointmentForFilter = [];
-    let DaysFilter = [];
+    let SlotFilter = [];
     let RegisterFilter = [];
     let statsusFilter = [];
     let TCFilter = [];
@@ -334,9 +336,9 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
       searchFields.push('Appointment_For');
       AppointmentForFilter = this.SelectedAppointmentForFilterList;
     }
-    if (this.SelectedDaysFilterList.length) {
-      searchFields.push('Days');
-      DaysFilter = this.SelectedDaysFilterList;
+    if (this.SelectedAppoSlotFilterList.length) {
+      searchFields.push('Appo_Time_Slot');
+      SlotFilter = this.SelectedAppoSlotFilterList;
     }
     if (this.SelectedStatusFilterList.length) {
       searchFields.push('Status');
@@ -365,7 +367,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
       const LeadArr = this.leadFollowUpListBackup.filter(function (e) {
         return ((PinFilter.length ? PinFilter.includes(e['Pin']) : true)
           && (AppointmentForFilter.length ? AppointmentForFilter.includes(e['Appointment_For']) : true)
-          && (DaysFilter.length ? DaysFilter.includes(e['Days']) : true)
+          && (SlotFilter.length ? SlotFilter.includes(e['Appo_Time_Slot']) : true)
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
           && (statsusFilter.length ? statsusFilter.includes(e['Status']) : true)
           && (TCFilter.length ? TCFilter.includes(e['TC_Name']) : true)
@@ -561,10 +563,14 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
     }
   }
   FollowupActionChanged() {
+    this.DisabledNextFollowup = false;
     this.TutopiaDemoActionFlag = false;
     this.objFollowUpCreation.Fathers_Occupation = '';
     this.objFollowUpCreation.School = '';
     if (this.objFollowUpCreation.Current_Action === 'Interested for Web Demo' || this.objFollowUpCreation.Current_Action === 'Interested for Home Demo') {
+        this.TutopiaDemoActionFlag = true;
+      }
+      if (this.objFollowUpCreation.Current_Action === 'DNP' || this.objFollowUpCreation.Current_Action === 'Web Demo Cancled' || this.objFollowUpCreation.Current_Action === 'NOT Sold'  || this.objFollowUpCreation.Current_Action === 'Web demo conducted and enrolled') {
         this.TutopiaDemoActionFlag = true;
       }
   }
@@ -589,6 +595,7 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
     this.NxtFollowupDate = new Date();
     this.folloupFormSubmit = false;
     this.CallDetailsObj = {};
+    this.DisabledNextFollowup = false;
     if (obj.Lead_ID) {
       this.objFollowupDetails = obj;
       this.objFollowUpCreation.Foot_Fall_ID = obj.Foot_Fall_ID;
@@ -898,12 +905,13 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
   // Rescedule 
   ShowRescedule(obj) {
     this.ResceduleLeadObj = new ResceduleLead();
-    this.ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+    this.ResceduleAppoDate = new Date().setDate(new Date().getDate());
     this.ResceduleLeadSubmitted = false;
     if(obj.Lead_ID) {
       this.ResceduleLeadObj.Appo_ID = obj.Appo_ID;
       this.ResceduleLeadObj.Appo_To_User_ID = obj.Appo_To_User_ID;
       this.ResceduleLeadObj.Demo_Type = 'WEB';
+      this.ResceduleLeadObj.Appo_To_User_ID = undefined;
       this.ResceduleLeadModal = true;
     }
 
@@ -942,7 +950,62 @@ export class TutoWebDemLeadFollowupComponent implements OnInit {
           detail: "Succesfully Rescedule."
         });
         this.ResceduleLeadObj = new ResceduleLead();
-        this.ResceduleAppoDate = new Date().setDate(new Date().getDate() + 1);
+        this.ResceduleAppoDate = new Date().setDate(new Date().getDate());
+        this.ResceduleLeadSubmitted = false;
+      }
+    })
+    }
+    
+  }
+   // Forward Rescedule 
+   ShowForwardRescedule(obj) {
+    this.ResceduleLeadObj = new ResceduleLead();
+    this.ResceduleAppoDate = new Date().setDate(new Date().getDate());
+    this.ResceduleLeadSubmitted = false;
+    if(obj.Lead_ID) {
+      this.ResceduleLeadObj.Appo_ID = obj.Appo_ID;
+      this.ResceduleLeadObj.Appo_To_User_ID = obj.Appo_To_User_ID;
+      this.ResceduleLeadObj.Demo_Type = 'WEB';
+      this.ResceduleLeadObj.Appo_To_User_ID = undefined;
+      this.ForwardResceduleLeadModal = true;
+    }
+
+  }
+  SaveForwardRescedule(valid) {
+    this.ResceduleLeadSubmitted = true;
+    if(valid) {
+      this.ResceduleLeadObj.Appo_Date = this.DateService.dateConvert(new Date(this.ResceduleAppoDate));
+      console.log(this.ResceduleLeadObj)
+      const obj = {
+        "SP_String":"SP_Appointment",
+        "Report_Name_String": "Followup_Web_Appointment_Forward",
+        "Json_Param_String" : JSON.stringify([this.ResceduleLeadObj])
+      }
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.GlobalAPI
+          .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+          .subscribe((data: any) => { 
+            console.log(data);
+      if (data[0].Remarks.includes('Already Engaged')) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "error",
+          detail: data[0].Remarks
+        });
+      } else {
+        this.SaerchFollowup(true);
+        this.ForwardResceduleLeadModal = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ResceduleLeadObj.Appo_ID,
+          detail: "Succesfully Forward."
+        });
+        this.ResceduleLeadObj = new ResceduleLead();
+        this.ResceduleAppoDate = new Date().setDate(new Date().getDate());
         this.ResceduleLeadSubmitted = false;
       }
     })

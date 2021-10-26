@@ -63,8 +63,8 @@
                                         <p-multiSelect [options]="Appointment_ForList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAppointmentForFilterList" [styleClass]="'compacct-multiselect'" name="Appointment"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">Days <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DaysList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDaysFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                        <label class="control-label">Appo Slot <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DAppoSlotList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAppoSlotFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Register <span class="text-danger"></span></label>
@@ -190,6 +190,11 @@
                                                 <li>
                                                     <a (click)="ShowRescedule(col)">
                                                         <i class="fa fa-refresh" aria-hidden="true"></i> Rescedule
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a (click)="ShowForwardRescedule(col)">
+                                                        <i class="fa fa-forward" aria-hidden="true"></i> Forward
                                                     </a>
                                                 </li>
                                                 <!-- <li><a (click)="RedirectPendingSubscriptionTutopia(col.Foot_Fall_ID)"><i
@@ -353,7 +358,8 @@
                                     <div class="col-sm-12">
                                         <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
                                         <input type="datetime-local" class="form-control" id="NextFollowup" #NextFollowup="ngModel" name="NextFollowup" [ngModel]="NxtFollowupDate | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="NxtFollowupDate = $event" [ngClass]="{'clearance':folloupFormSubmit && NextFollowup?.errors?.required}"
-                                            [min]="TodayDate" required>
+                                            [min]="TodayDate"
+                                            [disabled]='DisabledNextFollowup' required>
                                     </div>
                                     <!-- <div class="col-sm-12">
                                         <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
@@ -476,7 +482,7 @@
             <div class="col-sm-12">
                 <label class="control-label">
                     Appo Slot <sup class="text-danger">*</sup></label>
-                <select class="form-control" name='Time_Slot_Name' #Time_Slot_Name='ngModel' [ngClass]="{'clearance': transferLeadSubmitted &&  Time_Slot_Name?.errors?.required}" [(ngModel)]="ResceduleLeadObj.Appo_Time_Slot_ID" required>
+                <select class="form-control" name='Time_Slot_Name' #Time_Slot_Name='ngModel' [ngClass]="{'clearance': ResceduleLeadSubmitted &&  Time_Slot_Name?.errors?.required}" [(ngModel)]="ResceduleLeadObj.Appo_Time_Slot_ID" required>
                     <option [ngValue]="undefined">Select</option>
                     <option *ngFor="let option of AppoSlotList" [ngValue]="option.Time_Slot_ID">{{option.Time_Slot_Name}}</option>
                 </select>
@@ -500,6 +506,55 @@
             CLOSE
         </button>
         <button type="button" class="btn btn-primary" (click)="SaveRescedule(ResceduleLeadModalUpdate.form.valid)">
+            SAVE
+        </button>
+    </p-footer>
+</p-dialog>
+<!-- Rescedule FORWARD-->
+<p-dialog header="Forward Appo" [appendTo]="'body'" [visible]="ForwardResceduleLeadModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="ResceduleForwardLeadModalUpdate" style="margin-top:2em" #ResceduleForwardLeadModalUpdate="ngForm" novalidate>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Select Web Demo Person&nbsp;<span class="text-danger">*</span></label>
+                <p-dropdown [options]="UserList" name="User_ID2" [(ngModel)]="ResceduleLeadObj.Appo_To_User_ID" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select User'" [virtualScroll]="true" itemSize="30" #User_ID2="ngModel"
+                    [styleClass]="
+                    ResceduleLeadSubmitted && User_ID.errors?.required ? 'clearance': ''" [required]="true">
+                </p-dropdown>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Next Appo Date<sup class="text-danger">*</sup></label>
+                <input type="date" class="form-control" id="NextAppoDate-2" name="NextAppoDate" #NextAppoDate='ngModel' [ngModel]="ResceduleAppoDate | date:'yyyy-MM-dd'" (ngModelChange)="ResceduleAppoDate = $event" [min]="TodayDate" [ngClass]="{'clearance': ResceduleLeadSubmitted &&  NextAppoDate?.errors?.required}"
+                    required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">
+                    Appo Slot <sup class="text-danger">*</sup></label>
+                <select class="form-control" name='Time_Slot_Name' #Time_Slot_Name='ngModel' [ngClass]="{'clearance': ResceduleLeadSubmitted &&  Time_Slot_Name?.errors?.required}" [(ngModel)]="ResceduleLeadObj.Appo_Time_Slot_ID" required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of AppoSlotList" [ngValue]="option.Time_Slot_ID">{{option.Time_Slot_Name}}</option>
+                </select>
+            </div>
+            <!-- <div class="col-sm-12">
+                <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
+                <input type="datetime-local" class="form-control" id="Next-Followup-2" name="NextFollowup2" #NextFollowup2='ngModel' [ngModel]="NxtFollowupDate | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="NxtFollowupDate = $event" [min]="TodayDate" [ngClass]="{'clearance': transferLeadSubmitted &&  NextFollowup2?.errors?.required}"
+                    required>
+            </div> -->
+
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="ForwardResceduleLeadModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button type="button" class="btn btn-primary" (click)="SaveForwardRescedule(ResceduleForwardLeadModalUpdate.form.valid)">
             SAVE
         </button>
     </p-footer>

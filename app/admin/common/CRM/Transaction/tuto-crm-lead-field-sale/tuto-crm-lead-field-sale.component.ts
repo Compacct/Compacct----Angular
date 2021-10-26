@@ -69,12 +69,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   DaysList = [];
   RegisterList = [{ label: 'REGISTERED', value: '1' }, { label: 'UN REGSITERED', value: '0' }]
   ZonalSalesHeadList = [];
+  DAppoSlotList = [];
 
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
   SelectedDaysFilterList = [];
   SelectedRegisterFilterList = [];
   SelectedZonalSalesFilterList = [];
+  SelectedAppoSlotFilterList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -96,6 +98,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   CallDetailsModalFlag = false;
   CallDetailsObj: any = {};
   
+  from_date:any;
+  to_date:any;
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -238,11 +242,13 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let AppointmentForFilter = [];
     let DaysFilter = [];
     let ZonalSalesFilter = [];
+    let SlotFilter = [];
 
     this.PinList = [];
   this.Appointment_ForList = [];
   this.DaysList = [];
   this.ZonalSalesHeadList = [];
+  this.DAppoSlotList = [];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -255,6 +261,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       if (DaysFilter.indexOf(item.Days) === -1) {
         DaysFilter.push(item.Days);
         this.DaysList.push({ label: item.Days, value: item.Days });
+      }
+      if (SlotFilter.indexOf(item.Appo_Time_Slot) === -1) {
+        SlotFilter.push(item.Appo_Time_Slot);
+        this.DAppoSlotList.push({ label: item.Appo_Time_Slot, value: item.Appo_Time_Slot });
       }
       if (ZonalSalesFilter.indexOf(item.Zonal_Sales_Head) === -1) {
         ZonalSalesFilter.push(item.Zonal_Sales_Head);
@@ -278,6 +288,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let DaysFilter = [];
     let RegisterFilter = [];
     let ZonalSalesFilter = [];
+    let SlotFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -299,6 +310,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       searchFields.push('Zonal_Sales_Head');
       ZonalSalesFilter = this.SelectedZonalSalesFilterList;
     }
+    if (this.SelectedAppoSlotFilterList.length) {
+      searchFields.push('Appo_Time_Slot');
+      SlotFilter = this.SelectedAppoSlotFilterList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -307,6 +322,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         return ((PinFilter.length ? PinFilter.includes(e['Pin']) : true)
           && (AppointmentForFilter.length ? AppointmentForFilter.includes(e['Appointment_For']) : true)
           && (DaysFilter.length ? DaysFilter.includes(e['Days']) : true)
+          && (SlotFilter.length ? SlotFilter.includes(e['Appo_Time_Slot']) : true)
           && (ZonalSalesFilter.length ? ZonalSalesFilter.includes(e['Zonal_Sales_Head']) : true)
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
           );
@@ -336,6 +352,13 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     return returnBol;
   }
   }
+  // FOR SEARCH
+  getDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.from_date = dateRangeObj[0];
+      this.to_date = dateRangeObj[1];
+    }
+  }
   SaerchFollowup(valid) {
     this.SearchFormSubmitted = true;
     this.leadFollowUpList = [];
@@ -345,14 +368,20 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       this.seachSpinner = true;
       this.ObjSearch.User_ID = this.ObjSearch.User_ID ? this.ObjSearch.User_ID : '0';
       this.ObjSearch.Current_Action = this.ObjSearch.Current_Action ? this.ObjSearch.Current_Action : '';
-      
+      const tempObj = {
+        'Start_Date': this.from_date  ? this.DateService.dateConvert(new Date(this.from_date))
+        : this.DateService.dateConvert(new Date()),
+        'End_Date' : this.to_date  ? this.DateService.dateConvert(new Date(this.to_date))
+        : this.DateService.dateConvert(new Date()),
+        'User_ID' : this.ObjSearch.User_ID
+      }
       const obj = {
-        "Json_Param_String" : JSON.stringify([{ 'User_ID' : this.ObjSearch.User_ID}])
+        "Json_Param_String" : JSON.stringify([tempObj])
       }
      // this.GetFilteredItems();
       const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
       this.$http
-          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Channel sale Student Follow-up v3",obj)
+          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Channel sale Student Follow-up v4",obj)
           .subscribe((data: any) => {
             const SortData = data ? JSON.parse(data) : [];
             SortData.sort(function(a:any,b:any){
