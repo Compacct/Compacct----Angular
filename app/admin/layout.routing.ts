@@ -127,6 +127,8 @@ import { CrmLeadOpportunitiesComponent } from './common/CRM/Transaction/crm-lead
 import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-task-details/crm-lead-task-details.component';
 import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManagement/Production/k4c-stock-adjustment-store-items/k4c-stock-adjustment-store-items.component';
 import { TutoWebDemoTeamComponent } from './common/CRM/Transaction/tuto-web-demo-team/tuto-web-demo-team.component';
+import { TutoPreSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-pre-sale-audit-team/tuto-pre-sale-audit-team.component';
+import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-post-sale-audit-team/tuto-post-sale-audit-team.component';
 
 
 
@@ -732,7 +734,15 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                     path: 'Tutopia_Web_Demo_Team',
                                                                     component: TutoWebDemoTeamComponent,
                                                                     data: {title: 'Tutopia Web Demo Team '}
-                                                                    },
+                                                                    },{
+                                                                      path: 'Tutopia_Pre_Sale_Audit_Team',
+                                                                      component: TutoPreSaleAuditTeamComponent,
+                                                                      data: {title: 'Tutopia Pre Sale Audit Team '}
+                                                                      },{
+                                                                        path: 'Tutopia_Post_Sale_Audit_Team',
+                                                                        component: TutoPostSaleAuditTeamComponent,
+                                                                        data: {title: 'Tutopia Post Sale Audit Team '}
+                                                                        },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)
