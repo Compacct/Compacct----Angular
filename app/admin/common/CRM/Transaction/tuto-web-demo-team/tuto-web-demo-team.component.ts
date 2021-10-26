@@ -52,7 +52,7 @@ export class TutoWebDemoTeamComponent implements OnInit {
     // this.GetBrand();
     // this.GetIndentDate();
   }
-  TabClick(){}
+  TabClick(e){}
 
   GetTeamHead(){
     const obj = {

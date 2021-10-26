@@ -52,7 +52,7 @@ export class TutoPreSaleAuditTeamComponent implements OnInit {
     // this.GetBrand();
     // this.GetIndentDate();
   }
-  TabClick(){}
+  TabClick(e){}
 
   GetTeamHead(){
     const obj = {
