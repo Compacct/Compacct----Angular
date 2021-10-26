@@ -213,6 +213,8 @@ import { CrmLeadOpportunitiesComponent } from './common/CRM/Transaction/crm-lead
 import { CrmLeadTaskDetailsComponent } from './common/CRM/Transaction/crm-lead-task-details/crm-lead-task-details.component';
 import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManagement/Production/k4c-stock-adjustment-store-items/k4c-stock-adjustment-store-items.component';
 import { TutoWebDemoTeamComponent } from './common/CRM/Transaction/tuto-web-demo-team/tuto-web-demo-team.component';
+import { TutoPreSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-pre-sale-audit-team/tuto-pre-sale-audit-team.component';
+import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-post-sale-audit-team/tuto-post-sale-audit-team.component';
 
 @NgModule({
   declarations: [
@@ -361,7 +363,9 @@ import { TutoWebDemoTeamComponent } from './common/CRM/Transaction/tuto-web-demo
     CrmLeadOpportunitiesComponent,
     CrmLeadTaskDetailsComponent,
     K4cStockAdjustmentStoreItemsComponent,
-    TutoWebDemoTeamComponent
+    TutoWebDemoTeamComponent,
+    TutoPreSaleAuditTeamComponent,
+    TutoPostSaleAuditTeamComponent
   ],
   imports: [
     CommonModule,

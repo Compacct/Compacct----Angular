@@ -82,14 +82,17 @@ export class K4cMasterProductComponent implements OnInit {
     this.getProductTypeListRow(0);
 
     }else if (this.Param_Flag === 'Semi Finished') {
-
       this.getBrand();
+
     } else if (this.Param_Flag === 'Finished') {
       this.getBrand();
     }
-    else if(this.Param_Flag === 'Store Item'){
+    else if(this.Param_Flag === 'Store Item - N/Saleable'){
       this.getRowData();
       this.getProductTypeListRow(0);
+    }
+    else if(this.Param_Flag === 'Store Item - Saleable'){
+      this.getBrand();
     }
     this.getMfgData();
     this.getCategoryList();
@@ -129,7 +132,7 @@ export class K4cMasterProductComponent implements OnInit {
           if (data[0].Column1 === "done"){
           
           
-            if(this.ParamFlaghtml === "Raw Material" || this.ParamFlaghtml === "Store Item"){
+            if(this.ParamFlaghtml === "Raw Material" || this.ParamFlaghtml === "Store Item - N/Saleable"){
               this.getRowData();
             }
             else {
@@ -164,7 +167,7 @@ export class K4cMasterProductComponent implements OnInit {
           // console.log("del Data===", data[0].Column1)
           if (data[0].Column1 === "done"){
           
-            if(this.ParamFlaghtml === "Raw Material" ||  this.ParamFlaghtml === "Store Item"){
+            if(this.ParamFlaghtml === "Raw Material" ||  this.ParamFlaghtml === "Store Item - N/Saleable"){
               this.getRowData();
             }
             else {
@@ -295,7 +298,7 @@ export class K4cMasterProductComponent implements OnInit {
           this.items = ["BROWSE", "CREATE"];
           this.buttonname = "Create";
         }
-        else if (this.Param_Flag === "Store Item"){
+        else if (this.Param_Flag === "Store Item - N/Saleable"){
           const obj = {
             "SP_String": "SP_Controller_Master",
             "Report_Name_String": "Update Store Item Product",
@@ -314,8 +317,30 @@ export class K4cMasterProductComponent implements OnInit {
               this.Spinner = false;
               this.getRowData();
               }
-
-
+          })
+          this.tabIndexToView = 0;
+          this.items = ["BROWSE", "CREATE"];
+          this.buttonname = "Create";
+        }
+        else if (this.Param_Flag === "Store Item - Saleable"){
+          const obj = {
+            "SP_String": "SP_Controller_Master",
+            "Report_Name_String": "Update Store Item - Saleable Product",
+            "Json_Param_String": JSON.stringify([this.ObjmasterProduct])
+          }
+          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+            // console.log("del Data===", data[0].Column1)
+            if (data[0].Column1 === "done"){
+             this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: "Product Id: " + TempId ,
+                detail: "Succesfully Updated"
+              });
+              this.Spinner = false;
+              this.getBandlist();
+              }
           })
           this.tabIndexToView = 0;
           this.items = ["BROWSE", "CREATE"];
@@ -397,7 +422,7 @@ export class K4cMasterProductComponent implements OnInit {
                 this.getBandlist();
             })
           }
-          else if (this.Param_Flag === "Store Item"){
+          else if (this.Param_Flag === "Store Item - N/Saleable"){
             const obj = {
               "SP_String": "SP_Controller_Master",
               "Report_Name_String": "Add Store Item Product",
@@ -416,6 +441,27 @@ export class K4cMasterProductComponent implements OnInit {
                 }
                 this.Spinner = false;
                 this.getRowData();
+            })
+          }
+          else if (this.Param_Flag === "Store Item - Saleable"){
+            const obj = {
+              "SP_String": "SP_Controller_Master",
+              "Report_Name_String": "Add Store Item - Saleable Product",
+              "Json_Param_String": JSON.stringify([this.ObjmasterProduct])
+            }
+            this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+             console.log("del Data===", data[0].Column1)
+              if (data[0].Column1){
+                 this.compacctToast.clear();
+                this.compacctToast.add({
+                  key: "compacct-toast",
+                  severity: "success",
+                  summary: "Product Added",
+                  detail: "Succesfully Created"
+                });
+                }
+                this.Spinner = false;
+                this.getBandlist();
             })
           }
           else {
@@ -481,7 +527,7 @@ export class K4cMasterProductComponent implements OnInit {
     })
   }
   getRowData(){
-    const TempReportName = this.Param_Flag === 'Store Item' ? "Browse - Store Item Product Master" : "Browse - Raw Material Product Master";
+    const TempReportName = this.Param_Flag === 'Store Item - N/Saleable' ? "Browse - Store Item Product Master" : "Browse - Raw Material Product Master";
     console.log("Browse API",TempReportName);
     const obj = {
       "SP_String": "SP_Controller_Master",
@@ -510,7 +556,9 @@ export class K4cMasterProductComponent implements OnInit {
   {ReportName = "Get - Product Type List Semi Finished"}
   else if (this.Param_Flag === 'Finished')
   {ReportName = "Get - Product Type List Finished"}
-  else if(this.Param_Flag === 'Store Item')
+  else if(this.Param_Flag === 'Store Item - N/Saleable')
+  {ReportName = "Get - Product Type List Store Item"}
+  else if(this.Param_Flag === 'Store Item - Saleable')
   {ReportName = "Get - Product Type List Store Item"}
   console.log(ReportName);
   const obj = {
@@ -598,6 +646,24 @@ export class K4cMasterProductComponent implements OnInit {
     this.rowDataList = [];
     this.BackupRowDataList = [];
     if(this.ObjmasterProduct.Brand_ID) {
+      if (this.Param_Flag === 'Store Item - Saleable') {
+        const obj = {
+          "SP_String": "SP_Controller_Master",
+          "Report_Name_String": "Browse - Store Item Saleable Product Master",
+          "Json_Param_String": JSON.stringify([{Brand_ID : this.ObjmasterProduct.Brand_ID}])
+    
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          // console.log("row  ===",data);
+          this.DynamicHeader = Object.keys(data[0]);
+          this.rowDataList = data;
+          this.BackupRowDataList = data;
+          this.brandIdSave = this.ObjmasterProduct.Brand_ID;
+          this.getProductTypeListRow(this.ObjmasterProduct.Brand_ID);
+          this.filterProduct();
+          console.log("this.DynamicHeader",this.DynamicHeader)
+        })
+      } else {
       const ReportName = this.Param_Flag === 'Finished' ? "Browse - Finished Product Master" : "Browse - Semi Finished Product Master";
 
       const obj = {
@@ -616,6 +682,7 @@ export class K4cMasterProductComponent implements OnInit {
         this.filterProduct();
 
       })
+    }
     }
 
   }
@@ -677,6 +744,8 @@ export class K4cMasterProductComponent implements OnInit {
     console.log("event",eve);
     console.log("Product_Expiry",this.ObjmasterProduct.Product_Expiry);
   }
+  
+  
 
   }
 

@@ -8,13 +8,13 @@ import { DateTimeConvertService } from '../../../../shared/compacct.global/dateT
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-tuto-web-demo-team',
-  templateUrl: './tuto-web-demo-team.component.html',
-  styleUrls: ['./tuto-web-demo-team.component.css'],
+  selector: 'app-tuto-post-sale-audit-team',
+  templateUrl: './tuto-post-sale-audit-team.component.html',
+  styleUrls: ['./tuto-post-sale-audit-team.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class TutoWebDemoTeamComponent implements OnInit {
+export class TutoPostSaleAuditTeamComponent implements OnInit {
   tabIndexToView =0;
   seachSpinner = false;
   ObjTeamHead : TeamHead = new TeamHead ();
@@ -44,8 +44,8 @@ export class TutoWebDemoTeamComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Web Demo Team ",
-      Link: " CRM -> Web Demo Team "
+      Header: "Post Sale Audit ",
+      Link: " CRM -> Post Sale Audit "
     });
     this.GetTeamHead();
     // this.getdataforexcel();
@@ -56,8 +56,8 @@ export class TutoWebDemoTeamComponent implements OnInit {
 
   GetTeamHead(){
     const obj = {
-      "SP_String": "Tutopia_Web_Demo_Team",
-      "Report_Name_String": "Get_Web_Demo_Team_Head",
+      "SP_String": "Tutopia_Post_Sale_Audit_Team",
+      "Report_Name_String": "Get_Post_Sale_Audit",
      // "Json_Param_String": JSON.stringify([TempObj])
 
    }
@@ -74,8 +74,8 @@ export class TutoWebDemoTeamComponent implements OnInit {
     }
     if (valid){
     const obj = {
-      "SP_String": "Tutopia_Web_Demo_Team",
-      "Report_Name_String": "GET_Web-Demo_Team",
+      "SP_String": "Tutopia_Post_Sale_Audit_Team",
+      "Report_Name_String": "GET_Post_Sale_Audit_Team",
       "Json_Param_String": JSON.stringify([tempobj])
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -106,7 +106,7 @@ export class TutoWebDemoTeamComponent implements OnInit {
   console.log(tempArr)
     if (valid){
     const obj = {
-      "SP_String": "Tutopia_Web_Demo_Team",
+      "SP_String": "Tutopia_Post_Sale_Audit_Team",
       "Report_Name_String": "Create_User",
       "Json_Param_String": JSON.stringify(tempArr)
     }
@@ -170,7 +170,7 @@ export class TutoWebDemoTeamComponent implements OnInit {
   console.log(tempArr)
     if (valid){
     const obj = {
-      "SP_String": "Tutopia_Web_Demo_Team",
+      "SP_String": "Tutopia_Post_Sale_Audit_Team",
       "Report_Name_String": "Convert_User",
       "Json_Param_String": JSON.stringify(tempArr)
     }
@@ -332,3 +332,6 @@ class CreateUser {
 class ConvertUserToDemo {
   User_Name : string;
 }
+
+
+

@@ -249,8 +249,8 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
-            summary: "Cannot found EOD In Previous Date ",
-            //detail: "Previous Date"
+            summary: "Warn Message ",
+            detail: "Cannot found EOD In Previous Date "
           })
     }
     this.locationInput.nativeElement.value = '';
@@ -557,8 +557,8 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "error",
-          summary: "Cannot found EOD In Previous Date ",
-          //detail: "Previous Date"
+          summary: "Warn Message ",
+          detail: "Cannot found EOD In Previous Date "
         })
     }
     if(val === 'requisition') {
@@ -586,8 +586,8 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "error",
-          summary: "Cannot found EOD In Previous Date ",
-          //detail: "Previous Date"
+          summary: "Warn Message ",
+          detail: "Cannot found EOD In Previous Date "
         })
     }
     if(val === 'viewstock') {
