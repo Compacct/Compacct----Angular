@@ -215,6 +215,7 @@ import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManageme
 import { TutoWebDemoTeamComponent } from './common/CRM/Transaction/tuto-web-demo-team/tuto-web-demo-team.component';
 import { TutoPreSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-pre-sale-audit-team/tuto-pre-sale-audit-team.component';
 import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-post-sale-audit-team/tuto-post-sale-audit-team.component';
+import { TutoFieldSalesSchoolComponent } from './common/CRM/Master/tuto-field-sales-school/tuto-field-sales-school.component';
 
 @NgModule({
   declarations: [
@@ -365,7 +366,8 @@ import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-po
     K4cStockAdjustmentStoreItemsComponent,
     TutoWebDemoTeamComponent,
     TutoPreSaleAuditTeamComponent,
-    TutoPostSaleAuditTeamComponent
+    TutoPostSaleAuditTeamComponent,
+    TutoFieldSalesSchoolComponent
   ],
   imports: [
     CommonModule,

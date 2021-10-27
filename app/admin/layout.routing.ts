@@ -129,6 +129,7 @@ import { K4cStockAdjustmentStoreItemsComponent } from './common/MaterialManageme
 import { TutoWebDemoTeamComponent } from './common/CRM/Transaction/tuto-web-demo-team/tuto-web-demo-team.component';
 import { TutoPreSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-pre-sale-audit-team/tuto-pre-sale-audit-team.component';
 import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-post-sale-audit-team/tuto-post-sale-audit-team.component';
+import { TutoFieldSalesSchoolComponent } from './common/CRM/Master/tuto-field-sales-school/tuto-field-sales-school.component';
 
 
 
@@ -743,6 +744,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                         component: TutoPostSaleAuditTeamComponent,
                                                                         data: {title: 'Tutopia Post Sale Audit Team '}
                                                                         },
+                                          {
+                                          path: 'Tutopia_Field_Sales_School',
+                                          component: TutoFieldSalesSchoolComponent,
+                                          data: {title: 'Tutopia Field Sales School '}
+                                          },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)
