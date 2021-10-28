@@ -6,18 +6,27 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <div>
-                        <div class="col-sm-7">
-                            <div class="form-group">
-                                <div class="col-sm-5">
-                                    <label class="control-label">Lead<sup class="text-danger">*</sup></label>
-                                    <p-dropdown [options]="LeadList" name="lead"
-                                    (onChange)="LeadChange(SelectedLead)"
-                                         [(ngModel)]="SelectedLead" [showClear]="true" [emptyFilterMessage]="' No Lead Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Lead'" [virtualScroll]="true" itemSize="30" #lead="ngModel"
-                                        >
-                                    </p-dropdown>
-                                </div>
+                      <div class="col-sm-12" style="background: #3c8dbc1c;padding-bottom: 1em;border-radius: 5px;">
+                        
+                        <div class="form-group">
+                          <div class="col-sm-5">
+                              <label class="control-label">Lead<sup class="text-danger">*</sup></label>
+                              <p-dropdown [options]="LeadList" name="lead"
+                              (onChange)="LeadChange(SelectedLead)"
+                                   [(ngModel)]="SelectedLead" [showClear]="true" [emptyFilterMessage]="' No Lead Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Lead'" [virtualScroll]="true" itemSize="30" #lead="ngModel"
+                                  >
+                              </p-dropdown>
+                          </div>
+                          <button class="btn btn-primary custombutton pull-right" style="margin-right: 1.5em;" (click)='OpenTask()'>
+                            <span class="badge">{{TaskCount}}</span>&nbsp;   Task &nbsp;<span class="fa fa-fw fa-tasks"></span>
+                          </button>
+                          <button class="btn btn-primary custombutton pull-right" (click)='RedirectOpportunities()'>
+                           All Opportunities
+                          </button>
 
-                            </div>
+                      </div>
+                      </div>
+                        <div class="col-sm-8">
                             <br>
                             <p-panel header="Edit Lead"  [toggleable]="true" [collapsed]='true'>
                             <form name="myform" #myform="ngForm" novalidate>                            
@@ -39,7 +48,7 @@
                                            #Organization='ngModel'
                                            [(ngModel)]="leadtransation.Org_Name"
                                            placeholder="Company Name"
-                                           [ngClass]="{'clearance':leadtransaction && Organization?.errors?.required}"
+                                           [ngClass]="{'clearance':leadtransactionSubmit && Organization?.errors?.required}"
                                            required>
                                   </div>
                                   <div class="col-sm-6">
@@ -48,6 +57,8 @@
                                            name="Address"
                                            #Address='ngModel'
                                            [(ngModel)]="autocomplete"
+                                           Compacct-Place
+                                           (setAddress)="getAddressOnChange($event)"
                                            placeholder="Address"
                                            required>
                                   </div>
@@ -60,7 +71,7 @@
                                       <input type="text"
                                              name="docdate"
                                              id="dob34235432"
-                                             [ngClass]="{'clearance': leadtransaction && docdate?.errors?.required}"
+                                             [ngClass]="{'clearance': leadtransactionSubmit && docdate?.errors?.required}"
                                              [(ngModel)]="LeadDateNepal"
                                              class="form-control"
                                              nepali-date-picker
@@ -74,14 +85,14 @@
                                            #Landmark='ngModel'
                                            [(ngModel)]="leadtransation.Landmark"
                                            placeholder="Landmark"
-                                           [ngClass]="{'clearance':leadtransaction && Landmark?.errors?.required}">
+                                           [ngClass]="{'clearance':leadtransactionSubmit && Landmark?.errors?.required}">
                                   </div>
                                   <div class="col-sm-3">
                                     <label class="control-label">Lead Priority <sup class="text-danger">*</sup><sup class="text-danger"></sup></label>
                                     <select class="form-control"
                                             name="Priority"
                                             #Priority='ngModel'
-                                            [ngClass]="{'clearance': leadtransaction && Priority?.errors?.required}"
+                                            [ngClass]="{'clearance': leadtransactionSubmit && Priority?.errors?.required}"
                                             [(ngModel)]="leadtransation.Lead_Priority"
                                             required>
                                       <option value="">Select</option>
@@ -95,11 +106,13 @@
                                     <select class="form-control"
                                             name="Industry"
                                             #Industry='ngModel'
-                                            [ngClass]="{'clearance': leadtransaction && Industry?.errors?.required}"
+                                            [ngClass]="{'clearance': leadtransactionSubmit && Industry?.errors?.required}"
                                             [(ngModel)]="leadtransation.Sub_Ledger_Cat_ID"
-                                            ng-options="v.Sub_Ledger_Cat_ID as v.Sub_Ledger_Cat_Name for v in customertype"
                                             required>
-                                      <option value="">Select</option>
+                                      <option  [ngValue]="undefined">Select</option>
+                                      <option *ngFor = "let option of customertype" [value] ="option.Sub_Ledger_Cat_ID">
+                                         {{option.Sub_Ledger_Cat_Name}}
+                                       </option>
                                     </select>
                                   </div>
                                   <div class="col-sm-3">
@@ -107,10 +120,13 @@
                                     <select class="form-control"
                                             name="enquerysource"
                                             #enquerysource='ngModel'
-                                            [ngClass]="{'clearance': leadtransaction && enquerysource?.errors?.required}"
-                                            [(ngModel)]="leadtransation.Enq_Source_ID"
-                                            ng-options="v.Enq_Source_ID as v.Enq_Source_Name for v in EnqSourceModel">
+                                            [ngClass]="{'clearance': leadtransactionSubmit && enquerysource?.errors?.required}"
+                                            [(ngModel)]="leadtransation.Enq_Source_ID">
                                       <option value="">Select</option>
+                                      <option  [ngValue]="undefined">Select</option>
+                                      <option *ngFor = "let option of EnqSourceModel" [value] ="option.Enq_Source_ID">
+                                         {{option.Enq_Source_Name}}
+                                       </option>
                                     </select>
                                   </div>
                                   <!-- <div class="col-sm-6" *ngIf="leadtransation.Enq_Source_ID == 252">
@@ -126,7 +142,7 @@
                                     <input class="form-control"
                                            name="Website"
                                            #Website='ngModel'
-                                           [ngClass]="{'clearance': leadtransaction && Website?.errors?.required}"
+                                           [ngClass]="{'clearance': leadtransactionSubmit && Website?.errors?.required}"
                                            [(ngModel)]="leadtransation.Website"
                                            placeholder="Website"
                                            type="url">
@@ -152,7 +168,7 @@
                                     <input class="form-control"
                                            name="Facebook"
                                            #Facebook='ngModel'
-                                           [ngClass]="{'clearance': leadtransaction && Facebook?.errors?.required}"
+                                           [ngClass]="{'clearance': leadtransactionSubmit && Facebook?.errors?.required}"
                                            [(ngModel)]="leadtransation.Social_FaceBook_Link"
                                            placeholder="Facebook Link"
                                            type="url">
@@ -163,7 +179,7 @@
                                     <input class="form-control"
                                            name="Instagram"
                                            #Instagram='ngModel'
-                                           [ngClass]="{'clearance': leadtransaction && Instagram?.errors?.required}"
+                                           [ngClass]="{'clearance': leadtransactionSubmit && Instagram?.errors?.required}"
                                            [(ngModel)]="leadtransation.Social_Instagram_Link"
                                            placeholder="Instagram Link"
                                            type="url">
@@ -174,7 +190,7 @@
                                     <input class="form-control"
                                            name="Linkedin"
                                            #Linkedin='ngModel'
-                                           [ngClass]="{'clearance': leadtransaction && Linkedin?.errors?.required}"
+                                           [ngClass]="{'clearance': leadtransactionSubmit && Linkedin?.errors?.required}"
                                            [(ngModel)]="leadtransation.Social_Linkedin_Link"
                                            placeholder="Linkedin Link"
                                            type="url">
@@ -199,7 +215,7 @@
                                     <input class="form-control"
                                            name="contactperson"
                                            #contactperson='ngModel'
-                                           [ngClass]="{'clearance': leadtransaction && contactperson?.errors?.required}"
+                                           [ngClass]="{'clearance': leadtransactionSubmit && contactperson?.errors?.required}"
                                            [(ngModel)]="leadtransation.Contact_Name"
                                            placeholder="Contact Person Name"
                                            allow-pattern="[a-z ]"
@@ -211,7 +227,7 @@
                                     <select class="form-control"
                                             name="Designation"
                                             #Designation='ngModel'
-                                            [ngClass]="{'clearance': leadtransaction && Designation?.errors?.required}"
+                                            [ngClass]="{'clearance': leadtransactionSubmit && Designation?.errors?.required}"
                                             [(ngModel)]="leadtransation.Desig"
                                             required>
                                       <option value="">Select</option>
@@ -228,7 +244,7 @@
                                            #mobile1='ngModel'
                                            [ngClass]="{
                                             clearance:
-                                              (leadtransaction && mobile1.errors?.required) ||
+                                              (leadtransactionSubmit && mobile1.errors?.required) ||
                                               (mobile1.errors?.minlength && mobile1.touched)
                                           }"
                                            [(ngModel)]="leadtransation.Mobile"
@@ -242,7 +258,7 @@
                                            type="email"
                                            name="emailid"
                                            #emailid='ngModel'
-                                           [ngClass]="{'clearance':(leadtransaction && emailid?.errors?.required) || emailid?.errors?.email}"
+                                           [ngClass]="{'clearance':(leadtransactionSubmit && emailid?.errors?.required) || emailid?.errors?.email}"
                                            [(ngModel)]="leadtransation.Email"
                                            placeholder="Email Address">
                                   </div>
@@ -280,29 +296,32 @@
                                     </i> &nbsp;<strong>Lead Info : </strong>
                                   </h5>
                   
-                                  <div class="col-sm-3">
+                                  <div class="col-sm-6">
                                     <label class="control-label">Assign To<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                             name="forwardlead"
                                             #forwardlead='ngModel'
-                                            [ngClass]="{'clearance': leadtransaction && forwardlead?.errors?.required}"
+                                            [ngClass]="{'clearance': leadtransactionSubmit && forwardlead?.errors?.required}"
                                             [(ngModel)]="leadtransation. Assign_To"
-                                            ng-options="v.User_ID as v.Member_Name for v in user"
                                             required>
-                                      <option value="">Select</option>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor = "let option of user" [value] ="option.User_ID">
+                                               {{option.Member_Name}}
+                                             </option>
                                     </select>
                                   </div>
-                                  <div class="col-sm-4">
+                                  <div class="col-sm-6">
                                     <label class="control-label">Product Groups<sup class="text-danger"></sup></label>
-                                    <!-- <p-multiSelect [options]="PinList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedPinFilterList" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
-                                    <div ng-dropdown-multiselect=""
+                                   
+                                    <p-multiSelect [options]="ProductTypeLists" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedProductTypeList" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
+                                    <!-- <div ng-dropdown-multiselect=""
                                          options="ProductTypeLists"
                                          selected-model="ProductTypeidlist"
                                          extra-settings="categoryfetch"
                                          checkboxes="true"> 
-                                    </div>-->
+                                    </div> -->
                                   </div>
-                                  <div class="col-sm-5">
+                                  <div class="col-sm-6">
                                     <label class="control-label">Existing</label><br />
                                     <p-radioButton name="groupname" 
                                     #groupname='ngModel' value="Competitor" (onClick)='Cleardata3()' label="Competitor" [(ngModel)]="ExistingLead"></p-radioButton>
@@ -314,34 +333,34 @@
                                       <label class="radio-inline"><md-radio-button value="Other" class="md-primary">Other</md-radio-button></label>
                                     </md-radio-group> -->
                                   </div>
-                                  <div class="col-sm-3" *ngIf="ExistingLead === 'Competitor'">
+                                  <div class="col-sm-6" *ngIf="ExistingLead === 'Competitor'">
                                     <label class="control-label">Competitor<sup class="text-danger">*</sup></label>
                                     <input class="form-control"
                                            name="Competitor"
                                            #Competitor='ngModel'
-                                           [ngClass]="{'clearance': leadtransaction && Competitor?.errors?.required}"
+                                           [ngClass]="{'clearance': leadtransactionSubmit && Competitor?.errors?.required}"
                                            [(ngModel)]="leadtransation.Existing_Name"
                                            placeholder="Competitor"
                                            allow-pattern="[a-z ]"
                                            required>
                                   </div>
-                                  <div class="col-sm-3" *ngIf="ExistingLead === 'Trader'">
+                                  <div class="col-sm-6" *ngIf="ExistingLead === 'Trader'">
                                     <label class="control-label">Trader<sup class="text-danger">*</sup></label>
                                     <input class="form-control"
                                            name="Trader"                                           
                                            #Trader='ngModel'
-                                           [ngClass]="{'clearance': leadtransaction && Trader?.errors?.required}"
+                                           [ngClass]="{'clearance': leadtransactionSubmit && Trader?.errors?.required}"
                                            [(ngModel)]="leadtransation.Existing_Name"
                                            placeholder="Trader"
                                            allow-pattern="[a-z ]"
                                            required>
                                   </div>
-                                  <div class="col-sm-3" *ngIf="ExistingLead === 'Other'">
+                                  <div class="col-sm-6" *ngIf="ExistingLead === 'Other'">
                                     <label class="control-label">Other<sup class="text-danger">*</sup></label>
                                     <input class="form-control"
                                            name="Other"
                                            #Other='ngModel'
-                                           [ngClass]="{'clearance': leadtransaction && Other?.errors?.required}"
+                                           [ngClass]="{'clearance': leadtransactionSubmit && Other?.errors?.required}"
                                            [(ngModel)]="leadtransation.Existing_Name"
                                            placeholder="Other"
                                            allow-pattern="[a-z ]"
@@ -353,7 +372,7 @@
                                               name="Competitor_Activity"
                                               #Competitor_Activity='ngModel'
                                               rows="1"
-                                              [ngClass]="{'clearance': leadtransaction && Competitor_Activity?.errors?.required}"
+                                              [ngClass]="{'clearance': leadtransactionSubmit && Competitor_Activity?.errors?.required}"
                                               [(ngModel)]="leadtransation.Competition_Activity"
                                               placeholder="Competitor Activity"> </textarea>
                   
@@ -363,23 +382,28 @@
                                     <select class="form-control"
                                             name="leadstatus"
                                             #leadstatus='ngModel'
-                                            [ngClass]="{'clearance': leadtransaction && leadstatus?.errors?.required}"
+                                            [ngClass]="{'clearance': leadtransactionSubmit && leadstatus?.errors?.required}"
                                             [(ngModel)]="leadtransation.Status"
-                                            ng-options="v.Status as v.Status for v in LeadStatusList">
-                                      <option value="">Select</option>
+                                            required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor = "let option of LeadStatusList" [value] ="option.Status">
+                                               {{option.Status}}
+                                             </option>
                                     </select>
+                                  </div>
+                                  <div class="col-sm-4">
+                                    <button type="button" class="btn btn-primary custombutton" (click)="UpdateLead(myform.form.valid)" [disabled]="snipper">
+                                      <p-progressSpinner *ngIf="snipper" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                          animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!snipper" class="glyphicon glyphicon-save"></span>&nbsp;UPDATE
+                                  </button>
                                   </div>
                                 </div>
                                 </form>
                             </p-panel>
                         </div>
-                        <div class="col-sm-5">
-                            <button class="btn btn-primary custombutton" (click)='OpenTask()'>
-                                <span class="badge">{{TaskCount}}</span>&nbsp;   Task &nbsp;<span class="fa fa-fw fa-tasks"></span>
-                              </button>
-                              <button class="btn btn-primary custombutton" (click)='RedirectOpportunities()'>
-                               All Opportunities
-                              </button>
+                        <div class="col-sm-4">
+                          <br>
                               <div class="form-group">
                                   <h5> Sampling / Demo</h5>
                                   <div class="table-responsive no-padding">

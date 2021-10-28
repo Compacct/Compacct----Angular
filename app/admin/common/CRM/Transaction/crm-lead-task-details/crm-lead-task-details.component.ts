@@ -18,7 +18,8 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 export class CrmLeadTaskDetailsComponent implements OnInit {
   url = window["config"];
   leadtransation = new Lead();
-  leadtransaction = false;
+  snipper = false;
+  leadtransactionSubmit = false;
   ExistingLead = undefined;
 
   LeadStatusList = [];
@@ -41,6 +42,8 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
   docdate:any;
   LeadDateNepal = '';
   autocomplete:any;
+  ProductTypeLists = [];
+  SelectedProductTypeList = [];
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -68,6 +71,7 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
       Header: "Lead Details",
       Link: " CRM -> Transaction -> Lead Details"
     });
+    this.GetProductTypeLists();
     this.GetUser();
     this.GetStatuslist();
     this.GetEnqSrc();
@@ -156,13 +160,29 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
         this.LeadStatusList = data;
       });
   }
-
+  GetProductTypeLists() {
+    this.$http.get('/Master_Product_Type/Master_Product_Type_Browse')
+        .subscribe((res: any) => {
+          const data =  res ? JSON.parse(res) : [];
+          data.forEach(it=> {
+            it['value'] = it.Product_Type_ID;
+            it['label'] = it.Product_Type;
+          })
+          this.ProductTypeLists = data;
+        });
+  }
   // CHANGE
   LeadChange(obj){
     console.log(obj)
     this.leadtransation = new Lead();
+    this.SelectedProductTypeList = [];
+    this.ExistingLead = undefined;
     if(obj) {
       this.leadtransation = this.LeadList.filter(i=> i.Org_Name === obj)[0];
+      this.SelectedProductTypeList  = this.leadtransation.Product_Type_IDs ? this.leadtransation.Product_Type_IDs.split(',').filter(n=>n).map((i) => Number(i)) : [];
+      
+      this.ExistingLead = this.leadtransation.Existing ? this.leadtransation.Existing : undefined;
+      this.autocomplete = this.leadtransation.Address;
     }
   }
   ChnageReferencebyCustomer = function (subledgerID) {
@@ -174,9 +194,64 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
       this.leadtransation.Sub_Ledger_ID_Ref = 0;
     }
 }
+getAddressOnChange(e) {
+  this.leadtransation.Address = undefined;
+ if (e) {
+    this.leadtransation.Address = e;
+ }
+}
   Cleardata3 () {
     this.leadtransation.Existing_Name = undefined;
   }
+
+  // LEAD EDIT
+  GlobalFilterChange() {
+    console.log(this.SelectedProductTypeList);
+  }
+  UpdateLead(valid) {
+    this.leadtransactionSubmit = true;
+    if(valid) {
+     // this.snipper = true;
+      let custTypeList = this.SelectedProductTypeList;
+      this.leadtransation.Existing = this.ExistingLead;
+      this.leadtransation.Next_Followup = this.DateService.dateTimeConvert(new Date());
+      this.leadtransation.Product_Type_IDs = custTypeList.length ? "," + custTypeList.toString() + "," : '';
+      this.leadtransation.Followup_Remarks = 'NA';
+      this.leadtransation.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.leadtransation.User_ID = this.QueryStringUserID;
+      this.leadtransation.Foot_Fall_ID = this.QueryStringFootfall;
+      const obj = {
+        "SP_String": "SP_New_Lead_Registration",
+        "Report_Name_String": "New Lead Create",
+        "Json_Param_String": JSON.stringify([this.leadtransation])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        console.log(data);
+        if(data[0].Column1) {
+          this.leadtransactionSubmit = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: 'success',
+            detail: "Succesfully Updated."
+          });
+          this.snipper = false;
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured"
+          });
+          this.snipper = false;
+          
+        }
+    }); 
+  }
+  }
+
 
   OpenTask() {
   this.TaskToDate = new Date();  
@@ -303,9 +378,9 @@ class task {
 End_Date   :String;
 Foot_Fall_ID :String;         
 Sub_Ledger_ID = 0;      
-Status = 'LEAD' ;    
+Status = 'Lead_Pending' ;    
 Type =  'CRM' ;   
-Lead_Status = 'Prospecting';    
+Lead_Status = 'Lead_Pending';    
 Visit_Type ='Pending';      
 Contact_Txn_ID= 0;        
   Contact_Name='';   
