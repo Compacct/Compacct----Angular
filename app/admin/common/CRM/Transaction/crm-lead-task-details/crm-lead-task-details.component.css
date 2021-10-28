@@ -8,3 +8,29 @@ div.table-responsive.table-id > p-table > div > div {
 .custombutton {
     margin-top: 25px;
   }
+  
+  .timeline > li > .timeline-item > .timeline-body,
+  .timeline > li > .timeline-item > .timeline-footer {
+    padding: 2px;
+  }
+  .timelinescroll {
+    max-height: 350px;
+    overflow-y: scroll;
+  }
+  
+  .btn-danger {
+    background-color: #19770d;
+    border-color: #19770d;
+  }
+  
+  .btn-danger:hover,
+  .btn-danger:active,
+  .btn-danger.hover {
+    background-color: #486b41;
+  }
+  
+  .btn-danger:hover {
+    color: #fff;
+    background-color: #19770d;
+    border-color: #335232;
+  }

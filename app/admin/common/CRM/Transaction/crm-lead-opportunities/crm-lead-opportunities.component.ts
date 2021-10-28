@@ -22,15 +22,26 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   LeadcreationFormSubmitted = false;
   LeadList = [];
   BackupLeadList = [];
+  TableLeadList = [];
   from_date:any;
   to_date:any;
   seachSpinner = false;
   ObjLeadcreation: Leadcreation = new Leadcreation();
 
   StatusList = [];
+  DisplayGridStatusList = [];
   LeadFilterList =[];
-  SelectedLeadFilterList = [];
+  StatusFilterList = [];
+  AssignToFilterList = [];
 
+  SelectedLeadFilterList1 = [];
+  SelectedStatusFilterList1 = [];
+  SelectedAssignToFilterList1 = [];
+
+  SelectedLeadFilterList2 = [];
+  SelectedStatusFilterList2 = [];
+  SelectedGridStatusFilterList2 = [];
+  SelectedAssignToFilterList2 = [];
   cars: [];
   selectedCar: [];
   displayDialog: boolean;
@@ -39,6 +50,8 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   sortField: string;
   sortOrder: number;
   QueryStringUserID = undefined;
+  FilterColLeadList = [];
+  GridLoader = false;
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -95,7 +108,12 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
         data.sort(function(a, b) { 
           return a.Status_ID - b.Status_ID  ||  a.Status.localeCompare(b.Status);
         });
+        data.map(i=> {
+          i['value'] = i.Status;
+          i['label'] = i.Status;
+        })
         this.StatusList = data;
+        this.DisplayGridStatusList = data;
 
       });
   }
@@ -124,6 +142,9 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   }
  // FOR SEARCH
   GetAllLead(){    
+    this.LeadList = [];
+    this.BackupLeadList = [];
+    this.TableLeadList = [];
     const obj = {
       "SP_String": "SP_New_Lead_Registration",
       "Report_Name_String": "Get_Leads_with_Assign_To",
@@ -133,30 +154,98 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
       console.log(data);
       this.LeadList = data;
       this.BackupLeadList = data;
-      this.LeadFilterList = this.distService.GetMultipleDistinct(this.BackupLeadList,['Org_Name'])[0];
+      this.TableLeadList = data;
+      this.FilterColLeadList = this.TableLeadList.length ? Object.keys(this.TableLeadList[0]) : [];
+      const FilterArr = this.distService.GetMultipleDistinct(this.BackupLeadList,['Org_Name','Status','Assign_To_Name']);
+      this.LeadFilterList = FilterArr[0];
+      this.StatusFilterList = FilterArr[1];
+      this.AssignToFilterList = FilterArr[2];
       console.log(this.LeadList)
     })
 
   } 
-  GlobalFilterChange () {
+  GlobalFilterChange1 () {
     let searchFields = [];
     let LeadFilter = [];
-    if (this.SelectedLeadFilterList.length) {
+    let StatusFilterList = [];
+    let AssignToFilterList = [];
+    if (this.SelectedLeadFilterList1.length) {
       searchFields.push('Org_Name');
-      LeadFilter = this.SelectedLeadFilterList;
+      LeadFilter = this.SelectedLeadFilterList1;
     }    
+    if (this.SelectedStatusFilterList1.length) {
+      searchFields.push('Status');
+      StatusFilterList = this.SelectedStatusFilterList1;
+    } 
+    if (this.SelectedAssignToFilterList1.length) {
+      searchFields.push('Assign_To_Name');
+      AssignToFilterList = this.SelectedAssignToFilterList1;
+    } 
+    const ctrl = this;
+    this.TableLeadList = [];
+    if (searchFields.length) {
+      const ctrl = this;
+      const LeadArr = this.BackupLeadList.filter(function (e) {
+        return ((LeadFilter.length ? LeadFilter.includes(e['Org_Name']) : true) 
+        && (StatusFilterList.length ?  StatusFilterList.includes(e['Status']) : true)
+        && (AssignToFilterList.length ?  AssignToFilterList.includes(e['Assign_To_Name']) : true)
+        );
+      });
+      this.TableLeadList = LeadArr.length ? LeadArr : [];
+    } else {
+      this.TableLeadList = this.BackupLeadList;
+    }
+  }
+  GlobalFilterChange2 () {
+    let searchFields = [];
+    let LeadFilter = [];
+    let StatusFilterList = [];
+    let AssignToFilterList = [];
+    let GridStatusFilterList = [];
+    this.DisplayGridStatusList = [];
+    this.GridLoader = true;
+    if (this.SelectedLeadFilterList2.length) {
+      searchFields.push('Org_Name');
+      LeadFilter = this.SelectedLeadFilterList2;
+    }    
+    if (this.SelectedStatusFilterList2.length) {
+      searchFields.push('Status');
+      StatusFilterList = this.SelectedStatusFilterList2;
+    } 
+    if (this.SelectedAssignToFilterList2.length) {
+      searchFields.push('Assign_To_Name');
+      AssignToFilterList = this.SelectedAssignToFilterList2;
+    } 
+    if(this.SelectedGridStatusFilterList2.length) {
+      GridStatusFilterList = this.SelectedGridStatusFilterList2;
+      const LeadArr = this.StatusList.filter(function (e) {
+        return ((GridStatusFilterList.length ? GridStatusFilterList.includes(e['Status']) : true));
+      });
+      this.DisplayGridStatusList = LeadArr.length ? LeadArr : [];
+      this.DisplayGridStatusList.sort(function(a, b) { 
+        return a.Status_ID - b.Status_ID  ||  a.Status.localeCompare(b.Status);
+      });
+    } else {
+      this.StatusList.sort(function(a, b) { 
+        return a.Status_ID - b.Status_ID  ||  a.Status.localeCompare(b.Status);
+      });
+      this.DisplayGridStatusList = this.StatusList;
+    }
     const ctrl = this;
     this.LeadList = [];
     if (searchFields.length) {
       const ctrl = this;
       const LeadArr = this.BackupLeadList.filter(function (e) {
-        return ((LeadFilter.length ? LeadFilter.includes(e['Org_Name']) : true)
-          );
+        return ((LeadFilter.length ? LeadFilter.includes(e['Org_Name']) : true) 
+        && (StatusFilterList.length ?  StatusFilterList.includes(e['Status']) : true)
+        && (AssignToFilterList.length ?  AssignToFilterList.includes(e['Assign_To_Name']) : true)
+        );
       });
       this.LeadList = LeadArr.length ? LeadArr : [];
     } else {
       this.LeadList = this.BackupLeadList;
     }
+    this.GridLoader = false;
   }
   getStatusWIseList(obj){
     if(obj.Status) {
@@ -186,7 +275,7 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   RedirectLeadDetails (data){
     const obj = {
       FootFallID :  data.Foot_Fall_ID,
-      UserID :  data.User_ID,
+      UserID :  data.Assign_To,
     }
     const navigationExtras: NavigationExtras = {
       queryParams: obj,

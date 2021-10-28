@@ -28,7 +28,7 @@
                       </div>
                         <div class="col-sm-8">
                             <br>
-                            <p-panel header="Edit Lead"  [toggleable]="true" [collapsed]='true'>
+                            <p-panel header="Edit Lead"  [toggleable]="true" >
                             <form name="myform" #myform="ngForm" novalidate>                            
                                 <div class="form-group">
                                   <h5 style="
@@ -404,41 +404,80 @@
                         </div>
                         <div class="col-sm-4">
                           <br>
-                              <div class="form-group">
-                                  <h5> Sampling / Demo</h5>
-                                  <div class="table-responsive no-padding">
-                                    <table class="table table-bordered">
-                                      <thead>
-                                        <tr style="background-color:#3c8dbc;color:white;">
-                                          <th>Total Subject</th>
-                                          <th>Complete</th>
-                                          <th>Pending</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                  <h5> Phone Email</h5>
-                                  <div class="table-responsive no-padding">
-                                    <table class="table table-bordered">
-                                      <thead>
-                                        <tr style="background-color:#3c8dbc;color:white;">
-                                          <th>Departmentt</th>
-                                          <th>Name</th>
-                                          <th>Phone</th>
-                                          <th>Email</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
+                          <div class="form-horizontal">
+                            <div class="box-body ">
+                                <div class="timelinescroll style-3">
+                                    <ul class="timeline ">
+                                        <li class="time-label" style="margin-bottom: -20px" *ngFor="let objMain of distinctDateArray">
+                                            <span class="" style="background-color:rgb(236, 205, 51)">{{objMain | date : 'dd/MMM/yyyy'}}</span>
+                                            <ul class="timeline" style="margin: 7px 0 30px 0">
+                                                <li *ngFor="let objSub of getFollowupByDate(objMain)">
+                                                    <i class="fa fa-user bg-blue"></i>
+                                                    <div class="timeline-item">
+                                                     
+                                                        <div class="timeline-body">
+                                                        </div>
+                                                        <div class="timeline-footer" style="padding-bottom: 10px">
+                                                            <a class="btn btn-info btn-social  btn-xs">
+                                                                <i class="fa fa-user"></i>&nbsp;{{objSub.Agent_Name}}
+                                                            </a>
+                                                            <div class="btn btn-block btn-reddit btn-xs" style="white-space: pre-line;width: 82%;text-align: left;margin: 0.2em 0;">
+                                                                Subject : <span style="font-weight: 600;">{{objSub.Subject}}</span>
+                                                                <hr style="margin:1px">
+                                                                Target Date :<b>&nbsp;{{objSub.End_Date | date:"dd/MMM/yyyy"}}</b>
+    
+                                                            </div>
+                                                            <a class="btn btn-social  btn-xs" [ngClass]='GetStatusWiseColor(objSub)'>
+                                                                Status :
+                                                                <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Status}}
+                                                            </a> <br>
+                                                            <a (click)='ShowTaskDetail(objSub)' class="btn btn-primary btn-social btn-xs" >
+                                                              <i class="fa fa-info-circle"></i>&nbsp;Details
+                                                          </a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                              <h5> Sampling / Demo</h5>
+                              <div class="table-responsive no-padding">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr style="background-color:#3c8dbc;color:white;">
+                                      <th>Total Subject</th>
+                                      <th>Complete</th>
+                                      <th>Pending</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                    </tr>
+                                  </tbody>
+                                </table>
                               </div>
+                              <h5> Phone Email</h5>
+                              <div class="table-responsive no-padding">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr style="background-color:#3c8dbc;color:white;">
+                                      <th>Departmentt</th>
+                                      <th>Name</th>
+                                      <th>Phone</th>
+                                      <th>Email</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                          </div>
                         </div>
                     </div>
               </div>
@@ -446,7 +485,81 @@
         </div>
     </div>
 </div>
-<!-- CALL DETAILS -->
+<!-- TASK FOLLOWUP DETAILS -->
+<p-dialog header="TASK FOLLOWUP DETAILS" [appendTo]="'body'" [visible]="TaskDetailsFollowupModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="TaskDetailsFollo" #TaskDetailsFollo="ngForm" novalidate>
+        <div class="form-group" *ngIf='TaskDetailsFollowupObj?.Subject'>
+          <div class="col-sm-12" style="padding: 0.5em 0;background-color: #0080002e;text-align: center;border-radius: 5px;">
+              Subject : <b>{{TaskDetailsFollowupObj.Subject.toUpperCase()}}</b> <br>
+              Assign To {{TaskDetailsFollowupObj.Agent_Name ? TaskDetailsFollowupObj.Agent_Name.toUpperCase() : '-'}}
+          </div>
+        </div>
+        <div *ngIf='TaskDetailsFollowupObj?.Agent_User_ID && $CompacctAPI.CompacctCookies.User_ID == TaskDetailsFollowupObj.Agent_User_ID' class="form-group">
+            
+            <div class="col-sm-12">
+                <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+                <textarea type="date" class="form-control" name="Remarks" #Remarks='ngModel' [ngModel]="TaskDetailsFollowupObj.Remarks" 
+                 [ngClass]="{'clearance': TaskDetailsFollowupFormSubmited &&  Remarks?.errors?.required}"
+                    required> </textarea>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Status <sup class="text-danger">*</sup><sup class="text-danger"></sup></label>
+                <select class="form-control"
+                        name="Status"
+                        #Status='ngModel'
+                        [ngClass]="{'clearance': TaskSubmit && Status?.errors?.required}"
+                        [(ngModel)]="TaskDetailsFollowupObj.Status"
+                        required>
+                  <option value="">Select</option>
+                  <option value="Lead_Pending">Lead Pending</option>
+                  <option value="Working">Working</option>
+                  <option value="Done">Done</option>
+                </select>
+            </div>
+            <div class="col-sm-12 text-center">
+              <button class="btn btn-primary custombutton pull-right"
+                style="margin-right: 1.5em;"
+                (click)='saveTaskFollowup(TaskDetailsFollo.form.valid)'>
+                <span class="fa fa-fw fa-plus"></span> &nbsp; Save
+              </button>
+            </div>
+        </div>
+        <div  class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+        <div class="form-group">
+          <div class="table-responsive no-padding">
+            <table class="table table-bordered">
+              <thead>
+                <tr style="background-color:#3c8dbc;color:white;">
+                  <th class="text-center" style="vertical-align:middle">Date</th>
+                  <th class="text-center" style="vertical-align:middle">Status</th>
+                  <th class="text-center" style="vertical-align:middle">Remarks</th>                 
+
+              </thead>
+              <tbody>
+                <tr *ngFor="let d of TaskDetailsFollowupList;let odd = odd;let index = index"
+                  [class.even]="odd">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ d.Status ? d.Status : "-" }}</td>
+                  <td>{{ d.Remarks ? d.Remarks : "-" }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="TaskDetailsFollowupModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+    </p-footer>
+</p-dialog>
+<!-- TASK DETAILS -->
 <p-dialog header="TASK" [appendTo]="'body'" [visible]="TaaskDetailsModalFlag" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <form name="CALLFORM" style="margin-top:2em" #CALLFORM="ngForm" novalidate>

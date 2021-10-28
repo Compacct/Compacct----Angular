@@ -7,11 +7,30 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
-                         
+                            <div *ngIf="BackupLeadList.length" class="form-group" style="padding:15px">
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+    
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Lead <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="LeadFilterList" (onChange)='GlobalFilterChange1()' [(ngModel)]="SelectedLeadFilterList1" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Status <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="StatusFilterList" (onChange)='GlobalFilterChange1()' [(ngModel)]="SelectedStatusFilterList1" [styleClass]="'compacct-multiselect'" name="Status"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Assign To <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="AssignToFilterList" (onChange)='GlobalFilterChange1()' [(ngModel)]="SelectedAssignToFilterList1" [styleClass]="'compacct-multiselect'" name="Assign"></p-multiSelect>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>   
                             <div class="table-responsive table-id">
                             <p-table #dt
-                                     [value]='LeadList'
-                                     [globalFilterFields]="['Mobile','Mobile_Whatsup','Contact_Name','Class_Name','Pin','City','Address','School']"
+                                     [value]='TableLeadList'
+                                     [globalFilterFields]="FilterColLeadList"
                                      [paginator]="true" [rows]="10" [rowHover]="true"
                                      [autoLayout]="true" sortMode="multiple"
                                      [rowsPerPageOptions]="[10,20,30]"
@@ -82,26 +101,38 @@
                                     <div class="form-group">
                                         <div class="col-sm-3">
                                             <label class="control-label">Lead <span class="text-danger"></span></label>
-                                            <p-multiSelect [options]="LeadFilterList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedLeadFilterList" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
+                                            <p-multiSelect [options]="LeadFilterList" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedLeadFilterList2" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Status <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="StatusFilterList" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedStatusFilterList2" [styleClass]="'compacct-multiselect'" name="Status"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Assign To <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="AssignToFilterList" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedAssignToFilterList2" [styleClass]="'compacct-multiselect'" name="Assign"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Grid Status Filter <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="StatusList" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedGridStatusFilterList2" [styleClass]="'compacct-multiselect'" name="Status"></p-multiSelect>
                                         </div>
                                     </div>
                                 </fieldset>
                             </div>   
                             <div style="overflow: scroll;width: 100%;height: 500px;display: flex;" >
-                                   <div class='status-contain' *ngFor='let status of StatusList'>
-                                    <p-dataView #dv [value]="getStatusWIseList(status)" [paginator]="true" [rows]="20" paginatorPosition="both" filterBy="brand"
-                                    [sortField]="sortField" [sortOrder]="sortOrder">
+                                   <div class='status-contain' *ngFor='let status of DisplayGridStatusList'>
+                                    <p-dataView #dv [value]="getStatusWIseList(status)" [loading]='GridLoader' [paginator]="true" [rows]="20" paginatorPosition="both" filterBy="brand"
+                                    [sortField]="sortField" [sortOrder]="sortOrder" layout='list'>
                                     <p-header>
-                                        <div class="ui-helper-clearfix">
-                                            <div class="ui-g">
-                                                <div class="ui-g-12 ui-md-6" [ngClass]='GetStatusWiseColor(status.Status)' style="text-align: center;line-height: 2em;border-radius: 5px;">
+                                        <div class="row">
+                                            <div class="col-sm-12 text-center">
+                                                <button class="btn" [ngClass]='GetStatusWiseColor(status.Status)' style="text-align: center;line-height: 2em;border-radius: 5px;">
                                                     {{status.Status}}
-                                                </div>
-                                                <div class="ui-g-12 ui-md-6" style="text-align:right">
+                                                </button>
+                                                <!-- <div class="ui-g-12 ui-md-6" style="text-align:right">
                                                     <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
-                                                </div>
+                                                </div> -->
                                             </div>
-                                            <div class="ui-g">
+                                            <!-- <div class="ui-g">
                                                 <div class="ui-g-12 ui-md-6">
                                                     <p-dropdown [options]="sortOptions" [(ngModel)]="sortKey" placeholder="Sort By" (onChange)="onSortChange($event)" [style]="{'min-width':'140px'}"></p-dropdown>
                                                 </div>
@@ -111,7 +142,7 @@
                                                     </div>
                                                 </div>
                                                
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </p-header>
                                     <ng-template let-lead pTemplate="listItem">

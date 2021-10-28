@@ -44,6 +44,13 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
   autocomplete:any;
   ProductTypeLists = [];
   SelectedProductTypeList = [];
+  followUpLists = [];
+  distinctDateArray =[];
+  TaskCount = 0;
+  TaskDetailsFollowupObj = new TaskDetails();
+TaskDetailsFollowupModal = false;
+TaskDetailsFollowupFormSubmited = false;
+TaskDetailsFollowupList = [];
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -52,7 +59,7 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private compacctToast: MessageService,
     private route: ActivatedRoute,
-    private $CompacctAPI: CompacctCommonApi,
+    public $CompacctAPI: CompacctCommonApi,
     private distService : CompacctGetDistinctService) { 
         this.route.queryParams.subscribe((val:any) => {
           this.QueryStringFootfall = undefined;
@@ -60,12 +67,12 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
           if(val.FootFallID) {
             this.QueryStringFootfall = val.FootFallID;
             this.QueryStringUserID = val.UserID;
+            this.GetFollowupDetails(this.QueryStringFootfall);
             this.GetAllLead();
             this.GetTaskCount();
           }
         } );
     }
-    TaskCount = 0;
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Lead Details",
@@ -79,7 +86,7 @@ export class CrmLeadTaskDetailsComponent implements OnInit {
     this.GetReferencebyCustomer();
     this.GetAllLead();
     this.GetSubject();
-          this.GetTaskCount();
+    this.GetTaskCount();
   }
   // GET
   GetSubject() {
@@ -252,13 +259,47 @@ getAddressOnChange(e) {
   }
   }
 
-
+// TASK
   OpenTask() {
   this.TaskToDate = new Date();  
   this.TaskFromDate = new Date();
   this.TaskObj = new task();
   this.TaskSubmit = false;
   this.TaaskDetailsModalFlag = true;
+  }
+  GetFollowupDetails(footFallID) {
+    const ctrl = this;
+          const distinctDateArrayTemp = [];
+          const obj = {
+            "SP_String": "SP_New_Lead_Registration",
+            "Report_Name_String": "Get_Task_with_Foot_Fall_ID",
+            "Json_Param_String": '[{"Foot_Fall_ID":' + footFallID+'}]'
+          }
+          this.GlobalAPI.postData(obj).subscribe(function (data) {
+                ctrl.followUpLists = data.length ? data:[];
+                for (let i = 0; i < ctrl.followUpLists.length; i++) {
+                    distinctDateArrayTemp.push(ctrl.followUpLists[i].Start_Date);
+                }
+                const unique = distinctDateArrayTemp.filter(function(value, index, self){
+                                return self.indexOf(value) === index;
+                                })
+            ctrl.distinctDateArray = unique;
+            });
+           // this.GetTaskDetails();
+  }
+  GetStatusWiseColor(obj){
+    if(obj.Status === 'Lead_Pending') {
+      return 'btn-soundcloud';
+    }
+    if(obj.Status === 'Working') {
+      return 'btn-openid';
+    }
+    if(obj.Status === 'Done') {
+      return 'btn-danger';
+    }
+  }
+  getFollowupByDate(dateStr) {
+    return this.followUpLists.filter((item) => item.Start_Date === dateStr);
   }
   saveTask(valid) {
     this.TaskSubmit = true;
@@ -321,6 +362,64 @@ getAddressOnChange(e) {
       queryParams: obj,
     };
     this.router.navigate(['./BL_CRM_Lead_Interaction_Nepal'], navigationExtras);
+  }
+  // TASK DETAILS
+  ShowTaskDetail(obj) {
+    this.TaskDetailsFollowupObj = new TaskDetails();
+    this.TaskDetailsFollowupFormSubmited = false;
+    this.TaskDetailsFollowupList = [];
+    if(obj.scheduled_ID) {
+      this.TaskDetailsFollowupObj.Agent_Name = obj.Agent_Name;
+      this.TaskDetailsFollowupObj.scheduled_ID = obj.scheduled_ID;
+      this.TaskDetailsFollowupObj.Subject = obj.Subject;
+      this.TaskDetailsFollowupObj.Status = obj.Status;
+      this.TaskDetailsFollowupObj.Agent_User_ID = obj.Agent_User_ID;
+      this.TaskDetailsFollowupObj.Remarks = undefined;
+      this.GetTaskDetails()
+    }
+  }
+  GetTaskDetails() {
+    const obj = {
+      "SP_String": "SP_New_Lead_Registration",
+      "Report_Name_String": "Get_Remarks_Status_with_Schedule_ID",
+      "Json_Param_String": '[{"Schedule_ID":'+this.TaskDetailsFollowupObj.scheduled_ID+'}]'
+    }
+    this.GlobalAPI.postData(obj).subscribe((data) => {
+          console.log(data);
+          this.TaskDetailsFollowupList = data;
+          this.TaskDetailsFollowupModal = true;
+      });
+  }
+  saveTaskFollowup(valid){
+    this.TaskDetailsFollowupFormSubmited = true;
+    console.log(this.TaskDetailsFollowupObj)
+    if (valid) {
+      const obj = {
+        "SP_String": "SP_New_Lead_Registration",
+        "Report_Name_String": "Add Task Remarks Create",
+        "Json_Param_String": JSON.stringify([this.TaskDetailsFollowupObj])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        console.log(data);
+        if(data[0].Column1) {
+          this.GetTaskCount();
+          this.GetFollowupDetails(this.QueryStringFootfall);
+          this.TaskDetailsFollowupFormSubmited = false;
+          this.TaskDetailsFollowupModal = false;
+          this.TaskDetailsFollowupObj = new TaskDetails();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: 'success',
+            detail: "Succesfully Created."
+          });
+        }
+       
+      })
+      // this.objFollowUpCreation.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
+      // this.objFollowUpCreation.Next_Followup = this.DateService.dateTimeConvert(new Date(this.NxtFollowupDate));
+    }
   }
 }
 class Lead{
@@ -391,4 +490,12 @@ Priority  :String;
 Agent_Name:String;
 Agent_User_ID:String;
 
+}
+class TaskDetails{
+  scheduled_ID:String;
+  Remarks:String;
+  Status:String;
+  Subject:String;
+  Agent_Name:String;
+  Agent_User_ID:String;
 }
