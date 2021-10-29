@@ -37,16 +37,22 @@ export class K4cMasterProductComponent implements OnInit {
   rowDataList = [];
   BackupRowDataList = [];
   SelectedProductType: any = [];
+  SelectedDept: any = [];
   productListFilter = [];
+  deptlistFilter = [];
   brandList = [];
   brandBrowseList = [];
+  costcenterList = [];
+  costcenterTableData:any = [];
   masterProductId : number;
   componentDisplay: boolean = false;
   masterProductFormSubmitted = false;
   masterProductSearchSubmitted = false;
+  costcenterFormSubmitted = false;
   DynamicHeader = [];
   buttonname = "Create";
   ObjmasterProduct: masterProduct = new masterProduct();
+  ObjcostCenter: costCenter = new costCenter();
   Objbrand: brand = new brand();
   can_popup = false;
   act_popup = false;
@@ -80,9 +86,11 @@ export class K4cMasterProductComponent implements OnInit {
     if(this.Param_Flag === 'Raw Material'){
     this.getRowData();
     this.getProductTypeListRow(0);
+    this.GetCostCenter();
 
     }else if (this.Param_Flag === 'Semi Finished') {
       this.getBrand();
+      this.GetCostCenter();
 
     } else if (this.Param_Flag === 'Finished') {
       this.getBrand();
@@ -202,6 +210,7 @@ export class K4cMasterProductComponent implements OnInit {
     this.clearData();
     this.masterProductFormSubmitted = false;
     // console.log("tabclick",this.ObjmasterProduct);
+    this.costcenterTableData = [];
   }
   clearData(){
   //  console.log("clearData")
@@ -211,8 +220,9 @@ export class K4cMasterProductComponent implements OnInit {
    console.log(this.ObjmasterProduct.Brand_ID);
    this.ObjmasterProduct.UOM = this.UOMList.length === 1 ? this.UOMList[0].UOM : undefined;
    this.ObjmasterProduct.Alt_UOM = this.UOMList.length === 1 ? this.UOMList[0].UOM : undefined;
+   
    //this.masterProductFormSubmitted = false;
-  // this.ParamFlaghtml = undefined;
+  // this.ParamFlaghtml = undefined; 
   }
   SaveProductMaster(valid){
       this.masterProductFormSubmitted = true;
@@ -235,6 +245,7 @@ export class K4cMasterProductComponent implements OnInit {
               console.log("this.ObjmasterProduct.Product_ID",this.ObjmasterProduct.Product_ID);
               console.log("TempId",TempId );
               if (data[0].Column1 === "done"){
+                this.saveCost(this.ObjmasterProduct.Product_ID);
                  this.compacctToast.clear();
                 this.compacctToast.add({
                   key: "compacct-toast",
@@ -259,6 +270,7 @@ export class K4cMasterProductComponent implements OnInit {
             this.GlobalAPI.getData(obj).subscribe((data:any)=>{
               //  console.log("del Data===", data)
               if (data[0].Column1 === "done"){
+                this.saveCost(this.ObjmasterProduct.Product_ID);
                 this.compacctToast.clear();
                 this.compacctToast.add({
                   key: "compacct-toast",
@@ -360,6 +372,7 @@ export class K4cMasterProductComponent implements OnInit {
         else {
          // console.log("fire")
           if (this.Param_Flag === 'Raw Material'){
+         
             const obj = {
               "SP_String": "SP_Controller_Master",
               "Report_Name_String": "Add Raw Material Product",
@@ -368,13 +381,14 @@ export class K4cMasterProductComponent implements OnInit {
             this.GlobalAPI.postData(obj).subscribe((data:any)=>{
              console.log("del Data===", data[0].Column1)
               if (data[0].Column1){
+                 this.saveCost(data[0].Column1);
                  this.compacctToast.clear();
                 this.compacctToast.add({
                   key: "compacct-toast",
                   severity: "success",
                   summary: "Product Added",
                   detail: "Succesfully Created"
-                });
+        });
                 }
                 this.Spinner = false;
                 this.getRowData();
@@ -389,13 +403,14 @@ export class K4cMasterProductComponent implements OnInit {
             this.GlobalAPI.postData(obj).subscribe((data:any)=>{
              console.log("del Data===", data[0].Column1)
               if (data[0].Column1){
-                 this.compacctToast.clear();
-                this.compacctToast.add({
-                  key: "compacct-toast",
-                  severity: "success",
-                  summary: "Product Added",
-                  detail: "Succesfully Created"
-                });
+                this.saveCost(data[0].Column1);
+                this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: "Product Added",
+                detail: "Succesfully Created"
+              });
                 }
                 this.Spinner = false;
                 this.getRowData();
@@ -490,6 +505,7 @@ export class K4cMasterProductComponent implements OnInit {
       this.buttonname = "Update";
       this.brandInput = true;
       this.geteditmaster(masterProduct.Product_ID);
+      this.editCostcenter(masterProduct.Product_ID);
       }
   }
   geteditmaster(product_id){
@@ -511,7 +527,7 @@ export class K4cMasterProductComponent implements OnInit {
       console.log("ObjmasterProduct ===",this.ObjmasterProduct);
        this.ObjmasterProduct.Product_ID = product_id;
        console.log("this.ObjmasterProduct.Product_ID",this.ObjmasterProduct.Product_ID);
-
+      
     })
 
   }
@@ -723,7 +739,7 @@ export class K4cMasterProductComponent implements OnInit {
 
           const ProductObj = this.BackupRowDataList.filter((elem) => elem.Product_Type == item)[i];
           //const ProductObj = el;
-          console.log("ProductObj",ProductObj);
+          //console.log("ProductObj",ProductObj);
           if(ProductObj)
           tempProduct.push(ProductObj)
 
@@ -744,9 +760,137 @@ export class K4cMasterProductComponent implements OnInit {
     console.log("event",eve);
     console.log("Product_Expiry",this.ObjmasterProduct.Product_Expiry);
   }
-  
-  
+  GetCostCenter(){
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Cost Center Name Material Management",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log("costcenterList  ===",data);
+      this.costcenterList = data;
+    })
+  }
+  GetDept(id){
+    this.deptlistFilter = [];
+    this.SelectedDept = [];
+    console.log("Cost_Cen_ID",id);
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Godown Name Name Material Management",
+      "Json_Param_String": JSON.stringify([{Cost_Cen_ID : id}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log("Dept  ===",data);
+      const tempdept = data;
+       tempdept.forEach(el => {
+       this.deptlistFilter.push(
+          {
+            label: el.godown_name,
+            value: el.godown_id
+          }
+        )
+      })
+    })
+  }
 
+  saveCost(product_id){
+    let saveData = [];
+    console.log("save table",this.costcenterTableData);
+    if(this.costcenterTableData.length){
+      this.costcenterTableData.forEach(ele => {
+        let tempsave = {
+          Product_ID : product_id,
+          Cost_Cent_ID : ele.Cost_Cen_ID,
+          Godown_ID : ele.Godown_ID
+        }
+        saveData.push(tempsave);
+      });
+      console.log("saveData",saveData);
+      const obj = {
+        "SP_String": "SP_Controller_Master",
+        "Report_Name_String": "Create Update Product Wise Godown",
+        "Json_Param_String": JSON.stringify(saveData)
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      console.log("saveData",data);
+      if(data[0].Column1 === "done"){
+        this.costcenterTableData = [];
+        this.SelectedDept = [];
+        this.ObjcostCenter.costcenterId = undefined;
+      }
+    
+      })
+    }
+    
+  }
+  SavetablecostCenter(valid){
+    this.costcenterFormSubmitted = true;
+    let tablecheck  = [];
+    console.log("add table",this.costcenterTableData);
+    if(valid){
+      this.SelectedDept.forEach(ele => {
+         tablecheck = this.costcenterTableData.filter(item=> Number(item.Cost_Cen_ID) === Number(this.ObjcostCenter.costcenterId) && Number(item.Godown_ID) === Number(ele));
+      })
+     if(!tablecheck.length){
+      const sameproduct = this.costcenterList.filter(item=> Number(item.Cost_Cen_ID) === Number(this.ObjcostCenter.costcenterId));
+      console.log("sameproduct",sameproduct);
+      console.log("SelectedDept",this.SelectedDept);
+      this.SelectedDept.forEach(ele => {
+        const samego = this.deptlistFilter.filter(item=> Number(item.value) === Number(ele));
+        if(samego.length){
+          const productObj = {
+            Cost_Cen_ID : sameproduct[0].Cost_Cen_ID,
+            Cost_Cen_Name : sameproduct[0].Cost_Cen_Name,
+            Godown_ID : samego[0].value,
+            Godown_Name : samego[0].label,
+           };
+           this.costcenterTableData.push(productObj);
+        }
+   
+      });
+      this.costcenterFormSubmitted = false;
+     }
+     else{
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "already add"
+        });
+     }
+    }
+    
+    console.log("costcenterTableData",this.costcenterTableData);
+    this.SelectedDept = [];
+    this.ObjcostCenter.costcenterId = undefined;
+  }
+  delete(index) {
+    this.costcenterTableData.splice(index,1)
+  }
+  editCostcenter(id){
+    this.costcenterTableData = [];
+    let temparr = {}
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get Product Wise Godown",
+      "Json_Param_String": JSON.stringify([{Product_ID : id}])
+    }
+    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      console.log("editcost",data);
+     const tempEditdata = data;
+     tempEditdata.forEach(ele => {
+      temparr = {
+        Cost_Cen_ID : ele.Cost_Cen_ID,
+        Cost_Cen_Name : ele.Cost_Cen_Name,
+        Godown_ID : ele.Godown_ID,
+        Godown_Name : ele.godown_name,
+       };
+       this.costcenterTableData.push(temparr);
+     });
+    })
+    console.log("edit table",this.costcenterTableData);
+  }
   }
 
 
@@ -790,4 +934,7 @@ class masterProduct {
 }
 class brand{
   Brand_ID : 0 ;
+}
+class costCenter{
+  costcenterId : 0;
 }

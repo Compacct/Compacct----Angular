@@ -327,12 +327,12 @@
                                         <textarea class="form-control" style="margin: 0px -16.6719px 0px 0px; width: 334px;height: 69px;" name="Remarks" #Remarks="ngModel" rows='1' [(ngModel)]="ObjmasterProduct.Remarks"></textarea>
                                     </div>
                                     <div class="col-sm-4">
-
+                                       
                                     </div>
 
 
                                     <div class="col-sm-4">
-
+                                       
                                     </div>
                                     <div class="col-sm-4">
 
@@ -342,7 +342,64 @@
 
                                     </div>
                                 </div>
-
+                                <div class="col-lg-12" style="margin-top: 15px"  *ngIf="Param_Flag != 'Store Item' && Param_Flag != 'Finished'&& Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Store Item - Saleable'">
+                                    <div class="panel-group"  >
+                                      <div class="panel panel-primary">
+                                        <div class="panel-body">
+                                       <form name="coscenterForm" #coscenterForm="ngForm" novalidate>
+                                       <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Select Cost Center<sup class="text-danger"></sup>
+                                            </label>
+                                        <select class="form-control" 
+                                        name="costcenterId" 
+                                        #costcenterId="ngModel"
+                                         [(ngModel)]="ObjcostCenter.costcenterId"
+                                         (change)="GetDept(ObjcostCenter.costcenterId)">
+                                                  <option  [ngValue]="undefined">Select</option>
+                                              <option *ngFor="let option of costcenterList" value="{{option.Cost_Cen_ID}}">
+                                                  {{option.Cost_Cen_Name}}
+                                                  </option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Select Department</label>
+                                            <p-multiSelect [options]="deptlistFilter" 
+                                            [(ngModel)]="SelectedDept" 
+                                            [styleClass]="'compacct-multiselect'" 
+                                            name="deptlistFilter"
+                                            [ngClass]="{'clearance': costcenterFormSubmitted && deptlistFilter?.errors?.required}" 
+                                            required = "ObjcostCenter.costcenterId ? ObjcostCenter.costcenterId : false"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-primary custombutton" (click)="SavetablecostCenter(coscenterForm.form.valid)">
+                                                <span  class="glyphicon glyphicon-save">Add</span></button>
+                                        </div>
+                                        </div>
+                                      </form>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive no-padding">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#4fa1d1;color:white;" >
+                                                <th>Cost Cen Name</th>
+                                                <th>Godown Name </th>
+                                                <th >Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- ngRepeat: obj in ctrl.ProductCategoryGST -->
+                                              <tr *ngFor="let obj of costcenterTableData; let ind = index;" >
+                                                <td>{{obj.Cost_Cen_Name}}</td>
+                                                <td>{{obj.Godown_Name}}</td>
+                                                <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                             </div>
                                 <div class="box-footer">
                                     <button class="btn btn-primary pull-right" (click)="SaveProductMaster(masterProduct.form.valid)" id="load" [disabled]="Spinner">
                                         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>

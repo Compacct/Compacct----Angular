@@ -1,6 +1,9 @@
 #ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
     width: auto !important;
   }
+  div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
   .custombutton {
     margin-top: 25px;
   }
