@@ -38,8 +38,11 @@ export class K4cDayEndProcessComponent implements OnInit {
   req_date_B:string;
   req_date2:string;
   Cost_Cen_ID_B = undefined;
- costCenterDis = true;
- mismatch = false;
+  costCenterDis = true;
+  mismatch = false;
+  Total:any;
+  VarianceTotal: any;
+  SystemAmttotal: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -152,6 +155,8 @@ export class K4cDayEndProcessComponent implements OnInit {
     })
   }
   GetPaymentType(){
+    this.Total = [];
+    this.VarianceTotal = [];
     if(this.Datevalue){
       this.seachSpinner = true;
       const tempObj = {
@@ -175,6 +180,56 @@ export class K4cDayEndProcessComponent implements OnInit {
       })
     }
   }
+  getTotalValue(key){
+    this.SystemAmttotal = undefined;
+    let Amtval = 0;
+    this.paymentList.forEach((item)=>{
+      Amtval += Number(item[key]);
+    });
+    this.SystemAmttotal = Amtval
+    return Amtval ? Amtval : '-';
+  }
+  getTotalAmt(){
+    this.Total = undefined;
+    let totalAmtval = 0;
+    this.paymentList.forEach((item)=>{
+     totalAmtval += Number(item.Amount);
+    });
+    //totalAmtval += this.paymentList[indx]['Amount'];
+    this.Total = totalAmtval ? totalAmtval : 0;
+    return totalAmtval ? totalAmtval : 0;
+  }
+  getTotalVar(){
+    this.VarianceTotal = undefined;
+    let totalVarval = 0;
+    this.paymentList.forEach((item)=>{
+      totalVarval += Number(item.Variance);
+    });
+    this.VarianceTotal = totalVarval;
+    return totalVarval ? totalVarval : 0;
+  }
+  VarianceChq(indx){
+    this.paymentList[indx]['Variance'] =  0;
+   // this.paymentList[indx]['Amount'] = 0;
+    if(this.paymentList[indx]['Total_Amount'] && this.paymentList[indx]['Amount']){
+      this.paymentList[indx]['Variance'] = this.paymentList[indx]['Total_Amount'] - this.paymentList[indx]['Amount'];
+    }
+  //   this.Total = undefined;
+  //   let totalAmtval = 0;
+  //   this.paymentList.forEach((item)=>{
+  //    totalAmtval += Number(item.Amount);
+  //  });
+    //totalAmtval += this.paymentList[indx]['Amount'];
+    // this.Total = totalAmtval ? totalAmtval : '-';
+   // return totalAmtval ? totalAmtval : '-';
+  //  this.VarianceTotal = undefined;
+  //   let totalVarval = 0;
+  //   this.paymentList.forEach((item)=>{
+  //     totalVarval += Number(item.Variance);
+  //   });
+  //   this.VarianceTotal = totalVarval;
+
+  }
   GetclosingStatus(){
     if(this.Datevalue){
       const tempObj = {
@@ -196,29 +251,29 @@ export class K4cDayEndProcessComponent implements OnInit {
     let temparr = [];
     let saveValue = false;
     this.mismatch = true;
-    const sameValArr = this.paymentList.filter(item=> item.Total_Amount !== Number(item.Amount) );
+   // const sameValArr = this.paymentList.filter(item=> item.Total_Amount !== Number(item.Amount) );
     if(this.paymentList.length && this.closeingstatus){
-      if( !sameValArr.length && this.closeingUpdate === this.closeingstatus && this.closeingUpdate === "YES"){
+      if( this.closeingUpdate === this.closeingstatus && this.closeingUpdate === "YES"){
         this.saveCheck();
       } else{
-        const msg = this.closeingUpdate !== this.closeingstatus ? "CLOSEING STOCK UPDATED MISMATCHED" : "AMOUNT MISMATCHED"
+       // const msg = this.closeingUpdate !== this.closeingstatus ? "CLOSEING STOCK UPDATED MISMATCHED" : "AMOUNT MISMATCHED"
         this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
               severity: "error",
               summary: "Warn Message",
-              detail: msg
+              detail: "CLOSEING STOCK UPDATED MISMATCHED"
             });
       }
 
     }else{
-      const msgarr = sameValArr.length === 0 ? "ENTER AMOUNT" : "SELECT CLOSEING STOCK UPDATED"
+     // const msgarr = sameValArr.length === 0 ? "ENTER AMOUNT" : "SELECT CLOSEING STOCK UPDATED"
       this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
               severity: "error",
               summary: "Warn Message",
-              detail: msgarr
+              detail: "Select Closing Stock Update"
             });
     }
 
@@ -253,6 +308,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   save(){
     let saveData = [];
     this.saveSpinner = true;
+    if (Number(this.SystemAmttotal === this.Total) && Number(this.VarianceTotal == 0)) {
     this.paymentList.forEach(ele =>{
       const TempData = {
         Date : this.DateService.dateConvert(new Date(this.Datevalue)),
@@ -260,6 +316,7 @@ export class K4cDayEndProcessComponent implements OnInit {
         Description : ele.Collection_Mode,
         Manual_Amount : Number(ele.Amount),
         System_Amount : ele.Total_Amount,
+        Remarks : ele.Remarks,
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID
      }
      saveData.push(TempData)
@@ -283,5 +340,15 @@ export class K4cDayEndProcessComponent implements OnInit {
         });
       }
     })
+    }
+     else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "System amount is not equal to actual Aamount"
+      });
+     }
   }
 }

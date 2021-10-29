@@ -759,6 +759,7 @@ clearlistamount(){
 
 AmountChange(){
   //console.log("called");
+  var coupon_per = this.ObjcashForm.Coupon_Per ? this.ObjcashForm.Coupon_Per : 0;
   var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
   var wallet_amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashForm.Wallet_Amount : 0;
   var cash_amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0 ;
@@ -766,7 +767,12 @@ AmountChange(){
   // var total_paid = this.ObjcashForm.Total_Paid ? this.ObjcashForm.Total_Paid : 0;
   // var refund_amount = this.ObjcashForm.Refund_Amount ? this.ObjcashForm.Refund_Amount : 0;
   // var due_amount = this.ObjcashForm.Due_Amount ? this.ObjcashForm.Due_Amount : 0;
+  if (this.ObjcashForm.Coupon_Per || Number(this.ObjcashForm.Coupon_Per) === 0) {
+    this.ObjcashForm.Credit_To_Amount = Number(this.Net_Payable * coupon_per) / 100;
+    this.ObjcashForm.Total_Paid = Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount);
+  } else {
   this.ObjcashForm.Total_Paid = Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount);
+  }
    if(Number(this.Net_Payable) < this.ObjcashForm.Total_Paid){
      this.ObjcashForm.Refund_Amount = Number(this.ObjcashForm.Total_Paid) - Number(this.Net_Payable)
    }
@@ -919,6 +925,18 @@ saveprintAndUpdate(){
       severity: "error",
       summary: "Warn Message",
       detail: "Error in Credit to Account"
+    });
+    return false;
+  }
+  if(this.ObjcashForm.Coupon_Per && !this.Objcustomerdetail.Bill_Remarks){
+      this.Spinner = false;
+      this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Enter Remarks"
     });
     return false;
   }
@@ -1477,6 +1495,7 @@ clearData(){
   Ledger_Name : string;
 }
 class cashForm{
+  Coupon_Per : number;
   Credit_To_Ac_ID : any;
   Credit_To_Ac : string;
   Credit_To_Amount : number;
