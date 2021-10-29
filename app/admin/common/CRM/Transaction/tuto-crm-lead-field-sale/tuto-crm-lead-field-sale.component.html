@@ -79,6 +79,14 @@
                                         <p-multiSelect [options]="DAppoSlotList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAppoSlotFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
+                                        <label class="control-label">School Pin <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="SchoolPinList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedSchoolPinFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">School Name<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="SchoolNameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedSchoolNameFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
                                         <button *ngIf="leadFollowUpListBackup.length" (click)="exportexcel(leadFollowUpList,'Lead_Field_Sales')" class="btn btn-primary custombutton">
                                             <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
                                           </button>
@@ -142,7 +150,9 @@
                                     <th>Name</th>
                                     <th>Mobile</th>
                                     <th>Alternative Mobile No.</th>
-                                    <th>Pin </th>
+                                    <th>Resi Pin </th>
+                                    <th>School Pin </th>
+                                    <th>School Name </th>
                                     <th>Address</th>
                                     <th>Landmark</th>
                                     <th>Appointment Type</th>
@@ -181,6 +191,11 @@
                                                         <i class="fa fa-file-text-o" aria-hidden="true"></i> Show Details
                                                     </a>
                                                 </li>
+                                                <li>
+                                                    <a (click)="ShowForwardFieldSales(col)">
+                                                        <i class="fa fa-forward" aria-hidden="true"></i> Forward
+                                                    </a>
+                                                </li>
                                                 <!-- <li><a (click)="RedirectPendingSubscriptionTutopia(col.Foot_Fall_ID)"><i
                                                             class="fa fa-fw fa fa-exchange"></i>Pending Subscription</a></li> -->
 
@@ -210,6 +225,8 @@
                                     <td><a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a></td>
                                     <td>{{col.ALT_Mobile ? col.ALT_Mobile : '-'}}</td>
                                     <td>{{col.Pin ? col.Pin : '-' }}</td>
+                                    <td>{{col.School_PIN ? col.School_PIN : '-' }}</td>
+                                    <td>{{col.School_Name ? col.School_Name : '-' }}</td>
                                     <td>{{col.Address ? col.Address : '-'}}</td>
                                     <td>{{col.Landmark ? col.Landmark : '-'}}</td>
                                     <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
@@ -884,6 +901,66 @@
     <p-footer>
         <button type="button" (click)="CallDetailsModalFlag = false" class="btn btn-default">
             CLOSE
+        </button>
+    </p-footer>
+</p-dialog>
+<!-- FIELD SALES FORWARD-->
+<p-dialog header="Forward Lead" [appendTo]="'body'" [visible]="ForwardFieldSalesModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="ResceduleForwardLeadModalUpdate" style="margin:3em 0" #ResceduleForwardLeadModalUpdate="ngForm" novalidate>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Appo Date<sup class="text-danger">*</sup></label>
+                <input type="date" class="form-control" id="ForwardFieldFollowup2" name="ForwardFieldFollowup2" #ForwardFieldFollowup2='ngModel' [ngModel]="ForwardFieldSalesDate | date:'yyyy-MM-dd'" (ngModelChange)="ForwardFieldSalesDate = $event"  [ngClass]="{'clearance': ForwardFieldSalesSubmitted &&  ForwardFieldFollowup2?.errors?.required}"
+                    required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Distributor&nbsp;<span class="text-danger">*</span></label>
+                <p-dropdown [options]="DistributorList" name="Distributor" [(ngModel)]="ForwardFieldSalesObj.Member_ID" [showClear]="true" [emptyFilterMessage]="' No Distributor Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Distributor'" [virtualScroll]="true" itemSize="30" #Distributor="ngModel"
+                (onChange)='GetASPName()'    
+                [styleClass]="
+                    ForwardFieldSalesSubmitted && Distributor.errors?.required ? 'clearance': ''" [required]="true">
+                </p-dropdown>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">ASP&nbsp;<span class="text-danger">*</span></label>
+                <p-dropdown [options]="ASPList" name="ASP" [(ngModel)]="ForwardFieldSalesObj.Intro_Member_ID" [showClear]="true" [emptyFilterMessage]="' No ASP Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select ASP'" [virtualScroll]="true" itemSize="30" #ASP="ngModel"
+                (onChange)='ChnageASPName()'    
+                [styleClass]="
+                    ForwardFieldSalesSubmitted && ASP.errors?.required ? 'clearance': ''" [required]="true">
+                </p-dropdown>
+            </div>
+      
+            <div class="col-sm-12">
+                <label class="control-label">
+                    Appo Slot <sup class="text-danger">*</sup></label>
+                <select class="form-control" name='Time_Slot_Name' #Time_Slot_Name='ngModel' [ngClass]="{'clearance': ForwardFieldSalesSubmitted &&  Time_Slot_Name?.errors?.required}" [(ngModel)]="ForwardFieldSalesObj.Appo_Time_Slot_ID" required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of AppoSlotList" [ngValue]="option.Time_Slot_ID">{{option.Time_Slot_Name}}</option>
+                </select>
+            </div> 
+             
+            <!-- 
+                asp -- tda -- distrubator id
+                asp -- asp -user
+
+                 -->
+
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="ForwardFieldSalesModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button type="button" class="btn btn-primary" (click)="SaveForwardFieldSales(ResceduleForwardLeadModalUpdate.form.valid)">
+            SAVE
         </button>
     </p-footer>
 </p-dialog>

@@ -70,13 +70,17 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   RegisterList = [{ label: 'REGISTERED', value: '1' }, { label: 'UN REGSITERED', value: '0' }]
   ZonalSalesHeadList = [];
   DAppoSlotList = [];
-
+  SchoolNameList = [];
+  SchoolPinList = [];
+  
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
   SelectedDaysFilterList = [];
   SelectedRegisterFilterList = [];
   SelectedZonalSalesFilterList = [];
   SelectedAppoSlotFilterList = [];
+  SelectedSchoolNameFilterList = [];
+  SelectedSchoolPinFilterList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -100,6 +104,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   
   from_date:any;
   to_date:any;
+
+  ForwardFieldSalesObj = new ForwardFieldSales();
+  ForwardFieldSalesDate = new Date().setDate(new Date().getDate() + 1);
+  ForwardFieldSalesModal = false;
+  ForwardFieldSalesSubmitted = false;
+  ASPList = [];
+  DistributorList = [];
+  AppoSlotList = [];
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -131,6 +143,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
    // this.GetSalesUserList();
     this.GetAllUserList();
     this.GetActionListFollowupCreate();
+    this.GetDistributor();
+    this.GetASPName();
+    this.GetAppoSlotList();
   }
   GetUserList() {
      this.$http
@@ -243,12 +258,16 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let DaysFilter = [];
     let ZonalSalesFilter = [];
     let SlotFilter = [];
+    let SchoolNameFilter = [];
+    let SchoolPinFilter = [];
 
     this.PinList = [];
   this.Appointment_ForList = [];
   this.DaysList = [];
   this.ZonalSalesHeadList = [];
   this.DAppoSlotList = [];
+  this.SchoolNameList = [];
+  this.SchoolPinList = [];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -270,6 +289,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         ZonalSalesFilter.push(item.Zonal_Sales_Head);
         this.ZonalSalesHeadList.push({ label: item.Zonal_Sales_Head, value: item.Zonal_Sales_Head });
       }
+      if (SchoolNameFilter.indexOf(item.School_Name) === -1) {
+        SchoolNameFilter.push(item.School_Name);
+        this.SchoolNameList.push({ label: item.School_Name, value: item.School_Name });
+      }
+      if (SchoolPinFilter.indexOf(item.School_PIN) === -1) {
+        SchoolPinFilter.push(item.School_PIN);
+        this.SchoolPinList.push({ label: item.School_PIN, value: item.School_PIN });
+      }
     });
   }
   NextFollowDateFilterChange(e) {
@@ -289,6 +316,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let RegisterFilter = [];
     let ZonalSalesFilter = [];
     let SlotFilter = [];
+    let SchoolNameFilter = [];
+    let SchoolPinFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -314,6 +343,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       searchFields.push('Appo_Time_Slot');
       SlotFilter = this.SelectedAppoSlotFilterList;
     }
+    if (this.SelectedSchoolNameFilterList.length) {
+      searchFields.push('School_Name');
+      SchoolNameFilter = this.SelectedSchoolNameFilterList;
+    }
+    if (this.SelectedSchoolPinFilterList.length) {
+      searchFields.push('School_PIN');
+      SchoolPinFilter = this.SelectedSchoolPinFilterList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -325,6 +362,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           && (SlotFilter.length ? SlotFilter.includes(e['Appo_Time_Slot']) : true)
           && (ZonalSalesFilter.length ? ZonalSalesFilter.includes(e['Zonal_Sales_Head']) : true)
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
+          && (SchoolNameFilter.length ? SchoolNameFilter.includes(e['School_Name']) : true)
+          && (SchoolPinFilter.length ? SchoolPinFilter.includes(e['School_PIN']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];
@@ -781,6 +820,117 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     }
   }
 
+// 
+GetAppoSlotList() {
+  const obj = {
+    "SP_String":"SP_Appointment",
+    "Report_Name_String": "GET_Time_Slot"
+  }
+  this.GlobalAPI
+      .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+      .subscribe((data: any) => {
+        this.AppoSlotList = data.length ? data : [];
+      });
+}
+GetDistributor(){
+  const obj = {
+    "SP_String": "Tutopia_Field_Sales_School",
+    "Report_Name_String": "GET_Distributor_List",
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  data.forEach(i=>{
+    i['value'] = i.Distributor_ID;
+    i['label'] = i.Distributor_Name;
+  });
+     this.DistributorList = data;
+ });
+}
+GetASPName(){
+  this.ForwardFieldSalesObj.Appo_To_User_ID = undefined;
+  if(this.ForwardFieldSalesObj.Member_ID) {
+    const TempObj = {
+      Intro_Member_ID : this.ForwardFieldSalesObj.Member_ID
+    }
+    const obj = {
+      "SP_String": "Tutopia_Field_Sales_School",
+      "Report_Name_String": "GET_ASP_List",
+      "Json_1_String": JSON.stringify([TempObj])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    data.forEach(i=>{
+      i['value'] = i.Distributor_ID;
+      i['label'] = i.Distributor_Name;
+    });
+       this.ASPList = data;
+   });
+  }
+  
+}
+ChnageASPName() {
+  this.ForwardFieldSalesObj.Appo_To_User_ID = undefined;
+  if(this.ForwardFieldSalesObj.Intro_Member_ID) {
+    const arr = this.ASPList.filter(i=> i.Distributor_ID.toString() === this.ForwardFieldSalesObj.Intro_Member_ID.toString());
+    if(arr.length && arr[0].Distributor_Name === 'TBA_ASP') {
+      this.ForwardFieldSalesObj.Appo_To_User_ID = this.ForwardFieldSalesObj.Member_ID;
+    } else {
+      this.ForwardFieldSalesObj.Appo_To_User_ID = arr[0].Distributor_ID;
+    }
+  }
+}
+ShowForwardFieldSales(obj) {
+  this.ForwardFieldSalesObj = new ForwardFieldSales();
+  this.ForwardFieldSalesDate = new Date().setDate(new Date().getDate());
+  this.ForwardFieldSalesSubmitted = false;
+  if(obj.Lead_ID) {
+     this.ForwardFieldSalesObj.Appo_ID = obj.Appo_ID;
+    this.ForwardFieldSalesModal = true;
+  }
+
+}
+SaveForwardFieldSales(valid) {
+  this.ForwardFieldSalesSubmitted = true;
+  if(valid) {
+    this.ForwardFieldSalesObj.Appo_Date = this.DateService.dateConvert(new Date(this.ForwardFieldSalesDate));
+    console.log(this.ForwardFieldSalesObj)
+    const obj = {
+      "SP_String":"SP_Appointment",
+      "Report_Name_String": "Followup_Field_Appointment_Forward",
+      "Json_Param_String" : JSON.stringify([this.ForwardFieldSalesObj])
+    }
+    const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+    this.GlobalAPI
+        .CommonPostData(obj,'Tutopia_Call_Common_SP_For_All')
+        .subscribe((data: any) => { 
+          console.log(data);
+    if (data[0].Remarks.includes('Already Engaged')) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "error",
+        detail: data[0].Remarks
+      });
+    } else {
+      this.SaerchFollowup(true);
+      this.ForwardFieldSalesModal = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'APPO ID : ' +this.ForwardFieldSalesObj.Appo_ID ,
+        detail: "Succesfully Forward."
+      });
+      this.ForwardFieldSalesObj = new ForwardFieldSales();
+      this.ForwardFieldSalesDate = new Date().setDate(new Date().getDate());
+      this.ForwardFieldSalesSubmitted = false;
+    }
+  })
+  }
+  
+}
+
   // FORWARD LEAD
   OpenForwardModal() {
     this.NxtFollowupDate = new Date();
@@ -870,4 +1020,12 @@ class Studetail{
   Pin : string;
   City : string;
 
+}
+class ForwardFieldSales{
+  Member_ID :string;
+  Intro_Member_ID:string;
+  Appo_Time_Slot_ID:string;
+  Appo_ID:String;
+  Appo_Date:String;
+  Appo_To_User_ID:String;
 }

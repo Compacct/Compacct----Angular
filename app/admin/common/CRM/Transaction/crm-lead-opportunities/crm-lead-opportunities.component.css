@@ -8,6 +8,9 @@ div.table-responsive.table-id > p-table > div > div {
 .custombutton {
     margin-top: 25px;
   }
+  body > .ui-paginator{
+    margin-top: 0 !important;
+  }
   .status-contain{
     width: 35%;
     margin: 0 5px;
@@ -57,3 +60,6 @@ div.table-responsive.table-id > p-table > div > div {
   padding: 0px 10px 0px 10px;
   background-color: #ffffff;
       }
+      div.pac-container.pac-logo {
+        z-index: 9999999 !important;
+    }
