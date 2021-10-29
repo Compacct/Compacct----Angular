@@ -70,13 +70,17 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   RegisterList = [{ label: 'REGISTERED', value: '1' }, { label: 'UN REGSITERED', value: '0' }]
   ZonalSalesHeadList = [];
   DAppoSlotList = [];
-
+  SchoolNameList = [];
+  SchoolPinList = [];
+  
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
   SelectedDaysFilterList = [];
   SelectedRegisterFilterList = [];
   SelectedZonalSalesFilterList = [];
   SelectedAppoSlotFilterList = [];
+  SelectedSchoolNameFilterList = [];
+  SelectedSchoolPinFilterList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -254,12 +258,16 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let DaysFilter = [];
     let ZonalSalesFilter = [];
     let SlotFilter = [];
+    let SchoolNameFilter = [];
+    let SchoolPinFilter = [];
 
     this.PinList = [];
   this.Appointment_ForList = [];
   this.DaysList = [];
   this.ZonalSalesHeadList = [];
   this.DAppoSlotList = [];
+  this.SchoolNameList = [];
+  this.SchoolPinList = [];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -281,6 +289,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         ZonalSalesFilter.push(item.Zonal_Sales_Head);
         this.ZonalSalesHeadList.push({ label: item.Zonal_Sales_Head, value: item.Zonal_Sales_Head });
       }
+      if (SchoolNameFilter.indexOf(item.School_Name) === -1) {
+        SchoolNameFilter.push(item.School_Name);
+        this.SchoolNameList.push({ label: item.School_Name, value: item.School_Name });
+      }
+      if (SchoolPinFilter.indexOf(item.School_PIN) === -1) {
+        SchoolPinFilter.push(item.School_PIN);
+        this.SchoolPinList.push({ label: item.School_PIN, value: item.School_PIN });
+      }
     });
   }
   NextFollowDateFilterChange(e) {
@@ -300,6 +316,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let RegisterFilter = [];
     let ZonalSalesFilter = [];
     let SlotFilter = [];
+    let SchoolNameFilter = [];
+    let SchoolPinFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -325,6 +343,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       searchFields.push('Appo_Time_Slot');
       SlotFilter = this.SelectedAppoSlotFilterList;
     }
+    if (this.SelectedSchoolNameFilterList.length) {
+      searchFields.push('School_Name');
+      SchoolNameFilter = this.SelectedSchoolNameFilterList;
+    }
+    if (this.SelectedSchoolPinFilterList.length) {
+      searchFields.push('School_PIN');
+      SchoolPinFilter = this.SelectedSchoolPinFilterList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -336,6 +362,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           && (SlotFilter.length ? SlotFilter.includes(e['Appo_Time_Slot']) : true)
           && (ZonalSalesFilter.length ? ZonalSalesFilter.includes(e['Zonal_Sales_Head']) : true)
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
+          && (SchoolNameFilter.length ? SchoolNameFilter.includes(e['School_Name']) : true)
+          && (SchoolPinFilter.length ? SchoolPinFilter.includes(e['School_PIN']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];

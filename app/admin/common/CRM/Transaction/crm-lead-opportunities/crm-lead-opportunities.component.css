@@ -60,3 +60,6 @@ div.table-responsive.table-id > p-table > div > div {
   padding: 0px 10px 0px 10px;
   background-color: #ffffff;
       }
+      div.pac-container.pac-logo {
+        z-index: 9999999 !important;
+    }

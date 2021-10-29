@@ -7,6 +7,27 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label">Assign To<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="forwardlead"
+                                            #forwardlead='ngModel'
+                                            [ngClass]="{'clearance': leadtransactionSubmit && forwardlead?.errors?.required}"
+                                            [(ngModel)]="QueryStringUserID"
+                                            (change)='GetAllLead()'
+                                            [disabled]='FromQueryString'
+                                            required>
+                                            <option *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A"'  [ngValue]="undefined">Select</option>
+                                            <option *ngFor = "let option of user" [value] ="option.User_ID">
+                                               {{option.Member_Name}}
+                                             </option>
+                                    </select>
+                                  </div>
+                                  <button class="btn btn-primary custombutton" style="margin-right: 1.5em;" (click)='openLeadModal()'>
+                                    <span class="fa fa-fw fa-user-plus"></span>&nbsp;Create Lead 
+                                  </button>
+                            </div>
                             <div *ngIf="BackupLeadList.length" class="form-group" style="padding:15px">
                                 <fieldset class="col-md-12">
                                     <legend>Filter</legend>
@@ -94,6 +115,27 @@
                             </div> 
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label">Assign To<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="forwardlead"
+                                            #forwardlead='ngModel'
+                                            [ngClass]="{'clearance': leadtransactionSubmit && forwardlead?.errors?.required}"
+                                            [(ngModel)]="QueryStringUserID"
+                                            (change)='GetAllLead()'
+                                            [disabled]='FromQueryString'
+                                            required>
+                                            <option *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A"'  [ngValue]="undefined">Select</option>
+                                            <option *ngFor = "let option of user" [value] ="option.User_ID">
+                                               {{option.Member_Name}}
+                                             </option>
+                                    </select>
+                                  </div>
+                                  <button class="btn btn-primary custombutton" style="margin-right: 1.5em;" (click)='openLeadModal()'>
+                                    <span class="fa fa-fw fa-user-plus"></span>&nbsp;Create Lead 
+                                  </button>
+                            </div>
                             <div *ngIf="BackupLeadList.length" class="form-group" style="padding:15px">
                                 <fieldset class="col-md-12">
                                     <legend>Filter</legend>
@@ -155,8 +197,8 @@
                                                         <div class="ui-g-12">Contact Person : <b>{{lead.Contact_Name}}</b></div>
                                                         <div class="ui-g-12">Phone : <b>{{lead.Mobile}}</b></div>
                                                         <div class="ui-g-12">Lead Created By : <b>{{lead.Lead_Created_By}}</b></div>
-                                                        <div class="ui-g-12">Last Followup Date : <b>{{lead.Lead_Date | date : "dd/MMM/yyyy hh:mm a"}}</b></div>
-                                                        <div class="ui-g-12">Next Followup Date : <b>{{lead.Next_Followup}}</b></div>
+                                                        <div class="ui-g-12">Last Followup Date : <b>{{lead.Lead_Date === '1900-01-01T00:00:00' ? (lead.Lead_Date | date : "dd/MMM/yyyy") : '-'}}</b></div>
+                                                        <div class="ui-g-12">Next Followup Date : <b>{{lead.Next_Followup === '1900-01-01T00:00:00' ? (lead.Next_Followup | date : "dd/MMM/yyyy") : '-'}}</b></div>
                                                         <div class="ui-g-12">
                                                             <button class="btn pull-right btn-warning btn-xs"  (click)="RedirectLeadDetails(lead)"><i class="glyphicon glyphicon-info-sign"></i>&nbsp;More...</button>
                                                         </div>
@@ -188,4 +230,426 @@
     </div>
 </div>
 
+<!-- CREATE LEAD -->
+<p-dialog header="CREATE LEAD" [appendTo]="'body'" [visible]="LeadCreateModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '75%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="myform" class="form-horizontal" #myform="ngForm" novalidate>                            
+        <div class="form-group">
+          <h5 style="
+                                        padding: 0.5em 2em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+            <i class="fa fa-fw fa-fax">
+            </i> &nbsp;<strong>Lead Details : </strong>
+          </h5>
+          <div class="col-sm-6">
+            <label class="control-label">Company Name<sup class="text-danger">*</sup></label>
+            <input class="form-control"
+                   name="Organization"
+                   #Organization='ngModel'
+                   [(ngModel)]="leadtransation.Org_Name"
+                   placeholder="Company Name"
+                   [ngClass]="{'clearance':leadtransactionSubmit && Organization?.errors?.required}"
+                   required>
+          </div>
+          <div class="col-sm-6">
+            <label class="control-label">Address<sup class="text-danger">*</sup></label>
+            <input rows="1" class="form-control"
+                   name="Address"
+                   #Address='ngModel'
+                   [(ngModel)]="autocomplete"
+                   Compacct-Place
+                   (setAddress)="getAddressOnChange($event)"
+                   placeholder="Address"
+                   required>
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Date<sup class="text-danger">*</sup></label>
+            <div class="input-group date">
+              <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </div>
+              <input type="date" class="form-control" 
+               name="leadate" #leadate='ngModel'
+                [ngModel]="LeadDateNepal | date:'yyyy-MM-dd'"
+                 (ngModelChange)="LeadDateNepal = $event" 
+              [ngClass]="{'clearance': leadtransactionSubmit &&  leadate?.errors?.required}"
+                 required>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Landmark</label>
+            <input class="form-control"
+                   name="Landmark"
+                   #Landmark='ngModel'
+                   [(ngModel)]="leadtransation.Landmark"
+                   placeholder="Landmark"
+                   [ngClass]="{'clearance':leadtransactionSubmit && Landmark?.errors?.required}">
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Lead Priority <sup class="text-danger">*</sup><sup class="text-danger"></sup></label>
+            <select class="form-control"
+                    name="Priority"
+                    #Priority='ngModel'
+                    [ngClass]="{'clearance': leadtransactionSubmit && Priority?.errors?.required}"
+                    [(ngModel)]="leadtransation.Lead_Priority"
+                    required>
+              <option value="">Select</option>
+              <option value="Hot">Hot</option>
+              <option value="Warm">Warm</option>
+              <option value="Cold">Cold</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Industry <sup class="text-danger">*</sup><sup class="text-danger"></sup></label>
+            <select class="form-control"
+                    name="Industry"
+                    #Industry='ngModel'
+                    [ngClass]="{'clearance': leadtransactionSubmit && Industry?.errors?.required}"
+                    [(ngModel)]="leadtransation.Sub_Ledger_Cat_ID"
+                    required>
+              <option  [ngValue]="undefined">Select</option>
+              <option *ngFor = "let option of customertype" [value] ="option.Sub_Ledger_Cat_ID">
+                 {{option.Sub_Ledger_Cat_Name}}
+               </option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Source<sup class="text-danger"></sup></label>
+            <select class="form-control"
+                    name="enquerysource"
+                    #enquerysource='ngModel'
+                    [ngClass]="{'clearance': leadtransactionSubmit && enquerysource?.errors?.required}"
+                    [(ngModel)]="leadtransation.Enq_Source_ID">
+              <option value="">Select</option>
+              <option  [ngValue]="undefined">Select</option>
+              <option *ngFor = "let option of EnqSourceModel" [value] ="option.Enq_Source_ID">
+                 {{option.Enq_Source_Name}}
+               </option>
+            </select>
+          </div>
+          <!-- <div class="col-sm-6" *ngIf="leadtransation.Enq_Source_ID == 252">
+            <label class="control-label">Client Reference </label>
+            <p-dropdown [options]="ReferencebyCustomer" name="Sub_Ledger_ID_Ref"
+             [(ngModel)]="leadtransation.Sub_Ledger_ID_Ref" [showClear]="true" [emptyFilterMessage]="' No Reff Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select Reff'" [virtualScroll]="true" itemSize="30" #Sub_Ledger_ID_Ref="ngModel"
+            >
+            </p-dropdown>
+            
+          </div> -->
+          <div class="col-sm-3">
+            <label class="control-label">Website<sup class="text-danger"></sup></label>
+            <input class="form-control"
+                   name="Website"
+                   #Website='ngModel'
+                   [ngClass]="{'clearance': leadtransactionSubmit && Website?.errors?.required}"
+                   [(ngModel)]="leadtransation.Website"
+                   placeholder="Website"
+                   type="url">
 
+          </div>
+
+
+
+        </div>
+        <div class="form-group">
+          <h5 style="
+                                        padding: 0.5em 2em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+            <i class="fa fa-fw fa-fax">
+            </i> &nbsp;<strong>Social Media Links : </strong>
+          </h5>
+          <div class="col-sm-4">
+            <label class="control-label">Facebook Link<sup class="text-danger"></sup></label>
+            <input class="form-control"
+                   name="Facebook"
+                   #Facebook='ngModel'
+                   [ngClass]="{'clearance': leadtransactionSubmit && Facebook?.errors?.required}"
+                   [(ngModel)]="leadtransation.Social_FaceBook_Link"
+                   placeholder="Facebook Link"
+                   type="url">
+
+          </div>
+          <div class="col-sm-4">
+            <label class="control-label">Instagram Link<sup class="text-danger"></sup></label>
+            <input class="form-control"
+                   name="Instagram"
+                   #Instagram='ngModel'
+                   [ngClass]="{'clearance': leadtransactionSubmit && Instagram?.errors?.required}"
+                   [(ngModel)]="leadtransation.Social_Instagram_Link"
+                   placeholder="Instagram Link"
+                   type="url">
+
+          </div>
+          <div class="col-sm-4">
+            <label class="control-label">Linkedin Link<sup class="text-danger"></sup></label>
+            <input class="form-control"
+                   name="Linkedin"
+                   #Linkedin='ngModel'
+                   [ngClass]="{'clearance': leadtransactionSubmit && Linkedin?.errors?.required}"
+                   [(ngModel)]="leadtransation.Social_Linkedin_Link"
+                   placeholder="Linkedin Link"
+                   type="url">
+
+          </div>
+
+        </div>
+        <div class="form-group">
+          <h5 style="
+                                        padding: 0.5em 2em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+            <i class="fa fa-fw fa-fax">
+            </i> &nbsp;<strong>Contacts Info : </strong>
+          </h5>
+
+          <div class="col-sm-3">
+            <label class="control-label">Contact Person<sup class="text-danger">*</sup></label>
+            <input class="form-control"
+                   name="contactperson"
+                   #contactperson='ngModel'
+                   [ngClass]="{'clearance': leadtransactionSubmit && contactperson?.errors?.required}"
+                   [(ngModel)]="leadtransation.Contact_Name"
+                   placeholder="Contact Person Name"
+                   allow-pattern="[a-z ]"
+                   required>
+
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Designation<sup class="text-danger">*</sup></label>
+            <select class="form-control"
+                    name="Designation"
+                    #Designation='ngModel'
+                    [ngClass]="{'clearance': leadtransactionSubmit && Designation?.errors?.required}"
+                    [(ngModel)]="leadtransation.Desig"
+                    required>
+              <option value="">Select</option>
+              <option value="Manager">Manager</option>
+              <option value="Sales Person">Sales Person</option>
+              <option value="Enployee">Enployee</option>
+            </select>
+
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Phone<sup class="text-danger">*</sup></label>
+            <input class="form-control"
+                   name="mobile1"
+                   #mobile1='ngModel'
+                   [ngClass]="{
+                    clearance:
+                      (leadtransactionSubmit && mobile1.errors?.required) ||
+                      (mobile1.errors?.minlength && mobile1.touched)
+                  }"
+                   [(ngModel)]="leadtransation.Mobile"
+                   placeholder="Mobile Number"
+                   minlength="10" maxlength="10"
+                   required  CompacctDigitonly="true">
+          </div>
+          <div class="col-sm-3">
+            <label class="control-label">Email<sup class="text-danger"></sup></label>
+            <input class="form-control"
+                   type="email"
+                   name="emailid"
+                   #emailid='ngModel'
+                   [ngClass]="{'clearance':(leadtransactionSubmit && emailid?.errors?.required) || emailid?.errors?.email}"
+                   [(ngModel)]="leadtransation.Email"
+                   placeholder="Email Address">
+          </div>
+          <div class="col-sm-5">
+            <label class="control-label">Land Line</label>
+            <div class="input-group" style="width:100%">
+              <select class="form-control"
+                      name="prefix"
+                      #prefix='ngModel'
+                      [(ngModel)]="leadtransation.Landline_Extension">
+                <option value="">Select</option>
+              </select>
+              <span class="input-group-addon" style="border-color: #ffffff; padding:0px"></span>
+              <input class="form-control"
+                     name="landLine"
+                     #landLine='ngModel'
+                     [(ngModel)]="leadtransation.Phone"
+                     placeholder="Phone Number"
+                     allow-pattern="\d|/|-|\s">
+            </div>
+           
+          </div>
+
+        
+        </div>
+        <div class="form-group">
+          <h5 style="
+                                        padding: 0.5em 2em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+            <i class="fa fa-fw fa-fax">
+            </i> &nbsp;<strong>Lead Info : </strong>
+          </h5>
+
+          <div class="col-sm-4">
+            <label class="control-label">Assign To<sup class="text-danger">*</sup></label>
+            <select class="form-control"
+                    name="forwardlead"
+                    #forwardlead='ngModel'
+                    [ngClass]="{'clearance': leadtransactionSubmit && forwardlead?.errors?.required}"
+                    [(ngModel)]="leadtransation. Assign_To"
+                    required>
+                    <option  [ngValue]="undefined">Select</option>
+                    <option *ngFor = "let option of user" [value] ="option.User_ID">
+                       {{option.Member_Name}}
+                     </option>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <label class="control-label">Product Groups<sup class="text-danger"></sup></label>
+           
+            <p-multiSelect [options]="ProductTypeLists" [(ngModel)]="SelectedProductTypeList" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
+            <!-- <div ng-dropdown-multiselect=""
+                 options="ProductTypeLists"
+                 selected-model="ProductTypeidlist"
+                 extra-settings="categoryfetch"
+                 checkboxes="true"> 
+            </div> -->
+          </div>
+          <div class="col-sm-4">
+            <label class="control-label">Existing</label><br />
+            <p-radioButton name="groupname" 
+            #groupname='ngModel' value="Competitor" (onClick)='Cleardata3()' label="Competitor" [(ngModel)]="ExistingLead"></p-radioButton>
+            <p-radioButton name="groupname" #groupname='ngModel' value="Trader" (onClick)='Cleardata3()' label="Trader" [(ngModel)]="ExistingLead"></p-radioButton>
+            <p-radioButton name="groupname" #groupname='ngModel' value="Other" (onClick)='Cleardata3()' label="Other" [(ngModel)]="ExistingLead"></p-radioButton>
+            <!-- <md-radio-group [(ngModel)]="ExistingLead" ng-change="Cleardata3()">
+              <label class="radio-inline"> <md-radio-button value="Competitor" class="md-primary">Competitor</md-radio-button></label>
+              <label class="radio-inline"><md-radio-button value="Trader" class="md-primary">Trader</md-radio-button></label>
+              <label class="radio-inline"><md-radio-button value="Other" class="md-primary">Other</md-radio-button></label>
+            </md-radio-group> -->
+          </div>
+          <div class="col-sm-4" *ngIf="ExistingLead === 'Competitor'">
+            <label class="control-label">Competitor<sup class="text-danger">*</sup></label>
+            <input class="form-control"
+                   name="Competitor"
+                   #Competitor='ngModel'
+                   [ngClass]="{'clearance': leadtransactionSubmit && Competitor?.errors?.required}"
+                   [(ngModel)]="leadtransation.Existing_Name"
+                   placeholder="Competitor"
+                   allow-pattern="[a-z ]"
+                   required>
+          </div>
+          <div class="col-sm-4" *ngIf="ExistingLead === 'Trader'">
+            <label class="control-label">Trader<sup class="text-danger">*</sup></label>
+            <input class="form-control"
+                   name="Trader"                                           
+                   #Trader='ngModel'
+                   [ngClass]="{'clearance': leadtransactionSubmit && Trader?.errors?.required}"
+                   [(ngModel)]="leadtransation.Existing_Name"
+                   placeholder="Trader"
+                   allow-pattern="[a-z ]"
+                   required>
+          </div>
+          <div class="col-sm-4" *ngIf="ExistingLead === 'Other'">
+            <label class="control-label">Other<sup class="text-danger">*</sup></label>
+            <input class="form-control"
+                   name="Other"
+                   #Other='ngModel'
+                   [ngClass]="{'clearance': leadtransactionSubmit && Other?.errors?.required}"
+                   [(ngModel)]="leadtransation.Existing_Name"
+                   placeholder="Other"
+                   allow-pattern="[a-z ]"
+                   required>
+          </div>
+          <div class="col-sm-4">
+            <label class="control-label">Competition Activity<sup class="text-danger"></sup></label>
+            <textarea class="form-control"
+                      name="Competitor_Activity"
+                      #Competitor_Activity='ngModel'
+                      rows="1"
+                      [ngClass]="{'clearance': leadtransactionSubmit && Competitor_Activity?.errors?.required}"
+                      [(ngModel)]="leadtransation.Competition_Activity"
+                      placeholder="Competitor Activity"> </textarea>
+
+          </div>
+          <!-- <div class="col-sm-3">
+            <label class="control-label">Status<sup class="text-danger">*</sup></label>
+            <select class="form-control"
+                    name="leadstatus"
+                    #leadstatus='ngModel'
+                    [ngClass]="{'clearance': leadtransactionSubmit && leadstatus?.errors?.required}"
+                    [(ngModel)]="leadtransation.Status"
+                    required>
+                    <option  [ngValue]="undefined">Select</option>
+                    <option *ngFor = "let option of LeadStatusList" [value] ="option.Status">
+                       {{option.Status}}
+                     </option>
+            </select>
+          </div> -->
+        </div>
+        <div class="form-group">
+            <h5 style="
+            padding: 0.5em 2em;
+            background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            margin-top: 15px;
+            ">
+            <i class="fa fa-fw fa-fax">
+            </i> &nbsp;<strong>Task Info : </strong>
+            </h5>
+            <div class="col-sm-4">
+                <label class="control-label">Subject <sup class="text-danger">*</sup><sup class="text-danger"></sup></label>
+                <select class="form-control"
+                        name="Subject_ID"
+                        #Subject_ID='ngModel'
+                        [ngClass]="{'clearance': leadtransactionSubmit && Subject_ID?.errors?.required}"
+                        [(ngModel)]="leadtransation.Subject_ID"
+                        required>
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of SubjectList" [ngValue]="option.Subject_ID">{{option.Subject}}</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Task From Date<sup class="text-danger">*</sup></label>
+                <input type="date" class="form-control" id="Next-Followup-2" name="NextFollowup3" #NextFollowup3='ngModel' [ngModel]="TaskFromDate | date:'yyyy-MM-dd'" (ngModelChange)="TaskFromDate = $event" 
+                 [ngClass]="{'clearance': leadtransactionSubmit &&  NextFollowup3?.errors?.required}"
+                    required>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Task To Date<sup class="text-danger">*</sup></label>
+                <input type="date" class="form-control" id="Next-Followup-2" name="NextFollowup2" #NextFollowup2='ngModel' [ngModel]="TaskToDate | date:'yyyy-MM-dd'" 
+                (ngModelChange)="TaskToDate = $event"  [ngClass]="{'clearance': leadtransactionSubmit &&  NextFollowup2?.errors?.required}"
+                    required>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Priority <sup class="text-danger">*</sup><sup class="text-danger"></sup></label>
+                <select class="form-control"
+                        name="Priority"
+                        #Priority='ngModel'
+                        [ngClass]="{'clearance': leadtransactionSubmit && Priority?.errors?.required}"
+                        [(ngModel)]="leadtransation.Task_Priority"
+                        required>
+                  <option value="">Select</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+        </div>
+        </form>
+
+    <p-footer>
+        <button type="button" (click)="LeadCreateModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button class="btn btn-primary" (click)='saveLead(myform.form.valid)'>Save</button>
+    </p-footer>
+</p-dialog>

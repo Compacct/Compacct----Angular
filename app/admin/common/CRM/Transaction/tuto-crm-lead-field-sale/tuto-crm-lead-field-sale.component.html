@@ -79,6 +79,14 @@
                                         <p-multiSelect [options]="DAppoSlotList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAppoSlotFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
+                                        <label class="control-label">School Pin <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="SchoolPinList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedSchoolPinFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">School Name<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="SchoolNameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedSchoolNameFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
                                         <button *ngIf="leadFollowUpListBackup.length" (click)="exportexcel(leadFollowUpList,'Lead_Field_Sales')" class="btn btn-primary custombutton">
                                             <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
                                           </button>
@@ -142,7 +150,9 @@
                                     <th>Name</th>
                                     <th>Mobile</th>
                                     <th>Alternative Mobile No.</th>
-                                    <th>Pin </th>
+                                    <th>Resi Pin </th>
+                                    <th>School Pin </th>
+                                    <th>School Name </th>
                                     <th>Address</th>
                                     <th>Landmark</th>
                                     <th>Appointment Type</th>
@@ -215,6 +225,8 @@
                                     <td><a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a></td>
                                     <td>{{col.ALT_Mobile ? col.ALT_Mobile : '-'}}</td>
                                     <td>{{col.Pin ? col.Pin : '-' }}</td>
+                                    <td>{{col.School_PIN ? col.School_PIN : '-' }}</td>
+                                    <td>{{col.School_Name ? col.School_Name : '-' }}</td>
                                     <td>{{col.Address ? col.Address : '-'}}</td>
                                     <td>{{col.Landmark ? col.Landmark : '-'}}</td>
                                     <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>

@@ -229,7 +229,7 @@ getAddressOnChange(e) {
       this.leadtransation.Foot_Fall_ID = this.QueryStringFootfall;
       const obj = {
         "SP_String": "SP_New_Lead_Registration",
-        "Report_Name_String": "New Lead Create",
+        "Report_Name_String": "Update_Lead_Details",
         "Json_Param_String": JSON.stringify([this.leadtransation])
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
