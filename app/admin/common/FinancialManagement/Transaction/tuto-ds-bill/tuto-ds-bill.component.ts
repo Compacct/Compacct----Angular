@@ -24,6 +24,7 @@ export class TutoDsBillComponent implements OnInit {
   AddedProductList = [];
   TransactionList = [];
   TotalAmount = 0;
+  TotalProductAddedAmount = 0;
   Spinner = false;
   PGInvDetailsList = [];
   PGInvDetailsModalFlag = false;
@@ -71,6 +72,7 @@ export class TutoDsBillComponent implements OnInit {
     this.AddedProductList = [];
     this.ObjDSProduct = new DSProduct();
     this.TotalAmount = 0;
+    this.TotalProductAddedAmount = 0;
     this.TransactionList = [];
     if(this.ObjDSBill.Mobile_No && this.ObjDSBill.Mobile_No.length === 10) {
       const obj = {
@@ -127,6 +129,7 @@ export class TutoDsBillComponent implements OnInit {
   }
   GetTransactionDetails() {
     this.TransactionList = [];
+    this.TotalAmount = 0;
     const obj = {
       "SP_String": "Tutopia_Subscription_Accounts_PG_Request",
       "Report_Name_String": "Get_Student_Transactions",
@@ -186,6 +189,7 @@ export class TutoDsBillComponent implements OnInit {
       this.AmtMin = 0;
       this.AmtMax = 0;
       this.DSProductFormSubmitted = false;
+      this.getTotalProductAddedAmount();
     }
   }
   AmountChange() {
@@ -219,11 +223,29 @@ export class TutoDsBillComponent implements OnInit {
   }
   DeleteProduct(index) {
     this.AddedProductList.splice(index,1);
+    this.getTotalProductAddedAmount();
   
+  }
+  getTotalProductAddedAmount(){    
+    this.TotalProductAddedAmount = 0;
+    if(this.AddedProductList.length){
+      this.AddedProductList.forEach(item =>{
+         this.TotalProductAddedAmount = this.TotalProductAddedAmount + Number(item.Rate);
+      })
+    }
+  }
+
+  CreatPaymentLink(){
+    const navigationExtras: NavigationExtras = {
+      queryParams: {
+        Mobile : window.btoa(this.ObjDSBill.Mobile_No),
+      },
+    };
+    this.router.navigate(['./Tutopia_DS_Payment_Link'], navigationExtras);
   }
 
   SaveDSbill(valid) {
-    if(valid && this.AddedProductList.length) {
+    if(valid && this.AddedProductList.length && (this.TotalProductAddedAmount && this.TotalAmount && this.TotalProductAddedAmount === this.TotalAmount)) {
       this.Spinner = true;
       const tempArr = this.ObjArrMerge();
       const obj = {
@@ -244,6 +266,15 @@ export class TutoDsBillComponent implements OnInit {
             this.DynamicRedirectTo(obj1,'./Tutopia_Student_Order');
            console.log(data);
           }
+      });
+    }
+    if(!(this.TotalProductAddedAmount && this.TotalAmount && this.TotalProductAddedAmount === this.TotalAmount)){
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Validation",
+        detail: "Transaction Amount and Product Amount Does not Match."
       });
     }
   }

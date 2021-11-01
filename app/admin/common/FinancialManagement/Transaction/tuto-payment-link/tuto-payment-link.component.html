@@ -28,15 +28,20 @@
                                 <div class="col-sm-3">
                                     <label class="control-label">Mobile<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" placeholder="Enter Mobile Number" name="mobile" #mobile='ngModel' [(ngModel)]="mobile_number" CompacctDigitonly="true" maxlength="10" minlength="10" [ngClass]="{'clearance': numberSearchFormSubmitted && mobile?.errors?.required}"
-                                        required>
+                                    [disabled]='DisabledIfFromQuery'    
+                                    required>
                                 </div>
-                                <div class="col-sm-3">
-                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData(numberSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                <div class="col-sm-9">
+                                    <button class="btn btn-primary custombutton" *ngIf='!DisabledIfFromQuery'  data-toggle="modal" (click)="searchData(numberSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                         <p-progressSpinner *ngIf="seachSpinner"
                                             [style]="{width: '15px', height: '15px'}" strokeWidth="8"
                                             animationDuration=".5s"></p-progressSpinner>
                                         <span *ngIf="!seachSpinner"
                                             class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                    <button class="btn btn-primary custombutton" (click)="Billcreation()" id="Bill55" [disabled]="!Foot_Fall_ID">
+                                      
+                                        <span class="fa fa-fw fa-newspaper-o"></span>&nbsp; Create Bill
                                     </button>
                                 </div>
                             </div>
@@ -152,18 +157,19 @@
                         </div>
                         <form name="numberSearch2Form" #numberSearch2Form="ngForm" novalidate>
                             <div class="form-group">
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <label class="control-label">Amount<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" placeholder="Amount" name="Amountt" #Amountt='ngModel' [(ngModel)]="Amount" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' CompacctDigitonly="true" [ngClass]="{'clearance': numberSearch2FormSubmitted && Amountt?.errors?.required}"
                                         required>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="control-label">Remarks / For <span class="text-danger">*</span>
                                     </label>
-                                    <textarea class="form-control" name="Remark" [ngClass]="{'clearance': (numberSearch2FormSubmitted && Remark?.errors?.required) ||
+                                    <textarea class="form-control" name="Remark"
+                                    row='3' [ngClass]="{'clearance': (numberSearch2FormSubmitted && Remark?.errors?.required) ||
                                     (Remark.errors?.minlength && Remark.touched)}" #Remark='ngModel' placeholder="Remarks" minlength="10" [(ngModel)]="Remarks" rows='1' required></textarea>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-7" style="background: #8a979e30;text-align: center;padding-bottom: 20px;">
                                     <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GenerateLink(numberSearch2Form.form.valid)" id="load" [disabled]="seachSpinner2" [disabled]="!Foot_Fall_ID">
                                         <p-progressSpinner *ngIf="seachSpinner2"
                                             [style]="{width: '15px', height: '15px'}" strokeWidth="8"
@@ -276,6 +282,17 @@
 
                 </div>
                 <div class="col-sm-12">
+                    <label class="control-label">Transaction Date</label>
+                    <!-- <input class="form-control" name="Bank_Txn_ID" #Bank_Txn_ID="ngModel" [(ngModel)]="ObjManualPaymentCnfm.Bank_Txn_ID" placeholder="Transaction ID"> -->
+                    <input type="date" name="NextFollowDate"
+                     #NextFollowDate="ngModel" [ngModel]="ManualPaymentTrnsDate | date: 'yyyy-MM-dd'"
+                      (ngModelChange)="ManualPaymentTrnsDate = $event"
+                      [ngClass]="{'clearance': ManualPaymentConfirmFormSubmit && Bank_Txn_ID?.errors?.required}" 
+                      min="{{MinTansactionDate |date:'yyyy-MM-dd'}}"
+                      max="{{MaxTansactionDate | date:'yyyy-MM-dd'}}"
+                     class="form-control" required/>
+                </div>
+                <div class="col-sm-12">
                     <label class="control-label">Transaction ID</label>
                     <input class="form-control" name="Bank_Txn_ID" #Bank_Txn_ID="ngModel" [(ngModel)]="ObjManualPaymentCnfm.Bank_Txn_ID" placeholder="Transaction ID" [ngClass]="{'clearance': ManualPaymentConfirmFormSubmit && Bank_Txn_ID?.errors?.required}" required>
 
@@ -306,8 +323,12 @@
             <button type="button" (click)="ManualPaymentConfirmModal = false" class="btn btn-default">
             CANCEL
         </button>
-            <button type="button" class="btn btn-primary" (click)="SaveManualPaymentConfirm(PayementConfirmForm.form.valid)">
-            UPDATE
+            <button type="button" class="btn btn-primary" (click)="SaveManualPaymentConfirm(PayementConfirmForm.form.valid)" [disabled]="saveSpinner">
+                <p-progressSpinner *ngIf="saveSpinner"
+                    [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                    animationDuration=".5s"></p-progressSpinner>
+                <span *ngIf="!saveSpinner"
+                    class="glyphicon glyphicon-save"></span>&nbsp; UPDATE
         </button>
         </p-footer>
     </p-dialog>
@@ -315,7 +336,7 @@
       <p-dialog header="MANUAL EMI UPDATE" [appendTo]="'body'" [visible]="ManualEMIUpdateModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
       [maximizable]="true" [baseZIndex]="10000">
       <form name="EMIUpdateForm" style="margin-top:1em" #EMIUpdateForm="ngForm" novalidate>
-          <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjManualPaymentCnfm?.Contact_Name}}</span></h5>
+          <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjEMIUpdate?.Contact_Name}}</span></h5>
           <div class="form-group">
               <div class="col-sm-12" style="margin-top: 1.5em;">
                   <label class="control-label">Amount</label>
@@ -381,8 +402,12 @@
           <button type="button" (click)="ManualEMIUpdateModal = false" class="btn btn-default">
           CANCEL
       </button>
-          <button type="button" class="btn btn-primary" (click)="SaveManualEMIUpdate(EMIUpdateForm.form.valid)">
-          UPDATE
+          <button type="button" class="btn btn-primary" (click)="SaveManualEMIUpdate(EMIUpdateForm.form.valid)" [disabled]="saveSpinner">
+            <p-progressSpinner *ngIf="saveSpinner"
+                [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!saveSpinner"
+                class="glyphicon glyphicon-save"></span>&nbsp; UPDATE
       </button>
       </p-footer>
   </p-dialog>

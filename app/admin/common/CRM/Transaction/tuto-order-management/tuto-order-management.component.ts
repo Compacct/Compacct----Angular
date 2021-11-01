@@ -8,6 +8,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
 import { MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
 import { flatMap } from 'rxjs/operators';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-tuto-order-management',
@@ -126,6 +127,7 @@ export class TutoOrderManagementComponent implements OnInit {
         summary: "Order ID : " + this.OrderId,
         detail:  "Order Placed successfully "
       });
+      this.makePayment();
     }
     
   }
@@ -170,6 +172,7 @@ export class TutoOrderManagementComponent implements OnInit {
               detail:  "Order Placed successfully "
             });
            this.popup_Flag2 = true;
+           this.makePayment();
       });
     }
 
@@ -330,7 +333,8 @@ export class TutoOrderManagementComponent implements OnInit {
         } else {
           this.savebutton = false;
           this.popup_Flag2 = true;
-          this.OrderId = tempID;
+          this.OrderId = tempID;          
+          this.makePayment();
         }
        }
     })

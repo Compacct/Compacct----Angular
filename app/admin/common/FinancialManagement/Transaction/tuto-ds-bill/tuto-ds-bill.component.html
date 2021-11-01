@@ -52,6 +52,12 @@
                                 </label >
                                 <div  class="label-t">{{ObjDSBill['Pin'] ? ObjDSBill['Pin'] : '-'}}</div>
                             </div>
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary custombutton" (click)="CreatPaymentLink()" id="Bill55" [disabled]="!ObjDSBill.Mobile_No">
+                                      
+                                    <i class="fa fa-fw fa-credit-card-alt"></i>&nbsp; Create Payment Link
+                                </button>
+                            </div>
                         </div>
                         <div class="col-sm-12" style="margin-top:1em;" *ngIf='ObjDSBill.Foot_Fall_ID'>
                             <p-fieldset legend="Show Transactions Details" [toggleable]="true">
@@ -168,6 +174,14 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class='form-group'>
+                        <div class="col-sm-3">
+                            <label class="control-label">
+                                Total Product Amount <sup class="text-danger">*</sup>
+                            </label >
+                            <div  class="label-t">{{ TotalProductAddedAmount }}</div>
+                        </div>
                     </div>
                     <div class='box-footer'>
                         <button class="btn btn-primary pull-right" (click)="SaveDSbill(SearchForm.form.valid)" id="load" [disabled]="Spinner">

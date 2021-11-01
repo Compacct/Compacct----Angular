@@ -9,7 +9,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
 import { CompacctCommonApi } from "../../../../shared/compacct.services/common.api.service";
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, NavigationExtras, Router } from "@angular/router";
 
 @Component({
   selector: 'app-tuto-payment-link',
@@ -50,9 +50,12 @@ export class TutoPaymentLinkComponent implements OnInit {
   ObjEMIUpdate = new ManualPaymentCnfm();
   EMIUpdateFormSubmit = false;
   ManualEMIUpdateModal = false;
-  ManualEMIUpdateTrnsDate = new Date();
-  MinTansactionDate = new Date();
+  ManualEMIUpdateTrnsDate:any = new Date();
+  ManualPaymentTrnsDate:any = new Date();
+  MinTansactionDate:any = new Date();
   MaxTansactionDate:any =  new Date();
+  DisabledIfFromQuery = false;
+  saveSpinner = false;
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -61,12 +64,15 @@ export class TutoPaymentLinkComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private $CompacctAPI: CompacctCommonApi,
     private route: ActivatedRoute,
+    private router : Router,
     private compacctToast: MessageService,) { 
       this.route.queryParams.subscribe(params => {
         this.mobile_number = undefined;
         if(params['Mobile']) {
           this.mobile_number = window.atob(params['Mobile']);
+          this.DisabledIfFromQuery = true;
           this.searchData(true);
+          
         }
       })
     }
@@ -249,6 +255,15 @@ export class TutoPaymentLinkComponent implements OnInit {
          this.PGInvDetailsModalFlag = true;
     });
   }
+  Billcreation() {
+    const navigationExtras: NavigationExtras = {
+      queryParams: {
+        Mobile : window.btoa(this.mobile_number),
+        From : 'Y',
+      },
+    };
+    this.router.navigate(['./Tutopia_DS_Billing'], navigationExtras);
+  }
 
   // MANUAL PAYMENT CONFIRM
   showManualPaymentModal() {
@@ -256,12 +271,16 @@ export class TutoPaymentLinkComponent implements OnInit {
     this.PDFFlag = false;
     this.ProductPDFFile = {};
     this.ManualPaymentConfirmFormSubmit = false;
+    this.ManualPaymentTrnsDate = new Date();
+    const todday = new Date()
+    this.MinTansactionDate =  todday.setDate(todday.getDate() - 1);
+    this.MaxTansactionDate = new Date();
+    this.saveSpinner = false;
     if(this.Foot_Fall_ID) {
       this.ObjManualPaymentCnfm.Foot_Fall_ID = this.Foot_Fall_ID;
       this.ObjManualPaymentCnfm.Contact_Name = this.contactList.Contact_Name;
       this.ObjManualPaymentCnfm.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
       this.ObjManualPaymentCnfm.Amount = this.Amount ? this.Amount : undefined;
-      this.ObjManualPaymentCnfm.Txn_Date = undefined;
       this.ManualPaymentConfirmModal = true;
     }
   }
@@ -276,6 +295,8 @@ export class TutoPaymentLinkComponent implements OnInit {
   SaveManualPaymentConfirm(valid) {
     this.ManualPaymentConfirmFormSubmit = true;
     if (valid && this.ProductPDFFile['size']) {
+      this.saveSpinner = true;
+      this.ObjManualPaymentCnfm.Txn_Date = this.DateService.dateConvert(new Date(this.ManualPaymentTrnsDate));
       const obj = {
         "SP_String":"Tutopia_Manual_Payment_SP",
         "Report_Name_String":"Manual_Payment_Update",
@@ -332,6 +353,7 @@ export class TutoPaymentLinkComponent implements OnInit {
       this.ManualPaymentConfirmFormSubmit = false;
       this.ManualPaymentConfirmModal = false;
       this.GetTransactions(this.Foot_Fall_ID);
+      this.saveSpinner = false;
 
     }
   };
@@ -343,8 +365,12 @@ export class TutoPaymentLinkComponent implements OnInit {
     this.ObjEMIUpdate = new ManualPaymentCnfm();
     this.EMIUpdateFormSubmit = false;
     this.ManualEMIUpdateTrnsDate = new Date();
-    const todday = new Date()
-    this.MaxTansactionDate =  todday.setDate(todday.getDate() + 1);
+    this.saveSpinner = false;
+    const todday = new Date();
+    this.MinTansactionDate =  todday.setDate(todday.getDate() + 1);
+    this.ManualEMIUpdateTrnsDate = this.MinTansactionDate;
+    const todday2 = new Date();
+    this.MaxTansactionDate =  todday.setFullYear(todday.getFullYear() + 1);
     console.log(this.MaxTansactionDate)
     if(this.Foot_Fall_ID) {
       this.ObjEMIUpdate.Foot_Fall_ID = this.Foot_Fall_ID;
@@ -356,7 +382,8 @@ export class TutoPaymentLinkComponent implements OnInit {
   }
   SaveManualEMIUpdate(valid) {
     this.EMIUpdateFormSubmit = true;
-    if (valid) {
+    if (valid) {          
+      this.saveSpinner = true;
       this.ObjEMIUpdate.Txn_Date = this.DateService.dateConvert(new Date(this.ManualEMIUpdateTrnsDate));
       const obj = {
         "SP_String":"Tutopia_Manual_Payment_SP",
@@ -368,31 +395,32 @@ export class TutoPaymentLinkComponent implements OnInit {
         "Json_4_String":"NA"
       }
       console.log(this.ObjEMIUpdate)
-      // this.GlobalAPI.postData(obj).subscribe((data) => {
-      //   console.log(data[0])
-      //     if (data[0].Column1) {
-      //       this.compacctToast.clear();
-      //       this.compacctToast.add({
-      //         key: "compacct-toast",
-      //         severity: "success",
-      //         summary: 'Student ID : ' + this.ObjEMIUpdate.Foot_Fall_ID,
-      //         detail: "EMI Update Succesfully Saved."
-      //       });
-      //       this.ObjEMIUpdate = new ManualPaymentCnfm();
-      //       this.EMIUpdateFormSubmit = false;
-      //       this.ManualEMIUpdateModal = false;
-      //       this.GetTransactions(this.Foot_Fall_ID);
-      //   }
-      //   else {
-      //       this.compacctToast.clear();
-      //     this.compacctToast.add({
-      //       key: "compacct-toast",
-      //       severity: "error",
-      //       summary: "error",
-      //       detail: "Error Occured"
-      //     });
-      //   }
-      //   });
+      this.GlobalAPI.postData(obj).subscribe((data) => {
+        console.log(data[0])
+          if (data[0].Column1) {  
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'Student ID : ' + this.ObjEMIUpdate.Foot_Fall_ID,
+              detail: "EMI Update Succesfully Saved."
+            });
+            this.ObjEMIUpdate = new ManualPaymentCnfm();
+            this.EMIUpdateFormSubmit = false;
+            this.ManualEMIUpdateModal = false;
+            this.GetTransactions(this.Foot_Fall_ID);          
+            this.saveSpinner = false;
+        }
+        else {
+            this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured"
+          });
+        }
+        });
     }
   }
 }
