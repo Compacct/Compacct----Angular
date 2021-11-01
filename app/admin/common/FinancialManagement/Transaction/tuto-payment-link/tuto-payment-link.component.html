@@ -175,6 +175,10 @@
                                       
                                         <span class="fa fa-fw fa-check-square-o"></span>&nbsp; Manual Payment Update
                                     </button>
+                                    <button class="btn btn-primary custombutton" (click)="showEMIUpdateModal()" id="load55" [disabled]="!Foot_Fall_ID">
+                                      
+                                        <span class="fa fa-fw fa-check-square-o"></span>&nbsp; Manual EMI Update
+                                    </button>
                                 </div>
                             </div>
                             </form>
@@ -261,7 +265,7 @@
         </p-footer>
     </p-dialog>
     <!-- MANUAL PAYMENT CONFIRM -->
-    <p-dialog header="MANUAL PAYMENT UPDATE" [appendTo]="'body'" [visible]="ManualPaymentConfirmModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    <p-dialog header="MANUAL PAYMENT CONFIRM" [appendTo]="'body'" [visible]="ManualPaymentConfirmModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
         [maximizable]="true" [baseZIndex]="10000">
         <form name="PayementConfirmForm" style="margin-top:1em" #PayementConfirmForm="ngForm" novalidate>
             <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjManualPaymentCnfm?.Contact_Name}}</span></h5>
@@ -307,3 +311,78 @@
         </button>
         </p-footer>
     </p-dialog>
+      <!-- MANUAL EMI UPDATE -->
+      <p-dialog header="MANUAL EMI UPDATE" [appendTo]="'body'" [visible]="ManualEMIUpdateModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+      [maximizable]="true" [baseZIndex]="10000">
+      <form name="EMIUpdateForm" style="margin-top:1em" #EMIUpdateForm="ngForm" novalidate>
+          <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjManualPaymentCnfm?.Contact_Name}}</span></h5>
+          <div class="form-group">
+              <div class="col-sm-12" style="margin-top: 1.5em;">
+                  <label class="control-label">Amount</label>
+                  <input class="form-control" name="Amount222" CompacctDigitonly="true" #Amount222="ngModel" [(ngModel)]="ObjEMIUpdate.Amount" placeholder="Amount" [ngClass]="{'clearance': EMIUpdateFormSubmit && Amount222?.errors?.required}" required>
+
+              </div>
+              <!-- <div class="col-sm-12">
+                  <label class="control-label">Transaction ID</label>
+                  <input class="form-control" name="Bank_Txn_ID" #Bank_Txn_ID="ngModel" [(ngModel)]="ObjEMIUpdate.Bank_Txn_ID" placeholder="Transaction ID" [ngClass]="{'clearance': EMIUpdateFormSubmit && Bank_Txn_ID?.errors?.required}" required>
+
+              </div> -->
+              <div class="col-sm-12">
+                <label class="control-label">Transaction Date</label>
+                <!-- <input class="form-control" name="Bank_Txn_ID" #Bank_Txn_ID="ngModel" [(ngModel)]="ObjManualPaymentCnfm.Bank_Txn_ID" placeholder="Transaction ID"> -->
+                <input type="date" name="NextFollowDate"
+                 #NextFollowDate="ngModel" [ngModel]="ManualEMIUpdateTrnsDate | date: 'yyyy-MM-dd'"
+                  (ngModelChange)="ManualEMIUpdateTrnsDate = $event"
+                  [ngClass]="{'clearance': EMIUpdateFormSubmit && Bank_Txn_ID?.errors?.required}" 
+                  min="{{MinTansactionDate |date:'yyyy-MM-dd'}}"
+                  max="{{MaxTansactionDate | date:'yyyy-MM-dd'}}"
+                 class="form-control" required/>
+            </div>
+              <div class="col-sm-12">
+                  <label class="control-label">Total EMI</label>
+                  <!-- <input class="form-control" > -->
+                  <select class="form-control" name="Bank_Name" #Bank_Name="ngModel" [(ngModel)]="ObjEMIUpdate.Bank_Name" placeholder="Paid Through" [ngClass]="{'clearance':EMIUpdateFormSubmit && Bank_Name?.errors?.required}" required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option value="1 EMI">1</option>
+                    <option value="2 EMI">2</option>
+                    <option value="3 EMI">3</option>
+                    <option value="4 EMI">4</option>
+                    <option value="5 EMI">5</option>
+                    <option value="6 EMI">6</option>
+                </select>
+              </div>
+              <div class="col-sm-12">
+                <label class="control-label">EMI Number</label>
+                <!-- <input class="form-control" > -->
+                <select class="form-control" name="Bank_Txn_ID" #Bank_Txn_ID="ngModel" [(ngModel)]="ObjEMIUpdate.Bank_Txn_ID" placeholder="Transaction ID" [ngClass]="{'clearance': EMIUpdateFormSubmit && Bank_Txn_ID?.errors?.required}" required>
+                  <option [ngValue]="undefined">Select</option>
+                  <option value="EMI NO 1">1</option>
+                  <option value="EMI NO 2">2</option>
+                  <option value="EMI NO 3">3</option>
+                  <option value="EMI NO 4">4</option>
+                  <option value="EMI NO 5">5</option>
+                  <option value="EMI NO 6">6</option>
+              </select>
+            </div>
+              <div class="col-sm-12">
+                  <label class="control-label">Remarks <sup class="text-danger">*</sup></label>
+                  <textarea class="form-control" name="Remarks22" #Remarks22="ngModel" [(ngModel)]="ObjEMIUpdate.Remarks" placeholder="Remarks" [ngClass]="{'clearance':EMIUpdateFormSubmit && Remarks22?.errors?.required}" required> </textarea>
+              </div>
+            
+          </div>
+          <div class="form-group">
+              <div class="box-footer">
+                  <h5></h5>
+              </div>
+          </div>
+      </form>
+
+      <p-footer>
+          <button type="button" (click)="ManualEMIUpdateModal = false" class="btn btn-default">
+          CANCEL
+      </button>
+          <button type="button" class="btn btn-primary" (click)="SaveManualEMIUpdate(EMIUpdateForm.form.valid)">
+          UPDATE
+      </button>
+      </p-footer>
+  </p-dialog>

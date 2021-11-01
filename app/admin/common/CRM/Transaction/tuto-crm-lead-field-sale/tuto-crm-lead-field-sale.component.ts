@@ -607,6 +607,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     };
     this.router.navigate(['./Tutopia_DS_Billing'], navigationExtras);
   }
+  CreatPaymentLink(obj){
+    const navigationExtras: NavigationExtras = {
+      queryParams: {
+        Mobile : window.btoa(obj.Mobile),
+      },
+    };
+    this.router.navigate(['./Tutopia_DS_Payment_Link'], navigationExtras);
+  }
   Showdetails(obj){
     this.ObjStudetail = new Studetail();
     this.ShowDetailsModal = false;

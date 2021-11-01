@@ -187,6 +187,11 @@
                                                     </a>
                                                 </li>
                                                 <li>
+                                                    <a (click)="CreatPaymentLink(col)" *ngIf='col.Status === "PENDING" && col.Mobile && col.Foot_Fall_ID.toString() !== "0"'>
+                                                        <i class="fa fa-fw fa-credit-card-alt"></i> Create Payment Link
+                                                    </a>
+                                                </li>
+                                                <li>
                                                     <a (click)="Showdetails(col)">
                                                         <i class="fa fa-file-text-o" aria-hidden="true"></i> Show Details
                                                     </a>
