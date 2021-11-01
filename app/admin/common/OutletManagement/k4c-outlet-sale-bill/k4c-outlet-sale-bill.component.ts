@@ -90,31 +90,12 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService
   ) {
-    this.Header.pushHeader({
-      Header: "POS Bill",
-      Link: " Outlet -> Sale Bill"
-    });
-  }
-
-  ngOnInit() {
-   // console.log(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
-
-    $(".content-header").removeClass("collapse-pos");
-    $(".content").removeClass("collapse-pos");
-    this.items = ["BROWSE", "CREATE"];
-    this.Header.pushHeader({
-      Header: "POS Bill",
-      Link: " Outlet -> Sale Bill"
-    });
-    this.GetProductTypeFilterList();
-    this.getbilldate();
-    this.getcostcenid();
-    this.getselectitem();
-    this.getgodownid();
-    //this.getadvorderdetails();
+    
+   console.log('constr');
     this.route.queryParamMap.subscribe((val:any) => {
       this.CustomerDisabledFlag = false;
       this.ObjaddbillForm.Ledger_Name = '';
+      console.log('constr --2');
       if(val.params) {
         this.QueryStringObj = val.params;
         if(this.QueryStringObj.Foot_Fall_ID) {
@@ -153,6 +134,28 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
         }
       }
     } );
+    this.Header.pushHeader({
+      Header: "POS Bill",
+      Link: " Outlet -> Sale Bill"
+    });
+  }
+
+  ngOnInit() {
+   console.log('ngOnInit');
+
+    $(".content-header").removeClass("collapse-pos");
+    $(".content").removeClass("collapse-pos");
+    this.items = ["BROWSE", "CREATE"];
+    this.Header.pushHeader({
+      Header: "POS Bill",
+      Link: " Outlet -> Sale Bill"
+    });
+    this.GetProductTypeFilterList();
+    this.getbilldate();
+    this.getcostcenid();
+    this.getselectitem();
+    this.getgodownid();
+    //this.getadvorderdetails();
     this.getwalletamount();
     this.getcredittoaccount();
     //console.log(this.QueryStringObj);
@@ -396,6 +399,7 @@ getcostcenid(){
    this.getselectitem();
   //console.log("this.returnedID======",this.returnedID);
 
+  console.log('ngonit --2');
 
   });
 }
@@ -415,7 +419,7 @@ getcostcenid(){
         Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
         Doc_Type : "Sale_Bill",
         Product_Type_ID : 0,
-        bill_type : this.ObjaddbillForm.Ledger_Name ? 'Online' : ''
+        bill_type : this.QueryStringObj.Ledger_Name ? 'Online' : ''
        }
      const obj = {
       "SP_String": "SP_Controller_Master",
@@ -550,7 +554,7 @@ if(this.ObjaddbillForm.Product_ID) {
   const ctrl = this;
   this.getBatchNo();
   const productObj = $.grep(ctrl.selectitem,function(item) {return item.Product_ID == ctrl.ObjaddbillForm.Product_ID})[0];
-  //console.log(productObj);
+  console.log(productObj);
   //this.rate = productObj.Sale_rate;
   this.ObjaddbillForm.Product_Description = productObj.Product_Description;
   //this.ObjaddbillForm.Stock_Qty = productObj.Stock_Qty;
