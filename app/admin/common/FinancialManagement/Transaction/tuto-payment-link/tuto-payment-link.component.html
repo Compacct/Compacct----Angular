@@ -288,7 +288,6 @@
                      #NextFollowDate="ngModel" [ngModel]="ManualPaymentTrnsDate | date: 'yyyy-MM-dd'"
                       (ngModelChange)="ManualPaymentTrnsDate = $event"
                       [ngClass]="{'clearance': ManualPaymentConfirmFormSubmit && Bank_Txn_ID?.errors?.required}" 
-                      min="{{MinTansactionDate |date:'yyyy-MM-dd'}}"
                       max="{{MaxTansactionDate | date:'yyyy-MM-dd'}}"
                      class="form-control" required/>
                 </div>
@@ -349,14 +348,12 @@
 
               </div> -->
               <div class="col-sm-12">
-                <label class="control-label">Transaction Date</label>
+                <label class="control-label">EMI Payment Date</label>
                 <!-- <input class="form-control" name="Bank_Txn_ID" #Bank_Txn_ID="ngModel" [(ngModel)]="ObjManualPaymentCnfm.Bank_Txn_ID" placeholder="Transaction ID"> -->
                 <input type="date" name="NextFollowDate"
                  #NextFollowDate="ngModel" [ngModel]="ManualEMIUpdateTrnsDate | date: 'yyyy-MM-dd'"
                   (ngModelChange)="ManualEMIUpdateTrnsDate = $event"
                   [ngClass]="{'clearance': EMIUpdateFormSubmit && Bank_Txn_ID?.errors?.required}" 
-                  min="{{MinTansactionDate |date:'yyyy-MM-dd'}}"
-                  max="{{MaxTansactionDate | date:'yyyy-MM-dd'}}"
                  class="form-control" required/>
             </div>
               <div class="col-sm-12">

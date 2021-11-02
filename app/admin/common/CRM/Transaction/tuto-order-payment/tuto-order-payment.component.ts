@@ -123,10 +123,10 @@ export class TutoOrderPaymentComponent implements OnInit {
       this.payDetails = data;
       let TranscationID = false;
       this.payDetails.forEach(el =>{
-        if(el.Transaction_ID) {
-          this.Loan_Ac_No = el.Transaction_ID;
-          TranscationID = true;
-        }
+        // if(el.Transaction_ID) {
+        //   this.Loan_Ac_No = el.Transaction_ID;
+        //   TranscationID = true;
+        // }
         this.adddataList.push({
           Ledger_ID : el.Ledger_ID,
           Bank_Txn_Type_ID : el.Bank_Txn_Type_ID,
@@ -152,15 +152,16 @@ export class TutoOrderPaymentComponent implements OnInit {
         this.addButtonDis = true;
       }
       if(TranscationID) {
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "c4",
-          sticky: true,
-          severity: "warn",
-          summary: "",
-          closable : false,
-          detail: ""
-        });
+        //  this.SaveTransactionID();
+        // this.compacctToast.clear();
+        // this.compacctToast.add({
+        //   key: "c4",
+        //   sticky: true,
+        //   severity: "warn",
+        //   summary: "",
+        //   closable : false,
+        //   detail: ""
+        // });
       }
      });
 
