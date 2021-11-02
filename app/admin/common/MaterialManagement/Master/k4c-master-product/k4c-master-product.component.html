@@ -119,9 +119,9 @@
                             <form name="masterProduct" #masterProduct="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable'">
-                                        <label class="control-label">Brand<sup class="text-danger">*</sup>
+                                        <label class="control-label">Brand<sup class="text-danger" *ngIf='Param_Flag !== "Store Item - Saleable"'>*</sup>
                                             </label>
-                                        <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" (change)="getBandlist()" [disabled]="brandInput" [(ngModel)]="ObjmasterProduct.Brand_ID" [ngClass]="{'clearance': masterProductFormSubmitted && Brand_ID?.errors?.required}" required>
+                                        <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" (change)="getBandlist()" [disabled]="brandInput" [(ngModel)]="ObjmasterProduct.Brand_ID" [ngClass]="{'clearance': masterProductFormSubmitted && Brand_ID?.errors?.required}" [required]='Param_Flag !== "Store Item - Saleable"'>
                                                   <option  [ngValue]="undefined">Select</option>
                                               <option *ngFor="let option of brandList" value="{{option.Brand_ID}}">
                                                   {{option.Column1}}

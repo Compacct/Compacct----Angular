@@ -33,7 +33,7 @@ export class K4cMasterProductComponent implements OnInit {
   categoryList = [];
   sharemasterProduct = [];
   UOMList = [];
-  brandIdSave
+  brandIdSave:any;
   AllCostcenterList = [];
   rowDataList = [];
   BackupRowDataList = [];
@@ -233,7 +233,7 @@ export class K4cMasterProductComponent implements OnInit {
        if(valid){
         this.Spinner = true;
         if(this.ObjmasterProduct.Product_ID){
-
+          this.ObjmasterProduct.Brand_ID = this.ObjmasterProduct.Brand_ID ? this.ObjmasterProduct.Brand_ID : 0;
           console.log(this.ObjmasterProduct);
           if (this.Param_Flag === 'Raw Material') {
              var TempId = this.ObjmasterProduct.Product_ID;
