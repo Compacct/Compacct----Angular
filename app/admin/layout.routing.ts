@@ -131,6 +131,7 @@ import { TutoPreSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-pre
 import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-post-sale-audit-team/tuto-post-sale-audit-team.component';
 import { TutoFieldSalesSchoolComponent } from './common/CRM/Master/tuto-field-sales-school/tuto-field-sales-school.component';
 import { HarbaProjectEstimateComponent } from "./common/TenderManagement/harba-project-estimate/harba-project-estimate.component";
+import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rsns-closing-stock/k4c-rsns-closing-stock.component';
 
 
 
@@ -749,7 +750,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                           path: 'Tutopia_Field_Sales_School',
                                           component: TutoFieldSalesSchoolComponent,
                                           data: {title: 'Tutopia Field Sales School '}
-                                          },
+                                          },{
+                                            path: 'Raw_SemiFinished_Nonsaleable_Closing_Stock',
+                                            component: K4cRsnsClosingStockComponent,
+                                            data: {title: 'Raw SemiFinished Nonsaleable Closing Stock '}
+                                            },
                                           {
                                             path: 'Project_Estimate',
                                             component: HarbaProjectEstimateComponent,

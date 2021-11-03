@@ -6,9 +6,17 @@
             <h3>{{message.summary}}</h3>
             <p *ngIf="checkSave">{{message.detail}}</p>
         </div>
-
+        <form name="cancleForm" #cancleForm="ngForm" novalidate>
+            <div style="text-align: center">
+                <label class="control-label">Remarks <sup class="text-danger">*</sup></label>
+                <input class="form-control" name="cancleremarks" #cancleremarks="ngModel" [(ngModel)]="Cancle_Remarks" [ngClass]="{'clearance':cancleFormSubmitted && cancleremarks?.errors?.required}" required>
+            </div>
+        </form>
         <div *ngIf="checkSave" class="ui-g ui-fluid">
-            <div class="ui-g-6">
+            <div class="ui-g-6" *ngIf="Can_Remarks">
+                <button type="button" pButton (click)="onConfirmCan(cancleForm.form.valid)" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="!Can_Remarks">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
@@ -630,3 +638,28 @@
         </div>
     </div>
 </div>
+<!-- Cancle Remarks Popup -->
+<!-- <p-dialog header="Remarks Details" [appendTo]="'body'" [(visible)]="CanRemarksPoppup" [modal]="true" [responsive]="true" [minY]="50" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '30%', minWidth: '50px'}">
+    <form name="canRemarksd" #SearchForm="ngForm" novalidate>
+        <div class="form-group">
+            <div class="col-sm-3">
+            <label class="control-label">Date</label>
+            <div class="label-t">{{Doc_date | date :"dd/MMM/yyyy"}}</div>
+
+        </div>
+            <div class="col-sm-6">
+                <label class="control-label">Remarks <sup class="text-danger">*</sup></label>
+                <input class="form-control" name="cancleremarks" #cancleremarks="ngModel" [(ngModel)]="Cancle_Remarks" CompacctDigitonly="true" [ngClass]="{'clearance':addbillFormSubmitted && cancleremarks?.errors?.required}" required>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="Yes()" class="btn btn-success">
+       <i class="fa fa-check"></i>&nbsp;  Yes
+     </button>
+        <button type="button" (click)="CanRemarksPoppup = false" class="btn btn-default">
+        <i class="fa fa-times"></i>&nbsp;  No
+      </button>
+    </p-footer>
+</p-dialog> -->

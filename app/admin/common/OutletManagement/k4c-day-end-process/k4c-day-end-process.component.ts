@@ -43,6 +43,8 @@ export class K4cDayEndProcessComponent implements OnInit {
   Total:any;
   VarianceTotal: any;
   SystemAmttotal: any;
+  viewList = [];
+  viewpopup = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -196,8 +198,8 @@ export class K4cDayEndProcessComponent implements OnInit {
      totalAmtval += Number(item.Amount);
     });
     //totalAmtval += this.paymentList[indx]['Amount'];
-    this.Total = totalAmtval ? totalAmtval : 0;
-    return totalAmtval ? totalAmtval : 0;
+    this.Total = totalAmtval ? totalAmtval.toFixed(2) : 0;
+    return totalAmtval ? totalAmtval.toFixed(2) : 0;
   }
   getTotalVar(){
     this.VarianceTotal = undefined;
@@ -205,14 +207,14 @@ export class K4cDayEndProcessComponent implements OnInit {
     this.paymentList.forEach((item)=>{
       totalVarval += Number(item.Variance);
     });
-    this.VarianceTotal = totalVarval;
-    return totalVarval ? totalVarval : 0;
+    this.VarianceTotal = totalVarval.toFixed(2);
+    return totalVarval ? totalVarval.toFixed(2) : 0;
   }
   VarianceChq(indx){
     this.paymentList[indx]['Variance'] =  0;
    // this.paymentList[indx]['Amount'] = 0;
     if(this.paymentList[indx]['Total_Amount'] && this.paymentList[indx]['Amount']){
-      this.paymentList[indx]['Variance'] = this.paymentList[indx]['Total_Amount'] - this.paymentList[indx]['Amount'];
+      this.paymentList[indx]['Variance'] = (this.paymentList[indx]['Total_Amount'] - this.paymentList[indx]['Amount']).toFixed(2);
     }
   //   this.Total = undefined;
   //   let totalAmtval = 0;
@@ -350,5 +352,23 @@ export class K4cDayEndProcessComponent implements OnInit {
         detail: "System amount is not equal to actual Aamount"
       });
      }
+  }
+  View(EOD){
+    this.viewList = [];
+    const tempObj = {
+      Cost_Cen_ID: EOD.Cost_Cen_ID,
+      Date : this.DateService.dateConvert(new Date(EOD.Date))
+   }
+   const obj = {
+      "SP_String": "SP_K4C_Day_End_Process",
+      "Report_Name_String": "View_K4C_Outlet_Day_END",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.viewList = data;
+      //this.date = new Date(data[0].Req_Date)
+      this.viewpopup = true;
+      console.log("this.viewList",this.viewList);
+    })
   }
 }

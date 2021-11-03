@@ -217,6 +217,7 @@ import { TutoPreSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-pre
 import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-post-sale-audit-team/tuto-post-sale-audit-team.component';
 import { TutoFieldSalesSchoolComponent } from './common/CRM/Master/tuto-field-sales-school/tuto-field-sales-school.component';
 import { HarbaProjectEstimateComponent } from './common/TenderManagement/harba-project-estimate/harba-project-estimate.component';
+import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rsns-closing-stock/k4c-rsns-closing-stock.component';
 
 @NgModule({
   declarations: [
@@ -369,7 +370,8 @@ import { HarbaProjectEstimateComponent } from './common/TenderManagement/harba-p
     TutoPreSaleAuditTeamComponent,
     TutoPostSaleAuditTeamComponent,
     TutoFieldSalesSchoolComponent,
-    HarbaProjectEstimateComponent
+    HarbaProjectEstimateComponent,
+    K4cRsnsClosingStockComponent
   ],
   imports: [
     CommonModule,

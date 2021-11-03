@@ -102,6 +102,25 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService
   ) {
+    this.route.queryParamMap.subscribe((val:any) => {
+      this.CustomerDisabledFlag = false;
+      if(val.params) {
+        this.QueryStringObj = val.params;
+        if(this.QueryStringObj.Foot_Fall_ID) {
+          this.CustomerDisabledFlag = true;
+          this.tabIndexToView = 1;
+          this.UpdateCustomerDetails(this.QueryStringObj);
+
+        }
+        if(this.QueryStringObj.Browse_Flag) {
+          this.CustomerDisabledFlag = false;
+        }
+        if(this.QueryStringObj.Edit){
+          this.CustomerDisabledFlag = true;
+          this.Edit(this.QueryStringObj);
+        }
+      }
+     } );
     this.Header.pushHeader({
       Header: "Customized Order",
       Link: " Outlet -> Customized Order"
@@ -124,25 +143,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
      this.getcredittoaccount();
      this.getwalletamount();
      this.getAdvOrderfield();
-     this.route.queryParamMap.subscribe((val:any) => {
-      this.CustomerDisabledFlag = false;
-      if(val.params) {
-        this.QueryStringObj = val.params;
-        if(this.QueryStringObj.Foot_Fall_ID) {
-          this.CustomerDisabledFlag = true;
-          this.tabIndexToView = 1;
-          this.UpdateCustomerDetails(this.QueryStringObj);
-
-        }
-        if(this.QueryStringObj.Browse_Flag) {
-          this.CustomerDisabledFlag = false;
-        }
-        if(this.QueryStringObj.Edit){
-          this.CustomerDisabledFlag = true;
-          this.Edit(this.QueryStringObj);
-        }
-      }
-    } );
+     
      //Delivery Date
    //this.DateService.dateConvert(new Date (this.delivery_Date));
    this.delivery_Date.setDate(new Date(this.delivery_Date).getDate() + 1);
@@ -785,6 +786,7 @@ clearlistamount(){
 
 AmountChange(){
   //console.log("called");
+  var coupon_per = this.ObjcashForm.Coupon_Per ? this.ObjcashForm.Coupon_Per : 0;
   var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
   var wallet_amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashForm.Wallet_Amount : 0;
   var cash_amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0 ;
@@ -792,11 +794,17 @@ AmountChange(){
   var AdditionalPayment = this.Additional_Payment ? this.Additional_Payment : 0;
   //this.Additional_Payment = 0;
   // if(this.Additional_Payment){
+    // if (this.ObjcashForm.Coupon_Per || Number(this.ObjcashForm.Coupon_Per) === 0) {
+    //   this.ObjcashForm.Credit_To_Amount = Number(this.Amount_Payable * coupon_per) / 100;
+    //  // this.ObjcashForm.Total_Paid = Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount);
+    //  // this.ObjcashForm.Net_Due = Number(this.ObjcashForm.Total_Paid) - Number(this.Amount_Payable) ;
+    // } else {
    this.ObjcashForm.Total_Paid = Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount) + Number(AdditionalPayment);
+    //}
   // } else {
   //this.ObjcashForm.Total_Paid = Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount);
   //}
-  this.ObjcashForm.Net_Due = Number(this.Amount_Payable) - Number(this.ObjcashForm.Total_Paid);
+   this.ObjcashForm.Net_Due = Number(this.Amount_Payable) - Number(this.ObjcashForm.Total_Paid);
 
 }
 
@@ -892,6 +900,18 @@ saveprintandUpdate(){
       detail: "Error in Credit to Account"
     });
     return false;
+  }
+  if(this.ObjcashForm.Coupon_Per && !this.Objcustomerdetail.Bill_Remarks){
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+    key: "compacct-toast",
+    severity: "error",
+    summary: "Warn Message",
+    detail: "Enter Remarks"
+  });
+  return false;
   }
   }
   // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){
@@ -1433,6 +1453,7 @@ clearData(){
   Order_Taken_By : string;
 }
 class cashForm{
+  Coupon_Per : number;
   Credit_To_Ac_ID : any;
   Credit_To_Ac : string;
   Credit_To_Amount: number;

@@ -65,7 +65,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-
+                                            <th style="width:5em">Action</th>
                                             <th>Date</th>
                                             <th>Outlet</th>
                                             <th>Manual Amount</th>
@@ -76,6 +76,21 @@
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="View(col)">
+                                                                <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
                                             <td>{{col.Date | date: "dd/MMM/yyyy"}}</td>
                                             <td>{{col.Location}}</td>
                                             <td>{{col.Manual_Amount}}</td>
@@ -185,6 +200,81 @@
                     </p-tabView>
                 </div>
             </div>
+            <p-dialog header="Edit Details" [appendTo]="'body'" [(visible)]="viewpopup" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '80%', minWidth: '300px'}">
+                <!-- <div class="row">
+                    <div class="col-sm-6">
+                        <label class="control-label">Indent No</label>
+                        <div class="label-t">{{Requition_No}}
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="control-label">Date</label>
+                        <div class="label-t">{{date | date :"dd/MMM/yyyy"}}
+                        </div>
+                    </div>
+                </div> 
+                <hr> -->
+                <div class="table-responsive no-padding" style="overflow-x: hidden !important; ">
+                    <table class="table table-bordered">
+
+                        <thead>
+                            <tr style="background-color:#3c8dbc;color:white;">
+
+                                <th class="text-center" style="vertical-align:middle">
+                                    Payment Options
+                                </th>
+                                <th class="text-center" style="vertical-align:middle">
+                                    System Amount
+                                </th>
+                                <th class="text-center" style="vertical-align:middle">
+                                    Actual Amount
+                                </th>
+                                <th class="text-center" style="vertical-align:middle">
+                                    Variance
+                                </th>
+                                <th class="text-center" style="vertical-align:middle">
+                                    Remarks
+                                </th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="
+                                let col of viewList;
+                               let index = index
+                              ">
+                                <td>{{col.Description}}</td>
+                                <td>{{col.System_Amount}}</td>
+                                <td>{{col.Manual_Amount}}</td>
+                                <td>{{col.Variance}}</td>
+                                <td>{{col.Remarks ? col.Remarks : 'NA'}}</td>
+                            </tr>
+                            <!-- <tr>
+                                <td *ngIf="paymentList.length">Total</td>
+                                <td *ngIf="paymentList.length">{{getTotalValue('Total_Amount')}}</td>
+                                <td *ngIf="paymentList.length">{{getTotalAmt()}}</td>
+                                <td *ngIf="paymentList.length">{{getTotalVar()}}</td>
+                                <td *ngIf="paymentList.length"></td>
+                            </tr> -->
+                            <!-- <tr>
+                                <td *ngIf="paymentList.length">CLOSEING STOCK UPDATED</td>
+                                <td *ngIf="paymentList.length">{{closeingUpdate}}</td>
+                                <td *ngIf="paymentList.length"><select class="form-control" name="STOCK_UPDATED" #STOCK_UPDATED="ngModel" [(ngModel)]="closeingstatus" [ngClass]="{'clearance': mismatch && closeingstatus != closeingUpdate}" style="width: 100px;">
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option value = "YES">
+                                        YES
+                                        </option>
+                                        <option value = "NO">
+                                            NO
+                                            </option>
+                                </select></td>
+                            </tr> -->
+                        </tbody>
+
+                    </table>
+                </div>
+                <p-footer>
+                    <button type="button" pButton icon="fa fa-times" (click)="viewpopup=false" label="Close" class="ui-button-secondary"></button>
+                </p-footer>
+            </p-dialog>
         </div>
     </div>
 </div>

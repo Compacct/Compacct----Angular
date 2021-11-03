@@ -78,6 +78,10 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   FromCostCentId: any;
   checkSave = true;
   BackupWallet : number = 0;
+  CanRemarksPoppup = false;
+  Cancle_Remarks : string;
+  cancleFormSubmitted = false;
+  Can_Remarks = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -688,6 +692,7 @@ delete(index) {
   this.productSubmit.splice(index,1)
   this.CalculateTotalAmt();
   this.listofamount();
+  this.ObjcashForm.Coupon_Per = 0;
 
 }
 CalculateTotalAmt() {
@@ -1195,9 +1200,13 @@ PrintBill(obj) {
 //CANCLE BROWSE ROW
 Cancle(row){
   //console.log(this.Objcustomerdetail.Bill_No)
+  this.Cancle_Remarks = "";
+  this.cancleFormSubmitted = false;
   this.Objcustomerdetail.Bill_No = undefined ;
   if(row.Bill_No){
-    this.checkSave = true;
+  this.checkSave = true;
+  //this.CanRemarksPoppup = true;
+  this.Can_Remarks = true;
   this.Objcustomerdetail.Bill_No = row.Bill_No;
   this.compacctToast.clear();
   this.compacctToast.add({
@@ -1209,10 +1218,16 @@ Cancle(row){
     });
   }
  }
- onConfirm() {
+ onConfirm(){}
+ onConfirmCan(valid) {
+  this.Can_Remarks = true;
+   this.cancleFormSubmitted = true;
   const Tempobj = {
-    Doc_No : this.Objcustomerdetail.Bill_No
+    Doc_No : this.Objcustomerdetail.Bill_No,
+    Cancel_Remarks : this.Cancle_Remarks
   }
+ // if (this.Objcustomerdetail.Bill_No && this.Cancle_Remarks) {
+   if (valid) {
   const obj = {
     "SP_String": "SP_Controller_Master",
     "Report_Name_String": "Cancle Sale Bill",
@@ -1222,6 +1237,7 @@ Cancle(row){
     //console.log(data);
     if(data[0].Column1 === "Cancel Successfully") {
       this.GetSearchedlist();
+      this.cancleFormSubmitted = false;
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -1240,6 +1256,15 @@ Cancle(row){
       });
     }
   })
+  // } else{
+  //  // this.compacctToast.clear();
+  //   this.compacctToast.add({
+  //     key: "compacct-toast",
+  //     severity: "error",
+  //     summary: "Warn Message",
+  //     detail: "Remarks field empty "
+  //   });
+  }
 }
 
 onReject() {
