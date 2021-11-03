@@ -1,4 +1,19 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c4"  (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <form #BillingTypeForm="ngForm" novalidate>
+            <div class="text-center" style="margin-top: 25px;">
+                <span class="text-black text-bold">{{EditDistributorObj?.label}}</span>
+                <div class="text-center ui-g ui-fluid">
+                    <div class="ui-g-12">
+                        <button *ngIf='EditDistributorObj?.Sub_Dept === "DISTRIBUTOR"' (click)="OpenSaleFieldModal(EditDistributorObj?.Sub_Dept,EditDistributorObj)"  class="btn btn-facebook btn-sm btn-social"><i class="fa fa-fw fa-pencil"></i>&nbsp;EDIT</button>
+                        <button *ngIf='EditDistributorObj?.Sub_Dept === "ZONAL HEAD"' (click)="InactiveZonalHead(EditDistributorObj)" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -26,7 +41,11 @@
                             <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="View Change" (click)="ToggleView()"><i class="fa fa-fw fa-arrows"></i></button>
                         </div>
                         <div class="col-sm-12">
-                            <p-tree scrollHeight="300px" selectionMode="single" [(selection)]="selectedFile" (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)" [value]="TreeDataList" [loading]="loading" layout="{{layoutString}}"></p-tree>
+                            <p-tree scrollHeight="300px" selectionMode="single" [(selection)]="selectedFile"
+                             (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"
+                             [value]="TreeDataList" [loading]="loading" layout="{{layoutString}}">
+                         
+                            </p-tree>
 
                         </div>
                     </div>
@@ -66,38 +85,38 @@
                 >
                 </p-dropdown>
               </div>
-            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"|| CreateFieldModalTitle === "School"'>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"|| CreateFieldModalTitle === "School")'>
                 <label class="control-label">{{CreateFieldModalTitle}} Name<sup class="text-danger">*</sup></label>
                 <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle + ' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required>
             </div>
-            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"'>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">User Name<sup class="text-danger">*</sup></label>
                 <input type="text" class="form-control" placeholder="User name" name="User_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required>
             </div>
-            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "ASP"'>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "ASP"'>
                 <label class="control-label">Contact Name<sup class="text-danger">*</sup></label>
                 <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name.errors?.required}" required>
             </div>
-            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"'>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">Password<sup class="text-danger">*</sup></label>
                 <input type="password" placeholder="Password" class="form-control" name="pass" #pass="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass.errors?.required}" maxlength="10" required>
             </div>
-            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "School"'>
                 <label class="control-label">Location<sup class="text-danger">*</sup></label>
                 <input type="text" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Area" class="form-control" required>
             </div>
-            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "School"'>
                 <label class="control-label">Address<sup class="text-danger">*</sup></label>
                 <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.School_Address" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" required>
                  </textarea>
             </div>
-            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP"'>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">PIN<sup class="text-danger">*</sup></label>
                 <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="ObjSaleField.PIN_Code" placeholder="PIN" (ngModelChange)="stateDistrictChange(ObjSaleField.PIN_Code)" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && Pin?.errors?.required ||
                       (Pin.errors?.minlength && Pin.touched)}" required>
 
             </div>
-            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP"'>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">District<sup class="text-danger">*</sup></label>
                 <select class="form-control" name="District" #District="ngModel" [(ngModel)]="ObjSaleField.District" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && District?.errors?.required ||
                       (District.errors?.minlength && District.touched)}" required>

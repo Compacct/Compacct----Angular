@@ -104,7 +104,7 @@ export class TutoOrderPaymentComponent implements OnInit {
     }
   }
   onReject() {
-    this.compacctToast.clear("c");
+    this.compacctToast.clear("c4");
   }
   onConfirm(){}
   getpayDetails(){

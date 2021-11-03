@@ -28,6 +28,8 @@ export class TutoSaleTreeFieldComponent implements OnInit {
   selectedFile: TreeNode;
   @ViewChild("location", { static: false }) locationInput: ElementRef;
   IntroducerTitle:string;
+  EditFlag = false;
+  EditDistributorObj:any = {};
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -69,7 +71,7 @@ export class TutoSaleTreeFieldComponent implements OnInit {
         });
     }
   }
-  GetIntroducerList(SupDeptName,obj2?){
+  GetIntroducerList(SupDeptName){
     this.IntroducerList = [];
     const obj = {
       "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
@@ -83,8 +85,8 @@ export class TutoSaleTreeFieldComponent implements OnInit {
         element['value'] = element.Member_ID;
       });
       this.IntroducerList = data;
-      if(obj2 && obj2.Intro_Member_ID) {
-        this.ObjSaleField.Intro_Member_ID = obj2.Intro_Member_ID;
+      if(this.EditDistributorObj && this.EditDistributorObj.Intro_Member_ID) {
+        this.ObjSaleField.Intro_Member_ID = this.EditDistributorObj.Intro_Member_ID;
       }
       this.CreateFieldModal = true;
     });
@@ -126,8 +128,33 @@ export class TutoSaleTreeFieldComponent implements OnInit {
   
   nodeSelect(event) {
     console.log(event.node.label);
+    this.EditFlag = false;
+    this.EditDistributorObj = {};
     if(event.node.Sub_Dept === "DISTRIBUTOR"){
-      this.OpenSaleFieldModal(event.node.Sub_Dept, event.node)
+      this.EditFlag = true;
+      this.EditDistributorObj ={...event.node};
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c4",
+        sticky: true,
+        severity: "warn",
+        summary: "",
+        closable : true,
+        detail: ""
+      });
+     // this.OpenSaleFieldModal(event.node.Sub_Dept, event.node)
+    }
+    if(event.node.Sub_Dept === "ZONAL HEAD"){
+      this.EditDistributorObj ={...event.node};
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c4",
+        sticky: true,
+        severity: "warn",
+        summary: "",
+        closable : true,
+        detail: ""
+      });
     }
    }
    nodeUnselect(event) {
@@ -173,7 +200,46 @@ export class TutoSaleTreeFieldComponent implements OnInit {
     this.expandAll();
   }
 
+  onReject() {
+    this.compacctToast.clear("c4");
+  }
 
+  InactiveZonalHead(obj) {
+    if(obj.Member_ID) {
+      const obj1 = {
+        "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
+        "Report_Name_String": "Edit_Zonal_Head_Inactive",
+        "Json_1_String": JSON.stringify([{'Member_ID' : obj.Member_ID}])
+      }
+      this.GlobalAPI.getData(obj1).subscribe((data:any)=>{
+        console.log(data);
+        if(data[0].Column1) {
+          let Type:String = this.ObjSaleField.Sales_Type;
+          this.EditDistributorObj = {};
+          this.ClearData();
+          this.GetTreeData();
+          this.compacctToast.clear('c4');
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: '' + Type,
+            detail:  "Inactived Succesfully "
+          });
+
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+
+      })
+    }
+  }
   OpenSaleFieldModal(type,obj?) {
     this.ClearData();
     this.ObjSaleField.Member_ID = '0';
@@ -181,6 +247,7 @@ export class TutoSaleTreeFieldComponent implements OnInit {
     this.ObjSaleField.Member_ID = '0';
     this.ObjSaleField.Sales_Type = undefined;
     this.IntroducerTitle = undefined;
+    this.EditDistributorObj = obj ? obj : {};
     if(type === 'Zonal Head') {      
       this.IntroducerTitle = 'Channel Head';
     }
@@ -193,10 +260,10 @@ export class TutoSaleTreeFieldComponent implements OnInit {
     if(type === 'DISTRIBUTOR') {      
       this.IntroducerTitle = 'Zonal Head';
     }
-    if(obj && obj.Intro_Member_ID) {
-      this.ObjSaleField.Member_ID = obj.Member_ID;
+    if(this.EditDistributorObj && this.EditDistributorObj.Intro_Member_ID) {
+      this.ObjSaleField.Member_ID = this.EditDistributorObj.Intro_Member_ID;
       this.ObjSaleField.Sales_Type = type;
-      this.GetIntroducerList(type,obj);
+      this.GetIntroducerList(type);
     } else {
       this.CreateFieldModalTitle = type;
       this.ObjSaleField.Sales_Type = type;
@@ -206,15 +273,18 @@ export class TutoSaleTreeFieldComponent implements OnInit {
   SaveUpdateField (valid) {
     this.CreateFieldModalFormSubmitted = true;
     if(valid) {
+      const reportName = this.EditFlag ? 'Edit_Distributor_Introducer' : 'Create_Sales_Tree'
       const obj = {
         "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
-        "Report_Name_String": "Create_Sales_Tree",
+        "Report_Name_String": reportName,
         "Json_1_String": JSON.stringify([this.ObjSaleField])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         console.log(data);
         if(data[0].Column1) {
           let Type:String = this.ObjSaleField.Sales_Type;
+          this.EditFlag = false;
+          this.EditDistributorObj = {};
           this.ClearData();
           this.GetTreeData();
           this.CreateFieldModal = false;
@@ -225,6 +295,7 @@ export class TutoSaleTreeFieldComponent implements OnInit {
             summary: '' + Type,
             detail:  "Succesfully Created"
           });
+          this.onReject();
 
         } else {
           this.compacctToast.clear();

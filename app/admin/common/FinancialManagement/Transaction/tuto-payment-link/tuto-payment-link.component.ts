@@ -264,6 +264,40 @@ export class TutoPaymentLinkComponent implements OnInit {
     };
     this.router.navigate(['./Tutopia_DS_Billing'], navigationExtras);
   }
+  // 
+  DeletTransaction(obj) {
+    if(obj.Our_Ref_ID) {
+      const obj1 = {
+        "SP_String": "Tutopia_Subscription_Accounts_PG_Request",
+        "Report_Name_String": "DELETE_Student_Transactions",
+        "Json_Param_String" : JSON.stringify([{'PG_Txn_ID' : obj.Our_Ref_ID}])
+      }
+      this.GlobalAPI
+          .getData(obj1)
+          .subscribe((data: any) => {
+           console.log(data);
+           if(data[0].Column1) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'PG Txn ID : ' + obj.Our_Ref_ID,
+              detail: "Succesfully Deleted."
+            });
+            this.GetTransactions(this.Foot_Fall_ID)
+           } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "error",
+              detail: "Error Occured"
+            });
+           }
+           
+      });
+    }
+  }
 
   // MANUAL PAYMENT CONFIRM
   showManualPaymentModal() {

@@ -105,6 +105,7 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th>Txn Date Time</th>
+                                        <th>DELETE</th>
                                         <th>PG Inv ID</th>
                                         <th>Payment Link</th>
                                         <th>Remarks</th>
@@ -126,6 +127,12 @@
                                 <ng-template pTemplate="body" let-col>
                                     <tr [ngClass]="{'bg-green-gradient': (col.Current_Status === 'PAID')}">
                                         <td>{{col.Txn_Date_Time  | date : "dd/MMM/yyyy hh:mm a"}}</td>
+                                        <td class="text-center"> 
+                                            <a *ngIf='col.Payment_Link === "NA"' class='btn btn-danger btn-xs' (click)='DeletTransaction(col)'>
+                                                <i class="fa fa-fw fa-trash"></i>
+                                            </a>
+                                            
+                                        </td>
                                         <td> <a class='btn btn-xs' (click)='GetPGInvDetails(col.PG_Inv_ID)'>{{col.PG_Inv_ID ? col.PG_Inv_ID : '-'}}</a></td>
                                         <td>{{col.Payment_Link ? col.Payment_Link : '-'}}</td>
                                         <td>{{col.Remarks ? col.Remarks : '-'}}</td>

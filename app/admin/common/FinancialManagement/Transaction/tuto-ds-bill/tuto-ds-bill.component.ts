@@ -31,7 +31,7 @@ export class TutoDsBillComponent implements OnInit {
 
   AmtMin = 0;
   AmtMax =0;
-  AmtDisabledFlag = false;
+  AmtDisabledFlag = true;
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -44,7 +44,7 @@ export class TutoDsBillComponent implements OnInit {
     private compacctToast: MessageService) { 
       this.route.queryParams.subscribe((val:any) => {
         if(val.Mobile) {
-          this.AmtDisabledFlag = false;
+          this.AmtDisabledFlag = true;
           this.ObjDSBill.Mobile_No = window.atob(val['Mobile']);
           this.GetStudentsDetails();
           if(val.From === 'Y') {
@@ -168,6 +168,7 @@ export class TutoDsBillComponent implements OnInit {
     this.AmtMin = 0;
     this.AmtMax =0;
     if(this.ObjDSProduct.Product_ID) {
+      this.ObjDSProduct.Amount_Type = 'Sale_rate';
       const ProductObjArr = this.ProductList.filter(item => item.Product_ID == this.ObjDSProduct.Product_ID);
       if(ProductObjArr.length) {
         this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
@@ -180,6 +181,21 @@ export class TutoDsBillComponent implements OnInit {
         }
       }
     }
+  }
+  AmountTypeChange() { 
+    if(this.ObjDSProduct.Amount_Type){
+      const ProductObjArr = this.ProductList.filter(item => item.Product_ID == this.ObjDSProduct.Product_ID);
+      if(ProductObjArr.length) {
+        this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
+        this.AmtMin = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
+        this.AmtMax = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
+        if(this.AmtDisabledFlag) {
+          this.AmtMin =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+          this.AmtMax =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+          this.ObjDSProduct.Rate = ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+        }
+    }
+  }
   }
   AddProduct(valid){
     this.DSProductFormSubmitted = true;
@@ -312,5 +328,6 @@ class DSBill{
 class DSProduct {
   Product_ID:any;
   Product_Description:any;
+  Amount_Type:any;
   Rate:any;
 }
