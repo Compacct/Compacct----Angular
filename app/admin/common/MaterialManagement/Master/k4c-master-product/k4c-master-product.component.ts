@@ -218,6 +218,7 @@ export class K4cMasterProductComponent implements OnInit {
   //  console.log("clearData")
 
    this.ObjmasterProduct = new masterProduct();
+   this.Objbrand = new brand();
    this.ObjmasterProduct.Brand_ID = this.brandIdSave;
   // this.ObjmasterProduct.Brand_ID = undefined;
    console.log(this.ObjmasterProduct.Brand_ID);
@@ -669,12 +670,12 @@ export class K4cMasterProductComponent implements OnInit {
     this.DynamicHeader = [];
     this.rowDataList = [];
     this.BackupRowDataList = [];
-    if(this.ObjmasterProduct.Brand_ID) {
+    if(this.Objbrand.Brand_ID) {
       if (this.Param_Flag === 'Store Item - Saleable') {
         const obj = {
           "SP_String": "SP_Controller_Master",
           "Report_Name_String": "Browse - Store Item Saleable Product Master",
-          "Json_Param_String": JSON.stringify([{Brand_ID : this.ObjmasterProduct.Brand_ID}])
+          "Json_Param_String": JSON.stringify([{Brand_ID : this.Objbrand.Brand_ID}])
     
         }
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -682,8 +683,8 @@ export class K4cMasterProductComponent implements OnInit {
           this.DynamicHeader = Object.keys(data[0]);
           this.rowDataList = data;
           this.BackupRowDataList = data;
-          this.brandIdSave = this.ObjmasterProduct.Brand_ID;
-          this.getProductTypeListRow(this.ObjmasterProduct.Brand_ID);
+          this.brandIdSave = this.Objbrand.Brand_ID;
+          this.getProductTypeListRow(this.Objbrand.Brand_ID);
           this.filterProduct();
           console.log("this.DynamicHeader",this.DynamicHeader)
         })
@@ -693,15 +694,15 @@ export class K4cMasterProductComponent implements OnInit {
       const obj = {
         "SP_String": "SP_Controller_Master",
         "Report_Name_String": ReportName,
-        "Json_Param_String": JSON.stringify([{Brand_ID : this.ObjmasterProduct.Brand_ID}])
+        "Json_Param_String": JSON.stringify([{Brand_ID : this.Objbrand.Brand_ID}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.DynamicHeader = Object.keys(data[0]);
         // console.log("brandBrowseList  ===",data);
         this.rowDataList = data;
         this.BackupRowDataList = data;
-        this.brandIdSave = this.ObjmasterProduct.Brand_ID;
-        this.getProductTypeListRow(this.ObjmasterProduct.Brand_ID);
+        this.brandIdSave = this.Objbrand.Brand_ID;
+        this.getProductTypeListRow(this.Objbrand.Brand_ID);
        // console.log(this.rowDataList);
         this.filterProduct();
 
@@ -932,7 +933,7 @@ class masterProduct {
   Product_Type_ID : string ;
   Product_Sub_Type_ID : any ;
   HSN_NO : any ;
-  Brand_ID : 0;
+  Brand_ID : number;
   Sale_rate_Franchise_New   : any ;
   Sale_rate_Franchise_Old : any;
   Sale_rate_Online : any;
@@ -941,7 +942,7 @@ class masterProduct {
   Saleable_Product : false;
 }
 class brand{
-  Brand_ID : 0 ;
+  Brand_ID : number ;
 }
 class costCenter{
   costcenterId : 0;
