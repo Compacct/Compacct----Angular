@@ -213,10 +213,20 @@ export class TutoSaleTreeFieldComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj1).subscribe((data:any)=>{
         console.log(data);
-        if(data[0].Column1) {
-          let Type:String = this.ObjSaleField.Sales_Type;
+        if(data[0].Column1.toString() === '0') {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Already Distributor is tagged under this Zonal head."
+          });
+
+        } else if (data[0].Column1.toString() !== '0'){
+          let Type:String = obj.Sub_Dept;
           this.EditDistributorObj = {};
           this.ClearData();
+          this.loading = true;
           this.GetTreeData();
           this.compacctToast.clear('c4');
           this.compacctToast.clear();
@@ -226,7 +236,6 @@ export class TutoSaleTreeFieldComponent implements OnInit {
             summary: '' + Type,
             detail:  "Inactived Succesfully "
           });
-
         } else {
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -261,7 +270,7 @@ export class TutoSaleTreeFieldComponent implements OnInit {
       this.IntroducerTitle = 'Zonal Head';
     }
     if(this.EditDistributorObj && this.EditDistributorObj.Intro_Member_ID) {
-      this.ObjSaleField.Member_ID = this.EditDistributorObj.Intro_Member_ID;
+      this.ObjSaleField.Member_ID = this.EditDistributorObj.Member_ID;
       this.ObjSaleField.Sales_Type = type;
       this.GetIntroducerList(type);
     } else {
@@ -286,6 +295,7 @@ export class TutoSaleTreeFieldComponent implements OnInit {
           this.EditFlag = false;
           this.EditDistributorObj = {};
           this.ClearData();
+          this.loading = true;
           this.GetTreeData();
           this.CreateFieldModal = false;
           this.compacctToast.clear();
