@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { FileUpload } from 'primeng/primeng';
 import { Routes, RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-master-product',
@@ -32,7 +33,7 @@ export class K4cMasterProductComponent implements OnInit {
   categoryList = [];
   sharemasterProduct = [];
   UOMList = [];
-  brandIdSave
+  brandIdSave:any;
   AllCostcenterList = [];
   rowDataList = [];
   BackupRowDataList = [];
@@ -57,6 +58,7 @@ export class K4cMasterProductComponent implements OnInit {
   can_popup = false;
   act_popup = false;
   ParamFlaghtml = undefined;
+  exceldisable = false;
   constructor( private $http: HttpClient ,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -97,15 +99,15 @@ export class K4cMasterProductComponent implements OnInit {
     }
     else if(this.Param_Flag === 'Store Item - N/Saleable'){
       this.getRowData();
-      this.getProductTypeListRow(0);
     }
     else if(this.Param_Flag === 'Store Item - Saleable'){
       this.getBrand();
+      this.getProductTypeListRow(0);
     }
     this.getMfgData();
     this.getCategoryList();
     this.GetUOM();
-    // this.getProductTypeListRow();
+   // this.getProductTypeListRow();
     // console.log("brand Id for page",this.ObjmasterProduct.Brand_ID);
   }
   Active(masterProduct,ParamFlag){
@@ -217,6 +219,7 @@ export class K4cMasterProductComponent implements OnInit {
 
    this.ObjmasterProduct = new masterProduct();
    this.ObjmasterProduct.Brand_ID = this.brandIdSave;
+  // this.ObjmasterProduct.Brand_ID = undefined;
    console.log(this.ObjmasterProduct.Brand_ID);
    this.ObjmasterProduct.UOM = this.UOMList.length === 1 ? this.UOMList[0].UOM : undefined;
    this.ObjmasterProduct.Alt_UOM = this.UOMList.length === 1 ? this.UOMList[0].UOM : undefined;
@@ -230,7 +233,7 @@ export class K4cMasterProductComponent implements OnInit {
        if(valid){
         this.Spinner = true;
         if(this.ObjmasterProduct.Product_ID){
-
+          this.ObjmasterProduct.Brand_ID = this.ObjmasterProduct.Brand_ID ? this.ObjmasterProduct.Brand_ID : 0;
           console.log(this.ObjmasterProduct);
           if (this.Param_Flag === 'Raw Material') {
              var TempId = this.ObjmasterProduct.Product_ID;
@@ -558,6 +561,11 @@ export class K4cMasterProductComponent implements OnInit {
       this.filterProduct();
       console.log("this.DynamicHeader",this.DynamicHeader)
     })
+  }
+  exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
   }
  getProductTypeListRow(id){
   this.productListFilter = [];

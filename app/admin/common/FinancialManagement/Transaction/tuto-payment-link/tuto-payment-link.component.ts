@@ -272,9 +272,7 @@ export class TutoPaymentLinkComponent implements OnInit {
     this.ProductPDFFile = {};
     this.ManualPaymentConfirmFormSubmit = false;
     this.ManualPaymentTrnsDate = new Date();
-    const todday = new Date()
-    this.MinTansactionDate =  todday.setDate(todday.getDate() - 1);
-    this.MaxTansactionDate = new Date();
+    this.MaxTansactionDate =  new Date();
     this.saveSpinner = false;
     if(this.Foot_Fall_ID) {
       this.ObjManualPaymentCnfm.Foot_Fall_ID = this.Foot_Fall_ID;
@@ -367,11 +365,7 @@ export class TutoPaymentLinkComponent implements OnInit {
     this.ManualEMIUpdateTrnsDate = new Date();
     this.saveSpinner = false;
     const todday = new Date();
-    this.MinTansactionDate =  todday.setDate(todday.getDate() + 1);
-    this.ManualEMIUpdateTrnsDate = this.MinTansactionDate;
-    const todday2 = new Date();
-    this.MaxTansactionDate =  todday.setFullYear(todday.getFullYear() + 1);
-    console.log(this.MaxTansactionDate)
+    this.ManualEMIUpdateTrnsDate = todday.setMonth(todday.getMonth() + 1);
     if(this.Foot_Fall_ID) {
       this.ObjEMIUpdate.Foot_Fall_ID = this.Foot_Fall_ID;
       this.ObjEMIUpdate.Contact_Name = this.contactList.Contact_Name;

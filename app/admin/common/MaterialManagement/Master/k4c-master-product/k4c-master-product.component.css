@@ -1,18 +1,27 @@
-#ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
-    width: auto !important;
-  }
-  div.table-responsive.table-id>p-table>div>div {
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
     width: auto !important;
 }
-  .custombutton {
+
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+
+.custombutton {
     margin-top: 25px;
-  }
-  hr {
+}
+
+hr {
     margin-top: 1rem;
     margin-bottom: 1rem;
     border: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
-  }
-  .text-red-active > td {
-    color:red;
-  }
+}
+
+.text-red-active>td {
+    color: red;
+}
+
+.custombutton1 {
+    margin-top: 2px;
+    margin-left: 600px;
+}
