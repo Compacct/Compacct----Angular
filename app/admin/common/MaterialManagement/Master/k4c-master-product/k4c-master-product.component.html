@@ -34,7 +34,7 @@
                                     <label style="float: right;">Brand</label>
                                 </div>
                                 <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable'">
-                                    <select class="form-control" [(ngModel)]="ObjmasterProduct.Brand_ID " #Brand_ID="ngModel" name="Brand_ID" (change)="getBandlist()" required>
+                                    <select class="form-control" [(ngModel)]="Objbrand.Brand_ID" #Brand_ID="ngModel" name="Brand_ID" (change)="getBandlist()" required>
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of brandList" value="{{option.Brand_ID}}">{{option.Column1}}</option>
                                     </select>
@@ -121,7 +121,7 @@
                                     <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable'">
                                         <label class="control-label">Brand<sup class="text-danger" *ngIf='Param_Flag !== "Store Item - Saleable"'>*</sup>
                                             </label>
-                                        <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" (change)="getBandlist()" [disabled]="brandInput" [(ngModel)]="ObjmasterProduct.Brand_ID" [ngClass]="{'clearance': masterProductFormSubmitted && Brand_ID?.errors?.required}" [required]='Param_Flag !== "Store Item - Saleable"'>
+                                        <select class="form-control" name="BrandID" #BrandID="ngModel" [disabled]="brandInput" [(ngModel)]="ObjmasterProduct.Brand_ID" [ngClass]="{'clearance': masterProductFormSubmitted && BrandID?.errors?.required}" [required]='Param_Flag !== "Store Item - Saleable"'>
                                                   <option  [ngValue]="undefined">Select</option>
                                               <option *ngFor="let option of brandList" value="{{option.Brand_ID}}">
                                                   {{option.Column1}}
