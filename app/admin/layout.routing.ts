@@ -130,6 +130,7 @@ import { TutoWebDemoTeamComponent } from './common/CRM/Transaction/tuto-web-demo
 import { TutoPreSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-pre-sale-audit-team/tuto-pre-sale-audit-team.component';
 import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-post-sale-audit-team/tuto-post-sale-audit-team.component';
 import { TutoFieldSalesSchoolComponent } from './common/CRM/Master/tuto-field-sales-school/tuto-field-sales-school.component';
+import { HarbaProjectEstimateComponent } from "./common/TenderManagement/harba-project-estimate/harba-project-estimate.component";
 
 
 
@@ -749,6 +750,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                           component: TutoFieldSalesSchoolComponent,
                                           data: {title: 'Tutopia Field Sales School '}
                                           },
+                                          {
+                                            path: 'Project_Estimate',
+                                            component: HarbaProjectEstimateComponent,
+                                            data: {title: 'Project Estimate'}
+                                            },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)
