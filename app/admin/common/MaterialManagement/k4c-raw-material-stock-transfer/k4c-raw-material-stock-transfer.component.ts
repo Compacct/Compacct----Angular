@@ -464,6 +464,7 @@ const obj = {
      }else{
        this.FGdisableflag = false;
      }
+     this.GetToGodown();
      this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
      if(this.ToGodownList.length === 1){
        this.TGdisableflag = true;

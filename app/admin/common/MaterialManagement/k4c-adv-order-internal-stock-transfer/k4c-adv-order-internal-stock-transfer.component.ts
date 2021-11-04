@@ -22,7 +22,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save";
-  todayDate : any = new Date();
+  todayDate = new Date();
   myDate :any = Date;
   Datevalue : any = Date ;
   ProductionFormSubmitted = false ;
@@ -484,7 +484,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
    }
    dataforSaveAdvIntStocktr(){
      // console.log(this.DateService.dateConvert(new Date(this.myDate)))
-      this.Objproduction.Doc_Date = this.DateService.dateConvert(new Date(this.Datevalue));
+      this.Objproduction.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
      if(this.BackUpProductNamelList.length) {
        let tempArr =[]
        this.BackUpProductNamelList.forEach(item => {
@@ -742,7 +742,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
       this.AdvIntStockFormSubmitted = false;
       this.items = ["BROWSE", "CREATE"];
       this.buttonname = "Save";
-      this.Datevalue = this.DateService.dateConvert(new Date(this.Datevalue));
+      this.todayDate = new Date();
       this.ProDate = this.DateService.dateConvert(new Date(this.ProDate));
       this.GetProDate();
      }

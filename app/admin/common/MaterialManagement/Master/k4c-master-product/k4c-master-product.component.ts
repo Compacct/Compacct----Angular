@@ -99,6 +99,7 @@ export class K4cMasterProductComponent implements OnInit {
     }
     else if(this.Param_Flag === 'Store Item - N/Saleable'){
       this.getRowData();
+      this.getProductTypeListRow(0);
     }
     else if(this.Param_Flag === 'Store Item - Saleable'){
       this.getBandlist();

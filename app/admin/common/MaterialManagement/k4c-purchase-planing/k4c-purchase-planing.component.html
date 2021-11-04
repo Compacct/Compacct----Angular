@@ -667,7 +667,7 @@
                                     </div>
 
                                     <div class="col-sm-3">
-                                        <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="GetSearchedlist()" id="load" [disabled]="seachSpinner">
+                                        <button class="btn btn-primary custombutton3" data-toggle="modal" id="load" (click)="GetSearchedlist()" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
                                         [style]="{ width: '15px', height: '15px' }"
@@ -713,7 +713,7 @@
                                         <tr>
                                             <td>
                                                 <button type="button" (click)="Order(col)" class="btn btn-primary">
-                                                    <i class="fa fa-pencil-square-o"></i>&nbsp;  Edit
+                                                    <i class="fa fa-pencil-square-o"></i>&nbsp;  Order
                                                 </button>
                                             </td>
                                             <td>{{col.Doc_No}}</td>
