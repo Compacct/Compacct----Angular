@@ -124,7 +124,7 @@ export class DiplMasterSalesteamComponent implements OnInit {
   }
   GetUserList() {
     this.$http.get(this.url.apiGetUserListAll).subscribe((data: any) => {
-      this.UserList = data.length ?  data : [];
+      this.UserList = data.length ?  data.filter((el)=> el.Is_Active === 'Y') : [];
     });
   }
   // GET TREE

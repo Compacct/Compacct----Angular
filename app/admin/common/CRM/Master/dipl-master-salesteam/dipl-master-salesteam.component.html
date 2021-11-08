@@ -107,10 +107,10 @@
         >
           <option [ngValue]="undefined">Select</option>
           <option
-            *ngFor="let option of AssignedToList"
+            *ngFor="let option of UserList"
             value="{{ option.User_ID }}"
           >
-            {{ option.Member_Name }}
+            {{ option.Name }}
           </option>
         </select>
         </div>

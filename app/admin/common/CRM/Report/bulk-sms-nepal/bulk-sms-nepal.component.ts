@@ -60,14 +60,29 @@ export class BulkSmsNepalComponent implements OnInit {
       console.log('start');
       this.DueCustomerList[i]['Mgs_Body'] = '';
       const BodyData = await this.GetEmailBody(this.DueCustomerList[i]);
-      // console.log('BodyData',BodyData);
-      this.DueCustomerList[i]['Mgs_Body'] = BodyData;
-      const EmailPostData = await this.SendEmail(this.DueCustomerList[i]);
-      // console.log('EmailPostData --> ', EmailPostData);
-      if(EmailPostData.messageId){
-      this.EmailCounter = i + 1;
-      this.ProgressPercentage = Number(((this.EmailCounter / this.DueCustomerList.length) * 100).toFixed(2));
+      console.log('BodyData',BodyData);
+      if(BodyData){
+        
+      } else {
+        this.DueCustomerList[i]['Mgs_Body'] = BodyData;
+        const EmailPostData = await this.SendEmail(this.DueCustomerList[i]);
+        console.log('EmailPostData --> ', EmailPostData);
+        if(EmailPostData.messageId){
+          this.EmailCounter = i + 1;
+          this.ProgressPercentage = Number(((this.EmailCounter / this.DueCustomerList.length) * 100).toFixed(2));
+        } else {
+          const erroMgs = this.DueCustomerList[i].Email +' | error :' + EmailPostData.message
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error Occured",
+            life : 3500,
+            detail: erroMgs
+          });
+        }
       }
+      
     }
     this.EmailCounter = 0;
     this.DueCustomerList = [];

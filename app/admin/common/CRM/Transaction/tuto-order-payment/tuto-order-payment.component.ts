@@ -137,6 +137,9 @@ export class TutoOrderPaymentComponent implements OnInit {
           Transaction_ID : el.Transaction_ID,
           Ledger_Name : el.Ledger_Name,
           Txn_Type_Name : el.Txn_Type_Name,
+          PG_Txn_ID : el.PG_Txn_ID,
+          File_URL : el.File_Link,
+          File_Link : el.File_Link,
            del : 'NA'
         });
       });
@@ -482,6 +485,8 @@ export class TutoOrderPaymentComponent implements OnInit {
       Txn_Type_Name : el.Txn_Type_Name,
       User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
       File_URL: el.File_URL,
+      File_Link : el.File_Link,
+      PG_Txn_ID : el.PG_Txn_ID
        })
 
     });
