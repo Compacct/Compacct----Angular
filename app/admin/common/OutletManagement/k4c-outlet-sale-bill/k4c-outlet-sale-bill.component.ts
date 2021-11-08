@@ -775,15 +775,15 @@ AmountChange(){
   var cash_amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0 ;
   var card_amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
 
-  if (this.ObjcashForm.Coupon_Per ) { 
-    credit_amount = Number(this.Net_Payable) * Number(this.ObjcashForm.Coupon_Per ) / 100;
-    this.ObjcashForm.Credit_To_Amount = (credit_amount).toFixed(2);
-    this.ObjcashForm.Total_Paid = (Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
-  } else if (!this.ObjcashForm.Coupon_Per) {
-    this.ObjcashForm.Credit_To_Amount = null;
+  //if (this.ObjcashForm.Coupon_Per ) { 
+    // credit_amount = Number(this.Net_Payable) * Number(this.ObjcashForm.Coupon_Per ) / 100;
+    // this.ObjcashForm.Credit_To_Amount = (credit_amount).toFixed(2);
+    // this.ObjcashForm.Total_Paid = (Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+  //} else //if (!this.ObjcashForm.Coupon_Per) {
+    //this.ObjcashForm.Credit_To_Amount = null;
     //this.ObjcashForm.Total_Paid = null;
     this.ObjcashForm.Total_Paid = (Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
-  }
+  //}
    if(Number(this.Net_Payable) < this.ObjcashForm.Total_Paid){
      this.ObjcashForm.Refund_Amount = (Number(this.ObjcashForm.Total_Paid) - Number(this.Net_Payable)).toFixed(2);
    }
@@ -796,6 +796,21 @@ AmountChange(){
   // else {
     this.ObjcashForm.Due_Amount = (Number(this.ObjcashForm.Total_Paid) - Number(this.ObjcashForm.Refund_Amount) - Number(this.Net_Payable)).toFixed(2);
   //}
+}
+couponperchange(){
+  var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
+  var wallet_amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashForm.Wallet_Amount : 0;
+  var cash_amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0 ;
+  var card_amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
+  if (this.ObjcashForm.Coupon_Per ) { 
+    credit_amount = Number(this.Net_Payable) * Number(this.ObjcashForm.Coupon_Per ) / 100;
+    this.ObjcashForm.Credit_To_Amount = (credit_amount).toFixed(2);
+    this.ObjcashForm.Total_Paid = (Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+  } else if (!this.ObjcashForm.Coupon_Per) {
+    this.ObjcashForm.Credit_To_Amount = 0;
+    //this.ObjcashForm.Total_Paid = null;
+    this.ObjcashForm.Total_Paid = (Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+   }
 }
 // DAY END CHECK
 saveCheck(){

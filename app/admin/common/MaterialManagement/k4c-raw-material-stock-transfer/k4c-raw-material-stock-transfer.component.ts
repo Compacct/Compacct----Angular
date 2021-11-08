@@ -49,6 +49,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   Param_Flag ='';
   CostCentId_Flag : any;
   MaterialType_Flag = '';
+  TCdisableflag = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -148,12 +149,20 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.Tocostcenlist = data;
      // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
+      if (this.CostCentId_Flag) {
       this.ObjRawMateriali.To_Cost_Cen_ID = String(this.CostCentId_Flag);
-       this.GetToGodown();
+      this.TCdisableflag = true;
+      this.GetToGodown();
+      } else {
+        this.ObjRawMateriali.To_Cost_Cen_ID = undefined;
+        this.TCdisableflag = false;
+        this.GetToGodown();
+      }
      // console.log("To Cost Cen List ===",this.Tocostcenlist);
     })
   }
   GetToGodown(){
+    this.ToGodownList = [];
     if(this.ObjRawMateriali.To_Cost_Cen_ID){
       const tempObj = {
         Cost_Cen_ID : this.ObjRawMateriali.To_Cost_Cen_ID,
@@ -166,10 +175,12 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ToGodownList = data;
-         this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
+  // this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
        if(this.ToGodownList.length === 1){
+        this.ObjRawMateriali.To_godown_id = this.ToGodownList[0].godown_id;
          this.TGdisableflag = true;
        }else{
+        this.ObjRawMateriali.To_godown_id = undefined;
          this.TGdisableflag = false;
        }
        //console.log("To Godown List ===",this.ToGodownList);
@@ -457,14 +468,23 @@ const obj = {
 }
   clearData(){
     this.ObjRawMateriali.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    this.ObjRawMateriali.To_Cost_Cen_ID = String(this.CostCentId_Flag);
+    if (this.CostCentId_Flag) {
+      this.ObjRawMateriali.To_Cost_Cen_ID = String(this.CostCentId_Flag);
+      this.TCdisableflag = true;
+      this.GetToGodown();
+      } else {
+        this.ObjRawMateriali.To_Cost_Cen_ID = undefined;
+        //this.ObjRawMateriali.To_godown_id = undefined;
+        this.TCdisableflag = false;
+        this.GetToGodown();
+      }
     this.ObjRawMateriali.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
      if(this.FromGodownList.length === 1){
        this.FGdisableflag = true;
      }else{
        this.FGdisableflag = false;
      }
-     this.GetToGodown();
+    // this.GetToGodown();
      this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
      if(this.ToGodownList.length === 1){
        this.TGdisableflag = true;
