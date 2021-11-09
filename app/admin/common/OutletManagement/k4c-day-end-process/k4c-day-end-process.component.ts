@@ -310,7 +310,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   save(){
     let saveData = [];
     this.saveSpinner = true;
-    if (Number(this.SystemAmttotal === this.Total) && Number(this.VarianceTotal == 0)) {
+    if (Number(this.SystemAmttotal == this.Total) && Number(this.VarianceTotal == 0)) {
     this.paymentList.forEach(ele =>{
       const TempData = {
         Date : this.DateService.dateConvert(new Date(this.Datevalue)),
@@ -349,7 +349,7 @@ export class K4cDayEndProcessComponent implements OnInit {
         key: "compacct-toast",
         severity: "error",
         summary: "Warn Message",
-        detail: "System amount is not equal to actual Aamount"
+        detail: "System amount is not equal to actual amount"
       });
      }
   }
