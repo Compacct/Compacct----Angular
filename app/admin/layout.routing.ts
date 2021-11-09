@@ -764,6 +764,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                             data: {title: 'Project Estimate'}
                                             },
                                             {
+                                            path: 'Direct_Payment_Followup_Nepal',
+                                            component: DirectPaymentFollowupNepalComponent,
+                                            data: {title: 'Direct Payment Followup'}
+                                            },
+                                            {
                                               path: 'Franchise_Sale_Bill',
                                               component: K4cFranchiseSaleBillComponent,
                                               data: {title: 'Franchise Sale Bill'}
