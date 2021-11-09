@@ -58,6 +58,12 @@ export class K4cPurchasePlaningComponent implements OnInit {
   //filteredData = [];
   ObjStockLevel : StockLevel = new StockLevel ();
   StockLevelFormSubmitted = false;
+  costcenlist = [];
+  GodownList = [];
+  StockReportSearchlist = [];
+  Orderlist = [];
+  productdisabled = false;
+  
 
   constructor(
     private Header: CompacctHeader,
@@ -78,6 +84,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     //this.getproduct();
     this.getvendor();
     this.getmaterialtype();
+    this.GetCostCen();
    // this.getproducttype();
   }
   TabClick(e){
@@ -107,7 +114,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
        console.log("material type list======",this.materialtypelist);
      });
    }
-   getproducttype(){
+   getproducttype(id?){
     // this.Productlist = [];
     // this.SelectedProductType = [];
     // let producttypelist = [];
@@ -130,6 +137,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.producttypelist = data;
+       this.ObjMPtype.Product_Type = id ? id : undefined;
      console.log("product type list======",this.producttypelist);
     //  producttypelist.forEach(el => {
     //   this.SelectedProductType.push(el.Product_Type_ID);
@@ -140,10 +148,10 @@ export class K4cPurchasePlaningComponent implements OnInit {
     //     }
     //   )
     // })
-    this.getproduct();
+    const d = id ? '' : this.getproduct();
    });
   }
-   getproduct(){
+   getproduct(id?){
     this.Productlist = [];
     this.ObjPurchasePlan.Product_ID = undefined;
     //if(this.ObjaddbillForm.Cost_Cen_ID){
@@ -167,6 +175,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
            element['value'] = element.Product_ID
          });
          this.Productlist = data;
+         this.ObjPurchasePlan.Product_ID = id ? id : undefined;
         //  this.backUpproductList = this.Productlist;
         //  this.getproducttype();
        } else {
@@ -880,9 +889,126 @@ export class K4cPurchasePlaningComponent implements OnInit {
     })
 
    }
+   GetCostCen(){
+    const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Get - Non Outlet Cost Centre"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.costcenlist = data;
+      //this.Objproduction.From_Cost_Cen_ID = this.Fcostcenlist.length === 21 ? this.Fcostcenlist[0].From_Cost_Cen_ID : undefined;
+      this.ObjStockLevel.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      //console.log("Cost Cen List ===",this.Fcostcenlist);
+      this.GetGodown();
+    })
+  }
+  GetGodown(){
+    const tempObj = {
+      //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+      Cost_Cen_ID : this.ObjStockLevel.Cost_Cen_ID
+    }
+    const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Get - Godown",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.GodownList = data;
+      this.ObjStockLevel.Godown_ID = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
+     // this.ObjStockLevel.Godown_ID = data[0].godown_id;
+       //console.log("From Godown List ===",this.FromGodownList);
+    })
+  }
+  StockReportSearch(valid){
+    const tempobj = {
+      Material_Type : this.ObjStockLevel.Material_Type,
+      Cost_Cen_ID : this.ObjStockLevel.Cost_Cen_ID,
+      Godown_ID : this.ObjStockLevel.Godown_ID
+    }
+    if(valid){
+    const obj = {
+      "SP_String": "SP_Purchase_Planning",
+      "Report_Name_String": "Product For Order Stock Report",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.StockReportSearchlist = data;
+       console.log('Stock Report search list=====',this.StockReportSearchlist)
+       this.seachSpinner = false;
+      // this.SearchFactoryFormSubmit = false;
+     })
+     }
+  }
+   Order(pro_id){
+     //this.clearData();
+    if(pro_id.Product_ID){
+    this.ObjStockLevel.Product_ID = pro_id.Product_ID;
+    this.tabIndexToView = 1;
+    this.productdisabled = true;
+    this.uomdisabeld = true;
+    //this.items = ["BROWSE", "CREATE", "ORDER-STOCK REPORT"];
+    // this.buttonname = "Save";
+    // console.log("this.EditDoc_No ", this.Adv_Order_No );
+    this.getOrderdetails(this.ObjStockLevel.Product_ID);
+    }
+  //   if(this.StockReportSearchlist.length) {
+  //     let arr =[]
+  //     this.StockReportSearchlist.forEach(item => {
+  //       const obj = {
+  //           Product_ID : item.Product_ID
+  //       }
+  //       const objtemp = {
+  //         Material_Type : this.ObjStockLevel.Material_Type,
+  //         Cost_Cen_ID : this.ObjStockLevel.Cost_Cen_ID,
+  //         Godown_ID : this.ObjStockLevel.Godown_ID
+
+  //       }
+  //       arr.push({...obj,...objtemp})
+  //     });
+  //     console.log(arr)
+  //     return JSON.stringify(arr);
+
+   // }
+  }
+  getOrderdetails(Product_ID){
+    const tempobj = {
+      Product_ID : this.ObjStockLevel.Product_ID,
+      Material_Type : this.ObjStockLevel.Material_Type,
+      Cost_Cen_ID : this.ObjStockLevel.Cost_Cen_ID,
+      Godown_ID : this.ObjStockLevel.Godown_ID
+    }
+    const obj = {
+      "SP_String": "SP_Purchase_Planning",
+      "Report_Name_String": "Product Details For Order",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.Orderlist = data;
+       console.log('Orderlist list=====',this.Orderlist)
+       this.ObjMPtype.Material_Type = data[0].Material_Type;
+       this.getproducttype(data[0].Product_Type_ID);
+       this.ObjMPtype.Product_Type = data[0].Product_Type_ID;
+       this.ObjPurchasePlan.Product_ID = data[0].Product_ID;
+       this.getproduct(data[0].Product_ID);
+       this.ObjPurchasePlan.Product_Description = data[0].Product_Description;
+       this.ObjPurchasePlan.Weekly_Avg_Cons = data[0].Weekly_Avg_Cons;
+       this.ObjPurchasePlan.UOM = data[0].UOM;
+       this.ObjPurchasePlan.Weekly_Cons_Value = data[0].Weekly_Cons_Value;
+       this.LastPurDate = this.DateService.dateConvert(new Date(data[0].Last_Purchase_Date));
+       this.ObjPurchasePlan.Last_Purchase_Qty = data[0].Last_Purchase_Qty;
+       this.ObjPurchasePlan.AL_UOM = data[0].Alt_UOM;
+       this.ObjPurchasePlan.Last_Purchase_Rate = data[0].Last_Purchase_Rate;
+       this.ObjPurchasePlan.Current_Stock = data[0].Stock_Qty;
+       this.ObjPurchasePlan.Pcs_UOM = data[0].UOM;
+       this.ObjPurchasePlan.Alt_UOM = data[0].Alt_UOM;
+       this.ObjPurchasePlan.Stock_UOM = data[0].UOM;
+       this.ObjPurchasePlan.UOM_Qty = data[0].UOM_Qty;
+       this.ObjPurchasePlan.Due_Payment = data[0].Due_Payment;
+       this.ObjPurchasePlan.Sale_rate = data[0].Last_Purchase_Rate;
+
+     })
+  }
   onReject(){}
-  GetFromGodown(){}
-  Order(){}
 
   clearData(){
     this.ObjPurchasePlan = new PurchasePlan();
@@ -895,6 +1021,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
     this.LastPurDate = new Date();
     this.ovaldisabled = false;
     this.stockqtydisabled = false;
+    // this.ObjStockLevel.Material_Type = undefined;
+    // this.ObjStockLevel.Godown_ID = undefined;
+    // this.StockReportSearchlist = [];
+    this.productdisabled = false;
+    this.Orderlist = [];
   }
 
 
@@ -950,6 +1081,8 @@ class PurchasePlan {
   end_date : Date;
 }
  class StockLevel {
+  Material_Type : string;
   Cost_Cen_ID : any;
   Godown_ID : any ;
+  Product_ID : any;
 }

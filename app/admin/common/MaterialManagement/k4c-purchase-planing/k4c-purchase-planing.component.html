@@ -394,7 +394,7 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjMPtype.Material_Type" (change)='getproducttype()' [ngClass]="{'clearance': PurchaseFormSubmitted && producttype?.errors?.required}">
+                                                    <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjMPtype.Material_Type" (change)='getproducttype()' [disabled]="productdisabled" [ngClass]="{'clearance': PurchaseFormSubmitted && producttype?.errors?.required}">
                                         <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor = "let option of materialtypelist" value= "{{option.Material_Type}}">
                                             {{option.Material_Type}}
@@ -403,7 +403,7 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Product Type <sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="producttype" #producttype="ngModel" [(ngModel)]="ObjMPtype.Product_Type" (change)='ProductTypeChange()' [ngClass]="{'clearance': PurchaseFormSubmitted && producttype?.errors?.required}">
+                                                    <select class="form-control" name="producttype" #producttype="ngModel" [(ngModel)]="ObjMPtype.Product_Type" (change)='ProductTypeChange()' [disabled]="productdisabled" [ngClass]="{'clearance': PurchaseFormSubmitted && producttype?.errors?.required}">
                                       <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor = "let option of producttypelist" value= "{{option.Product_Type_ID}}">
                                           {{option.Product_Type}}
@@ -419,10 +419,11 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Product <sup class="text-danger">*</sup> &nbsp;
-                                      <span><a (click)="ProductDropdownChange()">{{data}}</a></span>
+                                      <span ><a  *ngIf="!Orderlist.length" (click)="ProductDropdownChange()">{{data}}</a></span>
                                     </label>
                                                     <p-dropdown [options]="Productlist" name="Product" [(ngModel)]="ObjPurchasePlan.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #Product="ngModel" [required]="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Product?.errors?.required}" required>
+                                                        [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #Product="ngModel" [disabled]="productdisabled" [required]="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Product?.errors?.required}"
+                                                        required>
                                                     </p-dropdown>
                                                 </div>
                                                 <!-- <div class="col-sm-2">
@@ -647,27 +648,36 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="StockLevelForm" #StockLevelForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="materialtype2" #materialtype2="ngModel" [(ngModel)]="ObjStockLevel.Material_Type" [ngClass]="{'clearance': StockLevelFormSubmitted && materialtype2?.errors?.required}" required>
+                                             <option  [ngValue]="undefined">Select</option>
+                                                 <option *ngFor = "let option of materialtypelist" value= "{{option.Material_Type}}">
+                                                    {{option.Material_Type}}
+                                                 </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
                                         <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel" [(ngModel)]="ObjStockLevel.Cost_Cen_ID" [ngClass]="{'clearance': StockLevelFormSubmitted && Cost_Cen_ID?.errors?.required}" (change)="GetFromGodown()">
+                                        <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel" [(ngModel)]="ObjStockLevel.Cost_Cen_ID" [ngClass]="{'clearance': StockLevelFormSubmitted && Cost_Cen_ID?.errors?.required}" (change)="GetGodown()" required>
                                                 <option  [ngValue]="undefined">Select</option>
-                                                <!-- <option  *ngFor="let option of Fcostcenlist" value="{{option.Cost_Cen_ID}}">
+                                                <option  *ngFor="let option of costcenlist" value="{{option.Cost_Cen_ID}}">
                                                   {{option.Cost_Cen_Name}}
-                                                </option> -->
+                                                </option>
                                           </select>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Godown_ID" #Godown_ID="ngModel" [(ngModel)]="ObjStockLevel.Godown_ID" [ngClass]="{'clearance': StockLevelFormSubmitted && Godown_ID?.errors?.required}">
+                                        <select class="form-control" name="Godown_ID" #Godown_ID="ngModel" [(ngModel)]="ObjStockLevel.Godown_ID" [ngClass]="{'clearance': StockLevelFormSubmitted && Godown_ID?.errors?.required}" required>
                                                 <option  [ngValue]="undefined">Select</option>
-                                                <!-- <option  *ngFor="let option of Fcostcenlist" value="{{option.Godown_ID}}">
-                                                  {{option.Godown_Name}}
-                                                </option> -->
+                                                <option  *ngFor="let option of GodownList" value="{{option.godown_id}}">
+                                                  {{option.godown_name}}
+                                                </option>
                                           </select>
                                     </div>
 
                                     <div class="col-sm-3">
-                                        <button class="btn btn-primary custombutton3" data-toggle="modal" id="load" (click)="GetSearchedlist()" [disabled]="seachSpinner">
+                                        <button class="btn btn-primary custombutton3" data-toggle="modal" id="load" (click)="StockReportSearch(StockLevelForm.form.valid)" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
                                         [style]="{ width: '15px', height: '15px' }"
@@ -689,11 +699,11 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="Searchedlist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Amount","Confirm_Amount","Autho_One_Staus"]'>
+                                <p-table [value]="StockReportSearchlist" #dt4 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Product_Description","Last_Purchase_Qty","Last_Purchase_Date","Stock_Qty","Reorder_Level","Critical_Level"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
-                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
 
@@ -710,17 +720,21 @@
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr>
+                                        <tr [class]='col.Color_Code === "Red" ? "text-red-active" : "" 
+                                        && col.Color_Code === "Orange" ? "text-orange-active" : ""
+                                        && col.Color_Code === "Blue" ? "text-blue-active" : ""'>
                                             <td>
                                                 <button type="button" (click)="Order(col)" class="btn btn-primary">
                                                     <i class="fa fa-pencil-square-o"></i>&nbsp;  Order
                                                 </button>
                                             </td>
-                                            <td>{{col.Doc_No}}</td>
-                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
-                                            <td>{{col.Amount}}</td>
-                                            <td>{{col.Confirm_Amount ? col.Confirm_Amount : '-'}}</td>
-                                            <td>{{col.Autho_One_Staus }}</td>
+                                            <td>{{col.Product_Description}}</td>
+                                            <td>{{col.Last_Purchase_Qty ? col.Last_Purchase_Qty : '-'}}</td>
+                                            <td>{{col.Last_Purchase_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Stock_Qty}}</td>
+                                            <!-- <td>{{col.Reorder_Level ? col.Reorder_Level : '-'}}</td> -->
+                                            <td>{{col.Reorder_Level }}</td>
+                                            <td>{{col.Critical_Level }}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
