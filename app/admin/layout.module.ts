@@ -218,7 +218,11 @@ import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-po
 import { TutoFieldSalesSchoolComponent } from './common/CRM/Master/tuto-field-sales-school/tuto-field-sales-school.component';
 import { HarbaProjectEstimateComponent } from './common/TenderManagement/harba-project-estimate/harba-project-estimate.component';
 import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rsns-closing-stock/k4c-rsns-closing-stock.component';
+<<<<<<< Updated upstream
 import { DirectPaymentFollowupNepalComponent } from './common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component';
+=======
+import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
+>>>>>>> Stashed changes
 
 @NgModule({
   declarations: [
@@ -373,7 +377,11 @@ import { DirectPaymentFollowupNepalComponent } from './common/CRM/Transaction/di
     TutoFieldSalesSchoolComponent,
     HarbaProjectEstimateComponent,
     K4cRsnsClosingStockComponent,
+<<<<<<< Updated upstream
     DirectPaymentFollowupNepalComponent
+=======
+    K4cFranchiseSaleBillComponent
+>>>>>>> Stashed changes
   ],
   imports: [
     CommonModule,
