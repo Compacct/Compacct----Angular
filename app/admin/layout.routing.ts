@@ -132,6 +132,7 @@ import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-po
 import { TutoFieldSalesSchoolComponent } from './common/CRM/Master/tuto-field-sales-school/tuto-field-sales-school.component';
 import { HarbaProjectEstimateComponent } from "./common/TenderManagement/harba-project-estimate/harba-project-estimate.component";
 import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rsns-closing-stock/k4c-rsns-closing-stock.component';
+import { DirectPaymentFollowupNepalComponent } from "./common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component";
 
 
 
@@ -760,6 +761,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                             component: HarbaProjectEstimateComponent,
                                             data: {title: 'Project Estimate'}
                                             },
+                                            {
+                                              path: 'Direct_Payment_Followup_Nepal',
+                                              component: DirectPaymentFollowupNepalComponent,
+                                              data: {title: 'Direct Payment Followup'}
+                                              },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

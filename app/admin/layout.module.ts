@@ -218,6 +218,7 @@ import { TutoPostSaleAuditTeamComponent } from './common/CRM/Transaction/tuto-po
 import { TutoFieldSalesSchoolComponent } from './common/CRM/Master/tuto-field-sales-school/tuto-field-sales-school.component';
 import { HarbaProjectEstimateComponent } from './common/TenderManagement/harba-project-estimate/harba-project-estimate.component';
 import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rsns-closing-stock/k4c-rsns-closing-stock.component';
+import { DirectPaymentFollowupNepalComponent } from './common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component';
 
 @NgModule({
   declarations: [
@@ -371,7 +372,8 @@ import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rs
     TutoPostSaleAuditTeamComponent,
     TutoFieldSalesSchoolComponent,
     HarbaProjectEstimateComponent,
-    K4cRsnsClosingStockComponent
+    K4cRsnsClosingStockComponent,
+    DirectPaymentFollowupNepalComponent
   ],
   imports: [
     CommonModule,
