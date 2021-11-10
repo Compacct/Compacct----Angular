@@ -303,7 +303,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   }
   
   Save(){}
-  GetSearchedList(){}
+  GetSearchedList(e){}
   clearData(){
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
