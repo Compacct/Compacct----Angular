@@ -932,7 +932,27 @@ export class K4cPurchasePlaningComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.StockReportSearchlist = data;
+      const Red = [];
+      const Orange = [];
+      const Blue = [];
+      const Other = [];
+      data.forEach(e=>{
+        if(e.Color_Code === 'Red'){
+          e['textClass'] = 'text-red-active';
+          Red.push(e);        
+        } else if(e.Color_Code === 'Orange') {
+          e['textClass'] = 'text-orange-active';
+          Orange.push(e);
+        } else if(e.Color_Code === 'Blue'){
+          e['textClass'] = 'text-blue-active';
+          Blue.push(e);
+        }else {
+          e['textClass'] = '';
+          Other.push(e);
+        }
+      })
+      const ang = [];
+       this.StockReportSearchlist = ang.concat(Red, Orange, Blue);
        console.log('Stock Report search list=====',this.StockReportSearchlist)
        this.seachSpinner = false;
       // this.SearchFactoryFormSubmit = false;

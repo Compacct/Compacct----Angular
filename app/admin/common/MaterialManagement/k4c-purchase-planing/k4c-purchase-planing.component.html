@@ -720,21 +720,19 @@
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr [class]='col.Color_Code === "Red" ? "text-red-active" : "" 
-                                        && col.Color_Code === "Orange" ? "text-orange-active" : ""
-                                        && col.Color_Code === "Blue" ? "text-blue-active" : ""'>
+                                        <tr>
                                             <td>
                                                 <button type="button" (click)="Order(col)" class="btn btn-primary">
                                                     <i class="fa fa-pencil-square-o"></i>&nbsp;  Order
                                                 </button>
                                             </td>
-                                            <td>{{col.Product_Description}}</td>
-                                            <td>{{col.Last_Purchase_Qty ? col.Last_Purchase_Qty : '-'}}</td>
-                                            <td>{{col.Last_Purchase_Date | date : 'dd/MMM/yyyy'}}</td>
-                                            <td>{{col.Stock_Qty}}</td>
+                                            <td [class]='col.textClass'>{{col.Product_Description}}</td>
+                                            <td  [class]='col.textClass'>{{col.Last_Purchase_Qty ? col.Last_Purchase_Qty : '-'}}</td>
+                                            <td [class]='col.textClass'>{{col.Last_Purchase_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td [class]='col.textClass'>{{col.Stock_Qty}}</td>
                                             <!-- <td>{{col.Reorder_Level ? col.Reorder_Level : '-'}}</td> -->
-                                            <td>{{col.Reorder_Level }}</td>
-                                            <td>{{col.Critical_Level }}</td>
+                                            <td [class]='col.textClass'>{{col.Reorder_Level }}</td>
+                                            <td [class]='col.textClass'>{{col.Critical_Level }}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
