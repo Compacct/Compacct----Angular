@@ -64,15 +64,16 @@ export class TutoMasterSkuComponent implements OnInit {
         Product_Description : obj.Product_Description,
         Tutopia_Product_Count : obj.Tutopia_Product_Count,
         DS_Min_Bill_Amt : obj.DS_Min_Bill_Amt,
-        DI_Max_Bill_Amt : obj.DI_Max_Bill_Amt,
+        DI_Max_Bill_Amt : obj.DS_Min_Bill_Amt,
         Direct_Sale_Min_Sale : obj.Direct_Sale_Min_Sale,
         Direct_Sale_Commission : obj.Direct_Sale_Commission,
         Affi_Sale_Min_Sale : obj.Affi_Sale_Min_Sale,
         Affi_Sale_Commission : obj.Affi_Sale_Commission,
         Dist_Sale_Min_Sale : obj.Dist_Sale_Min_Sale,
-        Dist_Sale_Commission : obj.Dist_Sale_Commission
+        Dist_Sale_Commission : obj.Dist_Sale_Commission,
+        DS_DIS_Amount_Price : obj.DS_DIS_Amount_Price
        }
-      const Tempobj = {
+    const Tempobj = {
         "Report_Name": "Update_Product_Name",
         "Json_Param_String" : JSON.stringify([TObj])
       }
@@ -101,7 +102,7 @@ export class TutoMasterSkuComponent implements OnInit {
               $('#RowID'+obj.Product_ID).button('reset');
             }
       });
-      //console.log('Update ===', TObj)
+      console.log('Update ===', TObj)
     }
     if(!obj.Product_Description){
       this.compacctToast.clear();
