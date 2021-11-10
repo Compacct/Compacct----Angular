@@ -952,7 +952,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
         }
       })
       const ang = [];
-       this.StockReportSearchlist = ang.concat(Red, Orange, Blue);
+       this.StockReportSearchlist = ang.concat(Red, Orange, Blue,Other);
        console.log('Stock Report search list=====',this.StockReportSearchlist)
        this.seachSpinner = false;
       // this.SearchFactoryFormSubmit = false;
