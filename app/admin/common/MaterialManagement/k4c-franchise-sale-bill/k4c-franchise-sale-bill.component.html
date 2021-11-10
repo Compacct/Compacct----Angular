@@ -30,12 +30,12 @@
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Date</label>
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                        <app-compacct-daterangepicker (DaterangeObj)="getBrowseDateRange($event)">
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="col-sm-3">
-                                            <button class="btn btn-primary" style="margin-top: 28px;margin-left: 85%;" data-toggle="modal" (click)="GetSearchedList(RSNSSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                            <button class="btn btn-primary" style="margin-top: 28px;margin-left: 85%;" data-toggle="modal" (click)="GetSearchedList()" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                    </button>
@@ -45,7 +45,7 @@
 
                             </form>
                             <div class="table-responsive no-padding">
-                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_No','Doc_Date','F_godown_name','To_godown_name','Issue_Qty']" [rowHover]="true"
+                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_No','Doc_Date','Sub_Ledger_Name','Cost_Cen_Location']" [rowHover]="true"
                                     #dt2>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -57,26 +57,26 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th style="width:5em">Action</th>
+                                            <!-- <th style="width:5em">Action</th> -->
                                             <th>Doc No</th>
                                             <th>Doc Date</th>
-                                            <!-- <th>Cost Centre</th>
-                                            <th>Stock Point</th>
-                                            <th>Total Qty</th>
-                                            <th>Variance</th> -->
-                                            <th>Material Type</th>
+                                            <th>Franchise</th>
+                                            <th>Gross Amount</th>
+                                            <th>Net Amount</th>
+                                            <!--<th>Variance</th> 
+                                            <th>Material Type</th>-->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
 
-                                            <td>
+                                            <!-- <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                 <i class="fa fa-fw fa-bars"></i>
                                                                 <span class="caret"></span>
                                                             </button>
-                                                    <!-- <ul class="dropdown-menu">
+                                                    <ul class="dropdown-menu">
                                                         <li>
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
@@ -92,16 +92,16 @@
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
-                                                    </ul> -->
+                                                    </ul>
                                                 </div>
-                                            </td>
-                                            <td>{{col.Doc_No }}</td>
+                                            </td> -->
+                                            <td>{{col.Doc_No}}</td>
                                             <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
-                                            <td>{{col.Cost_Cen_Name}}</td>
-                                            <!-- <td>{{col.godown_name}}</td>
-                                            <td>{{col.Closing_Qty}}</td>
-                                            <td>{{col.Varience_Qty}}</td> -->
-                                            <td>{{col.Material_Type}}</td>
+                                            <td>{{col.Sub_Ledger_Name}}-{{col.Cost_Cen_Location}}</td>
+                                            <td>{{col.Bill_Gross_Amt}}</td>
+                                            <td>{{col.Bill_Net_Amt}}</td>
+                                            <!--<td>{{col.Varience_Qty}}</td> 
+                                            <td>{{col.Material_Type}}</td>-->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -170,6 +170,7 @@
                                         <tr>
                                             <th>Product Description</th>
                                             <th>Qty</th>
+                                            <th>UOM</th>
                                             <th>Taxable</th>
                                             <th>CGST Amt</th>
                                             <th>SGST Amt</th>
@@ -181,6 +182,7 @@
                                         <tr>
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.Qty}}</td>
+                                            <td>{{col.UOM}}</td>
                                             <td>{{col.Taxable}}</td>
                                             <td>{{col.CGST_AMT}}</td>
                                             <td>{{col.SGST_AMT}}</td>
@@ -219,6 +221,9 @@
                                                     <label class="control-label">IGST Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{igst}}
                                                 </div>
                                                 <div class='col-sm-12'>
+                                                    <label class="control-label">Gross Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{grossamount}}
+                                                </div>
+                                                <div class='col-sm-12'>
                                                     <label class="control-label">Net Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{netamount}}
                                                 </div>
 
@@ -231,7 +236,7 @@
                             <hr class="box boxboxDivide-primary ng-scope">
 
                             <div class="box-footer">
-                                <button class="btn btn-primary pull-right" (click)="Save()" id="load" [disabled]="Spinner">
+                                <button class="btn btn-primary pull-right" (click)="SaveFranSaleBill()" id="load" [disabled]="Spinner">
                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                    </button>

@@ -61,6 +61,8 @@ export class StoreItemIndentComponent implements OnInit {
   ObjRequistion: Requistion = new Requistion();
   ObjRequistionSave: RequistionSave = new RequistionSave();
   ObjBrowseData: BrowseData = new BrowseData();
+  Boutletdisableflag = false;
+  outletdisableflag = false;
 
   constructor(
     private $http: HttpClient,
@@ -121,24 +123,33 @@ export class StoreItemIndentComponent implements OnInit {
 
  GetOutletName(){
    const obj = {
-     "SP_String": "SP_Controller_Master",
-     "Report_Name_String": "Get Sale Requisition Outlet",
-     "Json_Param_String": JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}])
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Get - Cost Center Name All",
+    "Json_Param_String": JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}])
     // "Json_Param_String": JSON.stringify([{User_ID : 61}])
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     // console.log("OutletNameList  ===",data);
       this.OutletNameList = data;
-      this.ObjBrowseData.Cost_Cen_ID_B = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
-      this.ObjRequistion.Cost_Cen_ID = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
-      if(this.OutletNameList.length === 1){
+      // this.ObjBrowseData.Cost_Cen_ID_B = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
+      // this.ObjRequistion.Cost_Cen_ID = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
+      if(this.OutletNameList.length){
 
        this.disinput = true;
        this.getRequisition();
 
   }
-
-
+  if(this.$CompacctAPI.CompacctCookies.User_Type === 'A'){
+    this.ObjBrowseData.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.Boutletdisableflag = false;
+    this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.outletdisableflag = false;
+    } else {
+      this.ObjBrowseData.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.Boutletdisableflag = true;
+      this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.outletdisableflag = true;
+    }
    })
  }
  GetDate(){
@@ -172,9 +183,20 @@ export class StoreItemIndentComponent implements OnInit {
  }
  clearData(){
    //this.ObjRequistion= new Requistion();
-   this.ObjBrowseData.Cost_Cen_ID_B = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
-   this.ObjRequistion.Cost_Cen_ID = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
-   if(this.OutletNameList.length === 1 && this.buttonname === "Create"){
+  //  this.ObjBrowseData.Cost_Cen_ID_B = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
+  //  this.ObjRequistion.Cost_Cen_ID = this.OutletNameList.length === 1 ? this.OutletNameList[0].Cost_Cen_ID : undefined;
+  if(this.$CompacctAPI.CompacctCookies.User_Type === 'A'){
+    this.ObjBrowseData.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.Boutletdisableflag = false;
+    this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.outletdisableflag = false;
+    } else {
+      this.ObjBrowseData.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.Boutletdisableflag = true;
+      this.ObjRequistion.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.outletdisableflag = true;
+    }
+   if(this.OutletNameList.length && this.buttonname === "Create"){
 
      this.disinput = true;
      this.getRequisition();

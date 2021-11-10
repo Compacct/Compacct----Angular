@@ -21,7 +21,6 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   ShowSpinner = false;
   tabIndexToView = 0;
   buttonname = "Save";
-  myDate = new Date();
   ObjfranchiseSalebill : franchiseSalebill = new franchiseSalebill ();
   franchiseSalebillFormSubmitted = false;
   ObjBrowse : Browse = new Browse ();
@@ -47,6 +46,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   CostCentId_Flag : any;
   MaterialType_Flag = '';
   todayDate : any = new Date();
+  currentDate : any = new Date();
   minDate = new Date();
   maxDate = new Date();
   Doc_No = undefined;
@@ -64,6 +64,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   cgst: any;
   sgst: any;
   igst: any;
+  grossamount: any;
   netamount: any;
 
   constructor(
@@ -78,20 +79,6 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.route.queryParams.subscribe(params => {
-    //   // console.log(params);
-    //   this.clearData();
-    //   this.Searchedlist = [];
-    //   this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-    //  if(this.GodownList.length === 1){
-    //    this.Gbrowsedisableflag = true;
-    //  }else{
-    //    this.Gbrowsedisableflag = false;
-    //  }
-      //this.Param_Flag = params['Name'];
-      //this.CostCentId_Flag = params['Cost_Cen_ID'];
-      //this.MaterialType_Flag = params['Material_Type']
-      // console.log (this.CostCentId_Flag);
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
       Header: " Franchise Sale Bill ", 
@@ -281,34 +268,167 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     this.cgst = undefined;
     this.sgst = undefined;
     this.igst = undefined;
-    this.netamount = undefined;
+    this.grossamount = undefined;
     let totaltax = 0; 
     let totalcgst = 0;
     let totalsgst = 0;
     let totaligst = 0;
-    let netamt = 0;
+    let grossamt = 0;
     this.ProductList.forEach(item => {
       totaltax = totaltax + Number(item.Taxable);
       totalcgst = totalcgst + Number(item.CGST_AMT);
       totalsgst = totalsgst + Number(item.SGST_AMT);
       totaligst = totaligst + Number(item.IGST_AMT);
-      netamt = netamt + Number(item.Net_Amount);
+      grossamt = grossamt + Number(item.Net_Amount);
     });
     this.taxable = (totaltax).toFixed(2);
     this.cgst = (totalcgst).toFixed(2);
     this.sgst = (totalsgst).toFixed(2);
     this.igst = (totaligst).toFixed(2);
-    this.netamount = (netamt).toFixed(2);
+    this.grossamount = (grossamt).toFixed(2);
+    // Round Off
+    this.netamount = Math.round(this.grossamount);
     //console.log(this.Net_Amount);
   }
-  
-  Save(){}
-  GetSearchedList(e){}
+  getChallanNoforSave(){
+    if(this.SelectedChallan.length) {
+      let Rarr =[]
+      this.SelectedChallan.forEach(el => {
+        if(el){
+          const Dobj = {
+            Order_No : el
+            }
+            Rarr.push(Dobj)
+        }
+
+    });
+      console.log("Table Data ===", Rarr)
+      return Rarr.length ? JSON.stringify(Rarr) : '';
+    }
+  }
+  dataforSaveFran(){
+    this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
+    if(this.ProductList.length) {
+      let tempArr =[]
+      this.ProductList.forEach(item => {
+       // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+     const TempObj = {
+            Doc_No:  "A",
+            Doc_Date: this.currentDate,
+            Sub_Ledger_ID : Number(this.ObjfranchiseSalebill.Franchise),
+            Cost_Cen_ID	: this.ObjfranchiseSalebill.Cost_Cen_ID,
+            Product_ID	: item.Product_ID,
+            Product_Name	: item.Product_Description,
+            Product_Type_ID	: item.Product_Type_ID,
+            Qty	: item.Qty,
+            UOM	: item.UOM,
+            MRP : item.Sale_rate,
+            Rate : item.Sale_rate,
+            Amount : item.Sale_rate,
+            Discount : 0,
+            Taxable_Amount : item.Taxable,
+            CAT_ID : item.Cat_ID,
+            CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
+            CGST_Rate : item.CGST_PER,
+            CGST_Amount : item.CGST_AMT,
+            SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
+            SGST_Rate : item.SGST_PER,
+            SGST_Amount : item.SGST_AMT,
+            IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
+            IGST_Rate : item.IGST_PER,
+            IGST_Amount : item.IGST_AMT,
+            Bill_Gross_Amt : Number(this.taxable),
+            Bill_Net_Amt : this.netamount,
+            User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+            Remarks : this.ObjfranchiseSalebill.Remarks,
+            Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
+            Total_Taxable : Number(this.taxable),
+            Total_CGST_Amt : Number(this.cgst),
+            Total_SGST_Amt : Number(this.sgst),
+            Total_IGST_Amt : Number(this.igst),
+            Total_Net_Amt : this.netamount,
+            HSL_No : item.HSN_NO
+         }
+      tempArr.push(TempObj)
+      });
+      console.log("Save Data ===", tempArr)
+      return JSON.stringify(tempArr);
+
+    }
+  }
+  SaveFranSaleBill(){
+      const obj = {
+        "SP_String" : "SP_Franchise_Sale_Bill",
+        "Report_Name_String" : "Save_Franchise_Sale_Bill",
+        "Json_Param_String" : this.dataforSaveFran(),
+        "Json_1_String" : this.getChallanNoforSave()
+
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        //console.log(data);
+        var tempID = data[0].Column1;
+        console.log("After Save",tempID);
+       // this.Objproduction.Doc_No = data[0].Column1;
+        if(data[0].Column1){
+          this.compacctToast.clear();
+          const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Production Voucher  " + tempID,
+           detail: "Succesfully  " + mgs
+         });
+        // this.GetSearchedList();
+         this.clearData();
+        //  this.ProductList =[];
+        //  this.franchiseSalebillFormSubmitted = false;
+        } else{
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+      })
+  }
+  getBrowseDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjBrowse.start_date = dateRangeObj[0];
+      this.ObjBrowse.end_date = dateRangeObj[1];
+    }
+  }
+  GetSearchedList(){
+    this.Searchedlist = [];
+  const start = this.ObjBrowse.start_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
+  : this.DateService.dateConvert(new Date());
+const end = this.ObjBrowse.end_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
+  : this.DateService.dateConvert(new Date());
+
+const tempobj = {
+  From_Date : start,
+  To_Date : end,
+}
+const obj = {
+  "SP_String": "SP_Franchise_Sale_Bill",
+  "Report_Name_String": "Browse Franchise Sale Challan",
+  "Json_Param_String": JSON.stringify([tempobj])
+}
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   this.Searchedlist = data;
+   console.log('Search list=====',this.Searchedlist)
+   this.seachSpinner = false;
+ })
+  }
   clearData(){
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.franchiseSalebillFormSubmitted = false;
     this.ObjfranchiseSalebill.Franchise = undefined;
+    this.ObjfranchiseSalebill.Remarks = undefined;
     this.ChallanList = [];
     this.BackupChallanList = [];
     this.SelectedChallan = [];

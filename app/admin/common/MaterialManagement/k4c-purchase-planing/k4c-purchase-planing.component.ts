@@ -938,13 +938,13 @@ export class K4cPurchasePlaningComponent implements OnInit {
       const Other = [];
       data.forEach(e=>{
         if(e.Color_Code === 'Red'){
-          e['textClass'] = 'text-red-active';
+          e['textClass'] = 'text-red';
           Red.push(e);        
         } else if(e.Color_Code === 'Orange') {
-          e['textClass'] = 'text-orange-active';
+          e['textClass'] = 'text-orange';
           Orange.push(e);
         } else if(e.Color_Code === 'Blue'){
-          e['textClass'] = 'text-blue-active';
+          e['textClass'] = 'text-blue';
           Blue.push(e);
         }else {
           e['textClass'] = '';
@@ -1038,6 +1038,24 @@ export class K4cPurchasePlaningComponent implements OnInit {
     this.uomdisabeld = false;
     //this.productaddSubmit = [];
     // this.todayDate = new Date();
+    this.LastPurDate = new Date();
+    this.ovaldisabled = false;
+    this.stockqtydisabled = false;
+    // this.ObjStockLevel.Material_Type = undefined;
+    // this.ObjStockLevel.Godown_ID = undefined;
+    // this.StockReportSearchlist = [];
+    this.productdisabled = false;
+    this.Orderlist = [];
+  }
+  Refresh(){
+    this.ObjMPtype = new MPtype();
+    this.ObjPurchasePlan = new PurchasePlan();
+    this.localpurchaseFLag = false;
+    this.vendordisabled = false;
+    //this.getproduct();
+    this.uomdisabeld = false;
+    //this.productaddSubmit = [];
+    this.todayDate = new Date();
     this.LastPurDate = new Date();
     this.ovaldisabled = false;
     this.stockqtydisabled = false;
