@@ -36,7 +36,7 @@ export class DirectPaymentFollowupNepalComponent implements OnInit {
     private distService : CompacctGetDistinctService) { 
       this.route.queryParams.subscribe((val:any) => {
         this.Agent_User_ID = undefined;
-        this.PendingTillDate = undefined;
+        this.PendingTillDate = new Date();
         if(val.User_ID && val.Followup) {
           this.Agent_User_ID = window.atob(val.User_ID);
           this.PendingTillDate = new Date(window.atob(val.Followup));

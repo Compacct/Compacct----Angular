@@ -61,8 +61,8 @@ export class MasterProductHearingComponent implements OnInit {
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
     ];
-    this.Header.pushHeader({'Header' : 'Master Product Hearing',
-                            'Link' : ' Material Management -> Master -> Master Product'});
+    this.Header.pushHeader({'Header' : 'Master Product Hearing Aid',
+                            'Link' : ' Material Management -> Master -> Master Product Hearing Aid'});
 
     this.getAllProduct();
     this.GetCategory();

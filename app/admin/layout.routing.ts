@@ -254,7 +254,7 @@ const layoutRoutes: Routes = [
       {
         path: "Master_Product_HA",
         component: MasterProductHearingComponent,
-        data: { title: "Master Product HA" }
+        data: { title: "Master Product Hearing Aid" }
       },
       {
         path: "Renewal",
