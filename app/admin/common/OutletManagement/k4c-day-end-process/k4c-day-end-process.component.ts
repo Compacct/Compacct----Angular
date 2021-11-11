@@ -188,8 +188,8 @@ export class K4cDayEndProcessComponent implements OnInit {
     this.paymentList.forEach((item)=>{
       Amtval += Number(item[key]);
     });
-    this.SystemAmttotal = Amtval
-    return Amtval ? Amtval : '-';
+    this.SystemAmttotal = Amtval.toFixed(2);
+    return Amtval ? Amtval.toFixed(2) : '-';
   }
   getTotalAmt(){
     this.Total = undefined;
