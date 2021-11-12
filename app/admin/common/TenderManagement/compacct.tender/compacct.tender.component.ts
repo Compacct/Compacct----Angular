@@ -37,10 +37,12 @@ export class CompacctTenderComponent implements OnInit {
   TenderPublishDate = new Date();
   TenderSearchDate = new Date();
   TFeeAmount = undefined;
+  TFeeAmountupdate = undefined;
   TenderAmount = undefined;
   PeriodOfWork = undefined;
   EMDAmount = undefined;
   ObjTender = new Tender();
+  ObjtenerFee = new tenerFee();
   ObjTask = new Task();
   ObjSearch = new Search();
   TenderOrganization = undefined;
@@ -66,17 +68,20 @@ export class CompacctTenderComponent implements OnInit {
   EMDSubmitted = false;
   EMDModal = false;
   TenderFeeSubmitted = false;
+  PerformanceSecuritySubmitted = false;
   TenderFeeModal = false;
-
+  PerformanceSecurityModel = false;
   EMDDepositDate = new Date();
+  EMDUpdateDepositDate = new Date();
+  EMDUpdateDeposit = new Date();
   EMDBGDate = new Date();
   EMDBGExpDate = new Date();
   EMDMatureDate = new Date();
   EMDNEFTDate = new Date();
   FDAmount = undefined;
   FDMaturityAmount =undefined;
-  ObjEMD = new EMD();
-
+  ObjEMD = new EMD(); PerformanceSecurity
+  ObjPerformanceSecurity= new PerformanceSecurity();
   TenderId = undefined;
 
   FeeDepositDate = new Date();
@@ -136,7 +141,7 @@ export class CompacctTenderComponent implements OnInit {
   CompletionDate = new Date();
   PeriodOfCompletion = undefined;
   EstimatedRate = undefined;
-
+  EstimateAllData = [];
 
   ObjBidOpening = new BidOpening();
   ObjBidOpeningList = new BidOpeningList();
@@ -159,7 +164,7 @@ export class CompacctTenderComponent implements OnInit {
   FinalcialYearName = undefined;
   FinalcialYearModal = false;
 
-  TenderDetails:any;
+  TenderDetails:any = {};
   BidderList = [];
   AuthorityList = [];
   DivisionList = [];
@@ -185,6 +190,8 @@ export class CompacctTenderComponent implements OnInit {
 
   TenderIssueDate = new Date();
   TenderExpiryDate = new Date();
+  TenderIssueDateupdate = new Date();
+  TenderExpiryDateupdate = new Date();
   EMDIssueDate = new Date();
   EMDExpiryDate = new Date();
   PerformanceIssueDate = new Date();
@@ -410,6 +417,21 @@ StateList = [];
      });
      this.ObjTender.T_Fee_Amount = Number(e);
      this.TFeeAmount = k;
+    }
+  }
+  TenderFeeUpdateChange(e){
+    console.log(e);
+    this.ObjTender.T_Fee_Amount = undefined;
+    if(e) {
+      const x= e.toString();
+      const number = Number(e);
+     const k =  number.toLocaleString('en-IN', {
+         maximumFractionDigits: 2,
+         style: 'currency',
+         currency: 'INR'
+     });
+     this.ObjTender.T_Fee_Amount = Number(e);
+     this.TFeeAmountupdate = k;
     }
   }
   TenderEMDChange(e){
@@ -970,6 +992,7 @@ StateList = [];
         this.DTLocationList = distARR[4];
         this.Spinner = false;
         this.TenderSearchForm = false;
+        console.log("TenderList",this.TenderList);
       });
   }
   }
@@ -1050,6 +1073,7 @@ StateList = [];
           summary: "Tender Doc ID  :" +  this.FootfalID,
           detail: "Tender for "+this.ObjTender.Tender_Name+" of " + this.GetOrgName(this.ObjTender.Tender_Org_ID)+" Saved Successfully"
         });
+        this.Spinner = false;
       console.group("Compacct V2");
       console.log("%c  Tender Sucess:", "color:green;");
       console.log("/BL_CRM_Txn_Enq_Tender/Insert_Enq_Tender");
@@ -1113,10 +1137,13 @@ StateList = [];
     this.EMDSubmitted = true;
     console.log(this.EMDBGExpDate)
     if (valid) {
+      const today = this.DateService.dateConvert(new Date());
+      this.ObjEMD.EMD_Date_of_Expiry =   this.EMDUpdateDepositDate  ?   this.DateService.dateConvert(new Date(this.EMDUpdateDepositDate)) : today;
+      this.ObjEMD.EMD_Date_of_Issue =   this.EMDUpdateDeposit  ?   this.DateService.dateConvert(new Date(this.EMDUpdateDeposit)) : today;
       this.FetchEMDdata();
       console.log( this.ObjEMD)
-      this.Spinner = true;
-      const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Update_EMD";
+     this.Spinner = true;
+      const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Update_EMD_Tender";
       this.$http.post(UrlAddress, this.ObjEMD).subscribe((data: any) => {
         if (data.success) {
           this.compacctToast.clear();
@@ -1148,13 +1175,14 @@ StateList = [];
   }
   SaveFee(valid){
     this.TenderFeeSubmitted = true;
+    console.log("valid",valid);
     if (valid) {
       this.Spinner = true;
       const today = this.DateService.dateConvert(new Date());
-      this.ObjFee.T_Fee_Amount_Deposit_Date =   this.FeeDepositDate  ?  this.DateService.dateConvert( this.FeeDepositDate ) : today;
-      this.ObjFee.T_Fee_NEFT_Txn_Date =   this.ObjFee.T_Fee_NEFT_Txn_Date  ?   this.ObjFee.T_Fee_NEFT_Txn_Date : today;
+      this.ObjtenerFee.T_Fee_Date_of_Expiry =   this.TenderExpiryDateupdate  ?  this.DateService.dateConvert( this.TenderExpiryDateupdate ) : today;
+      this.ObjtenerFee.T_Fee_Date_of_Issue =   this.TenderIssueDateupdate  ?   this.DateService.dateConvert( this.TenderIssueDateupdate ) : today;
       console.log( this.ObjFee)
-      const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Update_Tender_Fee";
+      const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Update_Tender_Fee_New";
       this.$http.post(UrlAddress, this.ObjFee).subscribe((data: any) => {
         if (data.success) {
           this.compacctToast.clear();
@@ -1262,9 +1290,9 @@ StateList = [];
     this.FDAmount = undefined;
     this.FDMaturityAmount =undefined;
     this.Spinner = false;
-    if(obj.Foot_Fall_ID) {
-      this.GetUpdatedEMD(obj.Foot_Fall_ID);
-      this.ObjEMD.Foot_Fall_ID = obj.Foot_Fall_ID;
+    if(obj.Tender_Doc_ID) {
+      this.GetUpdatedEMD(obj.Tender_Doc_ID);
+      this.ObjEMD.Tender_Doc_ID = obj.Tender_Doc_ID;
     }
   }
   UpdateTenderFee(obj) {
@@ -1273,9 +1301,20 @@ StateList = [];
     this.FeeDepositDate = new Date();
     this.FeeTransactionDate = new Date();
     this.Spinner = false;
-    if(obj.Foot_Fall_ID) {
-      this.ObjFee.Foot_Fall_ID = obj.Foot_Fall_ID;
-      this.GetUpdatedFee(obj.Foot_Fall_ID);
+    if(obj.Tender_Doc_ID) {
+      this.ObjtenerFee.Tender_Doc_ID = obj.Tender_Doc_ID;
+      this.GetUpdatedFee(obj.Tender_Doc_ID);
+    }
+  }
+  UpdatePerformanceSecurity(obj) {
+    this.PerformanceSecuritySubmitted = false;
+    this.ObjFee = new Fee();
+    this.FeeDepositDate = new Date();
+    this.FeeTransactionDate = new Date();
+    this.Spinner = false;
+    if(obj.Tender_Doc_ID) {
+      this.ObjPerformanceSecurity.Tender_Doc_ID = obj.Tender_Doc_ID;
+      this.GetUpdatedPerformanceSecurity(obj.Tender_Doc_ID);
     }
   }
   UpdateSubmissionDate(obj){
@@ -1284,8 +1323,8 @@ StateList = [];
     this.SubmissionDate =  new Date();
     this.ObjSubmission = new Submission();
     this.Spinner = false;
-    if(obj.Foot_Fall_ID){
-      this.ObjSubmission.Foot_Fall_ID =obj.Foot_Fall_ID;
+    if(obj.Tender_Doc_ID){
+      this.ObjSubmission.Foot_Fall_ID =obj.Tender_Doc_ID;
       if(obj.Tender_Submission_Date) {
        // this.SubmissionDate = moment(new Date(obj.Tender_Submission_Date))format("YYYY-MM-DDTHH:mm");
        this.SubmissionDate =  new Date(obj.Tender_Submission_Date);
@@ -1295,61 +1334,92 @@ StateList = [];
     }
   }
 
-  GetUpdatedEMD(footfallID) {
-    if(footfallID) {
+  GetUpdatedEMD(TenderDocID) {
+    if(TenderDocID) {
       const obj = new HttpParams()
-      .set("Foot_Fall_ID",footfallID);
+      .set("Tender_Doc_ID",TenderDocID);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj })
       .subscribe((data: any) => {
-        console.log(data);
+        
         const obj = data ? JSON.parse(data)[0] : {};
-        this.TenderEMDChange(obj.EMD_Amount);
-        if (obj.EMD_Amount_Deposit_Type) {
-          this.ObjEMD.EMD_Amount_Deposit_Type = obj.EMD_Amount_Deposit_Type;
-          this.EMDDepositDate = new Date(obj.EMD_Amount_Deposit_Date);
-          this.ObjEMD.EMD_Amount_Deposit_Date = this.DateService.dateConvert(obj.EMD_Amount_Deposit_Date);
-          if(this.ObjEMD.EMD_Amount_Deposit_Type === 'BG') {
-           this.ObjEMD.EMD_BG_Creation_Date = this.DateService.dateConvert(obj.EMD_BG_Creation_Date);
-           this.EMDBGDate = new Date(obj.EMD_BG_Creation_Date);
-           this.ObjEMD.EMD_BG_Exp_Date =   this.DateService.dateConvert(obj.EMD_BG_Exp_Date);
-           this.EMDBGExpDate = new Date(obj.EMD_BG_Exp_Date);
-          } else if (this.ObjEMD.EMD_Amount_Deposit_Type === 'FD') {
-           this.ObjEMD.EMD_FD_Mature_Date =   this.DateService.dateConvert(obj.EMD_FD_Mature_Date);
-           this.EMDMatureDate = new Date(obj.EMD_FD_Mature_Date);
-           this.TenderFDMaturityChange(obj.EMD_FD_Mature_Amount);
-           this.TenderFDChange(obj.EMD_FD_Amount);
-          }else if ((this.ObjEMD.EMD_Amount_Deposit_Type ==='NEFT' || this.ObjEMD.EMD_Amount_Deposit_Type ==='RTGS')) {
-           this.ObjEMD.EMD_NEFT_Txn_Date =   this.DateService.dateConvert(obj.EMD_NEFT_Txn_Date);
-           this.EMDNEFTDate = new Date(obj.EMD_NEFT_Txn_Date);
-           this.ObjEMD.EMD_NEFT_TXN_No = obj.EMD_NEFT_TXN_No;
-          }
-        }
-        this.EMDModal = true;
+        console.log("EMD UPdate Data",obj);
+        this.ObjEMD = obj;
+        console.log("ObjEMD",this.ObjEMD);
+        
+        //   this.TenderEMDChange(obj.EMD_Amount);
+        // if (obj.EMD_Amount_Deposit_Type) {
+        //   this.ObjEMD.EMD_Amount_Deposit_Type = obj.EMD_Amount_Deposit_Type;
+        //   this.EMDDepositDate = new Date(obj.EMD_Amount_Deposit_Date);
+        //   this.ObjEMD.EMD_Amount_Deposit_Date = this.DateService.dateConvert(obj.EMD_Amount_Deposit_Date);
+        //   if(this.ObjEMD.EMD_Amount_Deposit_Type === 'BG') {
+        //    this.ObjEMD.EMD_BG_Creation_Date = this.DateService.dateConvert(obj.EMD_BG_Creation_Date);
+        //    this.EMDBGDate = new Date(obj.EMD_BG_Creation_Date);
+        //    this.ObjEMD.EMD_BG_Exp_Date =   this.DateService.dateConvert(obj.EMD_BG_Exp_Date);
+        //    this.EMDBGExpDate = new Date(obj.EMD_BG_Exp_Date);
+        //   } else if (this.ObjEMD.EMD_Amount_Deposit_Type === 'FD') {
+        //    this.ObjEMD.EMD_FD_Mature_Date =   this.DateService.dateConvert(obj.EMD_FD_Mature_Date);
+        //    this.EMDMatureDate = new Date(obj.EMD_FD_Mature_Date);
+        //    this.TenderFDMaturityChange(obj.EMD_FD_Mature_Amount);
+        //    this.TenderFDChange(obj.EMD_FD_Amount);
+        //   }else if ((this.ObjEMD.EMD_Amount_Deposit_Type ==='NEFT' || this.ObjEMD.EMD_Amount_Deposit_Type ==='RTGS')) {
+        //    this.ObjEMD.EMD_NEFT_Txn_Date =   this.DateService.dateConvert(obj.EMD_NEFT_Txn_Date);
+        //    this.EMDNEFTDate = new Date(obj.EMD_NEFT_Txn_Date);
+        //    this.ObjEMD.EMD_NEFT_TXN_No = obj.EMD_NEFT_TXN_No;
+        //   }
+        // }
+        this.EMDUpdateDepositDate = new Date(obj.EMD_Date_of_Expiry);
+        this.EMDUpdateDeposit = new Date(obj.EMD_Date_of_Issue);
+       this.EMDModal = true;
       });
     }
   }
-  GetUpdatedFee(footfallID) {
-    if(footfallID) {
+  GetUpdatedFee(Tender_Doc_ID) {
+    if(Tender_Doc_ID) {
       const obj = new HttpParams()
-      .set("Foot_Fall_ID",footfallID);
+      .set("Tender_Doc_ID",Tender_Doc_ID);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj })
       .subscribe((data: any) => {
-        console.log(data);
         const obj = data ? JSON.parse(data)[0] : {};
-        if (obj.T_Fee_NEFT_TXN_No) {
-          this.ObjFee.T_Fee_NEFT_TXN_No = obj.T_Fee_NEFT_TXN_No;
-          this.FeeDepositDate = new Date(obj.T_Fee_Amount_Deposit_Date);
-          this.FeeTransactionDate = new Date(obj.T_Fee_NEFT_Txn_Date);
-          this.ObjFee.T_Fee_Amount_Deposit_Date = this.DateService.dateConvert(obj.T_Fee_Amount_Deposit_Date);
-          this.ObjFee.T_Fee_NEFT_Txn_Date = this.DateService.dateConvert(obj.T_Fee_NEFT_Txn_Date);
-        }
+        console.log("tenerFeeList",obj);
+         if (obj) {
+            this.ObjtenerFee = obj;
+            this.TenderIssueDateupdate = new Date(obj.T_Fee_Date_of_Issue);
+            this.TenderExpiryDateupdate = new Date(obj.T_Fee_Date_of_Expiry);
+            this.ObjFee.T_Fee_Amount_Deposit_Date = this.DateService.dateConvert(obj.T_Fee_Amount_Deposit_Date);
+            this.ObjFee.T_Fee_NEFT_Txn_Date = this.DateService.dateConvert(obj.T_Fee_NEFT_Txn_Date);
+            this.TenderFeeUpdateChange(obj.T_Fee_Amount);
+          }
+        
+        
         this.TenderFeeModal = true;
       });
     }
   }
-
+  GetUpdatedPerformanceSecurity(Tender_Doc_ID) {
+    if(Tender_Doc_ID) {
+      const obj = new HttpParams()
+      .set("Tender_Doc_ID",Tender_Doc_ID);
+    this.$http
+      .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj })
+      .subscribe((data: any) => {
+        const obj = data ? JSON.parse(data)[0] : {};
+        console.log("PerformanceSecurity",obj);
+        if(obj){
+          this.ObjPerformanceSecurity = obj
+            this.ObjFee.T_Fee_NEFT_TXN_No = obj.T_Fee_NEFT_TXN_No;
+            this.FeeDepositDate = new Date(obj.T_Fee_Amount_Deposit_Date);
+            this.FeeTransactionDate = new Date(obj.T_Fee_NEFT_Txn_Date);
+            this.ObjFee.T_Fee_Amount_Deposit_Date = this.DateService.dateConvert(obj.T_Fee_Amount_Deposit_Date);
+            this.ObjFee.T_Fee_NEFT_Txn_Date = this.DateService.dateConvert(obj.T_Fee_NEFT_Txn_Date);
+          
+        }
+        
+        this.PerformanceSecurityModel = true;
+      });
+    }
+  }
   // Delete
   onConfirm() {
     if ( this.TenderId) {
@@ -1406,6 +1476,7 @@ StateList = [];
     this.FootfalID = undefined;
     this.IntimationSelect = [];
     this.TFeeAmount = undefined;
+    this.TFeeAmountupdate = undefined;
     this.TenderAmount = undefined;
     this.EMDAmount = undefined;
     this.PeriodOfWork = undefined;
@@ -1484,6 +1555,9 @@ StateList = [];
       if(field === 'TFeeAmount') {
         this.TFeeAmount = Amt.split("₹").join("").split(",").join("");
       }
+      if(field === 'TFeeAmountupdate') {
+        this.TFeeAmountupdate = Amt.split("₹").join("").split(",").join("");
+      }
       if(field === 'EMDAmount') {
         this.EMDAmount = Amt.split("₹").join("").split(",").join("");
       }
@@ -1530,6 +1604,9 @@ StateList = [];
       }
       if(field === 'TFeeAmount') {
         this.TenderFeeChange(filterAmt);
+      }
+      if(field === 'TFeeAmountupdate') {
+        this.TenderFeeUpdateChange(filterAmt);
       }
       if(field === 'EMDAmount') {
         this.TenderEMDChange(filterAmt);
@@ -3454,12 +3531,14 @@ EstimateGroupProductChange(id) {
   }
 }
 OpenEstimate(obj){
+  this.EstimateAllData = [];
   this.EstimateInfoSubmitted = false;
   this.TenderDocID = undefined;
   if(obj.Tender_Doc_ID) {
     this.ObjEstimate = {};
     this.TenderDocID = obj.Tender_Doc_ID;
     this.EstimateModalFlag = true;
+    this.GetestimateAllData();
   }
 }
 CalculateEstimateAmount() {
@@ -3480,6 +3559,8 @@ AddEstimate(valid){
     const extimateObj = {...this.ObjEstimate};
     extimateObj.items = [];
     this.ObjEstimate = {};
+ 
+
     this.AddedEstimateProductList.push(extimateObj);    
     this.AddedEstimateProductList.sort(function(a, b){
         return parseFloat(a.Budget_Group_ID) - parseFloat(b.Budget_Group_ID);
@@ -3746,6 +3827,23 @@ LightBoxSave(val,field) {
 
   }
 }
+addEstimate(){
+  window.open("/Tender_Estimate?Tender_Doc_ID="+this.TenderDocID,"_self")
+}
+GetestimateAllData(){
+  const obj = {
+    "SP_String":"SP_Tender_Management_All",
+    "Report_Name_String": "Browse_Tender_Estimation",
+   // "Json_Param_String" : JSON.stringify(tempArr)
+  }
+  const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+  this.GlobalAPI
+      .postData(obj)
+      .subscribe((data: any) => { 
+       this.EstimateAllData = data ? data : [];
+       console.log("EstimateAllData",this.EstimateAllData);
+      })
+}
 }
 class Tender{
   Foot_Fall_ID = 0;
@@ -3804,11 +3902,11 @@ class Tender{
   Tender_Publishing_Info_From:string;
 
   EMD_Date_of_Issue	:string;
-EMD_Date_of_Expiry	:string;
-T_Fee_Date_of_Issue	:string;
-T_Fee_Date_of_Expiry	:string;
-PSD_Date_of_Issue		:string;
-PSD_Date_of_Expiry	:string;	
+  EMD_Date_of_Expiry	:string;
+  T_Fee_Date_of_Issue	:string;
+  T_Fee_Date_of_Expiry	:string;
+  PSD_Date_of_Issue		:string;
+  PSD_Date_of_Expiry	:string;	
 }
 class Task{
   Task_ID= 0;
@@ -3836,6 +3934,7 @@ class Search{
 
 class EMD{
   Foot_Fall_ID: string;
+  Tender_Doc_ID : number;
   EMD_Amount:number;
   EMD_Amount_Deposit_Date:string;
   EMD_Amount_Deposit_Type:string;
@@ -3846,6 +3945,144 @@ class EMD{
   EMD_FD_Mature_Date= '';
   EMD_NEFT_Txn_Date= '';
   EMD_NEFT_TXN_No= '';
+
+  T_Fee_exm_Allowed :string;
+  EMD_Date_of_Issue	:string;
+  EMD_Date_of_Expiry	:string;
+  EMD_Payment_Mode:string; 
+  EMD_Transaction_Ref_No:string; 
+  EMD_Fees_Exemption_Allowed:string;
+  EMD_Through_BG_SD	 = '';
+  EMD_fee_Type	 = '';
+  EMD_Persentage	 = '';
+  EMD_Payable_To:string;
+  EMD_Payable_At:string;
+}
+class tenerFee {
+  Foot_Fall_ID = 0;
+  Tender_Doc_ID= 0;
+  Tender_ID:string;
+  Cost_Cen_ID:string;
+  User_ID:string;
+  Posted_On:string;
+  Enq_Source_ID:number;
+  Tender_Org_ID	:string;
+  Tender_Category_ID:string;
+  Tender_Amount	:number;
+  Tender_Name:string;
+  Elegibility = '';
+  Tender_Opening_Date:string;
+  Tender_Closing_Date:string;
+  Corrigendum	 = '';
+  Remarks	:string;
+  Lead_Status = 'Tender Created';
+  EMD_Amount:number;
+  T_Fee_Amount:number;
+
+  Enq_Source_Detail:string;
+  Tender_Ref_No:string;
+  Tender_Type_ID: string;
+  Form_Of_Contract_ID	 = '0';
+  Location:string;
+  Pin_Code:string;
+  Tender_Payment_Mode_ID	 = '0';
+  Tender_Publish_Date:string;
+  Period_Of_Work:string;
+  EMD_Through_BG_SD	 = '';
+  EMD_fee_Type	 = '';
+  EMD_Persentage	 = '';
+  EMD_Payable_To:string;
+  EMD_Payable_At:string;
+  T_Fee_Payable_At:string;
+  T_Fee_Payable_To:string;
+  T_Fee_exm_Allowed :string;
+  dial_code = '+91';
+  Enq_Source_Mobile	 = ''
+
+  Tender_Calling_Div_ID  :string;            
+  Tender_Execution_Div_ID :string;                  
+  State :string;        
+  T_Fee_Payment_Mode:string;       
+  T_Fee_Transaction_Ref_No:string; 
+  EMD_Payment_Mode:string; 
+  EMD_Transaction_Ref_No:string; 
+  EMD_Fees_Exemption_Allowed:string; 
+  PSD_Payment_Mode:string; 
+  PSD_Acc_Voucher_No:string;    
+  PSD_Payable_To	 :string;   
+  PSD_Payable_At	:string;  
+  PSD__Fees_Exemption_Allowed	:string;
+  Tender_Publishing_Info_From:string;
+
+  EMD_Date_of_Issue	:string;
+  EMD_Date_of_Expiry	:string;
+  T_Fee_Date_of_Issue	:string;
+  T_Fee_Date_of_Expiry	:string;
+  PSD_Date_of_Issue		:string;
+  PSD_Date_of_Expiry	:string;
+}
+class PerformanceSecurity {
+  Foot_Fall_ID = 0;
+  Tender_Doc_ID= 0;
+  Tender_ID:string;
+  Cost_Cen_ID:string;
+  User_ID:string;
+  Posted_On:string;
+  Enq_Source_ID:number;
+  Tender_Org_ID	:string;
+  Tender_Category_ID:string;
+  Tender_Amount	:number;
+  Tender_Name:string;
+  Elegibility = '';
+  Tender_Opening_Date:string;
+  Tender_Closing_Date:string;
+  Corrigendum	 = '';
+  Remarks	:string;
+  Lead_Status = 'Tender Created';
+  EMD_Amount:number;
+  T_Fee_Amount:number;
+
+  Enq_Source_Detail:string;
+  Tender_Ref_No:string;
+  Tender_Type_ID: string;
+  Form_Of_Contract_ID	 = '0';
+  Location:string;
+  Pin_Code:string;
+  Tender_Payment_Mode_ID	 = '0';
+  Tender_Publish_Date:string;
+  Period_Of_Work:string;
+  EMD_Through_BG_SD	 = '';
+  EMD_fee_Type	 = '';
+  EMD_Persentage	 = '';
+  EMD_Payable_To:string;
+  EMD_Payable_At:string;
+  T_Fee_Payable_At:string;
+  T_Fee_Payable_To:string;
+  T_Fee_exm_Allowed :string;
+  dial_code = '+91';
+  Enq_Source_Mobile	 = ''
+
+  Tender_Calling_Div_ID  :string;            
+  Tender_Execution_Div_ID :string;                  
+  State :string;        
+  T_Fee_Payment_Mode:string;       
+  T_Fee_Transaction_Ref_No:string; 
+  EMD_Payment_Mode:string; 
+  EMD_Transaction_Ref_No:string; 
+  EMD_Fees_Exemption_Allowed:string; 
+  PSD_Payment_Mode:string; 
+  PSD_Acc_Voucher_No:string;    
+  PSD_Payable_To	 :string;   
+  PSD_Payable_At	:string;  
+  PSD__Fees_Exemption_Allowed	:string;
+  Tender_Publishing_Info_From:string;
+
+  EMD_Date_of_Issue	:string;
+  EMD_Date_of_Expiry	:string;
+  T_Fee_Date_of_Issue	:string;
+  T_Fee_Date_of_Expiry	:string;
+  PSD_Date_of_Issue		:string;
+  PSD_Date_of_Expiry	:string;
 }
 class Fee{
   Foot_Fall_ID:string;
