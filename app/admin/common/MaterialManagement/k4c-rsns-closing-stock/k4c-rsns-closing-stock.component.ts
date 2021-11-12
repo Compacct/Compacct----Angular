@@ -21,7 +21,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   ShowSpinner = false;
   tabIndexToView = 0;
   buttonname = "Save";
-  myDate = new Date();
+  myDate : Date;
   ObjrsnsClosingStock : rsnsClosingStock = new rsnsClosingStock ();
   rsnsClosingStockFormSubmitted = false;
   ObjBrowse : Browse = new Browse ();
@@ -46,8 +46,8 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   CostCentId_Flag : any;
   MaterialType_Flag = '';
   todayDate : any = new Date();
-  minDate = new Date();
-  maxDate = new Date();
+  minDate : any = new Date();
+  maxDate :  any = new Date();
   Doc_No = undefined;
   Editlist = [];
   ViewList = [];
@@ -68,9 +68,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-  ) { }
-
-  ngOnInit() {
+  ) {
     this.route.queryParams.subscribe(params => {
       // console.log(params);
       this.clearData();
@@ -92,11 +90,41 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     });
      this.GetCostCen();
      this.GetGodown();
+     this.GetDate();
     // this.GetProductType();
-    // this.minDate = new Date(this.todayDate.getDate());
-    // this.maxDate = new Date(this.todayDate.getDate());
+    // this.todayDate = new Date(this.myDate);
+    // let Datetemp:Date =  new Date(this.todayDate)
+    // const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 3);
+    // this.minDate = new Date(Timetemp);
+    // console.log("this.minDate===", this.minDate)
+    // this.maxDate = this.todayDate;
+    // console.log("this.maxDate===", this.maxDate)
   })
+   }
+
+  ngOnInit() {
+  
   }
+  GetDate(){
+    const obj = {
+      "SP_String":"SP_Raw_Material_Stock_Transfer",
+      "Report_Name_String": "Get Date"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.todayDate = new Date(data[0].Column1);
+      console.log("todayDate",this.todayDate);
+      let Datetemp:Date =  new Date(data[0].Column1)
+      const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 3);
+      this.minDate = new Date(Timetemp);
+      console.log("minDate==", this.minDate)
+      // let tempDate:Date =  new Date(data[0].Column1)
+      // const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 1);
+      this.maxDate = this.todayDate;
+      console.log("maxDate==", this.maxDate)
+
+    })
+  }
+
   TabClick(e){
     // console.log(e)
      this.tabIndexToView = e.index;
@@ -531,10 +559,11 @@ onConfirm(){
     this.ObjrsnsClosingStock.Doc_No = undefined;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
-    this.todayDate = new Date();
+    //this.todayDate = new Date();
     // this.minDate = new Date(this.todayDate.getDate());
     // this.maxDate = new Date(this.todayDate.getDate());
     this.datepickerdisable = false;
+    this.GetDate();
   }
 
 }

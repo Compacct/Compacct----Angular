@@ -50,6 +50,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   CostCentId_Flag : any;
   MaterialType_Flag = '';
   TCdisableflag = false;
+  todayDate = new Date();
 
   constructor(
     private Header: CompacctHeader,
@@ -341,7 +342,7 @@ GetProductType(){
   // SAVE AND UPDATE
   dataforSaveRawMaterialIssue(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
-     this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
+     this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
     if(this.ProductList.length) {
       let tempArr =[]
       this.ProductList.forEach(item => {
@@ -503,6 +504,8 @@ const obj = {
     this.SelectedProductType = [];
     this.ShowSpinner = false;
     this.ObjRawMateriali.Doc_No = undefined;
+    this.todayDate = new Date();
+
   }
 // Edit
 EditIntStock(col){
@@ -527,7 +530,7 @@ geteditmaster(Doc_No){
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("Edit",data);
     const TempData = data;
-    this.myDate = new Date(data[0].Doc_Date);
+    this.todayDate = new Date(data[0].Doc_Date);
     this.ObjRawMateriali = data[0];
     TempData.forEach(element => {
       this.ProductList.push({
