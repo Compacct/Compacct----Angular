@@ -162,7 +162,9 @@
                                     required>
                             </div>
                             <div class="col-sm-4">
-                                <button class="btn btn-primary custombutton" (click)="AddProduct(addProductForm.form.valid)"> ADD</button>
+                                <button class="btn btn-primary custombutton" (click)="AddProduct(addProductForm.form.valid)" [disabled]="addSnipper">
+                                    <p-progressSpinner *ngIf="addSnipper" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!addSnipper" class="glyphicon glyphicon-add"></span> ADD</button>
                             </div>
                         </div>
                     </form>

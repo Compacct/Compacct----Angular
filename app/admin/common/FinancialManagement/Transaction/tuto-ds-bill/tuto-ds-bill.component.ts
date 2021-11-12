@@ -32,6 +32,7 @@ export class TutoDsBillComponent implements OnInit {
   AmtMin = 0;
   AmtMax =0;
   AmtDisabledFlag = true;
+  addSnipper = false;
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -199,13 +200,39 @@ export class TutoDsBillComponent implements OnInit {
   }
   AddProduct(valid){
     this.DSProductFormSubmitted = true;
-    if(valid) {
-      this.AddedProductList.push(this.ObjDSProduct);
-      this.ObjDSProduct = new DSProduct ();
-      this.AmtMin = 0;
-      this.AmtMax = 0;
-      this.DSProductFormSubmitted = false;
-      this.getTotalProductAddedAmount();
+    if(valid && this.ObjDSBill.Foot_Fall_ID) {
+      this.addSnipper = true;
+      const obj = {
+        "SP_String": "Tutopia_Subscription_Accounts",
+        "Report_Name_String": "Check_Bill",
+        "Json_Param_String" : JSON.stringify([{'Foot_Fall_ID' : this.ObjDSBill.Foot_Fall_ID , 'Product_ID' : this.ObjDSProduct.Product_ID}])
+      }
+      this.GlobalAPI
+          .getData(obj)
+          .subscribe((data: any) => {
+           console.log(data);
+           if(data[0].remarks === 'success'){
+            this.AddedProductList.push(this.ObjDSProduct);
+            this.ObjDSProduct = new DSProduct ();
+            this.AmtMin = 0;
+            this.AmtMax = 0;
+            this.DSProductFormSubmitted = false;
+            this.getTotalProductAddedAmount();
+            this.addSnipper = false;
+           } else {
+            this.addSnipper = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "warn",
+              life : 6000,
+              summary: this.ObjDSBill['Contact_Name'] + " Has a Bill Already.",
+              detail: "Bill No : " + data[0].remarks+ " | Bill Date : " + data[0].Dated
+            });
+           }
+           
+      });
+      
     }
   }
   AmountChange() {
