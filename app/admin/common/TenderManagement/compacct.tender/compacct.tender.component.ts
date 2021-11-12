@@ -1181,6 +1181,7 @@ StateList = [];
       const today = this.DateService.dateConvert(new Date());
       this.ObjtenerFee.T_Fee_Date_of_Expiry =   this.TenderExpiryDateupdate  ?  this.DateService.dateConvert( this.TenderExpiryDateupdate ) : today;
       this.ObjtenerFee.T_Fee_Date_of_Issue =   this.TenderIssueDateupdate  ?   this.DateService.dateConvert( this.TenderIssueDateupdate ) : today;
+      // this.Obj 
       console.log( this.ObjFee)
       const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Update_Tender_Fee_New";
       this.$http.post(UrlAddress, this.ObjFee).subscribe((data: any) => {
