@@ -134,6 +134,7 @@ import { HarbaProjectEstimateComponent } from "./common/TenderManagement/harba-p
 import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rsns-closing-stock/k4c-rsns-closing-stock.component';
 import { DirectPaymentFollowupNepalComponent } from "./common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component";
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
+import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
 
 
 
@@ -773,6 +774,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                               component: K4cFranchiseSaleBillComponent,
                                               data: {title: 'Franchise Sale Bill'}
                                               },
+                                              {
+                                                path: 'Tender_Estimate',
+                                                component: TenderEstimateComponent,
+                                                data: {title: 'Tender Estimate'}
+                                                },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

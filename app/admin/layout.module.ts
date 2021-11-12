@@ -220,6 +220,7 @@ import { HarbaProjectEstimateComponent } from './common/TenderManagement/harba-p
 import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rsns-closing-stock/k4c-rsns-closing-stock.component';
 import { DirectPaymentFollowupNepalComponent } from './common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component';
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
+import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
 
 
 @NgModule({
@@ -376,7 +377,8 @@ import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-f
     HarbaProjectEstimateComponent,
     K4cRsnsClosingStockComponent,
     DirectPaymentFollowupNepalComponent,
-    K4cFranchiseSaleBillComponent
+    K4cFranchiseSaleBillComponent,
+    TenderEstimateComponent
   ],
   imports: [
     CommonModule,

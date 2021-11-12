@@ -3539,8 +3539,8 @@ novalidate
               type="date"
               name="updateTenderissuedate1"
               #updateTenderissuedate1="ngModel"
-              [ngModel]="TenderIssueDate | date: 'yyyy-MM-dd'"
-              (ngModelChange)="TenderIssueDate = $event"
+              [ngModel]="TenderIssueDateupdate | date: 'yyyy-MM-dd'"
+              (ngModelChange)="TenderIssueDateupdate = $event"
               class="form-control"
               [ngClass]="{'clearance': TenderFeeSubmitted && updateTenderissuedate1.errors?.required}"
               required  />
@@ -3556,8 +3556,8 @@ novalidate
               type="date"
               name="updateTenderexpirydate1"
               #updateTenderexpirydate1="ngModel"
-              [ngModel]="TenderExpiryDate | date: 'yyyy-MM-dd'"
-              (ngModelChange)="TenderExpiryDate = $event"
+              [ngModel]="TenderExpiryDateupdate | date: 'yyyy-MM-dd'"
+              (ngModelChange)="TenderExpiryDateupdate = $event"
               class="form-control"
               [ngClass]="{'clearance': TenderFeeSubmitted && updateTenderexpirydate1.errors?.required}"
                 />
