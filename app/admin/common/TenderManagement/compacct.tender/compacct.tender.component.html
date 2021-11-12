@@ -1152,9 +1152,9 @@
                                         </p-tabPanel>
                                         <p-tabPanel headerStyleClass="compacct-tabs" *ngIf="BidOpeningFlag" [header]="items[2]" leftIcon="fa fa-fw fa-industry">
                                           <form name="BidOpeningForm" #BidOpeningForm="ngForm" novalidate>
-                                            <button class="btn btn-primary btn-xs refresh-btn" [disabled]="ObjBidOpening['BOQ_File_Name']" *ngIf="tabIndexToView === 2" (click)="RefreshTenderData()"><i class="fa fa-fw  fa-refresh"></i></button>
+                                            <!-- <button class="btn btn-primary btn-xs refresh-btn" [disabled]="ObjBidOpening['BOQ_File_Name']" *ngIf="tabIndexToView === 2" (click)="RefreshTenderData()"><i class="fa fa-fw  fa-refresh"></i></button> -->
                                             <div class="form-group">
-                                              <div class="col-sm-4">
+                                              <!-- <div class="col-sm-4">
                                                 <label class="control-label">Tender Inviting Authority<sup class="text-danger">*</sup></label>
                                                 <span (click)="ToggleAuthority()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                 <select class="form-control"
@@ -1178,15 +1178,59 @@
                                                 <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
                                                 <div class="label-t">{{TenderDetails['Tender_ID']}}</div>
 
+                                              </div> -->
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
+                                                <div class="label-t">{{BidTenderList.Tender_Organization ? BidTenderList.Tender_Organization : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Tender Calling Div<sup class="text-danger">*</sup></label>
+                                                <div class="label-t">{{BidTenderList.Tender_Calling_Div_Name ? BidTenderList.Tender_Calling_Div_Name : '-'}}</div>
+                                              </div>
+                                            <div class="col-sm-4">
+                                          <label class="control-label">Tender Execution Div<sup class="text-danger">*</sup></label>
+                                          <div class="label-t">{{BidTenderList.Tender_Execution_Div_Name ? BidTenderList.Tender_Execution_Div_Name : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Tender Reference Number</label>
+                                                <div class="label-t">{{BidTenderList.Tender_Ref_No ? BidTenderList.Tender_Ref_No : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
+                                                <div class="label-t">{{BidTenderList.Tender_ID ? BidTenderList.Tender_ID : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Tender Type<sup class="text-danger">*</sup></label>
+                                                <div class="label-t">{{BidTenderList.Tender_Type_Name ? BidTenderList.Tender_Type_Name : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                  <label class="control-label">Tender Category<sup class="text-danger">*</sup></label>
+                                                  <div class="label-t">{{BidTenderList.Tender_Category_Name ? BidTenderList.Tender_Category_Name : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label"> 800 CHRS<sup class="text-danger">*</sup></label>
+                                                <div class="label-t">{{BidTenderList.Tender_Name ? BidTenderList.Tender_Name : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                                <div class="label-t">{{BidTenderList.State ? BidTenderList.State : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Work Location</label>
+                                                <div class="label-t">{{BidTenderList.Location ? BidTenderList.Location : '-'}}</div>
+                                                </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Pincode<sup class="text-danger"></sup
+                                                ></label>
+                                                <div class="label-t">{{BidTenderList.Pin_Code ? BidTenderList.Pin_Code : '-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Tender Value In ₹<sup class="text-danger">*</sup></label>
+                                                <div class="label-t">{{TenderAmount ? TenderAmount : '-'}}</div>
                                               </div>
                                             </div>
                                             <hr class="box boxboxDivide-primary" />
                                             <div class="form-group">
-                                              <div class="col-sm-4">
-                                                <label class="control-label">Bid Identification No<sup class="text-danger">*</sup></label>
-                                                <div class="label-t">{{TenderDetails['Tender_Ref_No']}}</div>
-
-                                              </div>
                                               <div class="col-sm-4">
                                                 <label class="control-label">Bidder Name<sup class="text-danger">*</sup></label>
                                                 <span (click)="ToggleBidder()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
@@ -1203,16 +1247,17 @@
                                                 </select>
                                               </div>
                                               <div class="col-sm-4">
-                                                <label class="control-label">Estimated Rate<sup class="text-danger">*</sup></label>
+                                                <label class="control-label">Tender Value<sup class="text-danger">*</sup></label>
                                                 <input class="form-control"
                                                 name="Estimate"
                                                 #Estimate="ngModel"
                                                 CompacctDigitonly="true"
-                                                [(ngModel)]="EstimatedRate"
-                                                placeholder="Estimate Rate"
-                                                disabled='true' >
+                                                [(ngModel)]="tenderValue"
+                                                placeholder="Tender Value"
+                                                [ngClass]="{'clearance': BidOpeningListFormSubmitted && (tenderValue ==='' || tenderValue === null || tenderValue === undefined)}"
+                                                 >
                                               </div>
-                                              <div class="col-sm-4">
+                                              <div class="col-sm-4" *ngIf = "tenderValue && tenderValue > 0">
                                                 <label class="control-label">Quoted Percentage <sup class="text-danger">*</sup></label>
                                                 <div class="input-group">
                                                   <input class="form-control"
@@ -1223,6 +1268,19 @@
                                                   [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Quoted_Percentage === '' || ObjBidOpeningList.Quoted_Percentage === null || ObjBidOpeningList.Quoted_Percentage=== undefined)}" >
                                                   <div class="input-group-addon"><b>%</b></div>
 
+                                                </div>
+                                              </div>
+                                              <div class="col-sm-4" *ngIf = "tenderValue === '' || tenderValue === null || tenderValue === undefined || tenderValue === '0'">
+                                                <label class="control-label">Quoted Rate <sup class="text-danger">*</sup></label>
+                                                <div class="input-group">
+                                                  <input class="form-control"
+                                                  name="Quoted_Rate"
+                                                  #Quoted_Rate="ngModel"
+                                                  [(ngModel)]="ObjBidOpeningList.Quoted_Rate"
+                                                  placeholder="Quoted Rate"
+                                                  [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Quoted_Rate === '' || ObjBidOpeningList.Quoted_Rate === null || ObjBidOpeningList.Quoted_Rate=== undefined)}" 
+                                                  CompacctDigitonly="true">
+                                                  
                                                 </div>
                                               </div>
                                               <div class="col-sm-4">
@@ -1265,7 +1323,7 @@
                                                         class="text-center"
                                                         style="vertical-align:middle"
                                                       >
-                                                        Estimated Rate
+                                                        Tender Value
                                                       </th>
                                                       <th
                                                         nowrap
@@ -1273,7 +1331,7 @@
                                                         class="text-center"
                                                         style="vertical-align:middle"
                                                       >
-                                                        Quoted Percentage
+                                                        Quoted Rate
                                                       </th>
                                                       <th
                                                       nowrap
@@ -1281,7 +1339,7 @@
                                                       class="text-center"
                                                       style="vertical-align:middle"
                                                     >
-                                                    Less/Excess
+                                                      Quoted Percentage
                                                     </th>
                                                       <th colspan="2" scope="colgroup" class="text-center">
                                                         Quoted Rate In Figures and Words
@@ -1305,9 +1363,9 @@
                                                       <td>{{ d.Sl_No }}</td>
                                                       <td>{{ d.Bidder_Name }}</td>
                                                       <td>{{ d.Estimated_Rate ? BidAmountView(d.Estimated_Rate) : "-" }}</td>
-                                                      <td>{{ d.Quoted_Percentage +' %' }}</td>
-                                                      <td>{{ d.Less_Excess ? d.Less_Excess : '-' }}</td>
-                                                      <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                                                      <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                                                      <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
+                                                       <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
                                                       <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
                                                       <td>
                                                         <a (click)="DeleteBidOpenList(index)"
@@ -1355,17 +1413,16 @@
                                                         class="text-center"
                                                         style="vertical-align:middle"
                                                       >
-                                                        Quoted Percentage
+                                                        Quoted Rate
                                                       </th>
                                                       <th
-                                                      nowrap
-                                                      rowspan="2"
-                                                      class="text-center"
-                                                      style="vertical-align:middle"
-                                                    >
-                                                    Less/Excess
-                                                    </th>
-
+                                                        nowrap
+                                                        rowspan="2"
+                                                        class="text-center"
+                                                        style="vertical-align:middle"
+                                                      >
+                                                        Quoted Percentage
+                                                      </th>
                                                       <th colspan="2" scope="colgroup" class="text-center">
                                                         Quoted Rate In Figures and Words
                                                       </th>
@@ -1387,8 +1444,8 @@
                                                     >
                                                       <td>{{ d.Rank }}</td>
                                                       <td>{{ d.Bidder_Name }}</td>
+                                                      <td>{{ d.Quoted_Rate +' %' }}</td>
                                                       <td>{{ d.Quoted_Percentage +' %' }}</td>
-                                                      <td>{{ d.Less_Excess ? d.Less_Excess : '-' }}</td>
                                                       <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
                                                       <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
 
@@ -1424,7 +1481,15 @@
                                                         class="text-center"
                                                         style="vertical-align:middle"
                                                       >
-                                                        Estimated Rate
+                                                      Tender Value
+                                                      </th>
+                                                      <th
+                                                        nowrap
+                                                        rowspan="2"
+                                                        class="text-center"
+                                                        style="vertical-align:middle"
+                                                      >
+                                                        Quoted Rate
                                                       </th>
                                                       <th
                                                         nowrap
@@ -1472,6 +1537,7 @@
                                                         <span  *ngIf="d['Lottery_Flag'] === 'FIXED'">{{d.Bidder_Name}}</span>
                                                       </td>
                                                       <td>{{ d.Estimated_Rate ? BidAmountView(d.Estimated_Rate) : "-" }} </td>
+                                                      <td> {{d.Quoted_Rate ? d.Quoted_Rate : '-' }} </td>
                                                       <td> {{d.Quoted_Percentage ? d.Quoted_Percentage  +' %':'-' }} </td>
                                                       <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
                                                       <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
@@ -1530,7 +1596,7 @@
                                                 [ngClass]="{'clearance': BidOpeningFormSubmitted && Disqualify .errors?.required}" required>
                                                </div> -->
                                             </div>
-                                            <div class="form-group" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'" style="padding-bottom: 1em;">
+                                            <!-- <div class="form-group" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'" style="padding-bottom: 1em;">
                                                   <h5 style="
                                                   padding: 0.5em 1em;
                                                   background: #c1c1c185;
@@ -1700,18 +1766,7 @@
                                                   <div class="input-group-addon">
                                                     <i class="fa fa-calendar"></i>
                                                   </div>
-                                                  <!-- <input
-                                                    type="date"
-                                                    name="NEFT"
-                                                    #NEFT="ngModel"
-                                                    [ngModel]="EMDNEFTDate | date: 'yyyy-MM-dd'"
-                                                    (ngModelChange)="GetEMDNEFTDate($event)"
-                                                    class="form-control"
-                                                    [ngClass]="{
-                                                      clearance: EMDSubmitted && NEFT?.errors?.required
-                                                    }"
-                                                    required
-                                                  /> -->
+                                                  
                                                   <ejs-datepicker name="ISDNEFT" [(ngModel)]='ISDNEFTDate' format='dd-MM-yyyy' ></ejs-datepicker>
                                               </div>
                                               </div>
@@ -1724,8 +1779,8 @@
                                                       placeholder=" NEFT Txn No"
                                                       [ngClass]="{'clearance': BidOpeningFormSubmitted && NEFTTxn.errors?.required}" >
                                               </div>
-                                            </div>
-                                            <div class="form-group" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'"  style="padding-bottom: 1em;">
+                                            </div> -->
+                                            <!-- <div class="form-group" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'"  style="padding-bottom: 1em;">
                                               <h5 style="
                                               padding: 0.5em 1em;
                                               background: #c1c1c185;
@@ -1909,10 +1964,20 @@
                                                       placeholder=" NEFT Txn No"
                                                       [ngClass]="{'clearance': BidOpeningFormSubmitted && NEFTTxn.errors?.required}">
                                               </div>
-                                            </div>
-                                            <hr class="box boxboxDivide-primary"  *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'"/>
+                                            </div> -->
+                                            <!-- <hr class="box boxboxDivide-primary"  *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'"/> -->
                                             <div class="form-group" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'" >
-                                              <div class="col-sm-4">
+                                              <h5 style="
+                                              padding: 0.5em 1em;
+                                              background: #c1c1c185;
+                                              border-top: 5px solid #3c8dbc;
+                                              border-bottom: 1px solid #c6c6c6;
+                                              margin-top: 15px;
+                                              ">
+                                                <i class="fa fa-fw fa-fax">
+                                                </i> &nbsp;<strong>Agreement Details :</strong>
+                                              </h5>
+                                              <!-- <div class="col-sm-4">
                                                 <label class="control-label">Financial Year <sup class="text-danger">*</sup></label>
                                                 <span (click)="ToggleFinalcialYear()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                 <select class="form-control"
@@ -1926,12 +1991,12 @@
                                                         </option>
 
                                                 </select>
-                                               </div>
-                                               <div class="col-sm-4">
+                                               </div> -->
+                                               <!-- <div class="col-sm-4">
                                                 <label class="control-label">Tender Organization<sup class="text-danger">*</sup></label>
                                                 <div class="label-t">{{GetOrgName(TenderDetails['Tender_Org_ID'])}}</div>
 
-                                              </div>
+                                              </div> -->
                                               <div class="col-sm-4">
                                                 <label class="control-label">Circle <sup class="text-danger">*</sup></label>
                                                 <span (click)="ToggleCircle()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
@@ -1948,11 +2013,7 @@
 
                                                 </select>
                                                </div>
-
-
-                                            </div>
-                                            <div class="form-group" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'" >
-                                              <div class="col-sm-4">
+                                            <!-- <div class="col-sm-4">
                                                 <label class="control-label">Division <sup class="text-danger">*</sup></label>
                                                 <span (click)="ToggleDivision()" [style.display]="ObjBidOpening.Circle ? 'block' : 'none'" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                 <select class="form-control"
@@ -1967,7 +2028,7 @@
 
                                                 </select>
 
-                                               </div>
+                                               </div> -->
                                                <div class="col-sm-4">
                                                 <label class="control-label">Agreement Number<sup class="text-danger">*</sup></label>
 
@@ -1980,7 +2041,12 @@
                                                </div>
                                                <div class="col-sm-4">
                                                 <label class="control-label">Agreement Value<sup class="text-danger">*</sup></label>
-                                                <div class="label-t">{{AgreementValue ? AgreementValue : '-'}}</div>
+                                                <input class="form-control"
+                                                name="Agreement_value"
+                                                #Agreement_value="ngModel"
+                                                [(ngModel)]="ObjBidOpening.Agreement_value"
+                                                placeholder="Agreement value"
+                                                [ngClass]="{'clearance': BidOpeningFormSubmitted && Agreement_value.errors?.required}" required>
                                                 <!-- <input class="form-control"
                                                 name="AgreementValue1"
                                                 #AgreementValue1="ngModel"
@@ -1994,8 +2060,8 @@
                                                </div>
 
 
-                                            </div>
-                                            <div class="form-group" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'" >
+                                            
+                                            
                                               <div class="col-sm-4">
                                                 <label class="control-label">Date of Commencement<sup class="text-danger">*</sup></label>
                                                 <div class="input-group date">
@@ -2029,17 +2095,10 @@
                                                 />
                                               </div>
                                               </div>
-                                              <div class="col-sm-4">
+                                              <!-- <div class="col-sm-4">
                                                 <label class="control-label">Periods of Completion (Months)<sup class="text-danger">*</sup></label>
                                                 <div class="label-t">{{PeriodOfCompletion ? PeriodOfCompletion : '-'}}</div>
-                                                <!-- <input class="form-control"
-                                                        name="WorkCompletion"
-                                                        #WorkCompletion="ngModel"
-                                                        [(ngModel)]="PeriodOfCompletion"
-                                                        (change)="TenderPeriodOfCompletionChange(PeriodOfCompletion)"
-                                                        placeholder="Periods of Completion (Months )"
-                                                        [ngClass]="{'clearance': BidOpeningFormSubmitted && WorkCompletion.errors?.required}" required> -->
-                                              </div>
+                                               </div> -->
                                             </div>
                                             <div class="box-footer">
                                               <button class="btn btn-primary pull-right"
@@ -2052,7 +2111,7 @@
                                           </div>
                                           </form>
                                           <!-- <app-compacct-document [foofFall]="ObjBidOpening.Foot_Fall_ID" (clear)="GetFlagFromDocumentBid($event)" *ngIf="FootfalID"></app-compacct-document> -->
-                                          <div class="row">
+                                          <!-- <div class="row">
                                             <h5 style="
                                             padding: 0.5em 1em;
                                             background: #c1c1c185;
@@ -2105,7 +2164,7 @@
                                         </button>
                                         </div>
                                         </form>
-                                          </div>
+                                          </div> -->
                                           <app-compacct-document  [documentType]="{'FootfalID' :ObjBidOpening.Foot_Fall_ID,'name': 'Awarding','title':'Awarding Documents Upload'}" (clear)="GetFlagFromDocument($event)" *ngIf="ObjBidOpening.Foot_Fall_ID"></app-compacct-document>
                                           <!-- <div class="row">
                                             <h5 style="
@@ -3627,7 +3686,7 @@ novalidate
     name="EMDPay2"
     #EMDPay2="ngModel"
     [(ngModel)]="ObjPerformanceSecurity.PSD_Payment_Mode"
-    [ngClass]="{'clearance': TenderFormSubmitted && EMDPay2.errors?.required}" required>
+    [ngClass]="{'clearance': PerformanceFormSubmitted && EMDPay2.errors?.required}" required>
     <option  [ngValue]="undefined">Select</option>
 <option *ngFor="let option of PaymentList" [ngValue]="option.Tender_Payment_Mode">
     {{option.Tender_Payment_Mode}}
@@ -3643,7 +3702,7 @@ novalidate
             #PSD_Acc_Voucher_No="ngModel"
             [(ngModel)]="ObjPerformanceSecurity.PSD_Acc_Voucher_No"
             placeholder="Performance Acc Voucher No"
-            [ngClass]="{'clearance': TenderFormSubmitted && PSD_Acc_Voucher_No.errors?.required}">
+            [ngClass]="{'clearance': PerformanceFormSubmitted && PSD_Acc_Voucher_No.errors?.required}">
   </div>
 
    <div class="col-sm-6">
@@ -3653,7 +3712,7 @@ novalidate
             #PSD_Payable_To="ngModel"
             [(ngModel)]="ObjPerformanceSecurity.PSD_Payable_To"
             placeholder="EMD Payable To"
-            [ngClass]="{'clearance': TenderFormSubmitted && PSD_Payable_To.errors?.required}" required>
+            [ngClass]="{'clearance': PerformanceFormSubmitted && PSD_Payable_To.errors?.required}" required>
   </div>
    <div class="col-sm-6">
     <label class="control-label">Performance Security Fees Payable At <sup class="text-danger">*</sup></label>
@@ -3662,7 +3721,7 @@ novalidate
             #PSD_Payable_At="ngModel"
             [(ngModel)]="ObjPerformanceSecurity.PSD_Payable_At"
             placeholder="EMD Payable At  "
-            [ngClass]="{'clearance': TenderFormSubmitted && PSD_Payable_At.errors?.required}" required>
+            [ngClass]="{'clearance': PerformanceFormSubmitted && PSD_Payable_At.errors?.required}" required>
   </div>
   <div class="col-sm-6">
     <label class="control-label">Performance Security Fees Exemption Allowed  <sup class="text-danger">*</sup></label>
@@ -3671,7 +3730,7 @@ novalidate
             #PSD__Fees_Exemption_Allowed="ngModel"
             [(ngModel)]="ObjPerformanceSecurity.PSD__Fees_Exemption_Allowed"
             placeholder="Tender Fee Exemption Allowed "
-            [ngClass]="{'clearance': TenderFormSubmitted && PSD__Fees_Exemption_Allowed.errors?.required}" required>
+            [ngClass]="{'clearance': PerformanceFormSubmitted && PSD__Fees_Exemption_Allowed.errors?.required}" required>
             <option  [ngValue]="undefined">Select</option>
         <option ngValue="Y">Yes</option>
         <option ngValue="N">No</option>
@@ -3687,10 +3746,10 @@ novalidate
         type="date"
         name="Performanceissuedate1"
         #Performanceissuedate1="ngModel"
-        [ngModel]="PerformanceIssueDate | date: 'yyyy-MM-dd'"
-        (ngModelChange)="PerformanceIssueDate = $event"
+        [ngModel]="PerformanceIssueDateUpdate | date: 'yyyy-MM-dd'"
+        (ngModelChange)="PerformanceIssueDateUpdate = $event"
         class="form-control"
-        [ngClass]="{'clearance': TenderFormSubmitted && Performanceissuedate1.errors?.required}"
+        [ngClass]="{'clearance': PerformanceFormSubmitted && Performanceissuedate1.errors?.required}"
         required  />
     </div>
   </div> 
@@ -3704,10 +3763,10 @@ novalidate
         type="date"
         name="Performanceexpirydate1"
         #Performanceexpirydate1="ngModel"
-        [ngModel]="PerformanceExpiryDate | date: 'yyyy-MM-dd'"
-        (ngModelChange)="PerformanceExpiryDate = $event"
+        [ngModel]="PerformanceExpiryDateUpdate | date: 'yyyy-MM-dd'"
+        (ngModelChange)="PerformanceExpiryDateUpdate = $event"
         class="form-control"
-        [ngClass]="{'clearance': TenderFormSubmitted && Performanceexpirydate1.errors?.required}"
+        [ngClass]="{'clearance': PerformanceFormSubmitted && Performanceexpirydate1.errors?.required}"
           />
     </div>
   </div> 
@@ -3729,7 +3788,7 @@ novalidate
     type="submit"
     name="bill"
     class="btn btn-primary pull-right custombutton"
-    (click)="SaveFee(PerformanceSecurity.form.valid)"
+    (click)="SavePerformanceSecurity(PerformanceSecurity.form.valid)"
     id="load2"
     [disabled]="Spinner"
   >
