@@ -73,15 +73,42 @@
                                 <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
                               </button>
                               </div>
-                              <div class="col-sm-4" *ngIf='Backupconfirmedlist.length'>
+                              <!-- <div class="col-sm-4" *ngIf='Backupconfirmedlist.length'>
                                 <label class="control-label">Payment Status <span class="text-danger"></span></label>
                                 <p-multiSelect [options]="DistPaymentStatus" [(ngModel)]="SelectedDistPaymentStatus" [virtualScroll]="true"
                                   itemSize="30" (onChange)='FilterDist2()' [styleClass]="'compacct-multiselect'"
                                   name="Payment"></p-multiSelect>
-                              </div>
+                              </div> -->
                             </div>
                             
                           </form>
+                          <div *ngIf="Backupconfirmedlist.length" class="form-group" style="padding:15px">
+                            <fieldset class="col-md-12">
+                                <legend>Filter</legend>
+
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                      <label class="control-label">Payment Status <span class="text-danger"></span></label>
+                                      <p-multiSelect [options]="DistPaymentStatus" [(ngModel)]="SelectedDistPaymentStatus" [virtualScroll]="true"
+                                        itemSize="30" (onChange)='FilterDist2()' [styleClass]="'compacct-multiselect'"
+                                        name="Payment"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                      <label class="control-label">IS Blocked <span class="text-danger"></span></label>
+                                      <p-multiSelect [options]="DistISBlocked" [(ngModel)]="SelectedDistISBlocked" [virtualScroll]="true"
+                                        itemSize="30" (onChange)='FilterDist2()' [styleClass]="'compacct-multiselect'"
+                                        name="isbloc"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                      <label class="control-label">Clam Status <span class="text-danger"></span></label>
+                                      <p-multiSelect [options]="DistClaimID" [(ngModel)]="SelectedDistClaimID" [virtualScroll]="true"
+                                        itemSize="30" (onChange)='FilterDist2()' [styleClass]="'compacct-multiselect'"
+                                        name="cal"></p-multiSelect>
+                                    </div>
+                                  </div>
+
+                                  </fieldset>
+                              </div>
                         <div class="row">
                             <div class="col-sm-8"><h5><strong></strong></h5></div>
                             </div>
@@ -120,6 +147,7 @@
                                         <th>Sale Amount</th>
                                         <th>Sale By</th>
                                         <th>Is Blocked</th>
+                                        <th>Clam Status</th>
                                         <th>Payment Status</th>
                                         <th>Paid Amount</th>
                                     </tr>
@@ -162,6 +190,7 @@
                                         <td>{{col.Sale_Amount}}</td>
                                         <td>{{col.Sale_By}}</td>
                                         <td>{{col.IS_Blocked}}</td>
+                                        <td>{{col.Clam_Status}}</td>
                                         <td>{{col.Payment_Status}}</td>
                                         <td>{{col.Paid_Amount}}</td>
                                     </tr>

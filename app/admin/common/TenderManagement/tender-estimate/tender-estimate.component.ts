@@ -84,7 +84,9 @@ export class TenderEstimateComponent implements OnInit {
       this.TenderDocID = params.Tender_Doc_ID
     })
   }
-
+  onReject(){
+    
+  }
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Tender Estimate",

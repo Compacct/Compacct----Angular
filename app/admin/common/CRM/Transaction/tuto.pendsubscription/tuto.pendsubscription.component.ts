@@ -40,6 +40,10 @@ export class TutoPendsubscriptionComponent implements OnInit {
   SelectedDistSubscribed =[];
   DistPaymentStatus =[];
   SelectedDistPaymentStatus =[];
+  DistISBlocked =[];
+  DistClaimID =[];
+  SelectedDistISBlocked =[];
+  SelectedDistClaimID =[];
   searchFields =[];
   OrderNo = undefined;
   constructor(
@@ -258,6 +262,10 @@ export class TutoPendsubscriptionComponent implements OnInit {
     this.DistPaymentStatus =[];
     this.Backupconfirmedlist = [];
     this.SelectedDistPaymentStatus =[];
+    this.DistISBlocked =[];
+    this.DistClaimID =[];
+    this.SelectedDistISBlocked =[];
+    this.SelectedDistClaimID =[];
     this.ConfirmSearchFormSubmitted = true;
     if(this.SaleType) {
       this.seachSpinner = true;
@@ -287,6 +295,8 @@ export class TutoPendsubscriptionComponent implements OnInit {
                 this.confirmedlist = data.length ? data : [];
                 this.Backupconfirmedlist = data.length ? data : [];
                 this.DistPaymentStatus = this.GetDistinctItems.GetMultipleDistinct(this.Backupconfirmedlist,['Payment_Status'])[0];
+                this.DistISBlocked = this.GetDistinctItems.GetMultipleDistinct(this.Backupconfirmedlist,['IS_Blocked'])[0];
+                this.DistClaimID = this.GetDistinctItems.GetMultipleDistinct(this.Backupconfirmedlist,['Clam_Status'])[0];
                 this.seachSpinner = false;
               });
       // const url = recordID  ? 'Tutopia_Pending_Subscription/Get_Confirm_details_With_Foot_fall_ID?Foot_Fall_ID=' + recordID : 'Tutopia_Pending_Subscription/Get_Confirm_details?User_ID='+this.$CompacctAPI.CompacctCookies.User_ID;
@@ -302,15 +312,28 @@ export class TutoPendsubscriptionComponent implements OnInit {
   }
   FilterDist2() {
     let DPaymentStatus = [];
+    let DISBlocked = [];
+    let DClaimID = [];
     let searchFields = [];
     if (this.SelectedDistPaymentStatus.length) {
       searchFields.push('Payment_Status');
       DPaymentStatus = this.SelectedDistPaymentStatus;
     }
+    if (this.SelectedDistISBlocked.length) {
+      searchFields.push('IS_Blocked');
+      DISBlocked = this.SelectedDistISBlocked;
+    }
+    if (this.SelectedDistClaimID.length) {
+      searchFields.push('Clam_Status');
+      DClaimID = this.SelectedDistClaimID;
+    }
     this.confirmedlist = [];
     if (searchFields.length) {
       let LeadArr = this.Backupconfirmedlist.filter(function (e) {
-        return (DPaymentStatus.length ? DPaymentStatus.includes(e['Payment_Status']) : true)
+        return ((DPaymentStatus.length ? DPaymentStatus.includes(e['Payment_Status']) : true)
+        && (DISBlocked.length ? DISBlocked.includes(e['IS_Blocked']) : true)
+        && (DClaimID.length ? DClaimID.includes(e['Clam_Status']) : true)
+        )
       });
       this.confirmedlist = LeadArr.length ? LeadArr : [];
     } else {
