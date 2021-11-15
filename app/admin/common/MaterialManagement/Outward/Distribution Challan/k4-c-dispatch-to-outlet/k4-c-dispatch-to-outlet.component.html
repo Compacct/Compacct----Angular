@@ -78,6 +78,7 @@
                                             <th>Indent No</th>
                                             <th>Doc No</th>
                                             <th>Doc Date</th>
+                                            <th>Transaction Date & Time</th>
                                             <th>Shift</th>
                                             <th>From Stock Point</th>
                                             <th>To Outlet</th>
@@ -130,6 +131,7 @@
                                             <td>{{col.Indent_No}}</td>
                                             <td>{{col.Doc_No}}</td>
                                             <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td>{{col.Transaction_Date}}-{{col.Transaction_Time}}</td>
                                             <td>{{col.Shift_N}}</td>
                                             <td>{{col.godown_name}}</td>
                                             <td>{{col.Cost_Cen_Name}}</td>

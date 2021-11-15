@@ -31,23 +31,25 @@
                         <form name="indentForm" #indentForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-3">
-                                    <label class="control-label">Advance Order Date</label>
+                                    <label class="control-label">Search By</label>
+                                    <select class="form-control" name="Search_By" [(ngModel)]="Search_By">
 
-                                    <app-compacct-daterangepicker
-                                    (DaterangeObj)="getConfirmDateRange($event)"
-                                    >
+                                  <!-- <option  [ngValue]="undefined">Select</option> -->
+                                  <option value="Delivery Date">Delivery Date</option>
+                                  <option value="Order Date">Order Date</option>
+                            </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date Range</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getConfirmDateRange($event)">
                                     </app-compacct-daterangepicker>
 
                                 </div>
 
-                                <div class="col-sm-2">
-                                  <label class="control-label"> Brand&nbsp;<span class="text-danger">*</span></label>
-                                  <select class="form-control"
-                                  name="Brand_ID"
-                                   #Brand_ID="ngModel"
-                                    [(ngModel)]="ObjBrowseData.Brand_ID"
-                                    [ngClass]="{'clearance': indentFormSubmit && Brand_ID?.errors?.required}"
-                                     required>
+                                <div class="col-sm-3">
+                                    <label class="control-label"> Brand&nbsp;<span class="text-danger">*</span></label>
+                                    <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="ObjBrowseData.Brand_ID" [ngClass]="{'clearance': indentFormSubmit && Brand_ID?.errors?.required}" required>
                                          <option  [ngValue]="undefined">Select</option>
                                          <option *ngFor="let option of brandList" value="{{option.Brand_ID}}">
                                              {{option.Brand_INI}}
@@ -55,124 +57,111 @@
                                   </select>
                                 </div>
                                 <div class="col-sm-2">
-                                  <button class="btn btn-primary search" data-toggle="modal"
-                                  (click)="GetAllData(indentForm.form.valid)"
-                                  id="load"
-                                  [disabled]="seachSpinner"
-                                  >
+                                    <button class="btn btn-primary search" data-toggle="modal" (click)="GetAllData(indentForm.form.valid)" id="load" [disabled]="seachSpinner">
                                   <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                   <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                </button>
                                 </div>
-                                <div class="col-sm-2">
-                                    <label class="control-label">Filter By Critical
+                            </div>
+                            <div class="form-group" *ngIf='BackupgetAllDataList.length' style="padding:15px">
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Filter By Critical
                                         <sup class="text-danger"></sup></label>
-                                    <p-multiSelect [options]="OutletFilter" [(ngModel)]="SelectedOutlet"
-                                        [styleClass]="'compacct-multiselect'" name="filterOutlet" (onChange)="filterOrderOutlet()"
-                                        ></p-multiSelect>
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="control-label">Filter of Delivery Time Range
+                                        <p-multiSelect [options]="OutletFilter" [(ngModel)]="SelectedOutlet" [styleClass]="'compacct-multiselect'" name="filterOutlet" (onChange)="filterOrderOutlet()"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Filter of Delivery Time Range
                                         <sup class="text-danger"></sup></label>
-                                    <p-multiSelect [options]="TimerangeFilter" [(ngModel)]="SelectedTimeRange"
-                                        [styleClass]="'compacct-multiselect'" name="filterRange" (onChange)="filterTimeRange()"
-                                        ></p-multiSelect>
-                                </div>
-
+                                        <p-multiSelect [options]="TimerangeFilter" [(ngModel)]="SelectedTimeRange" [styleClass]="'compacct-multiselect'" name="filterRange" (onChange)="filterTimeRange()"></p-multiSelect>
+                                    </div>
+                                </fieldset>
                             </div>
                         </form>
 
                         <div class="table-responsive no-padding">
-                            <p-table [value]="getAllDataList"
-                                     [paginator]="getAllDataList.length ? true : false" [rows]="100" [rowHover]="true"
-                                     [autoLayout]="true" sortMode="multiple"
-                                     [rowsPerPageOptions]="[100,200,300]"
-                                     [globalFilterFields]="['Req_No','Req_Date','Cost_Cen_Name','Product_Description','Sale_rate','Amount']"
-                                     [rowHover]="true"
-                                     #dt>
-                                       <ng-template pTemplate="caption">
-                                           <div class="row">
-                                                <div class="col-sm-3 pull-right" style="text-align: right">
-                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                    </div>
-                                           </div>
+                            <p-table [value]="getAllDataList" [paginator]="getAllDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Req_No','Req_Date','Cost_Cen_Name','Product_Description','Sale_rate','Amount']"
+                                [rowHover]="true" #dt>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
 
-                                        </ng-template>
-                                        <ng-template pTemplate="header">
-                                            <tr>
-                                                <th style="width:5em">Action</th>
-                                                <th >Order No</th>
-                                                <th>Product Description</th>
-                                                <th>Order Date</th>
-                                                <th>Order Outlet</th>
-                                                <th >Delivery Outlet</th>
-                                                <th >Delivery Date Time</th>
-                                                <th>Delivery Time Range</th>
-                                                <th> Qty</th>
-                                                <th> Weight in Pound</th>
-                                            </tr>
-                                        </ng-template>
-                                        <ng-template pTemplate="body" let-col>
-                                            <tr [class]='col.critical === "Y" ? "text-red-active" : ""'>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th>Order No</th>
+                                        <th>Product Description</th>
+                                        <th>Order Date</th>
+                                        <th>Order Outlet</th>
+                                        <th>Delivery Outlet</th>
+                                        <th>Delivery Date Time</th>
+                                        <th>Delivery Time Range</th>
+                                        <th> Qty</th>
+                                        <th> Weight in Pound</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr [class]='col.critical === "Y" ? "text-red-active" : ""'>
 
-                                                <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle"
-                                                                type="button" data-toggle="dropdown" style="height:27px">
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                 <i class="fa fa-fw fa-bars"></i>
                                                                 <span class="caret"></span>
                                                             </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li >
-                                                                    <a (click)="view(col)">
-                                                                        <i class="fa fa-fw fa-eye"></i>
-                                                                        View Detalis
-                                                                    </a>
-                                                                </li>
-                                                                <li >
-                                                                    <a (click)="print(col)">
-                                                                        <i class="fa fa-print"></i>
-                                                                        Print Delivery Challan
-                                                                    </a>
-                                                                </li>
-                                                                <li >
-                                                                    <a (click)="printorder(col)">
-                                                                        <i class="fa fa-print"></i>
-                                                                        Print Order
-                                                                    </a>
-                                                                </li>
-                                                                <li *ngIf="col.critical == 'N'">
-                                                                    <a (click)="Critical(col)">
-                                                                        <i class="fa fa-power-off"></i>
-                                                                        Mark As Critical
-                                                                    </a>
-                                                                </li>
-                                                                <li *ngIf="col.critical == 'Y'">
-                                                                  <a (click)="Normal(col)">
-                                                                      <i class="fa fa-times"></i>
-                                                                      Mark As Normal
-                                                                  </a>
-                                                              </li>
-                                                             </ul>
-                                                        </div>
-                                                </td>
-                                                            <td>{{col.Adv_Order_No}}<p *ngIf="col.critical == 'Y'" style="color : red;font-weight: bold;">(CRITICAL)</p></td>
-                                                            <td>{{col.Product_Description}}</td>
-                                                            <td>{{col.Order_Date | date : 'dd/MMM/yyyy'}}</td>
-                                                            <td>{{col.order_Outlet}}</td>
-                                                            <td>{{col.Cost_Center_Name}}</td>
-                                                            <td>{{col.Del_Date | date : 'dd/MMM/yyyy'}} - {{col.Del_Date_Time}}</td>
-                                                            <td>{{col.Del_Time_Range}}</td>
-                                                            <td>{{col.Qty}}</td>
-                                                             <td>{{col.Weight_in_Pound}}</td>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a (click)="view(col)">
+                                                            <i class="fa fa-fw fa-eye"></i> View Detalis
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="print(col)">
+                                                            <i class="fa fa-print"></i> Print Delivery Challan
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="printorder(col)">
+                                                            <i class="fa fa-print"></i> Print Order
+                                                        </a>
+                                                    </li>
+                                                    <li *ngIf="col.critical == 'N'">
+                                                        <a (click)="Critical(col)">
+                                                            <i class="fa fa-power-off"></i> Mark As Critical
+                                                        </a>
+                                                    </li>
+                                                    <li *ngIf="col.critical == 'Y'">
+                                                        <a (click)="Normal(col)">
+                                                            <i class="fa fa-times"></i> Mark As Normal
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>{{col.Adv_Order_No}}
+                                            <p *ngIf="col.critical == 'Y'" style="color : red;font-weight: bold;">(CRITICAL)</p>
+                                        </td>
+                                        <td>{{col.Product_Description}}</td>
+                                        <td>{{col.Order_Date | date : 'dd/MMM/yyyy'}}</td>
+                                        <td>{{col.order_Outlet}}</td>
+                                        <td>{{col.Cost_Center_Name}}</td>
+                                        <td>{{col.Del_Date | date : 'dd/MMM/yyyy'}} - {{col.Del_Date_Time}}</td>
+                                        <td>{{col.Del_Time_Range}}</td>
+                                        <td>{{col.Qty}}</td>
+                                        <td>{{col.Weight_in_Pound}}</td>
 
-                                            </tr>
-                                        </ng-template>
-                                        <ng-template pTemplate="paginatorright" let-state>
-                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                                        </ng-template>
-                                </p-table>
-                            </div>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
                     </p-tabView>
                 </div>
             </div>
@@ -180,251 +169,250 @@
     </div>
 </div>
 
-<p-dialog [header]="viewNo" [(visible)]="viewpopUp" [modal]="true" [responsive]="true"
-[style]="{width: '80%', minWidth: '300px'}" [minY]="70"[maximizable]="true" [baseZIndex]="10000">
-<h3>Order Details:</h3>
-<div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Adv Order No</label>
-            <div  class="label-t">{{viewData?.Adv_Order_No }}</div>
-        </div>
-    <div class="col-sm-4">
-        <label class="control-label">Order Date</label>
-            <div  class="label-t" *ngIf="viewData.Order_Date"> {{viewData?.Order_Date | date :"dd/MMM/yyyy"}}</div>
-        </div>
-
-    <div class="col-sm-4">
-        <label class="control-label">Order from </label>
-            <div  class="label-t">{{viewData?.Cost_Center_Name}}</div>
-
-    </div>
-  </div>
-  <div class="clearfix"></div>
-<div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Delivery Date Time</label>
-            <div  class="label-t" ><span *ngIf="viewData.Del_Date"> {{viewData?.Del_Date | date :"dd/MMM/yyyy"}} - {{viewData?.Del_Date_Time}}</span></div>
-
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label">Customer Name</label>
-            <div  class="label-t">{{viewData?.Customer_Name }}</div>
-        </div>
-    <div class="col-sm-4">
-        <label class="control-label">Customer Mobile</label>
-            <div  class="label-t" > {{viewData?.Customer_Mobile }}</div>
-        </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Delivery Time Range</label>
-            <div  class="label-t" ><span *ngIf="viewData.Del_Date"> {{viewData?.Del_Time_Range ? viewData?.Del_Time_Range : '-'}}</span></div>
-
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label">Order Outlet</label>
-            <div  class="label-t">{{viewData?.order_Outlet ? viewData?.order_Outlet : '-' }}</div>
-        </div>
-  </div>
-  <div class="clearfix"></div>
-  <h3>Product Details:</h3>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Product Description</label>
-            <div  class="label-t" >{{viewData?.Product_Description }}</div>
-
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Message on Cake 1</label>
-            <div  class="label-t">{{viewData?.Product_Modifier ? viewData?.Product_Modifier : '-' }}</div>
-        </div>
-    <div class="col-sm-4">
-        <label class="control-label">Message on Cake 2</label>
-            <div  class="label-t" > {{viewData?.Product_Modifier_1 ? viewData?.Product_Modifier_1 : '-' }}</div>
-        </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Message on Cake 3</label>
-            <div  class="label-t" >{{viewData?.Product_Modifier_2 ? viewData?.Product_Modifier_2 : '-' }}</div>
-
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Message on Cake 4</label>
-            <div  class="label-t">{{viewData?.Product_Modifier_3 ? viewData?.Product_Modifier_3 : '-'}}</div>
-        </div>
-    <div class="col-sm-4">
-        <label class="control-label">Message on Cake 5</label>
-            <div  class="label-t" > {{viewData?.Product_Modifier_4 ? viewData?.Product_Modifier_4 : '-' }}</div>
-        </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Flavour</label>
-            <div  class="label-t" >{{viewData?.Flavour ? viewData?.Flavour : '-' }}</div>
-
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Finishing</label>
-            <div  class="label-t">{{viewData?.Finishing ? viewData?.Finishing : '-' }}</div>
-        </div>
-    <div class="col-sm-4">
-        <label class="control-label">Shape</label>
-            <div  class="label-t" > {{viewData?.Shape ? viewData?.Shape : '-' }}</div>
-        </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Tier</label>
-            <div  class="label-t" >{{viewData?.Tier ? viewData?.Tier : '-' }}</div>
-
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Boxes</label>
-            <div  class="label-t">{{viewData?.Boxes ? viewData?.Boxes : '-'}}</div>
-        </div>
-    <div class="col-sm-4">
-        <label class="control-label">Base</label>
-            <div  class="label-t" > {{viewData?.Base ? viewData?.Base : '-' }}</div>
-        </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Changes on Cake</label>
-            <div  class="label-t" >{{viewData?.Changes_on_Cake ? viewData?.Changes_on_Cake : '-' }}</div>
-
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Order Taken By</label>
-            <div  class="label-t">{{viewData?.Order_Taken_By ? viewData?.Order_Taken_By : '-' }}</div>
+<p-dialog [header]="viewNo" [(visible)]="viewpopUp" [modal]="true" [responsive]="true" [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <h3>Order Details:</h3>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Adv Order No</label>
+            <div class="label-t">{{viewData?.Adv_Order_No }}</div>
         </div>
         <div class="col-sm-4">
-       </div>
+            <label class="control-label">Order Date</label>
+            <div class="label-t" *ngIf="viewData.Order_Date"> {{viewData?.Order_Date | date :"dd/MMM/yyyy"}}</div>
+        </div>
 
-  </div>
-  <div class="clearfix"></div>
-  <h3>Costing:</h3>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Rate</label>
-            <div  class="label-t" >{{viewData?.Rate }}</div>
+        <div class="col-sm-4">
+            <label class="control-label">Order from </label>
+            <div class="label-t">{{viewData?.Cost_Center_Name}}</div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Date Time</label>
+            <div class="label-t"><span *ngIf="viewData.Del_Date"> {{viewData?.Del_Date | date :"dd/MMM/yyyy"}} - {{viewData?.Del_Date_Time}}</span></div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Customer Name</label>
+            <div class="label-t">{{viewData?.Customer_Name }}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Customer Mobile</label>
+            <div class="label-t"> {{viewData?.Customer_Mobile }}</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Time Range</label>
+            <div class="label-t"><span *ngIf="viewData.Del_Date"> {{viewData?.Del_Time_Range ? viewData?.Del_Time_Range : '-'}}</span></div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Order Outlet</label>
+            <div class="label-t">{{viewData?.order_Outlet ? viewData?.order_Outlet : '-' }}</div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h3>Product Details:</h3>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Product Description</label>
+            <div class="label-t">{{viewData?.Product_Description }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Message on Cake 1</label>
+            <div class="label-t">{{viewData?.Product_Modifier ? viewData?.Product_Modifier : '-' }}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Message on Cake 2</label>
+            <div class="label-t"> {{viewData?.Product_Modifier_1 ? viewData?.Product_Modifier_1 : '-' }}</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Message on Cake 3</label>
+            <div class="label-t">{{viewData?.Product_Modifier_2 ? viewData?.Product_Modifier_2 : '-' }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Message on Cake 4</label>
+            <div class="label-t">{{viewData?.Product_Modifier_3 ? viewData?.Product_Modifier_3 : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Message on Cake 5</label>
+            <div class="label-t"> {{viewData?.Product_Modifier_4 ? viewData?.Product_Modifier_4 : '-' }}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Flavour</label>
+            <div class="label-t">{{viewData?.Flavour ? viewData?.Flavour : '-' }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Finishing</label>
+            <div class="label-t">{{viewData?.Finishing ? viewData?.Finishing : '-' }}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Shape</label>
+            <div class="label-t"> {{viewData?.Shape ? viewData?.Shape : '-' }}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Tier</label>
+            <div class="label-t">{{viewData?.Tier ? viewData?.Tier : '-' }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Boxes</label>
+            <div class="label-t">{{viewData?.Boxes ? viewData?.Boxes : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Base</label>
+            <div class="label-t"> {{viewData?.Base ? viewData?.Base : '-' }}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Changes on Cake</label>
+            <div class="label-t">{{viewData?.Changes_on_Cake ? viewData?.Changes_on_Cake : '-' }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Order Taken By</label>
+            <div class="label-t">{{viewData?.Order_Taken_By ? viewData?.Order_Taken_By : '-' }}</div>
+        </div>
+        <div class="col-sm-4">
+        </div>
 
     </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Qty</label>
-            <div  class="label-t">{{viewData?.Qty }}</div>
+    <div class="clearfix"></div>
+    <h3>Costing:</h3>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Rate</label>
+            <div class="label-t">{{viewData?.Rate }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Qty</label>
+            <div class="label-t">{{viewData?.Qty }}</div>
         </div>
         <div class="col-sm-4">
             <label class="control-label"> Weight in Poundy</label>
-                <div  class="label-t">{{viewData?.Weight_in_Pound }}</div>
+            <div class="label-t">{{viewData?.Weight_in_Pound }}</div>
         </div>
 
-  </div>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Accomplishment Amt</label>
-            <div  class="label-t" >{{viewData?.Acompanish }}</div>
-
     </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Amount</label>
-            <div  class="label-t">{{viewData?.Amount }}</div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Accomplishment Amt</label>
+            <div class="label-t">{{viewData?.Acompanish }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Amount</label>
+            <div class="label-t">{{viewData?.Amount }}</div>
         </div>
         <div class="col-sm-4">
             <label class="control-label"> Discount Amt</label>
-                <div  class="label-t">{{viewData?.Discount_Amt }}</div>
+            <div class="label-t">{{viewData?.Discount_Amt }}</div>
         </div>
 
-  </div>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Gross Amt</label>
-            <div  class="label-t" >{{viewData?.Gross_Amt }}</div>
-
     </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Net Amount</label>
-            <div  class="label-t">{{viewData?.Net_Amount }}</div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Gross Amt</label>
+            <div class="label-t">{{viewData?.Gross_Amt }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Net Amount</label>
+            <div class="label-t">{{viewData?.Net_Amount }}</div>
         </div>
         <div class="col-sm-4">
             <label class="control-label"> Rounded Off</label>
-                <div  class="label-t">{{viewData?.Rounded_Off }}</div>
+            <div class="label-t">{{viewData?.Rounded_Off }}</div>
         </div>
 
-  </div>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Amount Payable</label>
-            <div  class="label-t" >{{viewData?.Amount_Payable }}</div>
-
     </div>
-    <div class="col-sm-4">
-        <label class="control-label"> Net Payable</label>
-            <div  class="label-t">{{viewData?.Amount_Payable }}</div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Amount Payable</label>
+            <div class="label-t">{{viewData?.Amount_Payable }}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Net Payable</label>
+            <div class="label-t">{{viewData?.Amount_Payable }}</div>
         </div>
         <div class="col-sm-4">
             <label class="control-label"> Total Paid</label>
-                <div  class="label-t">{{viewData?.Total_Paid }}</div>
+            <div class="label-t">{{viewData?.Total_Paid }}</div>
         </div>
 
-  </div>
-  <div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Net Due</label>
-            <div  class="label-t" >{{viewData?.Net_Due }}</div>
-
     </div>
-    <div class="col-sm-4">
-     </div>
-    <div class="col-sm-4">
-     </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Net Due</label>
+            <div class="label-t">{{viewData?.Net_Due }}</div>
+
+        </div>
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4">
+        </div>
     </div>
     <div class="clearfix"></div>
     <h3>Delivery :</h3>
     <div class="form-group">
         <div class="col-sm-4">
             <label class="control-label">Delivery Outlet Name</label>
-                <div  class="label-t" >{{viewData?.Cost_Center_Name ? viewData?.Cost_Center_Name : '-' }}</div>
+            <div class="label-t">{{viewData?.Cost_Center_Name ? viewData?.Cost_Center_Name : '-' }}</div>
 
         </div>
         <div class="col-sm-4">
             <label class="control-label"> Delivery Type</label>
-                <div  class="label-t">{{viewData?.Delivery_Type }}</div>
-            </div>
-            <div class="col-sm-4">
-                <label class="control-label"> Delivery Mobile No</label>
-                    <div  class="label-t">{{viewData?.Delivery_Mobile_No ? viewData?.Delivery_Mobile_No : '-'}}</div>
-            </div>
+            <div class="label-t">{{viewData?.Delivery_Type }}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Delivery Mobile No</label>
+            <div class="label-t">{{viewData?.Delivery_Mobile_No ? viewData?.Delivery_Mobile_No : '-'}}</div>
+        </div>
 
-      </div>
-      <div class="form-group">
+    </div>
+    <div class="form-group">
         <div class="col-sm-4">
             <label class="control-label">Delivery Alt Mobile No</label>
-                <div  class="label-t" >{{viewData?.Delivery_Alt_Mobile_No ? viewData?.Delivery_Alt_Mobile_No : '-' }}</div>
+            <div class="label-t">{{viewData?.Delivery_Alt_Mobile_No ? viewData?.Delivery_Alt_Mobile_No : '-' }}</div>
 
         </div>
         <div class="col-sm-4">
             <label class="control-label">Delivery Name</label>
-                <div  class="label-t">{{viewData?.Delivery_Name ? viewData?.Delivery_Name : '-'}}</div>
-            </div>
-            <div class="col-sm-4">
-                <label class="control-label">Delivery Address</label>
-                    <div  class="label-t">{{viewData?.Delivery_Address ? viewData?.Delivery_Address : '-'}}</div>
-            </div>
+            <div class="label-t">{{viewData?.Delivery_Name ? viewData?.Delivery_Name : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Address</label>
+            <div class="label-t">{{viewData?.Delivery_Address ? viewData?.Delivery_Address : '-'}}</div>
+        </div>
 
-      </div>
-      <div class="form-group">
+    </div>
+    <div class="form-group">
         <div class="col-sm-4">
             <label class="control-label">Delivery Pin Code</label>
-                <div  class="label-t" >{{viewData?.Delivery_Pin_Code ? viewData?.Delivery_Pin_Code : '-' }}</div>
+            <div class="label-t">{{viewData?.Delivery_Pin_Code ? viewData?.Delivery_Pin_Code : '-' }}</div>
 
         </div>
         <div class="col-sm-4">
             <label class="control-label">Delivery Near By</label>
-                <div  class="label-t">{{viewData?.Delivery_Near_By ? viewData?.Delivery_Near_By : '-'}}</div>
-            </div>
-       </div>
+            <div class="label-t">{{viewData?.Delivery_Near_By ? viewData?.Delivery_Near_By : '-'}}</div>
+        </div>
+    </div>
 
 </p-dialog>
