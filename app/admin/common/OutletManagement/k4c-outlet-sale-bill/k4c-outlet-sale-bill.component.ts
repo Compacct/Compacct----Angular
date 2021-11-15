@@ -83,6 +83,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   cancleFormSubmitted = false;
   Can_Remarks = false;
   couponflag = false;
+  Del_Cost_Cent_ID : any;
 
   constructor(
     private Header: CompacctHeader,
@@ -136,6 +137,15 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
           this.getwalletamount();
           this.ObjaddbillForm.Advance = this.QueryStringObj.Order_No;
           this.ObjaddbillForm.Order_Date = this.QueryStringObj.Order_Date;
+        }
+        if(this.QueryStringObj.Edit_from_Border){
+          this.CustomerDisabledFlag = true;
+          this.getorderno(this.QueryStringObj);
+          this.getwalletamount();
+          this.Del_Cost_Cent_ID = this.QueryStringObj.Del_Cost_Cent_ID;
+         // console.log("this.Del_Cost_Cent_ID===",this.Del_Cost_Cent_ID)
+          // this.ObjaddbillForm.Advance = this.QueryStringObj.Order_No;
+          // this.ObjaddbillForm.Order_Date = this.QueryStringObj.Order_Date;
         }
       }
     } );
@@ -1279,6 +1289,7 @@ getorderno(orderno){
     this.clearData();
     if(orderno.Adv_Order_No){
     this.Adv_Order_No = orderno.Adv_Order_No;
+    //this.Del_Cost_Cent_ID = orderno.Del_Cost_Cent_ID,
     this.tabIndexToView = 1;
     this.IsAdvance = true;
      //console.log("this.EditDoc_No ", this.Adv_Order_No );
@@ -1288,7 +1299,7 @@ getorderno(orderno){
 getadvorderdetails(Adv_Order_No){
     //console.log('Bill No ===', this.Adv_Order_No)
     const TempObj = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Cost_Cen_ID : this.QueryStringObj.Del_Cost_Cent_ID ? this.QueryStringObj.Del_Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
       Doc_No : this.Adv_Order_No
      }
     const obj = {

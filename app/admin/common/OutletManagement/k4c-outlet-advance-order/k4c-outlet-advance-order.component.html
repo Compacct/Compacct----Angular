@@ -144,8 +144,8 @@
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a (click)="PrintBill(col)">
-                                                                <i class="fa fa-print" aria-hidden="true"></i> Print
+                                                            <a (click)="PrintOrder(col)">
+                                                                <i class="fa fa-print" aria-hidden="true"></i> Order Print
                                                             </a>
                                                         </li>
                                                         <li *ngIf='col.Cancel_Order === "N" && col.Can_Cancel === "Y"'>
@@ -153,9 +153,14 @@
                                                                 <i class="fa fa-times" aria-hidden="true"></i> Cancel
                                                             </a>
                                                         </li>
-                                                        <li *ngIf='col.Cancel_Order === "N"'>
-                                                            <a (click)="Create(col)">
+                                                        <li *ngIf='col.Cancel_Order === "N" && !col.Bill_No && col.Cost_Cent_ID == col.Del_Cost_Cent_ID'>
+                                                            <a (click)="CreateBill(col,'advordertosalebill')">
                                                                 <i class="fa fa-file-text-o" aria-hidden="true"></i> Create Bill
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf='col.Bill_No'>
+                                                            <a (click)="PrintBill(col)">
+                                                                <i class="fa fa-print" aria-hidden="true"></i> Bill Print
                                                             </a>
                                                         </li>
                                                         <li *ngIf='col.Cancel_Order === "N" && col.Net_Due > 0 && col.Net_Due != 0'>

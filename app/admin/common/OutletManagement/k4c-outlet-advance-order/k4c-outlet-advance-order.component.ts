@@ -8,7 +8,7 @@ import { DatePickerComponent, DateTimePickerModule, TimePickerComponent } from "
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { time } from 'console';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { valHooks } from 'jquery';
 import { compareElementParent } from '@syncfusion/ej2-base';
 import { NgxUiLoaderService } from "ngx-ui-loader";
@@ -1190,7 +1190,7 @@ geteditlist(Adv_Order_No){
 })
 }
 //BROWSE BILL
-PrintBill(obj) {
+PrintOrder(obj) {
   if (obj.Adv_Order_No) {
     window.open("/Report/Crystal_Files/K4C/K4C_Advance_Order_Print.aspx?DocNo=" + obj.Adv_Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
@@ -1377,6 +1377,30 @@ DeliveryDetailSubmit(){
 HoldBill(){
   this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Save & Print Bill';
 
+}
+RedirectTo (obj){
+  const navigationExtras: NavigationExtras = {
+    queryParams: obj,
+  };
+  this.router.navigate([obj.Redirect_To], navigationExtras);
+}
+CreateBill(col,val){
+  if (val === 'advordertosalebill') {
+    const TempObj = {
+      Redirect_To : './K4C_Outlet_Sale_Bill',
+      Adv_Order_No : col.Adv_Order_No,
+      Del_Cost_Cent_ID : col.Del_Cost_Cent_ID,
+      Edit_from_Border : true
+    }
+    this.RedirectTo(TempObj);
+  }
+}
+PrintBill(obj) {
+  if (obj.Bill_No) {
+    window.open("/Report/Crystal_Files/K4C/K4C_Bill_Print.aspx?DocNo=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
 }
 
 clearData(){
