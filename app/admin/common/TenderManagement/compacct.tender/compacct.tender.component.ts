@@ -565,15 +565,15 @@ StateList = [];
     this.ObjTask = new Task();
     this.ObjFee = new Fee();
     this.ObjEMD = new EMD();
-    if(obj.Foot_Fall_ID){
+    if(obj.Tender_Doc_ID){
       this.ObjTender = obj;
       this.TenderAmountChange(obj.Tender_Amount);
       this.TenderFeeChange(obj.T_Fee_Amount);
       this.TenderEMDChange(obj.EMD_Amount);
       this.TenderPeriodOfWorkChange(obj.Period_Of_Work);
-      this.GetTask(obj.Foot_Fall_ID,false);
-      this.GetDocument(obj.Foot_Fall_ID);
-      this.viewBooth(obj.Foot_Fall_ID)
+      this.GetTask(obj.Tender_Doc_ID,false);
+      this.GetDocument(obj.Tender_Doc_ID);
+      this.viewBooth(obj.Tender_Doc_ID)
     }
   }
   CloseViewModal(){
@@ -587,7 +587,7 @@ StateList = [];
   viewBooth(footfallID) {
     if(footfallID) {
       const obj = new HttpParams()
-      .set("Foot_Fall_ID",footfallID);
+      .set("Tender_Doc_ID",footfallID);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj })
       .subscribe((data: any) => {
@@ -600,7 +600,7 @@ StateList = [];
   }
   GetDocument(foofFall) {
     if(foofFall) {
-      const params = new HttpParams().set("Foot_Fall_ID", foofFall);
+      const params = new HttpParams().set("Tender_Doc_ID", foofFall);
       this.$http
         .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Document_Json", { params })
         .subscribe((data: any) => {
@@ -612,7 +612,7 @@ StateList = [];
   }
   GetTask(foofFall ,flag) {
     if(foofFall){
-      const obj = new HttpParams().set("Foot_Fall_ID", foofFall);
+      const obj = new HttpParams().set("Tender_Doc_ID", foofFall);
       this.$http
         .get("/BL_CRM_Txn_Enq_Task/Get_My_Task_Retrieve_FootFall", { params: obj })
         .subscribe((data: any) => {
@@ -704,7 +704,7 @@ StateList = [];
         console.log(data)
       if (data.success) {
         this.Spinner = false;
-        // if (this.ObjTender.Foot_Fall_ID) {
+        // if (this.ObjTender.Tender_Doc_ID) {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -747,7 +747,7 @@ StateList = [];
       this.$http.post(UrlAddress, obj).subscribe((data: any) => {
         console.log(data)
       if (data.success) {
-        // if (this.ObjTender.Foot_Fall_ID) {
+        // if (this.ObjTender.Tender_Doc_ID) {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -791,7 +791,7 @@ StateList = [];
         console.log(data)
       if (data.success) {
         this.Spinner = false;
-        // if (this.ObjTender.Foot_Fall_ID) {
+        // if (this.ObjTender.Tender_Doc_ID) {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -878,7 +878,7 @@ StateList = [];
         console.log(data)
       if (data.success) {
         this.Spinner = false;
-        // if (this.ObjTender.Foot_Fall_ID) {
+        // if (this.ObjTender.Tender_Doc_ID) {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -917,7 +917,7 @@ StateList = [];
  FecthTask(footfallID) {
    let arr = [];
    for(let i=0; i < this.IntimationSelect.length;i++){
-     this.ObjTask.Foot_Fall_ID = Number(footfallID);
+     this.ObjTask.Tender_Doc_ID = Number(footfallID);
      this.ObjTask.Tagged_To_User_ID = this.IntimationSelect[i];
      this.ObjTask.Created_By =  this.commonApi.CompacctCookies.User_ID;
      this.ObjTask.Last_Updated_On =  this.DateService.dateConvert(new Date());
@@ -987,6 +987,8 @@ StateList = [];
       .get("/BL_CRM_Txn_Enq_Tender/Get_All_Tender_Browse", { params: obj })
       .subscribe((data: any) => {
         this.TenderList = data.length ? JSON.parse(data) : [];
+        this.BidTenderList = data.length ? JSON.parse(data)[0] : [];
+        this.TenderAmountChange(this.BidTenderList.Tender_Amount);
         this.BackupTenderList = data.length ? JSON.parse(data) : [];
         const distARR = this.GetDistinctItems.GetMultipleDistinct(this.BackupTenderList,['Tender Authority','Tender Calling Div','Tender Category','State','Location']);
         this.DTAutorityList = distARR[0];
@@ -1119,7 +1121,7 @@ StateList = [];
         });
          // this.clearData();
           this.FootfalID = foot;
-          this.ObjTender.Foot_Fall_ID = foot;
+          this.ObjTender.Tender_Doc_ID = foot;
           this.Spinner = false;
           this.buttonname = "Update";
         console.group("Compacct V2");
@@ -1297,7 +1299,7 @@ StateList = [];
   // Edit & UPDATES
   EditTender(obj) {
     this.clearData();
-    if (obj.Foot_Fall_ID) {
+    if (obj.Tender_Doc_ID) {
     this.tabIndexToView = 1;
     this.items = ["BROWSE", "UPDATE"];
     this.buttonname = "Update";
@@ -1307,7 +1309,7 @@ StateList = [];
     this.TenderFeeChange(obj.T_Fee_Amount);
     this.TenderEMDChange(obj.EMD_Amount);
     this.TenderPeriodOfWorkChange(obj.Period_Of_Work);
-    this.FootfalID = obj.Foot_Fall_ID;
+    this.FootfalID = obj.Tender_Doc_ID;
     this.GetTask(this.FootfalID , true);
     this.TenderPublishDate = new Date(obj.Tender_Publish_Date);
     this.ObjTender.Tender_Publish_Date =  this.DateService.dateTimeConvert(new Date(obj.Tender_Publish_Date));
@@ -1468,7 +1470,7 @@ StateList = [];
   onConfirm() {
     if ( this.TenderId) {
       this.$http
-        .post("/BL_CRM_Txn_Enq_Tender/Delete_Tender", { Foot_Fall_ID:  this.TenderId })
+        .post("/BL_CRM_Txn_Enq_Tender/Delete_Tender", { Tender_Doc_ID:  this.TenderId })
         .subscribe((data: any) => {
           if (data.success === true) {
             this.onReject();
@@ -1489,8 +1491,8 @@ StateList = [];
   }
   DeleteTender(obj) {
     this.TenderId = undefined;
-    if (obj.Foot_Fall_ID) {
-      this.TenderId = obj.Foot_Fall_ID;
+    if (obj.Tender_Doc_ID) {
+      this.TenderId = obj.Tender_Doc_ID;
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "c",
@@ -1727,28 +1729,30 @@ GetFinancialYearList() {
       this.FinancialYearList = data ? JSON.parse(data) : [];
     });
 }
-GetIFBidExist(footfallId) {
+GetIFBidExist(TenderDocID) {
   if (this.PDFFlag) {
     this.fileInput.clear();
     this.BOQdataString =  [];
   }
-  if(footfallId) {
-    const params = new HttpParams().set("Foot_Fall_ID", footfallId);
+  if(TenderDocID) {
+    const params = new HttpParams().set("Tender_Doc_ID", TenderDocID);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Bidding_Common_Json", { params })
       .subscribe((data: any) => {
        const TempArr = data ? JSON.parse(data) : [];
-       if(TempArr[0].Tender_Inviting_Authority) {
+       console.log("all data TempArr",TempArr);
+       if(TempArr[0].Tender_Doc_ID) {
          this.BidEditFlag = true;
          const obj = TempArr[0];
           this.ObjBidOpening = obj;
+          this.BidOpenListView = obj;
           if(this.ObjBidOpening['BOQ_File_Name']) {
-            this.GetBOQExcelList(footfallId);
+            this.GetBOQExcelList(TenderDocID);
           } else {
             this.BOQExcelList = [];
           }
-          this.GetBidOpenList(footfallId);
-          this.GetRankBidOpenList(footfallId);
+          this.GetBidOpenList(TenderDocID);
+          this.GetRankBidOpenList(TenderDocID);
           if(obj.Financial_Bid_Status === 'AWARDING THE TENDER') {
           this.ISDAmountChange(obj.ISD_Amount);
           this.APSDAmountChange(obj.APSD_Amount);
@@ -1802,29 +1806,45 @@ getFileName(url) {
     return name;
   }
 }
-GetBidOpenList(footfallId) {
-  if(footfallId) {
-    const params = new HttpParams().set("Foot_Fall_ID", footfallId);
+GetBidOpenList(TenderDocID) {
+  if(TenderDocID) {
+    const params = new HttpParams().set("Tender_Doc_ID", TenderDocID);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Bidding_First_Table_Json", { params })
       .subscribe((data: any) => {
         const Arr = data ? JSON.parse(data) : [];
         this.BidOpenListView = Arr;
+        // this.BidOpenListView.forEach(el=>{
+        //   this.BidOpenListView['Quoted_Rate'] = el.Rate
+        // })
+        for(let i = 0; i<this.BidOpenListView.length; i++){
+          if(!this.BidOpenListView[i]['Quoted_Percentage']){
+            this.BidOpenListView[i]['Quoted_Rate'] = this.BidOpenListView[i]['Rate']
+          }
+         
+        }
+        console.log("Get BidOpenListView",this.BidOpenListView);
       });
   }
 }
-GetRankBidOpenList(footfallId) {
+GetRankBidOpenList(TenderDocID) {
   this.BidOpenListViewByRate = [];
   this.BidOpenListViewByLottery = [];
   this.BidOpenListViewByRateFlag = false;
   this.BidOpenListViewByLotteryFlag = false;
-  if(footfallId) {
-    const params = new HttpParams().set("Foot_Fall_ID", footfallId);
+  if(TenderDocID) {
+    const params = new HttpParams().set("Tender_Doc_ID", TenderDocID);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Bidding_Rank_Json", { params })
       .subscribe((data: any) => {
         const Arr = data ? JSON.parse(data) : [];
-        console.log(Arr)
+        for(let i = 0; i<Arr.length; i++){
+          if(!Arr[i]['Quoted_Percentage']){
+            Arr[i]['Quoted_Rate'] = Arr[i]['Rate']
+          }
+         
+        }
+        console.log("Get BidOpenListViewByRate",Arr);
         if(this.ObjBidOpening.Rank_Type === 'Normal'){
           this.BidOpenListViewByRate = Arr;
           this.BidOpenListViewByRateFlag = true;
@@ -1839,7 +1859,7 @@ GetRankBidOpenList(footfallId) {
 GetBOQExcelList(footfallId) {
   this.BOQExcelList = [];
   if(footfallId) {
-    const params = new HttpParams().set("Foot_Fall_ID", footfallId);
+    const params = new HttpParams().set("Tender_Doc_ID", footfallId);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_Bidding_BOQ_Json", { params })
       .subscribe((data: any) => {
@@ -1882,20 +1902,21 @@ clearBid() {
   this.DivisionList = [];
   this.CircleList = [];
   this.ReasonSelect = [];
-  this.ObjBidOpening.Foot_Fall_ID =  undefined;
+  this.ObjBidOpening.Tender_Doc_ID =  undefined;
   this.ObjBidOpening = new BidOpening();
 }
 ViewBidOpening(obj) {
   this.TenderDetails = undefined;
+  console.log("BidTenderList",this.BidTenderList);
   this.clearBid();
   this.BidEditFlag = false;
   if(obj.Tender_Doc_ID){
-    this.BidTenderValue(obj.Tender_Doc_ID);
-    this.GetCircle(obj.Tender_Org_ID);
+    this.ObjBidOpening.Tender_Doc_ID = obj.Tender_Doc_ID;
+    this.ObjBidOpeningList.Tender_Doc_ID = obj.Tender_Doc_ID;
+     this.GetCircle(obj.Tender_Org_ID);
     this.TenderDetails = obj;
-    this.ObjBidOpening.Foot_Fall_ID = obj.Tender_Doc_ID;
     this.EstimatedRateChange(obj.Tender_Amount);
-    //this.GetIFBidExist(obj. Tender_Doc_ID);
+    this.GetIFBidExist(obj.Tender_Doc_ID);
      const ctrl = this;
     setTimeout(() => {
       ctrl.tabIndexToView = 2;
@@ -1904,27 +1925,27 @@ ViewBidOpening(obj) {
 
 }
 
-BidTenderValue(Tender_Doc_ID){
-  if(Tender_Doc_ID){
-    const obj = new HttpParams()
-    .set("Tender_Doc_ID",Tender_Doc_ID);
-  this.$http
-    .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj })
-    .subscribe((data: any) => {
-      const obj = data ? JSON.parse(data)[0] : {};
-      console.log("tenerFeeList",obj);
-       if (obj) {
-          this.BidTenderList = obj;
-          this.TenderAmountChange(obj.Tender_Amount);
-       }
-    });
-  }
+// BidTenderValue(Tender_Doc_ID){
+//   if(Tender_Doc_ID){
+//     const obj = new HttpParams()
+//     .set("Tender_Doc_ID",Tender_Doc_ID);
+//   this.$http
+//     .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj })
+//     .subscribe((data: any) => {
+//       const obj = data ? JSON.parse(data)[0] : {};
+//       console.log("tenerFeeList",obj);
+//        if (obj) {
+//           this.BidTenderList = obj;
+//           this.TenderAmountChange(obj.Tender_Amount);
+//        }
+//     });
+//   }
   
-}
+// }
 
 RefreshTenderData() {
-  if (this.ObjBidOpening.Foot_Fall_ID) {
-    const params = new HttpParams().set("Foot_Fall_ID", this.ObjBidOpening.Foot_Fall_ID);
+  if (this.ObjBidOpening.Tender_Doc_ID) {
+    const params = new HttpParams().set("Tender_Doc_ID", this.ObjBidOpening.Tender_Doc_ID);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Amount_For_Refresh", { params })
       .subscribe((data: any) => {
@@ -1934,12 +1955,12 @@ RefreshTenderData() {
           this.EstimatedRateChange(obj.Tender_Amount);
           if (this.BidOpenListView.length) {
             for(let i = 0; i < this.BidOpenListView.length; i++) {
-              this.BidOpenListView[i].Estimated_Rate = obj.Tender_Amount;
+              this.BidOpenListView[i].Tender_Value = obj.Tender_Amount;
               const n = String(this.BidOpenListView[i].Quoted_Percentage).includes("-");
               const percentage = n ? String(this.BidOpenListView[i].Quoted_Percentage).replace("-", "") : this.BidOpenListView[i].Quoted_Percentage;
-              const PercentageVal = (( Number(percentage) / 100) * Number(this.BidOpenListView[i].Estimated_Rate));
-              const Rate = n ?  Number(this.BidOpenListView[i].Estimated_Rate) - PercentageVal :  Number(this.BidOpenListView[i].Estimated_Rate) + PercentageVal;
-             // const EstimatedRate = this.BidOpenListView[i].Estimated_Rate;
+              const PercentageVal = (( Number(percentage) / 100) * Number(this.BidOpenListView[i].Tender_Value));
+              const Rate = n ?  Number(this.BidOpenListView[i].Tender_Value) - PercentageVal :  Number(this.BidOpenListView[i].Tender_Value) + PercentageVal;
+             // const EstimatedRate = this.BidOpenListView[i].Tender_Value;
               this.BidOpenListView[i].Rate = Rate;
               this.BidOpenListView[i].Rate_In_Words = this.convertNumberToWords(Rate);
               this.BidOpenListView[i].Less_Excess = (n && !(Number(percentage) === 0)) ? 'Less' : Number(this.BidOpenListView[i].Quoted_Percentage) ? 'Excess' : 'Scheduled Rate';
@@ -1948,12 +1969,12 @@ RefreshTenderData() {
           }
           if (this.BidOpenListViewByRate.length) {
             for(let i = 0; i < this.BidOpenListViewByRate.length; i++) {
-              this.BidOpenListViewByRate[i].Estimated_Rate = obj.Tender_Amount;
+              this.BidOpenListViewByRate[i].Tender_Value = obj.Tender_Amount;
               const n = String(this.BidOpenListViewByRate[i].Quoted_Percentage).includes("-");
               const percentage = n ? String(this.BidOpenListViewByRate[i].Quoted_Percentage).replace("-", "") : this.BidOpenListViewByRate[i].Quoted_Percentage;
-              const PercentageVal = (( Number(percentage) / 100) * Number(this.BidOpenListViewByRate[i].Estimated_Rate));
-              const Rate = n ?  Number(this.BidOpenListViewByRate[i].Estimated_Rate) - PercentageVal :  Number(this.BidOpenListViewByRate[i].Estimated_Rate) + PercentageVal;
-              //const EstimatedRate = this.BidOpenListViewByRate[i].Estimated_Rate;
+              const PercentageVal = (( Number(percentage) / 100) * Number(this.BidOpenListViewByRate[i].Tender_Value));
+              const Rate = n ?  Number(this.BidOpenListViewByRate[i].Tender_Value) - PercentageVal :  Number(this.BidOpenListViewByRate[i].Tender_Value) + PercentageVal;
+              //const EstimatedRate = this.BidOpenListViewByRate[i].Tender_Value;
               this.BidOpenListViewByRate[i].Rate = Rate;
               this.BidOpenListViewByRate[i].Rate_In_Words = this.convertNumberToWords(Rate);
               this.BidOpenListViewByRate[i].Less_Excess = (n && !(Number(percentage) === 0)) ? 'Less' : Number(this.BidOpenListViewByRate[i].Quoted_Percentage) ? 'Excess' : 'Scheduled Rate';
@@ -1963,12 +1984,12 @@ RefreshTenderData() {
           }
           if (this.BidOpenListViewByLottery.length) {
             for(let i = 0; i < this.BidOpenListViewByLottery.length; i++) {
-              this.BidOpenListViewByLottery[i].Estimated_Rate = obj.Tender_Amount;
+              this.BidOpenListViewByLottery[i].Tender_Value = obj.Tender_Amount;
               const n = String(this.BidOpenListViewByLottery[i].Quoted_Percentage).includes("-");
               const percentage = n ? String(this.BidOpenListViewByLottery[i].Quoted_Percentage).replace("-", "") : this.BidOpenListViewByLottery[i].Quoted_Percentage;
-              const PercentageVal = (( Number(percentage) / 100) * Number(this.BidOpenListViewByLottery[i].Estimated_Rate));
-              const Rate = n ?  Number(this.BidOpenListViewByLottery[i].Estimated_Rate) - PercentageVal :  Number(this.BidOpenListViewByLottery[i].Estimated_Rate) + PercentageVal;
-             // const EstimatedRate = this.BidOpenListViewByLottery[i].Estimated_Rate;
+              const PercentageVal = (( Number(percentage) / 100) * Number(this.BidOpenListViewByLottery[i].Tender_Value));
+              const Rate = n ?  Number(this.BidOpenListViewByLottery[i].Tender_Value) - PercentageVal :  Number(this.BidOpenListViewByLottery[i].Tender_Value) + PercentageVal;
+             // const EstimatedRate = this.BidOpenListViewByLottery[i].Tender_Value;
               this.BidOpenListViewByLottery[i].Rate = Rate;
               this.BidOpenListViewByLottery[i].Rate_In_Words = this.convertNumberToWords(Rate);
               this.BidOpenListViewByLottery[i].Less_Excess = (n && !(Number(percentage) === 0)) ? 'Less' : Number(this.BidOpenListViewByLottery[i].Quoted_Percentage) ? 'Excess' : 'Scheduled Rate';
@@ -1990,7 +2011,7 @@ RefreshTenderData() {
 }
 EstimatedRateChange(e){
   console.log(e);
-  this.ObjBidOpeningList.Estimated_Rate = undefined;
+  this.ObjBidOpeningList.Tender_Value = undefined;
   if(e) {
     const x= e.toString();
     const number = Number(e);
@@ -1999,7 +2020,7 @@ EstimatedRateChange(e){
        style: 'currency',
        currency: 'INR'
    });
-   this.ObjBidOpeningList.Estimated_Rate = Number(e);
+   this.ObjBidOpeningList.Tender_Value = Number(e);
    this.EstimatedRate = k;
   }
 }
@@ -2153,15 +2174,15 @@ BidAmountView(e){
   }
 }
 GetDetailsTender(obj) {
-  if(obj.Foot_Fall_ID) {
+  if(obj.Tender_Doc_ID) {
     const obj1 = new HttpParams()
-    .set("Foot_Fall_ID",obj.Foot_Fall_ID);
+    .set("Tender_Doc_ID",obj.Tender_Doc_ID);
   this.$http
     .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj1 })
     .subscribe((data: any) => {
       console.log(data);
       const obj2 = data ? JSON.parse(data)[0] : {};
-      this.TenderDetails = obj.Foot_Fall_ID;
+      this.TenderDetails = obj.Tender_Doc_ID;
       this.tabIndexToView = 2;
     });
   }
@@ -2177,21 +2198,20 @@ AddBidOpen() {
     const PercentageVal = (( Number(percentage) / 100) * Number(this.tenderValue));
     const Rate = n ?  Number(this.tenderValue) - PercentageVal :  Number(this.tenderValue) + PercentageVal;
     const EstimatedRate = this.tenderValue;
-    const footfall = this.ObjBidOpening.Foot_Fall_ID;
+    const footfall = this.ObjBidOpening.Tender_Doc_ID;
     this.ObjBidOpeningList.Quoted_Percentage = (Number(percentage) === 0) ? '0' : this.ObjBidOpeningList.Quoted_Percentage;
-    this.ObjBidOpeningList.Foot_Fall_ID = footfall;
+    this.ObjBidOpeningList.Tender_Doc_ID = footfall;
     this.ObjBidOpeningList.Rate = Rate;
     this.ObjBidOpeningList.Rate_In_Words = this.convertNumberToWords(Rate);
     // this.ObjBidOpeningList.Less_Excess = (n && !(Number(percentage) === 0)) ? 'Less' : Number(this.ObjBidOpeningList.Quoted_Percentage) ? 'Excess' : 'Scheduled Rate';
     this.ObjBidOpeningList.Sl_No = Number(this.BidOpenListView.length) + 1;
-    this.ObjBidOpeningList.Estimated_Rate = this.tenderValue;
+    this.ObjBidOpeningList.Tender_Value = this.tenderValue;
     this.BidOpenListView.push(this.ObjBidOpeningList);
     this.BidOpeningListFormSubmitted = false;
     this.ObjBidOpeningList = new BidOpeningList();
     this.tenderValue = undefined
-    this.ObjBidOpeningList.Estimated_Rate = this.tenderValue;
-    this.ObjBidOpeningList.Foot_Fall_ID = footfall;
-    console.log("ObjBidOpeningList",this.ObjBidOpeningList);
+    this.ObjBidOpeningList.Tender_Value = this.tenderValue;
+    this.ObjBidOpeningList.Tender_Doc_ID = footfall;
     }
     else {
       const Rate = Number(this.ObjBidOpeningList.Quoted_Rate)
@@ -2199,18 +2219,16 @@ AddBidOpen() {
       this.ObjBidOpeningList.Rate_In_Words = this.convertNumberToWords(Rate);
       // this.ObjBidOpeningList.Less_Excess = (n && !(Number(percentage) === 0)) ? 'Less' : Number(this.ObjBidOpeningList.Quoted_Percentage) ? 'Excess' : 'Scheduled Rate';
       this.ObjBidOpeningList.Sl_No = Number(this.BidOpenListView.length) + 1;
-      this.ObjBidOpeningList.Estimated_Rate = this.tenderValue;
+      this.ObjBidOpeningList.Tender_Value = this.tenderValue;
       this.BidOpenListView.push(this.ObjBidOpeningList);
       this.BidOpeningListFormSubmitted = false;
       this.ObjBidOpeningList = new BidOpeningList();
       this.tenderValue = undefined
-      this.ObjBidOpeningList.Estimated_Rate = this.tenderValue;
+      this.ObjBidOpeningList.Tender_Value = this.tenderValue;
       
-      console.log("ObjBidOpeningList",this.ObjBidOpeningList);
       
     }
-    
-  
+    console.log("ObjBidOpeningList",this.BidOpenListView);
   }
   if (exitsFlag.length) {
     this.compacctToast.clear();
@@ -2332,7 +2350,7 @@ RetriveRankBidding(RankArr) {
     }
     this.BidOpenListViewByLottery.push(arr[i]);
   }
-  console.log( this.BidOpenListViewByLottery)
+  console.log( "BidOpenListViewByLottery",this.BidOpenListViewByLottery)
 }
 RankBiddingCompanies() {
   let found = false;
@@ -2340,10 +2358,10 @@ RankBiddingCompanies() {
   this.BidOpenListViewByLotteryFlag = false;
   this.BidOpenListViewByLottery = [];
   this.BidOpenListViewByRate  = [];
-
+   console.log("BidOpenListView",this.BidOpenListView);
   for(let i = 0; i < this.BidOpenListView.length; i++) {
-      if (this.BidOpenListView[i].Quoted_Percentage) {
-        if(this.BidOpenListView[i].Quoted_Percentage === this.BidOpenListView[0].Quoted_Percentage) {
+      if (this.BidOpenListView[i].Rate) {
+        if(this.BidOpenListView[i].Rate === this.BidOpenListView[0].Rate) {
           found = false;
         } else {
           found = true;
@@ -2367,6 +2385,7 @@ RankBiddingCompanies() {
     for(let i = 0; i < this.BidOpenListViewByRate.length; i++) {
       const rank = 'L' + (i+1);
       this.BidOpenListViewByRate[i].Rank =  rank;
+      this.BidOpenListViewByRate[i].Rank =  rank;
   }
     this.BidOpenListViewByRateFlag = true;
 
@@ -2382,7 +2401,8 @@ RankBiddingCompanies() {
       let k = 0 ;
       const rank = 'L' + (i+1);
       const objTemp = new RankBidOpeningList ();
-      objTemp.Foot_Fall_ID =  this.TenderDetails.Foot_Fall_ID;
+      objTemp.Tender_Doc_ID =  this.TenderDetails.Tender_Doc_ID;
+      objTemp.Tender_Doc_ID =  this.TenderDetails.Tender_Doc_ID;
       for(let r = 0; r < valueArr.length; r++){
         if(arr[i].Rate === valueArr[r]) {
           k++;
@@ -2391,9 +2411,10 @@ RankBiddingCompanies() {
       if (k === 1) {
         objTemp.Lottery_Flag = 'FIXED';
         objTemp.Sl_No = arr[i].Sl_No;
-        objTemp.Estimated_Rate = arr[i].Estimated_Rate;
+        objTemp.Tender_Value = arr[i].Tender_Value;
         objTemp.Bidder_Name = arr[i].Bidder_Name;
         objTemp.Quoted_Percentage = arr[i].Quoted_Percentage;
+        objTemp.Quoted_Rate = arr[i].Quoted_Rate;
         objTemp.Rate = arr[i].Rate;
         objTemp.Rate_In_Words = this.convertNumberToWords(arr[i].Rate);
       }
@@ -2409,6 +2430,7 @@ RankBiddingCompanies() {
     }
   this.BidOpenListViewByLotteryFlag = true;
   }
+  console.log("BidOpenListViewByLottery",this.BidOpenListViewByLottery);
 }
 checkBidderSelectLottery(bidderName) {
   const arr = [...this.BidOpenListViewByLottery]
@@ -2420,19 +2442,28 @@ DeleteRankBidOpenList(index){
  // this.RankBiddingCompanies();
 }
 LotteryBidderNameChange(i,obj) {
+      this.BidOpenListViewByLottery[i].Tender_Value = undefined;
+      this.BidOpenListViewByLottery[i].Quoted_Percentage = undefined;
+      this.BidOpenListViewByLottery[i].Rate = undefined;
+      this.BidOpenListViewByLottery[i].Quoted_Rate = undefined;
+      this.BidOpenListViewByLottery[i].Rate_In_Words = undefined;
   if(obj.Bidder_Name) {
     const arr =  [...this.BidOpenListView];
     const bidObj = $.grep(arr,function(elem){ return elem.Bidder_Name === obj.Bidder_Name})[0];
     const flag = this.checkBidderSelectLottery(obj.Bidder_Name)
     if(!flag) {
-      this.BidOpenListViewByLottery[i].Estimated_Rate = bidObj.Estimated_Rate;
+      this.BidOpenListViewByLottery[i].Tender_Value = bidObj.Tender_Value;
       this.BidOpenListViewByLottery[i].Quoted_Percentage = bidObj.Quoted_Percentage;
+      this.BidOpenListViewByLottery[i].Quoted_Rate = bidObj.Quoted_Rate;
+      this.BidOpenListViewByLottery[i].Tender_Doc_ID = bidObj.Tender_Doc_ID;
       this.BidOpenListViewByLottery[i].Rate = bidObj.Rate;
       this.BidOpenListViewByLottery[i].Rate_In_Words = this.convertNumberToWords(bidObj.Rate);
     } else {
-      this.BidOpenListViewByLottery[i].Estimated_Rate = undefined;
+      this.BidOpenListViewByLottery[i].Tender_Value = undefined;
       this.BidOpenListViewByLottery[i].Quoted_Percentage = undefined;
       this.BidOpenListViewByLottery[i].Rate = undefined;
+      this.BidOpenListViewByLottery[i].Quoted_Rate = bidObj.Quoted_Rate;
+      this.BidOpenListViewByLottery[i].Tender_Doc_ID = bidObj.Tender_Doc_ID;
       this.BidOpenListViewByLottery[i].Rate_In_Words = undefined;
       this.BidOpenListViewByLottery[i].Temp_Bidder_Array = [];
       const arrTemp = $.grep(arr,function(val){return val.Rate === bidObj.Rate});
@@ -2581,7 +2612,7 @@ if(valid) {
       console.log(data)
     if (data.success) {
       this.Spinner = false;
-      // if (this.ObjTender.Foot_Fall_ID) {
+      // if (this.ObjTender.Tender_Doc_ID) {
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -2631,7 +2662,7 @@ if(valid) {
       console.log(data)
     if (data.success) {
       this.Spinner = false;
-      // if (this.ObjTender.Foot_Fall_ID) {
+      // if (this.ObjTender.Tender_Doc_ID) {
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -2684,7 +2715,7 @@ if(valid) {
       console.log(data)
     if (data.success) {
       this.Spinner = false;
-      // if (this.ObjTender.Foot_Fall_ID) {
+      // if (this.ObjTender.Tender_Doc_ID) {
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -2739,7 +2770,7 @@ if(valid) {
       console.log(data)
     if (data.success) {
         this.Spinner = false;
-      // if (this.ObjTender.Foot_Fall_ID) {
+      // if (this.ObjTender.Tender_Doc_ID) {
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -2790,7 +2821,7 @@ if(valid) {
       console.log(data)
     if (data.success) {
       this.Spinner = false;
-      // if (this.ObjTender.Foot_Fall_ID) {
+      // if (this.ObjTender.Tender_Doc_ID) {
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -2842,7 +2873,7 @@ if(valid) {
       console.log(data)
     if (data.success) {
       this.Spinner = false;
-      // if (this.ObjTender.Foot_Fall_ID) {
+      // if (this.ObjTender.Tender_Doc_ID) {
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -2891,9 +2922,9 @@ ViewExcel() {
   }
 }
 getQuote() {
-  if(this.ObjBidOpening.Foot_Fall_ID) {
+  if(this.ObjBidOpening.Tender_Doc_ID) {
     this.$http
-    .get("/BL_CRM_Txn_Enq_Tender/Get_BOQ_Quoted_Percentage_Excel?Foot_Fall_ID="+this.ObjBidOpening.Foot_Fall_ID)
+    .get("/BL_CRM_Txn_Enq_Tender/Get_BOQ_Quoted_Percentage_Excel?Tender_Doc_ID="+this.ObjBidOpening.Tender_Doc_ID)
       .subscribe((data: any) => {
        console.log(data)
        const per = data ? JSON.parse(data)[0].Quoted_Percentage_Excel: 0;
@@ -2907,7 +2938,7 @@ saveQuote(){
   if(this.BOQExcelQuote) {
     const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Update_BOQ_Quoted_Percentage_Excel";
     const obj = {
-       Foot_Fall_ID:this.ObjBidOpening.Foot_Fall_ID,
+       Tender_Doc_ID:this.ObjBidOpening.Tender_Doc_ID,
        Quoted_Percentage_Excel : this.BOQExcelQuote
      };
     this.$http.post(UrlAddress, obj).subscribe((data: any) => {
@@ -3143,7 +3174,7 @@ FetchBiddata() {
 FetchBOQData(BOQurl) {
   const obj = {
     Project_ID : 0  ,
-    Foot_Fall_ID : this.ObjBidOpening.Foot_Fall_ID ,
+    Tender_Doc_ID : this.ObjBidOpening.Tender_Doc_ID ,
     Cost_Cen_ID : this.commonApi.CompacctCookies.Cost_Cen_ID,
     Project_Name : this.TenderDetails['Tender_Name']	,
     Bid_Identification_No: this.TenderDetails['Tender_ID'] ,
@@ -3172,7 +3203,7 @@ FetchBOQData(BOQurl) {
         Item_Code: this.BOQdataString[h].__EMPTY_1,
         Qty:  this.BOQdataString[h].__EMPTY_2,
         Unit: this.BOQdataString[h].__EMPTY_3 ,
-        Estimated_Rate:Number((Math.round(this.BOQdataString[h].__EMPTY_4 * 100) / 100).toFixed(2)),
+        Tender_Value:Number((Math.round(this.BOQdataString[h].__EMPTY_4 * 100) / 100).toFixed(2)),
         Amount : Number((Math.round(this.BOQdataString[h].__EMPTY_5 * 100) / 100).toFixed(2))
       }
       arrTemp1.push(obj1)
@@ -3195,6 +3226,7 @@ SaveBidOpening(valid) {
     this.Spinner = true;
     this.ObjBidOpening.Rank_Type =  this.BidOpenListViewByRate.length ? 'Normal' : 'Lottery';
     this.FetchBiddata();
+    console.log("save data",this.ObjBidOpening);
     const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Update_Enq_Tender_Bidding";
     const obj = { Enq_Bidding_String: JSON.stringify([this.ObjBidOpening]) };
     this.$http.post(UrlAddress, obj).subscribe((data: any) => {
@@ -3245,8 +3277,22 @@ SaveBidOpening(valid) {
     }
 }
 SaveBidList() {
+  
+  let Tempsavedata = []
+  this.BidOpenListView.forEach(el=>{
+    Tempsavedata.push({
+      Bidder_Name: el.Bidder_Name,
+      Tender_Value: el.Tender_Value,
+      Quoted_Percentage: el.Quoted_Percentage,
+      Rate: el.Rate,
+      Rate_In_Words: el.Rate_In_Words,
+      Sl_No: el.Sl_No,
+      Tender_Doc_ID: el.Tender_Doc_ID,
+    })
+  })
+  console.log("BidOpenListView",Tempsavedata);
   const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Insert_BL_CRM_Txn_Enq_Bidding_Table";
-    const obj = { Enq_Bidding_table_String: JSON.stringify(this.BidOpenListView) };
+    const obj = { Enq_Bidding_table_String: JSON.stringify(Tempsavedata) };
     this.$http.post(UrlAddress, obj).subscribe((data: any) => {
       if (data.success) {
         console.group("Compacct V2");
@@ -3266,8 +3312,23 @@ SaveBidList() {
 }
 SaveRankBidList(){
   const arr = this.BidOpenListViewByRate.length ? this.BidOpenListViewByRate : this.BidOpenListViewByLottery;
+  let tempSaveData = [];
+  arr.forEach(ele => {
+    tempSaveData.push({
+      Bidder_Name: ele.Bidder_Name,
+      Tender_Value: ele.Tender_Value,
+      Quoted_Percentage: ele.Quoted_Percentage,
+      Less_Excess : "0",
+      Rank: ele.Rank,
+      Rate: ele.Rate,
+      Rate_In_Words: ele.Rate_In_Words,
+      Sl_No: ele.Sl_No,
+      Tender_Doc_ID : ele.Tender_Doc_ID
+    })
+  });
+  console.log("Ranklist",tempSaveData);
   const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Insert_BL_CRM_Txn_Enq_Bidding_Rank";
-    const obj = { Enq_Bidding_Rank_String: this.simpleStringify(arr) };
+    const obj = { Enq_Bidding_Rank_String: this.simpleStringify(tempSaveData) };
     this.$http.post(UrlAddress, obj).subscribe((data: any) => {
       if (data.success) {
         console.group("Compacct V2");
@@ -3277,7 +3338,7 @@ SaveRankBidList(){
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
-          summary: "Lead ID  : " +  this.ObjBidOpening.Foot_Fall_ID,
+          summary: "Lead ID  : " +  this.ObjBidOpening.Tender_Doc_ID,
           detail: "Succesfully Bid Updated"
         });
         this.clearBid();
@@ -3299,7 +3360,7 @@ SaveBOQ(valid) {
   this.BoqDocFormSubmitted = true;
   if (this.PDFFlag && valid) {
     this.Spinner = true;
-    const endpoint = "/BL_CRM_Txn_Enq_Tender/Upload_BOQ_Document?Foot_Fall_ID=" + this.ObjBidOpening.Foot_Fall_ID;
+    const endpoint = "/BL_CRM_Txn_Enq_Tender/Upload_BOQ_Document?Tender_Doc_ID=" + this.ObjBidOpening.Tender_Doc_ID;
     const formData: FormData = new FormData();
     formData.append("aFile", this.BOQPDFFile);
     this.$http.post(endpoint, formData).subscribe((data:any) => {
@@ -3326,10 +3387,10 @@ SaveProject(projectData){
       this.compacctToast.add({
         key: "compacct-toast",
         severity: "success",
-        summary: "Lead ID  : " +  this.ObjBidOpening.Foot_Fall_ID,
+        summary: "Lead ID  : " +  this.ObjBidOpening.Tender_Doc_ID,
         detail: "Succesfully BOQ Updated"
       });
-      this.GetBOQExcelList(this.ObjBidOpening.Foot_Fall_ID)
+      this.GetBOQExcelList(this.ObjBidOpening.Tender_Doc_ID)
       this.Spinner = false;
       this.BoqDocFormSubmitted = false;
     } else {
@@ -3931,11 +3992,18 @@ GetestimateAllData(){
        console.log("EstimateAllData",this.EstimateAllData);
       })
 }
+inputBoxClr(n){
+ if(!n || Number(n) === 0){
+  this.ObjBidOpeningList.Quoted_Rate = undefined;
+ }
+ else {
+   this.ObjBidOpeningList.Quoted_Percentage = undefined;
+ }
+}
 }
 class Tender{
-  Foot_Fall_ID = 0;
-  Tender_Doc_ID= 0;
-  Tender_ID:string;
+  Tender_Doc_ID = 0;
+   Tender_ID:string;
   Cost_Cen_ID:string;
   User_ID:string;
   Posted_On:string;
@@ -4003,7 +4071,7 @@ class Task{
   Due_On:string;
   Tagged_To_User_ID:string;
   Linked_To= 'Lead'
-  Foot_Fall_ID:number;
+  Tender_Doc_ID:number;
   Sub_Ledger_ID =0;
   Last_Updated_On:string;
   Created_By:string;
@@ -4020,9 +4088,8 @@ class Search{
 }
 
 class EMD{
-  Foot_Fall_ID: string;
-  Tender_Doc_ID : number;
-  EMD_Amount:number;
+  Tender_Doc_ID: string;
+   EMD_Amount:number;
   EMD_Amount_Deposit_Date:string;
   EMD_Amount_Deposit_Type:string;
   EMD_BG_Creation_Date= '';
@@ -4046,9 +4113,8 @@ class EMD{
   EMD_Payable_At:string;
 }
 class tenerFee {
-  Foot_Fall_ID = 0;
-  Tender_Doc_ID= 0;
-  Tender_ID:string;
+  Tender_Doc_ID = 0;
+   Tender_ID:string;
   Cost_Cen_ID:string;
   User_ID:string;
   Posted_On:string;
@@ -4109,9 +4175,8 @@ class tenerFee {
   PSD_Date_of_Expiry	:string;
 }
 class PerformanceSecurity {
-  Foot_Fall_ID = 0;
-  Tender_Doc_ID= 0;
-  Tender_ID:string;
+  Tender_Doc_ID = 0;
+   Tender_ID:string;
   Cost_Cen_ID:string;
   User_ID:string;
   Posted_On:string;
@@ -4172,18 +4237,17 @@ class PerformanceSecurity {
   PSD_Date_of_Expiry	:string;
 }
 class Fee{
-  Foot_Fall_ID:string;
+  Tender_Doc_ID:string;
   T_Fee_Amount_Deposit_Date:string;
   T_Fee_NEFT_Txn_Date:string;
   T_Fee_NEFT_TXN_No:string;
 }
 class Submission{
-  Foot_Fall_ID:string;
-  Tender_Doc_ID : number;
+  Tender_Doc_ID:string;
   Tender_Submission_Date:string;
 }
 class BidOpening{
-    Foot_Fall_ID:string;
+    Tender_Doc_ID:string;
     Tender_Inviting_Authority:string;
     Financial_Bid_Status:string;
     Fin_Year_Name:string;
@@ -4218,7 +4282,7 @@ class BidOpening{
     APSD_NEFT_Txn_Date:string;
     APSD_NEFT_TXN_No:string;
     Agreement_Number:string;
-    Agreement_Value:number;
+    Agreement_Value:any;
     Date_of_Commencement:string;
     Date_of_Completion:string;
     Periods_of_Completion:string;
@@ -4230,31 +4294,35 @@ class BidOpening{
     Rank_Type: string;
     BOQ_File_Name:string;
     Project_Short_Name:string;
-    Agreement_value : string
+    Agreement_value : string;
+   
  }
 class BidOpeningList {
       Schedule_ID:string;
       Sl_No	:number;
       Bidder_Name:string;
-      Estimated_Rate:number;
+      Tender_Value:number;
       Quoted_Percentage:string;
-      Quoted_Rate:string;
+      Quoted_Rate:number;
       Less_Excess:string;
       Rate:number;
       Rate_In_Words:string;
-      Foot_Fall_ID:string;
+      Tender_Doc_ID:string;
+      
 }
 class RankBidOpeningList {
   Rank_ID:string;
   Rank:string;
   Sl_No	:number;
   Bidder_Name:string;
-  Estimated_Rate:number;
+  Tender_Value:number;
   Quoted_Percentage:string;
   Less_Excess:string;
   Rate:number;
   Rate_In_Words:string;
-  Foot_Fall_ID:string;
+  Tender_Doc_ID:string;
   Lottery_Flag:string;
+  Quoted_Rate:string;
   Temp_Bidder_Array:any = [];
+  
 }
