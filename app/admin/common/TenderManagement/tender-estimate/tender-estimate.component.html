@@ -27,6 +27,7 @@
                             <div class="form-group" style="padding: 0 1em;" >
                                 <div class="col-sm-6">
                                     <label class="control-label">Project Name&nbsp;<span class="text-danger" >*</span></label>
+                                    <span (click)='DynamicRedirectTo()' class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-database"></i>Manage Projects</span>
                                      <p-dropdown
                                     [options]="projectList"
                                     name="projectname"

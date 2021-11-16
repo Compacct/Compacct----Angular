@@ -10,6 +10,8 @@ declare var $:any;
 import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
+import { ActivatedRoute } from '@angular/router';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-compacct.tender',
@@ -247,10 +249,18 @@ StateList = [];
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
+    private route : ActivatedRoute,
     private DateService: DateTimeConvertService,
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
-    private GetDistinctItems :CompacctGetDistinctService) { }
+    private GetDistinctItems :CompacctGetDistinctService) { 
+      this.route.queryParamMap.subscribe((val:any) => {
+        console.log(val)
+        if(val.params.from) {
+          this.tabIndexToView = 1;
+        }
+      });
+    }
 
   ngOnInit() {
     this.Header.pushHeader({

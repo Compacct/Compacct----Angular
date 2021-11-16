@@ -10,7 +10,7 @@ declare var $: any;
 import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { clear } from 'console';
 
 @Component({
@@ -78,6 +78,7 @@ export class TenderEstimateComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
     private GetDistinctItems: CompacctGetDistinctService,
+    private router : Router,
     private route: ActivatedRoute,) {
     this.route.queryParams.subscribe(params => {
       console.log("params", params);
@@ -640,5 +641,15 @@ export class TenderEstimateComponent implements OnInit {
   }
   testchange(id) {
     console.log(id);
+  }
+
+
+  DynamicRedirectTo (){
+    const navigationExtras: NavigationExtras = {
+      queryParams: {
+        from : 'tenderESTIMATE'
+      },
+    };
+    this.router.navigate(['./BL_CRM_Txn_Enq_Tender'], navigationExtras);
   }
 }
