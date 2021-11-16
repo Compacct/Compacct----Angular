@@ -1226,7 +1226,7 @@
                                               </div>
                                               <div class="col-sm-4">
                                                 <label class="control-label">Tender Value In ₹<sup class="text-danger">*</sup></label>
-                                                <div class="label-t">{{TenderAmount ? TenderAmount : '-'}}</div>
+                                                <div class="label-t">{{TenderAmount ? TenderAmount : '-'}}</div>  
                                               </div>
                                             </div>
                                             <hr class="box boxboxDivide-primary" />
@@ -1253,6 +1253,7 @@
                                                 #Estimate="ngModel"
                                                 CompacctDigitonly="true"
                                                 [(ngModel)]="tenderValue"
+                                                (ngModelChange)="inputBoxClr(tenderValue)"
                                                 placeholder="Tender Value"
                                                 [ngClass]="{'clearance': BidOpeningListFormSubmitted && (tenderValue ==='' || tenderValue === null || tenderValue === undefined)}"
                                                  >
@@ -1362,7 +1363,7 @@
                                                     >
                                                       <td>{{ d.Sl_No }}</td>
                                                       <td>{{ d.Bidder_Name }}</td>
-                                                      <td>{{ d.Estimated_Rate ? BidAmountView(d.Estimated_Rate) : "-" }}</td>
+                                                      <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }}</td>
                                                       <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
                                                       <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
                                                        <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
@@ -1413,6 +1414,14 @@
                                                         class="text-center"
                                                         style="vertical-align:middle"
                                                       >
+                                                      Tender Value
+                                                      </th>
+                                                      <th
+                                                        nowrap
+                                                        rowspan="2"
+                                                        class="text-center"
+                                                        style="vertical-align:middle"
+                                                      >
                                                         Quoted Rate
                                                       </th>
                                                       <th
@@ -1444,8 +1453,9 @@
                                                     >
                                                       <td>{{ d.Rank }}</td>
                                                       <td>{{ d.Bidder_Name }}</td>
-                                                      <td>{{ d.Quoted_Rate +' %' }}</td>
-                                                      <td>{{ d.Quoted_Percentage +' %' }}</td>
+                                                      <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
+                                                      <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                                                      <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
                                                       <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
                                                       <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
 
@@ -1536,8 +1546,8 @@
                                                         </select>
                                                         <span  *ngIf="d['Lottery_Flag'] === 'FIXED'">{{d.Bidder_Name}}</span>
                                                       </td>
-                                                      <td>{{ d.Estimated_Rate ? BidAmountView(d.Estimated_Rate) : "-" }} </td>
-                                                      <td> {{d.Quoted_Rate ? d.Quoted_Rate : '-' }} </td>
+                                                      <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
+                                                      <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
                                                       <td> {{d.Quoted_Percentage ? d.Quoted_Percentage  +' %':'-' }} </td>
                                                       <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
                                                       <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
@@ -2042,11 +2052,11 @@
                                                <div class="col-sm-4">
                                                 <label class="control-label">Agreement Value<sup class="text-danger">*</sup></label>
                                                 <input class="form-control"
-                                                name="Agreement_value"
+                                                name="Agreement_Value"
                                                 #Agreement_value="ngModel"
-                                                [(ngModel)]="ObjBidOpening.Agreement_value"
+                                                [(ngModel)]="ObjBidOpening.Agreement_Value"
                                                 placeholder="Agreement value"
-                                                [ngClass]="{'clearance': BidOpeningFormSubmitted && Agreement_value.errors?.required}" required>
+                                                [ngClass]="{'clearance': BidOpeningFormSubmitted && Agreement_Value.errors?.required}" required>
                                                 <!-- <input class="form-control"
                                                 name="AgreementValue1"
                                                 #AgreementValue1="ngModel"
@@ -2165,7 +2175,7 @@
                                         </div>
                                         </form>
                                           </div> -->
-                                          <app-compacct-document  [documentType]="{'FootfalID' :ObjBidOpening.Foot_Fall_ID,'name': 'Awarding','title':'Awarding Documents Upload'}" (clear)="GetFlagFromDocument($event)" *ngIf="ObjBidOpening.Foot_Fall_ID"></app-compacct-document>
+                                          <app-compacct-document  [documentType]="{'FootfalID' :ObjBidOpening.Tender_Doc_ID,'name': 'Awarding','title':'Awarding Documents Upload'}" (clear)="GetFlagFromDocument($event)" *ngIf="ObjBidOpening.Tender_Doc_ID"></app-compacct-document>
                                           <!-- <div class="row">
                                             <h5 style="
                                             padding: 0.5em 1em;
