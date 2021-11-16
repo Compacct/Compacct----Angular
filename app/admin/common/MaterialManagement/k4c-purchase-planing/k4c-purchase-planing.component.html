@@ -109,18 +109,22 @@
                                                                     Edit
                                                                 </a>
                                                             </li> -->
-                                                        <li *ngIf="col.Autho_One == $CompacctAPI.CompacctCookies.User_ID && col.Autho_One_Staus == 'NO'">
+                                                        <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'M'  && col.Autho_One_Staus == 'NO'">
+                                                            <a (click)="Authorized(col)">
+                                                                <i class="fa fa-check"></i> Authorized
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'A'">
                                                             <a (click)="Authorized(col)">
                                                                 <i class="fa fa-check"></i> Authorized
                                                             </a>
                                                         </li>
 
-                                                        <!-- <li>
-                                                              <a (click)="exportoexcel(ViewList,'Purchase_Planning')">
-                                                                  <i class="glyphicon glyphicon-save" aria-hidden="true"></i>
-                                                                  export to excel
-                                                              </a>
-                                                          </li> -->
+                                                        <li *ngIf="col.Autho_One_Staus == 'YES'">
+                                                            <a (click)="exportoexcel2(col,'Purchase_Planning')">
+                                                                <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
+                                                            </a>
+                                                        </li>
                                                         <!-- <li *ngIf = "col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
                                                                 <a (click)="Delete(col)">
                                                                     <i class="fa fa-trash" aria-hidden="true"></i>
@@ -178,7 +182,7 @@
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
-                                        </div>
+                                        </div> <br>
 
                                     </ng-template>
                                     <ng-template pTemplate="header">
@@ -207,11 +211,12 @@
                                             <th>Confirm Amount</th>
                                             <th>Confirm Amount With GSt</th>
                                             <th>Vendor</th>
+                                            <th>Cr Days</th>
                                             <th>Remarks</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
-                                        <tr [class]='col.Last_Purchase_Rate != col.Rate ? "bg-color" : ""'>
+                                        <tr [class]='textcolor(col)'>
 
                                             <td>{{col.Material_Type}}</td>
                                             <td>{{col.Product_Type}}</td>
@@ -238,7 +243,17 @@
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Rate' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td>{{col.Confirm_Amount ? col.Confirm_Amount : '-'}}</td>
                                             <td>{{col.Confirm_Amount_With_GST}}</td>
-                                            <td>{{col.Vendor_Name}}</td>
+                                            <!-- <td>{{col.Vendor_Name}}</td> -->
+                                            <td>
+                                                <p-dropdown [options]="vendorlist" name="Appvendor" [(ngModel)]="col.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="crdchange(rowIndex)" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'"
+                                                    [virtualScroll]="true" itemSize="30" #Appvendor="ngModel">
+                                                </p-dropdown>
+                                                <!-- </div> -->
+                                            </td>
+                                            <!-- <td>{{col.Credit_days}}</td> -->
+                                            <td>
+                                                <input class="form-control" CompacctDigitonly="true" name="Appcreditdays" #Appcreditdays="ngModel" [(ngModel)]="col.Credit_days">
+                                            </td>
                                             <td>{{col.Remarks}}</td>
 
                                         </tr>
@@ -257,7 +272,7 @@
 
                             <p-footer>
                                 <button type="button" (click)="Approved()" class="btn btn-success">
-                              <i class="fa fa-check"></i>&nbsp;  Approved
+                              <i class="fa fa-check"></i>&nbsp;  {{Appbuttonname}}
                             </button>
                                 <button type="button" (click)="AuthPoppup = false" class="btn btn-default">
                                <i class="fa fa-close"></i>&nbsp;  Close
@@ -329,7 +344,7 @@
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
-                                        <tr [class]='col.Last_Purchase_Rate != col.Rate ? "bg-color" : ""'>
+                                        <tr [class]='textcolor(col)'>
 
                                             <td>{{col.Material_Type}}</td>
                                             <td>{{col.Product_Type}}</td>
@@ -373,7 +388,7 @@
 
 
                             <p-footer>
-                                <button type="button" (click)="exportoexcel(ViewList,'Purchase_Planning')" class="btn btn-success">
+                                <button *ngIf='ViewList.length' type="button" (click)="exportoexcel(ViewList,'Purchase_Planning')" class="btn btn-success">
                             <i class="glyphicon glyphicon-save"></i>&nbsp;  export to excel
                           </button>
                                 <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
@@ -551,12 +566,21 @@
                                                         <p-checkbox [(ngModel)]='localpurchaseFLag' name='localpurchase' (onChange)='checkboxchange()' [binary]="true"></p-checkbox>
 
                                                     </div>
-                                                    <select class="form-control" name="vendor" #vendor="ngModel" [(ngModel)]="ObjPurchasePlan.Vendor" [(disabled)]="vendordisabled" [ngClass]="{'clearance': PurchaseFormSubmitted && vendor?.errors?.required}" required>
+                                                    <p-dropdown [options]="vendorlist" name="vendor" [(ngModel)]="ObjPurchasePlan.Vendor_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="CreditDaysChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Vendor'" [virtualScroll]="true" itemSize="30" #vendor="ngModel" [(disabled)]="vendordisabled" [required]="true" [ngClass]="{'clearance':PurchaseFormSubmitted && vendor?.errors?.required}"
+                                                        required>
+                                                    </p-dropdown>
+                                                </div>
+                                                <!-- <select class="form-control" name="vendor" #vendor="ngModel" [(ngModel)]="ObjPurchasePlan.Vendor" [(disabled)]="vendordisabled" [ngClass]="{'clearance': PurchaseFormSubmitted && vendor?.errors?.required}" required>
                                            <option  [ngValue]="undefined">Select</option>
                                              <option *ngFor = "let option of vendorlist" value= "{{option.Sub_Ledger_ID}}">
                                                {{option.Sub_Ledger_Name}}
                                              </option>
-                                       </select>
+                                       </select> 
+                                            </div> -->
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Credit Days <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" CompacctDigitonly="true" name="creditdays" #creditdays="ngModel" [(ngModel)]="ObjPurchasePlan.Credit_Days" [ngClass]="{'clearance':PurchaseFormSubmitted && creditdays?.errors?.required}" required>
                                                 </div>
 
                                                 <div class="col-sm-1">
@@ -605,11 +629,12 @@
                                             <th>Amount</th>
                                             <th>Total Amount With GST</th> -->
                                             <th>Vendor</th>
+                                            <th>Cr Days</th>
                                             <th>Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let obj of productaddSubmit ; let ind = index;" [class]='obj.Last_Purchase_Rate != obj.Sale_rate ? "bg-color" : ""'>
+                                        <tr *ngFor="let obj of productaddSubmit ; let ind = index;" [class]='getClass(obj)'>
                                             <!--let ind = index; -->
                                             <td>{{obj.Material_Type}}</td>
                                             <td>{{obj.Product_Type}}</td>
@@ -634,7 +659,18 @@
                                             <td>{{obj.Amount}}</td>
                                             <td>{{obj.Total_Amount_With_GST}}</td> -->
                                             <!-- <td>{{obj.UOM}}</td> -->
-                                            <td>{{obj.Vendor}}</td>
+                                            <!-- <td>{{obj.Vendor}}</td>
+                                            <td>{{obj.Credit_days}}</td> -->
+                                            <td>
+                                                <p-dropdown [options]="vendorlist" name="createvendor" [(ngModel)]="obj.Vendor_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="crdayschange(ind)" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'"
+                                                    [virtualScroll]="true" itemSize="30" #createvendor="ngModel">
+                                                </p-dropdown>
+                                                <!-- </div> -->
+                                            </td>
+                                            <!-- <td>{{col.Credit_days}}</td> -->
+                                            <td>
+                                                <input class="form-control" style="width: 71px;" CompacctDigitonly="true" name="createcreditdays" #createcreditdays="ngModel" [(ngModel)]="obj.Credit_days">
+                                            </td>
                                             <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
@@ -653,7 +689,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="StockLevelForm" #StockLevelForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-3">
+                                    <!-- <div class="col-sm-3">
                                         <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="materialtype2" #materialtype2="ngModel" [(ngModel)]="ObjStockLevel.Material_Type" [ngClass]="{'clearance': StockLevelFormSubmitted && materialtype2?.errors?.required}" required>
                                              <option  [ngValue]="undefined">Select</option>
@@ -661,7 +697,7 @@
                                                     {{option.Material_Type}}
                                                  </option>
                                         </select>
-                                    </div>
+                                    </div> -->
                                     <div class="col-sm-3">
                                         <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel" [(ngModel)]="ObjStockLevel.Cost_Cen_ID" [ngClass]="{'clearance': StockLevelFormSubmitted && Cost_Cen_ID?.errors?.required}" (change)="GetGodown()" required>
@@ -698,6 +734,24 @@
                                     </div>
                                 </div>
                             </form>
+                            <div class="form-group" *ngIf='BackupStockReportSearchlist.length' style="padding:15px">
+
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Material Type <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterialType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
                             <div class="row">
                                 <div class="col-sm-8">
                                     <h5><strong></strong></h5>

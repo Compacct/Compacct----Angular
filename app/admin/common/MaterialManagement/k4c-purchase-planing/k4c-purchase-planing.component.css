@@ -75,6 +75,10 @@ div.label-t {
     background-color: #F5B7B1 !important;
 }
 
+.text-green-active>td {
+    color: rgb(33, 110, 17);
+}
+
 .custombutton2 {
     margin-top: 21px;
     margin-left: 10px;
@@ -95,4 +99,26 @@ div.label-t {
 
 .text-blue-active>td {
     color: rgb(16, 24, 131);
+}
+
+fieldset {
+    border: 1px solid #ddd !important;
+    margin: 0;
+    min-width: 0;
+    padding: 10px;
+    position: relative;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    padding-left: 10px!important;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    width: fit-content;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0px 10px 0px 10px;
+    background-color: #ffffff;
 }
