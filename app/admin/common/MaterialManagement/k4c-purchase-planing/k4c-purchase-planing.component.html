@@ -98,7 +98,7 @@
                                                             <span class="caret"></span>
                                                         </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf="col.Autho_One_Staus == 'YES'">
+                                                        <li>
                                                             <a (click)="View(col)">
                                                                 <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
                                                             </a>
@@ -120,7 +120,7 @@
                                                             </a>
                                                         </li>
 
-                                                        <li *ngIf="col.Autho_One_Staus == 'YES'">
+                                                        <li>
                                                             <a (click)="exportoexcel2(col,'Purchase_Planning')">
                                                                 <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
                                                             </a>
@@ -561,11 +561,11 @@
                                             <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Select Vendor <sup class="text-danger">*</sup></label>
-                                                    <div class="col-sm-2 pull-right" style="width:170px;">
+                                                    <!-- <div class="col-sm-2 pull-right" style="width:170px;">
                                                         <small><b>Local Purchase</b></small>
                                                         <p-checkbox [(ngModel)]='localpurchaseFLag' name='localpurchase' (onChange)='checkboxchange()' [binary]="true"></p-checkbox>
 
-                                                    </div>
+                                                    </div> -->
                                                     <p-dropdown [options]="vendorlist" name="vendor" [(ngModel)]="ObjPurchasePlan.Vendor_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="CreditDaysChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                         [placeholder]="'Select Vendor'" [virtualScroll]="true" itemSize="30" #vendor="ngModel" [(disabled)]="vendordisabled" [required]="true" [ngClass]="{'clearance':PurchaseFormSubmitted && vendor?.errors?.required}"
                                                         required>
@@ -730,6 +730,9 @@
                                         class="glyphicon glyphicon-search"
                                       ></span
                                       >&nbsp;Search
+                                    </button> &nbsp;&nbsp;
+                                        <button type="button" (click)="exportoexcel3(StockReportSearchlist,'Order_Stock_Report')" [disabled]='!StockReportSearchlist.length' class="btn btn-success custombutton3">
+                                        <i class="glyphicon glyphicon-save"></i>&nbsp;  export to excel
                                     </button>
                                     </div>
                                 </div>
@@ -771,6 +774,7 @@
                                         <tr>
                                             <th style="width:5em">Action</th>
                                             <th>Product Name</th>
+                                            <th>UOM</th>
                                             <th>Last Purchase Qty</th>
                                             <th>Last Purchase Date</th>
                                             <th>Current Stock</th>
@@ -786,6 +790,7 @@
                                                 </button>
                                             </td>
                                             <td [class]='col.textClass'>{{col.Product_Description}}</td>
+                                            <td [class]='col.textClass'>{{col.UOM}}</td>
                                             <td [class]='col.textClass'>{{col.Last_Purchase_Qty ? col.Last_Purchase_Qty : '-'}}</td>
                                             <td [class]='col.textClass'>{{col.Last_Purchase_Date | date : 'dd/MMM/yyyy'}}</td>
                                             <td [class]='col.textClass'>{{col.Stock_Qty}}</td>
