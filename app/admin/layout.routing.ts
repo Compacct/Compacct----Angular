@@ -135,6 +135,7 @@ import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rs
 import { DirectPaymentFollowupNepalComponent } from "./common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component";
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
+import { HearingPackageMasterComponent } from "./common/CRM/Master/hearing-package-master/hearing-package-master.component";
 
 
 
@@ -779,6 +780,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                 component: TenderEstimateComponent,
                                                 data: {title: 'Tender Estimate'}
                                                 },
+                                                {
+                                                  path: 'BL_CRM_Master_Package_New',
+                                                  component: HearingPackageMasterComponent,
+                                                  data: {title: 'Package Master'}
+                                                  },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)
