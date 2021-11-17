@@ -54,7 +54,7 @@
                                 <tr>
                                    
                                     <td>{{col['Customer Name'] ? col['Customer Name'] : '-'}} &nbsp;
-                                        <span style="margin-right: 1em;" class="btn btn-sm bg-gray-active">Last Followup : {{col.Last_Followup_Date | date:'dd-MMM-yyyy'}}</span>
+                                        <span *ngIf='col.Last_Followup_Date' style="margin-right: 1em;" class="btn btn-sm bg-gray-active">Last Followup : {{col.Last_Followup_Date}}</span>
                                         <span (click)='RedirectCustomerInteg(col.Sub_Ledger_ID)' class="btn btn-dropbox btn-xs"><i class="fa fa-fw fa-random"></i></span>
                                         
                                     </td>

@@ -49,7 +49,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   currentDate : any = new Date();
   minDate = new Date();
   maxDate = new Date();
-  Doc_No = undefined;
+  Doc_No : any;
   Editlist = [];
   ViewList = [];
   ViewPoppup = false;
@@ -66,6 +66,8 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   igst: any;
   grossamount: any;
   netamount: any;
+  Round_Off: any;
+  franshisedisable = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -157,6 +159,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
       this.ChallanList = data;
       this.BackupChallanList = data;
     this.franchiseSalebillFormSubmitted = false;
+    this.franshisedisable = true;
    console.log("this.ChallanList======",this.ChallanList);
    this.GetChallan();
   })
@@ -229,6 +232,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     //   Cost_Cen_ID : this.ObjRawMateriali.From_Cost_Cen_ID,
     //   Godown_ID : this.ObjRawMateriali.From_godown_id,
     //  }
+   // this.ProductList = [];
     if(this.dataforproduct()){
    const obj = {
     "SP_String": "SP_Franchise_Sale_Bill",
@@ -287,6 +291,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     this.igst = (totaligst).toFixed(2);
     this.grossamount = (grossamt).toFixed(2);
     // Round Off
+    this.Round_Off = (Number(this.grossamount) - Math.round(this.grossamount)).toFixed(2);
     this.netamount = Math.round(this.grossamount);
     //console.log(this.Net_Amount);
   }
@@ -316,15 +321,14 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
             Doc_No:  "A",
             Doc_Date: this.currentDate,
             Sub_Ledger_ID : Number(this.ObjfranchiseSalebill.Franchise),
-            Cost_Cen_ID	: this.ObjfranchiseSalebill.Cost_Cen_ID,
+            Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
             Product_ID	: item.Product_ID,
             Product_Name	: item.Product_Description,
-            Product_Type_ID	: item.Product_Type_ID,
             Qty	: item.Qty,
             UOM	: item.UOM,
             MRP : item.Sale_rate,
             Rate : item.Sale_rate,
-            Amount : item.Sale_rate,
+            Amount : Number(item.Qty) * Number(item.Sale_rate),
             Discount : 0,
             Taxable_Amount : item.Taxable,
             CAT_ID : item.Cat_ID,
@@ -338,6 +342,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
             IGST_Rate : item.IGST_PER,
             IGST_Amount : item.IGST_AMT,
             Bill_Gross_Amt : Number(this.taxable),
+            Rounded_Off : Number(this.Round_Off),
             Bill_Net_Amt : this.netamount,
             User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
             Remarks : this.ObjfranchiseSalebill.Remarks,
@@ -423,6 +428,57 @@ const obj = {
    this.seachSpinner = false;
  })
   }
+  Delete(col){
+    this.Doc_No = undefined;
+  if(col.Doc_No){
+    this.Doc_No = col.Doc_No;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+  }
+  }
+  onConfirm(){
+    if(this.Doc_No){
+      const Tempdata = {
+       // User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+        Doc_No : this.Doc_No
+      }
+      const objj = {
+        "SP_String": "SP_Franchise_Sale_Bill",
+        "Report_Name_String": "Delete Franchise Sale Bill",
+        "Json_Param_String": JSON.stringify([Tempdata])
+      }
+      this.GlobalAPI.getData(objj).subscribe((data:any)=>{
+        if (data[0].Column1 === "Done"){
+          this.onReject();
+          this.GetSearchedList();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Doc No.: " + this.Doc_No.toString(),
+            detail: "Succesfully Deleted"
+          });
+          this.clearData();
+        }
+      })
+    }
+  }
+  onReject() {
+    this.compacctToast.clear("c");
+  }
+  PrintBill(obj) {
+    if (obj.Doc_No) {
+      window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  
+      );
+    }
+  }
   clearData(){
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
@@ -434,10 +490,24 @@ const obj = {
     this.SelectedChallan = [];
     this.ChallanFilter = [];
     this.ProductList = [];
+    this.franshisedisable = false;
     //this.DocNo = undefined;
     //this.editDataList = [];
     //this.productListFilter = [];
 
+  }
+  Refresh(){
+    this.items = ["BROWSE", "CREATE"];
+    this.buttonname = "Save";
+    this.franshisedisable = false;
+    this.franchiseSalebillFormSubmitted = false;
+    this.ObjfranchiseSalebill.Franchise = undefined;
+    this.ObjfranchiseSalebill.Remarks = undefined;
+    this.ChallanList = [];
+    this.BackupChallanList = [];
+    this.SelectedChallan = [];
+    this.ChallanFilter = [];
+    this.ProductList = [];
   }
 
 }

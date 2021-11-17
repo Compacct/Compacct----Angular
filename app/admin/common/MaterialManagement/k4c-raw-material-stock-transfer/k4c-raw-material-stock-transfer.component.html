@@ -108,7 +108,12 @@
                                         <form name="RawMaterialIssueForm" #RawMaterialIssueForm="ngForm" novalidate>
 
                                             <div class="form-group">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Date </label>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='todayDate'></ejs-datepicker>
+                                                    <!-- <input class="form-control" name="Date" [disabled]="true" [ngModel]='todayDate  | date :"dd-MMM-yyyy"'> [enabled]='datepickerdisable'-->
+                                                </div>
+                                                <div class="col-sm-2">
                                                     <label class="control-label">From Cost Cent<sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="From_Cost_Cen_ID" #From_Cost_Cen_ID="ngModel" [(ngModel)]="ObjRawMateriali.From_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueFormSubmitted && From_Cost_Cen_ID?.errors?.required}" (change)="GetFromGodown()" [disabled]="FCostdisableflag"
                                                         [attr.disabled]="ProductList.length? true : null">
@@ -128,7 +133,7 @@
                                           </option>
                                     </select>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">To Cost Cent<sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="To_Cost_Cen_ID" #To_Cost_Cen_ID="ngModel" [(ngModel)]="ObjRawMateriali.To_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueFormSubmitted && To_Cost_Cen_ID?.errors?.required}" (change)="GetToGodown()" [disabled]="TCdisableflag"
                                                         [attr.disabled]="ProductList.length? true : null">

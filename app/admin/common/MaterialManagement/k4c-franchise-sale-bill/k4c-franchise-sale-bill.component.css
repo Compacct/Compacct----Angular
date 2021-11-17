@@ -64,7 +64,12 @@ hr {
 .pull-right1 {
     float: right!important;
     margin-top: 28px;
-    margin-right: 80px;
+}
+
+.pull-right2 {
+    float: right!important;
+    margin-top: 28px;
+    margin-right: 10px;
 }
 
 div.label-t {

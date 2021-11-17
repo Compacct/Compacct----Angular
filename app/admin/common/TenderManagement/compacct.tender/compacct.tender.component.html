@@ -381,13 +381,13 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                      <label class="control-label"> 800 CHRS<sup class="text-danger">*</sup></label>
+                                                      <label class="control-label"> Remarks<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
                                                               name="Name"
                                                               #Name="ngModel"
                                                               [(ngModel)]="ObjTender.Tender_Name"
                                                               (change)='CheckIfTenderNameExist()'
-                                                              placeholder="800 CHRS"
+                                                              placeholder="Remarks"
                                                               [ngClass]="{'clearance': TenderFormSubmitted && Name.errors?.required}" required>
                                                     </div>
                                                     <div class="col-sm-4">

@@ -63,6 +63,13 @@ export class K4cPurchasePlaningComponent implements OnInit {
   StockReportSearchlist = [];
   Orderlist = [];
   productdisabled = false;
+  BackupStockReportSearchlist = [];
+  DistMaterialType = [];
+  SelectedDistMaterialType = [];
+  DistProductType = [];
+  SelectedDistProductType = [];
+  SearchFields = [];
+  Appbuttonname = "Approved"
   
 
   constructor(
@@ -81,7 +88,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       Header: "Purchase Planning",
       Link: " Material Management -> Purchase Planning"
     });
-    //this.getproduct();
+    this.getproduct();
     this.getvendor();
     this.getmaterialtype();
     this.GetCostCen();
@@ -98,7 +105,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
      this.ObjMPtype.Product_Type = undefined;
      this.todayDate = new Date();
      this.data = "(Show Requisition Products)"
-     this.Productlist = [];
+     //this.Productlist = [];
    }
    getmaterialtype(){
       this.producttypelist = [];
@@ -160,7 +167,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     const TempObj = {
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID : this.ObjMPtype.Product_Type ? this.ObjMPtype.Product_Type : 0,
-      Material_Type : this.ObjMPtype.Material_Type
+      Material_Type : this.ObjMPtype.Material_Type ? this.ObjMPtype.Material_Type : ''
     }
       const obj = {
         "SP_String": "SP_Purchase_Planning",
@@ -192,7 +199,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     const TempObj ={
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID  : this.ObjMPtype.Product_Type ? this.ObjMPtype.Product_Type : 0,
-      Material_Type : this.ObjMPtype.Material_Type
+      Material_Type : this.ObjMPtype.Material_Type ? this.ObjMPtype.Material_Type : ''
     }
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -222,7 +229,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     const TempObj ={
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID  : this.ObjMPtype.Product_Type ? this.ObjMPtype.Product_Type : 0,
-      Material_Type : this.ObjMPtype.Material_Type
+      Material_Type : this.ObjMPtype.Material_Type ? this.ObjMPtype.Material_Type : ''
     }
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -274,7 +281,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     const TempObj = {
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID : this.ObjMPtype.Product_Type ? this.ObjMPtype.Product_Type : 0,
-      Material_Type : this.ObjMPtype.Material_Type
+      Material_Type : this.ObjMPtype.Material_Type ? this.ObjMPtype.Material_Type : ''
     }
       const obj = {
         "SP_String": "SP_Purchase_Planning",
@@ -302,7 +309,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     const TempObj ={
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID  : this.ObjMPtype.Product_Type ? this.ObjMPtype.Product_Type : 0,
-      Material_Type : this.ObjMPtype.Material_Type
+      Material_Type : this.ObjMPtype.Material_Type ? this.ObjMPtype.Material_Type : ''
     }
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -329,7 +336,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     const TempObj ={
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Product_Type_ID  : this.ObjMPtype.Product_Type ? this.ObjMPtype.Product_Type : 0,
-      Material_Type : this.ObjMPtype.Material_Type
+      Material_Type : this.ObjMPtype.Material_Type ? this.ObjMPtype.Material_Type : ''
     }
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -410,6 +417,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
    this.ObjPurchasePlan.Current_Stock =  productObj.Current_Stock;
    this.ObjPurchasePlan.Due_Payment = productObj.Due_Payment;
    this.ObjPurchasePlan.Weekly_Avg_Cons =  productObj.Weekly_Avg_Cons;
+   this.ObjPurchasePlan.Weekly_Cons_Value = productObj.Weekly_Cons_Value;
    this.ObjPurchasePlan.Estimated_Time_Of_Delivery = productObj.Estimated_Time_Of_Delivery;
    this.ObjPurchasePlan.GST_Tax_Per = productObj.GST_Tax_Per;
    this.ObjPurchasePlan.AL_UOM = productObj.Alt_UOM;
@@ -423,8 +431,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
   checkboxchange(){
     if(this.localpurchaseFLag){
       this.vendordisabled = true;
+      this.ObjPurchasePlan.Vendor_ID = undefined;
+      this.ObjPurchasePlan.Credit_Days = 0;
     } else {
       this.vendordisabled = false;
+      this.ObjPurchasePlan.Credit_Days = null;
     }
   }
   getvendor(){
@@ -436,9 +447,63 @@ export class K4cPurchasePlaningComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.vendorlist = data;
+        if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Sub_Ledger_Name,
+            element['value'] = element.Sub_Ledger_ID
+          });
+          this.vendorlist = data;
+         //  this.backUpproductList = this.Productlist;
+         //  this.getproducttype();
+        } else {
+          this.vendorlist = [];
+ 
+        }
       console.log("vendor list======",this.vendorlist);
     });
  }
+ CreditDaysChange() {
+  //this.ExpiredProductFLag = false;
+ if(this.ObjPurchasePlan.Vendor_ID) {
+   const ctrl = this;
+   const vendorCrDaysObj = $.grep(ctrl.vendorlist,function(item: any) {return item.Sub_Ledger_ID == ctrl.ObjPurchasePlan.Vendor_ID})[0];
+   console.log(vendorCrDaysObj);
+   this.ObjPurchasePlan.Vendor_ID = vendorCrDaysObj.Sub_Ledger_ID;
+   this.ObjPurchasePlan.Vendor = vendorCrDaysObj.Sub_Ledger_Name;
+   this.ObjPurchasePlan.Credit_Days = vendorCrDaysObj.CR_Days;
+   
+  }
+  }
+  
+  //CREATE CREDIT DAYS CHANGE IN GRID
+  crdayschange(i){
+    this.productaddSubmit[i].Credit_days = 0;
+   // this.AuthorizedList[i].Credit_days = 0;
+    if(this.productaddSubmit[i].Vendor_ID) {
+      const ctrl = this;
+      const CrDaysObj = $.grep(ctrl.vendorlist,function(item: any) {return Number(item.Sub_Ledger_ID) === Number(ctrl.productaddSubmit[i].Vendor_ID)});
+      console.log(CrDaysObj);
+      if(CrDaysObj.length) {
+        this.productaddSubmit[i].Credit_days = CrDaysObj[0].CR_Days;
+        this.productaddSubmit[i].vendorname = CrDaysObj[0].Sub_Ledger_Name;
+        //this.AuthorizedList[i].Credit_days = CrDaysObj[0].CR_Days;
+      }      
+     }
+  }
+
+  // APPROVED CREDIT DAYS CHANGE
+  crdchange(i){
+    this.AuthorizedList[i].Credit_days = 0;
+    if(this.AuthorizedList[i].Sub_Ledger_ID) {
+      const ctrl = this;
+      const CrObj = $.grep(ctrl.vendorlist,function(item: any) {return Number(item.Sub_Ledger_ID) === Number(ctrl.AuthorizedList[i].Sub_Ledger_ID)});
+      console.log(CrObj);
+      if(CrObj.length) {
+        this.AuthorizedList[i].Credit_days = CrObj[0].CR_Days;
+        this.AuthorizedList[i].Vendor_Name = CrObj[0].Sub_Ledger_Name;
+      }      
+     }
+  }
   OrderValueChange(){
     var ordervalue = 0;
     var stockoty = 0;
@@ -456,7 +521,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       // var AmtWithGST = Number(Amount * Number(this.ObjPurchasePlan.GST_Tax_Per) / 100);
       // var lastpurchaseGST = Number(Number(this.ObjPurchasePlan.Last_Purchase_Rate * this.ObjPurchasePlan.Last_Purchase_Qty * Number(this.ObjPurchasePlan.GST_Tax_Per)) / 100);
       var PT = this.producttypelist.filter((el) => el.Product_Type_ID == this.ObjMPtype.Product_Type)[0];
-      var VV = this.vendorlist.filter((elem) => elem.Sub_Ledger_ID == this.ObjPurchasePlan.Vendor)[0];
+    //  var VV = this.vendorlist.filter((elem) => elem.Sub_Ledger_ID == this.ObjPurchasePlan.Vendor_ID)[0];
       var productObj = {
       //Product_Type_ID : this.ObjPurchasePlan.Product_Type_ID,
     // Product_Type : this.ObjPurchasePlan.product_type,
@@ -488,7 +553,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
      // Indent_Qty : this.ObjPurchasePlan.Indent_Qty ? this.ObjPurchasePlan.Indent_Qty : '-',
       Remarks : this.ObjPurchasePlan.Remarks ? this.ObjPurchasePlan.Remarks : '-',
      // Vendor :  VV.Sub_Ledger_Name ? VV.Sub_Ledger_Name : this.ObjPurchasePlan.Vendor,
-      Vendor :  this.localpurchaseFLag ? "Local Purchase" : VV.Sub_Ledger_Name,
+      Vendor_ID :  this.localpurchaseFLag ? "Local Purchase" : this.ObjPurchasePlan.Vendor_ID,
+      Vendor : this.localpurchaseFLag ? "Local Purchase" : this.ObjPurchasePlan.Vendor,
+      Credit_days : this.ObjPurchasePlan.Credit_Days
     };
     this.productaddSubmit.push(productObj);
     console.log("Product Submit",this.productaddSubmit);
@@ -498,6 +565,12 @@ export class K4cPurchasePlaningComponent implements OnInit {
     this.clearData();
     }
    }
+   getClass(obj){
+     return  Number(obj.Last_Purchase_Rate) > Number(obj.Sale_rate) ? "text-green-active" : Number(obj.Last_Purchase_Rate) < Number(obj.Sale_rate) ? "text-red-active" : "";
+   }
+   textcolor(col){
+    return  Number(col.Last_Purchase_Rate) > Number(col.Rate) ? "text-green-active" : Number(col.Last_Purchase_Rate) < Number(col.Rate) ? "text-red-active" : "";
+  }
    delete(index) {
     this.productaddSubmit.splice(index,1)
 
@@ -525,7 +598,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
             Due_Payment : item.Due_Payment,
             //Order_Qty : item.Stock_Qty,
             //Current_Rate : item.Sale_rate,
-            Stock_Qty : Number(item.Order_Qty),
+            Stock_Qty : Number(item.Stock_Qty),
             Rate : Number(item.Sale_rate),
             Order_Value : item.Order_Value,
             Order_Stock_Qty : item.Stock_Qty,
@@ -534,12 +607,14 @@ export class K4cPurchasePlaningComponent implements OnInit {
             Indent_Qty : 0,
             //Total_Amount_With_GST : item.Total_Amount_With_GST,
             Remarks : item.Remarks,
-            Vendor_Name : item.Vendor,
+            Sub_Ledger_ID : item.Vendor_ID,
+            Vendor_Name : item.vendorname,
+            Credit_days : item.Credit_days,
 
             GST_PER	 : 0,
             Last_Purchase_With_GST	: 0,
             Monthly_Req_Value	 : 0,
-            Order_Qty	: Number(item.Stock_Qty),
+            Order_Qty	: Number(item.Order_Qty),
             Amount	: item.Order_Value,
             Total_Amount_With_GST	: 0,
             Created_By	: '',
@@ -596,7 +671,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
        this.clearData();
       // this.getproduct();
        this.data = "(Show Requisition Products)"
-       this.Productlist = [];
+      // this.Productlist = [];
        this.todayDate = new Date();
        this.ObjMPtype.Material_Type = undefined;
        this.ObjMPtype.Product_Type = undefined;
@@ -616,6 +691,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
     })
 
    }
+
+   // CREATE TAB END
+
    getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjBrowse.start_date = dateRangeObj[0];
@@ -713,12 +791,12 @@ export class K4cPurchasePlaningComponent implements OnInit {
       // this.To_outlet = data[0].From_Location1;
       // this.Batchno = data[0].Batch_No;
       // this.Return_reason = data[0].Return_Reason;
-      console.log("this.AuthorizedList  ===",this.AuthorizedList);
-      for(let i = 0; i < this.AuthorizedList.length ; i++){
-      this.AuthorizedList[i].Confirm_Qty = this.AuthorizedList[i].Order_Qty;
-      this.AuthorizedList[i].Confirm_Rate = this.AuthorizedList[i].Rate;
-      this.AuthorizedList[i].Confirm_Amount = this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate;
-      this.AuthorizedList[i].Confirm_Amount_With_GST = ((this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate) * this.AuthorizedList[i].GST_PER) / 100;
+      console.log("this.ViewList  ===",this.ViewList);
+      for(let i = 0; i < this.ViewList.length ; i++){
+      this.ViewList[i].Confirm_Qty = this.ViewList[i].Order_Qty;
+      this.ViewList[i].Confirm_Rate = this.ViewList[i].Rate;
+      this.ViewList[i].Confirm_Amount = this.ViewList[i].Confirm_Qty * this.ViewList[i].Confirm_Rate;
+      this.ViewList[i].Confirm_Amount_With_GST = ((this.ViewList[i].Confirm_Qty * this.ViewList[i].Confirm_Rate) * this.ViewList[i].GST_PER) / 100;
       }
        this.ViewPoppup = true;
     })
@@ -744,6 +822,21 @@ export class K4cPurchasePlaningComponent implements OnInit {
   //     this.exceldataList = data;
   //   })
   //  }
+  exportoexcel2(tempobj,fileName){
+    const obj = {
+      "SP_String": "SP_Purchase_Planning",
+      "Report_Name_String": "Get Data For Approved",
+      "Json_Param_String": JSON.stringify([{Doc_No : tempobj.Doc_No}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+      
+    })
+  }
+
    exportoexcel(Arr,fileName): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
@@ -763,6 +856,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
     this.ObjBrowse.Doc_No = DocNo.Doc_No;
     // this.AuthPoppup = true;
     //this.ViewPoppup = true;
+    if(DocNo.Autho_One_Staus == "YES") {
+      this.Appbuttonname = "Re-Approved"
+    } else {
+      this.Appbuttonname = "Approved"
+    }
     //this.tabIndexToView = 1;
      //console.log("this.EditDoc_No ", this.Adv_Order_No );
     this.getAuthdetails(this.ObjBrowse.Doc_No);;
@@ -792,6 +890,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       this.AuthorizedList[i].Confirm_Rate = this.AuthorizedList[i].Rate;
       this.AuthorizedList[i].Confirm_Amount = this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate;
       this.AuthorizedList[i].Confirm_Amount_With_GST = ((this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate) * this.AuthorizedList[i].GST_PER) / 100;
+      //this.AuthorizedList[i].Vendor_Name = this.AuthorizedList[i].Sub_Ledger_ID;
       }
        this.AuthPoppup = true;
     })
@@ -820,10 +919,13 @@ export class K4cPurchasePlaningComponent implements OnInit {
             Confirm_Qty : item.Confirm_Qty,
             Confirm_Rate : item.Confirm_Rate,
             Confirm_Amount : item.Confirm_Amount,
-            Confirm_Amount_With_GST : item.Confirm_Amount_With_GST
+            Confirm_Amount_With_GST : item.Confirm_Amount_With_GST,
             // Autho_One : item.Autho_One,
             // Remarks : item.Remarks,
-            // Vendor_Name : item.Vendor
+            Sub_Ledger_ID : item.Sub_Ledger_ID,
+            Vendor_Name : item.Vendor_Name,
+            Credit_days : item.Credit_days
+
         }
 
         const ObjTemp = {
@@ -844,17 +946,6 @@ export class K4cPurchasePlaningComponent implements OnInit {
     }
    }
   Approved(){
-  //   if(this.AuthorizedList.length) {
-  //     this.AuthorizedList.forEach(item => {
-  //   const tempobj = {
-  //     Doc_No : this.ObjBrowse.Doc_No,
-  //     Product_ID : item.Product_ID,
-  //     Confirm_Qty : item.Confirm_Qty,
-  //     Confirm_Rate : item.Confirm_Rate,
-  //     Confirm_Amount : item.Confirm_Amount
-  //   }
-  // })
-  // }
     const obj = {
       "SP_String": "SP_Purchase_Planning",
       "Report_Name_String" : "UPDATE Confirm",
@@ -889,6 +980,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
     })
 
    }
+
+   // BROWSE TAB END
+
    GetCostCen(){
     const obj = {
       "SP_String": "SP_Production_Voucher",
@@ -921,7 +1015,6 @@ export class K4cPurchasePlaningComponent implements OnInit {
   }
   StockReportSearch(valid){
     const tempobj = {
-      Material_Type : this.ObjStockLevel.Material_Type,
       Cost_Cen_ID : this.ObjStockLevel.Cost_Cen_ID,
       Godown_ID : this.ObjStockLevel.Godown_ID
     }
@@ -953,11 +1046,57 @@ export class K4cPurchasePlaningComponent implements OnInit {
       })
       const ang = [];
        this.StockReportSearchlist = ang.concat(Red, Orange, Blue,Other);
+       this.BackupStockReportSearchlist = data;
+       this.GetDistinct();
        console.log('Stock Report search list=====',this.StockReportSearchlist)
        this.seachSpinner = false;
       // this.SearchFactoryFormSubmit = false;
      })
      }
+  }
+  // DISTINCT & FILTER
+  GetDistinct() {
+    let DMaterialType = [];
+    let DProductType = [];
+    this.DistMaterialType =[];
+    this.SelectedDistMaterialType =[];
+    this.DistProductType =[];
+    this.SelectedDistProductType =[];
+    this.SearchFields =[];
+    this.StockReportSearchlist.forEach((item) => {
+   if (DMaterialType.indexOf(item.Material_Type) === -1) {
+    DMaterialType.push(item.Material_Type);
+   this.DistMaterialType.push({ label: item.Material_Type, value: item.Material_Type });
+   }
+  if (DProductType.indexOf(item.Product_Type_ID) === -1) {
+    DProductType.push(item.Product_Type_ID);
+    this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type_ID });
+    }
+  });
+     this.BackupStockReportSearchlist = [...this.StockReportSearchlist];
+  }
+  FilterDist() {
+    let DMaterialType = [];
+    let DProductType = [];
+    this.SearchFields =[];
+  if (this.SelectedDistMaterialType.length) {
+    this.SearchFields.push('Material_Type');
+    DMaterialType = this.SelectedDistMaterialType;
+  }
+  if (this.SelectedDistProductType.length) {
+    this.SearchFields.push('Product_Type_ID');
+    DProductType = this.SelectedDistProductType;
+  }
+  this.StockReportSearchlist = [];
+  if (this.SearchFields.length) {
+    let LeadArr = this.BackupStockReportSearchlist.filter(function (e) {
+      return (DMaterialType.length ? DMaterialType.includes(e['Material_Type']) : true)
+      && (DProductType.length ? DProductType.includes(e['Product_Type_ID']) : true)
+    });
+  this.StockReportSearchlist = LeadArr.length ? LeadArr : [];
+  } else {
+  this.StockReportSearchlist = [...this.BackupStockReportSearchlist] ;
+  }
   }
    Order(pro_id){
      //this.clearData();
@@ -1029,6 +1168,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
      })
   }
   onReject(){}
+
+  // ORDER STOCK REPORT END
 
   clearData(){
     this.ObjPurchasePlan = new PurchasePlan();
@@ -1112,6 +1253,7 @@ class PurchasePlan {
   Alt_UOM : string;
   Stock_UOM : string;
   UOM_Qty : number;
+  Credit_Days : number;
  }
  class Browse {
   Doc_No : any;

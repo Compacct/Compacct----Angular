@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild, ComponentFactoryResolver } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
@@ -10,7 +10,7 @@ declare var $: any;
 import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { clear } from 'console';
 
 @Component({
@@ -54,6 +54,23 @@ export class TenderEstimateComponent implements OnInit {
   EstimateModalFlag = false;
   workdetalisList = [];
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
+  cols = [
+    { field: 'Parent_Serial_No', header: 'SL No.' },
+    { field: 'Budget_Group_Name', header: 'Group Name' },
+    { field: 'Child_Serial_No', header: 'SL No.' },
+    { field: 'Budget_Sub_Group_Name', header: 'Sub Group Name' },
+    { field: 'Work_Details', header: 'Work Details' },
+    { field: 'Product_Description', header: 'Product' },
+    { field: 'unit', header: 'Unit Description' },
+    { field: 'Qty', header: 'Qty' },
+    { field: 'Nos', header: 'Nos' },
+    { field: 'TQty', header: 'Total Qty' },
+    { field: 'UOM', header: 'UOM' },
+    { field: 'saleRate', header: 'Sale Rate' },
+    { field: 'Sale_Amount', header: 'Sale Amount' },
+    { field: 'Rate', header: 'Purchase Rate' },
+    { field: 'Amount', header: 'Purchase Amount' }
+];
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
@@ -61,13 +78,16 @@ export class TenderEstimateComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
     private GetDistinctItems: CompacctGetDistinctService,
+    private router : Router,
     private route: ActivatedRoute,) {
     this.route.queryParams.subscribe(params => {
       console.log("params", params);
       this.TenderDocID = params.Tender_Doc_ID
     })
   }
-
+  onReject(){
+    
+  }
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Tender Estimate",
@@ -406,7 +426,7 @@ export class TenderEstimateComponent implements OnInit {
     this.EstimateInfoSubmitted = true;
     if (valid) {
       this.ShowAddedEstimateProductList = [];
-      const extimateObj = { ...this.ObjEstimate };
+      const extimateObj = { ...this.ObjEstimate , ...{ uid : '_' + Math.random().toString(36).substr(2, 9)}};
       extimateObj.items = [];
       //this.ObjEstimate = {};
       this.ObjEstimate.Product_ID = undefined;
@@ -422,12 +442,52 @@ export class TenderEstimateComponent implements OnInit {
       this.ObjEstimate.Nos = undefined;
       this.ObjEstimate.unit = undefined;
       this.AddedEstimateProductList.push(extimateObj);
-      this.AddedEstimateProductList.sort(function (a, b) {
-        return parseFloat(a.Budget_Group_ID) - parseFloat(b.Budget_Group_ID);
-      });
+      // this.AddedEstimateProductList.sort(function (a, b) {
+      //   return parseFloat(a.Budget_Group_ID) - parseFloat(b.Budget_Group_ID);
+      // });
       this.EstimateInfoSubmitted = false;
-      this.ShowAddedEstimateProductList = this.getNestedChildren(this.AddedEstimateProductList);
-      console.log(this.ShowAddedEstimateProductList)
+      this.ShowAddedEstimateProductList = this.AddedEstimateProductList;
+      let dupSub = [];
+      let parentCount = 0;
+      for(var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+        if (dupSub.indexOf(this.ShowAddedEstimateProductList[i]['Budget_Group_ID']) === -1) {
+          parentCount = parentCount + 1;
+          this.ShowAddedEstimateProductList[i]['Parent_Serial_No'] = parentCount;
+          dupSub.push(this.ShowAddedEstimateProductList[i]['Budget_Group_ID']);
+          const ParentDub = this.ShowAddedEstimateProductList.filter(obj => obj.Budget_Group_ID == this.ShowAddedEstimateProductList[i].Budget_Group_ID);        
+          var out2 = [];          
+          var count = 0;
+          if (ParentDub.length) {
+            for (var k = 0; k < ParentDub.length; k++) {
+              if (out2.indexOf(ParentDub[k]['Budget_Sub_Group_ID']) === -1) {
+                count = count + 1;
+                this.ShowAddedEstimateProductList.forEach((e,o) => {
+                  if(e.uid ===  ParentDub[k].uid) 
+                  this.ShowAddedEstimateProductList[o]['Child_Serial_No'] = parentCount + '.' + count;
+                });
+                out2.push(ParentDub[k]['Budget_Sub_Group_ID']);              
+              } else{
+                const childFilt = ParentDub.filter(e=> {
+                  return e.Budget_Group_ID == ParentDub[k]['Budget_Group_ID'] &&  e.Budget_Sub_Group_ID == ParentDub[k]['Budget_Sub_Group_ID']
+                });
+                console.log(childFilt)
+                childFilt.forEach(it => {
+                  this.ShowAddedEstimateProductList.forEach((e,o) => {
+                    if(e.uid ===  it.uid) 
+                    this.ShowAddedEstimateProductList[o]['Child_Serial_No'] = parentCount + '.' + count;
+                  });
+                })
+                
+              }
+            }
+
+          }
+
+        } else {
+          this.ShowAddedEstimateProductList[i]['Parent_Serial_No'] = this.ShowAddedEstimateProductList.find(e=> e.Budget_Group_ID == this.ShowAddedEstimateProductList[i]['Budget_Group_ID']).Parent_Serial_No;
+        }
+      }
+      console.log(this.ShowAddedEstimateProductList);
 
     }
 
@@ -581,5 +641,15 @@ export class TenderEstimateComponent implements OnInit {
   }
   testchange(id) {
     console.log(id);
+  }
+
+
+  DynamicRedirectTo (){
+    const navigationExtras: NavigationExtras = {
+      queryParams: {
+        from : 'tenderESTIMATE'
+      },
+    };
+    this.router.navigate(['./BL_CRM_Txn_Enq_Tender'], navigationExtras);
   }
 }

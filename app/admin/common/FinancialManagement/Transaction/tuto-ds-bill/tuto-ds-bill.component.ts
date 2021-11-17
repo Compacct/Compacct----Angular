@@ -32,6 +32,10 @@ export class TutoDsBillComponent implements OnInit {
   AmtMin = 0;
   AmtMax =0;
   AmtDisabledFlag = true;
+  addSnipper = false;
+
+  BDAList = [];
+  BDA_ID = undefined;
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -61,6 +65,23 @@ export class TutoDsBillComponent implements OnInit {
       Header: "Direct Sale Billing",
       Link: " Financial Management -> Transaction -> Direct Sale Billing"
      });
+     this.GetBDA();
+  }
+  GetBDA(){
+    const obj = {
+      "SP_String": "Tutopia_Subscription_Accounts",
+      "Report_Name_String": "GET_BDA_NAME",
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+         console.log(data);
+         data.forEach(element => {
+          element.label = element.User_Name;
+          element.value = element.User_ID;
+         });
+         this.BDAList = data.length ? data : undefined;
+    });
   }
   GetStudentsDetails() {
     this.ObjDSBill.Foot_Fall_ID = undefined;
@@ -199,13 +220,39 @@ export class TutoDsBillComponent implements OnInit {
   }
   AddProduct(valid){
     this.DSProductFormSubmitted = true;
-    if(valid) {
-      this.AddedProductList.push(this.ObjDSProduct);
-      this.ObjDSProduct = new DSProduct ();
-      this.AmtMin = 0;
-      this.AmtMax = 0;
-      this.DSProductFormSubmitted = false;
-      this.getTotalProductAddedAmount();
+    if(valid && this.ObjDSBill.Foot_Fall_ID) {
+      this.addSnipper = true;
+      const obj = {
+        "SP_String": "Tutopia_Subscription_Accounts",
+        "Report_Name_String": "Check_Bill",
+        "Json_Param_String" : JSON.stringify([{'Foot_Fall_ID' : this.ObjDSBill.Foot_Fall_ID , 'Product_ID' : this.ObjDSProduct.Product_ID}])
+      }
+      this.GlobalAPI
+          .getData(obj)
+          .subscribe((data: any) => {
+           console.log(data);
+           if(data[0].remarks === 'success'){
+            this.AddedProductList.push(this.ObjDSProduct);
+            this.ObjDSProduct = new DSProduct ();
+            this.AmtMin = 0;
+            this.AmtMax = 0;
+            this.DSProductFormSubmitted = false;
+            this.getTotalProductAddedAmount();
+            this.addSnipper = false;
+           } else {
+            this.addSnipper = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "warn",
+              life : 6000,
+              summary: this.ObjDSBill['Contact_Name'] + " Has a Bill Already.",
+              detail: "Bill No : " + data[0].remarks+ " | Bill Date : " + data[0].Dated
+            });
+           }
+           
+      });
+      
     }
   }
   AmountChange() {
@@ -274,12 +321,7 @@ export class TutoDsBillComponent implements OnInit {
           .subscribe((data: any) => {
             this.Spinner = false;
             if(data[0].Column1 === "Save Successfully") {
-            const obj1 = {
-              Subscription_Txn_ID :  window.btoa('0'),
-              Menu_Ref_ID : window.btoa(this.$CompacctAPI.CompacctCookies.Menu_Ref_ID),
-              Foot_Fall_ID : window.btoa(this.ObjDSBill.Foot_Fall_ID)
-            }
-            this.DynamicRedirectTo(obj1,'./Tutopia_Student_Order');
+            this.savePinForBill();
            console.log(data);
           }
       });
@@ -293,6 +335,28 @@ export class TutoDsBillComponent implements OnInit {
         detail: "Transaction Amount and Product Amount Does not Match."
       });
     }
+  }
+  savePinForBill() {
+    const obj = {
+      "SP_String": "Tutopia_Subscription_Accounts",
+      "Report_Name_String": "Update_PIN_Code",
+      "Json_Param_String" : JSON.stringify([{ Foot_Fall_ID :this.ObjDSBill.Foot_Fall_ID,PIN_Code : this.ObjDSBill.Pin}])
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          this.Spinner = false;
+          if(data[0].remarks === "success") {
+          const obj1 = {
+            Subscription_Txn_ID :  window.btoa('0'),
+            Menu_Ref_ID : window.btoa(this.$CompacctAPI.CompacctCookies.Menu_Ref_ID),
+            Foot_Fall_ID : window.btoa(this.ObjDSBill.Foot_Fall_ID),
+            BDA_ID :  window.btoa(this.BDA_ID)
+          }
+          this.DynamicRedirectTo(obj1,'./Tutopia_Student_Order');
+         console.log(data);
+        }
+    });
   }
   ObjArrMerge() {
     let arr = [];

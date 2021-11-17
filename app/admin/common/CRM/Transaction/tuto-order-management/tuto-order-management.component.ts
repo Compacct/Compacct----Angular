@@ -41,6 +41,8 @@ export class TutoOrderManagementComponent implements OnInit {
   LoanRecvFlag = false;
   StudentID = undefined;
   SuscbID = undefined;
+
+  BDA_ID = undefined;
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -68,6 +70,7 @@ export class TutoOrderManagementComponent implements OnInit {
           this.Param_FootFall = window.atob(params['Foot_Fall_ID']);
           this.GetStudentID();
         }
+        this.BDA_ID = params['BDA_ID'] ? window.atob(params['BDA_ID']) : 0;
 
          console.log (this.Param_Flag);
         })
@@ -314,7 +317,8 @@ export class TutoOrderManagementComponent implements OnInit {
         Subscription_Txn_ID: this.Param_Flag,
         User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
         Billing_Type : BILL[0].Pay_Type , 
-        Pay_ID : BILL[0].Pay_ID
+        Pay_ID : BILL[0].Pay_ID,
+        BDA_ID : this.BDA_ID ? this.BDA_ID : 0
       })
     });
     console.log("save Data",this.showProductList);

@@ -34,6 +34,7 @@ export class K4cFactoryIndentAdvanceComponent implements OnInit {
   viewData:any = {};
   viewNo = undefined;
   ObjBrowseData: BrowseData = new BrowseData();
+  Search_By = "Delivery Date";
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -91,7 +92,8 @@ export class K4cFactoryIndentAdvanceComponent implements OnInit {
       const tempDate = {
         From_Date: start,
         To_Date: end,
-        Brand_ID: this.ObjBrowseData.Brand_ID
+        Brand_ID: this.ObjBrowseData.Brand_ID,
+        Search_By : this.Search_By
       }
       const objj = {
         "SP_String": "SP_Production_Voucher",
