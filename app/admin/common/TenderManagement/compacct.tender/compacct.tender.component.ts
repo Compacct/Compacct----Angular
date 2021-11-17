@@ -43,6 +43,7 @@ export class CompacctTenderComponent implements OnInit {
   TenderAmount = undefined;
   PeriodOfWork = undefined;
   EMDAmount = undefined;
+  updateEMDAmount = undefined
   ObjTender = new Tender();
   ObjtenerFee = new tenerFee();
   ObjTask = new Task();
@@ -61,7 +62,8 @@ export class CompacctTenderComponent implements OnInit {
   FormOfContract = undefined;
   ContactModal = false;
   ContractSubmitted = false;
-
+  PerformanceSecurityAmount = undefined;
+  UpdatePerformanceSecurityAmount = undefined;
   TenderPaymentMode = undefined;
   PaymentModal = false;
   PaymentSubmitted = false;
@@ -69,6 +71,7 @@ export class CompacctTenderComponent implements OnInit {
 
   EMDSubmitted = false;
   EMDModal = false;
+  
   TenderFeeSubmitted = false;
   PerformanceSecuritySubmitted = false;
   TenderFeeModal = false;
@@ -463,6 +466,43 @@ StateList = [];
      this.ObjTender.EMD_Amount = Number(e);
      this.ObjEMD.EMD_Amount = Number(e);
      this.EMDAmount = k;
+     this.updateEMDAmount = k;
+    }
+  }
+  // TenderUpdateEMDChange(e){
+  //   console.log(e);
+  //   this.ObjTender.EMD_Amount = undefined;
+  //   this.ObjEMD.EMD_Amount = undefined;
+  //   if(e) {
+  //     const x= e.toString();
+  //     const number = Number(e);
+  //    const k =  number.toLocaleString('en-IN', {
+  //        maximumFractionDigits: 2,
+  //        style: 'currency',
+  //        currency: 'INR'
+  //    });
+  //    this.ObjTender.EMD_Amount = Number(e);
+  //    this.ObjEMD.EMD_Amount = Number(e);
+  //    this.EMDAmount = k;
+  //    this.updateEMDAmount = k;
+  //   }
+  // }
+  PerformanceSecurityChange(e){
+    console.log(e);
+    this.ObjTender.PSD_Amount = undefined;
+    this.ObjPerformanceSecurity.PSD_Amount = undefined;
+    if(e) {
+      const x= e.toString();
+      const number = Number(e);
+     const k =  number.toLocaleString('en-IN', {
+         maximumFractionDigits: 2,
+         style: 'currency',
+         currency: 'INR'
+     });
+     this.ObjTender.PSD_Amount = Number(e);
+     this.ObjPerformanceSecurity.PSD_Amount = Number(e);
+     this.PerformanceSecurityAmount = k;
+     this.UpdatePerformanceSecurityAmount = k;
     }
   }
   TenderFDChange(e){
@@ -580,6 +620,7 @@ StateList = [];
       this.TenderAmountChange(obj.Tender_Amount);
       this.TenderFeeChange(obj.T_Fee_Amount);
       this.TenderEMDChange(obj.EMD_Amount);
+      this.PerformanceSecurityChange(obj.PSD_Amount);
       this.TenderPeriodOfWorkChange(obj.Period_Of_Work);
       this.GetTask(obj.Tender_Doc_ID,false);
       this.GetDocument(obj.Tender_Doc_ID);
@@ -1058,6 +1099,7 @@ StateList = [];
   }
 // Save
   SaveTenderMaster(valid) {
+    console.log("ObjTender.PSD_Acc_Voucher_No",this.ObjTender.PSD_Acc_Voucher_No);
   this.TenderFormSubmitted = true;
   if (valid ) {
   this.Spinner = true;
@@ -1090,6 +1132,7 @@ StateList = [];
           detail: "Tender for "+this.ObjTender.Tender_Name+" of " + this.GetOrgName(this.ObjTender.Tender_Org_ID)+" Saved Successfully"
         });
         this.Spinner = false;
+        this.TenderFormSubmitted = false;
       console.group("Compacct V2");
       console.log("%c  Tender Sucess:", "color:green;");
       console.log("/BL_CRM_Txn_Enq_Tender/Insert_Enq_Tender");
@@ -1344,6 +1387,7 @@ StateList = [];
     this.EMDMatureDate = new Date();
     this.EMDNEFTDate = new Date();
     this.EMDAmount = undefined;
+    this.updateEMDAmount = undefined;
     this.FDAmount = undefined;
     this.FDMaturityAmount =undefined;
     this.Spinner = false;
@@ -1368,6 +1412,8 @@ StateList = [];
     this.ObjFee = new Fee();
     this.FeeDepositDate = new Date();
     this.FeeTransactionDate = new Date();
+    this.PerformanceSecurityAmount = undefined;
+    this.UpdatePerformanceSecurityAmount = undefined;
     this.Spinner = false;
     if(obj.Tender_Doc_ID) {
       this.ObjPerformanceSecurity.Tender_Doc_ID = obj.Tender_Doc_ID;
@@ -1535,6 +1581,9 @@ StateList = [];
     this.TFeeAmountupdate = undefined;
     this.TenderAmount = undefined;
     this.EMDAmount = undefined;
+    this.updateEMDAmount = undefined;
+    this.UpdatePerformanceSecurityAmount = undefined;
+    this.PerformanceSecurityAmount = undefined;
     this.PeriodOfWork = undefined;
     this.locationInput.nativeElement.value = '';
     this.TenderId = undefined;
@@ -1608,6 +1657,10 @@ StateList = [];
       if(field === 'TenderAmount') {
         this.TenderAmount = Amt.split("₹").join("").split(",").join("");
       }
+      if(field === 'PerformanceSecurityAmount') {
+        this.PerformanceSecurityAmount = Amt.split("₹").join("").split(",").join("");
+        this.UpdatePerformanceSecurityAmount = Amt.split("₹").join("").split(",").join("");
+      }
       if(field === 'TFeeAmount') {
         this.TFeeAmount = Amt.split("₹").join("").split(",").join("");
       }
@@ -1616,6 +1669,7 @@ StateList = [];
       }
       if(field === 'EMDAmount') {
         this.EMDAmount = Amt.split("₹").join("").split(",").join("");
+        this.updateEMDAmount = Amt.split("₹").join("").split(",").join("");
       }
       if(field === 'FDAmount') {
         this.FDAmount = Amt.split("₹").join("").split(",").join("");
@@ -1653,10 +1707,14 @@ StateList = [];
     }
   }
   onFocusOutEvent(field,Amt){
+    //this.PerformanceSecurityChange(obj.PSD_Amount);
     if(Amt){
       const filterAmt = Amt.split("₹").join("").split(",").join("");
       if(field === 'TenderAmount') {
         this.TenderAmountChange(filterAmt);
+      }
+      if(field === 'PerformanceSecurityAmount') {
+        this.PerformanceSecurityChange(filterAmt)
       }
       if(field === 'TFeeAmount') {
         this.TenderFeeChange(filterAmt);
@@ -3696,7 +3754,7 @@ OpenEstimate(obj){
     this.ObjEstimate = {};
     this.TenderDocID = obj.Tender_Doc_ID;
     this.EstimateModalFlag = true;
-    this.GetestimateAllData();
+    this.GetestimateAllData( );
   }
 }
 CalculateEstimateAmount() {
@@ -3986,13 +4044,16 @@ LightBoxSave(val,field) {
   }
 }
 addEstimate(){
-  window.open("/Tender_Estimate?Tender_Doc_ID="+this.TenderDocID,"_self")
+  window.open("/Tender_Estimate?Tender_Doc_ID="+this.TenderDocID,"_blank")
+}
+edit(){
+  window.open("/Tender_Estimate?Tender_Doc_ID="+this.TenderDocID,"_blank")
 }
 GetestimateAllData(){
   const obj = {
     "SP_String":"SP_Tender_Management_All",
     "Report_Name_String": "Browse_Tender_Estimation",
-   // "Json_Param_String" : JSON.stringify(tempArr)
+   "Json_Param_String" : JSON.stringify({Tender_Doc_ID : this.TenderDocID})
   }
   const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
   this.GlobalAPI
@@ -4071,7 +4132,8 @@ class Tender{
   T_Fee_Date_of_Issue	:string;
   T_Fee_Date_of_Expiry	:string;
   PSD_Date_of_Issue		:string;
-  PSD_Date_of_Expiry	:string;	
+  PSD_Date_of_Expiry	:string;
+  PSD_Amount : any;
 }
 class Task{
   Task_ID= 0;
@@ -4245,6 +4307,8 @@ class PerformanceSecurity {
   T_Fee_Date_of_Expiry	:string;
   PSD_Date_of_Issue		:string;
   PSD_Date_of_Expiry	:string;
+  PSD_Amount :any;
+
 }
 class Fee{
   Tender_Doc_ID:string;

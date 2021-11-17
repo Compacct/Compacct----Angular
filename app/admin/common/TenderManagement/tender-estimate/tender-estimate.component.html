@@ -28,7 +28,8 @@
                                 <div class="col-sm-6">
                                     <label class="control-label">Project Name&nbsp;<span class="text-danger" >*</span></label>
                                     <span (click)='DynamicRedirectTo()' class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-database"></i>Manage Projects</span>
-                                     <p-dropdown
+                                    <span style="margin-left: 2px;" (click)='GetProject()' class="btn-vk  pull-right createPatient btn btn-primary btn-xs"><i class="fa fa-fw  fa-refresh"></i>refresh</span>
+                                   <p-dropdown
                                     [options]="projectList"
                                     name="projectname"
                                     [(ngModel)]="ObjEstimate.project_ID"
@@ -258,7 +259,7 @@
                                       placeholder="Rate"
                                     />
                                   </div>
-                                  <div class="col-sm-3">
+                                  <div class="col-sm-2">
                                     <label class="control-label">Purchase Amount<sup class="text-danger">*</sup></label>
                                     <input
                                       class="form-control"
@@ -282,7 +283,7 @@
                                       
                                     />
                                   </div>
-                                  <div class="col-sm-3">
+                                  <div class="col-sm-2">
                                     <label class="control-label">Sale Amount</label>
                                     <input
                                       class="form-control"
@@ -294,11 +295,17 @@
                                     />
                                   </div>
                                   <div class="col-sm-2">
-                                    <button class="btn btn-primary custombutton"
+                                    <button class="btn btn-primary custombutton pull-right"
                                     (click)="AddEstimate(EstimateForm.form.valid)">    
-                                    <span class="glyphicon glyphicon-add"></span>&nbsp;Add
+                                    <span class="fa fa-plus"></span>&nbsp;Add
                                 </button>
                                  </div>
+                                 <div class="col-sm-2">
+                                  <button class="btn btn-primary custombutton pull-left"
+                                  (click)="cleardata()">    
+                                  <span class="fa fa-remove"></span>&nbsp;Clear
+                              </button>
+                               </div>
                                 
                               </div>
                               <div class="form-group" style="margin-top:2.5em;padding: 0 1em;" >

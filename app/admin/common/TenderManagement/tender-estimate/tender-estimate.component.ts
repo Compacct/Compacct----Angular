@@ -600,6 +600,7 @@ export class TenderEstimateComponent implements OnInit {
     let tempArr = [];
     for (var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
       const temp = this.ShowAddedEstimateProductList[i];
+      console.log("tamp Data",temp);
       if (temp.items.length) {
         for (var k = 0; k < temp.items.length; k++) {
           const temp2 = temp.items[k];
@@ -645,11 +646,30 @@ export class TenderEstimateComponent implements OnInit {
 
 
   DynamicRedirectTo (){
-    const navigationExtras: NavigationExtras = {
-      queryParams: {
-        from : 'tenderESTIMATE'
-      },
-    };
-    this.router.navigate(['./BL_CRM_Txn_Enq_Tender'], navigationExtras);
+    // const navigationExtras: NavigationExtras = {
+    //   queryParams: {
+    //     from : 'tenderESTIMATE'
+    //   },
+    // };
+    // this.router.navigate(['./Project_Estimate'], navigationExtras);
+    window.open("/Project_Estimate?from=tenderESTIMATE","_blank")
+  }
+
+  cleardata(){
+      this.ObjEstimate.Product_ID = undefined;
+      this.ObjEstimate.Qty = undefined;
+      this.ObjEstimate.UOM = undefined;
+      this.ObjEstimate.Rate = undefined;
+      this.ObjEstimate.Amount = undefined;
+      this.ObjEstimate.Product_Req = undefined;
+      this.ObjEstimate.Product_Req = undefined;
+      this.ObjEstimate.Sale_Amount = undefined;
+      this.ObjEstimate.saleRate = undefined;
+      this.ObjEstimate.TQty = undefined;
+      this.ObjEstimate.Nos = undefined;
+      this.ObjEstimate.unit = undefined;
+      this.ObjEstimate.Budget_Group_ID = undefined;
+      this.ObjEstimate.Budget_Sub_Group_ID = undefined;
+      this.ObjEstimate.Work_Details_ID = undefined;
   }
 }
