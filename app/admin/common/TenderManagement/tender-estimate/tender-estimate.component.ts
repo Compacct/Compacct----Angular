@@ -55,9 +55,8 @@ export class TenderEstimateComponent implements OnInit {
   workdetalisList = [];
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   cols = [
-    { field: 'Parent_Serial_No', header: 'SL No.' },
+    { field: 'SL_No', header: 'SL No.' },
     { field: 'Budget_Group_Name', header: 'Group Name' },
-    { field: 'Child_Serial_No', header: 'SL No.' },
     { field: 'Budget_Sub_Group_Name', header: 'Sub Group Name' },
     { field: 'Work_Details', header: 'Work Details' },
     { field: 'Product_Description', header: 'Product' },
@@ -69,7 +68,8 @@ export class TenderEstimateComponent implements OnInit {
     { field: 'saleRate', header: 'Sale Rate' },
     { field: 'Sale_Amount', header: 'Sale Amount' },
     { field: 'Rate', header: 'Purchase Rate' },
-    { field: 'Amount', header: 'Purchase Amount' }
+    { field: 'Amount', header: 'Purchase Amount' },
+    { field: 'zzzz', header: 'Delete' }
 ];
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -450,47 +450,22 @@ export class TenderEstimateComponent implements OnInit {
       let dupSub = [];
       let parentCount = 0;
       for(var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
-        if (dupSub.indexOf(this.ShowAddedEstimateProductList[i]['Budget_Group_ID']) === -1) {
-          parentCount = parentCount + 1;
-          this.ShowAddedEstimateProductList[i]['Parent_Serial_No'] = parentCount;
-          dupSub.push(this.ShowAddedEstimateProductList[i]['Budget_Group_ID']);
-          const ParentDub = this.ShowAddedEstimateProductList.filter(obj => obj.Budget_Group_ID == this.ShowAddedEstimateProductList[i].Budget_Group_ID);        
-          var out2 = [];          
-          var count = 0;
-          if (ParentDub.length) {
-            for (var k = 0; k < ParentDub.length; k++) {
-              if (out2.indexOf(ParentDub[k]['Budget_Sub_Group_ID']) === -1) {
-                count = count + 1;
-                this.ShowAddedEstimateProductList.forEach((e,o) => {
-                  if(e.uid ===  ParentDub[k].uid) 
-                  this.ShowAddedEstimateProductList[o]['Child_Serial_No'] = parentCount + '.' + count;
-                });
-                out2.push(ParentDub[k]['Budget_Sub_Group_ID']);              
-              } else{
-                const childFilt = ParentDub.filter(e=> {
-                  return e.Budget_Group_ID == ParentDub[k]['Budget_Group_ID'] &&  e.Budget_Sub_Group_ID == ParentDub[k]['Budget_Sub_Group_ID']
-                });
-                console.log(childFilt)
-                childFilt.forEach(it => {
-                  this.ShowAddedEstimateProductList.forEach((e,o) => {
-                    if(e.uid ===  it.uid) 
-                    this.ShowAddedEstimateProductList[o]['Child_Serial_No'] = parentCount + '.' + count;
-                  });
-                })
-                
-              }
-            }
-
-          }
-
-        } else {
-          this.ShowAddedEstimateProductList[i]['Parent_Serial_No'] = this.ShowAddedEstimateProductList.find(e=> e.Budget_Group_ID == this.ShowAddedEstimateProductList[i]['Budget_Group_ID']).Parent_Serial_No;
-        }
+        this.ShowAddedEstimateProductList[i]['SL_No'] = i + 1;
       }
-      console.log(this.ShowAddedEstimateProductList);
-
     }
 
+  }
+  DeleteEstimate(k) {
+    this.AddedEstimateProductList.splice(k,1);
+    this.ShowAddedEstimateProductList = this.AddedEstimateProductList;
+    for(var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+      this.ShowAddedEstimateProductList[i]['SL_No'] = i + 1;
+    }
+  }
+  RowReOrder(e) {
+    for(var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+      this.ShowAddedEstimateProductList[i]['SL_No'] = i + 1;
+    }
   }
   getNestedChildren(arr) {
     var out = []
@@ -575,8 +550,8 @@ export class TenderEstimateComponent implements OnInit {
               summary: 'Estimate Management ',
               detail: "Succesfully Save."
             });
-            this.ObjEstimate = {};
-            this.TenderDocID = undefined;
+           // this.ObjEstimate = {};
+          //  this.TenderDocID = undefined;
             this.EstimateModalFlag = false;
 
           } else {
@@ -600,43 +575,27 @@ export class TenderEstimateComponent implements OnInit {
     let tempArr = [];
     for (var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
       const temp = this.ShowAddedEstimateProductList[i];
-      console.log("tamp Data",temp);
-      if (temp.items.length) {
-        for (var k = 0; k < temp.items.length; k++) {
-          const temp2 = temp.items[k];
-          let slno = temp2.Sl_No;
-          if (temp2.items.length) {
-            for (var h = 0; h < temp2.items.length; h++) {
-              const e = temp2.items[h];
-              if (e && e.Budget_Group_ID) {
-                const tempObj = {
-                  Sl_No: slno,
-                  Budget_Group_ID: e.Budget_Group_ID,
-                  Budget_Sub_Group_ID: e.Budget_Sub_Group_ID,
-                  Product_ID: e.Product_ID,
-                  Product_Description: e.Product_Description,
-                  Total_Qty: e.Qty,
-                  UOM: e.UOM,
-                  Rate: e.Rate,
-                  Amount: e.Amount,
-                  Tender_Doc_ID: this.TenderDocID,
-                  Project_ID: e.project_ID,
-                  Site_ID: e.site_ID,
-                  Work_Details_ID: e.Work_Details_ID,
-                  Unit_Description: e.unit,
-                  Qty: e.Qty,
-                  NOs: e.Nos,
-                  Sale_Rate: e.saleRate,
-                  Sale_Amount: e.Sale_Amount
-                }
-                tempArr.push(tempObj);
-              }
-
-            }
-          }
-        }
-
+      const tempObj = {
+        Sl_No: temp.SL_No,
+        Budget_Group_ID: temp.Budget_Group_ID,
+        Budget_Sub_Group_ID: temp.Budget_Sub_Group_ID,
+        Product_ID: temp.Product_ID,
+        Product_Description: temp.Product_Description,
+        Total_Qty: temp.Qty,
+        UOM: temp.UOM,
+        Rate: temp.Rate,
+        Amount: temp.Amount,
+        Tender_Doc_ID: this.TenderDocID,
+        Project_ID: temp.project_ID,
+        Site_ID: temp.site_ID,
+        Work_Details_ID: temp.Work_Details_ID,
+        Unit_Description: temp.unit,
+        Qty: temp.Qty,
+        NOs: temp.Nos,
+        Sale_Rate: temp.saleRate,
+        Sale_Amount: temp.Sale_Amount
       }
+      tempArr.push(tempObj);
     }
     return tempArr;
   }
