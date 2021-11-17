@@ -221,6 +221,7 @@ import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rs
 import { DirectPaymentFollowupNepalComponent } from './common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component';
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
+import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-package-master/hearing-package-master.component';
 
 
 @NgModule({
@@ -378,7 +379,8 @@ import { TenderEstimateComponent } from './common/TenderManagement/tender-estima
     K4cRsnsClosingStockComponent,
     DirectPaymentFollowupNepalComponent,
     K4cFranchiseSaleBillComponent,
-    TenderEstimateComponent
+    TenderEstimateComponent,
+    HearingPackageMasterComponent,
   ],
   imports: [
     CommonModule,

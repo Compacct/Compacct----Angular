@@ -25,52 +25,52 @@
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <form name="EstimateForm" #EstimateForm="ngForm" novalidate>
                             <div class="form-group" style="padding: 0 1em;" >
-                                <div class="col-sm-6">
-                                    <label class="control-label">Project Name&nbsp;<span class="text-danger" >*</span></label>
-                                    <span (click)='DynamicRedirectTo()' class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-database"></i>Manage Projects</span>
-                                    <span style="margin-left: 2px;" (click)='GetProject()' class="btn-vk  pull-right createPatient btn btn-primary btn-xs"><i class="fa fa-fw  fa-refresh"></i>refresh</span>
-                                   <p-dropdown
-                                    [options]="projectList"
-                                    name="projectname"
-                                    [(ngModel)]="ObjEstimate.project_ID"
-                                    [showClear]="true"
-                                    [emptyFilterMessage]="' No Project Found'"
-                                    (onChange)="getSiteList(ObjEstimate.project_ID)"
-                                    [filter]="true"
-                                    filterBy="label,value.name"
-                                    [placeholder]="'Select Project Name'"
-                                    [virtualScroll]="true"
-                                    itemSize="30"
-                                    #projectname="ngModel"
-                                    [styleClass]="
-                                    EstimateInfoSubmitted && projectname.errors?.required? 'clearance': ''"
-                                    [required]="true"
-                                    [disabled]="ShowAddedEstimateProductList.length"
-                                  >
-                                  </p-dropdown>
-                                  </div>
-                                  <div class="col-sm-6">
-                                    <label class="control-label">Site Name&nbsp;<span class="text-danger" >*</span></label>
-                                     <p-dropdown
-                                    [options]="siteList"
-                                    name="siteName"
-                                    [(ngModel)]="ObjEstimate.site_ID"
-                                    [showClear]="true"
-                                    [emptyFilterMessage]="' No Site Found'"
-                                    (onChange)="testchange(ObjEstimate.site_ID)"
-                                    [filter]="true"
-                                    filterBy="label,value.name"
-                                    [placeholder]="'Select Site Name'"
-                                    [virtualScroll]="true"
-                                    itemSize="30"
-                                    #siteName="ngModel"
-                                    [styleClass]="
-                                    EstimateInfoSubmitted && siteName.errors?.required? 'clearance': ''"
-                                    [required]="true"
-                                    [disabled]="ShowAddedEstimateProductList.length"
-                                  >
-                                  </p-dropdown>
-                                  </div>
+                              <div class="col-sm-6">
+                                  <label class="control-label">Project Name&nbsp;<span class="text-danger" >*</span></label>
+                                  <span (click)='DynamicRedirectTo()' class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-database"></i>Manage Projects</span>
+                                  <span style="margin-left: 2px;" (click)='GetProject()' class="btn-vk  pull-right createPatient btn btn-primary btn-xs"><i class="fa fa-fw  fa-refresh"></i>refresh</span>
+                                  <p-dropdown
+                                  [options]="projectList"
+                                  name="projectname"
+                                  [(ngModel)]="ObjEstimate.project_ID"
+                                  [showClear]="true"
+                                  [emptyFilterMessage]="' No Project Found'"
+                                  (onChange)="getSiteList(ObjEstimate.project_ID)"
+                                  [filter]="true"
+                                  filterBy="label,value.name"
+                                  [placeholder]="'Select Project Name'"
+                                  [virtualScroll]="true"
+                                  itemSize="30"
+                                  #projectname="ngModel"
+                                  [styleClass]="
+                                  EstimateInfoSubmitted && projectname.errors?.required? 'clearance': ''"
+                                  [required]="true"
+                                  [disabled]="ShowAddedEstimateProductList.length"
+                                >
+                                </p-dropdown>
+                              </div>
+                              <div class="col-sm-6">
+                                <label class="control-label">Site Name&nbsp;<span class="text-danger" >*</span></label>
+                                  <p-dropdown
+                                [options]="siteList"
+                                name="siteName"
+                                [(ngModel)]="ObjEstimate.site_ID"
+                                [showClear]="true"
+                                [emptyFilterMessage]="' No Site Found'"
+                                (onChange)="testchange(ObjEstimate.site_ID)"
+                                [filter]="true"
+                                filterBy="label,value.name"
+                                [placeholder]="'Select Site Name'"
+                                [virtualScroll]="true"
+                                itemSize="30"
+                                #siteName="ngModel"
+                                [styleClass]="
+                                EstimateInfoSubmitted && siteName.errors?.required? 'clearance': ''"
+                                [required]="true"
+                                [disabled]="ShowAddedEstimateProductList.length"
+                              >
+                              </p-dropdown>
+                              </div>
                               </div>
                               <div class="form-group" style="padding: 0 1em;" >
                                 <div class="col-sm-6">
@@ -117,8 +117,7 @@
                                   [required]="true"
                                 >
                                 </p-dropdown>
-                                </div>
-                                
+                                </div>                                
                                </div>
                                <div class="form-group" style="padding: 0 1em;" >
                                 <div class="clearfix"></div>
@@ -310,7 +309,9 @@
                               </div>
                               <div class="form-group" style="margin-top:2.5em;padding: 0 1em;" >
                                 <div class="table-responsive no-padding">
-                                  <p-table [columns]="cols" [value]="ShowAddedEstimateProductList" [reorderableColumns]="true">
+                                  <p-table [columns]="cols" [value]="ShowAddedEstimateProductList"
+                                   (onRowReorder)='RowReOrder($event)'
+                                   [reorderableColumns]="true">
                                     <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:2.5em"></th>
@@ -324,8 +325,9 @@
                                             <td>
                                                 <i class="fa fa-bars" pReorderableRowHandle></i>
                                             </td>
-                                            <td *ngFor="let col of columns">
-                                                {{rowData[col.field]}}
+                                            <td *ngFor="let col of columns;let i = index;">
+                                               <span *ngIf='i !== (columns.length -1)'> {{rowData[col.field]}}</span>
+                                               <button *ngIf='i === (columns.length -1)' (click)="DeleteEstimate(index)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
                                     </ng-template>
