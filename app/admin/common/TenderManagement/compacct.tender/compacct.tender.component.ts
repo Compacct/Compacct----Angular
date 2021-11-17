@@ -489,8 +489,8 @@ StateList = [];
   // }
   PerformanceSecurityChange(e){
     console.log(e);
-    this.ObjTender.PSD_Amount = undefined;
-    this.ObjPerformanceSecurity.PSD_Amount = undefined;
+    this.ObjTender.APSD_Amount = undefined;
+    this.ObjPerformanceSecurity.APSD_Amount = undefined;
     if(e) {
       const x= e.toString();
       const number = Number(e);
@@ -499,8 +499,8 @@ StateList = [];
          style: 'currency',
          currency: 'INR'
      });
-     this.ObjTender.PSD_Amount = Number(e);
-     this.ObjPerformanceSecurity.PSD_Amount = Number(e);
+     this.ObjTender.APSD_Amount = Number(e);
+     this.ObjPerformanceSecurity.APSD_Amount = Number(e);
      this.PerformanceSecurityAmount = k;
      this.UpdatePerformanceSecurityAmount = k;
     }
@@ -1036,20 +1036,25 @@ StateList = [];
     .set("Search_Text",this.ObjSearch.Search_Text ? this.ObjSearch.Search_Text : undefined);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_All_Tender_Browse", { params: obj })
-      .subscribe((data: any) => {
-        this.TenderList = data.length ? JSON.parse(data) : [];
-        this.BidTenderList = data.length ? JSON.parse(data)[0] : [];
+      .subscribe((res: any) => {
+        const data = res ? JSON.parse(res) : [];
+        console.log("data",data);
+        console.log("data length",data.length);
+        if(data.length){
+          this.TenderList = data.length ? data : [];
+        this.BidTenderList = data.length ? data[0] : [];
         this.TenderAmountChange(this.BidTenderList.Tender_Amount);
-        this.BackupTenderList = data.length ? JSON.parse(data) : [];
+        this.BackupTenderList = data.length ? data : [];
         const distARR = this.GetDistinctItems.GetMultipleDistinct(this.BackupTenderList,['Tender Authority','Tender Calling Div','Tender Category','State','Location']);
         this.DTAutorityList = distARR[0];
         this.DTCallingDivList = distARR[1];
         this.DTCategoryList = distARR[2];
         this.DTStateList = distARR[3];
         this.DTLocationList = distARR[4];
-        this.Spinner = false;
         this.TenderSearchForm = false;
         console.log("TenderList",this.TenderList);
+        }
+        this.Spinner = false;
       });
   }
   }
@@ -1118,6 +1123,7 @@ StateList = [];
   this.ObjTender.User_ID =  this.commonApi.CompacctCookies.User_ID;
   this.ObjTender.Cost_Cen_ID =  this.commonApi.CompacctCookies.Cost_Cen_ID;
   this.ObjTender.Tender_Doc_ID =  this.ObjTender.Tender_Doc_ID ? this.ObjTender.Tender_Doc_ID : 0;
+  console.log("Tender data",this.ObjTender);
   const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Insert_Enq_Tender";
   const obj = { Enq_Tender_String: JSON.stringify([this.ObjTender]) };
   this.$http.post(UrlAddress, obj).subscribe((data: any) => {
@@ -1136,6 +1142,7 @@ StateList = [];
       console.group("Compacct V2");
       console.log("%c  Tender Sucess:", "color:green;");
       console.log("/BL_CRM_Txn_Enq_Tender/Insert_Enq_Tender");
+      this.clearData();
     } else {
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -1473,6 +1480,7 @@ StateList = [];
         // }
         this.EMDUpdateDepositDate = new Date(obj.EMD_Date_of_Expiry);
         this.EMDUpdateDeposit = new Date(obj.EMD_Date_of_Issue);
+        this.TenderEMDChange(obj.EMD_Amount)
        this.EMDModal = true;
       });
     }
@@ -1515,7 +1523,7 @@ StateList = [];
             this.PerformanceExpiryDateUpdate = new Date(obj.PSD_Date_of_Expiry);
             this.ObjFee.T_Fee_Amount_Deposit_Date = this.DateService.dateConvert(obj.T_Fee_Amount_Deposit_Date);
             this.ObjFee.T_Fee_NEFT_Txn_Date = this.DateService.dateConvert(obj.T_Fee_NEFT_Txn_Date);
-          
+          this.PerformanceSecurityChange(obj.APSD_Amount);
         }
         
         this.PerformanceSecurityModel = true;
@@ -4091,7 +4099,6 @@ class Tender{
   Lead_Status = 'Tender Created';
   EMD_Amount:number;
   T_Fee_Amount:number;
-
   Enq_Source_Detail:string;
   Tender_Ref_No:string;
   Tender_Type_ID: string;
@@ -4111,7 +4118,8 @@ class Tender{
   T_Fee_exm_Allowed :string;
   dial_code = '+91';
   Enq_Source_Mobile	 = ''
-
+  APSD_Amount:number;
+  
   Tender_Calling_Div_ID  :string;            
   Tender_Execution_Div_ID :string;                  
   State :string;        
@@ -4133,7 +4141,7 @@ class Tender{
   T_Fee_Date_of_Expiry	:string;
   PSD_Date_of_Issue		:string;
   PSD_Date_of_Expiry	:string;
-  PSD_Amount : any;
+  
 }
 class Task{
   Task_ID= 0;
@@ -4265,7 +4273,7 @@ class PerformanceSecurity {
   Lead_Status = 'Tender Created';
   EMD_Amount:number;
   T_Fee_Amount:number;
-
+  APSD_Amount:number;
   Enq_Source_Detail:string;
   Tender_Ref_No:string;
   Tender_Type_ID: string;
@@ -4285,7 +4293,7 @@ class PerformanceSecurity {
   T_Fee_exm_Allowed :string;
   dial_code = '+91';
   Enq_Source_Mobile	 = ''
-
+  
   Tender_Calling_Div_ID  :string;            
   Tender_Execution_Div_ID :string;                  
   State :string;        
