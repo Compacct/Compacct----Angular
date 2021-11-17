@@ -794,15 +794,20 @@
                                                             [ngClass]="{'clearance': TenderFormSubmitted && EMD_Transaction_Ref_No.errors?.required}" required>
                                                   </div>
 
-                                                  <!-- <div class="col-sm-4">
-                                                    <label class="control-label">EMD Fee Type <sup class="text-danger">*</sup></label>
+                                                  <div class="col-sm-4">
+                                                    <label class="control-label">EMD Amount <sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
-                                                            name="FeeType"
-                                                            #FeeType="ngModel"
-                                                            [(ngModel)]="ObjTender.EMD_fee_Type"
-                                                            placeholder="EMD Fee Type "
-                                                            [ngClass]="{'clearance': TenderFormSubmitted && FeeType.errors?.required}" required>
-                                                  </div> -->
+                                                    name="EMD"
+                                                    #EMD="ngModel"
+                                                    CompacctDigitonly="true"
+                                                    [(ngModel)]="EMDAmount"
+                                                    (change)="TenderEMDChange(EMDAmount)"
+                                                    (focus)="onFocusInEvent('EMDAmount',EMDAmount)"
+                                                    (focusout)="onFocusOutEvent('EMDAmount',EMDAmount)"
+                                                    placeholder="Payment Mode"
+                                                    autocomplete="off"
+                                                    [ngClass]="{'clearance': TenderFormSubmitted && EMD.errors?.required}" required>
+                                                    </div>
                                                   <!-- <div class="col-sm-4">
                                                     <label class="control-label">EMD Percentage <sup class="text-danger">*</sup></label>
                                                     <div class="input-group">
@@ -934,7 +939,7 @@
                                                             #PSD_Acc_Voucher_No="ngModel"
                                                             [(ngModel)]="ObjTender.PSD_Acc_Voucher_No"
                                                             placeholder="Performance Acc Voucher No"
-                                                            [ngClass]="{'clearance': TenderFormSubmitted && PSD_Acc_Voucher_No.errors?.required}">
+                                                            [ngClass]="{'clearance': TenderFormSubmitted && PSD_Acc_Voucher_No.errors?.required}" required>
                                                   </div>
 
                                                   <!-- <div class="col-sm-4">
@@ -995,6 +1000,20 @@
                                                         <option ngValue="Y">Yes</option>
                                                         <option ngValue="N">No</option>
                                                     </select>
+                                                  </div>
+                                                  <div class ="col-sm-4">
+                                                    <label class="control-label">Performance Security Amount <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    name="Performance_Security"
+                                                    #Performance_Security="ngModel"
+                                                    CompacctDigitonly="true"
+                                                    [(ngModel)]="PerformanceSecurityAmount"
+                                                    (change)="PerformanceSecurityChange(PerformanceSecurityAmount)"
+                                                    (focus)="onFocusInEvent('PerformanceSecurityAmount',PerformanceSecurityAmount)"
+                                                    (focusout)="onFocusOutEvent('PerformanceSecurityAmount',PerformanceSecurityAmount)"
+                                                    placeholder="Payment Mode"
+                                                    autocomplete="off"
+                                                    [ngClass]="{'clearance': TenderFormSubmitted && Performance_Security.errors?.required}" required> 
                                                   </div>
                                                   <div class="col-sm-4">
                                                     <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
@@ -3391,6 +3410,20 @@ novalidate
           [ngClass]="{'clearance': EMDSubmitted && EMD_Transaction_Ref_No.errors?.required}" required>
 </div>
 <div class="col-sm-6">
+  <label class="control-label">EMD Amount <sup class="text-danger">*</sup></label>
+  <input class="form-control"
+  name="UEMD"
+  #UEMD="ngModel"
+  CompacctDigitonly="true"
+  [(ngModel)]="updateEMDAmount"
+  (change)="TenderEMDChange(updateEMDAmount)"
+  (focus)="onFocusInEvent('EMDAmount',updateEMDAmount)"
+  (focusout)="onFocusOutEvent('EMDAmount',onFocusOutEvent)"
+  placeholder="Payment Mode"
+  autocomplete="off"
+  [ngClass]="{'clearance': TenderFormSubmitted && UEMD.errors?.required}" required>
+  </div>
+<div class="col-sm-6">
   <label class="control-label">EMD Fees Payable To <sup class="text-danger">*</sup></label>
   <input class="form-control"
           name="EMDPayable"
@@ -3714,7 +3747,20 @@ novalidate
             placeholder="Performance Acc Voucher No"
             [ngClass]="{'clearance': PerformanceFormSubmitted && PSD_Acc_Voucher_No.errors?.required}">
   </div>
-
+  <div class ="col-sm-6">
+    <label class="control-label">Performance Security Amount <sup class="text-danger">*</sup></label>
+    <input class="form-control"
+    name="UpdatePerformance_Security"
+    #UpdatePerformance_Security="ngModel"
+    CompacctDigitonly="true"
+    [(ngModel)]="UpdatePerformanceSecurityAmount"
+    (change)="PerformanceSecurityChange(UpdatePerformanceSecurityAmount)"
+    (focus)="onFocusInEvent('PerformanceSecurityAmount',UpdatePerformanceSecurityAmount)"
+    (focusout)="onFocusOutEvent('PerformanceSecurityAmount',UpdatePerformanceSecurityAmount)"
+    placeholder="Payment Mode"
+    autocomplete="off"
+    [ngClass]="{'clearance': TenderFormSubmitted && Performance_Security.errors?.required}" required> 
+  </div>
    <div class="col-sm-6">
     <label class="control-label">Performance Security Fees Payable To  <sup class="text-danger">*</sup></label>
     <input class="form-control"
@@ -4571,6 +4617,12 @@ id="load2"
                                 (click)="addEstimate()"
                                 ><span class="glyphicon glyphicon-plus"></span>&nbsp;ADD</button>
                             </div>
+                            <div class="col-sm-2 pull-left" style="text-align: left;">
+                              <button class="btn btn-primary btn-xs refresh-btn" 
+                              (click)="GetestimateAllData()">
+                              <i class="fa fa-fw  fa-refresh"></i>
+                            </button>
+                          </div>
                      </div>
 
                   </ng-template>
