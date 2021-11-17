@@ -293,10 +293,10 @@
                                                             <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
                                                             <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                             <select class="form-control"
-                                                                    name="Organization"
-                                                                    #Organization="ngModel"
+                                                                    name="Authority"
+                                                                    #Authority="ngModel"
                                                                     [(ngModel)]="ObjTender.Tender_Org_ID"
-                                                                    [ngClass]="{'clearance': TenderFormSubmitted && Organization.errors?.required}" required>
+                                                                    [ngClass]="{'clearance': TenderFormSubmitted && Authority.errors?.required}" required>
                                                                     <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let option of tenderOrgList" [ngValue]="option.Tender_Org_ID">
                                                                     {{option.Tender_Organization}}
@@ -308,10 +308,10 @@
                                                       <span (click)="Tender_Calling_Div_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                     
                                                       <select class="form-control"
-                                                              name="Organization"
-                                                              #Organization="ngModel"
+                                                              name="TenderCalling"
+                                                              #TenderCalling="ngModel"
                                                               [(ngModel)]="ObjTender.Tender_Calling_Div_ID"
-                                                              [ngClass]="{'clearance': TenderFormSubmitted && Organization.errors?.required}" required>
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && TenderCalling.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of TenderCallingDivList" [ngValue]="option.Tender_Calling_Div_ID">
                                                               {{option.Tender_Calling_Div_Name}}
@@ -322,10 +322,10 @@
                                                 <label class="control-label">Tender Execution Div<sup class="text-danger">*</sup></label>
                                                 <span (click)="Tender_Execution_Div_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                 <select class="form-control"
-                                                        name="Organization"
-                                                        #Organization="ngModel"
+                                                        name="Tender_ExecutionCreate"
+                                                        #Tender_ExecutionCreate="ngModel"
                                                         [(ngModel)]="ObjTender.Tender_Execution_Div_ID"
-                                                        [ngClass]="{'clearance': TenderFormSubmitted && Organization.errors?.required}" required>
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && Tender_ExecutionCreate.errors?.required}" required>
                                                         <option  [ngValue]="undefined">Select</option>
                                                     <option *ngFor="let option of TenderExecutionDivList" [ngValue]="option.Tender_Execution_Div_ID">
                                                         {{option.Tender_Execution_Div_Name}}
@@ -344,22 +344,22 @@
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
-                                                              name="ID"
-                                                              #ID="ngModel"
+                                                              name="TenderIDCreate"
+                                                              #TenderIDCreate="ngModel"
                                                               [(ngModel)]="ObjTender.Tender_ID"
                                                               placeholder="Tender ID"
                                                               (change)='CheckIfTenderIDExist()'
-                                                              [ngClass]="{'clearance': TenderFormSubmitted && ID.errors?.required}" required>
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && TenderIDCreate.errors?.required}" required>
                                                     </div>
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Type<sup class="text-danger">*</sup></label>
                                                       <span (click)="Tender_Type_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                
                                                       <select class="form-control"
-                                                              name="Type"
-                                                              #Type="ngModel"
+                                                              name="TenderTypeCreate"
+                                                              #TenderTypeCreate="ngModel"
                                                               [(ngModel)]="ObjTender.Tender_Type_ID"
-                                                              [ngClass]="{'clearance': TenderFormSubmitted && Type.errors?.required}" required>
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && TenderTypeCreate.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of TypeList" [ngValue]="option.Tender_Type_ID">
                                                               {{option.Tender_Type_Name}}
@@ -370,10 +370,10 @@
                                                         <label class="control-label">Tender Category<sup class="text-danger">*</sup></label>
                                                         <span (click)="Tender_Category_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                         <select class="form-control"
-                                                                name="Category"
-                                                                #Category="ngModel"
+                                                                name="CategoryTenderCreate"
+                                                                #CategoryTenderCreate="ngModel"
                                                                 [(ngModel)]="ObjTender.Tender_Category_ID"
-                                                                [ngClass]="{'clearance': TenderFormSubmitted && Category.errors?.required}" required>
+                                                                [ngClass]="{'clearance': TenderFormSubmitted && CategoryTenderCreate.errors?.required}" required>
                                                                 <option  [ngValue]="undefined">Select</option>
                                                             <option *ngFor="let option of tenderCategoryList" [ngValue]="option.Tender_Category_ID">
                                                                 {{option.Tender_Category_Name}}
@@ -383,12 +383,12 @@
                                                     <div class="col-sm-4">
                                                       <label class="control-label"> Remarks<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
-                                                              name="Name"
-                                                              #Name="ngModel"
+                                                              name="RemarksCreate"
+                                                              #RemarksCreate="ngModel"
                                                               [(ngModel)]="ObjTender.Tender_Name"
                                                               (change)='CheckIfTenderNameExist()'
                                                               placeholder="Remarks"
-                                                              [ngClass]="{'clearance': TenderFormSubmitted && Name.errors?.required}" required>
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && RemarksCreate.errors?.required}" required>
                                                     </div>
                                                     <div class="col-sm-4">
                                                       <label class="control-label">State<sup class="text-danger">*</sup></label>
@@ -443,8 +443,8 @@
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Value In ₹<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
-                                                             name="Amount"
-                                                             #Amount="ngModel"
+                                                             name="AmountTenderCreate"
+                                                             #AmountTenderCreate="ngModel"
                                                              CompacctDigitonly="true"
                                                              [(ngModel)]="TenderAmount"
                                                              (change)="TenderAmountChange(TenderAmount)"
@@ -452,7 +452,7 @@
                                                              (focusout)="onFocusOutEvent('TenderAmount',TenderAmount)"
                                                              placeholder="Tender Value In ₹"
                                                              autocomplete="off"
-                                                             [ngClass]="{'clearance': TenderFormSubmitted && Amount.errors?.required}" required>
+                                                             [ngClass]="{'clearance': TenderFormSubmitted && AmountTenderCreate.errors?.required}" required>
                                                     </div>
 
 
@@ -474,10 +474,10 @@
                                                 <span (click)="Tender_Payment_Mode.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                     
                                                 <select class="form-control"
-                                                              name="EMDAmountPay"
-                                                              #EMDAmountPay="ngModel"
+                                                              name="TenderAmountPay"
+                                                              #TenderAmountPay="ngModel"
                                                               [(ngModel)]="ObjTender.T_Fee_Payment_Mode"
-                                                              [ngClass]="{'clearance': TenderFormSubmitted && EMDAmountPay.errors?.required}" required>
+                                                              [ngClass]="{'clearance': TenderFormSubmitted && TenderAmountPay.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of PaymentList" [ngValue]="option.Tender_Payment_Mode">
                                                               {{option.Tender_Payment_Mode}}
@@ -500,11 +500,11 @@
                                                 <!-- <span (click)="ToggleOrganization()" style="margin-left: 6px;" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i>Choose</span> -->
                                                 <span (click)="RedirectVoucherAcc()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i>Create</span>
                                                 <input class="form-control"
-                                                        name="PayableAt"
-                                                        #PayableAt="ngModel"
+                                                        name="TenderPayableAt"
+                                                        #TenderPayableAt="ngModel"
                                                         [(ngModel)]="ObjTender.T_Fee_Transaction_Ref_No"
                                                         placeholder="Tender Acc Voucher No  "
-                                                        [ngClass]="{'clearance': TenderFormSubmitted && PayableAt.errors?.required}">
+                                                        [ngClass]="{'clearance': TenderFormSubmitted && TenderPayableAt.errors?.required}">
                                               </div>
                                                     <div class="col-sm-4">
                                                       <label class="control-label">Tender Fee In ₹<sup class="text-danger">*</sup></label>
@@ -2411,7 +2411,7 @@
             allow-pattern="([a-z ]|\.)"
             [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}"
             required
-          />
+          >
       </div>
       <button (click)='LightBoxSave("TenderPaymentMode1","Tender_Payment_Mode")'
        class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
@@ -4616,13 +4616,17 @@ id="load2"
                                 class="btn btn-success"
                                 (click)="addEstimate()"
                                 ><span class="glyphicon glyphicon-plus"></span>&nbsp;ADD</button>
+                                <button class="btn btn-primary pull-left" 
+                                (click)="GetestimateAllData()">
+                                <i class="fa fa-fw  fa-refresh"></i>
+                              </button>
                             </div>
-                            <div class="col-sm-2 pull-left" style="text-align: left;">
-                              <button class="btn btn-primary btn-xs refresh-btn" 
+                            <!-- <div class="col-sm-2 pull-left" style="text-align: left;">
+                              <button class="btn btn-primary " 
                               (click)="GetestimateAllData()">
                               <i class="fa fa-fw  fa-refresh"></i>
                             </button>
-                          </div>
+                          </div> -->
                      </div>
 
                   </ng-template>
