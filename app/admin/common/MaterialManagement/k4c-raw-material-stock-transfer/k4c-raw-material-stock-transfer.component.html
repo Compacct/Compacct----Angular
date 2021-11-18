@@ -28,14 +28,33 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="RawMaterialIssueSearchForm" #RawMaterialIssueSearchForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="control-label">Date</label>
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
+                                        <label class="control-label">To Cost Cent<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="BTo_Cost_Cen_ID" #BTo_Cost_Cen_ID="ngModel" [(ngModel)]="ObjBrowse.To_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_Cost_Cen_ID?.errors?.required}" (change)="GetBToGodown()" [disabled]="TBCdisableflag"
+                                            required>
+                              <option  [ngValue]="undefined">Select</option>
+                              <option  *ngFor="let option of ToBcostcenlist" value="{{option.Cost_Cen_ID}}">
+                                {{option.Cost_Cen_Name}}
+                              </option>
+                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">To Stock Point<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="BTo_godown_id" #BTo_godown_id="ngModel" [(ngModel)]="ObjBrowse.To_godown_id" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_godown_id?.errors?.required}" [disabled]="TBGdisableflag" required>
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  *ngFor="let option of ToBGodownList" value="{{option.godown_id}}">
+                                {{option.godown_name}}
+                              </option>
+                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
                                         <div class="col-sm-3">
-                                            <button class="btn btn-primary" style="margin-top: 28px;margin-left: 85%;" data-toggle="modal" (click)="GetSearchedList()" id="load" [disabled]="seachSpinner">
+                                            <button class="btn btn-primary" style="margin-top: 28px;margin-left: 85%;" data-toggle="modal" (click)="GetSearchedList(RawMaterialIssueSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                    </button>
@@ -185,6 +204,7 @@
                                         <tr>
                                             <th>Product Type</th>
                                             <th>Product Description</th>
+                                            <th>UOM</th>
                                             <th>Stock Qty</th>
                                             <th>Batch No</th>
                                             <th>Batch Qty</th>
@@ -196,7 +216,7 @@
                                         <tr>
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Description }}</td>
-
+                                            <td>{{col.UOM}}</td>
                                             <td>{{col.Stock_Qty}}</td>
                                             <td>{{col.Batch_No}}</td>
                                             <td>{{col.Batch_Qty}}</td>
