@@ -134,28 +134,28 @@ export class ReceiveDistributionChallanComponent implements OnInit {
         ? this.DateService.dateConvert(new Date(this.ObjBrowseData.To_Date))
         : this.DateService.dateConvert(new Date());
     if(valid){
-      if(this.ObjBrowseData.Material_Type === "Store Item"){
-        const tempDate = {
-          Material_Type : this.ObjBrowseData.Material_Type,
-          From_Date :start,
-          To_Date :end,
-          Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-          //Cost_Cen_ID :30
-          Brand_ID  : 0
-        }
+      // if(this.ObjBrowseData.Material_Type === "Store Item"){
+      //   const tempDate = {
+      //     Material_Type : this.ObjBrowseData.Material_Type,
+      //     From_Date :start,
+      //     To_Date :end,
+      //     Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      //     //Cost_Cen_ID :30
+      //     Brand_ID  : 0
+      //   }
   
-       const obj = {
-        "SP_String": "SP_Store_Item_Indent",
-        "Report_Name_String": "Get Dispatch Details For Accept Challan Store Item",
-        "Json_Param_String": JSON.stringify([tempDate])
-       }
-       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        this.GetAllDataList = data;
-        console.log("this.GetAllDataList",this.GetAllDataList);
-        this.DistributionSearchFormSubmitted = false;
-       // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
-      })
-      } else {
+      //  const obj = {
+      //   "SP_String": "SP_Store_Item_Indent",
+      //   "Report_Name_String": "Get Dispatch Details For Accept Challan Store Item",
+      //   "Json_Param_String": JSON.stringify([tempDate])
+      //  }
+      //  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      //   this.GetAllDataList = data;
+      //   console.log("this.GetAllDataList",this.GetAllDataList);
+      //   this.DistributionSearchFormSubmitted = false;
+      //  // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
+      // })
+      // } else {
       const tempDate = {
         Material_Type : this.ObjBrowseData.Material_Type,
         From_Date :start,
@@ -176,7 +176,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       this.DistributionSearchFormSubmitted = false;
      // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
     })
-  }
+  //}
   }
   }
   editmaster(masterProduct){

@@ -91,7 +91,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   SelectedIndent: any;
   TIndentList = [];
   BackUpproductDetails = [];
-
+  initDate2 = [];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -143,6 +143,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     this.SelectedIndent = [];
     this.IndentFilter = [];
     this.SpinnerShow = false;
+
   }
   onConfirm(){
     if(this.doc_no){
@@ -895,6 +896,7 @@ editmaster(masterProduct){
 }
 geteditmaster(masterProduct){
   this.EditList = [];
+  this.initDate2 = [];
   const obj = {
     "SP_String": "SP_Store_Item_Indent",
     "Report_Name_String": "Get Dispatch Details For Edit",
@@ -916,7 +918,12 @@ geteditmaster(masterProduct){
    this.Objdispatch.USER_ID = data[0].USER_ID;
    this.Objdispatch.Fin_Year_ID = data[0].Fin_Year_ID;
    this.Objdispatch.F_Cost_Cen_ID = data[0].F_Cost_Cen_ID;
-   this.todayDate = data[0].Indent_Date;
+   //this.todayDate = data[0].Indent_Date;
+   this.Objdispatch.Indent_Date_From = new Date(data[0].Indent_Date_From);
+   this.Objdispatch.Indent_Date_To = new Date(data[0].Indent_Date_To);
+   this.initDate2 =[this.Objdispatch.Indent_Date_From,this.Objdispatch.Indent_Date_To]
+   console.log('indent date form ===',this.Objdispatch.Indent_Date_From)
+   console.log('indent date to ===',this.Objdispatch.Indent_Date_To)
     this.EditList.forEach(el=>{
       this.productDetails.push({
         Delivery_Qty : el.Qty,
@@ -1013,7 +1020,8 @@ GetIndentList(){
      From_Date : start,
      To_Date : end,
      //Brand_ID : this.Objdispatch.Brand_ID
-     Material_Type : 'Store Item'
+     Material_Type : 'Store Item',
+     Cost_Cen_ID : this.Objdispatch.Cost_Cen_ID
     }
   const obj = {
    "SP_String": "SP_Store_Item_Indent",
@@ -1359,8 +1367,8 @@ class additem {
     Brand_ID :any;
     To_Godown_ID : any;
     Batch_No : any;
-    Indent_Date_From : string;
-    Indent_Date_To : string;
+    Indent_Date_From : Date;
+    Indent_Date_To : Date;
   }
   class BrowseData {
     From_Date: string;

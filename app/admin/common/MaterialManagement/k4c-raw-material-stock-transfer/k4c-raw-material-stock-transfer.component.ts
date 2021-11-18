@@ -51,6 +51,12 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   MaterialType_Flag = '';
   TCdisableflag = false;
   todayDate = new Date();
+  initDate = [];
+  RawMaterialIssueSearchFormSubmitted = false;
+  ToBcostcenlist = [];
+  ToBGodownList = [];
+  TBCdisableflag = false;
+  TBGdisableflag = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -61,7 +67,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -79,6 +85,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     });
     this.GetFromCostCen();
     this.GetToCostCen();
+    this.GetBToCostCen();
     this.GetProductType();
   })
   }
@@ -183,6 +190,60 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
        }else{
         this.ObjRawMateriali.To_godown_id = undefined;
          this.TGdisableflag = false;
+       }
+       //console.log("To Godown List ===",this.ToGodownList);
+      })
+    }
+
+  }
+  GetBToCostCen(){
+    const tempObj = {
+      User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+      Material_Type : this.MaterialType_Flag
+    }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Cost Center Name All",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ToBcostcenlist = data;
+     // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
+      if (this.CostCentId_Flag) {
+      this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
+      this.TBCdisableflag = true;
+      this.GetBToGodown();
+      } else {
+        this.ObjBrowse.To_Cost_Cen_ID = undefined;
+        this.TBCdisableflag = false;
+        this.GetBToGodown();
+      }
+      console.log("To B Cost Cen List ===",this.ToBcostcenlist);
+    })
+  }
+  GetBToGodown(){
+    this.ToBGodownList = [];
+    if(this.ObjBrowse.To_Cost_Cen_ID){
+      const tempObj = {
+        Cost_Cen_ID : this.ObjBrowse.To_Cost_Cen_ID,
+        Material_Type : this.MaterialType_Flag
+      }
+      const obj = {
+        "SP_String": "SP_Raw_Material_Stock_Transfer",
+        "Report_Name_String": "Get - Godown",
+        "Json_Param_String": JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.ToBGodownList = data;
+  // this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
+       if(this.ToBGodownList.length === 1){
+        //this.ObjRawMateriali.To_godown_id = this.ToGodownList[0].godown_id;
+        this.ObjBrowse.To_godown_id = this.ToBGodownList[0].godown_id;
+         this.TBGdisableflag = true;
+       }else{
+       // this.ObjRawMateriali.To_godown_id = undefined;
+        this.ObjBrowse.To_godown_id = undefined;
+         this.TBGdisableflag = false;
        }
        //console.log("To Godown List ===",this.ToGodownList);
       })
@@ -407,7 +468,7 @@ GetProductType(){
          this.tabIndexToView = 0 ;
          this.items = ["BROWSE", "CREATE"];
          this.buttonname = "Save";
-         this.GetSearchedList();
+         this.GetSearchedList(true);
          this.clearData();
          this.ProductList =[];
          this.IndentListFormSubmitted = false;
@@ -442,7 +503,7 @@ GetProductType(){
       this.ObjBrowse.end_date = dateRangeObj[1];
     }
   }
-  GetSearchedList(){
+  GetSearchedList(valid){
     this.Searchedlist = [];
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
@@ -451,9 +512,13 @@ const end = this.ObjBrowse.end_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
   : this.DateService.dateConvert(new Date());
 
+  this.RawMaterialIssueSearchFormSubmitted = true;
+  if (valid){
 const tempobj = {
   From_date : start,
   To_Date : end,
+  Cost_Cen_ID : this.ObjBrowse.To_Cost_Cen_ID,
+  Godown_ID : this.ObjBrowse.To_godown_id
 
 }
 const obj = {
@@ -465,20 +530,44 @@ const obj = {
    this.Searchedlist = data;
    console.log('Search list=====',this.Searchedlist)
    this.seachSpinner = false;
+   this.RawMaterialIssueSearchFormSubmitted = false;
  })
+}
 }
   clearData(){
     this.ObjRawMateriali.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    // FOR CREATE TAB
     if (this.CostCentId_Flag) {
       this.ObjRawMateriali.To_Cost_Cen_ID = String(this.CostCentId_Flag);
       this.TCdisableflag = true;
       this.GetToGodown();
+      this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
+      this.TBCdisableflag = true;
+      this.GetBToGodown();
       } else {
         this.ObjRawMateriali.To_Cost_Cen_ID = undefined;
         //this.ObjRawMateriali.To_godown_id = undefined;
         this.TCdisableflag = false;
         this.GetToGodown();
+        this.ObjBrowse.To_Cost_Cen_ID = undefined;
+        this.TBCdisableflag = false;
+        this.GetBToGodown();
       }
+      // FOR CREATE TAB
+      
+      // FOR BROWSE
+      // if (this.CostCentId_Flag) {
+      //   this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
+      //   this.TBCdisableflag = true;
+      //   this.GetBToGodown();
+      //   } else {
+      //     this.ObjBrowse.To_Cost_Cen_ID = undefined;
+      //     //this.ObjRawMateriali.To_godown_id = undefined;
+      //     this.TBCdisableflag = false;
+      //     this.GetBToGodown();
+      //   }
+        // FOR BROWSE
+
     this.ObjRawMateriali.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
      if(this.FromGodownList.length === 1){
        this.FGdisableflag = true;
@@ -486,12 +575,24 @@ const obj = {
        this.FGdisableflag = false;
      }
     // this.GetToGodown();
+    // FOR CREATE TAB
      this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
      if(this.ToGodownList.length === 1){
        this.TGdisableflag = true;
      }else{
        this.TGdisableflag = false;
      }
+     // FOR CREATE TAB
+
+     // FOR BROWSE TAB
+     this.ObjBrowse.To_godown_id = this.ToBGodownList.length === 1 ? this.ToBGodownList[0].godown_id : undefined;
+     if(this.ToBGodownList.length === 1){
+       this.TBGdisableflag = true;
+     }else{
+       this.TBGdisableflag = false;
+     }
+     // FOR BROWSE TAB
+
     this.ObjRawMateriali.Remarks = [];
     this.ObjRawMateriali.Indent_List = undefined;
     this.ProductList = [];
@@ -505,6 +606,7 @@ const obj = {
     this.ShowSpinner = false;
     this.ObjRawMateriali.Doc_No = undefined;
     this.todayDate = new Date();
+    this.RawMaterialIssueSearchFormSubmitted = false;
 
   }
 // Edit
@@ -579,7 +681,7 @@ onConfirm(){
     this.GlobalAPI.getData(objj).subscribe((data:any)=>{
       if (data[0].Column1 === "Done"){
         this.onReject();
-        this.GetSearchedList();
+        this.GetSearchedList(true);
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -606,4 +708,6 @@ class RawMateriali {
  class Browse {
   start_date : Date ;
   end_date : Date;
+  To_Cost_Cen_ID : any;
+  To_godown_id : any;
 }
