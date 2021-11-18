@@ -60,7 +60,7 @@ export class TenderEstimateComponent implements OnInit {
     { field: 'Budget_Sub_Group_Name', header: 'Sub Group Name' },
     { field: 'Work_Details', header: 'Work Details' },
     { field: 'Product_Description', header: 'Product' },
-    { field: 'unit', header: 'Unit Description' },
+    { field: 'unit', header: 'Unit' },
     { field: 'Qty', header: 'Qty' },
     { field: 'Nos', header: 'Nos' },
     { field: 'TQty', header: 'Total Qty' },
@@ -553,7 +553,7 @@ export class TenderEstimateComponent implements OnInit {
            // this.ObjEstimate = {};
           //  this.TenderDocID = undefined;
             this.EstimateModalFlag = false;
-
+            this.ShowAddedEstimateProductList = [];
           } else {
 
             this.compacctToast.clear();
