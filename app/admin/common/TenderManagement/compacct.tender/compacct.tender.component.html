@@ -4662,6 +4662,10 @@ id="load2"
                           <td>{{col.Site_Description ? col.Site_Description : '-'}}</td>
                           <td>{{col.Estimate_Amt ? col.Estimate_Amt : '-' }}</td>
                         </tr>
+                        <tr>
+                          <td colspan="3" class="text-right">Total</td>
+                          <td >{{totalAmt()}}</td>
+                        </tr>
                   </ng-template>
                   <ng-template  pTemplate="paginatorright" let-state>
                           Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}

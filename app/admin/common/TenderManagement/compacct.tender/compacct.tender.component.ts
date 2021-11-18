@@ -4079,6 +4079,14 @@ inputBoxClr(n){
    this.ObjBidOpeningList.Quoted_Percentage = undefined;
  }
 }
+totalAmt(){
+  let Amtval = 0;
+  this.EstimateAllData.forEach(item=>{
+    Amtval += Number(item.Estimate_Amt);
+  });
+
+  return Amtval ? Amtval : '-';
+}
 }
 class Tender{
   Tender_Doc_ID = 0;

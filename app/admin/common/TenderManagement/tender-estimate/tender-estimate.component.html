@@ -305,13 +305,14 @@
                                   <span class="fa fa-remove"></span>&nbsp;Clear
                               </button>
                                </div>
-                                
+                                 
                               </div>
                               <div class="form-group" style="margin-top:2.5em;padding: 0 1em;" >
                                 <div class="table-responsive no-padding">
                                   <p-table [columns]="cols" [value]="ShowAddedEstimateProductList"
+                                  [rowHover]="true" [autoLayout]="true"
                                    (onRowReorder)='RowReOrder($event)'
-                                   [reorderableColumns]="true">
+                                   [reorderableColumns]="false">
                                     <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:2.5em"></th>
@@ -330,6 +331,7 @@
                                                <button *ngIf='i === (columns.length -1)' (click)="DeleteEstimate(index)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
+                                        
                                     </ng-template>
                                 </p-table>
                                 <!-- <table  class="table table-bordered">
