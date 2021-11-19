@@ -35,7 +35,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">To Cost Cent<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="BTo_Cost_Cen_ID" #BTo_Cost_Cen_ID="ngModel" [(ngModel)]="ObjBrowse.To_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_Cost_Cen_ID?.errors?.required}" (change)="GetBToGodown()" [disabled]="TBCdisableflag"
+                                        <select class="form-control" name="BTo_Cost_Cen_ID" #BTo_Cost_Cen_ID="ngModel" [(ngModel)]="ObjBrowse.To_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_Cost_Cen_ID?.errors?.required}" (change)="GetBToGodown()" [attr.disabled]="TBCdisableflag? true: null"
                                             required>
                               <option  [ngValue]="undefined">Select</option>
                               <option  *ngFor="let option of ToBcostcenlist" value="{{option.Cost_Cen_ID}}">
@@ -45,7 +45,8 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">To Stock Point<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="BTo_godown_id" #BTo_godown_id="ngModel" [(ngModel)]="ObjBrowse.To_godown_id" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_godown_id?.errors?.required}" [disabled]="TBGdisableflag" required>
+                                        <select class="form-control" name="BTo_godown_id" #BTo_godown_id="ngModel" [(ngModel)]="ObjBrowse.To_godown_id" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_godown_id?.errors?.required}" [attr.disabled]="TBGdisableflag? true: null"
+                                            required>
                             <option  [ngValue]="undefined">Select</option>
                             <option  *ngFor="let option of ToBGodownList" value="{{option.godown_id}}">
                                 {{option.godown_name}}
@@ -192,6 +193,12 @@
                             <div class="table-responsive no-padding">
                                 <p-table [value]="ProductList" [autoLayout]="true" sortMode="multiple" [globalFilterFields]="['Product_Type','Product_Description','Stock_Qty','Batch_No','Batch_Qty']" [rowHover]="true" #dt1>
                                     <ng-template pTemplate="caption">
+                                        <div *ngIf="this.buttonname == 'Save'">
+                                            <button class="btn btn-primary pull-left" (click)="SaveRawMaterialIssue()" id="load" [disabled]="Spinner">
+                                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                        </button>
+                                        </div>
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
