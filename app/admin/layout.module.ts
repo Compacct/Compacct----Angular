@@ -74,6 +74,7 @@ import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { PivotFieldListAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { PivotViewAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { DateTimePickerModule } from "@syncfusion/ej2-angular-calendars";
+import { GanttModule } from '@syncfusion/ej2-angular-gantt';
 // DateRange
 import { DateRangePickerModule } from "@syncfusion/ej2-angular-calendars";
 import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
@@ -422,7 +423,8 @@ import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-packa
     SelectButtonModule,
     DataViewModule,
     PanelModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    GanttModule
   ],
   exports: [],
   providers: [
