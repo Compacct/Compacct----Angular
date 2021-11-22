@@ -4054,8 +4054,8 @@ LightBoxSave(val,field) {
 addEstimate(){
   window.open("/Tender_Estimate?Tender_Doc_ID="+this.TenderDocID,"_blank")
 }
-edit(){
-  window.open("/Tender_Estimate?Tender_Doc_ID="+this.TenderDocID,"_blank")
+edit(col){
+  window.open("/Tender_Estimate?Tender_Doc_ID="+this.TenderDocID + "&Project_ID="+ col.Project_ID + "&Site_ID=" +col.Site_ID,"_blank")
 }
 GetestimateAllData(){
   const obj = {
