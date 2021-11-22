@@ -8,6 +8,7 @@ import { CompacctCommonApi } from "../../../../../shared/compacct.services/commo
 import { CompacctGlobalApiService } from "../../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../../shared/compacct.global/dateTime.service";
 import { CompacctHeader } from "../../../../../shared/compacct.services/common.header.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 @Component({
@@ -94,6 +95,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   Refreshlist = [];
   RefreshData = [];
   editIndentList = [];
+  Auto_Accepted: any;
 
   constructor(
     private $http: HttpClient,
@@ -102,7 +104,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
     ) { }
 
   ngOnInit() {
@@ -207,6 +210,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   // this.IndentNoList = [];
   // this.BackupIndentList = [];
   //this.IndentFilter = []
+  this.ngxService.stop();
   }
   getCostcenter(){
     console.log(this.Objdispatch.Brand_ID)
@@ -280,6 +284,16 @@ export class K4CDispatchToOutletComponent implements OnInit {
       }
     })
   }
+  autoacceptedChange() {
+    //this.ExpiredProductFLag = false;
+   if(this.Objdispatch.Cost_Cen_ID) {
+     const ctrl = this;
+     const autoacceptedObj = $.grep(ctrl.outletList,function(item: any) {return item.Cost_Cen_ID == ctrl.Objdispatch.Cost_Cen_ID})[0];
+     console.log(autoacceptedObj);
+     this.Auto_Accepted = autoacceptedObj.Auto_Accepted;
+     
+    }
+    }
   Getgodown(){
     this.toutLetDis = true;
     console.log(this.Objdispatch.Cost_Cen_ID)
@@ -297,6 +311,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
         this.To_Godown_ID_Dis = true;
       }
       this.GetreqItem();
+      this.autoacceptedChange();
     })
   }
     CheckLengthProductID(ID) {
@@ -397,7 +412,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
    console.log("saveqty",this.saveqty());
    console.log("this.BackUpproductDetails",this.BackUpproductDetails);
   if(this.BackUpproductDetails.length && this.saveqty()){
-
+    // this.ngxService.start();
+    // this.displaysavepopup = false;
     if(this.doc_no){
       this.saveData = [];
       console.log ("Update");
@@ -433,6 +449,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
         }
       })
       console.log("this.saveData",this.saveData);
+      this.ngxService.start();
+      this.displaysavepopup = false;
      const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String": "Add K4C Txn Distribution",
@@ -446,6 +464,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
         this.indentdateDisabled = true;
         this.From_Godown_ID_Dis = false;
         this.To_Godown_ID_Dis = false;
+        this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
         key: "compacct-toast",
@@ -466,14 +485,25 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.displaysavepopup = false;
       this.SelectedIndent = [];
       this.IndentFilter = [];
-     }
+
+      //
+      this.Objdispatch = new dispatch();
+      this.productDetails = [];
+      this.BackUpproductDetails = [];
+      this.clearData();
+      this.todayDate = new Date();
+      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+     }else{
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
+    }
      })
-     this.Objdispatch = new dispatch();
-     this.productDetails = [];
-     this.BackUpproductDetails = [];
-     this.clearData();
-     this.todayDate = new Date();
-     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     }
 
     else{
@@ -483,7 +513,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
         if(el.Delivery_Qty && Number(el.Delivery_Qty) !== 0 ){
           const saveObj = {
             Doc_No: "A",
-            Accepted_Qty : 0,
+            Accepted_Qty : this.Auto_Accepted == "N" ? 0 : el.Delivery_Qty,
             Doc_Date: this.DateService.dateTimeConvert(new Date(this.ChallanDate)),
             F_Cost_Cen_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
             F_Godown_ID: this.Objdispatch.From_Godown_ID,
@@ -509,6 +539,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
         }
       })
       console.log("this.saveData",this.saveData);
+      this.ngxService.start();
+      this.displaysavepopup = false;
      const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String": "Add K4C Txn Distribution",
@@ -523,6 +555,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
         this.indentdateDisabled = true;
         this.From_Godown_ID_Dis = false;
         this.To_Godown_ID_Dis = false;
+        this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
         key: "compacct-toast",
@@ -543,27 +576,31 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.displaysavepopup = false;
       this.SelectedIndent = [];
       this.IndentFilter = [];
-     }
-     else{
-      this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Quantity can't be more than in batch available quantity"
-          });
-    }
-     })
+
+      //
+      
      this.Objdispatch = new dispatch();
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.clearData();
      this.todayDate = new Date();
      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+     }else{
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
+    }
+     })
 
     }
   }
   else{
+    this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
