@@ -8,6 +8,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-internal-stock-transfer-new',
@@ -78,6 +79,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -502,7 +504,8 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     if(this.saveqty()){
     if(Number(this.Objproduction.From_Cost_Cen_ID) == Number(this.Objproduction.To_Cost_Cen_ID) &&
       Number(this.Objproduction.From_godown_id) !== Number(this.Objproduction.To_godown_id)){
-
+    this.ngxService.start();
+    this.displaysavepopup = false;
     const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String" : "Add Internal Stock Transfer",
@@ -515,6 +518,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
       var tempID = data[0].Column1;
       this.Objproduction.Doc_No = data[0].Column1;
       if(data[0].Column1){
+        this.ngxService.stop();
         this.compacctToast.clear();
         const mgs = this.buttonname === "Save & Print" ? "Saved" : "Updated";
         this.compacctToast.add({
@@ -531,6 +535,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
        this.SelectedProduction = [];
        this.ProductionFilter = [];
       } else{
+        this.ngxService.stop();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -543,6 +548,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     }
     else{
       this.displaysavepopup = false;
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -554,6 +560,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   }
   else {
     this.editFlag = true;
+    this.ngxService.stop();
     this.compacctToast.clear();
          this.compacctToast.add({
              key: "compacct-toast",
@@ -842,6 +849,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
      this.Datevalue = this.DateService.dateConvert(new Date(this.Datevalue));
      this.ProDate = this.DateService.dateConvert(new Date(this.ProDate));
      this.GetProDate();
+     this.ngxService.stop();
     }
     qtyChqEdit(col){
       this.editFlag = false;

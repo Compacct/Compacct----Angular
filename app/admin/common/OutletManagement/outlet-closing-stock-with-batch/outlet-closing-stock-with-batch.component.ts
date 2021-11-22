@@ -5,6 +5,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.service";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 @Component({
@@ -57,7 +58,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     private compacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
     public $CompacctAPI: CompacctCommonApi,
-    private DateService: DateTimeConvertService
+    private DateService: DateTimeConvertService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -319,6 +321,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     }
   }
   SaveOTcloingWithBatch(){
+    this.ngxService.start();
     //if(valid){
       const obj = {
         "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
@@ -331,6 +334,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         var tempID = data[0].Column1;
        // this.Objproduction.Doc_No = data[0].Column1;
         if(data[0].Column1){
+          this.ngxService.stop();
           this.compacctToast.clear();
           const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
           this.compacctToast.add({
@@ -346,6 +350,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         // this.IssueStockFormSubmitted = false;
 
         } else{
+          this.ngxService.stop();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",

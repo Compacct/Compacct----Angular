@@ -8,6 +8,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 @Component({
@@ -79,7 +80,8 @@ export class OutletStockTransferComponent implements OnInit {
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) {
     // this.Header.pushHeader({
     //   Header: "Outlet Stock Transfer",
@@ -124,6 +126,7 @@ export class OutletStockTransferComponent implements OnInit {
     this.itemList = [];
     this.BatchList = [];
     this.MTdisabled = false;
+    this.ngxService.stop();
   }
   // Refresh(){
   //   this.ObjstockTransfer= new stockTransfer();
@@ -507,6 +510,7 @@ saveDispatch(){
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       var tempID = data[0].Column1;
       if(data[0].Column1){
+        this.ngxService.stop();
         this.compacctToast.clear();
       this.compacctToast.add({
       key: "compacct-toast",
@@ -520,8 +524,27 @@ saveDispatch(){
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
     this.clearData();
+      } else {
+        this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
       }
      })
+  }
+  else{
+    this.ngxService.stop();
+    this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
   }
 }
 delete(index){
@@ -689,6 +712,8 @@ saveAccet(){
       }
       saveData.push(saveObj)
     })
+    this.ngxService.start();
+    this.accept_challan = false;
     const obj = {
       "SP_String": "SP_Outlet_Stock_Transfer",
       "Report_Name_String": "Add Outlet Stock Transfer",
@@ -698,6 +723,7 @@ saveAccet(){
       if(data[0].Column1){
       this.searchData(true);
       this.accept_challan = false;
+      this.ngxService.stop();
      this.compacctToast.clear();
      this.compacctToast.add({
       key: "compacct-toast",
@@ -705,9 +731,27 @@ saveAccet(){
       summary: "Succesful ",
       detail: "Accepted Quantity Succesfully updated"
     });
-        }
+        } else {
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
+         }
     })
-  }
+  } else {
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Something Wrong"
+    });
+   }
 }
 
 // view
@@ -846,6 +890,7 @@ saveqty(){
   }
  }
  return flag;
+ this.ngxService.stop();
 }
 
 saveEdit(){
@@ -868,15 +913,18 @@ saveEdit(){
             Batch_NO: el.Batch_No,
             Qty: el.Qty,
             UOM: el.UOM,
-            Remarks: Number(el.Accepted_Qty) === Number(el.Qty) ? 'NA' : el.REMARKS ,
+            Remarks: Number(el.Accepted_Qty) === Number(el.Qty) ? 'NA' : el.Remarks ,
             User_ID: el.USER_ID,
             Accepted_Qty : el.Accepted_Qty,
             Total_Qty : Number(this.getTotal('Qty')),
-            Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty'))
+            Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty')),
+            Material_Type : el.Material_Type
       }
       saveData.push(saveObj)
      })
       console.log("saveData",saveData);
+      this.ngxService.start();
+      this.editPopUp = false;
     const obj = {
       "SP_String": "SP_Outlet_Stock_Transfer",
        "Report_Name_String": "Add Outlet Stock Transfer",
@@ -886,6 +934,7 @@ saveEdit(){
       if(data[0].Column1){
         this.searchData(true);
         this.editPopUp = false;
+        this.ngxService.stop();
         this.compacctToast.clear();
       this.compacctToast.add({
       key: "compacct-toast",
@@ -893,10 +942,37 @@ saveEdit(){
       summary: "Doc No. " ,
       detail: "Update Succesfully"
     });
+     } else {
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
      }
      })
-    }
-  }
+    } else {
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
+     }
+  } else {
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Something Wrong"
+    });
+   }
 
 }
  ///Delete
@@ -961,6 +1037,7 @@ saveCheck(valid){
   this.stockTransferFormSubmit = true;
   if(valid){
     if(this.ObjstockTransfer.From_Outlet && this.ObjstockTransfer.From_Stock_Point){
+      this.ngxService.start();
     const TempObj = {
       Cost_Cen_ID : this.ObjstockTransfer.From_Outlet,
       Godown_Id : this.ObjstockTransfer.From_Stock_Point
@@ -976,6 +1053,7 @@ saveCheck(valid){
       }
       else if(data[0].Status === "Disallow"){    // Disallow
         this.checkSave = false;
+        this.ngxService.stop();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "c",
@@ -986,6 +1064,15 @@ saveCheck(valid){
         });
         this.productDetails = [];
         this.clearData();
+      } else {
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
       }
     })
   }
@@ -1038,6 +1125,7 @@ ValidateEntryCheck(){
     else if(data[0].status === "false"){   
       var productDes = data[0].Product_Description; 
       var batchn = data[0].Batch_No;
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
