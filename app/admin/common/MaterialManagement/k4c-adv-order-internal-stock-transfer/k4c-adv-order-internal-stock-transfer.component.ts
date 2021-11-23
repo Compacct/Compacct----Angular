@@ -300,7 +300,8 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
      this.ProductNamelList = [];
       if(valid){
       const TempObj = {
-       Doc_Date : this.DateService.dateConvert(new Date(this.ProDate))
+       Doc_Date : this.DateService.dateConvert(new Date(this.ProDate)),
+       Brand_ID : this.Objproduction.Brand_ID
        }
      const obj = {
       "SP_String": "SP_Adv_Order_IST",

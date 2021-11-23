@@ -384,7 +384,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   //   }
   //  })
    this.productDetails.forEach(obj => {
-    if(obj.Delivery_Qty && Number(obj.Delivery_Qty) !== 0 ){
+    if(obj.Delivery_Qty){  //   && Number(obj.Delivery_Qty) !== 0
     //  console.log(filteredData.push(obj.Product_ID));
     this.filteredData.push(obj);
      // console.log("this.filteredData===",this.filteredData);
@@ -418,7 +418,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.saveData = [];
       console.log ("Update");
       this.BackUpproductDetails.forEach(el=>{
-        if(el.Delivery_Qty && Number(el.Delivery_Qty) !== 0 ){
+        if(el.Delivery_Qty){
           const saveObj = {
             Doc_No: this.doc_no,
             Accepted_Qty : el.Accepted_Qty,
@@ -510,7 +510,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
        console.log("create");
       this.saveData = [];
       this.BackUpproductDetails.forEach(el=>{
-        if(el.Delivery_Qty && Number(el.Delivery_Qty) !== 0 ){
+        if(el.Delivery_Qty){      //&& Number(el.Delivery_Qty) !== 0
           const saveObj = {
             Doc_No: "A",
             Accepted_Qty : this.Auto_Accepted == "N" ? 0 : el.Delivery_Qty,
