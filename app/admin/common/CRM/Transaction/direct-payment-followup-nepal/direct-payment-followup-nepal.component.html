@@ -32,8 +32,7 @@
                             </button>
                             </div>
                     </form>
-                    <div class="table-responsive table-id">
-                        <!-- <ejs-gantt d="ganttDefault" height="430px" [dataSource]="data" [taskFields]="taskSettings"> </ejs-gantt> -->
+                    <div class="table-responsive table-id">                       
                         <p-table #dt [value]="DirectPaymentFollowUpList" [paginator]="DirectPaymentFollowUpList.length ? true : false" [rows]="100" [loading]="snipper" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50 ,100]"
                             [rowHover]="true" [globalFilterFields]='["Customer Name","Bill_No_Count","Total_Amount"]'>
                             <ng-template pTemplate="caption">

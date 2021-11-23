@@ -1,0 +1,324 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body" >
+                    <form name="ProjectForm" #ProjectForm="ngForm" novalidate> 
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                <label class="control-label">Task Type<sup class="text-danger">*</sup></label>
+                                <select class="form-control" 
+                                 [ngClass]="{'clearance':ProjectTaskSubmitted && actiontakenFollowUpCreation?.errors?.required}"
+                                 name="actiontakenFollowUpCreation"
+                                 #actiontakenFollowUpCreation="ngModel"
+                                 [(ngModel)]="ObjProjectTask.Task_Type"
+                                 [disabled]='true'
+                                 required>
+                                 <option [ngValue]="undefined">Select</option>
+                                    <option value="Project">Project</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-5">
+                                <label class="control-label">Project Name&nbsp;<span class="text-danger" >*</span></label>
+                                <span (click)='DynamicRedirectTo()' class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-database"></i>&nbsp;Manage Projects</span>
+                               
+                                <p-dropdown
+                                [options]="ProjectList"
+                                name="projectname"
+                                [(ngModel)]="ObjProjectTask.Project_ID"
+                                [showClear]="true"
+                                [emptyFilterMessage]="' No Project Found'"
+                                (onChange)="GetSiteList()"
+                                [filter]="true"
+                                filterBy="label,value.name"
+                                [placeholder]="'Select Project Name'"
+                                [virtualScroll]="true"
+                                itemSize="30"
+                                #projectname="ngModel"
+                                [styleClass]="
+                                ProjectTaskSubmitted && projectname.errors?.required? 'clearance': ''"
+                                [required]="true"
+                              >
+                              </p-dropdown>
+                            </div>
+                            <div class="col-sm-5">
+                              <label class="control-label">Site Name&nbsp;<span class="text-danger" >*</span></label>
+                            
+                              <p-dropdown
+                              [options]="SiteList"
+                              name="siteName"
+                              [(ngModel)]="ObjProjectTask.Site_ID"
+                              [showClear]="true"
+                              [emptyFilterMessage]="' No Site Found'"
+                              (onChange)="GetTask()"
+                              [filter]="true"
+                              filterBy="label,value.name"
+                              [placeholder]="'Select Site Name'"
+                              [virtualScroll]="true"
+                              itemSize="30"
+                              #siteName="ngModel"
+                              [styleClass]="
+                              ProjectTaskSubmitted && siteName.errors?.required? 'clearance': ''"
+                              [required]="true"
+                            >
+                            </p-dropdown>
+                            </div>
+                        </div>
+                        </form> 
+                        <div  class="control-section">
+                            <ejs-gantt id="ganttDefault"
+                             height="430px" #gantt
+                            [dataSource]="data" [taskFields]="taskSettings"
+                            [splitterSettings]="splitterSettings"
+                            allowExcelExport='true'
+                            (toolbarClick)="toolbarClick($event)"
+                            [toolbar]="toolbar"> </ejs-gantt>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p-overlayPanel 
+    [dismissable]="true" [showCloseIcon]="true"
+    [appendTo]="'body'"
+    (onShow)='CreateLightBoxSubmitted = false;'
+    [baseZIndex]="9999999" #Task_Create_Overlay>
+    <div class="form-horizontal">
+        <form
+        name="Task_CreateForm"
+        #Task_CreateForm="ngForm"
+        novalidate
+        >
+        <div class="form-group">
+          <div class="col-sm-12">
+            <label class="control-label">Task Name<sup class="text-danger">*</sup ></label>
+          <input
+                type="text"
+                class="form-control"
+                name="name"
+                #name="ngModel"
+                [(ngModel)]="TaskNameModel"
+                placeholder="Task Name"
+                allow-pattern="([a-z ]|\.)"
+                [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}"
+                required
+              >
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label">Waitage Persentage<sup class="text-danger">*</sup ></label>
+                <input class="form-control" type="text"
+                name="Waitage_Persentage" #Waitage_Persentage="ngModel"
+                [ngClass]="{'clearance':CreateLightBoxSubmitted && Waitage_Persentage?.errors?.required}"
+                [(ngModel)]="TaskWaitageModel" 
+                CompacctDigitonly="true"
+                required>
+          </div>
+          <button (click)='LightBoxSave("Task_Create_Overlay")'
+           class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+           [disabled]="LightBoxSpinner"
+           >
+           <p-progressSpinner
+             *ngIf="LightBoxSpinner"
+             [style]="{ width: '15px', height: '15px' }"
+             strokeWidth="8"
+             animationDuration=".5s"
+           ></p-progressSpinner>
+            <i class="fa fa-fw  fa-plus"></i>  Create</button>
+        </div>
+        
+        </form>
+      </div>
+  </p-overlayPanel>
+  <p-overlayPanel 
+    [dismissable]="true" [showCloseIcon]="true"
+    [appendTo]="'body'"
+    (onShow)='CreateLightBoxSubmitted = false;'
+    [baseZIndex]="9999999" #Sub_Task_Create_Overlay>
+    <div class="form-horizontal">
+        <form
+        name="Task_CreateForm"
+        #Task_CreateForm="ngForm"
+        novalidate
+        >
+        <div class="form-group">
+          <div class="col-sm-12">
+            <label class="control-label">Sub Task Name<sup class="text-danger">*</sup ></label>
+          <input
+                type="text"
+                class="form-control"
+                name="name"
+                #name="ngModel"
+                [(ngModel)]="SubTaskNameModel"
+                placeholder="Task Name"
+                allow-pattern="([a-z ]|\.)"
+                [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}"
+                required
+              >
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label">Waitage Persentage<sup class="text-danger">*</sup ></label>
+                <input class="form-control" type="text"
+                name="Waitage_Persentage" #Waitage_Persentage="ngModel"
+                [ngClass]="{'clearance':CreateLightBoxSubmitted && Waitage_Persentage?.errors?.required}"
+                [(ngModel)]="SubTaskWaitageModel" 
+                CompacctDigitonly="true"
+                required>
+          </div>
+        
+          <button (click)='LightBoxSave("Sub_Task_Create_Overlay")'
+           class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+           [disabled]="LightBoxSpinner"
+           >
+           <p-progressSpinner
+             *ngIf="LightBoxSpinner"
+             [style]="{ width: '15px', height: '15px' }"
+             strokeWidth="8"
+             animationDuration=".5s"
+           ></p-progressSpinner>
+            <i class="fa fa-fw  fa-plus"></i>  Create</button>
+        </div>
+        
+        </form>
+      </div>
+  </p-overlayPanel>
+    <!-- FOLLOW UP -->
+<p-dialog header="Task Details"
+ [appendTo]="'body'"
+ [visible]="TaskModalFlag"
+ [closeOnEscape]="true"
+ [closable]="false"
+ [modal]="true"
+ [responsive]="true"
+ [style]="{ width: '60%', minWidth: '200px' }"
+ style="text-align: center;"
+ [minY]="70"
+ [maximizable]="true"
+ [baseZIndex]="10000">
+<form  name="TaskModalUpdate" #TaskModalUpdate="ngForm" novalidate>
+    <div class="form-group" *ngIf='ObjProjectTask?.Project_Name'>
+        <div class="col-sm-12" style="margin-bottom:3em;padding: 0.5em 0;background-color: #0080002e;text-align: center;border-radius: 5px;">
+            Project : <b>{{ObjProjectTask.Project_Name.toUpperCase()}}</b> | Site : <b>{{ObjProjectTask.Site_Name}}</b>
+        </div>
+    </div>
+    <div class="row form-horizontal" style="margin-bottom:3em;">
+        <div class="col-sm-6" >
+            <label class="control-label">Task&nbsp;<span class="text-danger" >*</span></label>
+            <span (click)="Task_Create_Overlay.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+            <p-dropdown
+            [options]="TaskList"
+            name="Taskname"
+            [(ngModel)]="ObjTask.Task_ID"
+            [showClear]="true"
+            [emptyFilterMessage]="' No Task Found'"
+            (onChange)="GetSubTask()"
+            [filter]="true"
+            filterBy="label,value.name"
+            [placeholder]="'Select Task Name'"
+            [virtualScroll]="true"
+            itemSize="30"
+            #Taskname="ngModel"
+            [styleClass]="
+            TaskSubmitted && Taskname.errors?.required? 'clearance': ''"
+            [required]="true"
+          >
+          </p-dropdown>
+        </div>
+        <div class="col-sm-6">
+          <label class="control-label">Sub Task&nbsp;<span class="text-danger" >*</span></label>
+          <span  *ngIf='ObjTask.Task_ID' (click)="Sub_Task_Create_Overlay.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+            <p-dropdown
+          [options]="SubTaskList"
+          name="SubTask"
+          [(ngModel)]="ObjTask.Sub_Task_ID"
+          [showClear]="true"
+          [emptyFilterMessage]="' No Sub Task Found'"
+          [filter]="true"
+          filterBy="label,value.name"
+          [placeholder]="'Select Sub Task Name'"
+          [virtualScroll]="true"
+          itemSize="30"
+          #SubTask="ngModel"
+          [styleClass]="
+          TaskSubmitted && SubTask.errors?.required? 'clearance': ''"
+          [required]="true"
+        >
+        </p-dropdown>
+        </div>
+        <div class="col-sm-6">
+            <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+            <textarea class="form-control" rows="4" name="remarkFollowUpCreation"
+             #remarkFollowUpCreation="ngModel"
+             [ngClass]="{'clearance':TaskSubmitted && remarkFollowUpCreation?.errors?.required}"
+             [(ngModel)]="ObjTask.Remarks" placeholder="Remarks"
+             required></textarea>
+        </div>
+        <div class="col-sm-6">
+            <label class="control-label">Task Start Date<sup class="text-danger">*</sup></label>
+            <input type="date" class="form-control"
+            id="taskstartdate1" #taskstartdate1="ngModel"
+            name="taskstartdate1" [ngModel]="TaskStartDate | date:'yyyy-MM-dd'"
+            (ngModelChange)="TaskStartDate = $event"
+            [ngClass]="{'clearance':TaskSubmitted && taskstartdate1?.errors?.required}"
+            required>
+        </div>
+        <div class="col-sm-6">
+            <label class="control-label">Task End Date<sup class="text-danger">*</sup></label>
+            <input type="date" class="form-control"
+            id="taskenddate1" #taskenddate1="ngModel"
+            name="taskenddate1" [ngModel]="TaskEndtDate | date:'yyyy-MM-dd'"
+            (ngModelChange)="TaskEndtDate = $event"
+            [ngClass]="{'clearance':TaskSubmitted && taskenddate1?.errors?.required}"
+            required>
+        </div>
+        
+        <div class="col-sm-4">
+            <label class="control-label">Waitage Persentage<sup class="text-danger">*</sup></label>
+            <div class="input-group">
+                
+            <input class="form-control" type="text"
+            name="Waitage_Persentage" #Waitage_Persentage="ngModel"
+            [ngClass]="{'clearance':TaskSubmitted && Waitage_Persentage?.errors?.required}"
+            [(ngModel)]="ObjTask.Pin" 
+            CompacctDigitonly="true"
+            required>
+           <span class="input-group-addon">%</span>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">
+                Assign To <sup class="text-danger">*</sup></label>
+            <select class="form-control" name='Assign' #Assign='ngModel'
+            [ngClass]="{'clearance': TaskSubmitted &&  Assign?.errors?.required}"
+            [(ngModel)]="ObjTask.User_ID" required>
+                <option [ngValue]="undefined">Select</option>
+                <option *ngFor="let option of AssignToList" [ngValue]="option.User_ID">{{option.Name}}</option>
+            </select>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Status<sup class="text-danger">*</sup></label>
+            <select class="form-control" 
+             [ngClass]="{'clearance':TaskSubmitted && Status?.errors?.required}"
+             name="Status"
+             #Status="ngModel"
+             [(ngModel)]="ObjTask.Task_Status"
+             required>
+                <option [ngValue]="undefined">Select</option>
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+    </div>
+ </form>
+ 
+    <p-footer>
+        <button type="button" (click)="TaskModalFlag = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button type="button" class="btn btn-primary" (click)="SaveTask(TaskModalUpdate.form.valid)">
+            SAVE
+        </button>
+    </p-footer>
+</p-dialog>

@@ -74,7 +74,7 @@ import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { PivotFieldListAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { PivotViewAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { DateTimePickerModule } from "@syncfusion/ej2-angular-calendars";
-import { GanttModule } from '@syncfusion/ej2-angular-gantt';
+import { GanttAllModule } from '@syncfusion/ej2-angular-gantt';
 // DateRange
 import { DateRangePickerModule } from "@syncfusion/ej2-angular-calendars";
 import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
@@ -223,6 +223,7 @@ import { DirectPaymentFollowupNepalComponent } from './common/CRM/Transaction/di
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
 import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-package-master/hearing-package-master.component';
+import { CompacctTxnTaskComponent } from './common/TenderManagement/compacct-txn-task/compacct-txn-task.component';
 
 
 @NgModule({
@@ -382,6 +383,7 @@ import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-packa
     K4cFranchiseSaleBillComponent,
     TenderEstimateComponent,
     HearingPackageMasterComponent,
+    CompacctTxnTaskComponent,
   ],
   imports: [
     CommonModule,
@@ -424,7 +426,7 @@ import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-packa
     DataViewModule,
     PanelModule,
     OverlayPanelModule,
-    GanttModule
+    GanttAllModule
   ],
   exports: [],
   providers: [
