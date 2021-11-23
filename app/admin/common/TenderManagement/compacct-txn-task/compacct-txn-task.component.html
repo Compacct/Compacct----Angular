@@ -280,7 +280,7 @@
             <input class="form-control" type="text"
             name="Waitage_Persentage" #Waitage_Persentage="ngModel"
             [ngClass]="{'clearance':TaskSubmitted && Waitage_Persentage?.errors?.required}"
-            [(ngModel)]="ObjTask.Pin" 
+            [(ngModel)]="ObjTask.Waitage_Persentage_Against_Sub_Task" 
             CompacctDigitonly="true"
             required>
            <span class="input-group-addon">%</span>
