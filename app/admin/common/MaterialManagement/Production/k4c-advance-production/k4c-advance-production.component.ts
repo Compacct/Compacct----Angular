@@ -47,6 +47,10 @@ export class K4cAdvanceProductionComponent implements OnInit {
   viewpopUp = false;
   viewData:any = {};
   Adv_Order_No: any;
+  docno: any;
+  docdate: any;
+  save_popup = false;
+  del_popup = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -250,6 +254,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
 
   }
   saveProduction(valid){
+    this.del_popup = false;
     this.Objproduction.Remarks = this.Objproduction.Remarks ? this.Objproduction.Remarks : " ";
     this.Objproduction.Doc_Date = this.DateService.dateConvert(new Date());
     this.Objproduction.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
@@ -278,6 +283,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
         }
       })
       if(this.saveData.length) {
+        this.save_popup = true;
         this.compacctToast.clear();
         this.compacctToast.add({
         key: "c",
@@ -354,6 +360,58 @@ view(col){
   this.viewData = col;
   console.log("col",col);
  }
+}
+Delete(col){
+  this.save_popup = false;
+  if(col.Doc_No){
+    this.del_popup = true;
+    this.docno = col.Doc_No;
+    //this.docdate = col.Doc_Date;
+    console.log("docno",this.docno);
+    this.compacctToast.clear();
+    this.compacctToast.add({
+    key: "c",
+    sticky: true,
+    severity: "warn",
+    summary: "Are you sure?",
+    detail: "Confirm to proceed"
+    });
+  }
+}
+onConfirm2() {
+  const Tempobj = {
+    Doc_No : this.docno,
+    User_ID : this.$CompacctAPI.CompacctCookies.User_ID
+  }
+  const obj = {
+    "SP_String" : "SP_Production_Voucher_New",
+    "Report_Name_String" : "Delete Adv Order Production Voucher",
+    "Json_Param_String" : JSON.stringify([Tempobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   // console.log(data);
+    if(data[0].Column1 === "Done") {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Doc_No : " + this.docno,
+        detail:  "Succesfully Delete"
+      });
+      this.SearchProduction();
+    } else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
+}
+onReject2() {
+  this.compacctToast.clear("c");
 }
 }
 class production {

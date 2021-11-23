@@ -8,6 +8,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-factory-indent-advance',
@@ -92,7 +93,7 @@ export class K4cFactoryIndentAdvanceComponent implements OnInit {
       const tempDate = {
         From_Date: start,
         To_Date: end,
-        Brand_ID: this.ObjBrowseData.Brand_ID,
+        Brand_ID: this.ObjBrowseData.Brand_ID ? this.ObjBrowseData.Brand_ID : 0,
         Search_By : this.Search_By
       }
       const objj = {
@@ -259,6 +260,11 @@ export class K4cFactoryIndentAdvanceComponent implements OnInit {
 
       );
     }
+  }
+  exportexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
   }
 }
 class BrowseData {

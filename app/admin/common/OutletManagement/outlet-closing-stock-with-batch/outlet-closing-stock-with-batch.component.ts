@@ -6,6 +6,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 
 
 @Component({
@@ -518,6 +519,27 @@ const obj = {
    onReject(){
      this.compacctToast.clear("c");
    }
+   exportoexcel(Arr,fileName): void {
+     let temp = [];
+     Arr.forEach(element => {
+       const obj = {
+        Product_Type : element.Product_Type,
+        Product_ID : element.Product_ID,
+        Product_Description : element.Product_Description,
+        UOM : element.UOM,
+        Batch_No : element.Batch_No,
+        Expiry_Date : element.Expiry_Date,
+        batch_Qty : element.batch_Qty,
+        Closing_Qty : element.Closing_Qty,
+        Remarks : element.Remarks
+       }
+       temp.push(obj)
+     });
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
   clearData(){
     if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
       this.ObjOTclosingwithbatch.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
