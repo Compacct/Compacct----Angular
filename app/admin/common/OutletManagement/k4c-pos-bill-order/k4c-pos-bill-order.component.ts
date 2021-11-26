@@ -41,6 +41,29 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
   PreviousDate: any;
   EODCheckFlag = false; 
   EODstatus: any;
+  BillWithoutStockPopup = false;
+  ObjcashForm : cashForm  = new cashForm();
+  Objcustomer : customer = new customer();
+  ObjHomeDelivery : HomeDelivery = new HomeDelivery();
+  walletlist: any;
+  creditlist: any;
+  Amount_Payable: any;
+  Adv_Order_No: any;
+  CreateBillList = [];
+  CurrentDate = new Date();
+  productSubmit = [];
+  delivery_Date = new Date();
+  Del_Date_Time : any;
+  minTime: Date;
+  maxTime: Date;
+  EditDeliverypopup = false;
+  delloclist: any;
+  Del_Cost_Cent_ID : string;
+  Round_Off: any;
+  Adv: any;
+  Net_Payable: any;
+  Bill_No: any;
+  Total: any;
 
 
   constructor( private Header: CompacctHeader,
@@ -70,6 +93,18 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     this.GetHoldOrder();
     this.getbilldate();
     this.EODCheck();
+
+    this.minTime = this.setHours(new Date(), "10:00am");
+    this.maxTime = this.setHours(new Date(), "06:00pm");
+    
+  }
+  setHours(dt, h):any {
+    const s = /(\d+):(\d+)(.+)/.exec(h);
+    dt.setHours(s[3] === "pm" ?
+      12 + parseInt(s[1], 10) :
+      parseInt(s[1], 10));
+    dt.setMinutes(parseInt(s[2],10));
+    return dt;
   }
   ngOnDestroy() {
     if ($(".content-header").hasClass("hide-pos")) {
@@ -639,6 +674,385 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     }
 
   }
+  
+  // BILL WITHOUT STOCK
+  getwalletamount(){
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Data for Card to Amount",
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.walletlist = data;
+       //console.log('card=====',this.cardlist)
+     })
+  }
+  getcredittoaccount(){
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Data for Credit to Account",
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.creditlist = data;
+       //console.log('credit=====',this.creditlist)
+     })
+  }
+  AmountChange(){
+    //console.log("called");
+  var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
+  var wallet_amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashForm.Wallet_Amount : 0;
+  var cash_amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0 ;
+  var card_amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
+
+   this.ObjcashForm.Total_Paid = Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount); 
+
+   if(Number(this.Net_Payable) < this.ObjcashForm.Total_Paid){
+    this.ObjcashForm.Refund_Amount = (Number(this.ObjcashForm.Total_Paid) - Number(this.Net_Payable)).toFixed(2);
+  } else {
+    this.ObjcashForm.Refund_Amount = 0 ;
+   }
+
+   this.ObjcashForm.Due_Amount = (Number(this.ObjcashForm.Total_Paid) - Number(this.ObjcashForm.Refund_Amount) - Number(this.Net_Payable)).toFixed(2);
+
+  }
+  BillWithoutStock(advorderno){
+    this.ObjcashForm  =  new cashForm();
+    this.CreateBillList = [];
+    this.getwalletamount();
+    this.getcredittoaccount();
+    if (advorderno.Adv_Order_No) {
+      this.Adv_Order_No = advorderno.Adv_Order_No;
+       this.BillWithoutStockPopup = true;
+      // this.Amount_Payable = advorderno.Net_Due;
+    }
+    this.CreateBillData();
+  }
+  CreateBillData(){
+    const Tempobj = {
+      Doc_No : this.Adv_Order_No,
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Create Bill Without Stock",
+      "Json_Param_String": JSON.stringify([Tempobj])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.CreateBillList = data;
+       console.log('CreateBillList=====',this.CreateBillList)
+       this.Objcustomer.Costomer_Mobile = data[0].Costomer_Mobile;
+       this.Objcustomer.Customer_Name= data[0].Customer_Name;
+       this.Objcustomer.Customer_DOB = data[0].Customer_DOB ? this.DateService.dateConvert(data[0].Customer_DOB) : undefined;
+       this.Objcustomer.Customer_Anni= data[0].Customer_Anni ? this.DateService.dateConvert(data[0].Customer_Anni) : undefined;
+       this.Objcustomer.Customer_GST = data[0].Customer_GST;
+       this.Objcustomer.Bill_Remarks = data[0].Bill_Remarks;
+
+       this.CreateBillList.forEach(element => {
+        const  productObj = {
+            Product_ID : element.Product_ID,
+            Product_Description : element.Product_Description,
+            Modifier : element.Product_Modifier,
+            Weight_in_Pound : element.Weight_in_Pound,
+            Flavour : element.Flavour,
+            Finishing : element.Finishing,
+            Shape : element.Shape,
+            Tier : element.Tier,
+            Base : element.Base,
+            Boxes : element.Boxes,
+            Changes_on_Cake : element.Changes_on_Cake,
+            Order_Taken_By : element.Order_Taken_By,
+            Net_Price : Number(element.Adv_Rate),
+            Stock_Qty :  Number(element.Qty),
+            Amount :Number(element.Amount).toFixed(2),
+            Max_Discount : Number(element.Discount_Per),
+            Dis_Amount : Number(element.Discount_Amt).toFixed(2),
+            Gross_Amount : Number(element.Gross_Amt).toFixed(2),
+            SGST_Per : Number(element.SGST_Per).toFixed(2),
+            SGST_Amount : Number(element.SGST_Amt).toFixed(2),
+            CGST_Per : Number(element.CGST_Per).toFixed(2),
+            CGST_Amount : Number(element.CGST_Amt).toFixed(2),
+            GST_Tax_Per : Number(element.IGST_Per),
+            GST_Tax_Per_Amt : element.IGST_Amt,
+            Net_Amount : Number(element.Net_Amount).toFixed(2)
+          };
+    
+          this.productSubmit.push(productObj);
+        });
+        // this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID ? data[0].Credit_To_Ac_ID : undefined;
+        // this.ObjcashForm.Credit_To_Ac = data[0].Credit_To_Ac ? data[0].Credit_To_Ac : undefined;
+        // this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount ? data[0].Credit_To_Amount : "";
+        // this.ObjcashForm.Wallet_Ac_ID = data[0].Wallet_Ac_ID ? data[0].Wallet_Ac_ID : undefined;
+        // this.ObjcashForm.Wallet_Ac = data[0].Wallet_Ac ? data[0].Wallet_Ac : undefined;
+        // this.ObjcashForm.Wallet_Amount = data[0].Wallet_Amount ? data[0].Wallet_Amount : "";
+        // this.ObjcashForm.Cash_Amount = data[0].Cash_Amount ? data[0].Cash_Amount : "";
+        // this.ObjcashForm.Card_Amount = data[0].Card_Amount ? data[0].Card_Amount : "";
+        // this.ObjcashForm.Total_Paid = data[0].Total_Paid;
+       // this.ObjcashForm.Net_Due = data[0].Net_Due;
+    
+        this.Objcustomerdetail.Foot_Fall_ID = data[0].Foot_Fall_ID;
+        this.Objcustomerdetail.Cost_Cen_ID = data[0].Cost_Cent_ID;
+        //this.Adv_Order_No = data[0].Adv_Order_No;
+    
+       // this.billstockDate = data[0].Order_Date;
+        this.Total = data[0].Net_Amount;
+        this.Round_Off = data[0].Rounded_Off;
+        this.Amount_Payable = data[0].Amount_Payable;
+        this.Adv = data[0].Advance,
+        this.Net_Payable = data[0].Net_Payable,
+       console.log("this.editList  ===",data);
+       this.ObjHomeDelivery.Delivery_Type = data[0].Delivery_Type;
+       this.ObjHomeDelivery.Delivery_Mobile_No = data[0].Delivery_Mobile_No;
+       this.ObjHomeDelivery.Delivery_Alt_Mobile_No = data[0].Delivery_Alt_Mobile_No;
+       this.ObjHomeDelivery.Delivery_Name = data[0].Delivery_Name;
+       this.ObjHomeDelivery.Delivery_Address = data[0].Delivery_Address;
+       this.ObjHomeDelivery.Delivery_Near_By = data[0].Delivery_Near_By;
+       this.ObjHomeDelivery.Delivery_Pin_Code = data[0].Delivery_Pin_Code;
+
+
+     })
+  }
+  getdataforSaveBill(){
+    if(this.ObjcashForm.Wallet_Ac_ID){
+      this.walletlist.forEach(el => {
+        if(Number(this.ObjcashForm.Wallet_Ac_ID) === Number(el.Txn_ID)){
+          this.ObjcashForm.Wallet_Ac = el.Ledger_Name
+        }
+      });
+  }
+  if(this.ObjcashForm.Credit_To_Ac_ID){
+    this.creditlist.forEach(el => {
+      if(Number(this.ObjcashForm.Credit_To_Ac_ID) === Number(el.Txn_ID)){
+        this.ObjcashForm.Credit_To_Ac = el.Ledger_Name
+      }
+    });
+}
+this.ObjcashForm.Wallet_Ac_ID = this.ObjcashForm.Wallet_Ac_ID ? this.ObjcashForm.Wallet_Ac_ID : 0 ;
+this.ObjcashForm.Wallet_Ac = this.ObjcashForm.Wallet_Ac ? this.ObjcashForm.Wallet_Ac : "NA" ;
+this.ObjcashForm.Credit_To_Ac_ID = this.ObjcashForm.Credit_To_Ac_ID ? this.ObjcashForm.Credit_To_Ac_ID : 0 ;
+this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm.Credit_To_Ac : "NA" ;
+  this.ObjcashForm.Credit_To_Amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
+  this.ObjcashForm.Wallet_Amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashForm.Wallet_Amount : 0;
+  this.ObjcashForm.Cash_Amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0;
+  this.ObjcashForm.Card_Amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
+  //console.log("this.ObjcashForm.Card_Ac",this.productSubmit);
+  if(this.productSubmit.length) {
+    let tempArr =[]
+    this.productSubmit.forEach(item => {
+      const obj = {
+          Product_ID : item.Product_ID,
+          Product_Description : item.Product_Description,
+          Product_Modifier : item.Modifier,
+          Rate : item.Net_Price,
+          Batch_No : item.Batch_No,
+          Qty : item.Stock_Qty,
+          Amount : item.Amount,
+          Discount_Per : item.Max_Discount,
+          Discount_Amt : item.Dis_Amount,
+          Gross_Amt : item.Gross_Amount,
+          SGST_Per : item.SGST_Per,
+          SGST_Amt : item.SGST_Amount,
+          CGST_Per : item.CGST_Per,
+          CGST_Amt : item.CGST_Amount,
+          IGST_Per : item.GST_Tax_Per,
+          IGST_Amt : item.GST_Tax_Per_Amt,
+          Net_Amount : item.Net_Amount,
+      }
+
+    const TempObj = {
+      Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
+      Foot_Fall_ID : this.Objcustomerdetail.Foot_Fall_ID,
+      Bill_Date : this.DateService.dateConvert(new Date(this.billdate)),
+      //Doc_No : this.ObjaddbillForm.Doc_No,
+      Doc_No : "A",
+      Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      //Adv_Order_No : this.ObjaddbillForm.Advance,
+      Rounded_Off : 0,
+      Amount_Payable : this.Amount_Payable,
+      Advance : this.ObjcashForm.Net_Due,
+      Net_Payable : this.Net_Payable,
+      Hold_Bill  : "N",
+      Order_Txn_ID : 0,
+      Adv_Order_No : this.Adv_Order_No,
+      Online_Order_No : null,
+      Online_Order_Date : null
+
+    }
+    tempArr.push({...obj,...TempObj,...this.Objcustomerdetail,...this.ObjcashForm})
+  });
+  console.log("save bill =" , tempArr)
+  return JSON.stringify(tempArr);
+  }
+  }
+  SaveBill(){
+    if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount != this.Net_Payable){
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Collected Amount is not equal to net payable "
+    });
+    return false;
+  }
+  if((!this.ObjcashForm.Wallet_Ac_ID && this.ObjcashForm.Wallet_Amount) ||
+     (!this.ObjcashForm.Wallet_Amount && this.ObjcashForm.Wallet_Ac_ID )){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error in wallet Amount"
+    });
+    return false;
+  }
+  if((!this.ObjcashForm.Credit_To_Ac_ID && this.ObjcashForm.Credit_To_Amount) ||
+     (!this.ObjcashForm.Credit_To_Amount && this.ObjcashForm.Credit_To_Ac_ID )){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error in Credit to Account"
+    });
+    return false;
+  }
+
+   const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String" : "Add Outlet Transaction Sale Bill without Stock",
+   "Json_Param_String": this.getdataforSaveBill()
+
+  }
+  this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    var tempID = data[0].Column1;
+    this.Bill_No = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+     // const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: "Sale_Bill_ID  " + tempID,
+       detail: "Succesfully Saved" 
+     });
+     this.productSubmit =[];
+     this.ObjcashForm  =  new cashForm();
+     this.BillWithoutStockPopup = false;
+     this.Amount_Payable = null;
+     this.GetTodaysDel();
+     this.SaveNPrintBill();
+    } else{
+
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
+  }
+  SaveNPrintBill() {
+    if (this.Bill_No) {
+      window.open("/Report/Crystal_Files/K4C/K4C_Bill_Print.aspx?DocNo=" + this.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  
+      );
+    }
+   // console.log('Doc_No ==', this.Objcustomerdetail.Bill_No)
+  }
+  // END
+
+  // EDIT DELIVERY
+  getdellocation(){
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Outlet Name",
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.delloclist = data;
+     this.Del_Cost_Cent_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ;
+     //console.log("this.delloclist======",this.delloclist);
+  
+  
+    });
+  }
+  tConv24(time24) {
+  let ts = time24;
+  let H = +ts.substr(0, 2);
+  let h:any = (H % 12) || 12;
+  h = (h < 10)?("0"+h):h;  // leading 0 at the left for 1 digit hours
+  let ampm = H < 12 ? "am" : "pm";
+  ts = h + ts.substr(2, 3) + ampm;
+  return ts;
+  }
+  EditDelivery(advorno){
+    this.getdellocation();
+    // this.delivery_Date = new Date();
+    // this.Del_Date_Time = "";
+    if (advorno.Adv_Order_No) {
+      this.Adv_Order_No = advorno.Adv_Order_No;
+       this.EditDeliverypopup = true;
+       this.delivery_Date = advorno.Del_Date;
+       //this.Del_Date_Time = advorno.Del_Date_Time_2;
+       if(advorno.Del_Date_Time_2){
+        const format = this.tConv24(advorno.Del_Date_Time_2);
+       this.Del_Date_Time =this.setHours(new Date(), format);
+       console.log("this.Del_Date_Time===", this. Del_Date_Time)
+      }
+    }
+    //this.CreateBillData();
+  }
+  EditDeliverySave(){
+    const Deltime = new Date(this.Del_Date_Time);
+     var hr = Deltime.getHours();
+     let min:any = Deltime.getMinutes();
+         min = min < 10 ? '0'+min : min;
+         this.Del_Date_Time = hr+ ":" +min
+     console.log("time ==" , this.Del_Date_Time)
+    const Tempobj = {
+      Doc_No : this.Adv_Order_No,
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Del_Location_ID : this.Del_Cost_Cent_ID,
+      Del_Date : this.DateService.dateConvert(new Date (this.delivery_Date)),
+      Del_Time : this.Del_Date_Time
+    }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Edit Delivery Location Date Time",
+      "Json_Param_String": JSON.stringify([Tempobj])
+     }
+     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      //console.log(data);
+      //var tempID = data[0].Column1;
+     // this.Bill_No = data[0].Column1;
+      if(data[0].Column1){
+        this.compacctToast.clear();
+       // const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         summary: "Delivery Details",
+         detail: "Succesfully Updated" 
+       });
+       this.EditDeliverypopup = false;
+       //this.delivery_Date = new Date();
+       //this.Del_Date_Time = "";
+       this.Del_Cost_Cent_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+       this.GetTodaysDel();
+      } else{
+  
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+  }
+  // END
 }
 class Customerdetail{
   Mobile : string;
@@ -657,4 +1071,49 @@ class Customerdetail{
 }
 class Lead{
   Location : string;
+}
+class cashForm{
+  Coupon_Per : number;
+  Credit_To_Ac_ID : any;
+  Credit_To_Ac : string;
+  Credit_To_Amount: number;
+  Wallet_Ac_ID : any;
+  Wallet_Ac : string;
+  Wallet_Amount : number;
+  Cash_Amount: number;
+  Card_Amount: number;
+  Total_Paid : number;
+  Net_Due : number;
+  //Refund_Amount = 0;
+  Refund_Amount : any;
+  Due_Amount : any;
+}
+class customer{
+  Costomer_Mobile : number;
+  Customer_Name : string;
+  Customer_DOB : string;
+  Customer_Anni : string;
+  Customer_GST : string;
+  Bill_Remarks : string;
+  // Delivery_Date : string;
+  Del_Date_Time : any;
+  Del_Cost_Cent_ID : string;
+  Foot_Fall_ID = 0;
+  Cost_Cen_ID : number;
+  Doc_Date : string;
+  //Doc_No = "A" ;
+  Adv_Order_No : any;
+  //Advance = "NA" ;
+  Cuppon_No : string;
+  Cuppon_OTP : string;
+}
+class HomeDelivery{
+  Delivery_Type : string;
+  Delivery_Mobile_No : any;
+  Delivery_Alt_Mobile_No : any;
+  Delivery_Name : any;
+  Delivery_Address: any;
+  Delivery_Near_By : any;
+  Delivery_Pin_Code : any;
+  //Delivery_Alt_Mobile_No:any;
 }

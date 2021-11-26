@@ -90,6 +90,10 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Fromgodown_id: any;
   checkSave = true;
   // TimeValue: Date = new Date('10:00 AM');
+  RefundPopup = false;
+  Adv_Order_No: any;
+  ObjRefundcashForm : RefundcashForm  = new RefundcashForm();
+  RAmount_Payable: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -1423,6 +1427,87 @@ clearData(){
   //this.DocNO = undefined;
 }
 
+// REFUND
+Refund(advono){
+  this.ObjRefundcashForm = new RefundcashForm();
+  if (advono.Adv_Order_No) {
+    this.Adv_Order_No = advono.Adv_Order_No;
+    this.RAmount_Payable = advono.Total_Paid - advono.Refund_Amt;
+    this.RefundPopup = true;
+  }
+
+}
+getdataforRefundSave(){
+  if(this.ObjRefundcashForm.Wallet_Ac_ID){
+    this.walletlist.forEach(el => {
+      if(Number(this.ObjRefundcashForm.Wallet_Ac_ID) === Number(el.Txn_ID)){
+        this.ObjRefundcashForm.Wallet_Ac = el.Ledger_Name
+      }
+    });
+}
+this.ObjRefundcashForm.Wallet_Ac_ID = this.ObjRefundcashForm.Wallet_Ac_ID ? this.ObjRefundcashForm.Wallet_Ac_ID : 0 ;
+this.ObjRefundcashForm.Wallet_Ac = this.ObjRefundcashForm.Wallet_Ac ? this.ObjRefundcashForm.Wallet_Ac : "NA" ;
+this.ObjRefundcashForm.Wallet_Amount = this.ObjRefundcashForm.Wallet_Amount ? this.ObjRefundcashForm.Wallet_Amount : 0;
+this.ObjRefundcashForm.Cash_Amount = this.ObjRefundcashForm.Cash_Amount ? this.ObjRefundcashForm.Cash_Amount : 0;
+
+let temparr = []
+const TempObj = {
+  Doc_No : this.Adv_Order_No,
+  Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+  //Created_On : this.Objcustomerdetail.Del_Date_Time,
+  Created_By : this.$CompacctAPI.CompacctCookies.User_ID
+}
+ temparr.push({...TempObj,...this.ObjRefundcashForm})
+ //console.log(temparr)
+ return JSON.stringify(temparr);
+}
+RefundSave(){
+  if((this.ObjRefundcashForm.Cash_Amount > this.RAmount_Payable) ||
+     (this.ObjRefundcashForm.Wallet_Amount > this.RAmount_Payable)){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Refund amount is more than amount received"
+    });
+    return false;
+  }
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Save Outlet Adv Order Refund Payment",
+    "Json_Param_String": this.getdataforRefundSave()
+   }
+   this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    var tempID = data[0].Column1;
+    this.Adv_Order_No = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+     // const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: " " + tempID,
+       //detail: "Succesfully done" 
+     });
+     this.RefundPopup = false;
+     this.Showdata();
+     this.Showdatabymobile(true);
+     this.ObjRefundcashForm = new RefundcashForm();
+    } else{
+
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
+}
+
 }
  class search{
   start_date : string;
@@ -1518,5 +1603,12 @@ class HomeDelivery{
   Delivery_Near_By : any;
   Delivery_Pin_Code : any;
   //Delivery_Alt_Mobile_No:any;
+}
+class RefundcashForm{
+  Wallet_Ac_ID : any;
+  Wallet_Ac : string;
+  Wallet_Amount : number;
+  Cash_Amount: number;
+  // Refund_Amount : number = 0;
 }
 

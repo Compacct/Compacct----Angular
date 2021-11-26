@@ -35,6 +35,8 @@ export class OutletTxnBankDepositComponent implements OnInit {
   Transfer_To: any = [];
   DisableSlipno = false;
   todayDate : any = new Date();
+  cashcollfromDate : any = new Date();
+  cashcollToDate : any = new Date();
 
   constructor(
     private Header: CompacctHeader,
@@ -125,6 +127,8 @@ SaveBankTransfer(valid){
     Transfer_To	: this.ObjBankTransfer.Transfer_To,
     //Date		:  this.DateService.dateConvert(new Date(this.myDate)),
     Date    : this.DateService.dateConvert(new Date(this.todayDate)),
+    cash_Form_Date    :  this.DateService.dateConvert(new Date(this.cashcollfromDate)),
+    cash_To_Date    :  this.DateService.dateConvert(new Date(this.cashcollToDate)),
     Amount	:  this.ObjBankTransfer.Amount,
     Bank_Name	: this.ObjBankTransfer.Bank_Name,
     Slip_No		: this.ObjBankTransfer.Slip_No,
@@ -227,6 +231,8 @@ Edit(TxnId){
      this.ObjBankTransfer.Transfer_To = data[0].Transfer_To;
      //this.myDate = data[0].Date;
      this.todayDate = data[0].Date;
+     this.cashcollfromDate = data[0].cash_Form_Date;
+     this.cashcollToDate = data[0].cash_To_Date;
      this.ObjBankTransfer.Amount = data[0].Amount;
      this.ObjBankTransfer.Bank_Name = data[0].Bank_Name;
      this.ObjBankTransfer.Slip_No = data[0].Slip_No;
@@ -294,6 +300,8 @@ clearData(){
   this.items = ["BROWSE", "CREATE"];
   this.buttonname = "Save";
   this.todayDate = new Date();
+  this.cashcollfromDate = new Date();
+  this.cashcollToDate = new Date();
 }
 
 }

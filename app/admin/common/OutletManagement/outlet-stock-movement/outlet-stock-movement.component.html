@@ -1,5 +1,5 @@
-
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
 <!-- <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
@@ -25,120 +25,82 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" > -->
-                            <form name="ViewStockForm" #ViewStockForm="ngForm" novalidate>
-                                <div class="form-group">
-                                  <div class="col-sm-4">
+                        <form name="ViewStockForm" #ViewStockForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
                                     <label class="control-label">Choose Report <sup class="text-danger">*</sup></label>
-                                    <select class="form-control"
-                                            name="Report"
-                                            #Report="ngModel"
-                                            [(ngModel)]="ObjBrowseStockView.Choose_Report"
-                                            (ngModelChange)= "onReportChange()"
-                                            [ngClass]="{'clearance':ViewStockFormSubmitted && Report?.errors?.required}"
-                                            required>
+                                    <select class="form-control" name="Report" #Report="ngModel" [(ngModel)]="ObjBrowseStockView.Choose_Report" (ngModelChange)="onReportChange()" [ngClass]="{'clearance':ViewStockFormSubmitted && Report?.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                      <option *ngFor = "let option of Reportlist" [value] ="option.report_name">
                                         {{option.report_name}}
                                       </option>
                                 </select>
-                                  </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Date <sup class="text-danger">*</sup></label>
-                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
-                                    </div>
-                                    <div class="col-sm-4">
-                                      <label class="control-label">Outlet <sup class="text-danger">*</sup></label>
-                                      <select class="form-control"
-                                              name="outlet"
-                                              #outlet="ngModel"
-                                              [(ngModel)]="ObjBrowseStockView.Outlet"
-                                              (change)="getGodown()"
-                                              [disabled] = "outletdisableflag"
-                                              [ngClass]="{'clearance':ViewStockFormSubmitted && outlet?.errors?.required}"
-                                              required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Date <sup class="text-danger">*</sup></label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Outlet <sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="outlet" #outlet="ngModel" [(ngModel)]="ObjBrowseStockView.Outlet" (change)="getGodown()" [disabled]="outletdisableflag" [ngClass]="{'clearance':ViewStockFormSubmitted && outlet?.errors?.required}">
                                               <option  [ngValue]="undefined">Select</option>
                                        <option *ngFor = "let option of Outletid" [value] ="option.Cost_Cen_ID">
                                           {{option.Cost_Cen_Name}}
                                         </option>
                                   </select>
-                                    </div>
+                                </div>
 
-                                   </div>
-                                    <!-- <div class="col-sm-3"  class = "text-right"> -->
-                                      <div class="form-group">
-                                        <div class="col-sm-4">
-                                          <label class="control-label">Stock Point <sup class="text-danger">*</sup></label>
-                                          <select class="form-control"
-                                                  name="godown"
-                                                  #godown="ngModel"
-                                                  [(ngModel)]="ObjBrowseStockView.Godown_Id"
-                                                  [disabled] = "stockdisableflag"
-                                                  [ngClass]="{'clearance':ViewStockFormSubmitted && godown?.errors?.required}"
-                                                  required>
+                            </div>
+                            <!-- <div class="col-sm-3"  class = "text-right"> -->
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Stock Point <sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="godown" #godown="ngModel" [(ngModel)]="ObjBrowseStockView.Godown_Id" [disabled]="stockdisableflag" [ngClass]="{'clearance':ViewStockFormSubmitted && godown?.errors?.required}">
                                                   <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor = "let option of GodownId" [value] ="option.godown_id">
                                               {{option.godown_name}}
                                             </option>
                                       </select>
-                                        </div>
-                                        <div class="col-sm-1">
-                                            <button class="btn btn-primary custombutton2" data-toggle="modal"
-                                          (click)="SearchStockView(ViewStockForm.form.valid)"
-                                          id="load"
-                                          [disabled]="seachSpinner"
-                                          >
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-primary custombutton2" data-toggle="modal" (click)="SearchStockView(ViewStockForm.form.valid)" id="load" [disabled]="seachSpinner">
                                           <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                           <span *ngIf="!seachSpinner" ></span>&nbsp;Search
                                        </button>
-                                        </div>
-                                        <div class="col-sm-1">
-                                          <button
-                                             class="btn btn-success custombutton3"
-                                             (click)="exportoexcel(Searchlist,'Outlet_Report')"
-                                             [disabled] = "exceldisable">
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-success custombutton3" (click)="exportoexcel(Searchlist,'Outlet_Report')" [disabled]="exceldisable">
                                              <span  class="glyphicon glyphicon-save"></span> Download Report
                                           </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Report Descripton </label>
+                                    <input class="form-control" name="Rdescription" #Rdescription="ngModel" [(ngModel)]="ObjBrowseStockView.Report_Description" disabled="true">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="table-responsive no-padding">
+                            <p-table [value]="Searchlist" [paginator]="Searchlist.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]='DynamicHeader' [rowHover]="true" #dt>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                         </div>
-                                   </div>
-                                  <div class="form-group">
-                                    <div class="col-sm-12">
-                                      <label class="control-label">Report Descripton </label>
-                                      <input class="form-control"
-                                            name="Rdescription"
-                                            #Rdescription = "ngModel"
-                                            [(ngModel)] ="ObjBrowseStockView.Report_Description"
-                                            disabled = "true"
-                                              >
-                                  </div>
-                                  </div>
-                            </form>
-                            <div class="table-responsive no-padding">
-                                <p-table
-                                         [value]="Searchlist"
-                                         [paginator]="Searchlist.length ? true : false" [rows]="100" [rowHover]="true"
-                                         [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[100,200,300]"
-                                         [globalFilterFields]='DynamicHeader'
-                                         [rowHover]="true"
-                                         #dt>
-                                           <ng-template pTemplate="caption" >
-                                               <div class="row"  >
-                                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                        </div>
-                                               </div>
+                                    </div>
 
-                                            </ng-template>
-                                            <ng-template pTemplate="header">
-                                                 <tr>
-                                                  <!-- <th style="width:5em">Action</th> -->
-                                                  <th *ngFor="let option of DynamicHeader" >{{option.replace('_',' ')}}</th>
-                                              </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-col>
-                                                <tr>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <!-- <th style="width:5em">Action</th> -->
+                                        <th *ngFor="let option of DynamicHeader">{{option.replace('_',' ')}}</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
 
-                                                    <!-- <td>
+                                        <!-- <td>
                                                             <div class="dropdown">
                                                                 <button class="btn btn-default btn-sm tableButton dropdown-toggle"
                                                                     type="button" data-toggle="dropdown" style="height:27px">
@@ -162,19 +124,19 @@
                                                             </div>
                                                     </td> -->
 
-                                                    <ng-container *ngFor="let option of DynamicHeader" data->
-                                                      <td>{{col[option]}}</td>
-                                                    </ng-container>
-                                                 </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="paginatorright" let-state>
-                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                                            </ng-template>
-                                    </p-table>
-                                    </div>
-                            <!-- </p-tabPanel> -->
+                                        <ng-container *ngFor="let option of DynamicHeader" data->
+                                            <td>{{col[option]}}</td>
+                                        </ng-container>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <!-- </p-tabPanel> -->
 
-                        </p-tabView>
+                    </p-tabView>
 
                 </div>
             </div>

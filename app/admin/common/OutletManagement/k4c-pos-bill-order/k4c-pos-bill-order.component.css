@@ -1,62 +1,116 @@
 .pos-row {
-  min-height: 200px;
-  padding: 2em;
-  background-color: #2a2a72;
-  background-image: linear-gradient(315deg, #182127 0%, #3c8dbccc 74%);
+    min-height: 200px;
+    padding: 2em;
+    background-color: #2a2a72;
+    background-image: linear-gradient(315deg, #182127 0%, #3c8dbccc 74%);
 }
+
 .collapse-pos {
-  padding: 0% !important;
+    padding: 0% !important;
 }
-.custom-orderno-toast > p-toastitem > .ui-toast-message {
-  color: black;
-  background-color: white !important;
+
+.custom-orderno-toast>p-toastitem>.ui-toast-message {
+    color: black;
+    background-color: white !important;
 }
-.info-box-icon{
-  height: 75px !important;
+
+.info-box-icon {
+    height: 75px !important;
     width: 75px !important;
     font-size: 35px !important;
     line-height: 65px !important;
 }
 
 div.pac-container.pac-logo {
-  z-index: 9999999 !important;
+    z-index: 9999999 !important;
 }
-.info-box{
-  min-height: 75px !important;
-  cursor: pointer !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+
+.info-box {
+    min-height: 75px !important;
+    cursor: pointer !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
-.info-box-content{
-  margin-left: 75px !important;
-  line-height: 60px !important;
+
+.info-box-content {
+    margin-left: 75px !important;
+    line-height: 60px !important;
 }
+
 .info-box:hover {
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-  background: #1496ff  !important;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    background: #1496ff !important;
 }
-.info-box-text{
-  white-space: pre-line !important;
+
+.info-box-text {
+    white-space: pre-line !important;
 }
-div.table-responsive.table-id > p-table > div > div {
-  width: auto !important;
+
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
 }
-.hide-pos{
-  display: none;
+
+.hide-pos {
+    display: none;
 }
 
 .DEP {
-  background-color: #696767;
+    background-color: #696767;
 }
-.DEP:hover, .DEP:focus, .DEP:active, .DEP.active, .open>.dropdown-toggle.DEP {
-  background-color: #1496ff;
+
+.DEP:hover,
+.DEP:focus,
+.DEP:active,
+.DEP.active,
+.open>.dropdown-toggle.DEP {
+    background-color: #1496ff;
 }
+
 .Bank {
-  background-color: #287467;
+    background-color: #287467;
 }
-.Bank:hover, .Bank:focus, .Bank:active, .Bank.active, .open>.dropdown-toggle.Bank {
-  background-color: #1496ff;
+
+.Bank:hover,
+.Bank:focus,
+.Bank:active,
+.Bank.active,
+.open>.dropdown-toggle.Bank {
+    background-color: #1496ff;
 }
+
+
+/* .custombutton {
+    margin-right: 20px;
+} */
+
+
+/* Bill Without Stock  */
+
+.col-md-6 {
+    padding-right: 15px;
+    padding-left: 15px;
+    position: center;
+    min-height: 1px;
+    box-sizing: border-box;
+}
+
+.box.box-successMP {
+    border-top-color: #00a65a;
+}
+
+.well-smMP {
+    padding: 9px;
+    border-radius: 3px;
+}
+
+.wellMP {
+    background-color: #dff0e5
+}
+
+.col-sm-6Mp {
+    width: 100%;
+}
+
 
 /* body, td, input, textarea {
   font-family: source sans pro, sans-serif;
