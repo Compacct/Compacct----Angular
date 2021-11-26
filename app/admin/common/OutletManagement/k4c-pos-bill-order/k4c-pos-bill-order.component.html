@@ -260,19 +260,29 @@
                                         <th>Total Amount</th>
                                         <th>Adv</th>
                                         <th>Due</th>
+                                        <th>Action</th>
 
 
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
                                     <tr>
-                                        <td><a class="btn btn-sm" (click)='RedrectEdit(col,"ordertobill")'>{{col.Adv_Order_No}}</a></td>
+                                        <td><a class="btn btn-sm" (click)='RedrectEdit(col,"ordertobill")'>{{col.Adv_Order_No}}</a> <br>
+                                            <button type="button" (click)="EditDelivery(col)" class="btn btn-primary">
+                                            <i class="fa fa-pencil-square-o"></i>&nbsp;  Edit Delivery
+                                            </button>
+                                        </td>
                                         <td>{{col.Del_Date | date: "dd/MMM/yyyy"}} - {{col.Del_Date_Time}}</td>
                                         <td>{{col.Customer_Name}}</td>
                                         <td>{{col.Costomer_Mobile}}</td>
                                         <td><b>{{col.Total_Amount}}</b></td>
                                         <td class="text-success">{{col.Advance}}</td>
                                         <td class="text-danger">{{col.Net_Due}}</td>
+                                        <td>
+                                            <button type="button" (click)="BillWithoutStock(col)" class="btn btn-primary">
+                                             <i class="fa fa-file-text-o"></i>&nbsp;  Bill Without Stock
+                                            </button>
+                                        </td>
 
                                     </tr>
                                 </ng-template>
@@ -487,5 +497,133 @@
         <button type="button" class="btn btn-primary" (click)="OnCustomerDetailsSubmit(CustomerDetailsForm.form.valid)">
       <i class="pi pi-check" ></i>&nbsp; OK
     </button>
+    </p-footer>
+</p-dialog>
+
+<!-- Bill Without Stock -->
+<p-dialog header="Bill" [appendTo]="'body'" [visible]="BillWithoutStockPopup" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="col-sm-6Mp">
+        <div class="box box-successMP wellMP well-smMP shadow">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class='col-sm-12'>
+                            <label class="control-label">Total Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Total}}
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Rounded Off:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Round_Off}}
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Amount Payable:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Amount_Payable}}
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Advance:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Adv}}
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Net Payable:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Net_Payable}}
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Cash Amount:</label>
+                            <input class="form-control" type="text" style="text-align: center" name="cash" #cash="ngModel" [(ngModel)]="ObjcashForm.Cash_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Wallet Amount: </label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Ac_ID">
+                                          <option [ngValue]="undefined">select</option>
+                                           <option *ngFor = "let option of walletlist" [value] ="option.Txn_ID">
+                                             {{option.Ledger_Name}}
+                                          </option>
+                                      </select>
+                                </div>
+                                <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                            </div>
+                        </div>
+
+                        <div class='col-sm-12'>
+                            <label class="control-label">Card Amount: </label>
+                            <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [(ngModel)]="ObjcashForm.Card_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Credit to Account:</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <select name="Credit" #Credit="ngModel" [(ngModel)]="ObjcashForm.Credit_To_Ac_ID">
+                                               <option [ngValue]="undefined">select</option>
+                                               <option *ngFor = "let option of creditlist" [value] ="option.Txn_ID">
+                                                    {{option.Ledger_Name}}
+                                              </option>
+                                           </select>
+                                </div>
+                                <input type="text" class="form-control" id="exampleInputAmount1" name="credit" #credit="ngModel" [(ngModel)]="ObjcashForm.Credit_To_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                            </div>
+                        </div>
+
+                        <div class='col-sm-12'>
+                            <label class="control-label">Total Paid:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjcashForm.Total_Paid}}
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Refund Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjcashForm.Refund_Amount}}
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Due Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjcashForm.Due_Amount}}
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <button type="button" (click)="BillWithoutStockPopup = false" class="btn btn-default">
+            <i class="fa fa-fw fa-close" ></i>&nbsp;  Close
+            </button>
+        <button type="button" class="btn btn-primary" (click)="SaveBill()">
+            <i class="glyphicon glyphicon-save" ></i>&nbsp; Save
+            </button>
+    </p-footer>
+</p-dialog>
+
+<!-- EDIT DELIVERY -->
+<p-dialog header={{Adv_Order_No}} [appendTo]="'body'" [(visible)]="EditDeliverypopup" [modal]="true" [responsive]="true" [closeOnEscape]="true" [closable]="false" [baseZIndex]="123" [style]="{ width: '36%', minWidth: '200px' }">
+
+    <form name="CustomerDetailsForm" #CustomerDetailsForm="ngForm" novalidate>
+        <div>
+            <div class="form-group">
+                <div class='col-sm-12'>
+                    <label class="control-label">Delivery Date</label>
+                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="delivery_Date"></ejs-datepicker>
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Delivery Time</label>
+                    <ejs-timepicker placeholder='Select a time' [(value)]="Del_Date_Time" name="Del_Date_Time" [format]="'hh:mm a'" [min]='minTime' [max]='maxTime'></ejs-timepicker>
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Delivery Location</label>
+                    <!-- <div class="pull-right">
+                            <button class="button1" (click)="ShowHomeDeliverypopup()">Home Delivery</button>
+                        </div> -->
+                    <select class="form-control" name="delLocation" #delLocation="ngModel" [(ngModel)]="Del_Cost_Cent_ID">
+                  <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of delloclist" [value] ="option.Cost_Cen_ID">
+              {{option.Cost_Cen_Name}}
+            </option>
+      </select>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="EditDeliverypopup = false" class="btn btn-default">
+<i class="fa fa-fw fa-close" ></i>&nbsp;  Close
+</button>
+        <button type="button" class="btn btn-primary" (click)="EditDeliverySave()">
+<i class="glyphicon glyphicon-save" ></i>&nbsp; Update
+</button>
     </p-footer>
 </p-dialog>

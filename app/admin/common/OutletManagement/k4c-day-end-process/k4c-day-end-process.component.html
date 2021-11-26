@@ -142,15 +142,15 @@
                                             <th class="text-center" style="vertical-align:middle">
                                                 Payment Options
                                             </th>
-                                            <th class="text-center" style="vertical-align:middle">
+                                            <!-- <th class="text-center" style="vertical-align:middle">
                                                 System Amount
-                                            </th>
+                                            </th> -->
                                             <th class="text-center" style="vertical-align:middle">
                                                 Actual Amount
                                             </th>
-                                            <th class="text-center" style="vertical-align:middle">
+                                            <!-- <th class="text-center" style="vertical-align:middle">
                                                 Variance
-                                            </th>
+                                            </th> -->
                                             <th class="text-center" style="vertical-align:middle">
                                                 Remarks
                                             </th>
@@ -161,21 +161,21 @@
                                            let index = index
                                           ">
                                             <td>{{col.Collection_Mode}}</td>
-                                            <td>{{col.Total_Amount}}</td>
+                                            <!-- <td>{{col.Total_Amount}}</td> -->
                                             <td><input type="text" [name]="col.slno" [(ngModel)]='col.Amount' (ngModelChange)='VarianceChq(index)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td>{{col.Variance}}</td>
-                                            <td><input type="text" [name]="col.slno" [(ngModel)]='col.Remarks' [disabled]="col.Total_Amount == col.Amount" class="form-control" style="width: 150px;" /></td>
+                                            <!-- <td>{{col.Variance}}</td> -->
+                                            <td><input type="text" [name]="col.slno" [(ngModel)]='col.Remarks' class="form-control" style="width: 150px;" /></td>
                                         </tr>
                                         <tr>
                                             <td *ngIf="paymentList.length">Total</td>
-                                            <td *ngIf="paymentList.length">{{getTotalValue('Total_Amount')}}</td>
+                                            <!-- <td *ngIf="paymentList.length">{{getTotalValue('Total_Amount')}}</td>  [disabled]="col.Total_Amount == col.Amount"-->
                                             <td *ngIf="paymentList.length">{{getTotalAmt()}}</td>
-                                            <td *ngIf="paymentList.length">{{getTotalVar()}}</td>
+                                            <!-- <td *ngIf="paymentList.length">{{getTotalVar()}}</td> -->
                                             <td *ngIf="paymentList.length"></td>
                                         </tr>
                                         <tr>
                                             <td *ngIf="paymentList.length">CLOSEING STOCK UPDATED</td>
-                                            <td *ngIf="paymentList.length">{{closeingUpdate}}</td>
+                                            <!-- <td *ngIf="paymentList.length">{{closeingUpdate}}</td> -->
                                             <td *ngIf="paymentList.length"><select class="form-control" name="STOCK_UPDATED" #STOCK_UPDATED="ngModel" [(ngModel)]="closeingstatus" [ngClass]="{'clearance': mismatch && closeingstatus != closeingUpdate}" style="width: 100px;">
                                                     <option  [ngValue]="undefined">Select</option>
                                                 <option value = "YES">

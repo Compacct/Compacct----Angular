@@ -96,6 +96,9 @@ export class K4CDispatchToOutletComponent implements OnInit {
   RefreshData = [];
   editIndentList = [];
   Auto_Accepted: any;
+  totalqty: any;
+  totalaccpqty: any;
+  batchqty: any;
 
   constructor(
     private $http: HttpClient,
@@ -354,24 +357,24 @@ export class K4CDispatchToOutletComponent implements OnInit {
     this.filteredData.forEach((item)=>{
       Indval += Number(item.Req_Qty)
     });
-
-    return Indval ? Indval : '-';
+    this.totalqty = (Indval).toFixed(2);
+    return Indval ? Indval.toFixed(2) : '-';
   }
   getTotalBatchValue(){
     let batchval = 0;
     this.filteredData.forEach((item)=>{
       batchval += Number(item.Batch_Qty)
     });
-
-    return batchval ? batchval : '-';
+    this.batchqty = (batchval).toFixed(2);
+    return batchval ? batchval.toFixed(2) : '-';
   }
   getTotalIssueValue(){
     let issueval = 0;
     this.filteredData.forEach((item)=>{
       issueval += Number(item.Delivery_Qty)
     });
-
-    return issueval ? issueval : '-';
+    this.totalaccpqty = (issueval).toFixed(2);
+    return issueval ? issueval.toFixed(2) : '-';
   }
   showDialog() {
     this.displaysavepopup = true;
@@ -442,8 +445,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
             Accept_Reason : el.Accepted_Qty === el.Delivery_Qty ? 'NA' : el.Accept_Reason,
             Status : "Updated",
             Material_Type : "Finished",
-            Total_Qty : Number(this.getTotalValue('Delivery_Qty')),
-            Total_Accepted_Qty : Number(this.getTotalValue('Accepted_Qty'))
+            Total_Qty : Number(this.batchqty),
+            Total_Accepted_Qty : Number(this.totalaccpqty)
           }
           this.saveData.push(saveObj)
         }
@@ -533,7 +536,9 @@ export class K4CDispatchToOutletComponent implements OnInit {
             Accept_Reason_ID : null,
             Accept_Reason : null,
             Status : "Not Updated",
-            Material_Type : "Finished"
+            Material_Type : "Finished",
+            Total_Qty : Number(this.totalqty),
+            Total_Accepted_Qty  : Number(this.totalaccpqty)
           }
           this.saveData.push(saveObj)
         }

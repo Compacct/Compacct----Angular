@@ -264,7 +264,7 @@ export class K4cDayEndProcessComponent implements OnInit {
               key: "compacct-toast",
               severity: "error",
               summary: "Warn Message",
-              detail: "CLOSEING STOCK UPDATED MISMATCHED"
+              detail: "Error in closing stock update"
             });
       }
 
@@ -310,8 +310,9 @@ export class K4cDayEndProcessComponent implements OnInit {
   save(){
     let saveData = [];
     this.saveSpinner = true;
-    if (Number(this.SystemAmttotal == this.Total) && Number(this.VarianceTotal == 0)) {
+   // if (Number(this.SystemAmttotal == this.Total) && Number(this.VarianceTotal == 0)) {
     this.paymentList.forEach(ele =>{
+      if(ele.Amount){      
       const TempData = {
         Date : this.DateService.dateConvert(new Date(this.Datevalue)),
         Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -322,7 +323,9 @@ export class K4cDayEndProcessComponent implements OnInit {
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID
      }
      saveData.push(TempData)
+    }
     })
+    if (saveData.length){
     const obj = {
       "SP_String": "SP_K4C_Day_End_Process",
       "Report_Name_String": "Save_K4C_Outlet_Day_END",
@@ -330,8 +333,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("save Data",data);
-      this.saveSpinner = false;
-      this.clearData();
+      
       if(data[0].Column1 === "Save successfully"){
         this.saveSpinner = true;
         this.compacctToast.add({
@@ -340,7 +342,17 @@ export class K4cDayEndProcessComponent implements OnInit {
           summary: "Succesfully ",
           detail: "Day End Process Succesfully Saved"
         });
-      }
+        this.saveSpinner = false;
+        this.clearData();
+      } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something wrong"
+          });
+         }
     })
     }
      else {
@@ -349,7 +361,7 @@ export class K4cDayEndProcessComponent implements OnInit {
         key: "compacct-toast",
         severity: "error",
         summary: "Warn Message",
-        detail: "System amount is not equal to actual amount"
+        detail: "Please enter actual amount"
       });
      }
   }
