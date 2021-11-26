@@ -75,6 +75,7 @@ import { PivotFieldListAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { PivotViewAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { DateTimePickerModule } from "@syncfusion/ej2-angular-calendars";
 import { GanttAllModule } from '@syncfusion/ej2-angular-gantt';
+import { SelectionService } from '@syncfusion/ej2-angular-gantt';
 // DateRange
 import { DateRangePickerModule } from "@syncfusion/ej2-angular-calendars";
 import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
@@ -438,6 +439,7 @@ import { CompacctTxnTaskComponent } from './common/TenderManagement/compacct-txn
     CompacctGetDistinctService,
     CompacctAccountJournal,
     DateTimeConvertService,
+    SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
   ]
 })
