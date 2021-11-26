@@ -29,6 +29,7 @@ export class CompacctTenderComponent implements OnInit {
   persons: [];
   buttonname = "Create";
   Spinner = false;
+  SpinnerAg = false;
   ViewFlag = false;
   TenderSearchForm = false;
   TenderFormSubmitted = false;
@@ -151,7 +152,8 @@ export class CompacctTenderComponent implements OnInit {
   EstimateAllData = [];
 
   ObjBidOpening = new BidOpening();
-  ObjBidOpeningList = new BidOpeningList();
+  ObjBidOpeningList = new BidOpeningList(); 
+  ObjAgreement = new Agreement();
   AuthoritySubmitted = false;
   AuthorityName = undefined;
   AuthorityModal = false;
@@ -248,6 +250,9 @@ SelectedDTState = [];
 SelectedDTLocation = [];
 TenderDocID = undefined;
 StateList = [];
+
+AgreementSubmitted = false;
+tenderDocId = undefined;
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -610,17 +615,21 @@ StateList = [];
   // View
   View(obj) {
     this.clearData();
+    console.log("view Obj",obj);
     this.DocumentList =[];
     this.TaskList = [];
     this.ObjTask = new Task();
     this.ObjFee = new Fee();
     this.ObjEMD = new EMD();
     if(obj.Tender_Doc_ID){
+      this.ViewFlag = true;
       this.ObjTender = obj;
+      console.log("ObjTender",this.ObjTender);
+      this.ObjAgreement.Tender_Doc_ID = obj.Tender_Doc_ID;
       this.TenderAmountChange(obj.Tender_Amount);
       this.TenderFeeChange(obj.T_Fee_Amount);
       this.TenderEMDChange(obj.EMD_Amount);
-      this.PerformanceSecurityChange(obj.PSD_Amount);
+      this.PerformanceSecurityChange(obj.APSD_Amount);
       this.TenderPeriodOfWorkChange(obj.Period_Of_Work);
       this.GetTask(obj.Tender_Doc_ID,false);
       this.GetDocument(obj.Tender_Doc_ID);
@@ -635,15 +644,15 @@ StateList = [];
     this.ObjEMD = new EMD();
 
   }
-  viewBooth(footfallID) {
-    if(footfallID) {
+  viewBooth(TenderDocID) {
+    if(TenderDocID) {
       const obj = new HttpParams()
-      .set("Tender_Doc_ID",footfallID);
+      .set("Tender_Doc_ID",TenderDocID);
     this.$http
       .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj })
       .subscribe((data: any) => {
-        console.log(data);
         const obj = data ? JSON.parse(data)[0] : {};
+        console.log("obj",obj);
         this.ObjFee = obj;
         this.ObjEMD = obj;
       });
@@ -690,7 +699,7 @@ StateList = [];
     return taggedname;
   }
   GetOrgName(id) {
-    const name = $.grep(this.tenderOrgList ,function(obj) {return obj.Tender_Org_ID === id})[0].Tender_Organization;
+   const name = $.grep(this.tenderOrgList ,function(obj) {return obj.Tender_Org_ID === id})[0].Tender_Organization;
     return name ? name : '-';
   }
   GetCatName(id) {
@@ -706,6 +715,7 @@ StateList = [];
     return name ? name : '-';
   }
   GetContaractName(id) {
+    console.log("GetContaractName call ContractList",this.ContractList);
     const name = $.grep(this.ContractList ,function(obj) {return obj.Form_Of_Contract_ID === id})[0].Form_Of_Contract;
     return name ? name : '-';
   }
@@ -1042,10 +1052,11 @@ StateList = [];
         console.log("data length",data.length);
         if(data.length){
           this.TenderList = data.length ? data : [];
-        this.BidTenderList = data.length ? data[0] : [];
-        this.TenderAmountChange(this.BidTenderList.Tender_Amount);
+        // this.BidTenderList = data.length ? data[0] : [];
+        // this.TenderAmountChange(this.BidTenderList.Tender_Amount);
         this.BackupTenderList = data.length ? data : [];
-        const distARR = this.GetDistinctItems.GetMultipleDistinct(this.BackupTenderList,['Tender Authority','Tender Calling Div','Tender Category','State','Location']);
+        const distARR = this.GetDistinctItems.GetMultipleDistinct(this.BackupTenderList,['Tender_Organization','Tender_Calling_Div_Name','Tender_Category_Name','State','Location']);
+        console.log("Filter Data",distARR);
         this.DTAutorityList = distARR[0];
         this.DTCallingDivList = distARR[1];
         this.DTCategoryList = distARR[2];
@@ -1068,15 +1079,15 @@ StateList = [];
     
 
     if (this.SelectedDTAutority.length) {
-      searchFields.push('Tender Authority');
+      searchFields.push('Tender_Organization');
       DTAutority = this.SelectedDTAutority;
     }
     if (this.SelectedDTCallingDiv.length) {
-      //searchFields.push('Tender Authority');
-      //DTCallingDiv = this.SelectedDTCallingDiv;
+      searchFields.push('Tender_Calling_Div_Name');
+      DTCallingDiv = this.SelectedDTCallingDiv;
     }
     if (this.SelectedDTCategory.length) {
-      searchFields.push('Tender Category');
+      searchFields.push('Tender_Category_Name');
       DTCategory = this.SelectedDTCategory;
     }
     if (this.SelectedDTState.length) {
@@ -1090,9 +1101,9 @@ StateList = [];
     this.TenderList = [];
     if (searchFields.length) {
       let LeadArr = this.BackupTenderList.filter(function (e) {
-        return ((DTAutority.length ? DTAutority.includes(e['Tender Authority']) : true) &&
-        (DTCallingDiv.length ? DTCallingDiv.includes(e['Subscribed']) : true) &&
-        (DTCategory.length ? DTCategory.includes(e['Tender Category']) : true) &&
+        return ((DTAutority.length ? DTAutority.includes(e['Tender_Organization']) : true) &&
+        (DTCallingDiv.length ? DTCallingDiv.includes(e['Tender_Calling_Div_Name']) : true) &&
+        (DTCategory.length ? DTCategory.includes(e['Tender_Category_Name']) : true) &&
         (DTState.length ? DTState.includes(e['State']) : true) &&
         (DTLocation.length ? DTLocation.includes(e['Location']) : true)
         )
@@ -1106,7 +1117,8 @@ StateList = [];
   SaveTenderMaster(valid) {
     console.log("ObjTender.PSD_Acc_Voucher_No",this.ObjTender.PSD_Acc_Voucher_No);
   this.TenderFormSubmitted = true;
-  if (valid ) {
+  console.log("valid",valid);
+  if (valid) {
   this.Spinner = true;
   this.ObjTender.Tender_Opening_Date = this.ObjTender.Tender_Opening_Date ? this.ObjTender.Tender_Opening_Date : this.DateService.dateTimeConvert(new Date(this.TenderOpenDate));
   this.ObjTender.Tender_Closing_Date = '01/01/1900'
@@ -1118,7 +1130,12 @@ StateList = [];
   this.ObjTender.EMD_Date_of_Expiry = this.ObjTender.EMD_Date_of_Expiry ? this.ObjTender.EMD_Date_of_Expiry : this.DateService.dateConvert(new Date(this.EMDExpiryDate));
   this.ObjTender.PSD_Date_of_Issue = this.ObjTender.PSD_Date_of_Issue ? this.ObjTender.PSD_Date_of_Issue : this.DateService.dateConvert(new Date(this.PerformanceIssueDate));
   this.ObjTender.PSD_Date_of_Expiry = this.ObjTender.PSD_Date_of_Expiry ? this.ObjTender.PSD_Date_of_Expiry : this.DateService.dateConvert(new Date(this.PerformanceExpiryDate));
-
+  
+  this.ObjTender.T_Fee_Date_of_Issue = this.ObjTender.T_Fee_Payment_Mode ? this.ObjTender.T_Fee_Date_of_Issue : '01/01/1900'
+  this.ObjTender.T_Fee_Date_of_Expiry = this.ObjTender.T_Fee_Payment_Mode ? this.ObjTender.T_Fee_Date_of_Expiry : '01/01/1900'
+  this.ObjTender.PSD_Date_of_Issue = this.ObjTender.PSD_Payment_Mode ? this.ObjTender.PSD_Date_of_Issue : '01/01/1900'
+  this.ObjTender.PSD_Date_of_Expiry = this.ObjTender.PSD_Payment_Mode ? this.ObjTender.PSD_Date_of_Expiry : '01/01/1900'
+  
   this.ObjTender.Posted_On = this.DateService.dateTimeConvert(new Date());
   this.ObjTender.User_ID =  this.commonApi.CompacctCookies.User_ID;
   this.ObjTender.Cost_Cen_ID =  this.commonApi.CompacctCookies.Cost_Cen_ID;
@@ -1579,7 +1596,7 @@ StateList = [];
     this.TenderSearchForm = false;
     this.TenderFormSubmitted = false;
     this.ObjTender = new Tender();
-    this.TenderOpenDate = new Date();
+     this.TenderOpenDate = new Date();
     this.TenderEndDate =  new Date();
     this.TenderPublishDate = new Date();
     this.ViewFlag = false;
@@ -1595,6 +1612,8 @@ StateList = [];
     this.PeriodOfWork = undefined;
     this.locationInput.nativeElement.value = '';
     this.TenderId = undefined;
+    this.AgreementSubmitted = false;
+
   }
   GetFlagFromDocument(e) {
     console.log(e);
@@ -1980,13 +1999,18 @@ clearBid() {
   this.ReasonSelect = [];
   this.ObjBidOpening.Tender_Doc_ID =  undefined;
   this.ObjBidOpening = new BidOpening();
+  this.AgreementSubmitted = false;
+  this.SpinnerAg = false;
+  this.ReasonSelect = undefined;
 }
 ViewBidOpening(obj) {
   this.TenderDetails = undefined;
-  console.log("BidTenderList",this.BidTenderList);
+  this.ObjAgreement = new Agreement();
   this.clearBid();
   this.BidEditFlag = false;
   if(obj.Tender_Doc_ID){
+    this.BidTenderValue(obj.Tender_Doc_ID);
+    this.ObjAgreement.Tender_Doc_ID = obj.Tender_Doc_ID
     this.ObjBidOpening.Tender_Doc_ID = obj.Tender_Doc_ID;
     this.ObjBidOpeningList.Tender_Doc_ID = obj.Tender_Doc_ID;
      this.GetCircle(obj.Tender_Org_ID);
@@ -2001,23 +2025,23 @@ ViewBidOpening(obj) {
 
 }
 
-// BidTenderValue(Tender_Doc_ID){
-//   if(Tender_Doc_ID){
-//     const obj = new HttpParams()
-//     .set("Tender_Doc_ID",Tender_Doc_ID);
-//   this.$http
-//     .get("/BL_CRM_Txn_Enq_Tender/Get_EMD_Tender_Json", { params: obj })
-//     .subscribe((data: any) => {
-//       const obj = data ? JSON.parse(data)[0] : {};
-//       console.log("tenerFeeList",obj);
-//        if (obj) {
-//           this.BidTenderList = obj;
-//           this.TenderAmountChange(obj.Tender_Amount);
-//        }
-//     });
-//   }
+BidTenderValue(TenderDocID){
+  if(TenderDocID){
+    const obj = new HttpParams()
+    .set("Tender_Doc_ID",TenderDocID);
+  this.$http
+    .get("/BL_CRM_Txn_Enq_Tender/Get_All_Tender_Individual_Browse", { params: obj })
+    .subscribe((data: any) => {
+      const obj = data ? JSON.parse(data)[0] : {};
+      console.log("tenerFeeList",obj);
+       if (obj) {
+          this.BidTenderList = obj;
+          this.TenderAmountChange(obj.Tender_Amount);
+       }
+    });
+  }
   
-// }
+}
 
 RefreshTenderData() {
   if (this.ObjBidOpening.Tender_Doc_ID) {
@@ -2553,8 +2577,13 @@ LotteryBidderNameChange(i,obj) {
 
 StatusChange(data){
   if(data === 'AWARDING THE TENDER') {
-    this.ObjBidOpening.Date_of_Commencement = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
-    this.ObjBidOpening.Date_of_Completion = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
+    this.ObjAgreement.Date_of_Commencement = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
+    this.ObjAgreement.Date_of_Completion = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
+    this.ReasonSelect = undefined;
+  }
+  else if (data === 'NOT- AWARDING THE TENDER'){
+    this.ObjAgreement = new Agreement();
+    this.AgreementSubmitted = false;
   }
 }
 UpdateStatus() {
@@ -2593,28 +2622,28 @@ monthDiff(a, b) {
   message += days + " days " ;
   return message
 }
-GetCommencementDate (date) {
-  this.PeriodOfCompletion = undefined;
-    this.ObjBidOpening.Periods_of_Completion = undefined;
-    if (date) {
-      this.ObjBidOpening.Date_of_Commencement = this.DateService.dateConvert(moment(date, "YYYY-MM-DD")["_d"]);
-      if(this.ObjBidOpening.Date_of_Completion){
-        this.PeriodOfCompletion = this.monthDiff(new Date(date),new Date(this.ObjBidOpening.Date_of_Completion));
-        this.ObjBidOpening.Periods_of_Completion = this.PeriodOfCompletion;
-      }
-    }
-}
-GetCompletionDate (date) {
-  this.PeriodOfCompletion = undefined;
-  this.ObjBidOpening.Periods_of_Completion = undefined;
-  if (date) {
-    this.ObjBidOpening.Date_of_Completion = this.DateService.dateConvert(moment(date, "YYYY-MM-DD")["_d"]);
-    if(this.ObjBidOpening.Date_of_Completion){
-      this.PeriodOfCompletion = this.monthDiff(new Date(this.ObjBidOpening.Date_of_Commencement),new Date(date));
-      this.ObjBidOpening.Periods_of_Completion = this.PeriodOfCompletion;
-    }
-  }
-}
+// GetCommencementDate (date) {
+//   this.PeriodOfCompletion = undefined;
+//     this.ObjAgreement.Date_of_Commencement = undefined;
+//     if (date) {
+//       this.ObjAgreement.Date_of_Commencement = this.DateService.dateConvert(moment(date, "YYYY-MM-DD")["_d"]);
+//       if(this.ObjAgreement.Date_of_Commencement){
+//         this.PeriodOfCompletion = this.monthDiff(new Date(date),new Date(this.ObjAgreement.Date_of_Commencement));
+//         this.ObjAgreement.Date_of_Commencement = this.PeriodOfCompletion;
+//       }
+//     }
+// }
+// GetCompletionDate (date) {
+//   this.PeriodOfCompletion = undefined;
+//   this.ObjAgreement.Date_of_Completion = undefined;
+//   if (date) {
+//     this.ObjAgreement.Date_of_Completion = this.DateService.dateConvert(moment(date, "YYYY-MM-DD")["_d"]);
+//     if(this.ObjAgreement.Date_of_Completion){
+//       this.PeriodOfCompletion = this.monthDiff(new Date(this.ObjAgreement.Date_of_Completion),new Date(date));
+//       this.ObjAgreement.Date_of_Completion = this.PeriodOfCompletion;
+//     }
+//   }
+// }
 TenderPeriodOfCompletionChange(data) {
   if(data){
     this.ObjBidOpening.Periods_of_Completion =  data;
@@ -4087,6 +4116,64 @@ totalAmt(){
 
   return Amtval ? Amtval : '-';
 }
+checkSubmission(date){
+ return date ? new Date(date) : "-";
+}
+saveAgreement(valid){
+ 
+  this.AgreementSubmitted = true;
+  console.log("valid",valid);
+ if(valid){
+   this.SpinnerAg = true;
+  this.ObjAgreement.Date_of_Commencement = this.ObjAgreement.Date_of_Commencement ? this.ObjAgreement.Date_of_Commencement : this.DateService.dateTimeConvert(new Date(this.CommencementDate));
+  this.ObjAgreement.Date_of_Completion = this.ObjAgreement.Date_of_Completion ? this.ObjAgreement.Date_of_Completion : this.DateService.dateTimeConvert(new Date(this.CompletionDate));
+  const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Update_Enq_Tender_Bidding_Agreement";
+    const obj = { Enq_Bidding_Agreement_String: JSON.stringify([this.ObjAgreement]) };
+    this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+      if (data.success) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Estimate Management ' ,
+        detail: "Succesfully Save."
+      });
+       this.SpinnerAg = false;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+        this.SpinnerAg = false;
+      }
+    })
+ }
+}
+PaymentChangeclr(){
+  if(this.ObjTender.T_Fee_Payment_Mode === undefined || this.ObjTender.T_Fee_Payment_Mode === null){
+    this.ObjTender.T_Fee_Transaction_Ref_No = undefined;
+    this.TFeeAmount = undefined;
+    this.ObjTender.T_Fee_Payable_To = undefined;
+    this.ObjTender.T_Fee_Payable_At = undefined;
+    this.ObjTender.T_Fee_exm_Allowed = undefined;
+    this.TenderIssueDate =new Date();
+    this.TenderExpiryDate = new Date();
+    }
+}
+PSDPaymentChangeclr(){
+  if(this.ObjTender.PSD_Payment_Mode === undefined || this.ObjTender.PSD_Payment_Mode === null){
+    this.ObjTender.PSD_Acc_Voucher_No = undefined;
+    this.PerformanceSecurityAmount = undefined;
+    this.ObjTender.PSD_Payable_To = undefined;
+    this.ObjTender.PSD_Payable_At = undefined;
+    this.ObjTender.PSD__Fees_Exemption_Allowed = undefined;
+    this.PerformanceIssueDate =new Date();
+    this.PerformanceExpiryDate = new Date();
+  }
+}
 }
 class Tender{
   Tender_Doc_ID = 0;
@@ -4119,7 +4206,7 @@ class Tender{
   EMD_Through_BG_SD	 = '';
   EMD_fee_Type	 = '';
   EMD_Persentage	 = '';
-  EMD_Payable_To:string;
+  EMD_Payable_To:any = 0;
   EMD_Payable_At:string;
   T_Fee_Payable_At:string;
   T_Fee_Payable_To:string;
@@ -4415,4 +4502,12 @@ class RankBidOpeningList {
   Quoted_Rate:string;
   Temp_Bidder_Array:any = [];
   
+}
+class Agreement{
+  Tender_Doc_ID : number;
+  Agreement_Number :any;
+  Agreement_Value :any;
+  Date_of_Commencement :any;
+  Date_of_Completion :any;
+  Circle :any
 }
