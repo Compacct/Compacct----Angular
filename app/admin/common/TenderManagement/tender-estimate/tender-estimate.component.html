@@ -27,8 +27,9 @@
                             <div class="form-group" style="padding: 0 1em;" >
                               <div class="col-sm-6">
                                   <label class="control-label">Project Name&nbsp;<span class="text-danger" >*</span></label>
-                                  <span (click)='DynamicRedirectTo()' class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-database"></i>Manage Projects</span>
-                                  <span style="margin-left: 2px;" (click)='GetProject()' class="btn-vk  pull-right createPatient btn btn-primary btn-xs"><i class="fa fa-fw  fa-refresh"></i>refresh</span>
+                                  <!-- <span (click)='DynamicRedirectTo()' class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-database"></i>Manage Projects</span> -->
+                                  <span *ngIf= "!projectList.length" (click)="ToggleProject()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                  <!-- <span style="margin-left: 2px;" (click)='GetProject()' class="btn-vk  pull-right createPatient btn btn-primary btn-xs"><i class="fa fa-fw  fa-refresh"></i>refresh</span> -->
                                   <p-dropdown
                                   [options]="projectList"
                                   name="projectname"
@@ -45,12 +46,13 @@
                                   [styleClass]="
                                   EstimateInfoSubmitted && projectname.errors?.required? 'clearance': ''"
                                   [required]="true"
-                                  [disabled]="ShowAddedEstimateProductList.length"
+                                  [disabled] = "editData.length"
                                 >
                                 </p-dropdown>
                               </div>
                               <div class="col-sm-6">
                                 <label class="control-label">Site Name&nbsp;<span class="text-danger" >*</span></label>
+                                <span *ngIf= "ObjEstimate.project_ID" (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                   <p-dropdown
                                 [options]="siteList"
                                 name="siteName"
@@ -67,7 +69,7 @@
                                 [styleClass]="
                                 EstimateInfoSubmitted && siteName.errors?.required? 'clearance': ''"
                                 [required]="true"
-                                [disabled]="ShowAddedEstimateProductList.length"
+                                [disabled] = "editData.length"
                               >
                               </p-dropdown>
                               </div>
@@ -327,11 +329,13 @@
                                                 <i class="fa fa-bars" pReorderableRowHandle></i>
                                             </td>
                                             <td *ngFor="let col of columns;let i = index;">
-                                               <span *ngIf='i !== (columns.length -1)'> {{rowData[col.field]}}</span>
+                                               <span *ngIf='i !== (columns.length -1)'> {{ rowData[col.field]}}</span>
                                                <button *ngIf='i === (columns.length -1)' (click)="DeleteEstimate(index)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
-                                        
+                                        <tr *ngIf='(index + 1)  === ShowAddedEstimateProductList.length'>
+                                          <td colspan="15" class="text-bold text-right"> Total Purchase Amount : {{getPurchaseAmt()}}</td>
+                                        </tr>
                                     </ng-template>
                                 </p-table>
                                 <!-- <table  class="table table-bordered">
@@ -446,16 +450,16 @@
                             class="btn btn-primary pull-right custombutton"
                             (click)="SaveEsitimate()"
                             id="load2"
-                            [disabled]="Spinner"
+                            [disabled]="saveSpinner"
                             >
                             <p-progressSpinner
-                            *ngIf="Spinner"
+                            *ngIf="saveSpinner"
                             [style]="{ width: '15px', height: '15px' }"
                             strokeWidth="8"
                             animationDuration=".5s"
                             ></p-progressSpinner>
                             <span
-                            *ngIf="!Spinner"
+                            *ngIf="!saveSpinner"
                             class="glyphicon glyphicon-save"
                             ></span
                             >&nbsp; SAVE
@@ -681,6 +685,173 @@ id="load2"
 ></p-progressSpinner>
 <span
   *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
+</button>
+</p-footer>
+</p-dialog>
+
+<p-dialog
+  [header]="'Create Project'"
+  [appendTo]="'body'"
+  [visible]="projectModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="ProjectSubmittedForm"
+#ProjectSubmittedForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-12">
+    <label class="control-label"
+    >Project Name<sup class="text-danger">*</sup
+  ></label>
+  <input
+        type="text"
+        class="form-control"
+        name="Projectname"
+        #Projectname="ngModel"
+        [(ngModel)]="ProjectName"
+        placeholder="Project Name"
+        allow-pattern="([a-z ]|\.)"
+        [ngClass]="{
+          clearance: ProjectSubmitted && Projectname?.errors?.required
+        }"
+        required
+      />
+  </div>
+  <div class="col-sm-12">
+    <label class="control-label"
+    >Project Remarks<sup class="text-danger">*</sup
+  ></label>
+  <input
+        type="text"
+        class="form-control"
+        name="Projectremark"
+        #Projectremark="ngModel"
+        [(ngModel)]="ProjectRemark"
+        placeholder="Project Remark"
+        allow-pattern="([a-z ]|\.)"
+        [ngClass]="{
+          clearance: ProjectSubmitted && Projectremark?.errors?.required
+        }"
+        required
+      />
+  </div>
+</div>
+
+</form>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="projectModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+<button
+type="submit"
+name="bill"
+class="btn btn-primary pull-right custombutton"
+(click)="CreateProject(ProjectSubmittedForm.form.valid)"
+id="load2"
+[disabled]="Spinnerproject"
+>
+<p-progressSpinner
+  *ngIf="Spinnerproject"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinnerproject"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
+</button>
+</p-footer>
+</p-dialog>
+
+<p-dialog
+  [header]="'Create Site'"
+  [appendTo]="'body'"
+  [visible]="siteModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="SiteSubmittedForm"
+#SiteSubmittedForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-12">
+    <label class="control-label"
+    >Site Name<sup class="text-danger">*</sup
+  ></label>
+  <input
+        type="text"
+        class="form-control"
+        name="name"
+        #name="ngModel"
+        [(ngModel)]="siteCreate"
+        placeholder="Site Name"
+        allow-pattern="([a-z ]|\.)"
+        [ngClass]="{
+          clearance: siteSubmitted && name?.errors?.required
+        }"
+        required
+      />
+  </div>
+  
+</div>
+
+</form>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="siteModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+<button
+type="submit"
+name="bill"
+class="btn btn-primary pull-right custombutton"
+(click)="CreateSite(SiteSubmittedForm.form.valid)"
+id="load2"
+[disabled]="Spinnersite"
+>
+<p-progressSpinner
+  *ngIf="Spinnersite"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinnersite"
   class="glyphicon glyphicon-save"
 ></span
 >&nbsp;{{ buttonname }}

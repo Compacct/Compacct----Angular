@@ -71,7 +71,7 @@
                                                                             Edit
                                                                         </a>
                                                                     </li>
-                                                                    <li>
+                                                                    <li *ngIf="!col.Tender_Doc_ID">
                                                                         <a (click)="DeleteCostcenter(col)">
                                                                             <i class="fa fa-fw fa-trash"></i>
                                                                             Delete
@@ -83,7 +83,7 @@
                                                     <td>{{col.Order_No}}</td>
                                                     <td>{{col.Project_Description }}</td>
                                                     <td>{{col.Project_Remarks}}</td>
-                                                    <td>{{col.Order_Received_YN === "N" ? "NO" : "Yes"}}</td>
+                                                    <td>{{col.Order_Received_YN === "N" ? "No" : "Yes"}}</td>
                                                     <td>{{col.Tender_Doc_ID}}</td>
                                                  </tr>
                                             </ng-template>
@@ -104,7 +104,8 @@
                                             [(ngModel)]="Objestimate.Project_Description" 
                                             placeholder="Product Description" 
                                             [ngClass]="{'clearance': projectEstimateFormFormSubmitted && Project_Description?.errors?.required}"
-                                            required>
+                                            required
+                                            [disabled] = "editdata.length">
                                         </div>
                                        
                                         <div class="col-sm-4">
@@ -115,21 +116,24 @@
                                             #Order_Received_YN="ngModel"
                                             [(ngModel)]="Objestimate.Order_Received_YN"
                                             [ngClass]="{'clearance': projectEstimateFormFormSubmitted && Order_Received_YN?.errors?.required}"
-                                            required>
+                                            required
+                                            [disabled] = "editdata.length">
                                                 <option  [ngValue]="undefined">Select</option>
                                                 <option value="Y">Yes</option>
                                                 <option value="N">No</option>
                                          </select>
                                         </div>
                                         <div class="col-sm-4">
-                                            <label class="control-label">Tender Doc ID</label>
+                                            <label class="control-label">Tender Doc ID<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
                                             name="Tender_Doc_ID	" 
                                             #Tender_Doc_ID	="ngModel" 
                                             [(ngModel)]="Objestimate.Tender_Doc_ID	" 
                                             placeholder="Tender Doc ID" 
                                             CompacctDigitonly="true"
-                                            >
+                                            [ngClass]="{'clearance': projectEstimateFormFormSubmitted && Tender_Doc_ID?.errors?.required}"
+                                            required
+                                            [disabled] = "editdata.length">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -141,7 +145,7 @@
                                             #Order_No="ngModel" 
                                             [(ngModel)]="Objestimate.Order_No" 
                                             placeholder="Order No" 
-                                            >
+                                            [disabled] = "editdata.length">
                                         </div>
                                         <div class="col-sm-4">
                                             <label class="control-label">Project Remarks<sup class="text-danger">*</sup></label>
@@ -192,12 +196,12 @@
                                     <th>Site Description</th>
                                      <th>Delete</th>
                                 </tr>
-                            </thead>
+                            </thead>  
                             <tbody>
                                 <!-- ngRepeat: obj in ctrl.ProductCategoryGST -->
                                   <tr *ngFor="let obj of siteTableData; let ind = index;" >
                                     <td>{{obj.Site_Description}}</td>
-                                    <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                    <td ><button (click)="checkDelete(ind,obj)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                 </tr>
                             </tbody>
                         </table>
