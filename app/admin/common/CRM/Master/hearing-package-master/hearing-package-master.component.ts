@@ -34,7 +34,7 @@ export class HearingPackageMasterComponent implements OnInit {
     private compacctToast: MessageService) { }
 
   ngOnInit() {
-    this.items =  ["CREATE", "BROWSE"];
+    this.items =  ["BROWSE", "CREATE"];
     this.Header.pushHeader({
       Header: "Package Master",
       Link: "CRM --> Clinic -> Master -> Package Master"
@@ -81,7 +81,7 @@ export class HearingPackageMasterComponent implements OnInit {
 
   TabClick(e){
     this.tabIndexToView = e.index;
-    this.items = ["CREATE", "BROWSE"];
+    this.items = ["BROWSE", "CREATE"];
     this.clearData();
 
   }
@@ -104,7 +104,7 @@ export class HearingPackageMasterComponent implements OnInit {
         "Json_Param_String" : JSON.stringify([obj])
       }
       this.GlobalAPI.postData(obj1).subscribe((data:any)=>{
-        this.items = ["CREATE", "VIEW"];
+        this.items = ["BROWSE", "VIEW"];
         this.ObjPackageMaster = obj;
         this.PackageSessionList = data;
         this.tabIndexToView = 1; 
