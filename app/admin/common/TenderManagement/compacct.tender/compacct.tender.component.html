@@ -3687,20 +3687,21 @@ style="text-align: center;"
       <div class="form-group">
         <div class="col-sm-4" style="margin-bottom: 1em;">
           <!-- <label class="control-label">Information Form</label> : {{ObjTender.Enq_Source_ID ? GetInformName(ObjTender.Enq_Source_ID) : '-'}} <br> -->
-          <label class="control-label">Bid Opening Date & Time :</label> {{ObjTender.Tender_Opening_Date | date: 'dd-MMM-yy  h:mm a'  }}<br>
-          <label class="control-label">Bid Submission End Date & Time :</label>{{ObjTender.Tender_Closing_Date | date: 'dd-MMM-yy  h:mm a'  }}<br>
+          <label class="control-label">Bid Opening Date & Time :</label> {{ObjTender.Tender_Opening_Date !== "1900-01-01T00:00:00" ?  (ObjTender.Tender_Opening_Date | date: 'dd-MMM-yy  h:mm a') : '-'  }}<br>
+          <label class="control-label">Bid Submission End Date & Time :</label>{{ObjTender.Tender_Closing_Date !== "1900-01-01T00:00:00" ?  (ObjTender.Tender_Closing_Date | date: 'dd-MMM-yy  h:mm a') : '-'  }}<br>
           <!-- <label class="control-label">Tender Amount</label> : {{ObjTender.Tender_Amount }}<br>
           -->
         </div>
         <div class="col-sm-4" style="margin-bottom: 1em;">
            <!-- <label class="control-label"  *ngIf="ObjTender.Enq_Source_ID === 246" >Website</label><span  *ngIf="ObjTender.Enq_Source_ID === 246">: <a style="cursor: pointer;" (click)="onNavigate(ObjTender.Enq_Source_Detail)" >{{ObjTender.Enq_Source_Detail}}</a> <br></span>
            <label class="control-label"  *ngIf="ObjTender.Enq_Source_ID === 236" >Name</label><span  *ngIf="ObjTender.Enq_Source_ID === 236"> {{ObjTender.Enq_Source_Detail}} <br></span> : -->
-          <label class="control-label">Tender Published Date & Time :</label>{{ObjTender.Tender_Publish_Date | date: 'dd-MMM-yy  h:mm a'  }}<br>
-          <label class="control-label">Period Of Work (Days)</label> : {{ObjTender.Period_Of_Work ?   PeriodOfWork : '-' }}
+          <label class="control-label">Tender Published Date & Time :</label>{{ObjTender.Tender_Publish_Date !== "1900-01-01T00:00:00" ?  (ObjTender.Tender_Publish_Date | date: 'dd-MMM-yy  h:mm a') : '-'  }}<br>
+         
         </div>
         <div class="col-sm-4" style="margin-bottom: 1em;">
           <!-- <label class="control-label"  *ngIf="ObjTender.Enq_Source_ID === 236" >Mobile</label><span  *ngIf="ObjTender.Enq_Source_ID === 236"> : {{ObjTender.Enq_Source_Detail}} <br></span> -->
           <!-- <label class="control-label">Remarks</label> : {{ObjTender.Remarks ?  ObjTender.Remarks : '-'}} <br> -->
+          <label class="control-label">Period Of Work (Days)</label> : {{ObjTender.Period_Of_Work ?   PeriodOfWork : '-' }}
         </div>
 
       </div>
@@ -3754,11 +3755,11 @@ style="text-align: center;"
         </div>
         <div  class="form-group">
           <div class="col-sm-4" style="margin-bottom: 1em;">
-            <label class="control-label">Tender Fee Issue Date</label> : {{ObjFee.T_Fee_Date_of_Issue  | date: 'dd-MMM-yy'}}
+            <label class="control-label">Tender Fee Issue Date</label> : {{ObjFee.T_Fee_Date_of_Issue  !== "1900-01-01T00:00:00" ?  (ObjTender.T_Fee_Date_of_Issue | date: 'dd-MMM-yy  h:mm a') : '-'}}
          
           </div>
           <div class="col-sm-4" style="margin-bottom: 1em;">
-            <label class="control-label">Tender Fee Expiry Date</label> : {{ObjFee.T_Fee_Date_of_Expiry  | date: 'dd-MMM-yy'}}
+            <label class="control-label">Tender Fee Expiry Date</label> : {{ObjFee.T_Fee_Date_of_Expiry !== "1900-01-01T00:00:00" ?  (ObjTender.T_Fee_Date_of_Expiry | date: 'dd-MMM-yy  h:mm a') : '-'}}
           </div>
         </div>
       </div>
@@ -3794,12 +3795,12 @@ style="text-align: center;"
         </div>
         <div class="form-group">
           <div class="col-sm-4" style="margin-bottom: 1em;">
-            <label class="control-label">EMD Date of Expiry</label> : {{ObjEMD.EMD_Date_of_Expiry | date: 'dd-MMM-yy'}}
+            <label class="control-label">EMD Date of Expiry</label> : {{ObjEMD.EMD_Date_of_Expiry !== "1900-01-01T00:00:00" ?  (ObjTender.EMD_Date_of_Expiry | date: 'dd-MMM-yy  h:mm a') : '-'}}
             
            
           </div>
           <div class="col-sm-4"  style="margin-bottom: 1em;" >
-            <label class="control-label">EMD Date of Issue</label> : {{ObjEMD.EMD_Date_of_Issue | date: 'dd-MMM-yy'}}
+            <label class="control-label">EMD Date of Issue</label> : {{ObjEMD.EMD_Date_of_Issue !== "1900-01-01T00:00:00" ?  (ObjTender.EMD_Date_of_Issue | date: 'dd-MMM-yy  h:mm a') : '-'}}
           </div>
           <!-- <div class="col-sm-4" style="margin-bottom: 1em;" *ngIf="ObjEMD.EMD_Amount_Deposit_Type ==='FD'">
             <label class="control-label">EMD FD Amount</label> : {{ObjEMD.EMD_FD_Mature_Amount}} <br>
