@@ -81,7 +81,7 @@ export class TutoManualPaymentCollectionComponent implements OnInit {
     this.ProductPDFFile = {};
     this. ManualPaymentTrnsDate = new Date();
     this.ManualPaymentConfirmFormSubmit = false;
-    if(obj.Contact_Name) {
+    if(obj.Txn_ID) {
       this.ObjManualPaymentCnfm.Txn_ID = obj.Txn_ID;
       this.ObjManualPaymentCnfm.Contact_Name = obj.Contact_Name;
       this.ObjManualPaymentCnfm.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
@@ -111,8 +111,8 @@ export class TutoManualPaymentCollectionComponent implements OnInit {
       }
       this.GlobalAPI.postData(obj).subscribe((data) => {
         console.log(data[0])
-          if (data[0].Column1) {
-            this.upload(data[0].Column1);
+          if (data[0].message) {
+            this.upload(this.ObjManualPaymentCnfm.Txn_ID);
         }
         else {
             this.compacctToast.clear();
@@ -138,7 +138,7 @@ export class TutoManualPaymentCollectionComponent implements OnInit {
   async upload(id){
     const formData: FormData = new FormData();
         formData.append("file", this.ProductPDFFile);
-    let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Manual_Payment_Update?code=NNuTlQBwbP5UMBVVX8eD6x8do/WNOEIbHdwZVwu/bSulcefirS3Siw==&ConTyp='+this.ProductPDFFile['type']+'&ext='+this.ProductPDFFile['name'].split('.').pop()+'&pgid='+id,{ 
+    let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Manual_EMI_Upload?code=JNaHkOxlfbekK4abze7AphqQ03SKbtYaJAD3Gy/HGTbjoiATO3jClg==&ConTyp='+this.ProductPDFFile['type']+'&ext='+this.ProductPDFFile['name'].split('.').pop()+'&txnid='+id,{ 
                   method: 'POST',
                   body: formData // This is your file object
                 });
@@ -149,12 +149,13 @@ export class TutoManualPaymentCollectionComponent implements OnInit {
       this.compacctToast.add({
         key: "compacct-toast",
         severity: "success",
-        summary: 'Manual Payment ID : ' + this.ObjManualPaymentCnfm.Txn_ID,
+        summary: 'Txn ID : ' + this.ObjManualPaymentCnfm.Txn_ID,
         detail: "Payment Confirm Succesfully Saved."
       });
       this.ObjManualPaymentCnfm = new ManualPaymentCnfm();
       this.ManualPaymentConfirmFormSubmit = false;
       this.ManualPaymentConfirmModal = false;
+      this.GetManualPaymentList();
 
     }
   };

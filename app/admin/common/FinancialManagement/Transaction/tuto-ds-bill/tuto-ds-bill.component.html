@@ -165,7 +165,7 @@
                                         <option [ngValue]="undefined">Select</option>
                                         <option Value="Sale_rate"> Normal Amount </option>
                                         <option Value="DS_DIS_Amount_Price"> Discounted Amount </option>
-                                        <option *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A"' Value="Custom"> Custom Amount </option>
+                                        <option *ngIf='$CompacctAPI.CompacctCookies.User_ID == 4' Value="Custom"> Custom Amount </option>
                                 </select>
                             </div>
 

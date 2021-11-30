@@ -13,7 +13,7 @@
                             </app-compacct-daterangepicker>
                         </div>
                         <div class="col-sm-3">
-                            <button class="btn btn-primary custombutton" (click)="GetManualPaymentList(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                            <button class="btn btn-primary custombutton" (click)="GetManualPaymentList()" id="load" [disabled]="seachSpinner">
                           <p-progressSpinner
                             *ngIf="seachSpinner"
                             [style]="{ width: '15px', height: '15px' }"
@@ -42,7 +42,7 @@
                         </ng-template>
                         <ng-template pTemplate="header">
                             <tr>
-                                <th>Update</th>
+                                <th>Txn ID</th>
                                 <th>Mobile</th>
                                 <th>Name</th>
                                 <th>EMI Date</th>
