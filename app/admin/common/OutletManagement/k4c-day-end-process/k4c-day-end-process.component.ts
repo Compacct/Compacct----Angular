@@ -45,6 +45,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   SystemAmttotal: any;
   viewList = [];
   viewpopup = false;
+  outletdisableflag = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -141,20 +142,42 @@ export class K4cDayEndProcessComponent implements OnInit {
     })
   }
   GetCostCenter(){
-    const tempObj = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
-    }
+    // const tempObj = {
+    //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    // }
+    // const obj = {
+    //   "SP_String": this.sp_string,
+    //   "Report_Name_String": "GET_Cost_center",
+    //   "Json_Param_String" :  JSON.stringify([tempObj])
+    // }
+    // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //   this.costCenterList = data;
+    //   this.Cost_Cen_ID = this.costCenterList[0].Cost_Cen_ID;
+    //   this.Cost_Cen_ID_B = this.costCenterList[0].Cost_Cen_ID;
+    //   console.log("Cost Center",this.costCenterList);
+    // })
     const obj = {
-      "SP_String": this.sp_string,
-      "Report_Name_String": "GET_Cost_center",
-      "Json_Param_String" :  JSON.stringify([tempObj])
-    }
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Cost Center Name All",
+      "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.costCenterList = data;
-      this.Cost_Cen_ID = this.costCenterList[0].Cost_Cen_ID;
-      this.Cost_Cen_ID_B = this.costCenterList[0].Cost_Cen_ID;
-      console.log("Cost Center",this.costCenterList);
-    })
+     this.costCenterList = data;
+     if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
+     //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
+     this.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.outletdisableflag = true;
+    // this.getGodown();
+     } else {
+      this.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.outletdisableflag = false;
+    //  this.getGodown();
+     }
+     // console.log("this.costCenterList ======",this.costCenterList);
+
+    });
   }
   GetPaymentType(){
     this.Total = [];

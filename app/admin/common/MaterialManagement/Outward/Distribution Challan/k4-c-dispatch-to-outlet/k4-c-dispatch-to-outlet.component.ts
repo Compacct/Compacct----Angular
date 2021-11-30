@@ -99,6 +99,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   totalqty: any;
   totalaccpqty: any;
   batchqty: any;
+  totaldelqty: any;
 
   constructor(
     private $http: HttpClient,
@@ -370,10 +371,15 @@ export class K4CDispatchToOutletComponent implements OnInit {
   }
   getTotalIssueValue(){
     let issueval = 0;
+    let acceptedval = 0;
     this.filteredData.forEach((item)=>{
       issueval += Number(item.Delivery_Qty)
+      if (this.AccQtydis) {
+      acceptedval += Number(item.Accepted_Qty)
+      }
     });
-    this.totalaccpqty = (issueval).toFixed(2);
+    this.totaldelqty = (issueval).toFixed(2);
+    this.totalaccpqty = (acceptedval).toFixed(2);
     return issueval ? issueval.toFixed(2) : '-';
   }
   showDialog() {
@@ -396,8 +402,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
   }
   // FOR SAVE DISPATCH
   getReqNo(){
+    let Rarr =[]
     if(this.SelectedIndent.length) {
-      let Rarr =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -407,9 +413,17 @@ export class K4CDispatchToOutletComponent implements OnInit {
         }
 
     });
-      console.log("Table Data ===", Rarr)
-      return Rarr.length ? JSON.stringify(Rarr) : '';
+      // console.log("Table Data ===", Rarr)
+      // return Rarr.length ? JSON.stringify(Rarr) : '';
     }
+    else {
+      const Dobj = {
+        Req_No : 'NA'
+        }
+        Rarr.push(Dobj)
+    }
+    console.log("Table Data ===", Rarr)
+    return Rarr.length ? JSON.stringify(Rarr) : '';
   }
   saveDispatch(){
    console.log("saveqty",this.saveqty());
@@ -445,7 +459,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
             Accept_Reason : el.Accepted_Qty === el.Delivery_Qty ? 'NA' : el.Accept_Reason,
             Status : "Updated",
             Material_Type : "Finished",
-            Total_Qty : Number(this.batchqty),
+            Total_Qty : Number(this.totaldelqty),
             Total_Accepted_Qty : Number(this.totalaccpqty)
           }
           this.saveData.push(saveObj)
@@ -537,8 +551,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
             Accept_Reason : null,
             Status : "Not Updated",
             Material_Type : "Finished",
-            Total_Qty : Number(this.totalqty),
-            Total_Accepted_Qty  : Number(this.totalaccpqty)
+            Total_Qty : Number(this.totaldelqty),
+            Total_Accepted_Qty  : this.Auto_Accepted == "N" ? 0 : Number(this.totaldelqty)
           }
           this.saveData.push(saveObj)
         }
@@ -645,10 +659,15 @@ console.log("Objdispatch",this.Objdispatch);
       batch_qty = el.Qty
      }
   })
+  console.log("NativeitemList",this.NativeitemList);
+  console.log("Objadditem",this.Objadditem);
+  
+  // const ProductArrValid = this.NativeitemList.filter(item => item.Product_ID === Number(this.Objadditem.Product_ID));
+  // const ExitsProduct = this.productDetails.filter(item => Number(item.product_id) === Number(this.Objadditem.Product_ID));
   const ProductArrValid = this.NativeitemList.filter( item => Number(item.Product_ID) === Number(this.Objadditem.Product_ID));
-
-  const ExitsProduct = this.productDetails.filter( item => Number(item.product_id) === Number(this.Objadditem.Product_ID));
-
+ const ExitsProduct = this.productDetails.filter( item => Number(item.product_id) === Number(this.Objadditem.Product_ID));
+ console.log("ProductArrValid.length",ProductArrValid.length); 
+ console.log("ExitsProduct.length",ExitsProduct.length);
 
   if(ProductArrValid.length){
     if(ExitsProduct.length) {
@@ -668,7 +687,7 @@ console.log("Objdispatch",this.Objdispatch);
         Product_Description : item.Product_Description,
         Batch_No : batch_id,
         Batch_Qty : batch_qty,
-        Req_Qty :item.Req_Qty,
+        //Req_Qty :item.Req_Qty,
         Rate: item.Sale_rate,
         Delivery_Qty : Number(this.Objadditem.Issue_Qty),
         UOM: item.UOM,
@@ -693,7 +712,7 @@ console.log("Objdispatch",this.Objdispatch);
         Product_Description : item.Product_Description,
         Batch_No : batch_id,
         Batch_Qty : batch_qty,
-        Req_Qty :item.Req_Qty,
+        Req_Qty :  0,
         Rate: item.Sale_rate,
         Delivery_Qty : Number(this.Objadditem.Issue_Qty),
         UOM: item.UOM,

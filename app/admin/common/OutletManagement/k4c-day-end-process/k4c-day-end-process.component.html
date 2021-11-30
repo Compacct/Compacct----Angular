@@ -37,9 +37,9 @@
 
                                     <div class="col-sm-4">
                                         <label class="control-label"> Outlet&nbsp;<span class="text-danger">*</span></label>
-                                        <select class="form-control" name=" Cost_Cen" #Cost_Cen='ngModel' [(ngModel)]="Cost_Cen_ID_B" [attr.disabled]="costCenterDis? true : null">
+                                        <select class="form-control" name=" Cost_Cen" #Cost_Cen='ngModel' [(ngModel)]="Cost_Cen_ID_B" [disabled]="outletdisableflag"> <!-- [attr.disabled]="costCenterDis? true : null" -->
                                               <!-- <option [ngValue]="undefined">Select</option> -->
-                                              <option *ngFor='let option of costCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Location}}</option>
+                                              <option *ngFor='let option of costCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                                       </select>
                                     </div>
                                     <div class="col-sm-3">
@@ -114,10 +114,10 @@
                                     <div class="col-sm-4">
                                         <label class="control-label"> Outlet
                                     </label>
-                                        <select class="form-control" name="cost_center" #cost_center="ngModel" [(ngModel)]="Cost_Cen_ID" disabled>
+                                        <select class="form-control" name="cost_center" #cost_center="ngModel" [(ngModel)]="Cost_Cen_ID" [disabled]="outletdisableflag">
                                           <option  [ngValue]="undefined">Select</option>
                                       <option *ngFor="let option of costCenterList" value="{{option.Cost_Cen_ID}}">
-                                          {{option.Location}}
+                                          {{option.Cost_Cen_Name}}
                                           </option>
                                   </select>
                                     </div>
