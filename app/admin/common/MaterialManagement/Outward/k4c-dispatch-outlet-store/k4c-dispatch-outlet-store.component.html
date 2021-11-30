@@ -288,7 +288,7 @@
 
                                                 </form>
                                                 <div class="box-footer">
-                                                    <button class="btn btn-primary pull-right" data-toggle="modal" (click)="addDispatch(AdditioanForm.form.valid)" id="load" [disabled]="Spinner" [disabled]="true">
+                                                    <button class="btn btn-primary pull-right" data-toggle="modal" (click)="addDispatch(AdditioanForm.form.valid)" id="load" [disabled]="Spinner">
                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                          <span *ngIf="!Spinner" class="glyphicon glyphicon-plus"></span>Add
                                       </button>
@@ -353,6 +353,14 @@
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td *ngIf="EditList.length">{{col.Accept_Reason}}</td>
 
+                                        </tr>
+                                        <tr *ngIf='i === (productDetails.length - 1)'>
+                                            <td colspan="3" class="text-right">Total</td>
+                                            <td *ngIf="reqQTYdis">{{getTotal('Req_Qty')}}</td>
+                                            <td></td>
+                                            <td *ngIf="AccQtydis">{{getTotal('Accepted_Qty')}}</td>
+                                            <td>{{getTotal('Batch_Qty')}}</td>
+                                            <td>{{getTotal('Delivery_Qty')}}</td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
