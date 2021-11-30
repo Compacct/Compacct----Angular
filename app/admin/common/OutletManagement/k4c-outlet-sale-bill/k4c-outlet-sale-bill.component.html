@@ -227,6 +227,10 @@
                                             <label class="control-label">Rate <sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="Net_Price" [disabled]="true" [(ngModel)]="ObjaddbillForm.Sale_rate" [disabled]="true" CompacctDigitonly="true" [ngClass]="{'clearance':addbillFormSubmitted && Net_Price?.errors?.required}" required>
                                         </div>
+                                        <div class="col-sm-1">
+                                            <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="Qty" id='Qty' #Qty="ngModel" [(ngModel)]="ObjaddbillForm.Stock_Qty" (keydown)="onKeydownMain($event,'Modifier')" [ngClass]="{'clearance':addbillFormSubmitted && Qty?.errors?.required}" required CompacctDigitonly="true">
+                                        </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Batch No</label>
                                             <select class="form-control" name="Batch_No" id='Batch_No' #Batch_No="ngModel" [(ngModel)]="ObjaddbillForm.Batch_No" (keydown)="onKeydownMain($event,'Qty')" required>
@@ -235,10 +239,6 @@
                                       {{option.Batch_No_Show}}
                                     </option>
                               </select>
-                                        </div>
-                                        <div class="col-sm-1">
-                                            <label class="control-label">Qty <sup class="text-danger">*</sup></label>
-                                            <input class="form-control" name="Qty" id='Qty' #Qty="ngModel" [(ngModel)]="ObjaddbillForm.Stock_Qty" (keydown)="onKeydownMain($event,'Modifier')" [ngClass]="{'clearance':addbillFormSubmitted && Qty?.errors?.required}" required CompacctDigitonly="true">
                                         </div>
                                         <!-- <div class="col-sm-1">
                                 <label class="control-label">Disc %</label>
