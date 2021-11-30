@@ -74,6 +74,8 @@ import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { PivotFieldListAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { PivotViewAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { DateTimePickerModule } from "@syncfusion/ej2-angular-calendars";
+import { GanttAllModule } from '@syncfusion/ej2-angular-gantt';
+import { SelectionService } from '@syncfusion/ej2-angular-gantt';
 // DateRange
 import { DateRangePickerModule } from "@syncfusion/ej2-angular-calendars";
 import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
@@ -221,6 +223,9 @@ import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rs
 import { DirectPaymentFollowupNepalComponent } from './common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component';
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
+import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-package-master/hearing-package-master.component';
+import { CompacctTxnTaskComponent } from './common/TenderManagement/compacct-txn-task/compacct-txn-task.component';
+import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
 
 
 @NgModule({
@@ -378,7 +383,10 @@ import { TenderEstimateComponent } from './common/TenderManagement/tender-estima
     K4cRsnsClosingStockComponent,
     DirectPaymentFollowupNepalComponent,
     K4cFranchiseSaleBillComponent,
-    TenderEstimateComponent
+    TenderEstimateComponent,
+    HearingPackageMasterComponent,
+    CompacctTxnTaskComponent,
+    TutoManualPaymentCollectionComponent,
   ],
   imports: [
     CommonModule,
@@ -420,7 +428,8 @@ import { TenderEstimateComponent } from './common/TenderManagement/tender-estima
     SelectButtonModule,
     DataViewModule,
     PanelModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    GanttAllModule
   ],
   exports: [],
   providers: [
@@ -432,6 +441,7 @@ import { TenderEstimateComponent } from './common/TenderManagement/tender-estima
     CompacctGetDistinctService,
     CompacctAccountJournal,
     DateTimeConvertService,
+    SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
   ]
 })

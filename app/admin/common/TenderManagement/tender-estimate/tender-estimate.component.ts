@@ -10,8 +10,9 @@ declare var $: any;
 import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { clear } from 'console';
+import { contains } from 'jquery';
 
 @Component({
   selector: 'app-tender-estimate',
@@ -27,6 +28,7 @@ export class TenderEstimateComponent implements OnInit {
   persons: [];
   buttonname = "Create";
   Spinner = false;
+  saveSpinner = false;
   ViewFlag = false;
   ObjEstimate: any = {};
   EstimateInfoSubmitted = false;
@@ -48,20 +50,31 @@ export class TenderEstimateComponent implements OnInit {
   EstimateGroupProductList = [];
   AddedEstimateProductList = [];
   ShowAddedEstimateProductList = [];
-  projectList = [];
+  projectList:any = [];
   siteList = [];
   TenderDocID = undefined;
   EstimateModalFlag = false;
   workdetalisList = [];
+  TenderProjectId = undefined;
+  TenderSiteId = undefined;
+  ProjectSubmitted = false;
+  ProjectName = undefined;
+  ProjectRemark = undefined;
+  projectModal = false;
+  Spinnerproject = false;
+  siteSubmitted = false;
+  siteCreate = undefined;
+  siteModal = false;
+  Spinnersite = false;
+  editData = [];
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   cols = [
-    { field: 'Parent_Serial_No', header: 'SL No.' },
+    { field: 'SL_No', header: 'SL No.' },
     { field: 'Budget_Group_Name', header: 'Group Name' },
-    { field: 'Child_Serial_No', header: 'SL No.' },
     { field: 'Budget_Sub_Group_Name', header: 'Sub Group Name' },
     { field: 'Work_Details', header: 'Work Details' },
     { field: 'Product_Description', header: 'Product' },
-    { field: 'unit', header: 'Unit Description' },
+    { field: 'unit', header: 'Unit' },
     { field: 'Qty', header: 'Qty' },
     { field: 'Nos', header: 'Nos' },
     { field: 'TQty', header: 'Total Qty' },
@@ -69,7 +82,8 @@ export class TenderEstimateComponent implements OnInit {
     { field: 'saleRate', header: 'Sale Rate' },
     { field: 'Sale_Amount', header: 'Sale Amount' },
     { field: 'Rate', header: 'Purchase Rate' },
-    { field: 'Amount', header: 'Purchase Amount' }
+    { field: 'Amount', header: 'Purchase Amount' },
+    { field: 'zzzz', header: 'Delete' }
 ];
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -78,22 +92,32 @@ export class TenderEstimateComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
     private GetDistinctItems: CompacctGetDistinctService,
+    private router : Router,
     private route: ActivatedRoute,) {
+      
     this.route.queryParams.subscribe(params => {
       console.log("params", params);
-      this.TenderDocID = params.Tender_Doc_ID
+      this.TenderDocID = params.Tender_Doc_ID;
+
+      this.ObjEstimate.project_ID  = Number(params.Project_ID);
+      this.ObjEstimate.site_ID  = Number(params.Site_ID);
+      
+      this.getSiteList(this.ObjEstimate.project_ID,this.ObjEstimate.site_ID );
+      this.GetEditdata()
     })
   }
-
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Tender Estimate",
       Link: " Tender Management -> Master -> Tender Estimate"
     });
-    this.GetEstimateGroup();
     this.GetProject();
+    this.GetEstimateGroup();
     this.getworkDetails();
     this.GetProduct();
+  }
+  onReject(){
+    
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -112,6 +136,7 @@ export class TenderEstimateComponent implements OnInit {
     this.EstimateGrpName = undefined;
     this.EstimateGrpModal = true;
     this.Spinner = false;
+    
   }
   GetEstimateGroup() {
     const obj = {
@@ -131,23 +156,37 @@ export class TenderEstimateComponent implements OnInit {
   }
 
   GetProject() {
-    const obj = {
-      "SP_String": "SP_Tender_Management_All",
-      "Report_Name_String": "Get Project",
-    }
-    this.GlobalAPI
-      .getData(obj)
-      .subscribe((data: any) => {
-        console.log("project", data)
-        data.forEach(el => {
-          el['label'] = el.Project_Description;
-          el['value'] = el.Project_ID;
+    if(this.TenderDocID){
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Get Project",
+        "Json_Param_String": JSON.stringify([{ 'Tender_Doc_ID': this.TenderDocID }])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log("project", data)
+          this.ObjEstimate.project_ID = data[0].Project_ID ? Number(data[0].Project_ID) : undefined;
+          data.forEach(el => {
+            el['label'] = el.Project_Description;
+            el['value'] = el.Project_ID;
+          });
+  
+          this.projectList = data;
+          console.log("ProjectList",this.projectList);
+          console.log("Project_ID",this.projectList.Project_ID);
+          console.log("Project_ID[0]",this.projectList[0].Project_ID);
+         
+         console.log("this.ObjEstimate.project_ID",this.ObjEstimate.project_ID);
+         if(this.ObjEstimate.project_ID){
+          this.getSiteList(this.ObjEstimate.project_ID);
+         }
+        
         });
-
-        this.projectList = data;
-      });
+    }
+    
   }
-  getSiteList(id) {
+  getSiteList(id,selectId?) {
     this.siteList = [];
     if (id) {
       const obj = {
@@ -159,11 +198,14 @@ export class TenderEstimateComponent implements OnInit {
         .getData(obj)
         .subscribe((data: any) => {
           console.log("site", data)
+          this.ObjEstimate.site_ID  = data[0].Site_ID ? Number(data[0].Site_ID) : undefined;
           data.forEach(el => {
             el['label'] = el.Site_Description;
             el['value'] = el.Site_ID;
           });
           this.siteList = data;
+          console.log("this.ObjEstimate.site_ID ",this.ObjEstimate.site_ID );
+          this.GetEditdata();
         });
     }
   }
@@ -260,6 +302,19 @@ export class TenderEstimateComponent implements OnInit {
       this.EstimateSubGrpModal = true;
     }
   }
+  ToggleProject() {
+    this.ProjectSubmitted = false;
+    this.ProjectName = undefined;
+    this.ProjectRemark = undefined;
+    this.projectModal = true;
+    this.Spinnerproject = false;
+  }
+  ToggleSite(){
+    this.siteSubmitted = false;
+    this.siteCreate = undefined;
+    this.siteModal = true;
+    this.Spinnersite = false;
+  }
   Toggleworkdetalis() {
     this.workdetalisSubmitted = false;
     this.workdetalisName = undefined;
@@ -321,6 +376,96 @@ export class TenderEstimateComponent implements OnInit {
               summary: "Warn Message",
               detail: "Error Occured "
             });
+          }
+        });
+    }
+  }
+  CreateProject(valid) {
+    this.ProjectSubmitted = true;
+    if (valid) {
+      this.Spinnerproject = true;
+      const temp = {
+        Project_Description: this.ProjectName,
+        Project_Remarks: this.ProjectRemark,
+        Tender_Doc_ID : this.TenderDocID
+      }
+      console.log("Project Save Data",temp);
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Add Project",
+        "Json_Param_String": JSON.stringify([temp])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log(data)
+          if (data[0].Project_ID) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "",
+              detail: "Succesfully Project Created"
+            });
+            this.GetProject();
+            this.ProjectSubmitted = false;
+            this.ProjectName = undefined;
+            this.ProjectRemark = undefined;
+            this.projectModal = false;
+            this.Spinnerproject = false;
+          } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+            this.Spinnerproject = false;
+          }
+        });
+    }
+  }
+  CreateSite(valid) {
+    this.siteSubmitted = true;
+    if (valid) {
+      this.Spinnersite = true;
+      const temp = {
+        Project_ID: this.ObjEstimate.project_ID,
+        Site_Description: this.siteCreate
+      }
+      console.log("Site Save Data",temp);
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Add Site",
+        "Json_Param_String": JSON.stringify([temp])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log(data)
+          if (data[0].Site_ID ) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "",
+              detail: "Succesfully Site Created"
+            });
+            this.getSiteList(this.ObjEstimate.project_ID);
+            this.siteSubmitted = false;
+            this.siteCreate = undefined;
+            this.siteModal = false;
+            this.Spinnersite = false;
+          } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+            this.Spinnersite = false;
           }
         });
     }
@@ -419,10 +564,12 @@ export class TenderEstimateComponent implements OnInit {
       this.CalculateEstimatesaleAmount();
     }
   }
+  getPurchaseAmt(){
+    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0)
+  }
   AddEstimate(valid) {
     this.EstimateInfoSubmitted = true;
     if (valid) {
-      this.ShowAddedEstimateProductList = [];
       const extimateObj = { ...this.ObjEstimate , ...{ uid : '_' + Math.random().toString(36).substr(2, 9)}};
       extimateObj.items = [];
       //this.ObjEstimate = {};
@@ -447,47 +594,22 @@ export class TenderEstimateComponent implements OnInit {
       let dupSub = [];
       let parentCount = 0;
       for(var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
-        if (dupSub.indexOf(this.ShowAddedEstimateProductList[i]['Budget_Group_ID']) === -1) {
-          parentCount = parentCount + 1;
-          this.ShowAddedEstimateProductList[i]['Parent_Serial_No'] = parentCount;
-          dupSub.push(this.ShowAddedEstimateProductList[i]['Budget_Group_ID']);
-          const ParentDub = this.ShowAddedEstimateProductList.filter(obj => obj.Budget_Group_ID == this.ShowAddedEstimateProductList[i].Budget_Group_ID);        
-          var out2 = [];          
-          var count = 0;
-          if (ParentDub.length) {
-            for (var k = 0; k < ParentDub.length; k++) {
-              if (out2.indexOf(ParentDub[k]['Budget_Sub_Group_ID']) === -1) {
-                count = count + 1;
-                this.ShowAddedEstimateProductList.forEach((e,o) => {
-                  if(e.uid ===  ParentDub[k].uid) 
-                  this.ShowAddedEstimateProductList[o]['Child_Serial_No'] = parentCount + '.' + count;
-                });
-                out2.push(ParentDub[k]['Budget_Sub_Group_ID']);              
-              } else{
-                const childFilt = ParentDub.filter(e=> {
-                  return e.Budget_Group_ID == ParentDub[k]['Budget_Group_ID'] &&  e.Budget_Sub_Group_ID == ParentDub[k]['Budget_Sub_Group_ID']
-                });
-                console.log(childFilt)
-                childFilt.forEach(it => {
-                  this.ShowAddedEstimateProductList.forEach((e,o) => {
-                    if(e.uid ===  it.uid) 
-                    this.ShowAddedEstimateProductList[o]['Child_Serial_No'] = parentCount + '.' + count;
-                  });
-                })
-                
-              }
-            }
-
-          }
-
-        } else {
-          this.ShowAddedEstimateProductList[i]['Parent_Serial_No'] = this.ShowAddedEstimateProductList.find(e=> e.Budget_Group_ID == this.ShowAddedEstimateProductList[i]['Budget_Group_ID']).Parent_Serial_No;
-        }
+        this.ShowAddedEstimateProductList[i]['SL_No'] = i + 1;
       }
-      console.log(this.ShowAddedEstimateProductList);
-
     }
 
+  }
+  DeleteEstimate(k) {
+    this.AddedEstimateProductList.splice(k,1);
+    this.ShowAddedEstimateProductList = this.AddedEstimateProductList;
+    for(var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+      this.ShowAddedEstimateProductList[i]['SL_No'] = i + 1;
+    }
+  }
+  RowReOrder(e) {
+    for(var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+      this.ShowAddedEstimateProductList[i]['SL_No'] = i + 1;
+    }
   }
   getNestedChildren(arr) {
     var out = []
@@ -548,6 +670,7 @@ export class TenderEstimateComponent implements OnInit {
   };
   SaveEsitimate() {
     if (this.ShowAddedEstimateProductList.length) {
+      this.saveSpinner = true;
       // this.ObjEstimate.Appo_Date = this.DateService.dateConvert(new Date(this.ResceduleAppoDate));
       const tempArr = this.FetchEstimateObj();
       console.log("saveData", tempArr);
@@ -572,10 +695,11 @@ export class TenderEstimateComponent implements OnInit {
               summary: 'Estimate Management ',
               detail: "Succesfully Save."
             });
-            this.ObjEstimate = {};
-            this.TenderDocID = undefined;
+           // this.ObjEstimate = {};
+          //  this.TenderDocID = undefined;
             this.EstimateModalFlag = false;
-
+            this.ShowAddedEstimateProductList = [];
+            this.saveSpinner = false;
           } else {
 
             this.compacctToast.clear();
@@ -585,6 +709,7 @@ export class TenderEstimateComponent implements OnInit {
               summary: "error",
               detail: data[0].Remarks
             });
+            this.saveSpinner = false;
           }
         })
     }
@@ -597,46 +722,88 @@ export class TenderEstimateComponent implements OnInit {
     let tempArr = [];
     for (var i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
       const temp = this.ShowAddedEstimateProductList[i];
-      if (temp.items.length) {
-        for (var k = 0; k < temp.items.length; k++) {
-          const temp2 = temp.items[k];
-          let slno = temp2.Sl_No;
-          if (temp2.items.length) {
-            for (var h = 0; h < temp2.items.length; h++) {
-              const e = temp2.items[h];
-              if (e && e.Budget_Group_ID) {
-                const tempObj = {
-                  Sl_No: slno,
-                  Budget_Group_ID: e.Budget_Group_ID,
-                  Budget_Sub_Group_ID: e.Budget_Sub_Group_ID,
-                  Product_ID: e.Product_ID,
-                  Product_Description: e.Product_Description,
-                  Total_Qty: e.Qty,
-                  UOM: e.UOM,
-                  Rate: e.Rate,
-                  Amount: e.Amount,
-                  Tender_Doc_ID: this.TenderDocID,
-                  Project_ID: e.project_ID,
-                  Site_ID: e.site_ID,
-                  Work_Details_ID: e.Work_Details_ID,
-                  Unit_Description: e.unit,
-                  Qty: e.Qty,
-                  NOs: e.Nos,
-                  Sale_Rate: e.saleRate,
-                  Sale_Amount: e.Sale_Amount
-                }
-                tempArr.push(tempObj);
-              }
-
-            }
-          }
-        }
-
+      const tempObj = {
+        Sl_No: temp.SL_No,
+        Budget_Group_ID: temp.Budget_Group_ID,
+        Budget_Sub_Group_ID: temp.Budget_Sub_Group_ID,
+        Product_ID: temp.Product_ID,
+        Product_Description: temp.Product_Description,
+        Total_Qty: temp.TQty,
+        UOM: temp.UOM,
+        Rate: temp.Rate,
+        Amount: temp.Amount,
+        Tender_Doc_ID: this.TenderDocID,
+        Project_ID: temp.project_ID,
+        Site_ID: temp.site_ID,
+        Work_Details_ID: temp.Work_Details_ID,
+        Unit_Description: temp.unit,
+        Qty: temp.Qty,
+        NOs: temp.Nos,
+        Sale_Rate: temp.saleRate,
+        Sale_Amount: temp.Sale_Amount
       }
+      tempArr.push(tempObj);
     }
     return tempArr;
   }
   testchange(id) {
     console.log(id);
+    this.GetEditdata();
+  }
+
+
+  DynamicRedirectTo (){
+    // const navigationExtras: NavigationExtras = {
+    //   queryParams: {
+    //     from : 'tenderESTIMATE'
+    //   },
+    // };
+    // this.router.navigate(['./Project_Estimate'], navigationExtras);
+    window.open("/Project_Estimate?from=tenderESTIMATE","_blank")
+  }
+
+  cleardata(){
+      this.ObjEstimate.Product_ID = undefined;
+      this.ObjEstimate.Qty = undefined;
+      this.ObjEstimate.UOM = undefined;
+      this.ObjEstimate.Rate = undefined;
+      this.ObjEstimate.Amount = undefined;
+      this.ObjEstimate.Product_Req = undefined;
+      this.ObjEstimate.Product_Req = undefined;
+      this.ObjEstimate.Sale_Amount = undefined;
+      this.ObjEstimate.saleRate = undefined;
+      this.ObjEstimate.TQty = undefined;
+      this.ObjEstimate.Nos = undefined;
+      this.ObjEstimate.unit = undefined;
+      this.ObjEstimate.Budget_Group_ID = undefined;
+      this.ObjEstimate.Budget_Sub_Group_ID = undefined;
+      this.ObjEstimate.Work_Details_ID = undefined;
+  }
+  GetEditdata(){
+    this.editData = [];
+    if(this.ObjEstimate.project_ID && this.ObjEstimate.site_ID){
+      console.log("ObjEstimate.site_ID ",this.ObjEstimate.site_ID );
+      const tempArr = {
+        Project_ID : this.ObjEstimate.project_ID,
+        Tender_Doc_ID	: this.TenderDocID,
+        Site_ID : this.ObjEstimate.site_ID
+      }
+      const obj = {
+        "SP_String":"SP_Tender_Management_All",
+        "Report_Name_String": "Get Data Tender Estimate",
+        "Json_Param_String" : JSON.stringify(tempArr)
+      }
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.GlobalAPI
+          .postData(obj)
+          .subscribe((data: any) => {
+            console.log("Edit Data",data);
+            this.editData = data ;
+            this.ShowAddedEstimateProductList = data;
+            this.AddedEstimateProductList = this.ShowAddedEstimateProductList;
+            console.log(this.getPurchaseAmt())
+          
+          })
+    }
   }
 }

@@ -29,6 +29,7 @@ export class HarbaProjectEstimateComponent implements OnInit {
   siteTableData:any = []
   siteSubmitted = false;
   GetAllDataList = []
+  editdata = [];
   Objestimate : estimate = new estimate ();
   constructor(private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
@@ -64,10 +65,11 @@ export class HarbaProjectEstimateComponent implements OnInit {
     this.Objestimate = new estimate();
     this.siteSubmitted = false;
     this.projectEstimateFormFormSubmitted = false;
+    this.editdata = [];
   }
   
   delete(index) {
-    this.siteTableData.splice(index,1)
+      this.siteTableData.splice(index,1);
   }
   addSite(valid){
    this.siteSubmitted = true;
@@ -99,12 +101,14 @@ export class HarbaProjectEstimateComponent implements OnInit {
         if(this.siteTableData.length){
             this.siteTableData.forEach(ele => {
                const tempdata = { 
+                Project_ID :  this.Objestimate.Project_ID ?  this.Objestimate.Project_ID : 0, 
                 Project_Description:this.Objestimate.Project_Description,
                 Project_Remarks: this.Objestimate.Project_Remarks,
                 Order_Received_YN: this.Objestimate.Order_Received_YN,
                 Tender_Doc_ID: Number(this.Objestimate.Tender_Doc_ID),
                 Order_No: this.Objestimate.Order_No,
-                Site_Description: ele.Site_Description
+                Site_Description: ele.Site_Description,
+                Site_ID : ele.Site_ID ? ele.Site_ID : 0
                }
                saveData.push(tempdata);
             });
@@ -115,18 +119,40 @@ export class HarbaProjectEstimateComponent implements OnInit {
               "Json_Param_String": JSON.stringify(saveData)
             }
             this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-              if(data[0].Column1){
+              console.log("After Save",data[0].Column1);
+              if(data[0].Column1 === "Successfully saved"){
                 this.compacctToast.clear();
                 this.compacctToast.add({
                 key: "compacct-toast",
                 severity: "success",
-                summary: "Product Added",
+                summary: "Project Added",
                 detail: "Succesfully Created"
               });
                  this.clearData();
                  this.browsedata();
+                 return
               }
-              
+              else if(data.length){
+                this.compacctToast.clear();
+                this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: "Project Update",
+                detail: "Succesfully Update"
+              });
+                 this.clearData();
+                 this.browsedata();
+                 return
+              }
+             else {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Something Wrong"
+            });
+             }
             })
              
         }
@@ -152,9 +178,70 @@ export class HarbaProjectEstimateComponent implements OnInit {
      this.GetAllDataList  = data;
     })
   }
+  editmaster(masterProduct){
+     if(masterProduct.Project_ID){
+       this.editdata = [];
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE"];
+      this.buttonname = "Update";
+      this.Objestimate.Project_ID = masterProduct.Project_ID; // s
+       this.geteditmaster(masterProduct.Project_ID);
+      
+      }
+  }
+  geteditmaster(product_id){
+    // console.log(product_id)
+    const tempObj = {
+      Project_ID : product_id
+    }
+    const obj = {
+      "SP_String": "SP_Project_Estimate",
+      "Report_Name_String": "Get Data Project Estimate",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("editDataList data  ===",data);
+     this.editdata = data;
+     this.Objestimate = data[0];
+     this.siteTableData = data;
+    })
 
+  }
+  checkDelete(index,col){
+    console.log(col);
+    if(col.Site_ID){
+      const tempobj = {
+        Project_ID : col.Project_ID,
+        Tender_Doc_ID	: col.Tender_Doc_ID,
+        Site_ID	: col.Site_ID
+      }
+      console.log("Check delete",tempobj);
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Can Delete Site Or Not",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log(data[0].Column1);
+       if(data[0].Column1 === 'No'){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "can't delete",
+        detail: "can't delete This Site"
+        });
+       } else{
+        this.delete(index);
+        }
+      })
+    } else {
+      this.delete(index);
+    }
+  }
 }
 class estimate {
+    Project_ID : any;
     Project_Description:string;
     Project_Remarks:string;
     Order_Received_YN:string;

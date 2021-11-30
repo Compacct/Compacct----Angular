@@ -141,7 +141,7 @@ this.GlobalAPI
     this.ObjsupportTkt.Support_Loation = data[0].Support_Loation;
     this.ObjsupportTkt.Product_Name = data[0].Product_Name;
     this.ObjsupportTkt.Sup_Ticket_ID = data[0].Sup_Ticket_ID;
-    this.ObjsupportTkt.Posted_By_Name = data[0].Posted_By_Name;
+    this.ObjsupportTkt.Posted_By_Name = this.$CompacctAPI.CompacctCookies.Name;
     this.ObjsupportTkt.Support_Charge_Type = data[0].Support_Charge_Type;
     this.ObjsupportTkt.Symptom = data[0].Symptom;
     this.ObjsupportTkt.Customar_Representative_Name = data[0].Contact_Peson_Name;
@@ -172,7 +172,7 @@ this.GlobalAPI
       this.ObjsupportTkt.Support_Loation = data[0].Support_Loation;
       this.ObjsupportTkt.Product_Name = data[0].Product_Name;
       this.ObjsupportTkt.Sup_Ticket_ID = data[0].Sup_Ticket_ID;
-      this.ObjsupportTkt.Posted_By_Name = data[0].Posted_By_Name;
+      this.ObjsupportTkt.Posted_By_Name = this.$CompacctAPI.CompacctCookies.Name;
       this.ObjsupportTkt.Support_Charge_Type = data[0].Support_Charge_Type;
       this.ObjsupportTkt.Symptom = data[0].Symptom;
       this.ObjsupportTkt.Customar_Representative_Name = data[0].Contact_Peson_Name;

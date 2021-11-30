@@ -24,6 +24,7 @@ export class DirectPaymentFollowupNepalComponent implements OnInit {
   Agent_User_ID = undefined;
 
   DirectPaymentFollowUpList = [];
+  
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -46,7 +47,7 @@ export class DirectPaymentFollowupNepalComponent implements OnInit {
     }
 
   ngOnInit() {
-    this.Header.pushHeader({
+   this.Header.pushHeader({
       Header: "Direct Payment Followup",
       Link: " CRM -> Transaction -> Direct Payment Followup"
     });

@@ -135,6 +135,9 @@ import { K4cRsnsClosingStockComponent } from './common/MaterialManagement/k4c-rs
 import { DirectPaymentFollowupNepalComponent } from "./common/CRM/Transaction/direct-payment-followup-nepal/direct-payment-followup-nepal.component";
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
+import { HearingPackageMasterComponent } from "./common/CRM/Master/hearing-package-master/hearing-package-master.component";
+import { CompacctTxnTaskComponent } from "./common/TenderManagement/compacct-txn-task/compacct-txn-task.component";
+import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
 
 
 
@@ -779,6 +782,21 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                 component: TenderEstimateComponent,
                                                 data: {title: 'Tender Estimate'}
                                                 },
+                                                {
+                                                  path: 'BL_CRM_Master_Package_New',
+                                                  component: HearingPackageMasterComponent,
+                                                  data: {title: 'Package Master'}
+                                                  },
+                                                  {
+                                                    path: 'BL_CRM_TXN_TASK',
+                                                    component: CompacctTxnTaskComponent,
+                                                    data: {title: 'Txn Task'}
+                                                    },
+                                                    {
+                                                      path: 'Tutopia_Manual_Payment_Collection',
+                                                      component: TutoManualPaymentCollectionComponent,
+                                                      data: {title: 'Manual Payment Collection'}
+                                                      },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

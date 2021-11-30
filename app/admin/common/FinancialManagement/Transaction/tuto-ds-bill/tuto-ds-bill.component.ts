@@ -33,6 +33,9 @@ export class TutoDsBillComponent implements OnInit {
   AmtMax =0;
   AmtDisabledFlag = true;
   addSnipper = false;
+
+  BDAList = [];
+  BDA_ID = undefined;
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -40,7 +43,7 @@ export class TutoDsBillComponent implements OnInit {
     private router : Router,
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
-    private $CompacctAPI: CompacctCommonApi,
+    public $CompacctAPI: CompacctCommonApi,
     private route: ActivatedRoute,
     private compacctToast: MessageService) { 
       this.route.queryParams.subscribe((val:any) => {
@@ -62,6 +65,23 @@ export class TutoDsBillComponent implements OnInit {
       Header: "Direct Sale Billing",
       Link: " Financial Management -> Transaction -> Direct Sale Billing"
      });
+     this.GetBDA();
+  }
+  GetBDA(){
+    const obj = {
+      "SP_String": "Tutopia_Subscription_Accounts",
+      "Report_Name_String": "GET_BDA_NAME",
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+         console.log(data);
+         data.forEach(element => {
+          element.label = element.User_Name;
+          element.value = element.User_ID;
+         });
+         this.BDAList = data.length ? data : undefined;
+    });
   }
   GetStudentsDetails() {
     this.ObjDSBill.Foot_Fall_ID = undefined;
@@ -187,14 +207,23 @@ export class TutoDsBillComponent implements OnInit {
     if(this.ObjDSProduct.Amount_Type){
       const ProductObjArr = this.ProductList.filter(item => item.Product_ID == this.ObjDSProduct.Product_ID);
       if(ProductObjArr.length) {
-        this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
-        this.AmtMin = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
-        this.AmtMax = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
-        if(this.AmtDisabledFlag) {
-          this.AmtMin =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
-          this.AmtMax =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
-          this.ObjDSProduct.Rate = ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+        if(this.ObjDSProduct.Amount_Type === 'Custom') {
+          this.AmtMin =  ProductObjArr[0]['Sale_rate'];
+            this.AmtMax =  ProductObjArr[0]['Sale_rate'];
+            this.ObjDSProduct.Rate = ProductObjArr[0]['Sale_rate'];
+            this.AmtDisabledFlag = false;
+        } else {
+          this.AmtDisabledFlag = true;
+          this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
+          this.AmtMin = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
+          this.AmtMax = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
+          if(this.AmtDisabledFlag) {
+            this.AmtMin =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+            this.AmtMax =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+            this.ObjDSProduct.Rate = ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+          }
         }
+        
     }
   }
   }
@@ -236,7 +265,7 @@ export class TutoDsBillComponent implements OnInit {
     }
   }
   AmountChange() {
-    if(this.ObjDSProduct.Rate) {
+    if(this.ObjDSProduct.Rate && this.ObjDSProduct.Amount_Type !== 'Custom') {
       if(this.AmtMin > Number(this.ObjDSProduct.Rate)){
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -301,12 +330,7 @@ export class TutoDsBillComponent implements OnInit {
           .subscribe((data: any) => {
             this.Spinner = false;
             if(data[0].Column1 === "Save Successfully") {
-            const obj1 = {
-              Subscription_Txn_ID :  window.btoa('0'),
-              Menu_Ref_ID : window.btoa(this.$CompacctAPI.CompacctCookies.Menu_Ref_ID),
-              Foot_Fall_ID : window.btoa(this.ObjDSBill.Foot_Fall_ID)
-            }
-            this.DynamicRedirectTo(obj1,'./Tutopia_Student_Order');
+            this.savePinForBill();
            console.log(data);
           }
       });
@@ -320,6 +344,28 @@ export class TutoDsBillComponent implements OnInit {
         detail: "Transaction Amount and Product Amount Does not Match."
       });
     }
+  }
+  savePinForBill() {
+    const obj = {
+      "SP_String": "Tutopia_Subscription_Accounts",
+      "Report_Name_String": "Update_PIN_Code",
+      "Json_Param_String" : JSON.stringify([{ Foot_Fall_ID :this.ObjDSBill.Foot_Fall_ID,PIN_Code : this.ObjDSBill.Pin}])
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          this.Spinner = false;
+          if(data[0].remarks === "success") {
+          const obj1 = {
+            Subscription_Txn_ID :  window.btoa('0'),
+            Menu_Ref_ID : window.btoa(this.$CompacctAPI.CompacctCookies.Menu_Ref_ID),
+            Foot_Fall_ID : window.btoa(this.ObjDSBill.Foot_Fall_ID),
+            BDA_ID :  window.btoa(this.BDA_ID)
+          }
+          this.DynamicRedirectTo(obj1,'./Tutopia_Student_Order');
+         console.log(data);
+        }
+    });
   }
   ObjArrMerge() {
     let arr = [];
