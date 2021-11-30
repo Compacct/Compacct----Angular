@@ -610,19 +610,16 @@ add(valid) {
     var finalBatch;
     this.Batch_NO.forEach(element => {
     var bqty = element.Qty;
-    if(qty >= bqty){
-     // element['SharedQty'] = 
-      count++;
-      // qtyarr.push(bqty);
-      // console.log('qtyarr===',qtyarr)
-    } else {
-      finalBatch = element;
-      console.log("finalBatch==", finalBatch)
-      finalBatch.Qty = qty;
-      console.log("finalBatch qty==", qty)
+    if(qty > 0) {
+      if(qty >= bqty){
+        count++;
+      } else {
+        finalBatch = element;
+        finalBatch.Qty = qty;
+      }
     }
+    
     qty = qty - bqty;
-    console.log('qty===',qty);
   });
 
   console.log("count==", count)
@@ -653,7 +650,7 @@ add(valid) {
     var IGST_Amount = 0 ;
   } 
   else {
-  var Amount = Number(qty * this.ObjaddbillForm.Sale_rate);
+  var Amount = Number(BQ * this.ObjaddbillForm.Sale_rate);
   var net =(Number(Amount * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100);
   var Dis_Amount = Number(net * Number(this.ObjaddbillForm.Max_Discount) / 100);
   var Gross_Amount = Number(net - Dis_Amount) ;
