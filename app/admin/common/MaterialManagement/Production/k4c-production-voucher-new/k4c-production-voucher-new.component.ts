@@ -638,8 +638,8 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   }
   }
   getReqNo(){
+    let Rarr =[]
     if(this.SelectedIndent.length) {
-      let Rarr =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -649,9 +649,17 @@ export class K4cProductionVoucherNewComponent implements OnInit {
         }
 
     });
-      console.log("Table Data ===", Rarr)
-      return Rarr.length ? JSON.stringify(Rarr) : '';
+      // console.log("Table Data ===", Rarr)
+      // return Rarr.length ? JSON.stringify(Rarr) : '';
+    } 
+    else {
+      const Dobj = {
+        Req_No : 'NA'
+        }
+        Rarr.push(Dobj)
     }
+    console.log("Table Data ===", Rarr)
+    return Rarr.length ? JSON.stringify(Rarr) : '';
   }
   SaveProduction(){
     //this.ProductionFormSubmitted2 = true;

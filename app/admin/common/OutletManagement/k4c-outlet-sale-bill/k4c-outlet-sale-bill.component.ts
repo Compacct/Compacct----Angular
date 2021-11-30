@@ -84,6 +84,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   Can_Remarks = false;
   couponflag = false;
   Del_Cost_Cent_ID : any;
+  gststatus: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -165,14 +166,15 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
       Header: "POS Bill",
       Link: " Outlet -> Sale Bill"
     });
+    this.getselectitem();
     this.GetProductTypeFilterList();
     this.getbilldate();
     this.getcostcenid();
-    this.getselectitem();
     this.getgodownid();
     //this.getadvorderdetails();
     this.getwalletamount();
     this.getcredittoaccount();
+    this.gstchecking();
     //console.log(this.QueryStringObj);
 
   }
@@ -578,24 +580,95 @@ if(this.ObjaddbillForm.Product_ID) {
   this.ObjaddbillForm.GST_Tax_Per =  productObj.GST_Tax_Per;
 }
 }
+// GST CHECKING
+gstchecking(){
+  const TempObj = {
+    Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+ }
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Get Franchise Gst Type",
+    "Json_Param_String": JSON.stringify([TempObj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.gststatus = data[0].Column1;
+    console.log("this.gststatus ===", this.gststatus)
+    //this.gst =
+  })
+}
 // CALCULATION
 add(valid) {
   //console.log(this.ObjaddbillForm.Product_ID)
   this.addbillFormSubmitted = true;
+  // console.log(' valid :- ', valid);
+  // console.log('this.GetSelectedBatchqty() :-')
+  // console.log(this.GetSelectedBatchqty());
   if(valid && this.GetSelectedBatchqty()) {
-   //console.log("call");
-  //console.log("this.ObjaddbillForm===",this.ObjaddbillForm)
-  var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
+    // var qtyarr;
+    var qty = this.ObjaddbillForm.Stock_Qty;
+    var count = 0; // to count how many to shift 
+    var finalBatch;
+    this.Batch_NO.forEach(element => {
+    var bqty = element.Qty;
+    if(qty >= bqty){
+     // element['SharedQty'] = 
+      count++;
+      // qtyarr.push(bqty);
+      // console.log('qtyarr===',qtyarr)
+    } else {
+      finalBatch = element;
+      console.log("finalBatch==", finalBatch)
+      finalBatch.Qty = qty;
+      console.log("finalBatch qty==", qty)
+    }
+    qty = qty - bqty;
+    console.log('qty===',qty);
+  });
+
+  console.log("count==", count)
+  var usedbatch = [];
+  for(var i =0 ; i<count; i++) {
+   var batchno = this.Batch_NO.shift();
+   usedbatch.push(batchno);
+   console.log("batchno===",batchno)
+  }
+
+  if(finalBatch) {
+    usedbatch.push(finalBatch);
+    //console.log('finalBatch' , finalBatch);
+  }
+  usedbatch.forEach(el => {
+    var BQ = el.Qty;
+  if (this.gststatus == "NO GST") {
+    //var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
+    var Amount = Number(BQ * this.ObjaddbillForm.Sale_rate);
+    var net =(Number(Amount * 100)) / (0 + 100);
+    var Dis_Amount = Number(net * Number(this.ObjaddbillForm.Max_Discount) / 100);
+    var Gross_Amount = Number(net - Dis_Amount) ;
+    var SGST_Per = 0 ;
+    var SGST_Amount = 0 ;
+    var CGST_Per = 0 ;
+    var CGST_Amount = 0 ;
+    var IGST_Per = 0;
+    var IGST_Amount = 0 ;
+  } 
+  else {
+  var Amount = Number(qty * this.ObjaddbillForm.Sale_rate);
   var net =(Number(Amount * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100);
   var Dis_Amount = Number(net * Number(this.ObjaddbillForm.Max_Discount) / 100);
-  var SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
   var Gross_Amount = Number(net - Dis_Amount) ;
+  var SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
   var SGST_Amount = Number((Amount - net) / 2) ;
   var CGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
   var CGST_Amount = Number((Amount - net) / 2) ;
+  var IGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per);
+  var IGST_Amount = this.ObjaddbillForm.GST_Tax_Per_Amt ;
+  }
   //this.ObjaddbillForm.Gross_Amt = Gross_Amount;
   //var GST_Tax_Per_Amt = 0;
   //new add
+  //usedbatch.forEach(el => {
+
   var productObj = {
     Product_ID : this.ObjaddbillForm.Product_ID,
     Product_Description : this.ObjaddbillForm.Product_Description,
@@ -606,8 +679,10 @@ add(valid) {
     // Modifier4 : this.ObjaddbillForm.Modifier4,
     // Modifier5 : this.ObjaddbillForm.Modifier5,
     Net_Price : Number(net).toFixed(2),
-    Stock_Qty :  Number(this.ObjaddbillForm.Stock_Qty),
-    Batch_No : this.ObjaddbillForm.Batch_No,
+    //Stock_Qty :  Number(this.ObjaddbillForm.Stock_Qty),
+    Stock_Qty : el.Qty,
+    Batch_No : el.Batch_NO,
+    //Batch_No : usedbatch, // this.ObjaddbillForm.Batch_No,
     Amount :Number(net).toFixed(2),
     Max_Discount : Number(this.ObjaddbillForm.Max_Discount),
     Dis_Amount : Number(Dis_Amount).toFixed(2),
@@ -616,11 +691,12 @@ add(valid) {
     SGST_Amount : Number(SGST_Amount).toFixed(2),
     CGST_Per : Number(CGST_Per).toFixed(2),
     CGST_Amount : Number(CGST_Amount).toFixed(2),
-    GST_Tax_Per : Number(this.ObjaddbillForm.GST_Tax_Per),
-    GST_Tax_Per_Amt : this.ObjaddbillForm.GST_Tax_Per_Amt,
+    GST_Tax_Per : Number(IGST_Per).toFixed(2),
+    GST_Tax_Per_Amt : Number(IGST_Amount).toFixed(2),
     Net_Amount : Number(Gross_Amount + SGST_Amount + CGST_Amount).toFixed(2)
   };
   this.productSubmit.push(productObj);
+ });
 
   // var sameProdTypeFlag = false;
   // this.productSubmit.forEach(item => {
@@ -648,7 +724,7 @@ add(valid) {
   //  this.productSubmit.push(productObj);
   // }
 
- // console.log("this.productSubmit",this.productSubmit);
+  console.log("this.productSubmit",this.productSubmit);
   this.Batch_NO = [];
   const selectedCostCenter = this.ObjaddbillForm.selectitem;
   const tempBackup = this.ObjaddbillForm;
@@ -679,24 +755,61 @@ GetSelectedBatchqty () {
         });
     return false;
   }
-  const baychqtyarr = this.Batch_NO.filter(item=> item.Batch_NO === this.ObjaddbillForm.Batch_No);
-    if(baychqtyarr.length) {
-      if(this.ObjaddbillForm.Stock_Qty <=  baychqtyarr[0].Qty) {
-        return true;
+
+  //previous code for batch quantity checking
+  // const baychqtyarr = this.Batch_NO.filter(item=> item.Batch_NO === this.ObjaddbillForm.Batch_No);
+  //   if(baychqtyarr.length) {
+  //     if(this.ObjaddbillForm.Stock_Qty <=  baychqtyarr[0].Qty) {
+  //       return true;
+  //     } else {
+  //       this.compacctToast.clear();
+  //       this.compacctToast.add({
+  //         key: "compacct-toast",
+  //         severity: "error",
+  //         summary: "Warn Message",
+  //         detail: "Quantity can't be more than in batch available quantity "
+  //       });
+  //       return false;
+  //     }
+  //   // } else {
+  //   //   return true;
+  //   // }
+  // }
+
+  const baychqtyarr = this.Batch_NO;
+  if(baychqtyarr.length > 0) {
+    var quantityAddChckFlag = false;
+    var qty = this.ObjaddbillForm.Stock_Qty;
+    for(var batchqty of baychqtyarr) {
+      console.log('qty ',qty);
+      if(qty <=  batchqty.Qty) {
+        quantityAddChckFlag = true;
+        break;
       } else {
-        this.compacctToast.clear();
+        quantityAddChckFlag = false;
+      }
+      qty = qty- batchqty.Qty;
+    }
+
+    if(!quantityAddChckFlag){
+      this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "error",
           summary: "Warn Message",
           detail: "Quantity can't be more than in batch available quantity "
         });
-        return false;
-      }
-    } else {
-      return true;
     }
+
+    console.log("quantityAddChckFlag :- ", quantityAddChckFlag)
+
+    return quantityAddChckFlag;
+
+  } 
+  else {
+    return true;
   }
+}
 
 
 delete(index) {
@@ -838,7 +951,7 @@ saveCheck(){
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      if(data[0].Status === "Allow"){
-       this.ValidateEntryCheck();
+      this.saveprintAndUpdate();
      }
      else if(data[0].Status === "Disallow"){    // Disallow
       this.checkSave = false;
