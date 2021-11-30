@@ -225,6 +225,7 @@ import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-f
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
 import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-package-master/hearing-package-master.component';
 import { CompacctTxnTaskComponent } from './common/TenderManagement/compacct-txn-task/compacct-txn-task.component';
+import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
 
 
 @NgModule({
@@ -385,6 +386,7 @@ import { CompacctTxnTaskComponent } from './common/TenderManagement/compacct-txn
     TenderEstimateComponent,
     HearingPackageMasterComponent,
     CompacctTxnTaskComponent,
+    TutoManualPaymentCollectionComponent,
   ],
   imports: [
     CommonModule,

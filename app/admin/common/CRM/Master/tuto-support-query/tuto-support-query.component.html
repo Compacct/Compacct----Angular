@@ -212,6 +212,14 @@
                                         <label class="control-label">Verified</label>
                                         <div class="label-t">{{ObjTicket.Verified ? ObjTicket.Verified : '-'}}</div>
                                     </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">School Name</label>
+                                      <div class="label-t">{{ObjTicket.School_Name ? ObjTicket.School_Name : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <label class="control-label">Ref Code</label>
+                                      <div class="label-t">{{ObjTicket.Ref_Code ? ObjTicket.Ref_Code : '-'}}</div>
+                                  </div>
                                     <div class="col-sm-12" style="margin-top:1em;" *ngIf='ObjTicket.Foot_Fall_ID'>
                                         <p-fieldset legend="Show Sale Details" [toggleable]="true">
                                             <div *ngIf='!SalesDetailsList.length'>No Data Found...</div>

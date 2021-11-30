@@ -137,6 +137,7 @@ import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-f
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
 import { HearingPackageMasterComponent } from "./common/CRM/Master/hearing-package-master/hearing-package-master.component";
 import { CompacctTxnTaskComponent } from "./common/TenderManagement/compacct-txn-task/compacct-txn-task.component";
+import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
 
 
 
@@ -791,6 +792,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                     component: CompacctTxnTaskComponent,
                                                     data: {title: 'Txn Task'}
                                                     },
+                                                    {
+                                                      path: 'Tutopia_Manual_Payment_Collection',
+                                                      component: TutoManualPaymentCollectionComponent,
+                                                      data: {title: 'Manual Payment Collection'}
+                                                      },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

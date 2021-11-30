@@ -1,0 +1,26 @@
+div.table-responsive.table-id > p-table > div > div {
+    width: auto !important;
+  }
+  .box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+  }
+  .custombutton {
+    margin-top: 25px;
+  }
+  div.label-t {
+    padding: 6px 12px;
+    background: rgb(206, 216, 216);
+  }
+  .pop-up-details {
+    padding: 0.3em;
+    background: white;
+    line-height: 2.428571;
+    box-shadow: 0px 0px 1px 0px black;
+    font-weight:900;
+    border-radius: 6px;
+  }
+
+    .pop-up-details:hover {
+      box-shadow: 0px 1px 2px 0px black;
+    }
