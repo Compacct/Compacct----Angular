@@ -30,7 +30,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
   ProductList = [];
   StockAdjStoreItemsFormSubmitted = false;
   productaddSubmit = [];
-  myDate = new Date;
+  myDate : Date;
   Expiry_Time : any;
   ObjBrowse : Browse  = new Browse();
   SearchFormSubmitted = false;
@@ -46,6 +46,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
   Godown_ID = undefined;
   BrandId = undefined;
   remarks = undefined;
+  dateList: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -62,6 +63,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
       Header: "Receive Stock Adjustment (Store Items)",
       Link: "Material Management -> Stock Adjustment (Store Items)"
     });
+    this.getbilldate();
     this.GetBrand();
     this.getCostCenter();
     //this.GetProduct();
@@ -81,6 +83,22 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
 //         {value : "Without Brand" , Name : "Without Brand"}
 //       ];
 // }
+getbilldate(){
+  const obj = {
+   "SP_String": "SP_Controller_Master",
+   "Report_Name_String": "Get - Outlet Bill Date",
+   //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   this.dateList = data;
+ //console.log("this.dateList  ===",this.dateList);
+  this.myDate =  new Date(data[0].Outlet_Bill_Date);
+ // on save use this
+// this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
+
+})
+}
   GetBrand(){
     this.BrandList = [];
     if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
@@ -518,6 +536,7 @@ const obj = {
     this.ObjStockAdStoreItems.Product_ID = undefined;
     this.StockAdjStoreItemsFormSubmitted = false;
   //  this.ObjReceiveStockAd.Batch_Qty = undefined;
+    this.getbilldate();
   }
 
 }

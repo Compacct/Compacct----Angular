@@ -138,7 +138,8 @@ import { TenderEstimateComponent } from './common/TenderManagement/tender-estima
 import { HearingPackageMasterComponent } from "./common/CRM/Master/hearing-package-master/hearing-package-master.component";
 import { CompacctTxnTaskComponent } from "./common/TenderManagement/compacct-txn-task/compacct-txn-task.component";
 import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
-
+import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
+import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
 
 
 
@@ -797,6 +798,16 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                       component: TutoManualPaymentCollectionComponent,
                                                       data: {title: 'Manual Payment Collection'}
                                                       },
+                                                      {
+                                                        path: 'Outlet_Sale_Bill_WithOut_batch_Select',
+                                                        component: OutletSaleBillWithoutBatchSelectComponent,
+                                                        data: {title: 'Take Away (Auto Batch)'}
+                                                        },
+                                                        {
+                                                          path: 'Outlet_Stock_Transfer_Atuto_Batch',
+                                                          component: OutletStockTransferAutoBatchComponent,
+                                                          data: {title: 'Outlet Stock Transfer(Auto Batch)'}
+                                                          },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

@@ -37,6 +37,7 @@ export class OutletTxnBankDepositComponent implements OnInit {
   todayDate : any = new Date();
   cashcollfromDate : any = new Date();
   cashcollToDate : any = new Date();
+  BankNameList: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -58,6 +59,7 @@ export class OutletTxnBankDepositComponent implements OnInit {
     });
     this.getCostCenter();
     this.getbilldate();
+    this.GetBankName();
     // if(this.ObjBankTransfer.Transfer_To = "HO"){
     //   this.ObjBankTransfer.Slip_No = "NA";
     //   this.DisableSlipno = true;
@@ -70,13 +72,27 @@ export class OutletTxnBankDepositComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
   }
+  GetBankName(){
+    const obj = {
+      "SP_String": "SP_Outlet_Txn_Bank_Deposit",
+      "Report_Name_String": "Get_Bank",
+      //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+ 
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.BankNameList = data;
+      console.log("this.BankNameList  ===",this.BankNameList);
+   // this.myDate =  new Date(data[0].Outlet_Bill_Date);
+ 
+  })
+  }
   SlipnoChange(){
     this.ObjBankTransfer.Slip_No = undefined;
-    this.ObjBankTransfer.Bank_Name = undefined;
+   // this.ObjBankTransfer.Bank_Name = undefined;
     this.DisableSlipno = false;
     if(this.ObjBankTransfer.Transfer_To == "HO"){
       this.ObjBankTransfer.Slip_No = "NA";
-      this.ObjBankTransfer.Bank_Name = "NA";
+     // this.ObjBankTransfer.Bank_Name = "NA";
       this.DisableSlipno = true;
      }
   }
@@ -122,6 +138,7 @@ SaveBankTransfer(valid){
   this.BankTransferFormSubmitted = true;
   if(valid){
     this.Spinner = true;
+    var bankname = this.BankNameList.find(ele => ele.Ledger_ID == this.ObjBankTransfer.Ledger_ID);
   const tempObj = {
     Txn_ID :	this.ObjBankTransfer.Txn_ID ? this.ObjBankTransfer.Txn_ID : 0,
     Transfer_To	: this.ObjBankTransfer.Transfer_To,
@@ -129,8 +146,9 @@ SaveBankTransfer(valid){
     Date    : this.DateService.dateConvert(new Date(this.todayDate)),
     cash_Form_Date    :  this.DateService.dateConvert(new Date(this.cashcollfromDate)),
     cash_To_Date    :  this.DateService.dateConvert(new Date(this.cashcollToDate)),
-    Amount	:  this.ObjBankTransfer.Amount,
-    Bank_Name	: this.ObjBankTransfer.Bank_Name,
+    Amount	:  Number(this.ObjBankTransfer.Amount),
+    Ledger_ID : this.ObjBankTransfer.Ledger_ID ? Number(this.ObjBankTransfer.Ledger_ID) : 0,
+    Bank_Name	: bankname.Bank_Name ? bankname.Bank_Name : 'NA',
     Slip_No		: this.ObjBankTransfer.Slip_No,
     Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
   }
@@ -216,7 +234,7 @@ Edit(TxnId){
  this.GetEdit(this.ObjBankTransfer.Txn_ID);
  //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
  }
- }
+}
  GetEdit(Txn_ID){
   this.editList = [];
   //this.ProductionFormSubmitted = false;
@@ -234,7 +252,8 @@ Edit(TxnId){
      this.cashcollfromDate = data[0].cash_Form_Date;
      this.cashcollToDate = data[0].cash_To_Date;
      this.ObjBankTransfer.Amount = data[0].Amount;
-     this.ObjBankTransfer.Bank_Name = data[0].Bank_Name;
+     this.ObjBankTransfer.Ledger_ID = data[0].Ledger_ID;
+     //this.ObjBankTransfer.Bank_Name = data[0].Bank_Name;
      this.ObjBankTransfer.Slip_No = data[0].Slip_No;
      this.SlipnoChange();
      this.ObjBankTransfer.Slip_No = data[0].Slip_No;
@@ -308,6 +327,7 @@ clearData(){
 class BankTransfer {
   Transfer_To : string;
   Amount : string;
+  Ledger_ID  : any;
   Bank_Name : string;
   Slip_No : any;
   Txn_ID : any;

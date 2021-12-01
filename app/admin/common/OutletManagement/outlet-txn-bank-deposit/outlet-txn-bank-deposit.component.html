@@ -203,11 +203,17 @@
                                                     </div>
                                                     <div class="col-sm-3">
                                                         <label class="control-label">Bank Name <sup class="text-danger">*</sup></label>
-                                                        <input class="form-control" name="bankname" #bankname="ngModel" [(ngModel)]="ObjBankTransfer.Bank_Name" [disabled]="DisableSlipno" [ngClass]="{'clearance':BankTransferFormSubmitted && bankname?.errors?.required}" required>
+                                                        <!-- <input class="form-control" name="bankname" #bankname="ngModel" [(ngModel)]="ObjBankTransfer.Bank_Name" [disabled]="DisableSlipno" [ngClass]="{'clearance':BankTransferFormSubmitted && bankname?.errors?.required}" required> -->
+                                                        <select class="form-control" name="bankname" #bankname="ngModel" [(ngModel)]="ObjBankTransfer.Ledger_ID" [disabled]="DisableSlipno" [ngClass]="{'clearance':BankTransferFormSubmitted && bankname?.errors?.required}" required>
+                                                            <option  [ngValue] = "undefined">Select</option>
+                                                        <option *ngFor="let obj of BankNameList" value="{{obj.Ledger_ID}}">
+                                                            {{obj.Bank_Name}}
+                                                        </option>
+                                                    </select>
                                                     </div>
                                                     <div class="col-sm-3">
                                                         <label class="control-label">Slip No. <sup class="text-danger">*</sup></label>
-                                                        <input class="form-control" name="slipno" #slipno="ngModel" [(ngModel)]="ObjBankTransfer.Slip_No" [disabled]="DisableSlipno" CompacctDigitonly="true" [ngClass]="{'clearance':BankTransferFormSubmitted && slipno?.errors?.required}" required>
+                                                        <input class="form-control" name="slipno" #slipno="ngModel" [(ngModel)]="ObjBankTransfer.Slip_No" [disabled]="DisableSlipno" [ngClass]="{'clearance':BankTransferFormSubmitted && slipno?.errors?.required}" required>
                                                     </div>
                                                 </div>
                                             </form>
