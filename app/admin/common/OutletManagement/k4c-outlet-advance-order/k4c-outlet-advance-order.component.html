@@ -60,9 +60,9 @@
                                             </select>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                        <button class="btn btn-primary custombutton2" data-toggle="modal" (click)="Showdata()" id="load" [disabled]="Spinner">
-                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                         <span *ngIf="!Spinner" ></span>Show
+                                                        <button class="btn btn-primary custombutton2" data-toggle="modal" (click)="Showdata()" id="load" [disabled]="seachSpinner">
+                                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span *ngIf="!seachSpinner" ></span>Show
                                      </button>
                                                     </div>
                                                 </div>
@@ -85,7 +85,7 @@
                                                     </div>
 
                                                     <div class="col-sm-3">
-                                                        <button class="btn btn-primary custombutton2" data-toggle="modal" (click)="Showdatabymobile(MobileSubmitForm.form.valid)" id="load" [disabled]="Spinner">
+                                                        <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="Showdatabymobile(MobileSubmitForm.form.valid)" id="load2" [disabled]="Spinner">
                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                          <span *ngIf="!Spinner"></span>Show
                                      </button>
