@@ -312,6 +312,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
 
   }
   GetSearchedlist(){
+    this.seachSpinner = true;
     const start = this.searchObj.start_date
       ? this.DateService.dateConvert(new Date(this.searchObj.start_date))
       : this.DateService.dateConvert(new Date());

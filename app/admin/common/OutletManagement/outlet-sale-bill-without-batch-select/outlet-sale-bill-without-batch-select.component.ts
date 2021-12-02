@@ -314,6 +314,7 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
  
    }
    GetSearchedlist(){
+    this.seachSpinner = true;
      const start = this.searchObj.start_date
        ? this.DateService.dateConvert(new Date(this.searchObj.start_date))
        : this.DateService.dateConvert(new Date());

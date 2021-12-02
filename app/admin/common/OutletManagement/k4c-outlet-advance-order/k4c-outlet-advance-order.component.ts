@@ -27,6 +27,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   buttonname = "Save & Print Bill";
   searchObj : search = new search();
   seachSpinner = false;
+  seachSpinner1 = false;
   Searchlist = [];
   MobileSubmitFormSubmitted = false;
   Searchbymobilelist = [];
@@ -238,6 +239,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   }
 
   Showdata(){
+    this.seachSpinner = true;
     this.Searchlist = [];
     //console.log("Search_By",this.Search_By)
     const start = this.searchObj.start_date
@@ -264,6 +266,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
        this.Searchlist = data;
        //console.log('searchlist=====',this.Searchlist)
        //this.seachSpinner = false;
+       this.seachSpinner = false;
      })
   }
   getTotalValue(key){
