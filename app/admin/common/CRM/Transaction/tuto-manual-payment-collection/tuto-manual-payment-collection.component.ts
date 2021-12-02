@@ -5,7 +5,7 @@ import { DateTimeConvertService } from '../../../../shared/compacct.global/dateT
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-tuto-manual-payment-collection',
   templateUrl: './tuto-manual-payment-collection.component.html',
@@ -18,6 +18,7 @@ export class TutoManualPaymentCollectionComponent implements OnInit {
   start_date :any;
   end_date : any;
   ManualPaymentList = [];
+  SearchColList = [];
   
   PDFFlag = false;
   PDFViewFlag = false;
@@ -70,6 +71,7 @@ export class TutoManualPaymentCollectionComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("SearchForm",data);
       this.ManualPaymentList = data.length ? data : [];
+      this.SearchColList = data.length ? Object.keys(data[0]) : []
       this.seachSpinner = false;
      })
   }
@@ -159,6 +161,15 @@ export class TutoManualPaymentCollectionComponent implements OnInit {
 
     }
   };
+
+  // EXPORT TO EXCEL
+  exportexcel(Arr,fileName): void {
+    const start = this.start_date ? this.DateService.dateConvert(new Date(this.start_date)) : this.DateService.dateConvert(new Date());
+    const end = this.end_date ? this.DateService.dateConvert(new Date(this.end_date)) : this.DateService.dateConvert(new Date());
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+start+end+'.xlsx');
+  }
 }
 class ManualPaymentCnfm {
   Txn_ID:String; 
