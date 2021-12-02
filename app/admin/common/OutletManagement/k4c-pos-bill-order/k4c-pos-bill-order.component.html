@@ -107,11 +107,11 @@
                 </div>
 
             </div>
-            <div class=" col-sm-6">
-                <div class="info-box bg-purple" (click)='RedirectTo("bill")'>
-                    <span class="info-box-icon"><i class="fa fa-search"></i></span>
+            <div class="col-sm-6">
+                <div class="info-box AutoB" (click)='ShowCustomerDetailsPopUp("./Outlet_Sale_Bill_WithOut_batch_Select")'>
+                    <span class="info-box-icon"><i class="fa fa-shopping-bag" style="color: white;"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em;">Browse Bill</span>
+                        <span class="info-box-text" style="font-size: 1.2em; color: white;">TAKE AWAY (Auto Batch)</span>
 
                     </div>
                 </div>
@@ -127,6 +127,27 @@
                 </div>
 
             </div>
+            <div class=" col-sm-6">
+                <div class="info-box bg-purple" (click)='RedirectTo("bill")'>
+                    <span class="info-box-icon"><i class="fa fa-search"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1.2em;">Browse Bill</span>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class=" col-sm-6">
+                <div class="info-box bg-red" (click)='RedirectTo("requisition")'>
+                    <span class="info-box-icon"><i class="fa fa-file-text-o"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1.2em;">Indent</span>
+
+                    </div>
+                </div>
+
+            </div>
+
 
             <div class="col-sm-6" *ngFor='let obj of OnlineLedgerList'>
                 <div class="info-box bg-light-blue-gradient" (click)='ShowOnlineDelOrderNo(obj)'>
@@ -161,16 +182,6 @@
       </div> -->
 
             <div class=" col-sm-6">
-                <div class="info-box bg-red" (click)='RedirectTo("requisition")'>
-                    <span class="info-box-icon"><i class="fa fa-file-text-o"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em;">Indent</span>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class=" col-sm-6">
                 <div class="info-box bg-olive" (click)='RedirectTo("acceptchallan")'>
                     <span class="info-box-icon"><i class="fa fa-check-square-o"></i></span>
                     <div class="info-box-content">
@@ -185,6 +196,16 @@
                     <span class="info-box-icon"><i class="fa fa-exchange"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text" style="font-size: 1.2em;">Stock Transfer</span>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class=" col-sm-6">
+                <div class="info-box autobatch" (click)='RedirectTo("outletstocktrancferautobatch")'>
+                    <span class="info-box-icon"><i class="fa fa-exchange" style="color: white;"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1em; color: white;">Stock Transfer (Auto Batch)</span>
 
                     </div>
                 </div>

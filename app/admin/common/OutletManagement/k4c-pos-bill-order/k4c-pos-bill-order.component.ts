@@ -625,6 +625,21 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
           detail: "Cannot found EOD In Previous Date "
         })
     }
+    if(val === 'outletstocktrancferautobatch' && this.EODstatus === "YES") {
+      const obj = {
+        Redirect_To : './Outlet_Stock_Transfer_Atuto_Batch',
+        //Browse_Flag : true
+      }
+      this.DynamicRedirectTo(obj);
+    } else {
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail: "Cannot found EOD In Previous Date "
+        })
+    }
     if(val === 'viewstock') {
       const obj = {
         Redirect_To : './Outlet_Stock_Movement',

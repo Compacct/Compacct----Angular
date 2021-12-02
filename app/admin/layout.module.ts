@@ -226,6 +226,8 @@ import { TenderEstimateComponent } from './common/TenderManagement/tender-estima
 import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-package-master/hearing-package-master.component';
 import { CompacctTxnTaskComponent } from './common/TenderManagement/compacct-txn-task/compacct-txn-task.component';
 import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
+import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
+import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
 
 
 @NgModule({
@@ -387,6 +389,8 @@ import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/t
     HearingPackageMasterComponent,
     CompacctTxnTaskComponent,
     TutoManualPaymentCollectionComponent,
+    OutletSaleBillWithoutBatchSelectComponent,
+    OutletStockTransferAutoBatchComponent,
   ],
   imports: [
     CommonModule,

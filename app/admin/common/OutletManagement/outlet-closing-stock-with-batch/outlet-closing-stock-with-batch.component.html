@@ -134,7 +134,7 @@
                                                             Print
                                                         </a>
                                                     </li> -->
-                                                        <li>
+                                                        <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'A'">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>

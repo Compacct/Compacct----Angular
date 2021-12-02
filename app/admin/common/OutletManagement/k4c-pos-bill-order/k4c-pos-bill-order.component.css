@@ -54,6 +54,18 @@ div.table-responsive.table-id>p-table>div>div {
     display: none;
 }
 
+.AutoB {
+    background-color: #FF7F50;
+}
+
+.AutoB:hover,
+.AutoB:focus,
+.AutoB:active,
+.AutoB.active,
+.AutoB>.dropdown-toggle.AutoB {
+    background-color: #1496ff;
+}
+
 .DEP {
     background-color: #696767;
 }
@@ -63,6 +75,18 @@ div.table-responsive.table-id>p-table>div>div {
 .DEP:active,
 .DEP.active,
 .open>.dropdown-toggle.DEP {
+    background-color: #1496ff;
+}
+
+.autobatch {
+    background-color: #ab79da;
+}
+
+.autobatch:hover,
+.autobatch:focus,
+.autobatch:active,
+.autobatch.active,
+.autobatch>.dropdown-toggle.autobatch {
     background-color: #1496ff;
 }
 

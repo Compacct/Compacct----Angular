@@ -226,21 +226,20 @@
                                         <div class="col-sm-1">
                                             <label class="control-label">Rate <sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="Net_Price" #Net_Price="ngModel" [disabled]="true" [(ngModel)]="ObjaddbillForm.Sale_rate" [disabled]="true" CompacctDigitonly="true" [ngClass]="{'clearance':addbillFormSubmitted && Net_Price?.errors?.required}" required>
-
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="control-label">Batch No</label>
-                                            <select class="form-control" name="Batch_No" id='Batch_No' #Batch_No="ngModel" [(ngModel)]="ObjaddbillForm.Batch_No" (keydown)="onKeydownMain($event,'Qty')" required>
-                                  <option  [ngValue]="undefined">Select</option>
-                                   <option *ngFor = "let option of Batch_NO" value="{{option.Batch_NO}}">
-                                      {{option.Batch_No_Show}}
-                                    </option>
-                              </select>
                                         </div>
                                         <div class="col-sm-1">
                                             <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="Qty" id='Qty' #Qty="ngModel" [(ngModel)]="ObjaddbillForm.Stock_Qty" (keydown)="onKeydownMain($event,'Modifier')" [ngClass]="{'clearance':addbillFormSubmitted && Qty?.errors?.required}" required CompacctDigitonly="true">
                                         </div>
+                                        <!-- <div class="col-sm-3">
+                                            <label class="control-label">Batch No</label>
+                                            <select class="form-control" name="Batch_No" id='Batch_No' #Batch_No="ngModel" [(ngModel)]="ObjaddbillForm.Batch_No" (keydown)="onKeydownMain($event,'Qty')" disabled="true">
+                                  <option  [ngValue]="undefined">Select</option>
+                                   <option *ngFor = "let option of Batch_NO" value="{{option.Batch_NO}}">
+                                      {{option.Batch_No_Show}}
+                                    </option>
+                              </select>
+                                        </div> -->
                                         <!-- <div class="col-sm-1">
                                 <label class="control-label">Disc %</label>
                                 <input
@@ -330,8 +329,8 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <!-- ngRepeat: obj in ctrl.ProductCategoryGST -->
-                                                <tr *ngFor="let obj of productSubmit ;let ind = index;">
+                                                <!-- ngRepeat: obj in ctrl.ProductCategoryGST let ind = index;-->
+                                                <tr *ngFor="let obj of productSubmit" [attr.Product_ID]="obj.Product_ID">
                                                     <td><b> {{obj.Product_Description}} </b> <br>
                                                         <i *ngIf='obj.Modifier' style="color: rgb(241, 11, 11);">
                                         {{obj.Modifier}}
@@ -383,7 +382,7 @@
                                                     <td>{{obj.GST_Tax_Per}} <br> {{obj.GST_Tax_Per_Amt}}
                                                     </td>
                                                     <td>{{obj.Net_Amount}}</td>
-                                                    <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                    <td *ngIf="!obj?.deleteflag"><button id="remove" (click)="delete(obj.Product_ID)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                 </tr>
                                             </tbody>
                                         </table>

@@ -1,4 +1,5 @@
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
 <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
@@ -192,7 +193,7 @@
                                     <div class="panel-body">
                                         <form name="AdditioanForm" #AdditioanForm="ngForm" novalidate>
                                             <div class="form-group">
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjstockTransfer.Material_Type" (ngModelChange)="GetProduct()" [ngClass]="{'clearance':AdditioanFormSubmit && materialtype?.errors?.required}" [disabled]="MTdisabled"
                                                         required>
@@ -212,13 +213,13 @@
                                               " [required]="true">
                                                     </p-dropdown>
                                                 </div>
-                                                <div class="col-sm-2">
+                                                <!-- <div class="col-sm-2">
                                                     <label class="control-label">Batch No</label>
-                                                    <select class="form-control" name="Batch_No" #Batch_No="ngModel" [(ngModel)]='Objadditem.Batch_No' [ngClass]="{'clearance': AdditioanFormSubmit && Batch_No?.errors?.required}" [disabled]="DisabledBatch" required>
+                                                    <select class="form-control" name="Batch_No" #Batch_No="ngModel" [(ngModel)]='Objadditem.Batch_No' [ngClass]="{'clearance': AdditioanFormSubmit && Batch_No?.errors?.required}" [disabled]="DisabledBatch">
                                                           <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of BatchList" [value]="option.Batch_NO">{{option.Batch_No_Show}}</option>
                                                     </select>
-                                                </div>
+                                                </div> -->
                                                 <!-- <div class="col-sm-2" *ngIf = "Objadditem.Material_Type === 'Store Item'">
                                               <label class="control-label">Available Qty <sup class="text-danger">*</sup></label>
                                               <input class="form-control"
@@ -267,12 +268,12 @@
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-i="rowIndex">
-                                        <tr>
+                                        <tr [attr.Product_ID]="col.Product_ID">
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.Batch_NO}}</td>
                                             <td>{{col.Qty}}</td>
                                             <td>
-                                                <a (click)="delete(i)" class="btn danger"> <i class="fa fa-trash"></i></a>
+                                                <a id="remove" (click)="delete(col.Product_ID)" class="btn danger"> <i class="fa fa-trash"></i></a>
                                             </td>
 
                                         </tr>
