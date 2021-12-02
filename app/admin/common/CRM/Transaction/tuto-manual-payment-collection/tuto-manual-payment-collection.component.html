@@ -63,7 +63,11 @@
                                 <td>{{col.EMI_Date}}</td>
                                 <td>{{col.EMI_No_Remarks}}</td>
                                 <td>{{col.Order_Date}}</td>
-                                <td>{{col.Order_No}}</td>
+                                <td>
+                                    <a (click)="GetPDF(col)">
+                                        {{col.Order_No}}
+                                      </a>
+                                </td>
                                 <td>{{col.Amount}}</td>
                                 <td>{{col.Distributor_CODE}}</td>
                                 <td>{{col.Sale_Type}}</td>

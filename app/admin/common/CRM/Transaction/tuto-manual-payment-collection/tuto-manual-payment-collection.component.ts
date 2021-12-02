@@ -170,6 +170,17 @@ export class TutoManualPaymentCollectionComponent implements OnInit {
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+start+end+'.xlsx');
   }
+  // pdf
+  GetPDF(obj) {
+    if (obj.Order_No) {
+      if(obj.Order_No.startsWith("O")) {
+        window.open("/Report/Crystal_Files/Tutopia/Receipt_Cum_Invoice.aspx?Order_No=" + obj.Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      }else {
+        window.open("/Report/Crystal_Files/Finance/SaleBill/tutopia_final.aspx?Doc_No=" + obj.Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      }
+
+    }
+  }
 }
 class ManualPaymentCnfm {
   Txn_ID:String; 

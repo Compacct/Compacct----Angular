@@ -181,9 +181,14 @@ export class StocktransferComponent implements OnInit {
         });
   }
   GetCostCenter() {
-    this.$CompacctAPI.getCostCenter().subscribe((data: any) => {
-      this.CostCenterList = data ? JSON.parse(data) : [];
-      const costcen = data ? JSON.parse(data) : [];
+    this.$CompacctAPI.getCostCenter().subscribe((res: any) => { 
+      const data =  res ? JSON.parse(res) : [];
+      data.forEach(e=>{
+        e['label'] = e.Cost_Cen_Name;
+        e['value'] = e.Cost_Cen_ID;
+      });
+      this.CostCenterList = data.length ? data : [];      
+      const costcen =  data.length ? data : [];
       const userdata = this.$CompacctAPI.CompacctCookies;
       if (userdata.User_Type === "U" && userdata.Company_Name !== "MANDKE HEARING SERVICES") {
         this.CustmCostCenterList = $.grep(costcen, function(value) {
