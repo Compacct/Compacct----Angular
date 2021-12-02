@@ -253,6 +253,11 @@ StateList = [];
 
 AgreementSubmitted = false;
 tenderDocId = undefined;
+
+
+  InformationSubmitted = false;
+  InformationName = undefined;
+  InformationModal = false;
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -2860,6 +2865,57 @@ ToggleDivision(){
   this.DivisionModal = true;
   this.Spinner = false;
  }
+ ToggleInformation(){
+  this.InformationSubmitted = false;
+  this.InformationName = undefined;
+  this.InformationModal = true;
+  this.Spinner = false;
+ }
+ CreateInformation(valid){
+  this.InformationSubmitted = true;
+  if(valid) {
+      this.Spinner = true;
+     const UrlAddress = "BL_CRM_Txn_Enq_Tender/Create_Tender_Enq_Source";
+      const obj = {
+        Enq_Source_Name: this.InformationName,
+        };
+      this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+        console.log(data)
+      if (data.success) {
+          this.Spinner = false;
+        // if (this.ObjTender.Tender_Doc_ID) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: "Succesfully Information Created"
+          });
+        // } else {
+        //   this.compacctToast.clear();
+        //   this.compacctToast.add({
+        //     key: "compacct-toast",
+        //     severity: "success",
+        //     summary: "",
+        //     detail: "Organization Already Exits"
+        //   });
+        // }
+        this.GetTenderInfoEnqSRC();
+        this.InformationSubmitted = false;
+        this.InformationName = undefined;
+        this.InformationModal = false;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      });
+  }
+  }
 CreateDivision(valid){
 this.DivisionSubmitted = true;
 if(valid) {
@@ -4012,6 +4068,7 @@ GetTenderInfoEnqSRC() {
     .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Enq_Source_Json")
     .subscribe((data: any) => {
       this.TenderInfoEnqList = data ? JSON.parse(data) : [];
+      console.log("TenderInfoEnqList",this.TenderInfoEnqList);
     });
 }
 GetTenderExecutionDiv() {

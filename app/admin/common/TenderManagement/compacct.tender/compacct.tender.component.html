@@ -1069,14 +1069,14 @@
                                                 </h5>
                                                 <div class="col-sm-4">
                                                   <label class="control-label">Information From<sup class="text-danger"></sup></label>
-                                                  <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                  <span (click)="ToggleInformation()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                   <select class="form-control"
                                                           name="Tender_Publishing_Info_From"
                                                           #Tender_Publishing_Info_From="ngModel"
                                                           [(ngModel)]="ObjTender.Tender_Publishing_Info_From"
                                                           [ngClass]="{'clearance': TenderFormSubmitted && Tender_Publishing_Info_From.errors?.required}">
                                                           <option  [ngValue]="undefined">Select</option>
-                                                      <option *ngFor="let option of informList" [ngValue]="option.Enq_Source_ID">
+                                                      <option *ngFor="let option of TenderInfoEnqList" [ngValue]="option.Enq_Source_ID">
                                                           {{option.Enq_Source_Name}}
                                                           </option>
                                                   </select>
@@ -4382,6 +4382,80 @@ type="submit"
 name="bill"
 class="btn btn-primary pull-right custombutton"
 (click)="CreateEstimateSubGrp(EstimateSubgrForm.form.valid)"
+id="load2"
+[disabled]="Spinner"
+>
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
+</button>
+</p-footer>
+</p-dialog>
+
+<p-dialog
+  [header]="'Create Information'"
+  [appendTo]="'body'"
+  [visible]="InformationModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="InformationForm"
+#InformationForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-12">
+    <label class="control-label"
+    >Information<sup class="text-danger">*</sup
+  ></label>
+  <input
+        type="text"
+        class="form-control"
+        name="nameInformation"
+        #nameInformation="ngModel"
+        [(ngModel)]="InformationName"
+        placeholder="Information"
+        allow-pattern="([a-z ]|\.)"
+        [ngClass]="{
+          clearance: DivisionSubmitted && nameInformation?.errors?.required
+        }"
+        required
+      />
+  </div>
+</div>
+
+</form>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="InformationModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+<button
+type="submit"
+name="bill"
+class="btn btn-primary pull-right custombutton"
+(click)="CreateInformation(InformationForm.form.valid)"
 id="load2"
 [disabled]="Spinner"
 >

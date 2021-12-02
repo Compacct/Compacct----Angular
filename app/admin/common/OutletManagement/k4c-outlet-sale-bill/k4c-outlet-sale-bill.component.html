@@ -226,6 +226,7 @@
                                         <div class="col-sm-1">
                                             <label class="control-label">Rate <sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="Net_Price" #Net_Price="ngModel" [disabled]="true" [(ngModel)]="ObjaddbillForm.Sale_rate" [disabled]="true" CompacctDigitonly="true" [ngClass]="{'clearance':addbillFormSubmitted && Net_Price?.errors?.required}" required>
+
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Batch No</label>

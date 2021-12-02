@@ -204,6 +204,7 @@ export class TutoDsBillComponent implements OnInit {
     }
   }
   AmountTypeChange() { 
+    this.AmtDisabledFlag = true;
     if(this.ObjDSProduct.Amount_Type){
       const ProductObjArr = this.ProductList.filter(item => item.Product_ID == this.ObjDSProduct.Product_ID);
       if(ProductObjArr.length) {
