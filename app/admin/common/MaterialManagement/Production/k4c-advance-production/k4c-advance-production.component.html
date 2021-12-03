@@ -75,6 +75,7 @@
                                             <th>UOM</th>
                                             <th>To Cost Center</th>
                                             <th>To Stock Point</th>
+                                            <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -115,6 +116,7 @@
                                             <td>{{col.UOM}}</td>
                                             <td>{{col.Cost_Cen_Name}}</td>
                                             <td>{{col.To_Stock_Point}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>

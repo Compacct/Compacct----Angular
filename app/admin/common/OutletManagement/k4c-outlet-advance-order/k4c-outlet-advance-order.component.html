@@ -52,7 +52,7 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-7">
                                                         <label class="control-label">Delivery Location</label>
-                                                        <select class="form-control" name="BroeItem" #BroeItem="ngModel" [(ngModel)]="ObjaddbillForm.BrowserDeliveryto">
+                                                        <select class="form-control" name="BroeItem" #BroeItem="ngModel" [(ngModel)]="ObjaddbillForm.BrowserDeliveryto" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'">
                                              <option  [ngValue] ="undefined">Select</option>
                                               <option *ngFor = "let option of returnedID" [value] ="option.Cost_Cen_ID">
                                                {{option.Cost_Cen_Name}}
@@ -101,7 +101,7 @@
                             <div class="clearfix"></div>
 
                             <div class="table-responsive no-padding table-id">
-                                <p-table [value]="Searchlist" [rows]="100" [rowHover]="true" [paginator]="true" [autoLayout]="true" sortMode="multiple" [loading]="seachSpinner" [rowsPerPageOptions]="[10,25,50,100]" [globalFilterFields]="['Adv_Order_No','Order_Date','Del_Date','Del_Date_Time','Customer_Name',
+                                <p-table [value]="Searchlist" [rows]="100" [rowHover]="true" [paginator]="true" [autoLayout]="true" sortMode="multiple" [loading]="seachSpinner" [rowsPerPageOptions]="[100, 300, 500]" [globalFilterFields]="['Adv_Order_No','Order_Date','Del_Date','Del_Date_Time','Customer_Name',
                                           'Costomer_Mobile','Total_Amount','Total_Paid','Net_Due','Bill_No','Bill_Date','Billing_Outlet']" [rowHover]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -127,6 +127,7 @@
                                             <th>Bill No</th>
                                             <th>Bill Date</th>
                                             <th>Billing Outlet</th>
+                                            <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
@@ -190,12 +191,13 @@
                                             <td>{{col.Bill_No}}</td>
                                             <td>{{col.Bill_Date}}</td>
                                             <td>{{col.Billing_Outlet}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                         <tr *ngIf='rowIndex === (Searchlist.length - 1)'>
                                             <td colspan="7" class="text-right">Total</td>
                                             <td>{{getTotalValue('Total_Amount')}}</td>
                                             <td>{{getTotalValue('Total_Paid')}}</td>
-                                            <td colspan="4"></td>
+                                            <td colspan="5"></td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>

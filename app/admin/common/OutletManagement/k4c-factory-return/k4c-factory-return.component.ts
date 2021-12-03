@@ -798,6 +798,13 @@ const obj = {
  })
  }
  }
+ PrintRTF(obj) {
+  if (obj.Doc_No) {
+    window.open("/Report/Crystal_Files/K4C/Return_To_Factory_Print.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
+}
  view(DocNo){
   this.Doc_no = undefined;
   this.Doc_date = undefined;

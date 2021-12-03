@@ -64,6 +64,7 @@
                                             <th>From Stock Point</th>
                                             <th>To Stock Point</th>
                                             <th>Production Qty</th>
+                                            <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -102,6 +103,7 @@
                                             <td>{{col.From_Godown_Name}}</td>
                                             <td>{{col.To_Godown_Name}}</td>
                                             <td>{{col.Qty}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
