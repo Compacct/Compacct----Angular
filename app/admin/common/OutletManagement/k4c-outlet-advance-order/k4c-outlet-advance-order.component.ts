@@ -253,7 +253,8 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
       To_Date : end,
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
       Menu_Ref_Id : this.$CompacctAPI.CompacctCookies.Menu_Ref_ID,
-      Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      //Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Cost_Cent_ID : this.ObjaddbillForm.BrowserDeliveryto,
       Search_By : this.Search_By
     }
 
@@ -418,7 +419,7 @@ getorderdate(){
 getcostcenid(){
   const obj = {
     "SP_String": "SP_Controller_Master",
-    "Report_Name_String": "Get Sale Requisition Outlet",
+    "Report_Name_String": "Get - Cost Center Name All",
     "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
     //"Json_Param_String": JSON.stringify([{User_ID : 61}])
    }
@@ -427,15 +428,36 @@ getcostcenid(){
    this.FromCostCentId = data[0].Cost_Cen_ID ? data[0].Cost_Cen_ID : 0;
    //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
    this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
-  //  if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
-  this.ObjaddbillForm.BrowserDeliveryto = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
-  //  }
+   if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
+   this.ObjaddbillForm.BrowserDeliveryto = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+   } else {
+    this.ObjaddbillForm.BrowserDeliveryto = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+   }
    //console.log("this.ObjaddbillForm.BroeItem",this.ObjaddbillForm.BroeItem);
    this.getselectitem();
-   //console.log("this.returnedID======",this.returnedID);
-
+  //console.log("this.returnedID======",this.returnedID);
 
   });
+  // const obj = {
+  //   "SP_String": "SP_Controller_Master",
+  //   "Report_Name_String": "Get Sale Requisition Outlet",
+  //   "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+  //   //"Json_Param_String": JSON.stringify([{User_ID : 61}])
+  //  }
+  // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //  this.returnedID = data;
+  //  this.FromCostCentId = data[0].Cost_Cen_ID ? data[0].Cost_Cen_ID : 0;
+  //  //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  //  this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+  // //  if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
+  // this.ObjaddbillForm.BrowserDeliveryto = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+  // //  }
+  //  //console.log("this.ObjaddbillForm.BroeItem",this.ObjaddbillForm.BroeItem);
+  //  this.getselectitem();
+  //  //console.log("this.returnedID======",this.returnedID); 
+
+
+  // });
 }
 getgodownid(){
   const TempObj = {

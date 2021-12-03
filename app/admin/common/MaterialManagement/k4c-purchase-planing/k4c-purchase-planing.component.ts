@@ -852,7 +852,22 @@ export class K4cPurchasePlaningComponent implements OnInit {
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   exportoexcel3(Arr,fileName): void {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    let temp = [];
+     Arr.forEach(element => {
+       const obj = {
+        Product_Type : element.Product_Type,
+        Product_ID : element.Product_ID,
+        Product_Description : element.Product_Description,
+        UOM : element.UOM,
+        Last_Purchase_Qty : element.Last_Purchase_Qty,
+        Last_Purchase_Date : this.DateService.dateConvert(new Date(element.Last_Purchase_Date)),
+        Stock_Qty : element.Stock_Qty,
+        Reorder_Level : element.Reorder_Level,
+        Critical_Level : element.Critical_Level
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
