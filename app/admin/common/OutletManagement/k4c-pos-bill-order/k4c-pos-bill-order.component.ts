@@ -870,6 +870,7 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
           IGST_Per : item.GST_Tax_Per,
           IGST_Amt : item.GST_Tax_Per_Amt,
           Net_Amount : item.Net_Amount,
+          //Advance : item.Advance
       }
 
     const TempObj = {
@@ -882,7 +883,7 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
       //Adv_Order_No : this.ObjaddbillForm.Advance,
       Rounded_Off : 0,
       Amount_Payable : this.Amount_Payable,
-      Advance : this.ObjcashForm.Net_Due,
+      Advance : this.Adv,
       Net_Payable : this.Net_Payable,
       Hold_Bill  : "N",
       Order_Txn_ID : 0,

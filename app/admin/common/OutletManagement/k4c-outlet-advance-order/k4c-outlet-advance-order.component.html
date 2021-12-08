@@ -140,8 +140,8 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y"'>
-                                                            <a (click)="Edit(col)">
+                                                        <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y" && !col.Bill_No' a>
+                                                            <a (click)="CreateBill(col,'editorder')">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
@@ -465,12 +465,16 @@
                                         <!-- </div> -->
                                         <div class="col-sm-2">
                                             <label class="control-label">Message 5 on Cake </label>
-                                            <input class="form-control" name="Modifier5" #Modifier5="ngModel" id='Modifier5' [(ngModel)]="ObjaddbillForm.Modifier5" (keydown)="onKeydownMain($event, 'enter')" [ngClass]="{'clearance':addbillFormSubmitted && Modifier5?.errors?.required}">
+                                            <input class="form-control" name="Modifier5" #Modifier5="ngModel" id='Modifier5' [(ngModel)]="ObjaddbillForm.Modifier5" (keydown)="onKeydownMain($event, 'DelCharge')" [ngClass]="{'clearance':addbillFormSubmitted && Modifier5?.errors?.required}">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Delivery Charge</label>
+                                            <input class="form-control" name="DelCharge" #DelCharge="ngModel" id='DelCharge' [(ngModel)]="ObjaddbillForm.Delivery_Charge" (keydown)="onKeydownMain($event, 'enter')" [ngClass]="{'clearance':addbillFormSubmitted && DelCharge?.errors?.required}" CompacctDigitonly="true">
                                         </div>
                                         <div>
                                             <button id="row-Add" class="btn btn-primary custombutton2" (click)="add(addbillForm.form.valid)">
-                              Add
-                          </button>
+                                                Add
+                                            </button>
                                         </div>
                                     </div>
 
@@ -482,6 +486,7 @@
                                                 <tr style="background-color:#3c8dbc;color:white;">
                                                     <th>Description</th>
                                                     <th>Rate</th>
+                                                    <th>Delivery Charge</th>
                                                     <th>Qty</th>
                                                     <th>Wight in Pound</th>
                                                     <th>Accomplishment Amt</th>
@@ -547,6 +552,7 @@
 
                                                     </td>
                                                     <td>{{obj.Net_Price}}</td>
+                                                    <td>{{obj.Delivery_Charge}}</td>
                                                     <td>{{obj.Stock_Qty}}</td>
                                                     <td>{{obj.Weight_in_Pound}}</td>
                                                     <td>{{obj.Acompanish}}</td>

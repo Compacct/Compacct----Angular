@@ -124,6 +124,10 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
           this.CustomerDisabledFlag = true;
           this.Edit(this.QueryStringObj);
         }
+        if(this.QueryStringObj.Edit_Adv_Order){
+          this.CustomerDisabledFlag = true;
+          this.EditFromBrowse(this.QueryStringObj);
+        }
       }
      } );
     this.Header.pushHeader({
@@ -688,6 +692,7 @@ add(valid) {
     // Weight_in_Pound : this.ObjaddbillForm.Weight_in_Pound,
     // Acompanish : this.ObjaddbillForm.Acompanish,
     Order_Taken_By : this.ObjaddbillForm.Order_Taken_By,
+    Delivery_Charge : this.ObjaddbillForm.Delivery_Charge ? this.ObjaddbillForm.Delivery_Charge : 0,
 
     Net_Price : Number(rate).toFixed(2),
     Stock_Qty :  Number(this.ObjaddbillForm.Stock_Qty),
@@ -703,7 +708,7 @@ add(valid) {
     CGST_Amount : Number(CGST_Amount).toFixed(2),
     GST_Tax_Per : Number(this.ObjaddbillForm.GST_Tax_Per),
     GST_Tax_Per_Amt : this.ObjaddbillForm.GST_Tax_Per_Amt,
-    Net_Amount : Number(totalAmt).toFixed(2)
+    Net_Amount : this.ObjaddbillForm.Delivery_Charge ? (Number(totalAmt) + Number(this.ObjaddbillForm.Delivery_Charge)).toFixed(2) : Number(totalAmt).toFixed(2)
   };
 
  // console.log(productObj);
@@ -716,7 +721,9 @@ add(valid) {
     //console.log(item.Product_ID == this.ObjaddbillForm.Product_ID);
     if(item.Product_ID == this.ObjaddbillForm.Product_ID && item.Modifier == this.ObjaddbillForm.Modifier1) {
       //console.log('select item true');
+      item.Delivery_Charge = Number(item.Delivery_Charge) + Number( productObj.Delivery_Charge);
       item.Stock_Qty = Number(item.Stock_Qty) + Number( productObj.Stock_Qty);
+      item.Weight_in_Pound = Number(item.Weight_in_Pound) + Number( productObj.Weight_in_Pound);
       item.Max_Discount = Number(item.Max_Discount) + Number(productObj.Max_Discount);
       item.Amount = Number(item.Amount) + Number(productObj.Amount);
       item.Gross_Amount = Number(item.Gross_Amount) + Number(productObj.Gross_Amount);
@@ -966,12 +973,25 @@ saveprintandUpdate(){
        });
        this.Spinner = false;
       this.ngxService.stop();
+      if(this.buttonname !== "Update"){
        this.SaveNPrintBill();
        this.clearData();
        this.productSubmit =[];
        this.clearlistamount();
        this.cleartotalamount();
        this.router.navigate(['./POS_BIll_Order']);
+      } else {
+       this.SaveNPrintBill();
+       this.clearData();
+       this.productSubmit =[];
+       this.clearlistamount();
+       this.cleartotalamount();
+       this.tabIndexToView = 0;
+       this.router.navigate(['./K4C_Outlet_Advance_Order']);
+       this.getcostcenid();
+       this.Showdata();
+       this.Showdatabymobile(true);
+      }
       } else{
         this.Spinner = false;
         this.ngxService.stop();
@@ -1054,6 +1074,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
           Acompanish : item.Acompanish,
           Order_Taken_By : item.Order_Taken_By,
           Rate : item.Net_Price,
+          Delivery_Charge : item.Delivery_Charge,
           Qty : item.Stock_Qty,
           Amount : item.Amount,
           Discount_Per : item.Max_Discount,
@@ -1101,6 +1122,21 @@ SaveNPrintBill() {
 }
 
 // EDIT ORDER
+EditFromBrowse(Erow){
+  //this.DocNO = undefined;
+    //console.log("Edit",eROW);
+    this.clearData();
+    if(Erow.Adv_Order_No){
+    this.Objcustomerdetail.Adv_Order_No = Erow.Adv_Order_No;
+   // console.log('advance order id ==',eROW.Adv_Order_No)
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "UPDATE"];
+    this.buttonname = "Update";
+    //console.log("this.EditDoc_No ", this.Objcustomerdetail.Adv_Order_No);
+    this.geteditlist(this.Objcustomerdetail.Adv_Order_No);
+    }
+
+  }
 Edit(eROW){
   //this.DocNO = undefined;
     //console.log("Edit",eROW);
@@ -1164,6 +1200,7 @@ geteditlist(Adv_Order_No){
         Changes_on_Cake : element.Changes_on_Cake,
         Order_Taken_By : element.Order_Taken_By,
         Net_Price : Number(element.Rate),
+        Delivery_Charge : Number(element.Delivery_Charge),
         Stock_Qty :  Number(element.Qty),
         Amount :Number(element.Amount).toFixed(2),
         Max_Discount : Number(element.Discount_Per),
@@ -1404,7 +1441,12 @@ DeliveryDetailSubmit(){
 }
 
 HoldBill(){
-  this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Save & Print Bill';
+  //this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Save & Print Bill';
+  if(this.QueryStringObj.Edit_Adv_Order){
+    this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Update';
+  } else {
+    this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Save & Print Bill';
+  }
 
 }
 RedirectTo (obj){
@@ -1420,6 +1462,14 @@ CreateBill(col,val){
       Adv_Order_No : col.Adv_Order_No,
       Del_Cost_Cent_ID : col.Del_Cost_Cent_ID,
       Edit_from_Border : true
+    }
+    this.RedirectTo(TempObj);
+  }
+  if (val === 'editorder') {
+    const TempObj = {
+      Redirect_To : './K4C_Outlet_Advance_Order',
+      Adv_Order_No : col.Adv_Order_No,
+      Edit_Adv_Order : true
     }
     this.RedirectTo(TempObj);
   }
@@ -1585,6 +1635,7 @@ RefundSave(){
   Weight_in_Pound : number;
   Acompanish : number;
   Order_Taken_By : string;
+  Delivery_Charge : number;
 }
 class cashForm{
   Coupon_Per : number;

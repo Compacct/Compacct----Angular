@@ -34,6 +34,7 @@ export class OutletTxnBankDepositComponent implements OnInit {
   editList = [];
   Transfer_To: any = [];
   DisableSlipno = false;
+  DisableBank = false;
   todayDate : any = new Date();
   cashcollfromDate : any = new Date();
   cashcollToDate : any = new Date();
@@ -90,10 +91,12 @@ export class OutletTxnBankDepositComponent implements OnInit {
     this.ObjBankTransfer.Slip_No = undefined;
    // this.ObjBankTransfer.Bank_Name = undefined;
     this.DisableSlipno = false;
+    this.DisableBank = false;
     if(this.ObjBankTransfer.Transfer_To == "HO"){
       this.ObjBankTransfer.Slip_No = "NA";
-     // this.ObjBankTransfer.Bank_Name = "NA";
+      this.ObjBankTransfer.Ledger_ID = undefined;
       this.DisableSlipno = true;
+      this.DisableBank = true;
      }
   }
   getbilldate(){
@@ -136,9 +139,13 @@ getCostCenter(){
 }
 SaveBankTransfer(valid){
   this.BankTransferFormSubmitted = true;
-  if(valid){
     this.Spinner = true;
     var bankname = this.BankNameList.find(ele => ele.Ledger_ID == this.ObjBankTransfer.Ledger_ID);
+    if(!this.ObjBankTransfer.Ledger_ID) {
+      this.ObjBankTransfer.Bank_Name = "NA";
+    } else {
+      this.ObjBankTransfer.Bank_Name = bankname.Bank_Name;
+    }
   const tempObj = {
     Txn_ID :	this.ObjBankTransfer.Txn_ID ? this.ObjBankTransfer.Txn_ID : 0,
     Transfer_To	: this.ObjBankTransfer.Transfer_To,
@@ -148,10 +155,11 @@ SaveBankTransfer(valid){
     cash_To_Date    :  this.DateService.dateConvert(new Date(this.cashcollToDate)),
     Amount	:  Number(this.ObjBankTransfer.Amount),
     Ledger_ID : this.ObjBankTransfer.Ledger_ID ? Number(this.ObjBankTransfer.Ledger_ID) : 0,
-    Bank_Name	: bankname.Bank_Name ? bankname.Bank_Name : 'NA',
+    Bank_Name	: this.ObjBankTransfer.Bank_Name,
     Slip_No		: this.ObjBankTransfer.Slip_No,
     Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
   }
+  if(valid){
   const obj = {
     "SP_String": "SP_Outlet_Txn_Bank_Deposit",
     "Report_Name_String": "Add_update_Outlet_Txn_Bank_Deposit",
@@ -169,9 +177,9 @@ SaveBankTransfer(valid){
        summary: "Txn_ID  " + tempID,
        detail: "Succesfully " + mgs
      });
-     this.Spinner = false;
-     this.BankTransferFormSubmitted = false;
      this.clearData();
+     this.tabIndexToView = 0;
+     this.GetSearchedList(true);
 
     } else{
       this.compacctToast.clear();
@@ -314,6 +322,7 @@ onReject() {
 clearData(){
   this.ObjBankTransfer = new BankTransfer();
   this.DisableSlipno = false;
+  this.DisableBank = false;
   this.ObjBankTransfer.Txn_ID = undefined;
   this.getbilldate();
   this.items = ["BROWSE", "CREATE"];
@@ -321,6 +330,8 @@ clearData(){
   this.todayDate = new Date();
   this.cashcollfromDate = new Date();
   this.cashcollToDate = new Date();
+  this.BankTransferFormSubmitted = false;
+  this.Spinner = false;
 }
 
 }

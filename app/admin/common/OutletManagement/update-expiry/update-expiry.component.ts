@@ -62,8 +62,8 @@ export class UpdateExpiryComponent implements OnInit {
   }
   TabClick(e){
     //console.log(e)
-    this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    //this.tabIndexToView = e.index;
+    //this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
   }
@@ -240,42 +240,54 @@ export class UpdateExpiryComponent implements OnInit {
         }
     }
   GetDataForSave(){
-      if(this.productaddSubmit.length) {
-        let tempArr =[];
+      //if(this.productaddSubmit.length) {
+        //let tempArr =[];
         const TempObj = {
-          Doc_No : "A",
-          Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
-          Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-          User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
-          Process_ID : 100,
+          // Doc_No : "A",
+          // Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
+          // Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+          // User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
+          // Process_ID : 100,
           Brand_ID : this.ObjUpdateExpAd.Brand_ID,
-          Narration : 'NA'
+         // Narration : 'NA',
+
+         // Product_Type_ID : this.ObjUpdateExpAd.Product_Type_ID,
+          Product_ID : this.ObjUpdateExpAd.Product_ID,
+          Product_Description : this.ObjUpdateExpAd.Product_Description,
+          //Rcv_Qty	: item.Rcv_Qty,
+         // Rate : 0,
+         // UOM	: this.ObjUpdateExpAd.UOM,
+          Batch_No : this.ObjUpdateExpAd.Batch_No,
+          Expiry_Date : this.DateService.dateTimeConvert(new Date(this.Expiry_Time)),
+        //  Shift_ID :  this.ObjUpdateExpAd.Batch_No.split('-').pop()
         }
-        this.productaddSubmit.forEach(item => {
-          //if(item.Issue_Qty) {
-            const obj = {
-              Product_Type_ID : item.Product_Type_ID,
-              Product_ID : item.Product_ID,
-              Product_Description : item.Product_Description,
-              Rcv_Qty	: item.Rcv_Qty,
-              Rate : 0,
-              UOM	: item.UOM,
-              Batch_No : item.Batch_No,
-              Expiry_Date : item.Exp_Date_Time,
-              Shift_ID :  item.Batch_No.split('-').pop()
-           }
+        // this.productaddSubmit.forEach(item => {
+        //   //if(item.Issue_Qty) {
+        //     const obj = {
+        //       Product_Type_ID : item.Product_Type_ID,
+        //       Product_ID : item.Product_ID,
+        //       Product_Description : item.Product_Description,
+        //       Rcv_Qty	: item.Rcv_Qty,
+        //       Rate : 0,
+        //       UOM	: item.UOM,
+        //       Batch_No : item.Batch_No,
+        //       Expiry_Date : item.Exp_Date_Time,
+        //       Shift_ID :  item.Batch_No.split('-').pop()
+        //    }
   
-           tempArr.push({...TempObj,...obj})
+          // tempArr.push({...TempObj,...obj})
+          // tempArr.push({TempObj})
           //}
   
-        });
-        console.log("Save Data ===", ...tempArr)
-        return JSON.stringify(tempArr);
+       // });
+        console.log("Save Data ===", TempObj)
+        return JSON.stringify(TempObj);
   
-      }
+     // }
   }
-  SaveReceiveStock(){
-    //if(valid){
+  SaveReceiveStock(valid){
+    this.UpdateExpFormSubmitted = true;
+    if(valid && this.checksameBatchno()){
       const obj = {
         "SP_String": "SP_Update_Expiry_Adjustment",
         "Report_Name_String" : "Save_Update_Expiry_Adjustment",
@@ -292,14 +304,14 @@ export class UpdateExpiryComponent implements OnInit {
           this.compacctToast.add({
            key: "compacct-toast",
            severity: "success",
-           summary: "Doc_No  " + tempID,
-           detail: "Succesfully  Saved" //+ mgs
+           summary:  tempID,
+           detail: "Succesfully  Updated" //+ mgs
          });
         //  if (this.buttonname == "Save & Print") {
         //  this.saveNprintProVoucher();
-        //  }
+        // }
          this.clearData();
-        // this.IssueStockFormSubmitted = false;
+         this.UpdateExpFormSubmitted = false;
 
         } else{
           this.compacctToast.clear();
@@ -311,7 +323,7 @@ export class UpdateExpiryComponent implements OnInit {
           });
         }
       })
-    //}
+    }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
