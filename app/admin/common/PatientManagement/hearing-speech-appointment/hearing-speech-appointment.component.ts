@@ -292,7 +292,7 @@ export class HearingSpeechAppointmentComponent implements OnInit {
       console.log(this.tabIndexToView);
     }
   }
-  Fluency(obj) {
+  FluencyModal(obj) {
     if (obj) {
       this.TabView = "";
       this.Tabitems = {};
