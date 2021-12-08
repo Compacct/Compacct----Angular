@@ -228,6 +228,7 @@ import { CompacctTxnTaskComponent } from './common/TenderManagement/compacct-txn
 import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
 import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
 import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
+import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
 
 
 @NgModule({
@@ -391,6 +392,7 @@ import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement
     TutoManualPaymentCollectionComponent,
     OutletSaleBillWithoutBatchSelectComponent,
     OutletStockTransferAutoBatchComponent,
+    TutoUploadDataSupportComponent,
   ],
   imports: [
     CommonModule,

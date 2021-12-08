@@ -13,6 +13,7 @@ import { MessageService } from "primeng/api";
 declare var $: any;
 import * as moment from "moment";
 import { CompacctGlobalUrlService } from "../../../../shared/compacct.global/global.service.service";
+import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 
 @Component({
   selector: "app-compacct-stocktransfer",
@@ -88,13 +89,19 @@ export class StocktransferComponent implements OnInit {
   aspxFileName:string;
   databaseName: any;
   @ViewChild('docdate',{static:false}) docdateElem:ElementRef;
+
+  AcceptStockModalTitle = undefined;
+  AcceptStockModal = false;
+  AcceptStockDocNo = undefined;
+  AcceptProductList = [];
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
-    private $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService
+    public $CompacctAPI: CompacctCommonApi,
+    private compacctToast: MessageService,
+    private GlobalAPI: CompacctGlobalApiService,
   ) {}
   selectedCities2: any;
   ngOnInit() {
@@ -110,7 +117,9 @@ export class StocktransferComponent implements OnInit {
       { field: "Amount", header: "Total Value" },
       { field: "CN_No", header: "CN No." },
       { field: "CN_Date", header: "CN Date" },
-      { field: "Dispatch_Through", header: "Dispatch Through" }
+      { field: "Dispatch_Through", header: "Dispatch Through" },
+      { field: "Total_Issue", header: "Total Issue" },
+      { field: "Total_Accept", header: "Total Accept" }
     ];
     this.items = ["BROWSE", "CREATE"];
     this.menuList = [
@@ -1400,6 +1409,129 @@ export class StocktransferComponent implements OnInit {
           this.$CompacctAPI.compacctSpinnerHide();
         });
     }
+  }
+  // ACCEPT
+  AcceptStockTransfer(obj) {
+    this.AcceptStockModalTitle = undefined;
+    this.AcceptProductList =[];
+    this.AcceptStockDocNo = undefined;
+    if(obj.Doc_No) {  
+     this.AcceptStockDocNo = obj.Doc_No;
+     this.AcceptStockModalTitle = obj.F_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Edit Product' : obj.T_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Accept Challan' : '-';
+     this.GetAcceptProduct(obj.Doc_No);
+     
+    }
+  }
+  GetAcceptProduct(docId) {
+    this.AcceptProductList = [];
+    if(docId) {
+      const obj = {
+        "SP_String": "SP_GRN_Stock_Transfer",
+        "Report_Name_String": "Get_Product_Stock_Popup",
+        "Json_Param_String" : JSON.stringify([{'Doc_No' : docId}])
+      }
+      this.GlobalAPI
+          .getData(obj)
+          .subscribe((data: any) => {
+           console.log(data);
+           data.forEach(element => {
+            element.issue_flag = this.AcceptStockModalTitle === 'Edit Product' ? true : false ;
+           });
+           this.AcceptProductList = data.length ? data : [];
+           this.AcceptStockModal = true;
+      });
+    }
+
+  }
+  checkIfExceed1(i) {
+    if(this.AcceptProductList[i].Product_ID) {
+      const flag = this.AcceptProductList[i].Serial_No ? true : false;
+      if(flag) {
+        const issueQty = this.AcceptProductList[i].Issue_Qty.toString();
+        if((issueQty != '0' && issueQty != '1')) {
+          this.AcceptProductList[i].Issue_Qty = 0;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Validation",
+            detail: "Put Qty 1 for Serial No."
+          });
+          return false;
+        }
+      }
+    }
+  }
+  checkIfExceed(i) {
+    if(this.AcceptProductList[i].Product_ID) {
+      const flag = this.AcceptProductList[i].Serial_No ? true : false;
+      if(flag) {
+        const AcceptQty = this.AcceptProductList[i].Accept_Qty.toString();
+        if((AcceptQty != '0' && AcceptQty != '1')) {
+          this.AcceptProductList[i].Accept_Qty = 0;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Validation",
+            detail: "Accept Qty Can't be higher than Issue Qty"
+          });
+          return false;
+        }
+      } else {
+        if(Number(this.AcceptProductList[i].Issue_Qty) < Number(this.AcceptProductList[i].Accept_Qty)) {
+          this.AcceptProductList[i].Accept_Qty = 0;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Validation",
+            detail: "Accept Qty Can't be higher than Issue Qty"
+          });
+          return false;
+         }
+      }
+     
+    }
+  }
+  SaveAcceptStockTransfer() {
+    if(this.AcceptStockDocNo && this.AcceptProductList.length) {
+       const TempArr = this.AcceptProductList.map(el=>({...el, Doc_No : this.AcceptStockDocNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}));
+       console.log(TempArr); 
+       const obj = {
+          "SP_String": "SP_GRN_Stock_Transfer",
+          "Report_Name_String": "Update_Product_Stock_Popup",
+          "Json_Param_String" : JSON.stringify(TempArr)
+        }
+      this.GlobalAPI
+          .getData(obj)
+          .subscribe((data: any) => {
+            console.log(data);
+            if (data[0].message) {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: this.AcceptStockDocNo,
+                detail: "Succesfully Updated"
+              });
+            } else {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Warn Message",
+                detail: "Error Occured "
+              });
+            }
+            this.AcceptStockModalTitle = undefined;
+            this.AcceptStockDocNo = undefined;
+            this.AcceptProductList = [];
+            this.AcceptStockModal = false;
+            this.SearchStockBill(true);
+      });
+    }
+
   }
   // DELETE
   onConfirm() {
