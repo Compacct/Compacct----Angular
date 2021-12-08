@@ -622,12 +622,12 @@
 
 
                             </form>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <div class="col-sm-2 pull-right" *ngIf='!QueryStringObj?.Txn_ID'>
                                     <p-checkbox label="HOLD BILL" (onChange)='HoldBill()' [(ngModel)]="Hold_Bill_Flag" [binary]="true"></p-checkbox>
 
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" (click)="saveCheck()" id="load" [disabled]="Spinner">
                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>

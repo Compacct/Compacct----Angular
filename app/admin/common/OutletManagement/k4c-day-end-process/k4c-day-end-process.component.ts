@@ -103,7 +103,7 @@ export class K4cDayEndProcessComponent implements OnInit {
       ? this.DateService.dateConvert(new Date(this.req_date2))
       : this.DateService.dateConvert(new Date());
     const tempObj = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Cost_Cen_ID : this.Cost_Cen_ID_B,
       From_Date :start,
       To_Date :end,
     }
@@ -185,7 +185,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     if(this.Datevalue){
       this.seachSpinner = true;
       const tempObj = {
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
         Date : this.DateService.dateConvert(new Date(this.Datevalue))
       }
       const obj = {
@@ -258,7 +258,8 @@ export class K4cDayEndProcessComponent implements OnInit {
   GetclosingStatus(){
     if(this.Datevalue){
       const tempObj = {
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
         Date : this.DateService.dateConvert(new Date(this.Datevalue))
       }
       const obj = {
@@ -338,7 +339,8 @@ export class K4cDayEndProcessComponent implements OnInit {
       if(ele.Amount){      
       const TempData = {
         Date : this.DateService.dateConvert(new Date(this.Datevalue)),
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
         Description : ele.Collection_Mode,
         Manual_Amount : Number(ele.Amount),
         System_Amount : ele.Total_Amount,

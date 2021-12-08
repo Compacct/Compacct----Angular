@@ -145,14 +145,14 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
 
   }
   GetToCostCen(){
-    const tempObj = {
-      User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-      Material_Type : this.MaterialType_Flag
-    }
+    // const tempObj = {
+    //   User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+    //   Material_Type : this.MaterialType_Flag
+    // }
     const obj = {
-      "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Cost Center Name All",
-      "Json_Param_String": JSON.stringify([tempObj])
+      "SP_String": "SP_Raw_Material_Stock_Transfer",
+      "Report_Name_String": "Get Cost Centre Non outlet",
+      //"Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.Tocostcenlist = data;
@@ -197,14 +197,14 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
 
   }
   GetBToCostCen(){
-    const tempObj = {
-      User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-      Material_Type : this.MaterialType_Flag
-    }
+    // const tempObj = {
+    //   User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+    //   Material_Type : this.MaterialType_Flag
+    // }
     const obj = {
-      "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Cost Center Name All",
-      "Json_Param_String": JSON.stringify([tempObj])
+      "SP_String": "SP_Raw_Material_Stock_Transfer",
+      "Report_Name_String": "Get Cost Centre Non outlet",
+     // "Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ToBcostcenlist = data;
