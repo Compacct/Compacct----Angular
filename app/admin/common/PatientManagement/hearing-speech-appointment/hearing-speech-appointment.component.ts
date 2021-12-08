@@ -48,15 +48,23 @@ export class HearingSpeechAppointmentComponent implements OnInit {
   sex = ""
   AppoID = undefined;
   browseAssesmentList = [];
+  browseFluencyList = [];
+  browseAdultList = [];
   browseTherapyList = [];
   viewpopUp = false;
+  viewFluencypopUp = false;
   TherapyViewpopUp = false;
+  viewAdultpopUp = false;
   disabled = true;
   ObjMaterialData: MaterialData = new MaterialData();
   ObjAssessment: Assessment = new Assessment();
   ObjAssessmentView: AssessmentView = new AssessmentView();
   ObjTherapy: Therapyy = new Therapyy();
-  ObjTherapyview: Therapyy = new Therapyy();
+  ObjTherapyview: Therapyy = new Therapyy(); 
+  ObjFluencyview:any = {};
+  objAdultview:any = {};
+  ObjFluency: Fluency = new Fluency();
+  ObjAdult: Adult = new Adult();
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -284,6 +292,52 @@ export class HearingSpeechAppointmentComponent implements OnInit {
       console.log(this.tabIndexToView);
     }
   }
+  Fluency(obj) {
+    if (obj) {
+      this.TabView = "";
+      this.Tabitems = {};
+      this.showTabs = true;
+      this.TabView = "Fluency";
+      this.footFall_ID = obj.Foot_Fall_ID;
+      this.AppoID = obj.Appo_ID;
+      this.GetbrowseFluency(this.footFall_ID);
+      this.Tabitems = {
+        headerStyleClass: "compacct-tabs",
+        header: "Fluency Assessment",
+        leftIcon: "fa fa-stethoscope",
+        TabView: "Fluency"
+      }
+      const ctrl = this;
+      setTimeout(function () {
+        ctrl.tabIndexToView = 1;
+        ctrl.GetnameDetails();
+      }, 100);
+      console.log(this.tabIndexToView);
+    }
+  }
+  Adult(obj) {
+    if (obj) {
+      this.TabView = "";
+      this.Tabitems = {};
+      this.showTabs = true;
+      this.TabView = "Adult";
+      this.footFall_ID = obj.Foot_Fall_ID;
+      this.AppoID = obj.Appo_ID;
+      this.GetbrowseAdult(this.footFall_ID);
+      this.Tabitems = {
+        headerStyleClass: "compacct-tabs",
+        header: "Adult Assessment",
+        leftIcon: "fa fa-stethoscope",
+        TabView: "Adult"
+      }
+      const ctrl = this;
+      setTimeout(function () {
+        ctrl.tabIndexToView = 1;
+        ctrl.GetnameDetails();
+      }, 100);
+      console.log(this.tabIndexToView);
+    }
+  }
   Therapy(obj) {
     if (obj) {
       this.TabView = "";
@@ -383,6 +437,33 @@ export class HearingSpeechAppointmentComponent implements OnInit {
     }
 
   }
+  saveFluency(){
+    this.ObjFluency.Appo_ID = this.AppoID;
+    this.ObjFluency.Foot_Fall_ID = this.footFall_ID;
+
+    const obj = {
+      "SP_String": "SP_Speech_Appointment_Adult",
+      "Report_Name_String": "Insert_Fluency_Assesment",
+      "Json_Param_String": JSON.stringify([this.ObjFluency])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("Save Data", data);
+      if (data[0].Column1 === "Save Successfully") {
+        this.ObjFluency = new Fluency();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: data[0].Column1,
+          detail: "Fluency Assessment Succesfully Save"
+        });
+        this.showTabs = false;
+        this.tabIndexToView = 0;
+        this.TabView = "";
+        this.Tabitems = {}
+      }
+    })
+  }
  GetbrowseAssesment(Foot_Fall_ID){
    if(Foot_Fall_ID){
      this.browseAssesmentList = [];
@@ -398,8 +479,37 @@ export class HearingSpeechAppointmentComponent implements OnInit {
    }
   
  }
+ GetbrowseFluency(Foot_Fall_ID){
+  if(Foot_Fall_ID){
+    this.browseFluencyList = [];
+   const obj = {
+     "SP_String": "SP_Speech_Appointment_Adult",
+     "Report_Name_String": "Get_Fluency_Assesment",
+     "Json_Param_String": JSON.stringify([{Foot_Fall_ID:Foot_Fall_ID}])
+   }
+   this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.browseFluencyList = data;
+      console.log("browseFluencyList",this.browseFluencyList);
+   })
+  }
+ 
+}
+GetbrowseAdult(Foot_Fall_ID){
+  if(Foot_Fall_ID){
+    this.browseAdultList = [];
+   const obj = {
+     "SP_String": "SP_Speech_Appointment_Adult",
+     "Report_Name_String": "Get_Adult_Assessment",
+     "Json_Param_String": JSON.stringify([{Foot_Fall_ID:Foot_Fall_ID}])
+   }
+   this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.browseAdultList = data;
+      console.log("browseAdultList",this.browseAdultList);
+   })
+  }
+ 
+}
  GetView(col){
-  
    if(col.Assesment_ID){
     const obj = {
       "SP_String": "SP_Speech_Appointment",
@@ -437,6 +547,40 @@ export class HearingSpeechAppointmentComponent implements OnInit {
     })
    }
  }
+ GetFluencyview(col){
+    if(col.Txn_ID){
+      const obj = {
+        "SP_String": "SP_Speech_Appointment_Adult",
+        "Report_Name_String": "Get_Fluency_Assesment_Details",
+        "Json_Param_String": JSON.stringify([{Txn_ID : col.Txn_ID}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("Fluencyview",data);
+        this.ObjFluencyview = data[0];
+        console.log("ObjFluencyview",this.ObjFluencyview);
+       if(this.ObjFluencyview){
+          this.viewFluencypopUp = true;
+       }
+      });
+    }
+ }
+ GetAdultview(col){
+  if(col.Txn_ID){
+    const obj = {
+      "SP_String": "SP_Speech_Appointment_Adult",
+      "Report_Name_String": "Get_Adult_Assessment_Details",
+      "Json_Param_String": JSON.stringify([{Txn_ID : col.Txn_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("Fluencyview",data);
+      this.objAdultview = data[0];
+      console.log("objAdultview",this.objAdultview);
+     if(this.objAdultview){
+        this.viewAdultpopUp = true;
+     }
+    });
+  }
+}
  GetPrint(col){
   console.log("print",col);
   if (col.Assesment_ID) {
@@ -445,6 +589,7 @@ export class HearingSpeechAppointmentComponent implements OnInit {
     );
   }
  }
+
  saveTherapy(){
   if (this.AppoID && this.footFall_ID){
     this.ObjTherapy.Appo_ID = this.AppoID;
@@ -475,6 +620,33 @@ export class HearingSpeechAppointmentComponent implements OnInit {
        }
     })
   }
+ }
+ saveAdult(){
+  this.ObjAdult.Appo_ID = this.AppoID;
+  this.ObjAdult.Foot_Fall_ID = this.footFall_ID;
+
+  const obj = {
+    "SP_String": "SP_Speech_Appointment_Adult",
+    "Report_Name_String": "Insert_Adult_Assessment",
+    "Json_Param_String": JSON.stringify([this.ObjAdult])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    console.log("Save Data", data);
+    if (data[0].Column1 === "Save Successfully") {
+      this.ObjAdult = new Adult();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: data[0].Column1,
+        detail: "Adult Assessment Succesfully Save"
+      });
+      this.showTabs = false;
+      this.tabIndexToView = 0;
+      this.TabView = "";
+      this.Tabitems = {}
+    }
+  })
  }
  GetbrowseTherapy(Foot_Fall_ID){
   if(Foot_Fall_ID){
@@ -516,6 +688,22 @@ GetTherapyprint(col){
   console.log("print",col);
   if (col.Therapy_Prog_ID) {
     window.open("/Report/Crystal_Files/CRM/Clinic/Therapy.html?Therapy_Prog_ID=" + col.Therapy_Prog_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500',
+
+    );
+  }
+}
+GetFluencyprint(col){
+  console.log("print",col);
+  if (col.Txn_ID) {
+    window.open("/Report/Crystal_Files/CRM/Clinic/Fluency.html?txn_ID=" + col.Txn_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500',
+
+    );
+  }
+}
+GetAdultprint(col){
+  console.log("print",col);
+  if (col.Txn_ID) {
+    window.open("/Report/Crystal_Files/CRM/Clinic/Adult.html?txn_ID=" + col.Txn_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500',
 
     );
   }
@@ -666,4 +854,87 @@ class Therapyy{
   Plan_End_Date :any;        
   Parental_Counseling :any;
   Recommendations :any;
+}
+
+class Fluency {
+    Appo_ID:number;
+    Foot_Fall_ID:number;
+    Sec_I_First_Exhibition:any;
+    Sec_I_Gradual_Sudden:any;
+    Sec_I_First_Notice:any;
+    Sec_I_Related_Circumstances:any;
+    Sec_I_Severity_Inc_Dec:any;
+    Sec_I_Stuttered_Or_Not:any;
+    Sec_I_Stutterer_Contact:any;
+
+    Sec_II_Reaction_Problem:any;
+    Sec_II_By_Parents:any;
+    Sec_II_By_Self:any;
+    Sec_II_By_Others:any;
+
+    Sec_III_Variety_Stuttering:any;
+    Sec_III_Res_Spec_Situation:any;
+    Sec_III_Res_Spec_Individuals:any;
+    Sec_III_Res_Spec_Sounds:any;
+    Sec_III_Res_Sentance_Struc:any;
+    Sec_III_Avoid_Behave_Mechanisn:any;
+    Sec_III_Avoid_Behave_Reported:any;
+    Sec_III_Avoid_Behave_Observed:any;
+    Sec_III_Avoid_Behave_Self_Cencern:any;
+    Sec_III_Situation_Mechanism:any;
+    Sec_III_Situation_Reported:any;
+    Sec_III_Situation_Observed:any;
+    Sec_III_Situation_Self_Cencern:any;
+    Sec_III_Sounds_Mechanism:any;
+    Sec_III_Sounds_Reported:any;
+    Sec_III_Sounds_Observed:any;
+    Sec_III_Sounds_Self_Cencern:any;
+    Sec_III_Self_Cencern:any;
+
+    Sec_IV_No_Of_Prolongation:any;
+    Sec_IV_No_Of_Repitions:any;
+    Sec_IV_No_Of_Hesitations:any;
+    Sec_IV_No_Of_Blocks:any;
+    Sec_IV_Secondary_Behave:any;
+    Sec_IV_Other_Test:any;
+    Sec_IV_Provisional_Diagnosis:any;
+    Sec_IV_Recommendation:any;
+}
+class Adult{
+  Appo_ID:any;
+  Foot_Fall_ID:any;
+  General_Complaint:any;
+  Medical_History:any;
+  Pre_Morbid_Status:any;
+  Assessment_Dysphagia:any;
+  Score:any;
+  Impression:any;
+  Assessment_Dysarthria:any;
+  Fren_Dysarthria_Assessment:any;
+  Reflexes:any;
+  Respiration:any;
+  Lips:any;
+  Palate:any;
+  Laryngeal:any;
+  Tongue:any;
+  Intelligibility:any;
+  Dysarthria_Impression:any;
+  Cranial_Nerve_Assesment:any;
+  Voice_Evaluation_Pitch:any;
+  Voice_Evaluation_Loudness:any;
+  Voice_Evaluation_Quality:any;
+  Phonation_Duration:any;
+  S_Z_Ratio:any;
+  Instrumental_Assessment:any;
+  Grbas_Scale:any;
+  Apraxia_Assessment:any;
+  Assessment_Aphasia:any;
+  Fluency:any;
+  Comprehension:any;
+  Naming:any;
+  Repetition:any;
+  Aphasia_Impression:any;
+  Other_Test:any;
+  Provisional_Diagnosis:any;
+  Recommendation:any;
 }
