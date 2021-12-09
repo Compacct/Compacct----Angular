@@ -524,7 +524,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
             To_Godown_ID: this.Objdispatch.To_Godown_ID,
             Product_ID: el.Product_ID,
             Batch_No: el.Batch_No,
-            Qty: el.Delivery_Qty,
+            Qty: Number(el.Delivery_Qty),
             Rate: 0,
             UOM: el.UOM,
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
