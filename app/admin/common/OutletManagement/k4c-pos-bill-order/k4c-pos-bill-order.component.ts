@@ -731,7 +731,9 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
   }
   BillWithoutStock(advorderno){
     this.ObjcashForm  =  new cashForm();
+    this.Objcustomer  =  new customer();
     this.CreateBillList = [];
+    this.productSubmit = [];
     this.getwalletamount();
     this.getcredittoaccount();
     if (advorderno.Adv_Order_No) {
@@ -803,8 +805,8 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
         // this.ObjcashForm.Total_Paid = data[0].Total_Paid;
        // this.ObjcashForm.Net_Due = data[0].Net_Due;
     
-        this.Objcustomerdetail.Foot_Fall_ID = data[0].Foot_Fall_ID;
-        this.Objcustomerdetail.Cost_Cen_ID = data[0].Cost_Cent_ID;
+        this.Objcustomer.Foot_Fall_ID = data[0].Foot_Fall_ID;
+        this.Objcustomer.Cost_Cen_ID = data[0].Cost_Cent_ID;
         //this.Adv_Order_No = data[0].Adv_Order_No;
     
        // this.billstockDate = data[0].Order_Date;
@@ -875,11 +877,11 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
 
     const TempObj = {
       Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
-      Foot_Fall_ID : this.Objcustomerdetail.Foot_Fall_ID,
+      Foot_Fall_ID : this.Objcustomer.Foot_Fall_ID,
       Bill_Date : this.DateService.dateConvert(new Date(this.billdate)),
       //Doc_No : this.ObjaddbillForm.Doc_No,
       Doc_No : "A",
-      Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Cost_Cent_ID : this.Objcustomer.Cost_Cen_ID,
       //Adv_Order_No : this.ObjaddbillForm.Advance,
       Rounded_Off : 0,
       Amount_Payable : this.Amount_Payable,
@@ -892,7 +894,7 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
       Online_Order_Date : null
 
     }
-    tempArr.push({...obj,...TempObj,...this.Objcustomerdetail,...this.ObjcashForm})
+    tempArr.push({...obj,...TempObj,...this.Objcustomer,...this.ObjcashForm})
   });
   console.log("save bill =" , tempArr)
   return JSON.stringify(tempArr);
@@ -1112,16 +1114,16 @@ class customer{
   Customer_GST : string;
   Bill_Remarks : string;
   // Delivery_Date : string;
-  Del_Date_Time : any;
-  Del_Cost_Cent_ID : string;
-  Foot_Fall_ID = 0;
+  //Del_Date_Time : any;
+  //Del_Cost_Cent_ID : string;
+  Foot_Fall_ID : string;
   Cost_Cen_ID : number;
-  Doc_Date : string;
+  //Doc_Date : string;
   //Doc_No = "A" ;
-  Adv_Order_No : any;
+  //Adv_Order_No : any;
   //Advance = "NA" ;
-  Cuppon_No : string;
-  Cuppon_OTP : string;
+  //Cuppon_No : string;
+  //Cuppon_OTP : string;
 }
 class HomeDelivery{
   Delivery_Type : string;

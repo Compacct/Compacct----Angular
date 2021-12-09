@@ -158,8 +158,7 @@
                                                     </div>
                                                     <div class="col-sm-2">
                                                         <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
-                                                        <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="ObjStockAdStoreItems.Brand_ID" (change)="getCostCenter()" [ngClass]="{'clearance': StockAdjStoreItemsFormSubmitted && Brand_ID?.errors?.required}" [disabled]="BrandDisable"
-                                                            required>
+                                                        <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="ObjStockAdStoreItems.Brand_ID" (change)="GetProduct()" [ngClass]="{'clearance': StockAdjStoreItemsFormSubmitted && Brand_ID?.errors?.required}" [disabled]="BrandDisable" required>
                                              <option  [ngValue]="undefined">Select</option>
                                          <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
                                              {{option.Brand_INI}}
