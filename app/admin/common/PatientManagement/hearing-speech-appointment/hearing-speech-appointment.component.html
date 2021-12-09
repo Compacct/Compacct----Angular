@@ -95,7 +95,6 @@
                                                 <th>Package</th>
                                                 <th>Sub Type</th>
                                                 <th>Chargeable</th>
-                                                <th>Audiologist Status</th>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -155,10 +154,9 @@
                                                 <td>{{col.Cost_Cen_Name}}</td>
                                                 <td>{{col.Consultancy_Type}}</td>
                                                 <td>{{col.Consultancy_Descr}}</td>
-                                                <td>{{col.PRI_ALT}}</td>
-                                                <td>{{col.PRI_ALT}}</td>
+                                                <td>{{col.Package_Name}}</td>
+                                                <td>{{col.Session_Name}}</td>
                                                 <td>{{col.Chargeable ? 'Yes' : 'No'}}</td>
-                                                <td>{{col.PRI_ALT}}</td>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="paginatorright" let-state>
@@ -2122,6 +2120,7 @@
             <input type="text" class="form-control" placeholder="FIRST NOTICED BY WHOM"
                 name="Sec_I_First_Notice" #Sec_I_First_Notice="ngModel"
                 [(ngModel)]="ObjFluencyview.Sec_I_First_Notice" [disabled] = "true">
+
         </div>
      </div>
     <br>

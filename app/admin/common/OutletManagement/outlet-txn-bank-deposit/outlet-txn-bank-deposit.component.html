@@ -1,66 +1,53 @@
-
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
 <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
-  <ng-template let-message pTemplate="message">
-      <div style="text-align: center">
-          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
-          <h3>{{message.summary}}</h3>
-          <p >{{message.detail}}</p>
-      </div>
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
 
-      <div  class="ui-g ui-fluid">
-          <div class="ui-g-6">
-              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
-          </div>
-          <div class="ui-g-6">
-              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
-          </div>
-      </div>
-  </ng-template>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
 </p-toast>
 
 <div class="row">
-  <div class="col-xs-12">
-      <div class="box box-primary">
-          <div class="form-horizontal">
-              <div class="box-body">
-                  <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                    <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
-                      <form name="SearchForm" #SearchForm="ngForm" novalidate>
-                          <div class="form-group">
-                            <div class="col-sm-3">
-                              <label class="control-label">Date</label>
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
 
-                              <app-compacct-daterangepicker
-                              (DaterangeObj)="getDateRange($event)">
-                              </app-compacct-daterangepicker>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                        </app-compacct-daterangepicker>
 
-                            </div>
-                             <div class="col-sm-3">
-                                  <label class="control-label" >Outlet <sup class="text-danger">*</sup>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Outlet <sup class="text-danger">*</sup>
                                   </label>
-                                <select class="form-control"
-                                        name="outlet"
-                                        #outlet="ngModel"
-                                        [(ngModel)]="ObjBrowse.Outlet"
-                                        [ngClass]="{'clearance':SearchFormSubmitted && outlet?.errors?.required}"
-                                        [attr.disabled]="costcentdisableflag? true : null"
-                                        required>
+                                        <select class="form-control" name="outlet" #outlet="ngModel" [(ngModel)]="ObjBrowse.Outlet" [ngClass]="{'clearance':SearchFormSubmitted && outlet?.errors?.required}" [attr.disabled]="costcentdisableflag? true : null" required>
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor = "let option of Outletid" [value] ="option.Cost_Cen_ID">
                                           {{option.Cost_Cen_Name}}
                                         </option>
                                 </select>
-                                </div>
+                                    </div>
 
-                            <div class="col-sm-3">
-                              <button
-                                class="btn btn-primary custombutton1"
-                                data-toggle="modal"
-                                (click)="GetSearchedList(SearchForm.form.valid)"
-                                id="load"
-                                [disabled]="seachSpinner"
-                              >
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="GetSearchedList(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                 <p-progressSpinner
                                   *ngIf="seachSpinner"
                                   [style]="{ width: '15px', height: '15px' }"
@@ -73,66 +60,57 @@
                                 ></span
                                 >&nbsp;Search
                               </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
                             </div>
-                          </div>
-
-                        </form>
-                      <div class="row">
-                          <div class="col-sm-8"><h5><strong></strong></h5></div>
-                          </div>
-                      <div class="table-responsive table-id">
-                          <p-table [value]="Searchedlist" #dt
-                          [paginator] ="true"
-                          [rows] ="100"
-                          [loading] = "seachSpinner"
-                          [rowHover] ="true"
-                          [autoLayout] ="true"
-                          sortMode ="multiple"
-                          [rowsPerPageOptions]="[10,25,50,100]"
-                          [rowHover] ="true"
-                          [globalFilterFields]='["Txn_ID","Transfer_To","Date","Amount","Bank_Name","Slip_No"]'>
-                          <ng-template pTemplate="caption">
-                              <div class="row">
-                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                            <input type="text" pInputText size="50" placeholder="Search" (input) ="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                            <div class="table-responsive table-id">
+                                <p-table [value]="Searchedlist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Txn_ID","Transfer_To","Date","Amount","Bank_Name","Slip_No"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
                                         </div>
-                              </div>
 
-                            </ng-template>
-                              <ng-template pTemplate="header">
-                                  <tr>
-                                      <th style="width:5em">Action</th>
-                                      <th>Txn No</th>
-                                      <th>Transfer To</th>
-                                      <th>Date</th>
-                                      <th>Amount</th>
-                                      <th>Bank Name</th>
-                                      <th>Slip No</th>
-                                  </tr>
-                              </ng-template>
-                               <ng-template pTemplate="body" let-col>
-                                 <tr >
-                                         <td>
-                                              <div class="dropdown">
-                                                  <button class="btn btn-default btn-sm tableButton dropdown-toggle"
-                                                      type="button" data-toggle="dropdown" style="height:27px">
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Txn No</th>
+                                            <th>Transfer To</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Bank Name</th>
+                                            <th>Slip No</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                       <i class="fa fa-fw fa-bars"></i>
                                                       <span class="caret"></span>
                                                   </button>
-                                                  <ul class="dropdown-menu">
-                                                      <!-- <li>
+                                                    <ul class="dropdown-menu">
+                                                        <!-- <li>
                                                           <a (click)="view(col)">
                                                             <i class="fa fa-fw fa-eye" aria-hidden="true"></i>
                                                              View
                                                           </a>
                                                       </li> -->
-                                                      <li>
+                                                        <li>
                                                             <a (click)="Edit(col)">
-                                                              <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
-                                                              Edit
-                                                          </a>
-                                                      </li>
-                                                      <!-- <li *ngIf= "col.Toyal_Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.To_Cost_Cen_ID">
+                                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li *ngIf= "col.Toyal_Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.To_Cost_Cen_ID">
                                                         <a (click)="AcceptChallan(col)">
                                                             <i class="fa fa-check"></i>
                                                            Accepted Challan
@@ -145,48 +123,41 @@
                                                             Print
                                                         </a>
                                                     </li> -->
-                                                      <li>
-                                                          <a (click)="Delete(col)">
-                                                              <i class="fa fa-trash" aria-hidden="true"></i>
-                                                              Delete
-                                                          </a>
-                                                      </li>
-                                                  </ul>
-                                              </div>
-                                      </td>
-                                      <td>{{col.Txn_ID}}</td>
-                                      <td>{{col.Transfer_To}}</td>
-                                      <td>{{col.Date | date : 'dd/MMM/yyyy'}}</td>
-                                      <td>{{col.Amount}}</td>
-                                      <td>{{col.Bank_Name}}</td>
-                                      <td>{{col.Slip_No}}</td>
-                                  </tr>
-                              </ng-template>
-                              <ng-template pTemplate="paginatorright" let-state>
-                                  Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                          </ng-template>
-                          </p-table>
+                                                        <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Txn_ID}}</td>
+                                            <td>{{col.Transfer_To}}</td>
+                                            <td>{{col.Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Amount}}</td>
+                                            <td>{{col.Bank_Name}}</td>
+                                            <td>{{col.Slip_No}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
 
-                      </div>
+                            </div>
 
-                  </p-tabPanel>
-                  <p-tabPanel headerStyleClass="compacct-tabs"  [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save" >
-                    <div >
-                    <div class="panel-group"  >
-                      <div class="panel panel-primary">
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <div>
+                                <div class="panel-group">
+                                    <div class="panel panel-primary">
 
-                        <div class="panel-body">
-                            <form name="BankTransferForm" #BankTransferForm="ngForm" novalidate>
-                             <div class="form-group">
-                              <div class="col-sm-3">
-                                <label class="control-label"> Transfer To<sup class="text-danger">*</sup></label>
-                                <select class="form-control"
-                                name="transferto"
-                                #transferto="ngModel"
-                                [(ngModel)]="ObjBankTransfer.Transfer_To"
-                                (change)="SlipnoChange()"
-                                [ngClass]="{'clearance': BankTransferFormSubmitted && transferto?.errors?.required}"
-                                required>
+                                        <div class="panel-body">
+                                            <form name="BankTransferForm" #BankTransferForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label"> Transfer To<sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="transferto" #transferto="ngModel" [(ngModel)]="ObjBankTransfer.Transfer_To" (change)="SlipnoChange()" [ngClass]="{'clearance': BankTransferFormSubmitted && transferto?.errors?.required}" required>
                                 <option  [ngValue] = "undefined">Select</option>
                                 <!-- <option  value = "Bank / Collection">Bank / Collection</option>
                                 <option  value = "HO">HO</option> -->
@@ -194,57 +165,63 @@
                                 {{option}}
                             </option>
                         </select>
-                               </div>
-                               <div class="col-sm-2">
-                                <label class="control-label">Date</label>
-                                <ejs-datepicker  [format]="'dd/MMM/yyyy'"
-                                      [(value)] = 'todayDate'
-                                ></ejs-datepicker>
-                                <!-- <input class="form-control"
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Date</label>
+                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='todayDate'></ejs-datepicker>
+                                                        <!-- <input class="form-control"
                                        name="Date"
                                        [disabled]="true"
                                        [ngModel] ='myDate  | date :"dd-MMM-yyyy"'
                                        (ngModelChange) ='myDate = $event' > -->
-                              </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Cash Collected From Date</label>
+                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='cashcollfromDate'></ejs-datepicker>
+                                                        <!-- <input class="form-control"
+                                     name="Date"
+                                     [disabled]="true"
+                                     [ngModel] ='myDate  | date :"dd-MMM-yyyy"'
+                                     (ngModelChange) ='myDate = $event' > -->
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Cash Collected To Date</label>
+                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='cashcollToDate'></ejs-datepicker>
+                                                        <!-- <input class="form-control"
+                                       name="Date"
+                                       [disabled]="true"
+                                       [ngModel] ='myDate  | date :"dd-MMM-yyyy"'
+                                       (ngModelChange) ='myDate = $event' > -->
+                                                    </div>
 
-                                <div class="col-sm-2">
-                                  <label class="control-label">Amount <sup class="text-danger">*</sup></label>
-                                  <input class="form-control"
-                                        name="amount"
-                                        #amount="ngModel"
-                                        [(ngModel)] ="ObjBankTransfer.Amount"
-                                        CompacctDigitonly="true"
-                                        [ngClass]="{'clearance':BankTransferFormSubmitted && amount?.errors?.required}"
-                                        required>
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Amount <sup class="text-danger">*</sup></label>
+                                                        <input class="form-control" name="amount" #amount="ngModel" [(ngModel)]="ObjBankTransfer.Amount" CompacctDigitonly="true" [ngClass]="{'clearance':BankTransferFormSubmitted && amount?.errors?.required}" required>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Bank Name <sup class="text-danger">*</sup></label>
+                                                        <!-- <input class="form-control" name="bankname" #bankname="ngModel" [(ngModel)]="ObjBankTransfer.Bank_Name" [disabled]="DisableSlipno" [ngClass]="{'clearance':BankTransferFormSubmitted && bankname?.errors?.required}" required> -->
+                                                        <select class="form-control" name="bankname" #bankname="ngModel" [(ngModel)]="ObjBankTransfer.Ledger_ID" [disabled]="DisableBank" [ngClass]="{'clearance':BankTransferFormSubmitted && bankname?.errors?.required}" [required]='ObjBankTransfer.Transfer_To !== "HO"'>
+                                                            <option  [ngValue]="undefined">Select</option>
+                                                        <option *ngFor="let obj of BankNameList" value="{{obj.Ledger_ID}}">
+                                                            {{obj.Bank_Name}}
+                                                        </option>
+                                                    </select>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Slip No. <sup class="text-danger">*</sup></label>
+                                                        <input class="form-control" name="slipno" #slipno="ngModel" [(ngModel)]="ObjBankTransfer.Slip_No" [disabled]="DisableSlipno" [ngClass]="{'clearance':BankTransferFormSubmitted && slipno?.errors?.required}" required>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-3">
-                                  <label class="control-label">Bank Name <sup class="text-danger">*</sup></label>
-                                  <input class="form-control"
-                                        name="bankname"
-                                        #bankname="ngModel"
-                                        [(ngModel)] ="ObjBankTransfer.Bank_Name"
-                                        [disabled] = "DisableSlipno"
-                                        [ngClass]="{'clearance':BankTransferFormSubmitted && bankname?.errors?.required}"
-                                        required>
-                                </div>
-                                <div class="col-sm-2">
-                                  <label class="control-label">Slip No. <sup class="text-danger">*</sup></label>
-                                  <input class="form-control"
-                                        name="slipno"
-                                        #slipno="ngModel"
-                                        [(ngModel)] ="ObjBankTransfer.Slip_No"
-                                        [disabled] = "DisableSlipno"
-                                        CompacctDigitonly="true"
-                                        [ngClass]="{'clearance':BankTransferFormSubmitted && slipno?.errors?.required}"
-                                        required>
-                                </div>
-                             </div>
-                          </form>
-                        </div>
-                      </div>
-                  </div>
-                </div>
-                <!-- <div>
+                            </div>
+                            <!-- <div>
                   <button
                     type="button"
                     (click)="GetProduct(IssueStockForm.form.valid)"
@@ -253,25 +230,22 @@
                   </button>
                 </div> -->
 
-                        <div class="row">
-                          <div class="col-sm-8"><h5><strong></strong></h5></div>
-                          </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
 
-                <div class="box-footer">
-                    <button
-                           type="button"
-                            class="btn btn-primary pull-right"
-                            (click) = "SaveBankTransfer(BankTransferForm.form.valid)"
-                            id="load"
-                            [disabled]="Spinner">
+                            <div class="box-footer">
+                                <button type="button" class="btn btn-primary pull-right" (click)="SaveBankTransfer(BankTransferForm.form.valid)" id="load" [disabled]="Spinner">
                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
                     </button>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
                 </div>
-              </p-tabPanel>
-            </p-tabView>
-              </div>
-          </div>
-      </div>
-  </div>
+            </div>
+        </div>
+    </div>
 </div>

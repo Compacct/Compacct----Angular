@@ -33,24 +33,57 @@
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="control-label">Issuing CostCenter &nbsp;<span class="text-danger">*</span></label>
-                                                <select class="form-control" name="costcenterFrom2"
+                                                <p-dropdown
+                                                    [options]="CostCenterList   "
+                                                    name="costcenterFrom2"
+                                                    [(ngModel)]="ObjSearchStock.F_Cost_Cen_ID"
+                                                    [showClear]="true"
+                                                    [emptyFilterMessage]="' No Cost Center Found'"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Cost Center'"
+                                                    [virtualScroll]="true"
+                                                    itemSize="30"
+                                                    #costcenterFrom2="ngModel"
+                                                    [styleClass]="
+                                                    StockSearchFormSubmitted && costcenterFrom2.errors?.required? 'clearance': ''"
+                                                    [required]="true"
+                                                    >
+                                                    </p-dropdown>
+                                                <!-- <select class="form-control" name="costcenterFrom2"
                                                         #costcenterFrom2= 'ngModel'
                                                         [(ngModel)]="ObjSearchStock.F_Cost_Cen_ID"
                                                         [ngClass]="{'clearance': StockSearchFormSubmitted && costcenterFrom2.errors?.required}"
                                                         required>
                                                         <option [ngValue]="undefined">Select</option>
                                                         <option *ngFor='let option of CustmCostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
-                                                </select>
+                                                </select> -->
                                             </div>
                                             <div class="col-sm-3">
                                                     <label class="control-label">CostCenter To</label>
-                                                    <select class="form-control" name="costcenterTo2"
+                                                    <p-dropdown
+                                                    [options]="CostCenterList"
+                                                    name="costcenterTo2"
+                                                    [(ngModel)]="ObjSearchStock.T_Cost_Cen_ID"
+                                                    [showClear]="true"
+                                                    [emptyFilterMessage]="' No Cost Center Found'"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Cost Center'"
+                                                    [virtualScroll]="true"
+                                                    itemSize="30"
+                                                    #costcenterTo2="ngModel"
+                                                    [styleClass]="
+                                                    StockSearchFormSubmitted && costcenterTo2.errors?.required? 'clearance': ''"
+                                                    >
+                                                    </p-dropdown>
+                                                    <!-- <select class="form-control" name="costcenterTo2"
                                                             #costcenterTo2= 'ngModel'
                                                             [(ngModel)]="ObjSearchStock.T_Cost_Cen_ID"
                                                             [ngClass]="{'clearance': StockSearchFormSubmitted && costcenterTo2.errors?.required}">
                                                             <option  [ngValue]="undefined">Select</option>
                                                             <option *ngFor='let option of CostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
-                                                    </select>
+                                                    </select> -->
                                             </div>
                                             <div class="col-sm-3">
                                                         <button class="btn btn-primary custombutton" data-toggle="modal"
@@ -90,7 +123,7 @@
 
                                                         </ng-template>
                                                         <ng-template pTemplate="body" let-list let-columns="columns">
-                                                            <tr>
+                                                            <tr [ngClass]='list.Total_Accept !== list.Total_Issue ? "red-bg-cus" : ""'>
                                                                 <td>
                                                                     <div class="dropdown">
                                                                         <button class="btn btn-default btn-sm tableButton dropdown-toggle"
@@ -99,10 +132,16 @@
                                                                             <span class="caret"></span>
                                                                         </button>
                                                                         <ul class="dropdown-menu">
-                                                                            <li>
+                                                                            <li *ngIf='list.T_Cost_Cen_ID != $CompacctAPI.CompacctCookies.Cost_Cen_ID'>
                                                                                 <a (click)="EditStockTransfer(list)">
                                                                                     <i class="fa fa-fw fa-pencil"></i>
                                                                                     Edit
+                                                                                </a>
+                                                                            </li>
+                                                                            <li *ngIf='list.Total_Accept !== list.Total_Issue'>
+                                                                                <a (click)="AcceptStockTransfer(list)">
+                                                                                    <i class="fa fa-fw fa-history"></i>
+                                                                                    {{list.F_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Edit Product' : list.T_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Accept Challan' : ''}}
                                                                                 </a>
                                                                             </li>
                                                                             <li *ngIf="!(list.Eway_Bill_No === 'Not Required')">
@@ -142,9 +181,28 @@
                                     <form  #StockForm="ngForm" novalidate>
                                         <h5><strong>From CostCente</strong></h5>
                                         <div class="form-group">
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-6" style="margin-bottom: -2px;">
                                                 <label class="control-label">CostCenter &nbsp;<span class="text-danger">*</span></label>
-                                                <select class="form-control" name="costcenterFrom"
+                                                <p-dropdown
+                                                    [options]="CustmCostCenterList"
+                                                    name="costcenterFrom"
+                                                    [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_ID"
+                                                    [showClear]="true"
+                                                    (onChange)="StockCostCenterFromChange(ObjCostCenterFROM.F_Cost_Cen_ID)"
+                                                    [emptyFilterMessage]="' No Cost Center Found'"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Cost Center'"
+                                                    [virtualScroll]="true"
+                                                    itemSize="30"
+                                                    #costcenterFrom="ngModel"
+                                                    [styleClass]="
+                                                    StockSearchFormSubmitted && costcenterFrom.errors?.required? 'clearance': ''"
+                                                    [required]="true"
+                                                    [disabled]="ProductInfoListView.length"
+                                                    >
+                                                    </p-dropdown>
+                                                <!-- <select class="form-control" name="costcenterFrom"
                                                         #costcenterFrom= 'ngModel'
                                                         [(ngModel)]="ObjCostCenterFROM.F_Cost_Cen_ID"
                                                         (change)="StockCostCenterFromChange(ObjCostCenterFROM.F_Cost_Cen_ID)"
@@ -153,7 +211,7 @@
                                                         required>
                                                         <option  [ngValue]="undefined">Select</option>
                                                         <option *ngFor='let option of CustmCostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
-                                                </select>
+                                                </select> -->
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="control-label">Address<span class="text-danger"></span></label>
@@ -270,9 +328,28 @@
                                         <hr class="box boxboxDivide-primary" />
                                         <h5><strong>To CostCenter </strong></h5>
                                         <div class="form-group">
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-6" style="margin-bottom: -2px;">
                                                 <label class="control-label">CostCenter&nbsp;<span class="text-danger">*</span></label>
-                                                <select class="form-control" name="costcenterTo"
+                                                <p-dropdown
+                                                [options]="CostCenterList"
+                                                name="costcenterTo"
+                                                [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_ID"
+                                                [showClear]="true"
+                                                (onChange)="StockCostCenterToChange(ObjCostCenterTO.T_Cost_Cen_ID)"
+                                                [emptyFilterMessage]="' No Cost Center Found'"
+                                                [filter]="true"
+                                                filterBy="label,value.name"
+                                                [placeholder]="'Select Cost Center'"
+                                                [virtualScroll]="true"
+                                                itemSize="30"
+                                                #costcenterTo="ngModel"
+                                                [styleClass]="
+                                                StockFormSubmitted && costcenterTo.errors?.required? 'clearance': ''"
+                                                [required]="true"
+                                                [disabled]="ProductInfoListView.length"
+                                                >
+                                                </p-dropdown>
+                                                <!-- <select class="form-control" name="costcenterTo"
                                                         #costcenterTo='ngModel'
                                                         [(ngModel)]="ObjCostCenterTO.T_Cost_Cen_ID"
                                                         (change)="StockCostCenterToChange(ObjCostCenterTO.T_Cost_Cen_ID)"
@@ -281,7 +358,7 @@
                                                         required>
                                                         <option  [ngValue]="undefined">Select</option>
                                                         <option *ngFor='let option of CostCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
-                                                </select>
+                                                </select> -->
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="control-label">Address<span class="text-danger"></span></label>
@@ -820,5 +897,75 @@
     <button type="button" pButton icon="pi pi-close" (click)="displayEwayModal=false" label="CANCEL" class="ui-button-secondary"></button>
 
     <button type="button" pButton icon="pi pi-check" (click)="EwayUpdate(EwayForm.form.valid)" label="Update"></button>
+</p-footer>
+</p-dialog>
+<p-dialog [header]="AcceptStockModalTitle" [appendTo]="'body'" [visible]="AcceptStockModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{width: '50%', minWidth: '200px'}" [minY]="70"
+[maximizable]="true" [baseZIndex]="10000">
+
+<form name="AcceptChallnForm" #EwayForm="ngForm" novalidate>
+    <h5 class="text-center bg-gray" style="padding:0.6em;">Doc No : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{AcceptStockDocNo}}</span></h5>
+    <div class="form-group">
+        <table class="table table-bordered">
+            <thead>
+                <tr style="background-color:#3c8dbc;color:white;">
+                    <th scope="col">Product </th>
+                    <th scope="col">Bacth</th>
+                    <th scope="col">Serial</th>
+                    <th scope="col">Issuing Qty</th>
+                    <th scope="col">Accepting Qty</th>
+                    <th scope="col">UOM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="d-flex" *ngFor="let option of AcceptProductList;let i = index;" >
+                    <td>{{option.Product_Description}}</td>
+                    <td>{{option.Batch_Number ? option.Batch_Number : '-'}}</td>
+                    <td>{{option.Serial_No ? option.Serial_No : '-'}}</td>
+                    <td>
+                        <input class="form-control" [name]="'Issue'+i"
+                        type="text"
+                        [(ngModel)]="option.Issue_Qty"
+                        CompacctDigitonly="true"
+                        (change)='checkIfExceed1(i)'
+                        [required]="true"
+                        *ngIf='option.issue_flag'
+                        placeholder="Issue Qty" />
+                        <span *ngIf='!option.issue_flag'>{{option.Issue_Qty}}</span>
+                    </td>
+                    <td>
+                        <input class="form-control" [name]="'Accept'+i"
+                        type="text"
+                        [(ngModel)]="option.Accept_Qty"
+                        CompacctDigitonly="true"
+                        (change)='checkIfExceed(i)'
+                        [required]="true"
+                        *ngIf='!option.issue_flag'
+                        placeholder="Accept Qty" />
+                        <span *ngIf='option.issue_flag'>{{option.Accept_Qty}}</span>
+                    </td>
+                    <td>
+                        {{option.UOM}}
+                    </td>
+                </tr>
+                <!-- <tr>
+      <td colspan="4">Total</td>
+      <td>{{getTotalValue()}}</td>
+    </tr> -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-group">
+            <div class="col-sm-12">
+                <h2></h2>
+            </div>
+        </div>
+    <br>
+</form>
+
+<p-footer>
+    <button type="button" pButton icon="pi pi-close" (click)="AcceptStockModal=false" label="CANCEL" class="ui-button-secondary"></button>
+
+    <button type="button" pButton icon="pi pi-check" (click)="SaveAcceptStockTransfer()" label="Update"></button>
 </p-footer>
 </p-dialog>

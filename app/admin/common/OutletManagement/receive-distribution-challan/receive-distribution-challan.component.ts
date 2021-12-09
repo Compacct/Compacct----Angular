@@ -8,6 +8,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 
@@ -63,7 +64,8 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -92,7 +94,9 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
   }
-  clearData(){}
+  clearData(){
+    this.ngxService.stop();
+  }
   getConfirmDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjBrowseData.From_Date = dateRangeObj[0];
@@ -134,28 +138,28 @@ export class ReceiveDistributionChallanComponent implements OnInit {
         ? this.DateService.dateConvert(new Date(this.ObjBrowseData.To_Date))
         : this.DateService.dateConvert(new Date());
     if(valid){
-      if(this.ObjBrowseData.Material_Type === "Store Item"){
-        const tempDate = {
-          Material_Type : this.ObjBrowseData.Material_Type,
-          From_Date :start,
-          To_Date :end,
-          Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-          //Cost_Cen_ID :30
-          Brand_ID  : 0
-        }
+      // if(this.ObjBrowseData.Material_Type === "Store Item"){
+      //   const tempDate = {
+      //     Material_Type : this.ObjBrowseData.Material_Type,
+      //     From_Date :start,
+      //     To_Date :end,
+      //     Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      //     //Cost_Cen_ID :30
+      //     Brand_ID  : 0
+      //   }
   
-       const obj = {
-        "SP_String": "SP_Store_Item_Indent",
-        "Report_Name_String": "Get Dispatch Details For Accept Challan Store Item",
-        "Json_Param_String": JSON.stringify([tempDate])
-       }
-       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        this.GetAllDataList = data;
-        console.log("this.GetAllDataList",this.GetAllDataList);
-        this.DistributionSearchFormSubmitted = false;
-       // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
-      })
-      } else {
+      //  const obj = {
+      //   "SP_String": "SP_Store_Item_Indent",
+      //   "Report_Name_String": "Get Dispatch Details For Accept Challan Store Item",
+      //   "Json_Param_String": JSON.stringify([tempDate])
+      //  }
+      //  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      //   this.GetAllDataList = data;
+      //   console.log("this.GetAllDataList",this.GetAllDataList);
+      //   this.DistributionSearchFormSubmitted = false;
+      //  // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
+      // })
+      // } else {
       const tempDate = {
         Material_Type : this.ObjBrowseData.Material_Type,
         From_Date :start,
@@ -176,7 +180,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       this.DistributionSearchFormSubmitted = false;
      // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
     })
-  }
+  //}
   }
   }
   editmaster(masterProduct){
@@ -329,6 +333,8 @@ export class ReceiveDistributionChallanComponent implements OnInit {
   }
   saveCheck(){
      if(this.fromCostId && this.fromGodownId){
+      this.ngxService.start();
+      this.tabEdit = false;
       const TempObj = {
         Cost_Cen_ID : this.fromCostId,
         Godown_Id : this.fromGodownId
@@ -343,6 +349,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
           this.saveDispatch();
         }
         else if(data[0].Status === "Disallow"){    // Disallow
+          this.ngxService.stop();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "c",
@@ -353,6 +360,15 @@ export class ReceiveDistributionChallanComponent implements OnInit {
           });
           this.productDetails = [];
           this.clearData();
+        } else {
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
         }
       })
     }
@@ -409,6 +425,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
             this.updateexpirydate();
           this.searchData(true);
         this.tabEdit = false;
+        this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
         key: "compacct-toast",
@@ -418,6 +435,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       });
           }
           else{
+            this.ngxService.stop();
             this.compacctToast.clear();
                 this.compacctToast.add({
                   key: "compacct-toast",
@@ -429,6 +447,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       })
       }
       else{
+        this.ngxService.stop();
         this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
@@ -440,6 +459,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     }
     }
     else{
+      this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -507,6 +527,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
         if(this.productDetails[i]['remarks'] === false){
           //flag = false;
           if(this.productDetails[i]['Accept_Reason_ID'] === undefined){
+            this.ngxService.stop();
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",

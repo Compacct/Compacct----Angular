@@ -74,6 +74,8 @@ import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { PivotFieldListAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { PivotViewAllModule } from '@syncfusion/ej2-angular-pivotview';
 import { DateTimePickerModule } from "@syncfusion/ej2-angular-calendars";
+import { GanttAllModule } from '@syncfusion/ej2-angular-gantt';
+import { SelectionService } from '@syncfusion/ej2-angular-gantt';
 // DateRange
 import { DateRangePickerModule } from "@syncfusion/ej2-angular-calendars";
 import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
@@ -222,6 +224,11 @@ import { DirectPaymentFollowupNepalComponent } from './common/CRM/Transaction/di
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
 import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-package-master/hearing-package-master.component';
+import { CompacctTxnTaskComponent } from './common/TenderManagement/compacct-txn-task/compacct-txn-task.component';
+import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
+import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
+import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
+import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
 
 
 @NgModule({
@@ -381,6 +388,11 @@ import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-packa
     K4cFranchiseSaleBillComponent,
     TenderEstimateComponent,
     HearingPackageMasterComponent,
+    CompacctTxnTaskComponent,
+    TutoManualPaymentCollectionComponent,
+    OutletSaleBillWithoutBatchSelectComponent,
+    OutletStockTransferAutoBatchComponent,
+    TutoUploadDataSupportComponent,
   ],
   imports: [
     CommonModule,
@@ -422,7 +434,8 @@ import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-packa
     SelectButtonModule,
     DataViewModule,
     PanelModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    GanttAllModule
   ],
   exports: [],
   providers: [
@@ -434,6 +447,7 @@ import { HearingPackageMasterComponent } from './common/CRM/Master/hearing-packa
     CompacctGetDistinctService,
     CompacctAccountJournal,
     DateTimeConvertService,
+    SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
   ]
 })

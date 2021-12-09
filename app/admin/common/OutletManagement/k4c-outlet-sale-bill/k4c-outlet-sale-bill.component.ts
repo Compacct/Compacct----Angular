@@ -153,6 +153,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
       Header: "POS Bill",
       Link: " Outlet -> Sale Bill"
     });
+   // this.getselectitem();
   }
 
   ngOnInit() {
@@ -165,10 +166,10 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
       Header: "POS Bill",
       Link: " Outlet -> Sale Bill"
     });
+    this.getselectitem();
     this.GetProductTypeFilterList();
     this.getbilldate();
     this.getcostcenid();
-    this.getselectitem();
     this.getgodownid();
     //this.getadvorderdetails();
     this.getwalletamount();
@@ -312,6 +313,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
 
   }
   GetSearchedlist(){
+    this.seachSpinner = true;
     const start = this.searchObj.start_date
       ? this.DateService.dateConvert(new Date(this.searchObj.start_date))
       : this.DateService.dateConvert(new Date());

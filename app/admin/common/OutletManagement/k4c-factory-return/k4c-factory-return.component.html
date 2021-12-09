@@ -87,6 +87,7 @@
                                             <th>To Stock Point</th>
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
+                                            <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -114,12 +115,11 @@
                                                             </a>
                                                         </li>
 
-                                                        <!-- <li>
-                                                              <a (click)="editmaster(col)">
-                                                                  <i class="fa fa-print" aria-hidden="true"></i>
-                                                                  Print
-                                                              </a>
-                                                          </li> -->
+                                                        <li>
+                                                            <a (click)="PrintRTF(col)">
+                                                                <i class="fa fa-print" aria-hidden="true"></i> Print
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
@@ -134,6 +134,7 @@
                                             <td>{{col.To_godown_name}}</td>
                                             <td>{{col.Toyal_Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>

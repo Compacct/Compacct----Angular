@@ -8,6 +8,7 @@ import { CompacctCommonApi } from "../../../../../shared/compacct.services/commo
 import { CompacctGlobalApiService } from "../../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../../shared/compacct.global/dateTime.service";
 import { CompacctHeader } from "../../../../../shared/compacct.services/common.header.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 @Component({
@@ -94,6 +95,11 @@ export class K4CDispatchToOutletComponent implements OnInit {
   Refreshlist = [];
   RefreshData = [];
   editIndentList = [];
+  Auto_Accepted: any;
+  totalqty: any;
+  totalaccpqty: any;
+  batchqty: any;
+  totaldelqty: any;
 
   constructor(
     private $http: HttpClient,
@@ -102,7 +108,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
     ) { }
 
   ngOnInit() {
@@ -207,6 +214,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   // this.IndentNoList = [];
   // this.BackupIndentList = [];
   //this.IndentFilter = []
+  this.ngxService.stop();
   }
   getCostcenter(){
     console.log(this.Objdispatch.Brand_ID)
@@ -280,6 +288,16 @@ export class K4CDispatchToOutletComponent implements OnInit {
       }
     })
   }
+  autoacceptedChange() {
+    //this.ExpiredProductFLag = false;
+   if(this.Objdispatch.Cost_Cen_ID) {
+     const ctrl = this;
+     const autoacceptedObj = $.grep(ctrl.outletList,function(item: any) {return item.Cost_Cen_ID == ctrl.Objdispatch.Cost_Cen_ID})[0];
+     console.log(autoacceptedObj);
+     this.Auto_Accepted = autoacceptedObj.Auto_Accepted;
+     
+    }
+    }
   Getgodown(){
     this.toutLetDis = true;
     console.log(this.Objdispatch.Cost_Cen_ID)
@@ -297,6 +315,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
         this.To_Godown_ID_Dis = true;
       }
       this.GetreqItem();
+      this.autoacceptedChange();
     })
   }
     CheckLengthProductID(ID) {
@@ -339,24 +358,29 @@ export class K4CDispatchToOutletComponent implements OnInit {
     this.filteredData.forEach((item)=>{
       Indval += Number(item.Req_Qty)
     });
-
-    return Indval ? Indval : '-';
+    this.totalqty = (Indval).toFixed(2);
+    return Indval ? Indval.toFixed(2) : '-';
   }
   getTotalBatchValue(){
     let batchval = 0;
     this.filteredData.forEach((item)=>{
       batchval += Number(item.Batch_Qty)
     });
-
-    return batchval ? batchval : '-';
+    this.batchqty = (batchval).toFixed(2);
+    return batchval ? batchval.toFixed(2) : '-';
   }
   getTotalIssueValue(){
     let issueval = 0;
+    let acceptedval = 0;
     this.filteredData.forEach((item)=>{
       issueval += Number(item.Delivery_Qty)
+      if (this.AccQtydis) {
+      acceptedval += Number(item.Accepted_Qty)
+      }
     });
-
-    return issueval ? issueval : '-';
+    this.totaldelqty = (issueval).toFixed(2);
+    this.totalaccpqty = (acceptedval).toFixed(2);
+    return issueval ? issueval.toFixed(2) : '-';
   }
   showDialog() {
     this.displaysavepopup = true;
@@ -369,7 +393,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   //   }
   //  })
    this.productDetails.forEach(obj => {
-    if(obj.Delivery_Qty && Number(obj.Delivery_Qty) !== 0 ){
+    if(obj.Delivery_Qty){  //   && Number(obj.Delivery_Qty) !== 0
     //  console.log(filteredData.push(obj.Product_ID));
     this.filteredData.push(obj);
      // console.log("this.filteredData===",this.filteredData);
@@ -378,8 +402,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
   }
   // FOR SAVE DISPATCH
   getReqNo(){
+    let Rarr =[]
     if(this.SelectedIndent.length) {
-      let Rarr =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -389,20 +413,29 @@ export class K4CDispatchToOutletComponent implements OnInit {
         }
 
     });
-      console.log("Table Data ===", Rarr)
-      return Rarr.length ? JSON.stringify(Rarr) : '';
+      // console.log("Table Data ===", Rarr)
+      // return Rarr.length ? JSON.stringify(Rarr) : '';
     }
+    else {
+      const Dobj = {
+        Req_No : 'NA'
+        }
+        Rarr.push(Dobj)
+    }
+    console.log("Table Data ===", Rarr)
+    return Rarr.length ? JSON.stringify(Rarr) : '';
   }
   saveDispatch(){
    console.log("saveqty",this.saveqty());
    console.log("this.BackUpproductDetails",this.BackUpproductDetails);
   if(this.BackUpproductDetails.length && this.saveqty()){
-
+    // this.ngxService.start();
+    // this.displaysavepopup = false;
     if(this.doc_no){
       this.saveData = [];
       console.log ("Update");
       this.BackUpproductDetails.forEach(el=>{
-        if(el.Delivery_Qty && Number(el.Delivery_Qty) !== 0 ){
+        if(el.Delivery_Qty){
           const saveObj = {
             Doc_No: this.doc_no,
             Accepted_Qty : el.Accepted_Qty,
@@ -426,13 +459,15 @@ export class K4CDispatchToOutletComponent implements OnInit {
             Accept_Reason : el.Accepted_Qty === el.Delivery_Qty ? 'NA' : el.Accept_Reason,
             Status : "Updated",
             Material_Type : "Finished",
-            Total_Qty : Number(this.getTotalValue('Delivery_Qty')),
-            Total_Accepted_Qty : Number(this.getTotalValue('Accepted_Qty'))
+            Total_Qty : Number(this.totaldelqty),
+            Total_Accepted_Qty : Number(this.totalaccpqty)
           }
           this.saveData.push(saveObj)
         }
       })
       console.log("this.saveData",this.saveData);
+      this.ngxService.start();
+      this.displaysavepopup = false;
      const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String": "Add K4C Txn Distribution",
@@ -446,6 +481,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
         this.indentdateDisabled = true;
         this.From_Godown_ID_Dis = false;
         this.To_Godown_ID_Dis = false;
+        this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
         key: "compacct-toast",
@@ -466,24 +502,35 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.displaysavepopup = false;
       this.SelectedIndent = [];
       this.IndentFilter = [];
-     }
+
+      //
+      this.Objdispatch = new dispatch();
+      this.productDetails = [];
+      this.BackUpproductDetails = [];
+      this.clearData();
+      this.todayDate = new Date();
+      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+     }else{
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
+    }
      })
-     this.Objdispatch = new dispatch();
-     this.productDetails = [];
-     this.BackUpproductDetails = [];
-     this.clearData();
-     this.todayDate = new Date();
-     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     }
 
     else{
        console.log("create");
       this.saveData = [];
       this.BackUpproductDetails.forEach(el=>{
-        if(el.Delivery_Qty && Number(el.Delivery_Qty) !== 0 ){
+        if(el.Delivery_Qty){      //&& Number(el.Delivery_Qty) !== 0
           const saveObj = {
             Doc_No: "A",
-            Accepted_Qty : 0,
+            Accepted_Qty : this.Auto_Accepted == "N" ? 0 : el.Delivery_Qty,
             Doc_Date: this.DateService.dateTimeConvert(new Date(this.ChallanDate)),
             F_Cost_Cen_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
             F_Godown_ID: this.Objdispatch.From_Godown_ID,
@@ -503,12 +550,16 @@ export class K4CDispatchToOutletComponent implements OnInit {
             Accept_Reason_ID : null,
             Accept_Reason : null,
             Status : "Not Updated",
-            Material_Type : "Finished"
+            Material_Type : "Finished",
+            Total_Qty : Number(this.totaldelqty),
+            Total_Accepted_Qty  : this.Auto_Accepted == "N" ? 0 : Number(this.totaldelqty)
           }
           this.saveData.push(saveObj)
         }
       })
       console.log("this.saveData",this.saveData);
+      this.ngxService.start();
+      this.displaysavepopup = false;
      const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String": "Add K4C Txn Distribution",
@@ -523,6 +574,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
         this.indentdateDisabled = true;
         this.From_Godown_ID_Dis = false;
         this.To_Godown_ID_Dis = false;
+        this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
         key: "compacct-toast",
@@ -543,27 +595,31 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.displaysavepopup = false;
       this.SelectedIndent = [];
       this.IndentFilter = [];
-     }
-     else{
-      this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Quantity can't be more than in batch available quantity"
-          });
-    }
-     })
+
+      //
+      
      this.Objdispatch = new dispatch();
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.clearData();
      this.todayDate = new Date();
      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+     }else{
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
+    }
+     })
 
     }
   }
   else{
+    this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -603,10 +659,15 @@ console.log("Objdispatch",this.Objdispatch);
       batch_qty = el.Qty
      }
   })
+  console.log("NativeitemList",this.NativeitemList);
+  console.log("Objadditem",this.Objadditem);
+  
+  // const ProductArrValid = this.NativeitemList.filter(item => item.Product_ID === Number(this.Objadditem.Product_ID));
+  // const ExitsProduct = this.productDetails.filter(item => Number(item.product_id) === Number(this.Objadditem.Product_ID));
   const ProductArrValid = this.NativeitemList.filter( item => Number(item.Product_ID) === Number(this.Objadditem.Product_ID));
-
-  const ExitsProduct = this.productDetails.filter( item => Number(item.product_id) === Number(this.Objadditem.Product_ID));
-
+ const ExitsProduct = this.productDetails.filter( item => Number(item.product_id) === Number(this.Objadditem.Product_ID));
+ console.log("ProductArrValid.length",ProductArrValid.length); 
+ console.log("ExitsProduct.length",ExitsProduct.length);
 
   if(ProductArrValid.length){
     if(ExitsProduct.length) {
@@ -626,7 +687,7 @@ console.log("Objdispatch",this.Objdispatch);
         Product_Description : item.Product_Description,
         Batch_No : batch_id,
         Batch_Qty : batch_qty,
-        Req_Qty :item.Req_Qty,
+        //Req_Qty :item.Req_Qty,
         Rate: item.Sale_rate,
         Delivery_Qty : Number(this.Objadditem.Issue_Qty),
         UOM: item.UOM,
@@ -651,7 +712,7 @@ console.log("Objdispatch",this.Objdispatch);
         Product_Description : item.Product_Description,
         Batch_No : batch_id,
         Batch_Qty : batch_qty,
-        Req_Qty :item.Req_Qty,
+        Req_Qty :  0,
         Rate: item.Sale_rate,
         Delivery_Qty : Number(this.Objadditem.Issue_Qty),
         UOM: item.UOM,

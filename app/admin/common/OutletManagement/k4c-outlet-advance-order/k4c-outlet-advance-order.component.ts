@@ -27,6 +27,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   buttonname = "Save & Print Bill";
   searchObj : search = new search();
   seachSpinner = false;
+  seachSpinner1 = false;
   Searchlist = [];
   MobileSubmitFormSubmitted = false;
   Searchbymobilelist = [];
@@ -90,6 +91,10 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Fromgodown_id: any;
   checkSave = true;
   // TimeValue: Date = new Date('10:00 AM');
+  RefundPopup = false;
+  Adv_Order_No: any;
+  ObjRefundcashForm : RefundcashForm  = new RefundcashForm();
+  RAmount_Payable: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -118,6 +123,10 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
         if(this.QueryStringObj.Edit){
           this.CustomerDisabledFlag = true;
           this.Edit(this.QueryStringObj);
+        }
+        if(this.QueryStringObj.Edit_Adv_Order){
+          this.CustomerDisabledFlag = true;
+          this.EditFromBrowse(this.QueryStringObj);
         }
       }
      } );
@@ -234,6 +243,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   }
 
   Showdata(){
+    this.seachSpinner = true;
     this.Searchlist = [];
     //console.log("Search_By",this.Search_By)
     const start = this.searchObj.start_date
@@ -247,7 +257,8 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
       To_Date : end,
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
       Menu_Ref_Id : this.$CompacctAPI.CompacctCookies.Menu_Ref_ID,
-      Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      //Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Cost_Cent_ID : this.ObjaddbillForm.BrowserDeliveryto,
       Search_By : this.Search_By
     }
 
@@ -260,6 +271,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
        this.Searchlist = data;
        //console.log('searchlist=====',this.Searchlist)
        //this.seachSpinner = false;
+       this.seachSpinner = false;
      })
   }
   getTotalValue(key){
@@ -411,7 +423,7 @@ getorderdate(){
 getcostcenid(){
   const obj = {
     "SP_String": "SP_Controller_Master",
-    "Report_Name_String": "Get Sale Requisition Outlet",
+    "Report_Name_String": "Get - Cost Center Name All",
     "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
     //"Json_Param_String": JSON.stringify([{User_ID : 61}])
    }
@@ -420,15 +432,36 @@ getcostcenid(){
    this.FromCostCentId = data[0].Cost_Cen_ID ? data[0].Cost_Cen_ID : 0;
    //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
    this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
-  //  if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
-  this.ObjaddbillForm.BrowserDeliveryto = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
-  //  }
+   if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
+   this.ObjaddbillForm.BrowserDeliveryto = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+   } else {
+    this.ObjaddbillForm.BrowserDeliveryto = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+   }
    //console.log("this.ObjaddbillForm.BroeItem",this.ObjaddbillForm.BroeItem);
    this.getselectitem();
-   //console.log("this.returnedID======",this.returnedID);
-
+  //console.log("this.returnedID======",this.returnedID);
 
   });
+  // const obj = {
+  //   "SP_String": "SP_Controller_Master",
+  //   "Report_Name_String": "Get Sale Requisition Outlet",
+  //   "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+  //   //"Json_Param_String": JSON.stringify([{User_ID : 61}])
+  //  }
+  // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //  this.returnedID = data;
+  //  this.FromCostCentId = data[0].Cost_Cen_ID ? data[0].Cost_Cen_ID : 0;
+  //  //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  //  this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+  // //  if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
+  // this.ObjaddbillForm.BrowserDeliveryto = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+  // //  }
+  //  //console.log("this.ObjaddbillForm.BroeItem",this.ObjaddbillForm.BroeItem);
+  //  this.getselectitem();
+  //  //console.log("this.returnedID======",this.returnedID); 
+
+
+  // });
 }
 getgodownid(){
   const TempObj = {
@@ -659,6 +692,7 @@ add(valid) {
     // Weight_in_Pound : this.ObjaddbillForm.Weight_in_Pound,
     // Acompanish : this.ObjaddbillForm.Acompanish,
     Order_Taken_By : this.ObjaddbillForm.Order_Taken_By,
+    Delivery_Charge : this.ObjaddbillForm.Delivery_Charge ? this.ObjaddbillForm.Delivery_Charge : 0,
 
     Net_Price : Number(rate).toFixed(2),
     Stock_Qty :  Number(this.ObjaddbillForm.Stock_Qty),
@@ -674,7 +708,7 @@ add(valid) {
     CGST_Amount : Number(CGST_Amount).toFixed(2),
     GST_Tax_Per : Number(this.ObjaddbillForm.GST_Tax_Per),
     GST_Tax_Per_Amt : this.ObjaddbillForm.GST_Tax_Per_Amt,
-    Net_Amount : Number(totalAmt).toFixed(2)
+    Net_Amount : this.ObjaddbillForm.Delivery_Charge ? (Number(totalAmt) + Number(this.ObjaddbillForm.Delivery_Charge)).toFixed(2) : Number(totalAmt).toFixed(2)
   };
 
  // console.log(productObj);
@@ -687,7 +721,9 @@ add(valid) {
     //console.log(item.Product_ID == this.ObjaddbillForm.Product_ID);
     if(item.Product_ID == this.ObjaddbillForm.Product_ID && item.Modifier == this.ObjaddbillForm.Modifier1) {
       //console.log('select item true');
+      item.Delivery_Charge = Number(item.Delivery_Charge) + Number( productObj.Delivery_Charge);
       item.Stock_Qty = Number(item.Stock_Qty) + Number( productObj.Stock_Qty);
+      item.Weight_in_Pound = Number(item.Weight_in_Pound) + Number( productObj.Weight_in_Pound);
       item.Max_Discount = Number(item.Max_Discount) + Number(productObj.Max_Discount);
       item.Amount = Number(item.Amount) + Number(productObj.Amount);
       item.Gross_Amount = Number(item.Gross_Amount) + Number(productObj.Gross_Amount);
@@ -937,12 +973,25 @@ saveprintandUpdate(){
        });
        this.Spinner = false;
       this.ngxService.stop();
+      if(this.buttonname !== "Update"){
        this.SaveNPrintBill();
        this.clearData();
        this.productSubmit =[];
        this.clearlistamount();
        this.cleartotalamount();
        this.router.navigate(['./POS_BIll_Order']);
+      } else {
+       this.SaveNPrintBill();
+       this.clearData();
+       this.productSubmit =[];
+       this.clearlistamount();
+       this.cleartotalamount();
+       this.tabIndexToView = 0;
+       this.router.navigate(['./K4C_Outlet_Advance_Order']);
+       this.getcostcenid();
+       this.Showdata();
+       this.Showdatabymobile(true);
+      }
       } else{
         this.Spinner = false;
         this.ngxService.stop();
@@ -1025,6 +1074,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
           Acompanish : item.Acompanish,
           Order_Taken_By : item.Order_Taken_By,
           Rate : item.Net_Price,
+          Delivery_Charge : item.Delivery_Charge,
           Qty : item.Stock_Qty,
           Amount : item.Amount,
           Discount_Per : item.Max_Discount,
@@ -1072,6 +1122,21 @@ SaveNPrintBill() {
 }
 
 // EDIT ORDER
+EditFromBrowse(Erow){
+  //this.DocNO = undefined;
+    //console.log("Edit",eROW);
+    this.clearData();
+    if(Erow.Adv_Order_No){
+    this.Objcustomerdetail.Adv_Order_No = Erow.Adv_Order_No;
+   // console.log('advance order id ==',eROW.Adv_Order_No)
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "UPDATE"];
+    this.buttonname = "Update";
+    //console.log("this.EditDoc_No ", this.Objcustomerdetail.Adv_Order_No);
+    this.geteditlist(this.Objcustomerdetail.Adv_Order_No);
+    }
+
+  }
 Edit(eROW){
   //this.DocNO = undefined;
     //console.log("Edit",eROW);
@@ -1135,6 +1200,7 @@ geteditlist(Adv_Order_No){
         Changes_on_Cake : element.Changes_on_Cake,
         Order_Taken_By : element.Order_Taken_By,
         Net_Price : Number(element.Rate),
+        Delivery_Charge : Number(element.Delivery_Charge),
         Stock_Qty :  Number(element.Qty),
         Amount :Number(element.Amount).toFixed(2),
         Max_Discount : Number(element.Discount_Per),
@@ -1375,7 +1441,12 @@ DeliveryDetailSubmit(){
 }
 
 HoldBill(){
-  this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Save & Print Bill';
+  //this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Save & Print Bill';
+  if(this.QueryStringObj.Edit_Adv_Order){
+    this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Update';
+  } else {
+    this.buttonname = this.Hold_Order_Flag ? "Hold Order" : 'Save & Print Bill';
+  }
 
 }
 RedirectTo (obj){
@@ -1391,6 +1462,14 @@ CreateBill(col,val){
       Adv_Order_No : col.Adv_Order_No,
       Del_Cost_Cent_ID : col.Del_Cost_Cent_ID,
       Edit_from_Border : true
+    }
+    this.RedirectTo(TempObj);
+  }
+  if (val === 'editorder') {
+    const TempObj = {
+      Redirect_To : './K4C_Outlet_Advance_Order',
+      Adv_Order_No : col.Adv_Order_No,
+      Edit_Adv_Order : true
     }
     this.RedirectTo(TempObj);
   }
@@ -1421,6 +1500,87 @@ clearData(){
   this.Objcustomerdetail.Del_Cost_Cent_ID ='32';
   this.Hold_Order_Flag = false;
   //this.DocNO = undefined;
+}
+
+// REFUND
+Refund(advono){
+  this.ObjRefundcashForm = new RefundcashForm();
+  if (advono.Adv_Order_No) {
+    this.Adv_Order_No = advono.Adv_Order_No;
+    this.RAmount_Payable = advono.Total_Paid - advono.Refund_Amt;
+    this.RefundPopup = true;
+  }
+
+}
+getdataforRefundSave(){
+  if(this.ObjRefundcashForm.Wallet_Ac_ID){
+    this.walletlist.forEach(el => {
+      if(Number(this.ObjRefundcashForm.Wallet_Ac_ID) === Number(el.Txn_ID)){
+        this.ObjRefundcashForm.Wallet_Ac = el.Ledger_Name
+      }
+    });
+}
+this.ObjRefundcashForm.Wallet_Ac_ID = this.ObjRefundcashForm.Wallet_Ac_ID ? this.ObjRefundcashForm.Wallet_Ac_ID : 0 ;
+this.ObjRefundcashForm.Wallet_Ac = this.ObjRefundcashForm.Wallet_Ac ? this.ObjRefundcashForm.Wallet_Ac : "NA" ;
+this.ObjRefundcashForm.Wallet_Amount = this.ObjRefundcashForm.Wallet_Amount ? this.ObjRefundcashForm.Wallet_Amount : 0;
+this.ObjRefundcashForm.Cash_Amount = this.ObjRefundcashForm.Cash_Amount ? this.ObjRefundcashForm.Cash_Amount : 0;
+
+let temparr = []
+const TempObj = {
+  Doc_No : this.Adv_Order_No,
+  Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+  //Created_On : this.Objcustomerdetail.Del_Date_Time,
+  Created_By : this.$CompacctAPI.CompacctCookies.User_ID
+}
+ temparr.push({...TempObj,...this.ObjRefundcashForm})
+ //console.log(temparr)
+ return JSON.stringify(temparr);
+}
+RefundSave(){
+  if((this.ObjRefundcashForm.Cash_Amount > this.RAmount_Payable) ||
+     (this.ObjRefundcashForm.Wallet_Amount > this.RAmount_Payable)){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Refund amount is more than amount received"
+    });
+    return false;
+  }
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Save Outlet Adv Order Refund Payment",
+    "Json_Param_String": this.getdataforRefundSave()
+   }
+   this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    var tempID = data[0].Column1;
+    this.Adv_Order_No = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+     // const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: " " + tempID,
+       //detail: "Succesfully done" 
+     });
+     this.RefundPopup = false;
+     this.Showdata();
+     this.Showdatabymobile(true);
+     this.ObjRefundcashForm = new RefundcashForm();
+    } else{
+
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
 }
 
 }
@@ -1475,6 +1635,7 @@ clearData(){
   Weight_in_Pound : number;
   Acompanish : number;
   Order_Taken_By : string;
+  Delivery_Charge : number;
 }
 class cashForm{
   Coupon_Per : number;
@@ -1518,5 +1679,12 @@ class HomeDelivery{
   Delivery_Near_By : any;
   Delivery_Pin_Code : any;
   //Delivery_Alt_Mobile_No:any;
+}
+class RefundcashForm{
+  Wallet_Ac_ID : any;
+  Wallet_Ac : string;
+  Wallet_Amount : number;
+  Cash_Amount: number;
+  // Refund_Amount : number = 0;
 }
 

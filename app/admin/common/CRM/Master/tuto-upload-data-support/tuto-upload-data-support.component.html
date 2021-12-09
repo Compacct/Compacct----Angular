@@ -1,0 +1,85 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <form name="BillSearchForm" #BillSearchForm="ngForm" novalidate>
+                        <div class="form-group">
+                            <div class='col-sm-12'>
+                                <div class="alert" style="
+                                  background-color: #fcf8e3;
+                                  border-color: #faebcc;
+                                  font-weight: 400;
+                                  margin-bottom: 0;" role="alert">
+                                    Column Name Must Be &nbsp;&nbsp;&nbsp;<code>Student_No</code> , <code>User_Name</code> , <code>Call_Date_Time</code> .
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class='row'>
+                                    <div class="col-sm-12">
+
+                                        <div style="padding: 15px;">
+                                            <label class="control-label">Upload CSV File</label>
+                                            <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept=".csv" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="handleFileSelect($event)"></p-fileUpload>
+                                            <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-12">
+                                  
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-primary custombutton pull-right" (click)="SaveLeadJSON()" id="load" [disabled]="seachSpinnersave">
+                                                <p-progressSpinner *ngIf="seachSpinnersave" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                                  animationDuration=".5s"></p-progressSpinner>
+                                                <span *ngIf="!seachSpinnersave" class="glyphicon glyphicon-save"></span>&nbsp;Update
+                                              </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6" *ngIf='LeadListRerturned.length'>
+                                
+                                 <div class="table-responsive no-padding table-id">
+                                    <p-table [value]="LeadListRerturned" [columns]='["Student_No","User_Name","Call_Date_Time"]' #dt4 [paginator]="LeadListRerturned.length ? true : false"
+                                        [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowHover]="true" [globalFilterFields]='["Student_No","User_Name","Call_Date_Time"]'>
+
+                                        <ng-template pTemplate="caption">
+                                           
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                    <th>Mobile</th>
+                                                    <th>User Name</th>
+                                                    <th>Call Date Time</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>{{ col.Student_No}}</td>
+                                                <td>{{ col.User_Name}}</td>
+                                                <td>{{ col.Call_Date_Time | date:"dd/MMM/yyyy hh:mm a"}}</td>
+
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

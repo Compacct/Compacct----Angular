@@ -356,6 +356,8 @@ export class TutoSupportQueryComponent implements OnInit {
     this.ObjTicket.Registration_Date = undefined;
     this.ObjTicket.District = undefined;
     this.ObjTicket.Class_ID = undefined;
+    this.ObjTicket.School_Name = undefined;
+    this.ObjTicket.Ref_Code = undefined;
     this.ObjTicket.Asigned_To = undefined;
     this.ObjTicket.Student_ID = undefined;
     this.ObjTicket.Paid = undefined;
@@ -386,6 +388,8 @@ export class TutoSupportQueryComponent implements OnInit {
             this.ObjTicket.District = ReturnObj.District;
             this.ObjTicket.Class_ID = ReturnObj.Class_ID;
             this.ObjTicket.Student_ID = ReturnObj.Student_ID;
+            this.ObjTicket.School_Name = ReturnObj.School_Name;
+            this.ObjTicket.Ref_Code = ReturnObj.Ref_Code;
             this.ObjTicket.Asigned_To = this.$CompacctAPI.CompacctCookies.User_ID;
             this.ObjTicket.Paid = ReturnObj.Paid === 'Y' ? 'YES' : 'NO';
             this.ObjTicket.Paid = ReturnObj.Paid === 'Y' ? 'YES' : 'NO';
@@ -416,6 +420,8 @@ export class TutoSupportQueryComponent implements OnInit {
             this.ObjTicket.Blocked = undefined;
             this.ObjTicket.Verified = undefined;
             this.ObjTicket.Student_ID = undefined;
+            this.ObjTicket.School_Name = undefined;
+            this.ObjTicket.Ref_Code = undefined;
             this.TicketWithContactID = false;
            }
       });
@@ -1903,6 +1909,9 @@ class Ticket {
   Device_Model:string;
   Blocked:string;
   Verified:string;
+
+  School_Name:string;
+ Ref_Code:string;
 }
 class SearchContactMgs {
   start_date:string;

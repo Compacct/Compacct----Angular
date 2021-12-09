@@ -134,7 +134,7 @@
                                                             Print
                                                         </a>
                                                     </li> -->
-                                                        <li>
+                                                        <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'A'">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>
@@ -167,7 +167,7 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-2">
                                                         <label class="control-label">Date</label>
-                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='BillDate' [min]='minDate' [max]='maxDate'></ejs-datepicker>
+                                                        <ejs-datepicker strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='BillDate' [min]='minDate' [max]='maxDate'></ejs-datepicker>
                                                         <!-- <input class="form-control" name="Date" [disabled]="true" [ngModel]='BillDate  | date :"dd-MMM-yyyy"'> -->
                                                     </div>
                                                     <div class="col-sm-3">
@@ -380,6 +380,7 @@
             <ng-template pTemplate="header">
                 <tr>
                     <th>Product Type</th>
+                    <th>Product Id</th>
                     <th>Product Description</th>
                     <th>UOM</th>
                     <th>Batch No</th>
@@ -393,6 +394,7 @@
                 <tr>
 
                     <td>{{col.Product_Type}}</td>
+                    <td>{{col.Product_ID}}</td>
                     <td>{{col.Product_Description}}</td>
                     <td>{{col.UOM}}</td>
                     <td>{{col.Batch_No}}</td>
@@ -403,9 +405,10 @@
 
                 </tr>
                 <tr *ngIf='rowIndex === (productlist.length - 1)'>
-                    <td colspan="5" class="text-right">Total</td>
+                    <td colspan="6" class="text-right">Total</td>
                     <td>{{getTotalValue('batch_Qty')}}</td>
                     <td>{{getTotalValue('Closing_Qty')}}</td>
+                    <td></td>
                 </tr>
             </ng-template>
         </p-table>
@@ -413,6 +416,9 @@
 
 
     <p-footer>
+        <button *ngIf='editList.length' type="button" (click)="exportoexcel(editList,'Closing_stock_with_batch')" class="btn btn-success">
+            <i class="glyphicon glyphicon-save"></i>&nbsp;  export to excel
+          </button>
         <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
      <i class="fa fa-close"></i>&nbsp;  Close
    </button>

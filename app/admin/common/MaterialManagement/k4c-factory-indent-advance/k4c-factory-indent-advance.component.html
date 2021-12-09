@@ -30,7 +30,7 @@
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <form name="indentForm" #indentForm="ngForm" novalidate>
                             <div class="form-group">
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <label class="control-label">Search By</label>
                                     <select class="form-control" name="Search_By" [(ngModel)]="Search_By">
 
@@ -47,9 +47,9 @@
 
                                 </div>
 
-                                <div class="col-sm-3">
-                                    <label class="control-label"> Brand&nbsp;<span class="text-danger">*</span></label>
-                                    <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="ObjBrowseData.Brand_ID" [ngClass]="{'clearance': indentFormSubmit && Brand_ID?.errors?.required}" required>
+                                <div class="col-sm-2">
+                                    <label class="control-label"> Brand</label>
+                                    <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="ObjBrowseData.Brand_ID" [ngClass]="{'clearance': indentFormSubmit && Brand_ID?.errors?.required}">
                                          <option  [ngValue]="undefined">Select</option>
                                          <option *ngFor="let option of brandList" value="{{option.Brand_ID}}">
                                              {{option.Brand_INI}}
@@ -61,6 +61,11 @@
                                   <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                   <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                </button>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-success custombutton2" (click)="exportexcel(getAllDataList,'Pending_Adv_Order')" [disabled]="!getAllDataList.length">
+                                    <span class="glyphicon glyphicon-save"></span> Export to excel
+                                 </button>
                                 </div>
                             </div>
                             <div class="form-group" *ngIf='BackupgetAllDataList.length' style="padding:15px">
@@ -95,6 +100,7 @@
                                     <tr>
                                         <th style="width:5em">Action</th>
                                         <th>Order No</th>
+                                        <th>Customer Name / Mobile No</th>
                                         <th>Product Description</th>
                                         <th>Order Date</th>
                                         <th>Order Outlet</th>
@@ -146,6 +152,7 @@
                                         <td>{{col.Adv_Order_No}}
                                             <p *ngIf="col.critical == 'Y'" style="color : red;font-weight: bold;">(CRITICAL)</p>
                                         </td>
+                                        <td>{{col.Customer_Name}} ({{col.Customer_Mobile}})</td>
                                         <td>{{col.Product_Description}}</td>
                                         <td>{{col.Order_Date | date : 'dd/MMM/yyyy'}}</td>
                                         <td>{{col.order_Outlet}}</td>

@@ -45,6 +45,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   SystemAmttotal: any;
   viewList = [];
   viewpopup = false;
+  outletdisableflag = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -102,7 +103,7 @@ export class K4cDayEndProcessComponent implements OnInit {
       ? this.DateService.dateConvert(new Date(this.req_date2))
       : this.DateService.dateConvert(new Date());
     const tempObj = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Cost_Cen_ID : this.Cost_Cen_ID_B,
       From_Date :start,
       To_Date :end,
     }
@@ -141,20 +142,42 @@ export class K4cDayEndProcessComponent implements OnInit {
     })
   }
   GetCostCenter(){
-    const tempObj = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
-    }
+    // const tempObj = {
+    //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    // }
+    // const obj = {
+    //   "SP_String": this.sp_string,
+    //   "Report_Name_String": "GET_Cost_center",
+    //   "Json_Param_String" :  JSON.stringify([tempObj])
+    // }
+    // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //   this.costCenterList = data;
+    //   this.Cost_Cen_ID = this.costCenterList[0].Cost_Cen_ID;
+    //   this.Cost_Cen_ID_B = this.costCenterList[0].Cost_Cen_ID;
+    //   console.log("Cost Center",this.costCenterList);
+    // })
     const obj = {
-      "SP_String": this.sp_string,
-      "Report_Name_String": "GET_Cost_center",
-      "Json_Param_String" :  JSON.stringify([tempObj])
-    }
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Cost Center Name All",
+      "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.costCenterList = data;
-      this.Cost_Cen_ID = this.costCenterList[0].Cost_Cen_ID;
-      this.Cost_Cen_ID_B = this.costCenterList[0].Cost_Cen_ID;
-      console.log("Cost Center",this.costCenterList);
-    })
+     this.costCenterList = data;
+     if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
+     //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
+     this.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.outletdisableflag = true;
+    // this.getGodown();
+     } else {
+      this.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.Cost_Cen_ID_B = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.outletdisableflag = false;
+    //  this.getGodown();
+     }
+     // console.log("this.costCenterList ======",this.costCenterList);
+
+    });
   }
   GetPaymentType(){
     this.Total = [];
@@ -162,7 +185,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     if(this.Datevalue){
       this.seachSpinner = true;
       const tempObj = {
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
         Date : this.DateService.dateConvert(new Date(this.Datevalue))
       }
       const obj = {
@@ -235,7 +258,8 @@ export class K4cDayEndProcessComponent implements OnInit {
   GetclosingStatus(){
     if(this.Datevalue){
       const tempObj = {
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
         Date : this.DateService.dateConvert(new Date(this.Datevalue))
       }
       const obj = {
@@ -264,7 +288,7 @@ export class K4cDayEndProcessComponent implements OnInit {
               key: "compacct-toast",
               severity: "error",
               summary: "Warn Message",
-              detail: "CLOSEING STOCK UPDATED MISMATCHED"
+              detail: "Error in closing stock update"
             });
       }
 
@@ -310,11 +334,13 @@ export class K4cDayEndProcessComponent implements OnInit {
   save(){
     let saveData = [];
     this.saveSpinner = true;
-    if (Number(this.SystemAmttotal == this.Total) && Number(this.VarianceTotal == 0)) {
+   // if (Number(this.SystemAmttotal == this.Total) && Number(this.VarianceTotal == 0)) {
     this.paymentList.forEach(ele =>{
+      if(ele.Amount){      
       const TempData = {
         Date : this.DateService.dateConvert(new Date(this.Datevalue)),
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
         Description : ele.Collection_Mode,
         Manual_Amount : Number(ele.Amount),
         System_Amount : ele.Total_Amount,
@@ -322,7 +348,9 @@ export class K4cDayEndProcessComponent implements OnInit {
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID
      }
      saveData.push(TempData)
+    }
     })
+    if (saveData.length){
     const obj = {
       "SP_String": "SP_K4C_Day_End_Process",
       "Report_Name_String": "Save_K4C_Outlet_Day_END",
@@ -330,8 +358,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("save Data",data);
-      this.saveSpinner = false;
-      this.clearData();
+      
       if(data[0].Column1 === "Save successfully"){
         this.saveSpinner = true;
         this.compacctToast.add({
@@ -340,7 +367,17 @@ export class K4cDayEndProcessComponent implements OnInit {
           summary: "Succesfully ",
           detail: "Day End Process Succesfully Saved"
         });
-      }
+        this.saveSpinner = false;
+        this.clearData();
+      } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something wrong"
+          });
+         }
     })
     }
      else {
@@ -349,7 +386,7 @@ export class K4cDayEndProcessComponent implements OnInit {
         key: "compacct-toast",
         severity: "error",
         summary: "Warn Message",
-        detail: "System amount is not equal to actual amount"
+        detail: "Please enter actual amount"
       });
      }
   }

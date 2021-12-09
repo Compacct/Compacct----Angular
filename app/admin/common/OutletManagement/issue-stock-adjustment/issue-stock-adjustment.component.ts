@@ -28,7 +28,7 @@ export class IssueStockAdjustmentComponent implements OnInit {
   godowndisableflag = false;
   productlist = [];
   flag = false;
-  myDate = new Date;
+  myDate : Date;
   IssueStockFormSubmitted = false;
   ObjBrowse : Browse  = new Browse();
   Searchedlist = [];
@@ -43,6 +43,7 @@ export class IssueStockAdjustmentComponent implements OnInit {
   Godown_ID = undefined;
   BrandId = undefined;
   remarks = undefined;
+  dateList: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -59,6 +60,7 @@ export class IssueStockAdjustmentComponent implements OnInit {
       Header: "Issue Stock Adjustment",
       Link: "Material Management -> Issue Stock Adjustment"
     });
+    this.getbilldate();
     this.GetBrand();
     this.getCostCenter();
   }
@@ -70,6 +72,22 @@ export class IssueStockAdjustmentComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+  }
+  getbilldate(){
+    const obj = {
+     "SP_String": "SP_Controller_Master",
+     "Report_Name_String": "Get - Outlet Bill Date",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.dateList = data;
+   //console.log("this.dateList  ===",this.dateList);
+    this.myDate =  new Date(data[0].Outlet_Bill_Date);
+   // on save use this
+  // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
+  
+  })
   }
   GetBrand(){
     this.BrandList = [];
@@ -370,6 +388,7 @@ const obj = {
      }
     this.ObjIssueStockAd.Remarks = [];
     this.productlist = [];
+    this.getbilldate();
   }
 
 }

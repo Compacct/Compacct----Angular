@@ -84,6 +84,7 @@
                                             <th>To Outlet</th>
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
+                                            <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -132,6 +133,7 @@
                                             <td>{{col.To_Location}}</td>
                                             <td>{{col.Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -339,6 +341,7 @@
             <ng-template pTemplate="header">
                 <tr>
                     <th>Product Name</th>
+                    <th> Batch No </th>
                     <th>Qty</th>
                     <th>Accepted Qty</th>
 
@@ -346,15 +349,16 @@
             </ng-template>
             <ng-template pTemplate="body" let-col let-i="rowIndex">
                 <tr>
-                    <ng-container *ngIf="CheckLengthProductID(col.Product_ID) !== 1 && CheckIndexProductID(col.Product_ID) === i;">
+                    <!-- <ng-container *ngIf="CheckLengthProductID(col.Product_ID) !== 1 && CheckIndexProductID(col.Product_ID) === i;">
                         <td [attr.rowspan]="CheckLengthProductID(col.Product_ID)">{{col.Product_Description}}</td>
 
 
                     </ng-container>
                     <ng-container *ngIf="CheckLengthProductID(col.Product_ID) === 1">
                         <td>{{col.Product_Description}}</td>
-                    </ng-container>
-
+                    </ng-container> -->
+                    <td>{{col.Product_Description}}</td>
+                    <td>{{col.Batch_No}}</td>
                     <td>{{col.Qty}}</td>
                     <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                     <!-- <td><select class="form-control"
@@ -368,7 +372,7 @@
 
                 </tr>
                 <tr *ngIf='i === (AccetProductDetails.length - 1)'>
-                    <td colspan="1" class="text-right">Total</td>
+                    <td colspan="2" class="text-right">Total</td>
                     <td>{{getTotalVal('Qty')}}</td>
                     <td>{{getTotalVal('Accepted_Qty')}}</td>
                 </tr>
@@ -476,15 +480,16 @@
             </ng-template>
             <ng-template pTemplate="body" let-col let-i="rowIndex">
                 <tr>
-                    <ng-container *ngIf="CheckLengthProductIDedit(col.Product_ID) !== 1 && CheckIndexProductIDedit(col.Product_ID) === i;">
+                    <!-- <ng-container *ngIf="CheckLengthProductIDedit(col.Product_ID) !== 1 && CheckIndexProductIDedit(col.Product_ID) === i;">
                         <td [attr.rowspan]="CheckLengthProductIDedit(col.Product_ID)">{{col.Product_Description}}</td>
 
 
                     </ng-container>
                     <ng-container *ngIf="CheckLengthProductIDedit(col.Product_ID) === 1">
                         <td>{{col.Product_Description}}</td>
-                    </ng-container>
-                    <td>{{col.Batch_No_Show}}</td>
+                    </ng-container> -->
+                    <td>{{col.Product_Description}}</td>
+                    <td>{{col.Batch_No}}</td>
                     <td>{{col.Accepted_Qty}}</td>
                     <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' CompacctDigitonly="true" (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" class="form-control" style="width: 71px;" /></td>
 

@@ -25,6 +25,7 @@ export class K4cDepartmentWiseRequisitionComponent implements OnInit {
   Indentdate = [];
   myDate: Date;
   initDate = [];
+  RequisitionSearchFormSubmit = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -93,7 +94,7 @@ export class K4cDepartmentWiseRequisitionComponent implements OnInit {
       this.ObjBrowseRequi.end_date = dateRangeObj[1];
     }
   }
-  ShowPRequiConsolidated(){
+  ShowPRequiConsolidated(valid){
     this.DynamicHeader = [];
     this.Showlist = [];
     const start = this.ObjBrowseRequi.start_date
@@ -102,10 +103,13 @@ export class K4cDepartmentWiseRequisitionComponent implements OnInit {
     const end = this.ObjBrowseRequi.end_date
       ? this.DateService.dateConvert(new Date(this.ObjBrowseRequi.end_date))
       : this.DateService.dateConvert(new Date());
+      this.RequisitionSearchFormSubmit = true;
+      if (valid){
     const tempobj = {
       From_Date : start,
       To_Date : end,
       Product_Type_ID : this.ObjBrowseRequi.Product_Type ? this.ObjBrowseRequi.Product_Type : 0,
+      Brand_ID : this.ObjBrowseRequi.Brand_ID
     }
     const obj = {
       "SP_String": "SP_Production_Voucher",
@@ -119,7 +123,9 @@ export class K4cDepartmentWiseRequisitionComponent implements OnInit {
        //this.GetDistinct();
       // console.log('Show list=====',this.Showlist)
        this.seachSpinner = false;
+       this.RequisitionSearchFormSubmit = false;
      })
+    }
   }
   exportexcel(Arr,fileName): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);

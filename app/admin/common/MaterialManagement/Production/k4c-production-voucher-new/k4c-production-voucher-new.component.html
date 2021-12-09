@@ -1,5 +1,5 @@
-
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
 <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
@@ -9,13 +9,13 @@
         </div>
 
         <div class="ui-g ui-fluid">
-          <div class="ui-g-6">
-              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
-          </div>
-          <div class="ui-g-6">
-              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
-          </div>
-      </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
     </ng-template>
 </p-toast>
 <div class="row">
@@ -24,521 +24,404 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="ProductSearchForm" #ProductSearchForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Date</label>
-                                            <app-compacct-daterangepicker
-                                                  (DaterangeObj)="getDateRange($event)"
-                                                  [HardCodeDateOpt]="initDate">
-                                            </app-compacct-daterangepicker>
-                                          </div>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
                                     <div class="col-sm-3">
                                         <div class="col-sm-3">
-                                            <button class="btn btn-primary custombutton" data-toggle="modal"
-                                          (click)="SearchProduction()"
-                                          id="load"
-                                          [disabled]="seachSpinner"
-                                          >
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="SearchProduction()" id="load" [disabled]="seachSpinner">
                                           <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                           <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                        </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div  class="form-group" *ngIf='BackupSearchedlist.length' style="padding:15px">
+                                <div class="form-group" *ngIf='BackupSearchedlist.length' style="padding:15px">
 
-                                  <fieldset class="col-md-12">
-                                    <legend>Filter</legend>
+                                    <fieldset class="col-md-12">
+                                        <legend>Filter</legend>
 
-                                    <div class="form-group" >
-                                      <div class="col-sm-3">
-                                        <label class="control-label">Process Name <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DistProcessName"  [(ngModel)]="SelectedDistProcessName"
-                                          itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
-                                          name="Process_Name"></p-multiSelect>
-                                      </div>
-                                       <!-- <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Process Name <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistProcessName" [(ngModel)]="SelectedDistProcessName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Process_Name"></p-multiSelect>
+                                            </div>
+                                            <!-- <div class="col-sm-3">
                                         <label class="control-label">Product Type <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType"
                                           itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
                                           name="Product_Type"></p-multiSelect>
                                       </div> -->
-                                      <div class="col-sm-3">
-                                        <label class="control-label">Shift <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DistShift"  [(ngModel)]="SelectedDistShift"
-                                          itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
-                                          name="Shift_Name"></p-multiSelect>
-                                      </div>
-                                    </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Shift <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistShift" [(ngModel)]="SelectedDistShift" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Shift_Name"></p-multiSelect>
+                                            </div>
+                                        </div>
 
-                                  </fieldset>
+                                    </fieldset>
                                 </div>
                             </form>
                             <div class="table-responsive no-padding">
-                                <p-table [value]="Searchedlist"  #dt1
-                                         [paginator]="true"
-                                         [rows]="100"
-                                         [rowHover]="true"
-                                         [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[100,200,300]"
-                                         [rowHover]="true"
-                                         [globalFilterFields]='["Doc_No","Doc_Date","Process_Name","Product_Type","Shift_Name","Qty","name"]'>
-                                           <ng-template pTemplate="caption">
-                                               <div class="row">
-                                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                        </div>
-                                               </div>
-
-                                            </ng-template>
-                                            <ng-template pTemplate="header">
-                                                <tr>
-                                                    <th style="width:5em">Action</th>
-                                                    <th>Indent No</th>
-                                                    <th>Doc No</th>
-                                                    <th>Doc Date</th>
-                                                    <th>Process Name</th>
-                                                    <!-- <th>Product Type</th> -->
-                                                    <th>Shift</th>
-                                                    <th>Total Qty</th>
-                                                    <th>Created By</th>
-                                                 </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-col>
-                                                <tr>
-
-                                                    <td>
-                                                            <div class="dropdown">
-                                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle"
-                                                                    type="button" data-toggle="dropdown" style="height:27px">
-                                                                    <i class="fa fa-fw fa-bars"></i>
-                                                                    <span class="caret"></span>
-                                                                </button>
-                                                                <ul class="dropdown-menu">
-                                                                  <li >
-                                                                    <a (click)="ViewProduction(col)">
-                                                                        <i class="fa fa-eye"></i>
-                                                                        View
-                                                                    </a>
-                                                                </li>
-                                                                    <li *ngIf = 'col.Status == "Can modify"'>
-                                                                        <a (click)="EditProduction(col)">
-                                                                            <i class="fa fa-fw fa-pencil"></i>
-                                                                            Edit
-                                                                        </a>
-                                                                    </li>
-                                                                    <li>
-                                                                      <a (click)="PrintProVoucher(col)">
-                                                                          <i class="fa fa-print"></i>
-                                                                          Print
-                                                                      </a>
-                                                                  </li>
-                                                                    <li *ngIf = 'col.Status == "Can modify"'>
-                                                                        <a (click)="DeleteProduction(col)">
-                                                                            <i class="fa fa-fw fa-trash"></i>
-                                                                            Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                    </td>
-                                                    <td>{{col.Indent_No ? col.Indent_No : '-'}}</td>
-                                                    <td>{{col.Doc_No }}</td>
-                                                    <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
-                                                    <td>{{col.Process_Name}}</td>
-                                                    <!-- <td>{{col.Product_Type}}</td> -->
-                                                    <td>{{col.Shift_Name}}</td>
-                                                    <td>{{col.Qty}}</td>
-                                                    <td>{{col.name}}</td>
-                                                 </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="paginatorright" let-state>
-                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                                            </ng-template>
-                                    </p-table>
-                                </div>
-                            </p-tabPanel>
-                    <!-- VIEW POPUP -->
-                        <p-dialog
-                        header="Details"
-                        [appendTo]="'body'"
-                        [(visible)]="ViewPoppup"
-                        [modal]="true"
-                        [responsive]="true"
-                        [closeOnEscape]="true"
-                        [style]="{width: '70%', minWidth: '300px'}"
-                        [maximizable]="true"
-                        >
-                       <div class="form-group">
-                       <div class="col-sm-4">
-                           <label class="control-label">Date</label>
-                               <div  class="label-t">{{Doc_date  | date :"dd/MMM/yyyy"}}</div>
-
-                           </div>
-                       <div class="col-sm-4">
-                           <label class="control-label">Doc No</label>
-                               <div  class="label-t">{{Doc_no}}</div>
-                           </div>
-                           <div class="col-sm-4">
-                            <label class="control-label">Brand</label>
-                                <div  class="label-t">{{BrandName}}</div>
-
-                        </div>
-
-                       </div>
-                       <div class="form-group">
-                        <div class="col-sm-4">
-                          <label class="control-label">Process Name</label>
-                              <div  class="label-t">{{ProcessName}}</div>
-
-                      </div>
-                      <div class="col-sm-4">
-                        <label class="control-label">From Process</label>
-                            <div  class="label-t">{{FprocessName}}</div>
-
-                    </div>
-                       <!-- <div class="col-sm-4">
-                         <label class="control-label">Product Type</label>
-                             <div  class="label-t">{{Producttype}}</div>
-
-                     </div> -->
-                     <div class="col-sm-4">
-                      <label class="control-label">Shift</label>
-                          <div  class="label-t">{{Vshift}}</div>
-
-                  </div>
-                    </div>
-                     <div class="form-group">
-                  <div class="col-sm-4">
-                    <label class="control-label">From Stock Point</label>
-                        <div  class="label-t">{{FstockPoint}}</div>
-
-                </div>
-                <div class="col-sm-4">
-                  <label class="control-label">To Stock Point</label>
-                      <div  class="label-t">{{TostockPoint}}</div>
-
-              </div>
-                 </div>
-                 <div class="clearfix"></div>
-                 <div  class="table-responsive no-padding" style="overflow-x: hidden !important;">
-                  <p-table [value]="editList"
-                           [globalFilterFields]='["Product_Description","Batch_No","Qty"]'
-                           [rowHover]="true"
-                           [autoLayout]="true"
-
-                           #dt2>
-                             <ng-template pTemplate="caption">
-                                 <div class="row">
-                                      <div class="col-sm-3 pull-right" style="text-align: right">
-                                              <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                          </div>
-                                 </div>
+                                <p-table [value]="Searchedlist" #dt1 [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Process_Name","Product_Type","Shift_Name","Qty","name"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
 
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                           <th>Product Type</th>
-                                           <th>Product Name</th>
-                                           <th>Batch No</th>
-                                           <th>Total Qty</th>
-                                         </tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Indent No</th>
+                                            <th>Doc No</th>
+                                            <th>Doc Date</th>
+                                            <th>Process Name</th>
+                                            <!-- <th>Product Type</th> -->
+                                            <th>Shift</th>
+                                            <th>Total Qty</th>
+                                            <th>Created By</th>
+                                            <th>Transaction Date & Time</th>
+                                        </tr>
                                     </ng-template>
-                                   <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                    <ng-template pTemplate="body" let-col>
                                         <tr>
-                                           <td>{{col.Product_Type}}</td>
-                                           <td>{{col.Product_Description}}</td>
-                                           <td>{{col.Batch_NO ? col.Batch_NO : '-'}}</td>
-                                           <td>{{col.Qty}}</td>
 
-                                       </tr>
-                                   </ng-template>
-                           </p-table>
-                           </div>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="ViewProduction(col)">
+                                                                <i class="fa fa-eye"></i> View
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf='col.Status == "Can modify"'>
+                                                            <a (click)="EditProduction(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintProVoucher(col)">
+                                                                <i class="fa fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf='col.Status == "Can modify"'>
+                                                            <a (click)="DeleteProduction(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Indent_No ? col.Indent_No : '-'}}</td>
+                                            <td>{{col.Doc_No }}</td>
+                                            <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td>{{col.Process_Name}}</td>
+                                            <!-- <td>{{col.Product_Type}}</td> -->
+                                            <td>{{col.Shift_Name}}</td>
+                                            <td>{{col.Qty}}</td>
+                                            <td>{{col.name}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <!-- VIEW POPUP -->
+                        <p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{width: '70%', minWidth: '300px'}" [maximizable]="true">
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Date</label>
+                                    <div class="label-t">{{Doc_date | date :"dd/MMM/yyyy"}}</div>
 
-                       <p-footer>
-                         <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Doc No</label>
+                                    <div class="label-t">{{Doc_no}}</div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Brand</label>
+                                    <div class="label-t">{{BrandName}}</div>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Process Name</label>
+                                    <div class="label-t">{{ProcessName}}</div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">From Process</label>
+                                    <div class="label-t">{{FprocessName}}</div>
+
+                                </div>
+                                <!-- <div class="col-sm-4">
+                         <label class="control-label">Product Type</label>
+                             <div  class="label-t">{{Producttype}}</div>
+
+                     </div> -->
+                                <div class="col-sm-4">
+                                    <label class="control-label">Shift</label>
+                                    <div class="label-t">{{Vshift}}</div>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">From Stock Point</label>
+                                    <div class="label-t">{{FstockPoint}}</div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">To Stock Point</label>
+                                    <div class="label-t">{{TostockPoint}}</div>
+
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+                                <p-table [value]="editList" [globalFilterFields]='["Product_Description","Batch_No","Qty"]' [rowHover]="true" [autoLayout]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Product Type</th>
+                                            <th>Product Name</th>
+                                            <th>Batch No</th>
+                                            <th>Total Qty</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr>
+                                            <td>{{col.Product_Type}}</td>
+                                            <td>{{col.Product_Description}}</td>
+                                            <td>{{col.Batch_NO ? col.Batch_NO : '-'}}</td>
+                                            <td>{{col.Qty}}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                            <p-footer>
+                                <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
                             <i class="fa fa-close"></i>&nbsp;  Close
                           </button>
-                        </p-footer>
-                     </p-dialog>
-                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
-                              <div class="col-lg-6">
-                                <div class="panel-group"  >
-                                  <div class="panel panel-primary">
-                                    <div class="panel-body">
-                                   <form name="productionForm" #productionForm="ngForm" novalidate>
-                                   <div class="form-group">
-                                   <!-- <div class="col-sm-2">
+                            </p-footer>
+                        </p-dialog>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <div class="col-lg-6">
+                                <div class="panel-group">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-body">
+                                            <form name="productionForm" #productionForm="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <!-- <div class="col-sm-2">
                                         <label class="control-label">Date</label>
                                          <p-calendar name="Req_Date" [(ngModel)]="date1" (ngModelChange)='myDate = $event' class="form-control" dateFormat="dd/mm/yy" ></p-calendar>
                                         <input  type="text" name="Req_Date" [ngModel]="myDate | date:'dd-MMM-yyyy'" (ngModelChange)='myDate = $event' class="form-control" disabled>
                                        </div> -->
-                                       <div class="col-sm-4">
-                                        <label class="control-label"  >Brand<sup class="text-danger">*</sup></label>
-                                        <select class="form-control"
-                                        name="Brand_ID"
-                                        #Brand_ID="ngModel"
-                                        [(ngModel)]="Objproduction.Brand_ID"
-                                        [ngClass]="{'clearance': ProductionFormSubmitted && Brand_ID?.errors?.required}"
-                                        [disabled] = "inputBoxDisabled"
-                                        required>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Brand<sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="Objproduction.Brand_ID" [ngClass]="{'clearance': ProductionFormSubmitted && Brand_ID?.errors?.required}" [disabled]="inputBoxDisabled" required>
                                         <option  [ngValue]="undefined">Select</option>
                                     <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
                                         {{option.Brand_INI}}
                                         </option>
                                 </select>
-                                       </div>
-                                       <div class="col-sm-4">
-                                        <label class="control-label">Production Process <sup class="text-danger">*</sup></label>
-                                        <select class="form-control"
-                                        name="Select_Process"
-                                        (change)="GetFromProcess()"
-                                        #Select_Process="ngModel"
-                                        [(ngModel)]="Objproduction.Process_ID"
-                                        [ngClass]="{'clearance': ProductionFormSubmitted && Select_Process?.errors?.required}"
-                                        [disabled] = "inputBoxDisabled"
-                                        required
-                                        >
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Production Process <sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="Select_Process" (change)="GetFromProcess()" #Select_Process="ngModel" [(ngModel)]="Objproduction.Process_ID" [ngClass]="{'clearance': ProductionFormSubmitted && Select_Process?.errors?.required}" [disabled]="inputBoxDisabled"
+                                                            required>
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  *ngFor="let option of SelProcessList" value="{{option.Process_ID}}">
                                               {{option.Process_Name}}
                                             </option>
                                       </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                      <label class="control-label">From Process</label>
-                                      <select class="form-control"
-                                      name="From_Process"
-                                      #From_Process="ngModel"
-                                      [(ngModel)]="Objproduction.From_Process_ID"
-                                      [attr.disabled]="FPDisabled? true : null"
-                                      [ngClass]="{'clearance': ProductionFormSubmitted && From_Process?.errors?.required}"
-                                      >
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">From Process</label>
+                                                        <select class="form-control" name="From_Process" #From_Process="ngModel" [(ngModel)]="Objproduction.From_Process_ID" [attr.disabled]="FPDisabled? true : null" [ngClass]="{'clearance': ProductionFormSubmitted && From_Process?.errors?.required}">
                                           <option  [ngValue]="undefined">Select</option>
                                           <option  *ngFor="let option of FromProcessList" value="{{option.From_Process_ID}}">
                                             {{option.From_Process_Name}}
                                           </option>
                                     </select>
-                                  </div>
-                                  <div class="col-sm-4">
-                                    <label class="control-label">From Stock Point <sup class="text-danger">*</sup></label>
-                                    <select class="form-control"
-                                    name="From_godown_id"
-                                    #From_godown_id="ngModel"
-                                    [(ngModel)]="Objproduction.From_godown_id"
-                                    [ngClass]="{'clearance': ProductionFormSubmitted && From_godown_id?.errors?.required}"
-                                    [attr.disabled]="FPDisabled? true : null"
-                                    [required]="!FPDisabled"
-                                    >
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">From Stock Point <sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="From_godown_id" #From_godown_id="ngModel" [(ngModel)]="Objproduction.From_godown_id" [ngClass]="{'clearance': ProductionFormSubmitted && From_godown_id?.errors?.required}" [attr.disabled]="FPDisabled? true : null" [required]="!FPDisabled">
                                         <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of FromGodownList" value="{{option.godown_id}}">
                                           {{option.godown_name}}
                                         </option>
                                   </select>
-                                </div>
-                                <div class="col-sm-4">
-                                  <label class="control-label">Indent Date</label>
-                                  <ejs-datepicker  [format]="'dd/MMM/yyyy'"
-                                              [(value)] = 'todayDate'
-                                       ></ejs-datepicker>
-                                </div>
-                                    <div class="col-sm-4">
-                                      <button class="btn btn-primary custombutton1"
-                                      data-toggle="modal"
-                                      (click) = "GetProductType(productionForm.form.valid)"
-                                      id="load"
-                                      [attr.disabled]="editDis? true : null"
-                                     [disabled]="Spinner"
-                                       >
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Indent Date</label>
+                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='todayDate'></ejs-datepicker>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="GetProductType(productionForm.form.valid)" id="load" [attr.disabled]="editDis? true : null" [disabled]="Spinner">
                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                    <span *ngIf="!Spinner" ></span>Get Product Type
                                </button>
-                                  </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
-                                  </form>
-                                  </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-6">
-                          <div class="panel-group"  >
-                            <div class="panel panel-primary">
-                              <div class="panel-body">
-                                <form name="productionForm2" #productionForm2="ngForm" novalidate>
-                                <div class="form-group">
-                                       <div class="col-sm-6">
-                                        <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
-                                        <select class="form-control"
-                                        name="Product_Type_ID"
-                                        #Product_Type_ID="ngModel"
-                                        [(ngModel)]="Objproduction.Product_Type_ID"
-                                        [ngClass]="{'clearance': ProductionFormSubmitted2 && Product_Type_ID?.errors?.required}"
-                                        [attr.disabled]="editDis? true : null"
-                                        [disabled] = "ProtypeDisabled"
-                                        (change)="GetProductionpro()"
-                                        >
+                            <div class="col-lg-6">
+                                <div class="panel-group">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-body">
+                                            <form name="productionForm2" #productionForm2="ngForm" novalidate>
+                                                <div class="form-group">
+                                                    <div class="col-sm-6">
+                                                        <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="Product_Type_ID" #Product_Type_ID="ngModel" [(ngModel)]="Objproduction.Product_Type_ID" [ngClass]="{'clearance': ProductionFormSubmitted2 && Product_Type_ID?.errors?.required}" [attr.disabled]="editDis? true : null"
+                                                            [disabled]="ProtypeDisabled" (change)="GetProductionpro()">
                                            <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of ProcessProductList" value="{{option.Product_Type_ID}}">
                                               {{option.Product_Type}}
                                             </option>
                                       </select>
-                                       </div>
+                                                    </div>
 
-                                       <div class="col-sm-6">
-                                        <label class="control-label">Shift<sup class="text-danger">*</sup></label>
-                                        <select class="form-control"
-                                        name="Shift"
-                                        #Shift="ngModel"
-                                        [(ngModel)]="Objproduction.Shift"
-                                        [ngClass]="{'clearance': ProductionFormSubmitted2 && Shift?.errors?.required}"
-                                        [attr.disabled]="editDis? true : null"
-                                        required
-
-                                         >
+                                                    <div class="col-sm-6">
+                                                        <label class="control-label">Shift<sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="Shift" #Shift="ngModel" [(ngModel)]="Objproduction.Shift" [ngClass]="{'clearance': ProductionFormSubmitted2 && Shift?.errors?.required}" [attr.disabled]="editDis? true : null" required>
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  *ngFor="let option of SiftList" value="{{option.Shift_ID}}">
                                               {{option.Shift_Name}}
                                             </option>
                                       </select>
-                                       </div>
-                                       </div>
-                                       <div class="form-group">
-                                       <div class="col-sm-6">
-                                        <label class="control-label">To Stock Point<sup class="text-danger">*</sup></label>
-                                        <select class="form-control"
-                                        name="To_godown_id"
-                                        #To_godown_id="ngModel"
-                                        [(ngModel)]="Objproduction.To_godown_id"
-                                        [ngClass]="{'clearance': ProductionFormSubmitted2 && To_godown_id?.errors?.required}"
-
-                                        required
-                                        >
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-6">
+                                                        <label class="control-label">To Stock Point<sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="To_godown_id" #To_godown_id="ngModel" [(ngModel)]="Objproduction.To_godown_id" [ngClass]="{'clearance': ProductionFormSubmitted2 && To_godown_id?.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  *ngFor="let option of ToGodownList" value="{{option.godown_id}}">
                                               {{option.godown_name}}
                                             </option>
                                       </select>
-                                       </div>
-                                       <div class="col-sm-6">
-                                          <label class="control-label">Production Date</label>
-                                          <ejs-datepicker  [format]="'dd/MMM/yyyy'"
-                                               [(value)] = 'Datevalue'
-                                               [min]='minDate' [max]='maxDate'
-                                               ></ejs-datepicker>
-                                          <!-- <input class="form-control"
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label class="control-label">Production Date</label>
+                                                        <ejs-datepicker strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='Datevalue' [min]='minDate' [max]='maxDate'></ejs-datepicker>
+                                                        <!-- <input class="form-control"
                                                  name="Objproduction.Doc_Date"
                                                  [ngModel] ="myDate  | date :'dd-MMM-yyyy'"
                                                  (ngModelChange) ='myDate = $event'
                                                  disabled = "true">
                                                  [attr.disabled]="editDis? true : null" -->
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
-                                  </form>
-                                  </div>
                                 </div>
                             </div>
-                        </div>
-                        <br>
-                        <div class="col-sm-4">
-                          <label class="control-label">Indent List<sup class="text-danger">*</sup> &nbsp;
+                            <br>
+                            <div class="col-sm-4">
+                                <label class="control-label">Indent List<sup class="text-danger">*</sup> &nbsp;
                       </label>
-                          <p-multiSelect itemSize="30"
-                                     [options]="IndentFilter"
-                                     [styleClass]="'compacct-multiselect'"
-                                     name="indentn"
-                                     [(ngModel)]="SelectedIndent"
-                                     [filter]="true"
-                                     filterBy="label,value.name"
-                                     (onChange)="filterIndentList()"
-                                     [resetFilterOnHide]="true"
-                                     >
-                        </p-multiSelect>
-                        <!-- <div class="col-sm-4">
+                                <p-multiSelect itemSize="30" [options]="IndentFilter" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedIndent" [filter]="true" filterBy="label,value.name" (onChange)="filterIndentList()" [resetFilterOnHide]="true">
+                                </p-multiSelect>
+                                <!-- <div class="col-sm-4">
                           <label class="control-label">Indent List <span class="text-danger"></span></label>
                           <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType"
                             itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
                             name="Product_Type"></p-multiSelect>
                         </div> -->
 
-                      </div>
-                        <div class="clearfix"></div>
-                              <div class="no-padding">
-                                <p-table [value]="ProductionlList"
-                                        [globalFilterFields]="['Product_Description','Req_Qty','Qty']"
-                                         [rowHover]="true"
-                                         [autoLayout]="true"
-
-                                         #dt>
-                                           <ng-template pTemplate="caption">
-                                               <div class="row">
-                                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                        </div>
-                                                        <div *ngIf="!editDis" class="col-sm-3 pull-left" style="text-align: left">
-                                                          <div class="checkBox">
-                                                            <label>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="no-padding">
+                                <p-table [value]="ProductionlList" [globalFilterFields]="['Product_Description','Req_Qty','Qty']" [rowHover]="true" [autoLayout]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                            <div *ngIf="!editDis" class="col-sm-3 pull-left" style="text-align: left">
+                                                <div class="checkBox">
+                                                    <label>
                                                                 <p-checkbox  [(ngModel)]="allProductsCheck"  name="allProductsCheck" (ngModelChange)="onFilterChange($event)" [disabled]="checkBoxdis" binary="true"
                                                                 ></p-checkbox> Show All Products
                                                             </label>
-                                                           </div>
-                                                      </div>
-                                               </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                            </ng-template>
+                                    </ng-template>
 
-                                            <ng-template pTemplate="header">
-                                                <tr>
-                                                    <th>Product Type</th>
-                                                    <th>Product Description</th>
-                                                    <th>Indent Qty</th>
-                                                    <th>Production Qty</th>
-                                                 </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-col let-i="rowIndex">
-                                                <tr [class]='col.req_qty? "text-blue-active" : ""'>
-                                                    <td>{{col.Product_Type}}</td>
-                                                    <td >{{col.Product_Description}}</td>
-                                                    <td>{{col.req_qty}}</td>
-                                                    <td><input type="text" [name]="col.Product_ID"  [(ngModel)]='col.Qty'
-                                                         CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Product Type</th>
+                                            <th>Product Description</th>
+                                            <th>Indent Qty</th>
+                                            <th>Production Qty</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr [class]='col.req_qty? "text-blue-active" : ""'>
+                                            <td>{{col.Product_Type}}</td>
+                                            <td>{{col.Product_Description}}</td>
+                                            <td>{{col.req_qty}}</td>
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
 
-                                                </tr>
-                                             </ng-template>
-                                                  <!-- <tr>
+                                        </tr>
+                                    </ng-template>
+                                    <!-- <tr>
                                                   <td colspan="4">Total</td>
                                                   <td>{{getTotalValue()}}</td>
                                                 </tr> -->
-                                    </p-table>
-                                </div>
+                                </p-table>
+                            </div>
 
-                                         <div class="box-footer">
-                                           <div class = "text-right">
-                                          <button
-                                          type="button"
-                                           class="btn btn-primary"
-                                           [attr.disabled]="editDis? true : null"
-                                           (click) = "Refresh()">
+                            <div class="box-footer">
+                                <div class="text-right">
+                                    <button type="button" class="btn btn-primary" [attr.disabled]="editDis? true : null" (click)="Refresh()">
                                            <!-- <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner> -->
                                              Clear
                                         </button> &nbsp;&nbsp;&nbsp;&nbsp;
-                                             <button
-                                                    type="button"
-                                                     class="btn btn-primary"
-                                                     (click) = "showDialog(productionForm2.form.valid)"
-                                                     id="load"
-                                                     [disabled]="Spinner">
+                                    <button type="button" class="btn btn-primary" (click)="showDialog(productionForm2.form.valid)" id="load" [disabled]="Spinner">
                                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                  <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
                                              </button>
-                                             </div>
-                                         </div>
-                                     <!-- </form> -->
-                                </p-tabPanel>
+                                </div>
+                            </div>
+                            <!-- </form> -->
+                        </p-tabPanel>
 
-                        </p-tabView>
+                    </p-tabView>
 
                 </div>
             </div>
@@ -546,31 +429,30 @@
     </div>
 </div>
 <!-- popup Save -->
- <p-dialog header="Production" [(visible)]="displaysavepopup" [modal]="true" [responsive]="true" [style]="{width: '545px', minWidth: '200px'}" [minY]="70"
-  [maximizable]="true" [baseZIndex]="10000">
-<table class="table table-striped" style="height: 230px; overflow-y: auto; ;" >
-  <thead>
-    <tr>
-      <th scope="col">Product Description</th>
-      <th scope="col">Indent Qty</th>
-      <th scope="col">Production Qty</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr class="d-flex" *ngFor="let option of filteredData;">
-      <td>{{option.Product_Description}}</td>
-      <td>{{option.req_qty}}</td>
-      <td>{{option.Qty}}</td>
-    </tr>
-    <tr>
-      <td colspan="1">Total</td>
-      <td>{{getTotalIndValue()}}</td>
-      <td>{{getTotalProValue()}}</td>
-    </tr>
-  </tbody>
-</table>
-<p-footer>
-    <button type="button" pButton icon="pi pi-check" (click)="SaveProduction()" label="Yes"></button>
-    <button type="button" pButton icon="pi pi-close" (click)="displaysavepopup=false" label="No" class="ui-button-secondary"></button>
-</p-footer>
+<p-dialog header="Production" [(visible)]="displaysavepopup" [modal]="true" [responsive]="true" [style]="{width: '545px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <table class="table table-striped" style="height: 230px; overflow-y: auto; ;">
+        <thead>
+            <tr>
+                <th scope="col">Product Description</th>
+                <th scope="col">Indent Qty</th>
+                <th scope="col">Production Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="d-flex" *ngFor="let option of filteredData;">
+                <td>{{option.Product_Description}}</td>
+                <td>{{option.req_qty}}</td>
+                <td>{{option.Qty}}</td>
+            </tr>
+            <tr>
+                <td colspan="1">Total</td>
+                <td>{{getTotalIndValue()}}</td>
+                <td>{{getTotalProValue()}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="SaveProduction()" label="Yes"></button>
+        <button type="button" pButton icon="pi pi-close" (click)="displaysavepopup=false" label="No" class="ui-button-secondary"></button>
+    </p-footer>
 </p-dialog>

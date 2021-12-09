@@ -172,7 +172,13 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     this.BackupChallanList.forEach((item) => {
       if (DIndent.indexOf(item.Doc_No) === -1) {
         DIndent.push(item.Doc_No);
-        this.ChallanFilter.push({ label: [item.Doc_No +'-'+ item.Material_Type +'-'+ this.DateService.dateConvert(new Date(item.Doc_Date))], value: item.Doc_No });
+        var advno;
+        if(item.Material_Type === "Advance Order") {
+          advno = '('+ item.Adv_Order_No +')';
+        } else {
+          advno = '';
+        }
+        this.ChallanFilter.push({ label: [item.Doc_No +'-'+ item.Material_Type +'-'+ this.DateService.dateConvert(new Date(item.Doc_Date))]  + advno, value: item.Doc_No });
         console.log("this.IndentFilter", this.ChallanFilter);
       }
     });

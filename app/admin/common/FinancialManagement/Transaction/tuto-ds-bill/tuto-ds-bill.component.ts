@@ -43,7 +43,7 @@ export class TutoDsBillComponent implements OnInit {
     private router : Router,
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
-    private $CompacctAPI: CompacctCommonApi,
+    public $CompacctAPI: CompacctCommonApi,
     private route: ActivatedRoute,
     private compacctToast: MessageService) { 
       this.route.queryParams.subscribe((val:any) => {
@@ -204,17 +204,27 @@ export class TutoDsBillComponent implements OnInit {
     }
   }
   AmountTypeChange() { 
+    this.AmtDisabledFlag = true;
     if(this.ObjDSProduct.Amount_Type){
       const ProductObjArr = this.ProductList.filter(item => item.Product_ID == this.ObjDSProduct.Product_ID);
       if(ProductObjArr.length) {
-        this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
-        this.AmtMin = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
-        this.AmtMax = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
-        if(this.AmtDisabledFlag) {
-          this.AmtMin =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
-          this.AmtMax =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
-          this.ObjDSProduct.Rate = ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+        if(this.ObjDSProduct.Amount_Type === 'Custom') {
+          this.AmtMin =  ProductObjArr[0]['Sale_rate'];
+            this.AmtMax =  ProductObjArr[0]['Sale_rate'];
+            this.ObjDSProduct.Rate = ProductObjArr[0]['Sale_rate'];
+            this.AmtDisabledFlag = false;
+        } else {
+          this.AmtDisabledFlag = true;
+          this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
+          this.AmtMin = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
+          this.AmtMax = Number(ProductObjArr[0][this.ObjDSProduct.Amount_Type]);
+          if(this.AmtDisabledFlag) {
+            this.AmtMin =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+            this.AmtMax =  ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+            this.ObjDSProduct.Rate = ProductObjArr[0][this.ObjDSProduct.Amount_Type];
+          }
         }
+        
     }
   }
   }
@@ -256,7 +266,7 @@ export class TutoDsBillComponent implements OnInit {
     }
   }
   AmountChange() {
-    if(this.ObjDSProduct.Rate) {
+    if(this.ObjDSProduct.Rate && this.ObjDSProduct.Amount_Type !== 'Custom') {
       if(this.AmtMin > Number(this.ObjDSProduct.Rate)){
         this.compacctToast.clear();
         this.compacctToast.add({

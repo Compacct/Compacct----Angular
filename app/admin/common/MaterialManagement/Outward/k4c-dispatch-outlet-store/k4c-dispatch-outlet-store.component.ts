@@ -91,7 +91,13 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   SelectedIndent: any;
   TIndentList = [];
   BackUpproductDetails = [];
-
+  initDate2 = [];
+  Auto_Accepted: any;
+  totalqty: any;
+  totalaccpqty: any;
+  batchqty: any;
+  totaldelqty: any;
+  
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -143,6 +149,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     this.SelectedIndent = [];
     this.IndentFilter = [];
     this.SpinnerShow = false;
+
   }
   onConfirm(){
     if(this.doc_no){
@@ -216,6 +223,16 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
        this.Getgodown();
         })
   }
+  autoacceptedChange() {
+    //this.ExpiredProductFLag = false;
+   if(this.Objdispatch.Cost_Cen_ID) {
+     const ctrl = this;
+     const autoacceptedObj = $.grep(ctrl.costcenterList,function(item: any) {return item.Cost_Cen_ID == ctrl.Objdispatch.Cost_Cen_ID})[0];
+     console.log(autoacceptedObj);
+     this.Auto_Accepted = autoacceptedObj.Auto_Accepted;
+     
+    }
+    }
   getCostcenterBro(){
     console.log(this.ObjBrowseData.Brand_ID)
     const obj = {
@@ -290,6 +307,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
         this.To_Godown_ID_Dis = true;
       }
       //this.GetreqItem();
+      this.autoacceptedChange();
     })
   }
     CheckLengthProductID(ID) {
@@ -331,24 +349,29 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     this.filteredData.forEach((item)=>{
       Indval += Number(item.Req_Qty)
     });
-
-    return Indval ? Indval : '-';
+     this.totalqty = (Indval).toFixed(2);
+    return Indval ? Indval.toFixed(2) : '-';
   }
   getTotalBatchValue(){
     let batchval = 0;
     this.filteredData.forEach((item)=>{
       batchval += Number(item.Batch_Qty)
     });
-
-    return batchval ? batchval : '-';
+    this.batchqty = (batchval).toFixed(2);
+    return batchval ? batchval.toFixed(2) : '-';
   }
   getTotalIssueValue(){
     let issueval = 0;
+    let acceptedval = 0;
     this.filteredData.forEach((item)=>{
       issueval += Number(item.Delivery_Qty)
+      if (this.AccQtydis) {
+        acceptedval += Number(item.Accepted_Qty)
+        }
     });
-
-    return issueval ? issueval : '-';
+    this.totaldelqty = (issueval).toFixed(2);
+    this.totalaccpqty = (acceptedval).toFixed(2);
+    return issueval ? issueval.toFixed(2) : '-';
   }
   showDialog() {
     this.displaysavepopup = true;
@@ -371,8 +394,8 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     return TotalAmt ? TotalAmt.toFixed(2) : '-';
   }
   getReqNo(){
+    let Rarr =[]
     if(this.SelectedIndent.length) {
-      let Rarr =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -382,9 +405,17 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
         }
 
     });
-      console.log("Table Data ===", Rarr)
-      return Rarr.length ? JSON.stringify(Rarr) : '';
+      // console.log("Table Data ===", Rarr)
+      // return Rarr.length ? JSON.stringify(Rarr) : '';
+    } 
+    else {
+      const Dobj = {
+        Req_No : 'NA'
+        }
+        Rarr.push(Dobj)
     }
+    console.log("Table Data ===", Rarr)
+      return Rarr.length ? JSON.stringify(Rarr) : '';
   }
   saveDispatch(){
    console.log("saveqty",this.saveqty());
@@ -414,7 +445,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
             Rate: 0,
             UOM: el.UOM,
             Batch_No: el.Batch_No,
-            Qty: el.Delivery_Qty,
+            Qty: Number(el.Delivery_Qty),
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
             REMARKS: this.Objdispatch.REMARKS ? this.Objdispatch.REMARKS : "NA",
             Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
@@ -426,9 +457,11 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
             Material_Type : "Store Item",
             Indent_Date_From : start,
             Indent_Date_To : end,
+            // Total_Qty : Number(this.getTotal('Delivery_Qty')),
+            // Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty')),
+            Status : "Updated",
             Total_Qty : Number(this.getTotal('Delivery_Qty')),
-            Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty')),
-            Status : "Updated"
+            Total_Accepted_Qty  : Number(this.totalaccpqty)
           }
           this.saveData.push(saveObj)
         }
@@ -503,7 +536,10 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
             Material_Type : el.Material_Type,
             Indent_Date_From : start,
             Indent_Date_To : end,
-            Status : 'Not Updated'
+            Status : 'Not Updated',
+            Accepted_Qty : this.Auto_Accepted == "N" ? 0 : Number(el.Delivery_Qty),
+            Total_Qty : Number(this.totaldelqty),
+            Total_Accepted_Qty  : this.Auto_Accepted == "N" ? 0 : Number(this.totaldelqty)
           }
           this.saveData.push(saveObj)
         }
@@ -600,9 +636,22 @@ this.AdditioanFormSubmit = true;
  if(ProductArrValid.length){
     if(ExitsProduct.length) {
         this.productDetails.forEach(el=>{
-           if(el.Product_ID === ProductArrValid[0].Product_ID){
+          var leftqty = Number(el.Batch_Qty - el.Delivery_Qty);
+          console.log("leftqty ==", leftqty)
+          console.log("this.Objadditem.Issue_Qty ==", this.Objadditem.Issue_Qty)
+           if(el.Product_ID === ProductArrValid[0].Product_ID 
+            && leftqty >= Number(this.Objadditem.Issue_Qty)){
              console.log("Add QTY")
             el.Delivery_Qty = Number(el.Delivery_Qty ? el.Delivery_Qty : 0) + Number(this.Objadditem.Issue_Qty)
+           }
+           else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Quantity can't be more than in batch available quantity "
+            });
            }
 
         })
@@ -895,6 +944,7 @@ editmaster(masterProduct){
 }
 geteditmaster(masterProduct){
   this.EditList = [];
+  this.initDate2 = [];
   const obj = {
     "SP_String": "SP_Store_Item_Indent",
     "Report_Name_String": "Get Dispatch Details For Edit",
@@ -916,7 +966,12 @@ geteditmaster(masterProduct){
    this.Objdispatch.USER_ID = data[0].USER_ID;
    this.Objdispatch.Fin_Year_ID = data[0].Fin_Year_ID;
    this.Objdispatch.F_Cost_Cen_ID = data[0].F_Cost_Cen_ID;
-   this.todayDate = data[0].Indent_Date;
+   //this.todayDate = data[0].Indent_Date;
+   this.Objdispatch.Indent_Date_From = new Date(data[0].Indent_Date_From);
+   this.Objdispatch.Indent_Date_To = new Date(data[0].Indent_Date_To);
+   this.initDate2 =[this.Objdispatch.Indent_Date_From,this.Objdispatch.Indent_Date_To]
+   console.log('indent date form ===',this.Objdispatch.Indent_Date_From)
+   console.log('indent date to ===',this.Objdispatch.Indent_Date_To)
     this.EditList.forEach(el=>{
       this.productDetails.push({
         Delivery_Qty : el.Qty,
@@ -1013,7 +1068,8 @@ GetIndentList(){
      From_Date : start,
      To_Date : end,
      //Brand_ID : this.Objdispatch.Brand_ID
-     Material_Type : 'Store Item'
+     Material_Type : 'Store Item',
+     Cost_Cen_ID : this.Objdispatch.Cost_Cen_ID
     }
   const obj = {
    "SP_String": "SP_Store_Item_Indent",
@@ -1359,8 +1415,8 @@ class additem {
     Brand_ID :any;
     To_Godown_ID : any;
     Batch_No : any;
-    Indent_Date_From : string;
-    Indent_Date_To : string;
+    Indent_Date_From : Date;
+    Indent_Date_To : Date;
   }
   class BrowseData {
     From_Date: string;

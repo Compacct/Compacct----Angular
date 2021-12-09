@@ -52,7 +52,7 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-7">
                                                         <label class="control-label">Delivery Location</label>
-                                                        <select class="form-control" name="BroeItem" #BroeItem="ngModel" [(ngModel)]="ObjaddbillForm.BrowserDeliveryto">
+                                                        <select class="form-control" name="BroeItem" #BroeItem="ngModel" [(ngModel)]="ObjaddbillForm.BrowserDeliveryto" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'">
                                              <option  [ngValue] ="undefined">Select</option>
                                               <option *ngFor = "let option of returnedID" [value] ="option.Cost_Cen_ID">
                                                {{option.Cost_Cen_Name}}
@@ -60,9 +60,9 @@
                                             </select>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                        <button class="btn btn-primary custombutton2" data-toggle="modal" (click)="Showdata()" id="load" [disabled]="Spinner">
-                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                         <span *ngIf="!Spinner" ></span>Show
+                                                        <button class="btn btn-primary custombutton2" data-toggle="modal" (click)="Showdata()" id="load" [disabled]="seachSpinner">
+                                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span *ngIf="!seachSpinner" ></span>Show
                                      </button>
                                                     </div>
                                                 </div>
@@ -85,7 +85,7 @@
                                                     </div>
 
                                                     <div class="col-sm-3">
-                                                        <button class="btn btn-primary custombutton2" data-toggle="modal" (click)="Showdatabymobile(MobileSubmitForm.form.valid)" id="load" [disabled]="Spinner">
+                                                        <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="Showdatabymobile(MobileSubmitForm.form.valid)" id="load2" [disabled]="Spinner">
                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                          <span *ngIf="!Spinner"></span>Show
                                      </button>
@@ -101,7 +101,7 @@
                             <div class="clearfix"></div>
 
                             <div class="table-responsive no-padding table-id">
-                                <p-table [value]="Searchlist" [rows]="100" [rowHover]="true" [paginator]="true" [autoLayout]="true" sortMode="multiple" [loading]="seachSpinner" [rowsPerPageOptions]="[10,25,50,100]" [globalFilterFields]="['Adv_Order_No','Order_Date','Del_Date','Del_Date_Time','Customer_Name',
+                                <p-table [value]="Searchlist" [rows]="100" [rowHover]="true" [paginator]="true" [autoLayout]="true" sortMode="multiple" [loading]="seachSpinner" [rowsPerPageOptions]="[100, 300, 500]" [globalFilterFields]="['Adv_Order_No','Order_Date','Del_Date','Del_Date_Time','Customer_Name',
                                           'Costomer_Mobile','Total_Amount','Total_Paid','Net_Due','Bill_No','Bill_Date','Billing_Outlet']" [rowHover]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -123,9 +123,11 @@
                                             <th>Total Amount</th>
                                             <th>Total Paid</th>
                                             <th>Net Due</th>
+                                            <th>Refund Amount</th>
                                             <th>Bill No</th>
                                             <th>Bill Date</th>
                                             <th>Billing Outlet</th>
+                                            <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
@@ -138,8 +140,8 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y"'>
-                                                            <a (click)="Edit(col)">
+                                                        <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y" && !col.Bill_No' a>
+                                                            <a (click)="CreateBill(col,'editorder')">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
@@ -165,7 +167,12 @@
                                                         </li>
                                                         <li *ngIf='col.Cancel_Order === "N" && col.Net_Due > 0 && col.Net_Due != 0'>
                                                             <a (click)="MakePayment(col)">
-                                                                <i class="fa fa-money" aria-hidden="true"></i> Make Payment
+                                                                <i class="fa fa-inr" aria-hidden="true"></i> Make Payment
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Refund(col)">
+                                                                <i class="fa fa-money" aria-hidden="true"></i> Refund
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -180,15 +187,17 @@
                                             <td>{{col.Total_Amount}}</td>
                                             <td>{{col.Total_Paid}}</td>
                                             <td>{{col.Net_Due}}</td>
+                                            <td>{{col.Refund_Amt}}</td>
                                             <td>{{col.Bill_No}}</td>
                                             <td>{{col.Bill_Date}}</td>
                                             <td>{{col.Billing_Outlet}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                         <tr *ngIf='rowIndex === (Searchlist.length - 1)'>
                                             <td colspan="7" class="text-right">Total</td>
                                             <td>{{getTotalValue('Total_Amount')}}</td>
                                             <td>{{getTotalValue('Total_Paid')}}</td>
-                                            <td colspan="4"></td>
+                                            <td colspan="5"></td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -456,12 +465,16 @@
                                         <!-- </div> -->
                                         <div class="col-sm-2">
                                             <label class="control-label">Message 5 on Cake </label>
-                                            <input class="form-control" name="Modifier5" #Modifier5="ngModel" id='Modifier5' [(ngModel)]="ObjaddbillForm.Modifier5" (keydown)="onKeydownMain($event, 'enter')" [ngClass]="{'clearance':addbillFormSubmitted && Modifier5?.errors?.required}">
+                                            <input class="form-control" name="Modifier5" #Modifier5="ngModel" id='Modifier5' [(ngModel)]="ObjaddbillForm.Modifier5" (keydown)="onKeydownMain($event, 'DelCharge')" [ngClass]="{'clearance':addbillFormSubmitted && Modifier5?.errors?.required}">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Delivery Charge</label>
+                                            <input class="form-control" name="DelCharge" #DelCharge="ngModel" id='DelCharge' [(ngModel)]="ObjaddbillForm.Delivery_Charge" (keydown)="onKeydownMain($event, 'enter')" [ngClass]="{'clearance':addbillFormSubmitted && DelCharge?.errors?.required}" CompacctDigitonly="true">
                                         </div>
                                         <div>
                                             <button id="row-Add" class="btn btn-primary custombutton2" (click)="add(addbillForm.form.valid)">
-                              Add
-                          </button>
+                                                Add
+                                            </button>
                                         </div>
                                     </div>
 
@@ -473,6 +486,7 @@
                                                 <tr style="background-color:#3c8dbc;color:white;">
                                                     <th>Description</th>
                                                     <th>Rate</th>
+                                                    <th>Delivery Charge</th>
                                                     <th>Qty</th>
                                                     <th>Wight in Pound</th>
                                                     <th>Accomplishment Amt</th>
@@ -538,6 +552,7 @@
 
                                                     </td>
                                                     <td>{{obj.Net_Price}}</td>
+                                                    <td>{{obj.Delivery_Charge}}</td>
                                                     <td>{{obj.Stock_Qty}}</td>
                                                     <td>{{obj.Weight_in_Pound}}</td>
                                                     <td>{{obj.Acompanish}}</td>
@@ -856,3 +871,57 @@
         </div>
     </div>
 </div>
+
+<!-- REFUND -->
+<p-dialog header="REFUND" [appendTo]="'body'" [visible]="RefundPopup" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="col-sm-6">
+        <div class="box box-successMP wellMP well-smMP shadow">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class='col-sm-12'>
+                            <label class="control-label">Amount Received:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{RAmount_Payable}}
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Cash Amount:</label>
+                            <input class="form-control" type="text" style="text-align: center" name="Rcash" #Rcash="ngModel" [(ngModel)]="ObjRefundcashForm.Cash_Amount" CompacctDigitonly="true">
+                        </div>
+                        <div class='col-sm-12'>
+                            <label class="control-label">Wallet Amount: </label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <select name="Rwallet" #Rwallet="ngModel" [(ngModel)]="ObjRefundcashForm.Wallet_Ac_ID" [disabled]='true'>
+                                                              <option [ngValue]="undefined">select</option>
+                                                              <option *ngFor = "let option of walletlist" [value] ="option.Txn_ID">
+                                                                  {{option.Ledger_Name}}
+                                                              </option>
+                                                          </select>
+                                </div>
+                                <input type="text" class="form-control" id="exampleInputAmount" name="RWallet" #RWallet="ngModel" [(ngModel)]="ObjRefundcashForm.Wallet_Amount" CompacctDigitonly="true" [disabled]='true'>
+                            </div>
+                        </div>
+
+
+                        <!-- <div class='col-sm-12'>
+                                                        <label class="control-label">Total Paid:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjcashForm.Total_Paid}}
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Net Due:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjcashForm.Net_Due}}
+                                                    </div> -->
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <button type="button" (click)="RefundPopup = false" class="btn btn-default">
+                                        <i class="fa fa-fw fa-close" ></i>&nbsp;  Close
+                                    </button>
+        <button type="button" class="btn btn-primary" (click)="RefundSave()">
+                                        <i class="fa fa-money" ></i>&nbsp; Refund
+                                    </button>
+    </p-footer>
+</p-dialog>

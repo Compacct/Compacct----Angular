@@ -45,6 +45,21 @@ body, td, input, textarea{
   .clearance {
     border: 1px solid red !important;
   }
+input[type='date'].clearance {
+  padding-right: 25px;
+  background: url("https://static.thenounproject.com/png/844317-200.png") no-repeat right;
+  background-size: 20px;
+}
+.ui-dropdown.clearance, select.clearance {
+  padding-right: 25px;
+  background: url("https://static.thenounproject.com/png/811309-200.png") no-repeat 95% 50%;
+  background-size: 20px;
+}
+input[type='text'].clearance {
+  padding-right: 25px;
+  background: url("https://static.thenounproject.com/png/811309-200.png") no-repeat right;
+  background-size: 20px;
+}
 body .ui-inputtext {
   width: 100% !important;
   /*border: 1px solid #d2d5de !important;*/

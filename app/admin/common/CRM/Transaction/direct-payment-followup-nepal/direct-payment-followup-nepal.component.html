@@ -32,7 +32,7 @@
                             </button>
                             </div>
                     </form>
-                    <div class="table-responsive table-id">
+                    <div class="table-responsive table-id">                       
                         <p-table #dt [value]="DirectPaymentFollowUpList" [paginator]="DirectPaymentFollowUpList.length ? true : false" [rows]="100" [loading]="snipper" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50 ,100]"
                             [rowHover]="true" [globalFilterFields]='["Customer Name","Bill_No_Count","Total_Amount"]'>
                             <ng-template pTemplate="caption">
@@ -48,6 +48,7 @@
                                     <th>Customer Name</th>
                                     <th>Total No of Bills</th>
                                     <th>Total Amount</th>
+                                    <th>Total Pending Amount</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-col>
@@ -59,7 +60,8 @@
                                         
                                     </td>
                                     <td>{{col.Bill_No_Count ? col.Bill_No_Count : '-'}}</td>
-                                    <td>{{col.Total_Amount ? col.Total_Amount : '-' }}</td>                                   
+                                    <td>{{col.Total_Amount ? col.Total_Amount : '-' }}</td>   
+                                    <td>{{col.Total_Pending_Amount ? col.Total_Pending_Amount : '-' }}</td>                                 
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="paginatorleft" let-state>

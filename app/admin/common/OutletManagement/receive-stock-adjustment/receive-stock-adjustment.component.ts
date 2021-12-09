@@ -30,7 +30,7 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
   ProductList = [];
   ReceiveStockFormSubmitted = false;
   productaddSubmit = [];
-  myDate = new Date;
+  myDate : Date;
   Expiry_Time : any;
   ObjBrowse : Browse  = new Browse();
   SearchFormSubmitted = false;
@@ -46,7 +46,14 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
   Godown_ID = undefined;
   BrandId = undefined;
   remarks = undefined;
+  dateList: any;
+  CurrentDateTime = new Date();
+  Shelflife: any;
+  ShiftList = [];
+  shiftTime: any;
 
+  batchreq = false;
+  customBacth= undefined;
   constructor(
     private Header: CompacctHeader,
     private $http : HttpClient,
@@ -62,6 +69,7 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
       Header: "Receive Stock Adjustment",
       Link: "Material Management -> Receive Stock Adjustment"
     });
+    this.getbilldate();
     this.GetBrand();
     this.getCostCenter();
     //this.GetProduct();
@@ -73,6 +81,22 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+  }
+  getbilldate(){
+    const obj = {
+     "SP_String": "SP_Controller_Master",
+     "Report_Name_String": "Get - Outlet Bill Date",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.dateList = data;
+   //console.log("this.dateList  ===",this.dateList);
+    this.myDate =  new Date(data[0].Outlet_Bill_Date);
+   // on save use this
+  // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
+  
+  })
   }
   GetBrand(){
     this.BrandList = [];
@@ -126,21 +150,28 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
   getCostCenter(){
     const obj = {
       "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Cost Center Name All",
-      "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+      "Report_Name_String": "Get - Outlet For Distribution",
+      "Json_Param_String": JSON.stringify([{Brand_ID : this.ObjReceiveStockAd.Brand_ID}])
+      // "SP_String": "SP_Controller_Master",
+      // "Report_Name_String": "Get - Cost Center Name All",
+      // "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
       //"Json_Param_String": JSON.stringify([{User_ID : 61}])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.CostCenter = data;
      if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
      //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
-     this.ObjReceiveStockAd.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     //this.ObjReceiveStockAd.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.ObjReceiveStockAd.Cost_Cen_ID = undefined;
      this.costcentdisableflag = true;
      this.getGodown();
+     this.GetProduct();
      } else {
-      this.ObjReceiveStockAd.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     // this.ObjReceiveStockAd.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.ObjReceiveStockAd.Cost_Cen_ID = undefined;
       this.costcentdisableflag = false;
       this.getGodown();
+      this.GetProduct();
      }
       console.log("this.Outletid ======",this.CostCenter);
 
@@ -204,12 +235,31 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
      this.ObjReceiveStockAd.Product_Description = productObj.Product_Description;
      this.ObjReceiveStockAd.Exp_Date_Time =  productObj.Exp_Date_Time;
      this.ObjReceiveStockAd.UOM = productObj.UOM;
+     this.Shelflife = productObj.Shelf_Life_Hours;
     // //this.ObjaddbillForm.Stock_Qty = productObj.Stock_Qty;
+    this.GetShift();
     }
+  }
+  GetShift(){
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "GET_Shift_Time_For_Update"
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.ShiftList = data;
+        //this.shiftTime =  new Date(data[0].Shift_Time);
+        this.shiftTime = this.DateService.dateTimeConvert(new Date(data[0].Shift_Time));
+        // this.ShiftList.forEach(el=>{
+        //   el['time'] = new Date(el.Shift_Time); 
+        // })
+        console.log("this.ShiftList",this.ShiftList);
+        console.log("this.shiftTime",this.shiftTime);
+      })
   }
   GetExpDateTimewWrtBatch(){
     this.Batchflag = false;
     this.ReceiveStockFormSubmitted = false;
+    this.ObjReceiveStockAd.Batch_No = this.customBacth.replaceAll('/','');
     const tempobj = {
       From_Cost_Cen_ID : this.ObjReceiveStockAd.Cost_Cen_ID,
       From_godown_id : this.ObjReceiveStockAd.godown_id,
@@ -244,7 +294,22 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
   }
   onConfirm() {
     this.Batchflag = true;
+    this.Expiry_Time = undefined;
     this.compacctToast.clear("c");
+    const spliobj = this.customBacth.split('-');
+    const shiftObj = this.ShiftList.filter(el=> Number(el.Shift_ID) === Number(spliobj[1]));
+    const ShiftHOURS = new Date(shiftObj[0].Shift_Time).getHours(),ShiftMINUT = new Date(shiftObj[0].Shift_Time).getMinutes();
+    const dateArr = spliobj[0].split('/');
+    const year = '20'+dateArr[0],month = Number(dateArr[1]) - 1,date = dateArr[2];
+    let BacthDate = new Date(Number(year),month,Number(date));
+    BacthDate.setHours(ShiftHOURS);
+    BacthDate.setMinutes(ShiftMINUT);
+    console.log(BacthDate)
+    console.log(new Date(BacthDate))
+    const Shelf_Life_Hours =this.ProductList.filter(el=> Number(el.Product_ID) === Number(this.ObjReceiveStockAd.Product_ID))[0].Shelf_Life_Hours;
+    BacthDate.setHours(BacthDate.getHours() + Shelf_Life_Hours);
+    this.Expiry_Time = new Date(BacthDate);
+   // console.log("this.Expiry_Time==", this.Expiry_Time)
   }
   onReject() {
     this.Batchflag = false;
@@ -254,6 +319,7 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
   AddProduct(valid){
     //console.log('add ===', valid)
   this.ReceiveStockFormSubmitted = true;
+  this.batchreq = true;
   if(valid && this.checksameBatchno()){
     //console.log(this.ObjproductAdd.Batch_No)
     //var RR = this.ReturnReasonid.find(Return_Reason => Return_Reason.Return_Reason_ID == this.ObjProductaddForm.Return_Reason_ID);
@@ -269,10 +335,12 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
   this.productaddSubmit.push(productObj);
   console.log("Product Submit",this.productaddSubmit);
   this.ReceiveStockFormSubmitted = false;
+  this.batchreq = false;
   // this.ObjproductAdd = new productAdd();
   // this.ProductList = [];
   this.ObjReceiveStockAd.Product_ID = undefined;
    this.ObjReceiveStockAd.Batch_No = [];
+   this.customBacth = undefined;
   // this.ObjReceiveStockAd.Exp_Date_Time = [];
    this.Expiry_Time = [];
    this.ObjReceiveStockAd.Rcv_Qty  = [];
@@ -324,7 +392,7 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
         else {
           return true;
         }
-    }
+  }
   GetDataForSave(){
     if(this.productaddSubmit.length) {
       let tempArr =[];
@@ -483,7 +551,8 @@ const obj = {
        this.ProductList = [];
     }
     this.Searchedlist = [];
-    this.ObjReceiveStockAd.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.ObjReceiveStockAd.Cost_Cen_ID = undefined;
+    this.CostCenter = [];
     this.getGodown();
     this.ObjReceiveStockAd.Remarks = [];
     //this.ProductList = [];
@@ -493,7 +562,9 @@ const obj = {
     this.ObjReceiveStockAd.Rcv_Qty = undefined;
     this.ObjReceiveStockAd.Product_ID = undefined;
     this.ReceiveStockFormSubmitted = false;
+    this.batchreq = false;
   //  this.ObjReceiveStockAd.Batch_Qty = undefined;
+    this.getbilldate();
   }
 
 }

@@ -9,6 +9,7 @@ import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { Console } from 'console';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 declare var $:any;
 
 @Component({
@@ -90,6 +91,7 @@ export class K4cFactoryReturnComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) {
     // this.Header.pushHeader({
     //   Header: "Return To Factory",
@@ -599,6 +601,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   // DAY END CHECK
  saveCheck(){
   if(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID && this.Fromgodownid){
+    this.ngxService.start();
     const TempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
       Godown_Id : this.Fromgodownid
@@ -614,6 +617,7 @@ export class K4cFactoryReturnComponent implements OnInit {
       }
       else if(data[0].Status === "Disallow"){    // Disallow
        this.checkSave = false;
+       this.ngxService.stop();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "c",
@@ -624,8 +628,26 @@ export class K4cFactoryReturnComponent implements OnInit {
         });
         this.productaddSubmit = [];
         this.clearData();
+      } else{
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
       }
     })
+  } else{
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error Occured "
+    });
   }
 
  }
@@ -644,6 +666,7 @@ export class K4cFactoryReturnComponent implements OnInit {
       var productDes = data[0].Product_Description; 
       var batchn = data[0].Batch_No;
      this.Spinner = false;
+     this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -665,6 +688,7 @@ export class K4cFactoryReturnComponent implements OnInit {
     console.log(data);
     var tempID = data[0].Column1;
     if(data[0].Column1){
+      this.ngxService.stop();
       this.compacctToast.clear();
       //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
       this.compacctToast.add({
@@ -686,6 +710,7 @@ export class K4cFactoryReturnComponent implements OnInit {
      //this.ObjSaveForm = new SaveForm();
 
     } else{
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -773,6 +798,13 @@ const obj = {
  })
  }
  }
+ PrintRTF(obj) {
+  if (obj.Doc_No) {
+    window.open("/Report/Crystal_Files/K4C/Return_To_Factory_Print.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
+}
  view(DocNo){
   this.Doc_no = undefined;
   this.Doc_date = undefined;
@@ -866,13 +898,13 @@ console.log(this.editList)
     this.To_cost_cen_ID = data[0].To_Cost_Cen_ID;
   //  this.UOM = data[0].UOM,
     //console.log("this.editList  ===",data);
-    for(let i = 0; i < this.editList.length ; i++){
-    if(this.editList[i].Accepted_Qty === 0){
-        this.editList[i].Accepted_Qty = this.editList[i].Qty;
-        } else {
-          this.editList[i].Accepted_Qty = this.editList[i].Accepted_Qty
-        }
-    }
+    // for(let i = 0; i < this.editList.length ; i++){
+    // if(this.editList[i].Accepted_Qty === 0){
+    //     this.editList[i].Accepted_Qty = this.editList[i].Qty;
+    //     } else {
+    //       this.editList[i].Accepted_Qty = this.editList[i].Accepted_Qty
+    //     }
+    // }
   })
  }
  getTotal(key){
@@ -887,6 +919,9 @@ console.log(this.editList)
    // DAY END CHECK
 saveCheckUpdate(){
   if(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID && this.Fromgodownid){
+    this.ngxService.start();
+    this.EditPoppup = false;
+    this.AcceptChallanPoppup = false;
     const TempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
       Godown_Id : this.Fromgodownid
@@ -904,6 +939,7 @@ saveCheckUpdate(){
        this.checkSave = false;
        this.EditPoppup = false;
        this.AcceptChallanPoppup = false;
+       this.ngxService.stop();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "c",
@@ -914,7 +950,16 @@ saveCheckUpdate(){
         });
         this.productaddSubmit = [];
         this.clearData();
-      }
+      } else {
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
+       }
     })
   }
 
@@ -993,6 +1038,7 @@ saveCheckUpdate(){
         this.GetSearchedlist(true);
       this.EditPoppup = false;
       this.AcceptChallanPoppup = false;
+      this.ngxService.stop();
      this.compacctToast.clear();
      this.compacctToast.add({
       key: "compacct-toast",
@@ -1002,6 +1048,7 @@ saveCheckUpdate(){
     });
         }
         else{
+          this.ngxService.stop();
           this.compacctToast.clear();
               this.compacctToast.add({
                 key: "compacct-toast",
@@ -1013,6 +1060,7 @@ saveCheckUpdate(){
     })
     }
     else{
+      this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -1024,6 +1072,7 @@ saveCheckUpdate(){
 
   }
   else{
+    this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -1068,6 +1117,7 @@ saveCheckUpdate(){
   }
  }
  return flag;
+ this.ngxService.stop();
 }
 
  Delete(row){
@@ -1136,8 +1186,7 @@ onReject(){
     this.ObjSaveForm.Material_Type = undefined;
     this.selectProduct = [];
   }
-
-
+  this.ngxService.stop();
  }
  clearbutton(){
   this.ObjSaveForm.Material_Type = undefined;

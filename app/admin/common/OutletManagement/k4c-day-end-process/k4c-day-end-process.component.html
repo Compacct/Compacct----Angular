@@ -37,9 +37,9 @@
 
                                     <div class="col-sm-4">
                                         <label class="control-label"> Outlet&nbsp;<span class="text-danger">*</span></label>
-                                        <select class="form-control" name=" Cost_Cen" #Cost_Cen='ngModel' [(ngModel)]="Cost_Cen_ID_B" [attr.disabled]="costCenterDis? true : null">
+                                        <select class="form-control" name=" Cost_Cen" #Cost_Cen='ngModel' [(ngModel)]="Cost_Cen_ID_B" [attr.disabled]="outletdisableflag? true : null"> <!-- [attr.disabled]="costCenterDis? true : null" -->
                                               <!-- <option [ngValue]="undefined">Select</option> -->
-                                              <option *ngFor='let option of costCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Location}}</option>
+                                              <option *ngFor='let option of costCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                                       </select>
                                     </div>
                                     <div class="col-sm-3">
@@ -70,6 +70,7 @@
                                             <th>Outlet</th>
                                             <th>Manual Amount</th>
                                             <th>System Amount</th>
+                                            <th>Transaction Date & Time</th>
 
 
                                         </tr>
@@ -95,6 +96,7 @@
                                             <td>{{col.Location}}</td>
                                             <td>{{col.Manual_Amount}}</td>
                                             <td>{{col.System_Amount}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
 
                                         </tr>
                                     </ng-template>
@@ -109,15 +111,15 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Date</label>
-                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Datevalue' [min]='minDate' [max]='maxDate'></ejs-datepicker>
+                                        <ejs-datepicker strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='Datevalue' [min]='minDate' [max]='maxDate'></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label"> Outlet
                                     </label>
-                                        <select class="form-control" name="cost_center" #cost_center="ngModel" [(ngModel)]="Cost_Cen_ID" disabled>
+                                        <select class="form-control" name="cost_center" #cost_center="ngModel" [(ngModel)]="Cost_Cen_ID" [attr.disabled]="outletdisableflag? true : null">
                                           <option  [ngValue]="undefined">Select</option>
                                       <option *ngFor="let option of costCenterList" value="{{option.Cost_Cen_ID}}">
-                                          {{option.Location}}
+                                          {{option.Cost_Cen_Name}}
                                           </option>
                                   </select>
                                     </div>
@@ -142,15 +144,15 @@
                                             <th class="text-center" style="vertical-align:middle">
                                                 Payment Options
                                             </th>
-                                            <th class="text-center" style="vertical-align:middle">
+                                            <!-- <th class="text-center" style="vertical-align:middle">
                                                 System Amount
-                                            </th>
+                                            </th> -->
                                             <th class="text-center" style="vertical-align:middle">
                                                 Actual Amount
                                             </th>
-                                            <th class="text-center" style="vertical-align:middle">
+                                            <!-- <th class="text-center" style="vertical-align:middle">
                                                 Variance
-                                            </th>
+                                            </th> -->
                                             <th class="text-center" style="vertical-align:middle">
                                                 Remarks
                                             </th>
@@ -161,21 +163,21 @@
                                            let index = index
                                           ">
                                             <td>{{col.Collection_Mode}}</td>
-                                            <td>{{col.Total_Amount}}</td>
+                                            <!-- <td>{{col.Total_Amount}}</td> -->
                                             <td><input type="text" [name]="col.slno" [(ngModel)]='col.Amount' (ngModelChange)='VarianceChq(index)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td>{{col.Variance}}</td>
-                                            <td><input type="text" [name]="col.slno" [(ngModel)]='col.Remarks' [disabled]="col.Total_Amount == col.Amount" class="form-control" style="width: 150px;" /></td>
+                                            <!-- <td>{{col.Variance}}</td> -->
+                                            <td><input type="text" [name]="col.slno" [(ngModel)]='col.Remarks' class="form-control" style="width: 150px;" /></td>
                                         </tr>
                                         <tr>
                                             <td *ngIf="paymentList.length">Total</td>
-                                            <td *ngIf="paymentList.length">{{getTotalValue('Total_Amount')}}</td>
+                                            <!-- <td *ngIf="paymentList.length">{{getTotalValue('Total_Amount')}}</td>  [disabled]="col.Total_Amount == col.Amount"-->
                                             <td *ngIf="paymentList.length">{{getTotalAmt()}}</td>
-                                            <td *ngIf="paymentList.length">{{getTotalVar()}}</td>
+                                            <!-- <td *ngIf="paymentList.length">{{getTotalVar()}}</td> -->
                                             <td *ngIf="paymentList.length"></td>
                                         </tr>
                                         <tr>
                                             <td *ngIf="paymentList.length">CLOSEING STOCK UPDATED</td>
-                                            <td *ngIf="paymentList.length">{{closeingUpdate}}</td>
+                                            <!-- <td *ngIf="paymentList.length">{{closeingUpdate}}</td> -->
                                             <td *ngIf="paymentList.length"><select class="form-control" name="STOCK_UPDATED" #STOCK_UPDATED="ngModel" [(ngModel)]="closeingstatus" [ngClass]="{'clearance': mismatch && closeingstatus != closeingUpdate}" style="width: 100px;">
                                                     <option  [ngValue]="undefined">Select</option>
                                                 <option value = "YES">

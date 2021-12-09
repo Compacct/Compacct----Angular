@@ -136,7 +136,11 @@ import { DirectPaymentFollowupNepalComponent } from "./common/CRM/Transaction/di
 import { K4cFranchiseSaleBillComponent } from './common/MaterialManagement/k4c-franchise-sale-bill/k4c-franchise-sale-bill.component';
 import { TenderEstimateComponent } from './common/TenderManagement/tender-estimate/tender-estimate.component';
 import { HearingPackageMasterComponent } from "./common/CRM/Master/hearing-package-master/hearing-package-master.component";
-
+import { CompacctTxnTaskComponent } from "./common/TenderManagement/compacct-txn-task/compacct-txn-task.component";
+import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
+import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
+import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
+import { TutoUploadDataSupportComponent } from "./common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component";
 
 
 
@@ -785,6 +789,32 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                   component: HearingPackageMasterComponent,
                                                   data: {title: 'Package Master'}
                                                   },
+                                                  {
+                                                    path: 'BL_CRM_TXN_TASK',
+                                                    component: CompacctTxnTaskComponent,
+                                                    data: {title: 'Txn Task'}
+                                                    },
+                                                    {
+                                                      path: 'Tutopia_Manual_Payment_Collection',
+                                                      component: TutoManualPaymentCollectionComponent,
+                                                      data: {title: 'Manual Payment Collection'}
+                                                      },
+                                                      {
+                                                        path: 'Outlet_Sale_Bill_WithOut_batch_Select',
+                                                        component: OutletSaleBillWithoutBatchSelectComponent,
+                                                        data: {title: 'Take Away (Auto Batch)'}
+                                                        },
+                                                        {
+                                                          path: 'Outlet_Stock_Transfer_Atuto_Batch',
+                                                          component: OutletStockTransferAutoBatchComponent,
+                                                          data: {title: 'Outlet Stock Transfer(Auto Batch)'}
+                                                          },
+                                                          {
+                                                            path: 'Tutopia_Upload_Data_Support',
+                                                            component: TutoUploadDataSupportComponent,
+                                                            data: {title: 'Upload Data Support'}
+                                                            },
+        /*{
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

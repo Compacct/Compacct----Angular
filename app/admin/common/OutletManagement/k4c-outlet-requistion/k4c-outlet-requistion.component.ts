@@ -387,6 +387,14 @@ view(masterProduct){
     //console.log("this.viewList",this.viewList);
   })
 }
+TotalValue(key){
+  let totalval = 0;
+  this.viewList.forEach((item)=>{
+    totalval += Number(item[key]);
+  });
+
+  return totalval ? totalval.toFixed(2) : '-';
+}
 updateRowGroupMetaData() {
   this.rowGroupMetadata = {};
   let previousRowGroup = [];

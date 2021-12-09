@@ -24,6 +24,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   brandInput = false ;
   buttonname = "Create";
   myDate : Date;
+  ChallanDate : any = Date ;
   brandList = [];
   toGodownList = [];
   costcenterList = [];
@@ -45,6 +46,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   seachSpinner = false;
   flag = false;
   inputBoxDisabled = false;
+  indentdateDisabled = true;
   inputDate = true;
   To_Godown_ID_Dis = false;
   Stock_Point = false;
@@ -86,17 +88,17 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     this.ObjadvDispat= new advDispat();
     this.productDetails = [];
     this.inputBoxDisabled = false;
+    this.indentdateDisabled = true;
     this.Stock_Point = false;
     this.To_Godown_ID_Dis = false;
     this.inputDate = true;
     this.Delivery_Date = new Date();
+    this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   }
   clearData(){
     //this.ObjadvDispat= new advDispat();
-
     this.OutletFormSubmit = false;
     this.flag = false;
-
    }
   onConfirm(){ }
   onReject(){}
@@ -110,6 +112,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
 
       //this.ObjRequistion.Req_Date = new Date(data[0].Requisition_Date);
       this.myDate =  new Date(data[0].Bill_Date);
+      this.ChallanDate = new Date(data[0].Bill_Date);
       // on save use this
       //this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));??
       console.log("dateList  ===",this.myDate);
@@ -225,6 +228,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.productDetails = data;
         this.inputBoxDisabled = true;
+        this.indentdateDisabled = false;
         this.Stock_Point = true;
         this.To_Godown_ID_Dis = true;
         this.inputDate = false;
@@ -233,7 +237,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
           ele['Delivery_Qty'] = ele.Qty;
           ele['Doc_No'] = "A";
           ele['Product_ID'] = ele.Product_ID;
-          ele['Doc_Date'] = this.DateService.dateConvert(new Date());
+          ele['Doc_Date'] = this.DateService.dateConvert(new Date(this.ChallanDate));
           ele['F_Cost_Cen_ID'] = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
          ele['To_Cost_Cen_ID'] = this.ObjadvDispat.Cost_Cen_ID;
          ele['Product_Description'] = ele.Product_Description;
@@ -312,6 +316,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                this.items = ["BROWSE", "CREATE"];
                this.buttonname = "Create";
                this.clearData();
+               this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
                  }
                })
              }
@@ -449,6 +454,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     );
   }
   }
+  editmaster(col){}
+  DeleteCostcenter(col){}
 
 }
 class advDispat{

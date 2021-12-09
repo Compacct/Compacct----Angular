@@ -10,6 +10,7 @@ import * as moment from "moment";
 import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-production-voucher-new',
@@ -104,7 +105,8 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     private $http : HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
-    public $CompacctAPI: CompacctCommonApi,) {
+    public $CompacctAPI: CompacctCommonApi,
+    private ngxService: NgxUiLoaderService) {
       this.route.queryParams.subscribe(params => {
         // console.log(params);
         this.Param_Flag = params['Name'];
@@ -636,8 +638,8 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   }
   }
   getReqNo(){
+    let Rarr =[]
     if(this.SelectedIndent.length) {
-      let Rarr =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -647,13 +649,23 @@ export class K4cProductionVoucherNewComponent implements OnInit {
         }
 
     });
-      console.log("Table Data ===", Rarr)
-      return Rarr.length ? JSON.stringify(Rarr) : '';
+      // console.log("Table Data ===", Rarr)
+      // return Rarr.length ? JSON.stringify(Rarr) : '';
+    } 
+    else {
+      const Dobj = {
+        Req_No : 'NA'
+        }
+        Rarr.push(Dobj)
     }
+    console.log("Table Data ===", Rarr)
+    return Rarr.length ? JSON.stringify(Rarr) : '';
   }
   SaveProduction(){
     //this.ProductionFormSubmitted2 = true;
     //if(valid){
+      this.ngxService.start();
+      this.displaysavepopup = false;
       const obj = {
         "SP_String": "SP_Production_Voucher_New",
         "Report_Name_String" : "Add Production Voucher",
@@ -666,6 +678,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
         var tempID = data[0].Column1;
         this.Objproduction.Doc_No = data[0].Column1;
         if(data[0].Column1){
+          this.ngxService.stop();
           this.compacctToast.clear();
           const mgs = this.buttonname === "Save & Print" ? "Saved" : "Updated";
           this.compacctToast.add({
@@ -689,6 +702,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
          //this.ObjSaveForm = new SaveForm();
 
         } else{
+          this.ngxService.stop();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -1139,6 +1153,7 @@ const obj = {
   //this.ProductionlList = [];
   this.Datevalue = this.DateService.dateConvert(new Date(this.Datevalue));
   this.todayDate = new Date();
+  this.ngxService.stop();
   }
   Refresh(){
     //this.clearData();
@@ -1179,6 +1194,7 @@ const obj = {
     this.todayDate = new Date();
     this.SelectedIndent = [];
     this.IndentFilter = []
+    this.ngxService.stop();
   }
 }
 class production {

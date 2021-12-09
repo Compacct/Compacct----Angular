@@ -328,6 +328,7 @@ export class TutoStudentSearchComponent implements OnInit {
     this.Product_ID = undefined;
     if(obj.Foot_Fall_ID){
       this.ObjStusearchForm.Foot_Fall_ID = obj.Foot_Fall_ID;
+      this.ObjStusearchForm.Lead_ID = obj.Lead_ID;
       this.GetStudentdetails();
       this.GetStudentOrderdetails2();
       setTimeout(()=>{
