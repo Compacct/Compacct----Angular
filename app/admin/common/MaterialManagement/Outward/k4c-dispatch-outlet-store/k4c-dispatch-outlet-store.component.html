@@ -352,7 +352,7 @@
                                             <td>{{col.Batch_No}}</td>
                                             <td *ngIf="AccQtydis">{{col.Accepted_Qty}}</td>
                                             <td>{{col.Batch_Qty}}</td>
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input [name]="col.Product_ID" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td *ngIf="EditList.length">{{col.Accept_Reason}}</td>
 
                                         </tr>
