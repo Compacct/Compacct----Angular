@@ -817,7 +817,7 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                             component: BillEditFromAdminComponent,
                                                             data: {title: 'Sale Bill'}
                                                             },
-
+                                                            {
                                                             path: 'Tutopia_Upload_Data_Support',
                                                             component: TutoUploadDataSupportComponent,
                                                             data: {title: 'Upload Data Support'}
