@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Outlet</label>
-                                        <select class="form-control" name="BroeItem" #BroeItem="ngModel" [(ngModel)]="ObjaddbillForm.Browseroutlet" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'">
+                                        <select class="form-control" name="BroeItem" #BroeItem="ngModel" [(ngModel)]="Browseroutlet" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'">
                                 <option  [ngValue] ="undefined">Select</option>
                                 <option *ngFor = "let option of returnedID" [value] ="option.Cost_Cen_ID">
                                     {{option.Cost_Cen_Name}}

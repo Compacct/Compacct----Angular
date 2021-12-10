@@ -87,6 +87,7 @@ export class BillEditFromAdminComponent implements OnInit {
   Del_Cost_Cent_ID : any;
   rowCostcenter: any;
   Browsetab = true;
+  Browseroutlet: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -164,7 +165,7 @@ export class BillEditFromAdminComponent implements OnInit {
     // this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
      //if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
      this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-     this.ObjaddbillForm.Browseroutlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.Browseroutlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      //} else {
      // this.ObjaddbillForm.Browseroutlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      //}
@@ -200,7 +201,7 @@ export class BillEditFromAdminComponent implements OnInit {
       To_Date : end,
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
       Menu_Ref_Id : this.$CompacctAPI.CompacctCookies.Menu_Ref_ID,
-      Cost_Cen_ID : this.ObjaddbillForm.Browseroutlet
+      Cost_Cen_ID : this.Browseroutlet
     }
     const obj = {
       "SP_String": "SP_Controller_Master",
@@ -227,11 +228,13 @@ export class BillEditFromAdminComponent implements OnInit {
       if(eROW.Bill_No){
       this.Objcustomerdetail.Bill_No = eROW.Bill_No;
       this.rowCostcenter = eROW.Cost_Cent_ID;
+      this.ObjaddbillForm.selectitem = this.rowCostcenter;
       this.Browsetab = false;
       this.tabIndexToView = 1;
       this.items = ["BROWSE","UPDATE"];
       this.buttonname = "Update";
        //console.log("this.EditDoc_No ", this.Objcustomerdetail.Bill_No );
+      this.GetProductTypeFilterList();
       this.getselectitem();
       this.geteditmaster(this.Objcustomerdetail.Bill_No);
       //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
@@ -1026,8 +1029,8 @@ GetSelectedBatchqty () {
     this.ObjaddbillForm = new addbillForm();
     this.ObjcashForm = new cashForm();
     this.Objcustomerdetail = new customerdetail();
-    this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    this.ObjaddbillForm.Browseroutlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.ObjaddbillForm.selectitem = this.rowCostcenter;
+   // this.Browseroutlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     //if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
     //  this.ObjaddbillForm.Browseroutlet = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
     //  }
