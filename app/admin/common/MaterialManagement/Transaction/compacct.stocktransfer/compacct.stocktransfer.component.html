@@ -157,7 +157,7 @@
                                                                                 </a>
                                                                             </li>
                                                                             <li>
-                                                                                <a (click)="DeleteStockTransfer(list)">
+                                                                                <a *ngIf='$CompacctAPI.CompacctCookies.User_Type ==="A"' (click)="DeleteStockTransfer(list)">
                                                                                     <i class="fa fa-fw fa-trash"></i>
                                                                                     Delete
                                                                                 </a>
