@@ -229,6 +229,8 @@ import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/t
 import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
 import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
+import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
+
 
 
 @NgModule({
@@ -393,6 +395,7 @@ import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edi
     OutletSaleBillWithoutBatchSelectComponent,
     OutletStockTransferAutoBatchComponent,
     BillEditFromAdminComponent,
+    TutoUploadDataSupportComponent,
   ],
   imports: [
     CommonModule,
