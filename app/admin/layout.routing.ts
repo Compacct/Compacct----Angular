@@ -141,6 +141,7 @@ import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/t
 import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
 import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
+import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq-tender-harbauer/txn-enq-tender-harbauer.component';
 
 
 
@@ -814,6 +815,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                             component: BillEditFromAdminComponent,
                                                             data: {title: 'Sale Bill'}
                                                             },
+                                                            {
+                                                              path: 'BL_CRM_Txn_Enq_Tender_Harbauer',
+                                                              component: TxnEnqTenderHarbauerComponent,
+                                                              data: {title: 'Txn Enq Tender'}
+                                                              },
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

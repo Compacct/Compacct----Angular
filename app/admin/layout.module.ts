@@ -229,7 +229,9 @@ import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/t
 import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
 import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
-
+import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq-tender-harbauer/txn-enq-tender-harbauer.component';
+// Chips
+import {ChipsModule} from 'primeng/chips';
 
 @NgModule({
   declarations: [
@@ -393,6 +395,7 @@ import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edi
     OutletSaleBillWithoutBatchSelectComponent,
     OutletStockTransferAutoBatchComponent,
     BillEditFromAdminComponent,
+    TxnEnqTenderHarbauerComponent,
   ],
   imports: [
     CommonModule,
@@ -435,7 +438,8 @@ import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edi
     DataViewModule,
     PanelModule,
     OverlayPanelModule,
-    GanttAllModule
+    GanttAllModule,
+    ChipsModule
   ],
   exports: [],
   providers: [
