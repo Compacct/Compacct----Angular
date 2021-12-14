@@ -232,6 +232,9 @@ import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edi
 import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq-tender-harbauer/txn-enq-tender-harbauer.component';
 // Chips
 import {ChipsModule} from 'primeng/chips';
+import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
+
+
 
 @NgModule({
   declarations: [
@@ -396,6 +399,7 @@ import {ChipsModule} from 'primeng/chips';
     OutletStockTransferAutoBatchComponent,
     BillEditFromAdminComponent,
     TxnEnqTenderHarbauerComponent,
+    TutoUploadDataSupportComponent,
   ],
   imports: [
     CommonModule,

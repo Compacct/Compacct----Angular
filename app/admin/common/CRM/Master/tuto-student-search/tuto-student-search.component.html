@@ -117,10 +117,10 @@
                                                 <li *ngIf="$CompacctAPI.CompacctCookies.User_ID == '4' || $CompacctAPI.CompacctCookies.Menu_Ref_ID == '1' || $CompacctAPI.CompacctCookies.Menu_Ref_ID == '8'|| $CompacctAPI.CompacctCookies.Menu_Ref_ID == '7'">
                                                     <a (click)="FollowUpPopup(col)"> <i class="fa fa-commenting-o"> </i>Followup</a>
                                                 </li>
-                                                <li>
+                                                <li  *ngIf='$CompacctAPI.CompacctCookies.Menu_Ref_ID != 12'>
                                                     <a (click)="OpenForwardModal(col)"> <i class="fa fa-user-plus"> </i>Forward Lead</a>
                                                 </li>
-                                                <li>
+                                                <li *ngIf='$CompacctAPI.CompacctCookies.Menu_Ref_ID != 12'>
                                                     <a (click)="showManualPaymentModal(col)"><i class="fa fa-check-square-o"></i> Manual Payment Update</a>
                                                 </li>
 

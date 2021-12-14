@@ -114,6 +114,7 @@ export class TutoOrderManagementComponent implements OnInit {
         const apiRes:any = await this.CallTutopiaApiForTicket('subscription/create',apiObj);
         this.InsertSuscription(apiRes.data.order_detail);
       } catch(error) {
+        this.Spinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -286,6 +287,7 @@ export class TutoOrderManagementComponent implements OnInit {
   Saveorder(){
     this.showProductList = [];
     this.popup_Flag = false;
+    this.Spinner = true;
     const BILL = this.BillingList.filter(item => Number(item.Pay_ID) === Number(this.Billing_Type));
     this.productList.forEach((item)=>{
       // item['Total_Order_Amount'] =  this.totalAmt;
@@ -351,6 +353,7 @@ export class TutoOrderManagementComponent implements OnInit {
         'Foot_Fall_ID' : window.btoa(this.Foot_Fall_ID)
       },
     };
+    this.Spinner = false;
     this.router.navigate(['./Tutopia_Order_Payment'], navigationExtras);
     // const Link = '/?Subscription_Txn_ID='+ +'&Menu_Ref_ID='+window.btoa(this.Param_MenRefID)+'&Foot_Fall_ID='+window.btoa(this.Foot_Fall_ID);
    // window.open(Link);

@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
-            <div class="form-horizontal">
+            <div>
                 <form name="SearchForm" #SearchForm="ngForm" novalidate>
                     <div class="form-group">
                         <div class="col-sm-4">
@@ -12,26 +12,23 @@
                             <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [DefaultDateOpt]="'weekwise'">
                             </app-compacct-daterangepicker>
                         </div>
-                        <div class="col-sm-3">
-                            <button class="btn btn-primary custombutton" (click)="GetManualPaymentList()" id="load" [disabled]="seachSpinner">
-                          <p-progressSpinner
-                            *ngIf="seachSpinner"
-                            [style]="{ width: '15px', height: '15px' }"
-                            strokeWidth="8"
-                            animationDuration=".5s"
-                          ></p-progressSpinner>
-                          <span
-                            *ngIf="!seachSpinner"
-                            class="glyphicon glyphicon-search"
-                          ></span
-                          >&nbsp;Search
-                        </button>
-                        </div>
+                        <button class="btn btn-primary custombutton" (click)="GetManualPaymentList()" id="load" [disabled]="seachSpinner">
+                            <p-progressSpinner
+                              *ngIf="seachSpinner"
+                              [style]="{ width: '15px', height: '15px' }"
+                              strokeWidth="8"
+                              animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search" ></span>&nbsp;Search
+                          </button>
+                          <button *ngIf='ManualPaymentList.length' (click)="exportexcel(ManualPaymentList,'ManualPaymentList_')" class="btn btn-primary custombutton">
+                            <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                          </button>
                     </div>
 
                 </form>
                 <div class="box-body"><div class="table-responsive table-id">
-                    <p-table #dt [value]="ManualPaymentList" [paginator]="ManualPaymentList.length ? true : false" [rows]="10" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true" [globalFilterFields]='["Mobile","Contact_Name","Pin","Class_Name"]'>
+                    <p-table #dt [value]="ManualPaymentList"
+                     [paginator]="ManualPaymentList.length ? true : false" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30,100]" [rowHover]="true" [globalFilterFields]='SearchColList'>
                         <ng-template pTemplate="caption">
                             <div class="row">
                                 <div class="col-sm-3 pull-right" style="text-align: right">
@@ -50,6 +47,8 @@
                                 <th>Order Date</th>
                                 <th>Order No</th>
                                 <th>Amount</th>
+                                <th>Distributor CODE</th>
+                                <th>Sale Type</th>
 
                             </tr>
                         </ng-template>
@@ -64,8 +63,14 @@
                                 <td>{{col.EMI_Date}}</td>
                                 <td>{{col.EMI_No_Remarks}}</td>
                                 <td>{{col.Order_Date}}</td>
-                                <td>{{col.Order_No}}</td>
+                                <td>
+                                    <a (click)="GetPDF(col)">
+                                        {{col.Order_No}}
+                                      </a>
+                                </td>
                                 <td>{{col.Amount}}</td>
+                                <td>{{col.Distributor_CODE}}</td>
+                                <td>{{col.Sale_Type}}</td>
                                 <!-- <td>{{col.School ? col.School :'-'}}</td> -->
 
                             </tr>
@@ -74,7 +79,6 @@
                             Showing {{ state.first + 1 }} of {{ state.first + 1 + state.rows }} of {{ state.totalRecords }}
                         </ng-template>
                     </p-table>
-
                 </div>
 
             </div>
@@ -87,7 +91,7 @@
     [maximizable]="true" [baseZIndex]="10000">
     <div class="form-horizontal">
         <form name="PayementConfirmForm" style="margin-top:1em" #PayementConfirmForm="ngForm" novalidate>
-            <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{this.ObjManualPaymentCnfm.Contact_Name}}</span></h5>
+            <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{ObjManualPaymentCnfm.Contact_Name}}</span></h5>
             <div class="form-group">
                 <div class="col-sm-12" style="margin-top: 1.5em;">
                     <label class="control-label">Bank Txn ID<sup class="text-danger">*</sup></label>
