@@ -132,7 +132,7 @@
                                                                             <span class="caret"></span>
                                                                         </button>
                                                                         <ul class="dropdown-menu">
-                                                                            <li *ngIf='list.T_Cost_Cen_ID != $CompacctAPI.CompacctCookies.Cost_Cen_ID'>
+                                                                            <li *ngIf='list.F_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID'>
                                                                                 <a (click)="EditStockTransfer(list)">
                                                                                     <i class="fa fa-fw fa-pencil"></i>
                                                                                     Edit
@@ -157,7 +157,7 @@
                                                                                 </a>
                                                                             </li>
                                                                             <li>
-                                                                                <a (click)="DeleteStockTransfer(list)">
+                                                                                <a *ngIf='$CompacctAPI.CompacctCookies.User_Type ==="A"' (click)="DeleteStockTransfer(list)">
                                                                                     <i class="fa fa-fw fa-trash"></i>
                                                                                     Delete
                                                                                 </a>

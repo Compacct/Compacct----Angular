@@ -140,7 +140,9 @@ import { CompacctTxnTaskComponent } from "./common/TenderManagement/compacct-txn
 import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/tuto-manual-payment-collection/tuto-manual-payment-collection.component';
 import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
 import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
+import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
 import { TutoUploadDataSupportComponent } from "./common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component";
+
 
 
 
@@ -810,11 +812,18 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                           data: {title: 'Outlet Stock Transfer(Auto Batch)'}
                                                           },
                                                           {
+
+                                                            path: 'Bill_Edit_From_Admin',
+                                                            component: BillEditFromAdminComponent,
+                                                            data: {title: 'Sale Bill'}
+                                                            },
+                                                            {
                                                             path: 'Tutopia_Upload_Data_Support',
                                                             component: TutoUploadDataSupportComponent,
                                                             data: {title: 'Upload Data Support'}
                                                             },
         /*{
+
       /*{
            path: '404',
            loadChildren: () => import('src/app/admin/pageNotFound/pageNotFound.route.module').then(m => m.PageNotFoundModule)

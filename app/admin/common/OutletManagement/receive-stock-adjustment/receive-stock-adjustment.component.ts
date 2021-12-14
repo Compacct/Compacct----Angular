@@ -149,9 +149,9 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
   // }
   getCostCenter(){
     const obj = {
-      "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Outlet For Distribution",
-      "Json_Param_String": JSON.stringify([{Brand_ID : this.ObjReceiveStockAd.Brand_ID}])
+      "SP_String": "SP_Raw_Material_Stock_Transfer",
+      "Report_Name_String": "Get Cost Centre outlet and HO",
+      //"Json_Param_String": JSON.stringify([{Brand_ID : this.ObjReceiveStockAd.Brand_ID}])
       // "SP_String": "SP_Controller_Master",
       // "Report_Name_String": "Get - Cost Center Name All",
       // "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
@@ -165,13 +165,13 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
      this.ObjReceiveStockAd.Cost_Cen_ID = undefined;
      this.costcentdisableflag = true;
      this.getGodown();
-     this.GetProduct();
+    // this.GetProduct();
      } else {
      // this.ObjReceiveStockAd.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      this.ObjReceiveStockAd.Cost_Cen_ID = undefined;
       this.costcentdisableflag = false;
       this.getGodown();
-      this.GetProduct();
+      //this.GetProduct();
      }
       console.log("this.Outletid ======",this.CostCenter);
 
@@ -552,7 +552,7 @@ const obj = {
     }
     this.Searchedlist = [];
     this.ObjReceiveStockAd.Cost_Cen_ID = undefined;
-    this.CostCenter = [];
+    //this.CostCenter = [];
     this.getGodown();
     this.ObjReceiveStockAd.Remarks = [];
     //this.ProductList = [];

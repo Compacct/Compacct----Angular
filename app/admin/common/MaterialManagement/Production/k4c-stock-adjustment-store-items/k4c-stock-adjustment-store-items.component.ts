@@ -158,8 +158,8 @@ getbilldate(){
   //   });
   // } else {
     const obj = {
-      "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Outlet For Distribution",
+      "SP_String": "SP_Raw_Material_Stock_Transfer",
+      "Report_Name_String": "Get Cost Centre outlet and HO",
       "Json_Param_String": JSON.stringify([{Brand_ID : this.ObjStockAdStoreItems.Brand_ID}])
      // "Json_Param_String": JSON.stringify([{User_ID : 61}])
     }
@@ -171,12 +171,12 @@ getbilldate(){
       // this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
        this.costcentdisableflag = true;
         this.getGodown();
-        this.GetProduct();
+       // this.GetProduct();
          } else {
         // this.ObjStockAdStoreItems.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
          this.costcentdisableflag = false;
          this.getGodown();
-         this.GetProduct();
+       //  this.GetProduct();
         }
          console.log("this.Outletid ======",this.CostCenter);
          });
