@@ -986,6 +986,56 @@ export class TutoStudentSearchComponent implements OnInit {
 
     }
   };
+
+  // REFUND
+  SaveRefund(obj){
+    if(obj.Bill_No && Number(obj.Refund_Amt) > 0) {
+      const Objtemp = {
+        Refund_Amount : obj.Refund_Amt,
+        Refund_User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+        Order_No : obj.Bill_No
+      };
+      console.log(Objtemp)
+      const objj = {
+        "SP_String" : "Tutopia_Subscription_Update",
+        "Report_Name_String" : "Refund_Order",
+        "Json_Param_String" : JSON.stringify([Objtemp])
+      }
+      this.GlobalAPI.getData(objj).subscribe((data:any)=>{
+        console.log(data)
+        const res = data.length ? data[0] : {};
+       console.log(res)
+       if(res.remarks === 'success'){
+         this.GetStudentOrderdetails2();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'success',
+          detail: "Succesfully Saved."
+        });
+       } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error",
+          detail: "Error Occured"
+        });
+       }
+        
+  
+       })
+    } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error",
+          detail: "Refund Amount Not Found or Set as 0."
+        });
+    }
+  }
 }
 class StusearchForm{
   Search_BY = "Mobile";
