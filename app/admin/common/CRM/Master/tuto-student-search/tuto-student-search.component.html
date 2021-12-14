@@ -49,7 +49,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-3">
-                                <label class="control-label">Search<sup class="text-danger">*</sup></label>
+                                <label class="control-label">Search <sup class="text-danger">*</sup></label>
                                 <input class="form-control" name="Search" #Search="ngModel" [(ngModel)]="ObjStusearchForm.Search_Value" placeholder="Search Value" [ngClass]="{'clearance': ConfirmSearchFormSubmitted && Search?.errors?.required}" required>
                             </div>
                             <div class="col-sm-3">
@@ -635,7 +635,7 @@
     [baseZIndex]="10000">
     <form name="ShowOrderModalUpdate" style="margin-top:1em" *ngIf='Studentdetails?.Foot_Fall_ID' #ShowOrderModalUpdate="ngForm" novalidate>
         <h5 class="text-center">Student Name : <span class="text-bold text-uppercase">&nbsp;&nbsp;{{Studentdetails['Contact_Name']}}</span></h5>
-        <div class="table-responsive table-id no-padding">
+        <div class="table-responsive no-padding">
             <p-table [value]="Orderdetaillist2" #OrderPopup [paginator]="Orderdetaillist2.length ? true : false" [rows]="10" [rowHover]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [autoLayout]="true" [rowHover]="true" [globalFilterFields]='["Ref_Code","Products","Txn_Date","Subscription_Txn_ID" ]'>
                 <ng-template pTemplate="caption">
                     <div class="row">
@@ -649,6 +649,7 @@
 
                         <th>Order ID </th>
                         <th>Txn Date </th>
+                        <th>Bill No.</th>
                         <th>App Confirm</th>
                         <th>App Confirmed Date</th>
                         <th>Cancel</th>
@@ -661,9 +662,16 @@
                     <tr>
                         <td>{{col.Subscription_Txn_ID }}</td>
                         <td>{{col.Txn_Date }}</td>
+                        <td>
+                            {{col.Bill_No ? col.Bill_No : '-'}}<br>
+                            <div *ngIf='col.Bill_No' class="input-group">
+                                <input type="text" name="{{'refund'+ col.Subscription_Txn_ID}}" [(ngModel)]="col.Refund_Amt" class="form-control" placeholder="Refund Amount">
+                                <span style="cursor: pointer;" (click)='SaveRefund(col)' class="input-group-addon bg-purple-gradient">REFUND</span>
+                            </div>
+                        </td>
                         <td>{{col.App_Confirm === 'Y' ? 'YES' : 'NO'}}</td>
                         <td>{{col.App_Confirm === 'Y' ? col.App_Confirm_Date : '-'}}</td>
-                        <td>{{col.Is_Cancled === 'Y' ? 'YES' : 'NO'}}
+                        <td>{{col.Is_Cancled === 'Y' ? 'YES' : 'NO'}}<br>
                             <button (click)='CancelOrder(col)' class="btn btn-warning btn-xs"><i class='fa fa-fw fa-close'></i>Cancel Suscriptions</button>
                         </td>
                         <td>{{col.Is_Cancled === 'Y' ? col.Cancel_Date : '-'}}</td>
@@ -673,7 +681,7 @@
                                 <span style="cursor: pointer;" (click)='CheckRefCode(col)' class="input-group-addon bg-green-gradient">Update</span>
                             </div>
                         </td>
-                        <td>{{col.Products }}
+                        <td>{{col.Products }}<br>
                             <button (click)='ShowOrderProducts(col)' class="btn btn-primary btn-xs">Show Products</button>
                         </td>
 
