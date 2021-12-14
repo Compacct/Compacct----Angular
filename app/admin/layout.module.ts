@@ -230,6 +230,8 @@ import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManage
 import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
 import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
+import { TenderBudgetComponent } from './common/TenderManagement/tender-budget/tender-budget.component';
+import { TenderHarbauerViewComponent } from './common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component';
 
 
 
@@ -396,6 +398,8 @@ import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-
     OutletStockTransferAutoBatchComponent,
     BillEditFromAdminComponent,
     TutoUploadDataSupportComponent,
+    TenderBudgetComponent,
+    TenderHarbauerViewComponent,
   ],
   imports: [
     CommonModule,
