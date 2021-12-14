@@ -1,0 +1,423 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="TenderForm" #TenderForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Work Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="RemarksCreate" #RemarksCreate="ngModel" [(ngModel)]="ObjTender.Tender_Name" (change)='CheckIfTenderNameExist()' placeholder="Work Name" [ngClass]="{'clearance': TenderFormSubmitted && RemarksCreate.errors?.required}"
+                                            required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
+                                        <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        <select class="form-control" name="Authority" #Authority="ngModel" [(ngModel)]="ObjTender.Tender_Org_ID" [ngClass]="{'clearance': TenderFormSubmitted && Authority.errors?.required}" required>
+                                                                    <option  [ngValue]="undefined">Select</option>
+                                                                <option *ngFor="let option of tenderOrgList" [ngValue]="option.Tender_Org_ID">
+                                                                    {{option.Tender_Organization}}
+                                                                    </option>
+                                                            </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Calling Div</label>
+                                        <span (click)="Tender_Calling_Div_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+
+                                        <select class="form-control" name="TenderCalling" #TenderCalling="ngModel" [(ngModel)]="ObjTender.Tender_Calling_Div_ID" [ngClass]="{'clearance': TenderFormSubmitted && TenderCalling.errors?.required}">
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of TenderCallingDivList" [ngValue]="option.Tender_Calling_Div_ID">
+                                                              {{option.Tender_Calling_Div_Name}}
+                                                              </option>
+                                                      </select>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Execution Div</label>
+                                        <span (click)="Tender_Execution_Div_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        <select class="form-control" name="Tender_ExecutionCreate" #Tender_ExecutionCreate="ngModel" [(ngModel)]="ObjTender.Tender_Execution_Div_ID" [ngClass]="{'clearance': TenderFormSubmitted && Tender_ExecutionCreate.errors?.required}">
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of TenderExecutionDivList" [ngValue]="option.Tender_Execution_Div_ID">
+                                                    {{option.Tender_Execution_Div_Name}}
+                                                    </option>
+                                            </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Reference Number<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="reffno" #reffno="ngModel" [(ngModel)]="ObjTender.Tender_Ref_No" placeholder="Tender Reference Number" [ngClass]="{'clearance': TenderFormSubmitted && reffno.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="TenderIDCreate" #TenderIDCreate="ngModel" [(ngModel)]="ObjTender.Tender_ID" placeholder="Tender ID" (change)='CheckIfTenderIDExist()' [ngClass]="{'clearance': TenderFormSubmitted && TenderIDCreate.errors?.required}" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Type</label>
+                                        <span (click)="Tender_Type_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+
+                                        <select class="form-control" name="TenderTypeCreate" #TenderTypeCreate="ngModel" [(ngModel)]="ObjTender.Tender_Type_ID" [ngClass]="{'clearance': TenderFormSubmitted && TenderTypeCreate.errors?.required}">
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of TypeList" [ngValue]="option.Tender_Type_ID">
+                                                              {{option.Tender_Type_Name}}
+                                                              </option>
+                                                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Category</label>
+                                        <span (click)="Tender_Category_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        <select class="form-control" name="CategoryTenderCreate" #CategoryTenderCreate="ngModel" [(ngModel)]="ObjTender.Tender_Category_ID" [ngClass]="{'clearance': TenderFormSubmitted && CategoryTenderCreate.errors?.required}">
+                                                                <option  [ngValue]="undefined">Select</option>
+                                                            <option *ngFor="let option of tenderCategoryList" [ngValue]="option.Tender_Category_ID">
+                                                                {{option.Tender_Category_Name}}
+                                                                </option>
+                                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" [ngClass]="{'clearance': TenderFormSubmitted && Contact.errors?.required}" required>
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of StateList" [ngValue]="option.State">
+                                                              {{option.State}}
+                                                              </option>
+                                                      </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Work Location<sup class="text-danger">*</sup></label>
+                                        <p-chips name="wlocation" #wlocation="ngModel" placeholder="Area" [(ngModel)]="testchips" [ngClass]="{'clearance': TenderFormSubmitted && wlocation.errors?.required}" required>
+                                        </p-chips>
+                                        <!-- <span (click)="addpopup()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Add</span> -->
+                                        <!-- <input class="form-control" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Area" /> -->
+                                        <!-- <input class="form-control" name="wlocation" #wlocation="ngModel" [(ngModel)]="ObjTender.Work_Location" placeholder="Work Name" placeholder="Area" /> -->
+                                        <!-- <button class="form-control" type="button" (click)="addpopup()" class="btn btn-primary">
+                                      Add Location
+                                    </button> -->
+                                    </div>
+                                    <!-- <div class="col-sm-8">
+                                        <br>
+                                        <div class="table-responsive no-padding">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <td class="tabletd" *ngFor="let obj of wLocationSubmit">{{obj.Work_Location}}</td>
+                                                </tbody>
+                                            </table>
+                                        </div> -->
+                                    <!-- <div class="p-grid" style="margin-top: .5em">
+                                            <div class="p-col" *ngFor="let col of wLocationSubmit; let i=index" [@animation]="'visible'">
+                                                <div class="box">{{col.Work_Location}}</div>
+                                            </div>
+                                        </div> -->
+                                    <!-- </div> -->
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Value <sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="AmountTenderCreate" #AmountTenderCreate="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjTender.Tender_Amount" (change)="TenderAmountChange(ObjTender.Tender_Amount)" (focus)="onFocusInEvent('TenderAmount',TenderAmount)"
+                                            (focusout)="onFocusOutEvent('TenderAmount',TenderAmount)" placeholder="Tender Value" autocomplete="off" [ngClass]="{'clearance': TenderFormSubmitted && AmountTenderCreate.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Published Date & Time<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input class="form-control" [owlDateTimeTrigger]="pub" name="pub_Date_Submission" [(ngModel)]="TenderPublishDate" [owlDateTime]="pub">
+                                            <owl-date-time [hour12Timer]='true' #pub></owl-date-time>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Submission Date & Time<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input class="form-control" [owlDateTimeTrigger]="end" name="END_Date_Submission" [(ngModel)]="TenderEndDate" [owlDateTime]="end">
+                                            <owl-date-time [hour12Timer]='true' #end></owl-date-time>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Bid Opening Date & Time<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input class="form-control" [owlDateTimeTrigger]="open" name="Date_Submission" [(ngModel)]="TenderOpenDate" [owlDateTime]="open">
+                                            <owl-date-time [hour12Timer]='true' #open></owl-date-time>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">EMD Value <sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="EMD" #EMD="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjTender.EMD_Amount" (focus)="onFocusInEvent('EMDAmount',EMDAmount)" (focusout)="onFocusOutEvent('EMDAmount',EMDAmount)" placeholder="EMD Value" autocomplete="off"
+                                            [ngClass]="{'clearance': TenderFormSubmitted && EMD.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tender Fee <sup *ngIf="ObjTender.T_Fee_Payment_Mode" class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Fee" #Fee="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjTender.T_Fee_Amount" (focus)="onFocusInEvent('TFeeAmount',TFeeAmount)" (focusout)="onFocusOutEvent('TFeeAmount',TFeeAmount)" placeholder="Tender Fee" autocomplete="off"
+                                            [ngClass]="{'clearance': TenderFormSubmitted && Fee.errors?.required}" [required]="ObjTender.T_Fee_Payment_Mode">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Information From<sup class="text-danger"></sup></label>
+                                        <span (click)="ToggleInformation()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        <select class="form-control" name="Tender_Publishing_Info_From" #Tender_Publishing_Info_From="ngModel" [(ngModel)]="ObjTender.Tender_Publishing_Info_From" [ngClass]="{'clearance': TenderFormSubmitted && Tender_Publishing_Info_From.errors?.required}">
+                                                      <option  [ngValue]="undefined">Select</option>
+                                                  <option *ngFor="let option of TenderInfoEnqList" [ngValue]="option.Enq_Source_ID">
+                                                      {{option.Enq_Source_Name}}
+                                                      </option>
+                                              </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Informed Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="EMDIssueDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
+                                                required />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period Of Working<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="WorkCreate" #WorkCreate="ngModel" CompacctDigitonly="true" [(ngModel)]="PeriodOfWork" (change)="TenderPeriodOfWorkChange(PeriodOfWork)" placeholder="Period Of Working" [ngClass]="{'clearance': TenderFormSubmitted && WorkCreate.errors?.required}"
+                                            required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Budget Required By <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="date" name="budgetrequidby" #budgetrequidby="ngModel" [ngModel]="BudgetRequidBy | date: 'yyyy-MM-dd'" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && budgetrequidby.errors?.required}" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Assign To For Budget<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="assignedforbudget" #assignedforbudget="ngModel" [(ngModel)]="ObjTender.Assign_For_Budget" [ngClass]="{'clearance': TenderFormSubmitted && assignedforbudget.errors?.required}" required>
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of UserList" [ngValue]="option.User_ID">
+                                                              {{option.User_Name}}
+                                                              </option>
+                                                      </select>
+                                    </div>
+                                </div>
+
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" type="button" (click)="SaveTenderMaster(TenderForm.form.valid)" id="load" [disabled]="Spinner">
+                                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                                    </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Tender_Calling_Div_Name>
+    <div class="form-horizontal">
+        <form name="OrgForm" #OrgForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Tender Calling Div<sup class="text-danger">*</sup ></label>
+                    <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="TenderCallingDiv" placeholder="Tender Calling Div" allow-pattern="([a-z ]|\.)" [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}" required />
+                </div>
+                <button (click)='LightBoxSave("TenderCallingDiv","Tender_Calling_Div_Name")' class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;" [disabled]="Spinner">
+             <p-progressSpinner
+               *ngIf="Spinner"
+               [style]="{ width: '15px', height: '15px' }"
+               strokeWidth="8"
+               animationDuration=".5s"
+             ></p-progressSpinner>
+              <i class="fa fa-fw  fa-plus"></i>  Create</button>
+            </div>
+
+        </form>
+    </div>
+</p-overlayPanel>
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Tender_Execution_Div_Name>
+    <div class="form-horizontal">
+        <form name="OrgForm" #OrgForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Tender Execution Div<sup class="text-danger">*</sup ></label>
+                    <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="TenderExecutionDiv" placeholder="Tender Execution Div" allow-pattern="([a-z ]|\.)" [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}" required />
+                </div>
+                <button (click)='LightBoxSave("TenderExecutionDiv","Tender_Execution_Div_Name")' class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;" [disabled]="Spinner">
+           <p-progressSpinner
+             *ngIf="Spinner"
+             [style]="{ width: '15px', height: '15px' }"
+             strokeWidth="8"
+             animationDuration=".5s"
+           ></p-progressSpinner>
+            <i class="fa fa-fw  fa-plus"></i>  Create</button>
+            </div>
+
+        </form>
+    </div>
+</p-overlayPanel>
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Tender_Type_Name>
+    <div class="form-horizontal">
+        <form name="OrgForm" #OrgForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Tender Type<sup class="text-danger">*</sup ></label>
+                    <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="TenderType" placeholder="Tender Type" allow-pattern="([a-z ]|\.)" [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}" required />
+                </div>
+                <button (click)='LightBoxSave("TenderType","Tender_Type_Name")' class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;" [disabled]="Spinner">
+         <p-progressSpinner
+           *ngIf="Spinner"
+           [style]="{ width: '15px', height: '15px' }"
+           strokeWidth="8"
+           animationDuration=".5s"
+         ></p-progressSpinner>
+          <i class="fa fa-fw  fa-plus"></i>  Create</button>
+            </div>
+
+        </form>
+    </div>
+</p-overlayPanel>
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Tender_Category_Name>
+    <div class="form-horizontal">
+        <form name="OrgForm" #OrgForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Tender Category<sup class="text-danger">*</sup ></label>
+                    <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="TenderCategory" placeholder="Tender Category" allow-pattern="([a-z ]|\.)" [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}" required />
+                </div>
+                <button (click)='LightBoxSave("TenderCategory","Tender_Category_Name")' class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;" [disabled]="Spinner">
+       <p-progressSpinner
+         *ngIf="Spinner"
+         [style]="{ width: '15px', height: '15px' }"
+         strokeWidth="8"
+         animationDuration=".5s"
+       ></p-progressSpinner>
+        <i class="fa fa-fw  fa-plus"></i>  Create</button>
+            </div>
+
+        </form>
+    </div>
+</p-overlayPanel>
+
+
+<p-dialog [header]="'Create Organization'" [appendTo]="'body'" [visible]="OrganizationModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="OrgForm" #OrgForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Organization Name<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="TenderOrganization" placeholder="Organization Name" allow-pattern="([a-z ]|\.)" [ngClass]="{
+          clearance: OrgSubmitted && name?.errors?.required
+        }" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="OrganizationModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateOrganization(OrgForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
+</button>
+    </p-footer>
+</p-dialog>
+<p-dialog [header]="'Create Information'" [appendTo]="'body'" [visible]="InformationModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="InformationForm" #InformationForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Information<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" class="form-control" name="nameInformation" #nameInformation="ngModel" [(ngModel)]="InformationName" placeholder="Information" allow-pattern="([a-z ]|\.)" [ngClass]="{
+          clearance: DivisionSubmitted && nameInformation?.errors?.required
+        }" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="InformationModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateInformation(InformationForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
+</button>
+    </p-footer>
+</p-dialog>

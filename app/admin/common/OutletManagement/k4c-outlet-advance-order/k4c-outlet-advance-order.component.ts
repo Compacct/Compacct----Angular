@@ -95,6 +95,9 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Adv_Order_No: any;
   ObjRefundcashForm : RefundcashForm  = new RefundcashForm();
   RAmount_Payable: any;
+  Cancle_Remarks : string;
+  cancleFormSubmitted = false;
+  Can_Remarks = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -309,9 +312,12 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   //CANCLE BROWSE ROW
   Cancle(row){
     //console.log(this.Objcustomerdetail.Adv_Order_No)
+    this.Cancle_Remarks = "";
+    this.cancleFormSubmitted = false;
     this.Objcustomerdetail.Adv_Order_No = undefined ;
     if(row.Adv_Order_No){
       this.checkSave = true;
+      this.Can_Remarks = true;
     this.Objcustomerdetail.Adv_Order_No = row.Adv_Order_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -323,25 +329,33 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
       });
     }
    }
-   onConfirm() {
+   onConfirm(valid) {
+    this.Can_Remarks = true;
+    this.cancleFormSubmitted = true;
     const Tempobj = {
-      Doc_No : this.Objcustomerdetail.Adv_Order_No
+      Doc_No : this.Objcustomerdetail.Adv_Order_No,
+      Order_Cancel_Remarks : this.Cancle_Remarks
     }
+    if (valid) {
     const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Cancle Advance Order",
       "Json_Param_String": JSON.stringify([Tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      var msg = data[0].Column1;
       //console.log(data);
-      if(data[0].Column1 === "Cancel Successfully") {
+      //if(data[0].Column1 === "Cancel Successfully") {
+        if(data[0].Column1) {
         this.Showdata();
+        this.Showdatabymobile(true);
+        this.cancleFormSubmitted = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
           summary: "Adv_Order_No : " + this.Objcustomerdetail.Adv_Order_No,
-          detail:  "Succesfully Cancle"
+          detail:  msg
         });
 
       } else{
@@ -354,6 +368,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
         });
       }
     })
+  }
   }
 
   onReject() {

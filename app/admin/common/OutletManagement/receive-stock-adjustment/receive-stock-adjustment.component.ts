@@ -5,6 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-receive-stock-adjustment',
@@ -61,6 +62,7 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -432,6 +434,7 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
   }
   SaveReceiveStock(){
     //if(valid){
+      this.ngxService.start();
       const obj = {
         "SP_String": "SP_Issue_Stock_Adjustment",
         "Report_Name_String" : "Save_Receive_Stock_Movement",
@@ -443,6 +446,7 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
         var tempID = data[0].Column1;
        // this.Objproduction.Doc_No = data[0].Column1;
         if(data[0].Column1){
+          this.ngxService.stop();
           this.compacctToast.clear();
         //  const mgs = this.buttonname === "Save & Print" ? "Saved" : "Updated";
           this.compacctToast.add({
@@ -458,6 +462,7 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
         // this.IssueStockFormSubmitted = false;
 
         } else{
+          this.ngxService.stop();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -565,6 +570,7 @@ const obj = {
     this.batchreq = false;
   //  this.ObjReceiveStockAd.Batch_Qty = undefined;
     this.getbilldate();
+    this.ngxService.stop();
   }
 
 }

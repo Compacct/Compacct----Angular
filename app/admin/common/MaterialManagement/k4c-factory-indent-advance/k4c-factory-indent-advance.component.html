@@ -107,8 +107,9 @@
                                         <th>Delivery Outlet</th>
                                         <th>Delivery Date Time</th>
                                         <th>Delivery Time Range</th>
-                                        <th> Qty</th>
-                                        <th> Weight in Pound</th>
+                                        <th>Qty</th>
+                                        <th>Weight in Pound</th>
+                                        <th>Total Amount</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
@@ -161,6 +162,7 @@
                                         <td>{{col.Del_Time_Range}}</td>
                                         <td>{{col.Qty}}</td>
                                         <td>{{col.Weight_in_Pound}}</td>
+                                        <td>{{col.Amount_Payable}}</td>
 
                                     </tr>
                                 </ng-template>
