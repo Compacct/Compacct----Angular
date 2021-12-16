@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CompacctCommonApi } from '../../compacct.services/common.api.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 
 @Component({
@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
  userName: String;
  CompanyName: String;
  FinYearName: string;
+ LogoReqFlag = false;
  constructor (
   private $http: HttpClient,private $compacct: CompacctCommonApi) {
 
@@ -21,6 +22,7 @@ export class HeaderComponent implements OnInit {
   this.userName = this.$compacct.CompacctCookies.Name;
   this.CompanyName = this.$compacct.CompacctCookies.Company_Name;
   this.GetFinDetails();
+  this.GetLogoReq();
  }
  GetFinDetails() {
   this.$http
@@ -35,6 +37,14 @@ export class HeaderComponent implements OnInit {
         localStorage.setItem('Fin', JSON.stringify([JSON.parse(data)[0]]));
     }
   });
+  }
+  GetLogoReq() {
+    const httpHeader = new HttpHeaders({'Content-Type':'text/plain'})
+    this.$http
+    .get('/Common/Get_SHOW_LOGO',{headers : httpHeader, responseType: 'text'})
+    .subscribe((data: any) => {
+      this.LogoReqFlag = data === 'Y' ? true : false;
+    });
   }
 
 }

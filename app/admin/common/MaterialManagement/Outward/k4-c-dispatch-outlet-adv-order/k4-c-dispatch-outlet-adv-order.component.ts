@@ -8,6 +8,7 @@ import { CompacctGlobalApiService } from "../../../../shared/compacct.services/c
 import { CompacctCommonApi } from "../../../../shared/compacct.services/common.api.service";
 import { CompacctHeader } from "../../../../shared/compacct.services/common.header.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
+import * as XLSX from 'xlsx';
 
 
 @Component({
@@ -453,6 +454,29 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     window.open("/Report/Crystal_Files/K4C/Adv_Custom_Order_Dispatch.aspx?DocNo=" + Objp.Adv_Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
     );
   }
+  }
+  exportoexcel(Arr,fileName): void {
+    let temp = [];
+     Arr.forEach(element => {
+       const obj = {
+        Doc_No   :    element.Doc_No,
+        Adv_Order_No   :  element.Adv_Order_No,
+        Doc_Date    :  this.DateService.dateConvert(new Date(element.Doc_Date)),
+        Customer_Name   :  element.Customer_Name,
+        Costomer_Mobile   :  element.Costomer_Mobile,
+        amount_payable   :  element.amount_payable,
+        godown_name  :  element.godown_name,
+        Cost_Cen_Name   :  element.Cost_Cen_Name,
+        Total_Qty  :  element.Total_Qty,
+        Total_Amount   :  element.Total_Amount,
+        Vehicle_Details   :  element.Vehicle_Details,
+        Transaction_Date_Time   :  element.Transaction_Date_Time
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   editmaster(col){}
   DeleteCostcenter(col){}

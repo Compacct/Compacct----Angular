@@ -141,9 +141,12 @@ import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/t
 import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
 import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
+import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq-tender-harbauer/txn-enq-tender-harbauer.component';
 import { TutoUploadDataSupportComponent } from "./common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component";
 import { TenderBudgetComponent } from "./common/TenderManagement/tender-budget/tender-budget.component";
 import { TenderHarbauerViewComponent } from "./common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component";
+import { NepalMasterSubledgerComponent } from "./common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component";
+
 
 
 
@@ -820,6 +823,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                             data: {title: 'Sale Bill'}
                                                             },
                                                             {
+                                                              path: 'BL_CRM_Txn_Enq_Tender_Harbauer',
+                                                              component: TxnEnqTenderHarbauerComponent,
+                                                              data: {title: 'Txn Enq Tender'}
+                                                              },
+                                                              {
                                                             path: 'Tutopia_Upload_Data_Support',
                                                             component: TutoUploadDataSupportComponent,
                                                             data: {title: 'Upload Data Support'}
@@ -834,6 +842,12 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                 component: TenderHarbauerViewComponent,
                                                                 data: {title: 'Tender View (GOVT.)'}
                                                                 },
+                                                            },{
+                                                              path:'Master_Accounting_Subledger_Nepal',
+                                                              component: NepalMasterSubledgerComponent,
+                                                              data: {title: 'Master Subledger'}
+                                                            }
+
         /*{
 
       /*{

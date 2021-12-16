@@ -6,7 +6,7 @@ a[data-link] {
   float: left;
   background-color: transparent;
   background-image: none;
-  padding: 15px 15px;
+  padding: 15px 0px;
   font-family: fontAwesome;
 }
 .ui-tabview {
