@@ -143,6 +143,7 @@ import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
 import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq-tender-harbauer/txn-enq-tender-harbauer.component';
 import { TutoUploadDataSupportComponent } from "./common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component";
+import { NepalMasterSubledgerComponent } from "./common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component";
 
 
 
@@ -827,7 +828,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                             path: 'Tutopia_Upload_Data_Support',
                                                             component: TutoUploadDataSupportComponent,
                                                             data: {title: 'Upload Data Support'}
-                                                            },
+                                                            },{
+                                                              path:'Master_Accounting_Subledger_Nepal',
+                                                              component: NepalMasterSubledgerComponent,
+                                                              data: {title: 'Master Subledger'}
+                                                            }
         /*{
 
       /*{

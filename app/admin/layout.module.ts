@@ -233,6 +233,8 @@ import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq
 // Chips
 import {ChipsModule} from 'primeng/chips';
 import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { NepalMasterSubledgerComponent } from './common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component';
 
 
 
@@ -400,6 +402,7 @@ import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-
     BillEditFromAdminComponent,
     TxnEnqTenderHarbauerComponent,
     TutoUploadDataSupportComponent,
+    NepalMasterSubledgerComponent,
   ],
   imports: [
     CommonModule,
@@ -443,7 +446,8 @@ import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-
     PanelModule,
     OverlayPanelModule,
     GanttAllModule,
-    ChipsModule
+    ChipsModule,
+    NgxSkeletonLoaderModule
   ],
   exports: [],
   providers: [
