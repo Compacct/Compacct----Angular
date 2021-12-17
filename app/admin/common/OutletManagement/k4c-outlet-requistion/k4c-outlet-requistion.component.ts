@@ -8,6 +8,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-outlet-requistion',
@@ -72,7 +73,8 @@ export class K4cOutletRequistionComponent implements OnInit {
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService) {
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService) {
 
     }
 
@@ -211,7 +213,7 @@ clearData(){
   this.expanded = false;
   this.Product_ID = [];
   this.GetDate();
-
+  this.ngxService.stop();
 }
 getConfirmDateRange(dateRangeObj) {
   if (dateRangeObj.length) {
@@ -449,6 +451,7 @@ showDialog() {
 }
 saveREquistion(){
   this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
+
   this.OutletNameList.forEach(el =>{
     if(this.ObjRequistion.Cost_Cen_ID == el.Cost_Cen_ID){
       this.ObjRequistion.Cost_Cen_Name = el.Cost_Cen_Name;
@@ -456,6 +459,7 @@ saveREquistion(){
   })
   // console.log("this.filteredData",this.filteredData);
    if(this.requistionId){
+    this.ngxService.start();
     this.Product_ID = [];
     // console.log("Update");
 
@@ -486,6 +490,7 @@ saveREquistion(){
      if(data[0].Column1 === this.requistionId && data[0].Status === "Success"){
       this.valid = true;
       this.SearchStockBill(this.valid);
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
        key: "compacct-toast",
@@ -508,6 +513,7 @@ saveREquistion(){
       this.status = "Indent Time is crossed, You Can not edit this Indent" ; ;
    }
    else{
+    this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -521,6 +527,7 @@ saveREquistion(){
 
    }
    else{
+    this.ngxService.start();
     this.Product_ID = [];
     // console.log("Save");
     this.filteredData.forEach(el =>{
@@ -550,6 +557,7 @@ saveREquistion(){
       this.valid = true;
       this.ObjBrowseData. Cost_Cen_ID_B = this.ObjRequistion.Cost_Cen_ID;
       this.SearchStockBill(this.valid);
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
        key: "compacct-toast",
@@ -571,6 +579,7 @@ saveREquistion(){
        this.status = "Indent Time is crossed, You Can not Save this Indent" ;
     }
     else{
+      this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",

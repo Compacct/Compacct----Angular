@@ -8,6 +8,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-store-item-indent',
@@ -71,7 +72,8 @@ export class StoreItemIndentComponent implements OnInit {
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService) {
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService) {
     }
 
   ngOnInit() {
@@ -208,7 +210,7 @@ export class StoreItemIndentComponent implements OnInit {
    this.expanded = false;
    this.Product_ID = [];
    this.GetDate();
-
+   this.ngxService.stop();
  }
  getConfirmDateRange(dateRangeObj) {
    if (dateRangeObj.length) {
@@ -446,6 +448,7 @@ export class StoreItemIndentComponent implements OnInit {
    })
    // console.log("this.filteredData",this.filteredData);
     if(this.requistionId){
+      this.ngxService.start();
      this.Product_ID = [];
      // console.log("Update");
 
@@ -478,6 +481,7 @@ export class StoreItemIndentComponent implements OnInit {
       if(data[0].Column1 === this.requistionId && data[0].Status === "Success"){
        this.valid = true;
        this.SearchStockBill(this.valid);
+       this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
         key: "compacct-toast",
@@ -500,6 +504,7 @@ export class StoreItemIndentComponent implements OnInit {
        this.status = "Indent Time is crossed, You Can not edit this Indent" ; ;
     }
     else{
+      this.ngxService.stop();
      this.compacctToast.clear();
          this.compacctToast.add({
            key: "compacct-toast",
@@ -513,6 +518,7 @@ export class StoreItemIndentComponent implements OnInit {
 
     }
     else{
+     this.ngxService.start();
      this.Product_ID = [];
      // console.log("Save");
      this.filteredData.forEach(el =>{
@@ -544,6 +550,7 @@ export class StoreItemIndentComponent implements OnInit {
        this.valid = true;
        this.ObjBrowseData. Cost_Cen_ID_B = this.ObjRequistion.Cost_Cen_ID;
        this.SearchStockBill(this.valid);
+       this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
         key: "compacct-toast",
@@ -565,6 +572,7 @@ export class StoreItemIndentComponent implements OnInit {
         this.status = "Indent Time is crossed, You Can not Save this Indent" ;
      }
      else{
+       this.ngxService.stop();
        this.compacctToast.clear();
            this.compacctToast.add({
              key: "compacct-toast",
