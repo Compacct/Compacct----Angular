@@ -686,6 +686,7 @@ SaveTenderMaster(valid){
       this.Tender_Doc_ID = data[0].Column1;
       if(data[0].Column1){
        this.FollowUpSave();
+       this.testchips =[];
         this.TenderFormSubmitted = false;
       } else{
        // this.ngxService.stop();
@@ -731,7 +732,7 @@ SaveTenderMaster(valid){
          detail: "Succesfully Created" //+ mgs
        });
         this.clearData();
-        this.testchips =[];
+        // this.testchips =[];
    
        } else{
         // this.ngxService.stop();

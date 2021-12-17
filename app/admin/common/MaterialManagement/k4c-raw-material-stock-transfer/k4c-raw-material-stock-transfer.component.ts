@@ -57,6 +57,11 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   ToBGodownList = [];
   TBCdisableflag = false;
   TBGdisableflag = false;
+  ViewPoppup = false;
+  Viewlist = [];
+  Doc_date: any;
+  Formstockpoint: any;
+  Tostockpoint: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -74,6 +79,9 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
       // console.log(params);
       this.clearData();
       this.Searchedlist = [];
+      this.BackupIndentList = [];
+     this.TIndentList = [];
+     this.SelectedIndent = [];
       this.Param_Flag = params['Name'];
       this.CostCentId_Flag = params['Cost_Cen_ID'];
       this.MaterialType_Flag = params['Material_Type']
@@ -171,7 +179,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   }
   GetToGodown(){
     this.ToGodownList = [];
-    if(this.ObjRawMateriali.To_Cost_Cen_ID){
+    //if(this.ObjRawMateriali.To_Cost_Cen_ID){
       const tempObj = {
         Cost_Cen_ID : this.ObjRawMateriali.To_Cost_Cen_ID,
         Material_Type : this.MaterialType_Flag
@@ -193,7 +201,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
        }
        //console.log("To Godown List ===",this.ToGodownList);
       })
-    }
+    //}
 
   }
   GetBToCostCen(){
@@ -217,13 +225,14 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
         this.ObjBrowse.To_Cost_Cen_ID = undefined;
         this.TBCdisableflag = false;
         this.GetBToGodown();
+       // this.ToBGodownList = [];
       }
       console.log("To B Cost Cen List ===",this.ToBcostcenlist);
     })
   }
   GetBToGodown(){
     this.ToBGodownList = [];
-    if(this.ObjBrowse.To_Cost_Cen_ID){
+    //if(this.ObjBrowse.To_Cost_Cen_ID){
       const tempObj = {
         Cost_Cen_ID : this.ObjBrowse.To_Cost_Cen_ID,
         Material_Type : this.MaterialType_Flag
@@ -247,7 +256,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
        }
        //console.log("To Godown List ===",this.ToGodownList);
       })
-    }
+    //}
 
   }
 
@@ -517,8 +526,8 @@ const end = this.ObjBrowse.end_date
 const tempobj = {
   From_date : start,
   To_Date : end,
-  Cost_Cen_ID : this.ObjBrowse.To_Cost_Cen_ID,
-  Godown_ID : this.ObjBrowse.To_godown_id
+  Cost_Cen_ID : this.ObjBrowse.To_Cost_Cen_ID ? this.ObjBrowse.To_Cost_Cen_ID : 0,
+  Godown_ID : this.ObjBrowse.To_godown_id ? this.ObjBrowse.To_godown_id : 0
 
 }
 const obj = {
@@ -534,6 +543,7 @@ const obj = {
  })
 }
 }
+
   clearData(){
     this.ObjRawMateriali.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // FOR CREATE TAB
@@ -609,6 +619,25 @@ const obj = {
     this.RawMaterialIssueSearchFormSubmitted = false;
 
   }
+  // View
+  View(DocNo){
+    this.Viewlist = [];
+    this.ObjRawMateriali.Doc_No = undefined;
+    this.Doc_date = undefined;
+    this.Formstockpoint = undefined;
+    this.Tostockpoint = undefined;
+    if(DocNo.Doc_No){
+      this.ObjRawMateriali.Doc_No = DocNo.Doc_No;
+      this.Doc_date = DocNo.Doc_Date;
+      this.Formstockpoint = DocNo.From_Godown_Name;
+      this.Tostockpoint = DocNo.To_Godown_Name;
+    // this.AuthPoppup = true;
+    this.ViewPoppup = true;
+    //this.tabIndexToView = 1;
+     //console.log("this.EditDoc_No ", this.Adv_Order_No );
+     this.geteditmaster(DocNo.Doc_No)
+    }
+  }
 // Edit
 EditIntStock(col){
   this.ObjRawMateriali.Doc_No = undefined;
@@ -631,6 +660,7 @@ geteditmaster(Doc_No){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("Edit",data);
+    this.Viewlist = data;
     const TempData = data;
     this.todayDate = new Date(data[0].Doc_Date);
     this.ObjRawMateriali = data[0];
