@@ -842,7 +842,7 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                 component: TenderHarbauerViewComponent,
                                                                 data: {title: 'Tender View (GOVT.)'}
                                                                 },
-                                                            },{
+                                                            {
                                                               path:'Master_Accounting_Subledger_Nepal',
                                                               component: NepalMasterSubledgerComponent,
                                                               data: {title: 'Master Subledger'}
