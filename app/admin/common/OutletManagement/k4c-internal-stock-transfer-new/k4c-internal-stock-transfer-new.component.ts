@@ -239,10 +239,12 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
       //this.initDate = [this.myDate , this.myDate];
       //console.log("this.initDate ==", this.initDate)
       this.Datevalue = new Date(data[0].Column1);
-      this.minDate =  new Date(data[0].Column1);
+     // this.minDate =  new Date(data[0].Column1);
        let tempDate:Date =  new Date(data[0].Column1)
+       const mindate = tempDate.setDate(tempDate.getDate() - 1);
+       this.minDate = new Date(mindate);
       console.log("minDate==", this.minDate)
-      const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 1);
+      const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 2);
       this.maxDate = new Date(tempTimeBill);
       console.log("maxDate==", this.maxDate)
     })
