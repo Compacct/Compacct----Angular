@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast position="center"  baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -30,8 +30,8 @@
                                 name="filterBy"
                                 #filterBy="ngModel"
                                 [(ngModel)]="Objsearch.Filter1_Text"
-                                (chnage)='changeFilterBy()'
-                                [ngClass]="{'clearance': TenderSerachFormSubmit && filterBy.errors?.required}" required>
+                                (ngModelChange)="changefilterType()"
+                               [ngClass]="{'clearance': TenderSerachFormSubmit && filterBy.errors?.required}" required>
                                 <option  [ngValue]="undefined">Select</option>
                                 <option *ngFor="let option of filterByList" [ngValue]="option">{{option}}</option>
                                  </select>
@@ -66,7 +66,8 @@
                                 [(ngModel)]="Objsearch.Filter1_Data_Value"
                                 [ngClass]="{'clearance': TenderSerachFormSubmit && filterBy.errors?.required}" [required]="Objsearch.Filter1_Text === 'PRIVATE OR GOVT'">
                                 <option  [ngValue]="undefined">Select</option>
-                                <option ngFor="let option of privGovt" [ngValue]="option">{{option}}</option>
+                                <option value="Private">Private</option>
+                                <option value="GOVT">GOVT</option>
                                 </select>
                                 </div>
                                 <div class="col-sm-4" *ngIf = "Objsearch.Filter1_Text === 'TENDER TYPE'">
@@ -83,20 +84,674 @@
                                 <div class="col-sm-4" >
                                     <label class="control-label">Optional Filter</label>
                                 <select class="form-control"
-                                name="filterBy"
-                                #filterBy="ngModel"
-                                [(ngModel)]="Objsearch.filterBy"
+                                name="filterOP"
+                                #filterOP="ngModel"
+                                [(ngModel)]="Objsearch.Filter2_Text"
                                 >
                                 <option  [ngValue]="undefined">Select</option>
-                                <option *ngFor="let option of filterByList" [ngValue]="option">{{option}}</option>
+                                <option *ngFor="let option of filteroptionList" [ngValue]="option">{{option}}</option>
                                  </select>
                                 </div>
                                 </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right custombutton" data-toggle="modal"
+                                      (click)="SearchTender(TenderSerachForm.form.valid)"
+                                       id="load"
+                                       [disabled]="Spinner">
+                                       <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                  </button>
+                                </div>
                                 </form>
+                                <div class="table-responsive no-padding table-id">
+                                    <p-table [value]="getAllTenderData"
+                                    [columns]="cols"
+                                            [paginator]="getAllTenderData.length ? true : false" [rows]="100" [rowHover]="true"
+                                             [autoLayout]="true" sortMode="multiple"
+                                             [rowsPerPageOptions]="[100,200,300]"
+                                             [globalFilterFields]="['Tender_ID','Tender_Authority','Tender_Value','Tender_Last_Sub_Date','State','EMD_Amount','Tender_Publish_Date','Status']"
+                                             [rowHover]="true"
+                                             #dt>
+                                               <ng-template pTemplate="caption">
+                                                   <div class="row">
+                                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                            </div>
+                                                   </div>
+                
+                                                </ng-template>
+                                                <ng-template pTemplate="header" let-columns>
+                                                    <tr>
+                                                        <th style="width:5em">Action</th>
+                                                        <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                                                            {{col.header}}
+                                                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                                        </th>
+                                                    </tr>
+                                                    <!-- <tr>
+                                                        <th style="width:5em">Action</th>
+                                                        <th>Tender Id</th>
+                                                        <th>Tender Authority</th>
+                                                        <th>Tender Value</th>
+                                                        <th>Tender Submission Date & Time</th>
+                                                        <th>State</th>
+                                                        <th>EMD value</th>
+                                                        <th>Publish Date & Time</th>
+                                                        <th>Status</th>
+                                                      </tr> -->
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-col>
+                                                    <tr>
+                
+                                                        <td>
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                                    <ul class="dropdown-menu">
+                                                                        <li >
+                                                                            <a (click)="updateSubmission(col)" *ngIf="col.Status === 'BUDGET CREATED' || col.Status === 'BUDGET APPROVED - TENDER NOT SUBMITTED'">
+                                                                                <i class="fa fa-fw fa-calendar"></i>
+                                                                                Update Submission Data
+                                                                            </a>
+                                                                        </li>
+                                                                        <!-- <li *ngIf="col.Status === 'BUDGET APPROVED - TENDER NOT SUBMITTED'">
+                                                                            <a (click)="updateFinance(col)">
+                                                                                <i class="fa fa-fw fa-clone"></i>
+                                                                                Update Finance
+                                                                            </a>
+                                                                        </li> -->
+                                                                        <li >
+                                                                            <a (click)="updateFinance(col)">
+                                                                                <i class="fa fa-fw fa-clone"></i>
+                                                                                Update Finance
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                        </td>
+                                                        <td>{{col.Tender_ID}}</td>
+                                                        <td>{{col.Tender_Authority}}</td>
+                                                        <td>{{col.Tender_Value}}</td>
+                                                        <td>{{col.Tender_Last_Sub_Date | date: 'dd-MMM-yy hh:mm:a'}}</td>
+                                                        <td>{{col.State}}</td>
+                                                        <td>{{col.EMD_Amount}}</td>
+                                                        <td>{{col.Tender_Publish_Date| date: 'dd-MMM-yy hh:mm:a'}}</td>
+                                                        <td>{{col.Status}}</td>
+                                                     </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="paginatorright" let-state>
+                                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                </ng-template>
+                                        </p-table>
+                                    </div>
                     </p-tabView>
                     </div>
                     </div>
-                    </div>
-                    </div>
-                    </div>
-                    
+        </div>
+
+    </div>
+</div>
+
+<!-- Update Submission Date -->
+ <p-dialog 
+ [header]="'Update Submission Date'"
+ [appendTo]="'body'"
+ [visible]="updateSubmissionmodule"
+ [closeOnEscape]="true"
+ [closable]="false"
+ [modal]="true"
+ [responsive]="true"
+ [style]="{ width: '40%', minWidth: '200px' }"
+ style="text-align: center;"
+ [minY]="70"
+ [maximizable]="true"
+ [baseZIndex]="10000">
+                    <form name="dateSubmissionForm" #dateSubmissionForm="ngForm" novalidate>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="control-label">Last Submission Date
+                                    <sup class="text-danger">*</sup></label>
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                      <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input class="form-control"  [owlDateTimeTrigger]="lastsub"   name="bidsub_Submission111"
+                                    [(ngModel)]="lastSubmissionDate" [owlDateTime]="lastsub">
+                                   <owl-date-time  [pickerMode]="'dialog'" [hour12Timer]='true' #lastsub></owl-date-time>
+                                  </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="control-label">Bid Openning Date
+                                    <sup class="text-danger">*</sup></label>
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                          <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input class="form-control"  [owlDateTimeTrigger]="Bidopen"   name="bidsub_Submission"
+                                        [(ngModel)]="bidopenningDate" [owlDateTime]="Bidopen">
+                                       <owl-date-time  [pickerMode]="'dialog'" [hour12Timer]='true' #Bidopen></owl-date-time>
+                                      </div>
+                            </div>
+                            
+                        </div>
+                    </form>
+                    <p-footer>
+                        <button type="button" pButton icon="pi pi-check" (click)="saveSubmissionDate(dateSubmissionForm.form.valid)" label="save"></button>
+                        <button type="button" pButton icon="pi pi-close" (click)="updateSubmissionmodule=false" label="Close" class="ui-button-secondary"></button>
+                    </p-footer>
+</p-dialog>
+<!-- Update Finance -->
+<p-dialog 
+header="Update Finance"
+[appendTo]="'body'"
+[visible]="updateFinanceModel"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '90%', minWidth: '1000px',height:'auto',textAlign: 'center'}"
+[minY]="90"
+[minHeight] = "auto"
+[maximizable]="true"
+[baseZIndex]="10000">
+<div class="form-horizontal">
+  <form name="EmdForm" #EmdForm="ngForm" novalidate>
+    <div class="form-group" style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        margin-top: 5px;
+        ">
+        <i class="fa fa-fw fa-fax">
+        </i> &nbsp;<strong>EMD Detalis :</strong>
+    </h5>
+     <div class="col-sm-4">
+        <label class="control-label">Mode<sup class="text-danger">*</sup></label>
+        <div class="pull-right">
+        <span class="btn-vk createPatient" (click)="commView()" style="margin-right: 5px;"><i class="fa fa-fw  fa-plus"></i> View</span>
+        <span class="btn-vk createPatient" (click)="EMD_Mode.toggle($event)"><i class="fa fa-fw  fa-plus"></i> Create</span>
+        </div>
+        
+        <select class="form-control"
+                name="EMDmode"
+                #EMDmode="ngModel"
+                [(ngModel)]="ObjEMD.Mode"
+                [ngClass]="{'clearance': EMDSubmitted && EMDmode.errors?.required}" required
+               >
+               <option  [ngValue]="undefined">Select</option>
+               <option *ngFor="let option of PaymentList" [ngValue]="option.Tender_Payment_Mode">
+                 {{option.Tender_Payment_Mode}}
+                 </option>
+            
+        </select>
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Acc voucher <sup class="text-danger">*</sup></label>
+        <input class="form-control"
+                name="EMD_Acc_voucher"
+                #EMD_Acc_voucher="ngModel"
+                [(ngModel)]="ObjEMD.Voucher_No"
+                placeholder="Acc voucher"
+                [ngClass]="{'clearance': EMDSubmitted && EMD_Acc_voucher.errors?.required}" required
+                >
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">EMD Reference No <sup class="text-danger">*</sup></label>
+        <input class="form-control"
+                name="EMD_Reference_No"
+                #EMD_Reference_No="ngModel"
+                [(ngModel)]="ObjEMD.Reference_No"
+                placeholder="EMD Reference No"
+                [ngClass]="{'clearance': EMDSubmitted && EMD_Reference_No.errors?.required}" required
+                >
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
+        <div class="input-group date">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input
+            type="date"
+            name="EMDDateIssue"
+            #EMDDateIssue="ngModel"
+            [ngModel]="EMDIssueDate | date: 'yyyy-MM-dd'"
+            (ngModelChange)="EMDIssueDate = $event"
+            class="form-control"
+            [ngClass]="{'clearance': EMDSubmitted && EMDDateIssue.errors?.required}"
+            required
+            >
+        </div>
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Date of Expiry <sup class="text-danger">*</sup></label>
+        <div class="input-group date">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input
+            type="date"
+            name="EMDDateExpiry"
+            #EMDDateExpiry="ngModel"
+            [ngModel]="EMDIssueExpiry | date: 'yyyy-MM-dd'"
+            (ngModelChange)="EMDIssueExpiry = $event"
+            class="form-control"
+            [ngClass]="{'clearance': EMDSubmitted && EMDDateIssue.errors?.required}"
+            required
+            >
+        </div>
+     </div>
+     <div class="col-sm-4">
+        <button class="btn btn-primary custombutton" data-toggle="modal"
+        (click)="SaveFinance(EmdForm.form.valid,'EMD Details')"
+        id="load"
+        [disabled]="EMDSpinner">
+        <p-progressSpinner *ngIf="EMDSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!EMDSpinner" class="glyphicon glyphicon-save"></span>&nbsp;EMD Save
+        </button>
+     </div>
+    </div>
+   
+</form>
+<form name="TenderFeesForm" #TenderFeesForm="ngForm" novalidate>
+    <div class="form-group"style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        margin-top: 15px;
+        ">
+        <i class="fa fa-fw fa-fax">
+        </i> &nbsp;<strong>Tender Fees :</strong>
+    </h5>
+     <div class="col-sm-4">
+        <label class="control-label">Mode<sup class="text-danger">*</sup></label>
+        <div class="pull-right">
+        <span class="btn-vk createPatient" (click)="commView()" style="margin-right: 5px;"><i class="fa fa-fw  fa-plus"></i> View</span>
+        <span class="btn-vk createPatient" (click)="TenderfeesMode.toggle($event)"><i class="fa fa-fw  fa-plus"></i> Create</span>
+        </div>
+        
+        <select class="form-control"
+                name="Tendermode"
+                #Tendermode="ngModel"
+                [(ngModel)]="ObjTenderFees.Mode"
+                [ngClass]="{'clearance': TenderSubmit && Tendermode.errors?.required}"
+                required
+               >
+               <option  [ngValue]="undefined">Select</option>
+               <option *ngFor="let option of PaymentList" [ngValue]="option.Tender_Payment_Mode">
+                 {{option.Tender_Payment_Mode}}
+                 </option>
+         </select>
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Acc voucher <sup class="text-danger">*</sup></label>
+        <input class="form-control"
+                name="Tender_Acc_voucher"
+                #Tender_Acc_voucher="ngModel"
+                [(ngModel)]="ObjTenderFees.Voucher_No"
+                placeholder="Acc voucher"
+                [ngClass]="{'clearance': TenderSubmit && Tender_Acc_voucher.errors?.required}"
+                required
+                >
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Tender Fees Reference No <sup class="text-danger">*</sup></label>
+        <input class="form-control"
+                name="Tender_Reference_No"
+                #Tender_Reference_No="ngModel"
+                [(ngModel)]="ObjTenderFees.Reference_No"
+                placeholder="Tender Fees Reference No"
+                [ngClass]="{'clearance': TenderSubmit && Tender_Reference_No.errors?.required}"
+                required
+                >
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
+        <div class="input-group date">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input
+            type="date"
+            name="TenderFeesIssue"
+            #TenderFeesIssue="ngModel"
+            [ngModel]="TenderFeesIssueDate | date: 'yyyy-MM-dd'"
+            (ngModelChange)="TenderFeesIssueDate = $event"
+            class="form-control"
+            [ngClass]="{'clearance': TenderSubmit && TenderFeesIssue.errors?.required}"
+            required
+            >
+        </div>
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Date of Expiry <sup class="text-danger">*</sup></label>
+        <div class="input-group date">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input
+            type="date"
+            name="TenderFeesExpiry"
+            #TenderFeesExpiry="ngModel"
+            [ngModel]="TenderFeesIssueExpiry | date: 'yyyy-MM-dd'"
+            (ngModelChange)="TenderFeesIssueExpiry = $event"
+            class="form-control"
+            [ngClass]="{'clearance': TenderSubmit && TenderFeesExpiry.errors?.required}"
+            required
+            >
+        </div>
+     </div>
+     <div class="col-sm-4">
+        <button class="btn btn-primary custombutton" data-toggle="modal"
+        (click)="SaveFinance(TenderFeesForm.form.valid,'Tender Fees')"
+        id="load"
+        [disabled]="TenderSpinner">
+        <p-progressSpinner *ngIf="TenderSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!TenderSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Tender Fees Save
+        </button>
+     </div>
+    </div>
+</form>
+<form name="PerformanceSecurityForm" #PerformanceSecurityForm="ngForm" novalidate>
+    <div class="form-group"style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        margin-top: 15px;
+        ">
+        <i class="fa fa-fw fa-fax">
+        </i> &nbsp;<strong>Performance Security :</strong>
+    </h5>
+     <div class="col-sm-4">
+        <label class="control-label">Mode<sup class="text-danger">*</sup></label>
+        <div class="pull-right">
+        <span class="btn-vk createPatient" (click)="commView()" style="margin-right: 5px;"><i class="fa fa-fw  fa-plus"></i> View</span>
+        <span class="btn-vk createPatient" (click)="PerformanceSecurityMode.toggle($event)"><i class="fa fa-fw  fa-plus"></i> Create</span>
+        </div>
+        
+        <select class="form-control"
+                name="PSmode"
+                #PSmode="ngModel"
+                [(ngModel)]="ObjPerformanceSecurity.Mode"
+                [ngClass]="{'clearance': psSubmitted && PSmode.errors?.required}"
+                required
+               >
+                <option  [ngValue]="undefined">Select</option>
+                <option *ngFor="let option of PaymentList" [ngValue]="option.Tender_Payment_Mode">
+                  {{option.Tender_Payment_Mode}}
+                  </option>
+         </select>
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Amount <sup class="text-danger">*</sup></label>
+        <input class="form-control"
+                name="psAmount"
+                #psAmount="ngModel"
+                CompacctDigitonly="true"
+                [(ngModel)]="ObjPerformanceSecurity.Amount"
+                placeholder="Amount"
+                [ngClass]="{'clearance': psSubmitted && psAmount.errors?.required}"
+                required
+                >
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Acc voucher <sup class="text-danger">*</sup></label>
+        <input class="form-control"
+                name="ps_Acc_voucher"
+                #ps_Acc_voucher="ngModel"
+                [(ngModel)]="ObjPerformanceSecurity.Voucher_No"
+                placeholder="Acc voucher"
+                [ngClass]="{'clearance': psSubmitted && ps_Acc_voucher.errors?.required}"
+                required
+                >
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Tender Rees Reference No <sup class="text-danger">*</sup></label>
+        <input class="form-control"
+                name="PS_Reference_No"
+                #PS_Reference_No="ngModel"
+                [(ngModel)]="ObjPerformanceSecurity.Reference_No"
+                placeholder="Tender Rees Reference No"
+                [ngClass]="{'clearance': psSubmitted && PS_Reference_No.errors?.required}"
+                required
+                >
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
+        <div class="input-group date">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input
+            type="date"
+            name="PerformanceSecurityIssue"
+            #PerformanceSecurityIssue="ngModel"
+            [ngModel]="PerformanceSecurityIssueDate | date: 'yyyy-MM-dd'"
+            (ngModelChange)="PerformanceSecurityIssueDate = $event"
+            class="form-control"
+            [ngClass]="{'clearance': psSubmitted && PerformanceSecurityIssue.errors?.required}"
+            required
+            >
+        </div>
+     </div>
+     <div class="col-sm-4">
+        <label class="control-label">Date of Expiry <sup class="text-danger">*</sup></label>
+        <div class="input-group date">
+          <div class="input-group-addon">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <input
+            type="date"
+            name="PerformanceSecurityExpiry"
+            #PerformanceSecurityExpiry="ngModel"
+            [ngModel]="PerformanceSecurityIssueExpiry | date: 'yyyy-MM-dd'"
+            (ngModelChange)="PerformanceSecurityIssueExpiry = $event"
+            class="form-control"
+            [ngClass]="{'clearance': psSubmitted && PerformanceSecurityExpiry.errors?.required}"
+            required
+            >
+        </div>
+     </div>
+     <div class="box-footer">
+        <button class="btn btn-primary pull-right custombutton" data-toggle="modal"
+        (click)="SaveFinance(PerformanceSecurityForm.form.valid,'Performance Security')"
+        id="load"
+        [disabled]="PSSpinner">
+        <p-progressSpinner *ngIf="PSSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!PSSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Performance Security Save
+        </button>
+     </div>
+    </div>
+</form>
+</div>
+
+<p-footer>
+    <button
+  type="button"
+  (click)="updateFinanceModel = false"
+  class="btn btn-default"
+>Close
+</button>
+</p-footer>
+</p-dialog>
+
+<!-- EMD mode Create -->
+<p-overlayPanel 
+  [dismissable]="true" [showCloseIcon]="true"
+  [appendTo]="'body'"
+  (onShow)='EMDFormSubmitted = false;'
+  [baseZIndex]="9999999" #EMD_Mode>
+  <div class="form-horizontal">
+    <form
+    name="FormEMD"
+    #FormEMD="ngForm"
+    novalidate
+    >
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">Payment Mode<sup class="text-danger">*</sup ></label>
+      <input
+            type="text"
+            class="form-control"
+            name="name"
+            #name="ngModel"
+            [(ngModel)]="EMDmodeselect"
+            placeholder="Payment Mode"
+            allow-pattern="([a-z ]|\.)"
+            [ngClass]="{clearance: EMDFormSubmitted && name?.errors?.required}"
+            required
+          >
+      </div>
+      <button (click)='CreateEMDmode("FormEMD.form.valid")'
+       class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+       [disabled]="Spinner"
+       >
+       <p-progressSpinner
+         *ngIf="Spinner"
+         [style]="{ width: '15px', height: '15px' }"
+         strokeWidth="8"
+         animationDuration=".5s"
+       ></p-progressSpinner>
+        <i class="fa fa-fw  fa-plus"></i>  Create</button>
+    </div>
+    
+    </form>
+    </div>
+</p-overlayPanel>
+
+<!-- Tender fees mode Create -->
+<p-overlayPanel 
+  [dismissable]="true" [showCloseIcon]="true"
+  [appendTo]="'body'"
+  (onShow)='TenderFormSubmitted = false;'
+  [baseZIndex]="9999999" #TenderfeesMode>
+  <div class="form-horizontal">
+    <form
+    name="FormTenderfees"
+    #FormTenderfees="ngForm"
+    novalidate
+    >
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">Payment Mode<sup class="text-danger">*</sup ></label>
+      <input
+            type="text"
+            class="form-control"
+            name="name"
+            #name="ngModel"
+            [(ngModel)]="Tenderfeesselete"
+            placeholder="Payment Mode"
+            allow-pattern="([a-z ]|\.)"
+            [ngClass]="{clearance: TenderFormSubmitted && name?.errors?.required}"
+            required
+          >
+      </div>
+      <button (click)='CreateTenderfeesmode("FormTenderfees.form.valid")'
+       class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+       [disabled]="Spinner"
+       >
+       <p-progressSpinner
+         *ngIf="Spinner"
+         [style]="{ width: '15px', height: '15px' }"
+         strokeWidth="8"
+         animationDuration=".5s"
+       ></p-progressSpinner>
+        <i class="fa fa-fw  fa-plus"></i>  Create</button>
+    </div>
+    
+    </form>
+    </div>
+</p-overlayPanel>
+
+<!-- Performance Security fees mode Create -->
+<p-overlayPanel 
+  [dismissable]="true" [showCloseIcon]="true"
+  [appendTo]="'body'"
+  (onShow)='performanceSubmitted = false;'
+  [baseZIndex]="9999999" #PerformanceSecurityMode>
+  <div class="form-horizontal">
+    <form
+    name="FormPerformanceSecurity"
+    #FormPerformanceSecurity="ngForm"
+    novalidate
+    >
+    <div class="form-group">
+      <div class="col-sm-12">
+        <label class="control-label">Payment Mode<sup class="text-danger">*</sup ></label>
+      <input
+            type="text"
+            class="form-control"
+            name="name"
+            #name="ngModel"
+            [(ngModel)]="PerformanceSecurityselete"
+            placeholder="Payment Mode"
+            allow-pattern="([a-z ]|\.)"
+            [ngClass]="{clearance: performanceSubmitted && name?.errors?.required}"
+            required
+          >
+      </div>
+      <button (click)='CreatePerformanceSecuritymode("FormPerformanceSecurity.form.valid")'
+       class="btn btn-sm btn-success pull-right" style="margin-right: 15px;margin-top: 10px;"
+       [disabled]="Spinner"
+       >
+       <p-progressSpinner
+         *ngIf="Spinner"
+         [style]="{ width: '15px', height: '15px' }"
+         strokeWidth="8"
+         animationDuration=".5s"
+       ></p-progressSpinner>
+        <i class="fa fa-fw  fa-plus"></i>  Create</button>
+    </div>
+    
+    </form>
+    </div>
+</p-overlayPanel>
+
+<!-- Commone View -->
+<p-dialog 
+ [header]="'Mode View'"
+ [appendTo]="'body'"
+ [visible]="viewModel"
+ [closeOnEscape]="true"
+ [closable]="false"
+ [modal]="true"
+ [responsive]="true"
+ [style]="{ width: '50%', minWidth: '200px' }"
+ style="text-align: center;"
+ [minY]="70"
+ [maximizable]="true"
+ [baseZIndex]="10000">
+ <div class="table-responsive no-padding table-id">
+  <p-table [value]="PaymentList"
+          [autoLayout]="true" 
+          sortMode="multiple"
+          [rowHover]="true"
+           >
+             <ng-template pTemplate="header" let-columns let-rowData let-index="rowIndex">
+                   <tr>
+                      <th>Payment Mode</th>
+                      <th>Delete</th>
+                    </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-col>
+                  <tr>
+                     <td>{{col.Tender_Payment_Mode}}</td>
+                      <td><button (click)="Deleteview(col.Tender_Payment_Mode_ID)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button></td>
+                   </tr>
+              </ng-template>
+              
+      </p-table>
+  </div>
+                    <p-footer>
+                        <button type="button" pButton icon="pi pi-close" (click)="viewModel=false" label="Close" class="ui-button-secondary"></button>
+                    </p-footer>
+</p-dialog>
