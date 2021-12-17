@@ -5,6 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-stock-adjustment-store-items',
@@ -55,6 +56,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -66,7 +68,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
     this.getbilldate();
     this.GetBrand();
     this.getCostCenter();
-    //this.GetProduct();
+    this.GetProduct();
   }
   TabClick(e){
     //console.log(e)
@@ -74,6 +76,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+   // this.GetProduct();
   }
 //   GetBrand(){
 //     console.log("Brand ===", this.BrandList)
@@ -203,14 +206,14 @@ getbilldate(){
   }
   GetProduct(){
     this.ProductList = [];
-    let Brand;
-       if(this.ObjStockAdStoreItems.Brand_ID ==='Without Brand') {
-        Brand = 0;
-       } else {
-        Brand = this.ObjStockAdStoreItems.Brand_ID;
-       }
+    // let Brand;
+    //    if(this.ObjStockAdStoreItems.Brand_ID ==='Without Brand') {
+    //     Brand = 0;
+    //    } else {
+    //     Brand = this.ObjStockAdStoreItems.Brand_ID;
+    //    }
     const TempObj = {
-      Brand_ID : Brand,
+      Brand_ID : this.ObjStockAdStoreItems.Brand_ID ? this.ObjStockAdStoreItems.Brand_ID : 0,
       // From_Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
       // From_godown_id : this.ObjStockAdStoreItems.godown_id,
       // Product_Type_ID : 0
@@ -406,6 +409,7 @@ getbilldate(){
   }
   SaveReceiveStock(){
     //if(valid){
+      this.ngxService.start();
       const obj = {
         "SP_String": "SP_Issue_Stock_Adjustment",
         "Report_Name_String" : "Save_Receive_Stock_Movement_Store_Items",
@@ -417,6 +421,7 @@ getbilldate(){
         var tempID = data[0].Column1;
        // this.Objproduction.Doc_No = data[0].Column1;
         if(data[0].Column1){
+          this.ngxService.stop();
           this.compacctToast.clear();
         //  const mgs = this.buttonname === "Save & Print" ? "Saved" : "Updated";
           this.compacctToast.add({
@@ -432,6 +437,7 @@ getbilldate(){
         // this.IssueStockFormSubmitted = false;
 
         } else{
+          this.ngxService.stop();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -522,7 +528,7 @@ const obj = {
        this.ObjBrowse.Brand_ID = undefined;
        this.ObjStockAdStoreItems.Brand_ID = undefined;
        this.BrandDisable = false;
-       this.ProductList = [];
+       //this.ProductList = [];
      }
     this.Searchedlist = [];
     this.ObjStockAdStoreItems.Cost_Cen_ID = undefined;
@@ -537,6 +543,8 @@ const obj = {
     this.StockAdjStoreItemsFormSubmitted = false;
   //  this.ObjReceiveStockAd.Batch_Qty = undefined;
     this.getbilldate();
+    this.ngxService.stop();
+    this.GetProduct();
   }
 
 }

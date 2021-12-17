@@ -229,9 +229,15 @@ import { TutoManualPaymentCollectionComponent } from './common/CRM/Transaction/t
 import { OutletSaleBillWithoutBatchSelectComponent } from './common/OutletManagement/outlet-sale-bill-without-batch-select/outlet-sale-bill-without-batch-select.component';
 import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement/outlet-stock-transfer-auto-batch/outlet-stock-transfer-auto-batch.component';
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
+import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq-tender-harbauer/txn-enq-tender-harbauer.component';
+// Chips
+import {ChipsModule} from 'primeng/chips';
 import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
 import { TenderBudgetComponent } from './common/TenderManagement/tender-budget/tender-budget.component';
 import { TenderHarbauerViewComponent } from './common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { NepalMasterSubledgerComponent } from './common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component';
+
 
 
 
@@ -397,9 +403,11 @@ import { TenderHarbauerViewComponent } from './common/TenderManagement/tender-ha
     OutletSaleBillWithoutBatchSelectComponent,
     OutletStockTransferAutoBatchComponent,
     BillEditFromAdminComponent,
+    TxnEnqTenderHarbauerComponent,
     TutoUploadDataSupportComponent,
     TenderBudgetComponent,
     TenderHarbauerViewComponent,
+    NepalMasterSubledgerComponent,
   ],
   imports: [
     CommonModule,
@@ -442,7 +450,9 @@ import { TenderHarbauerViewComponent } from './common/TenderManagement/tender-ha
     DataViewModule,
     PanelModule,
     OverlayPanelModule,
-    GanttAllModule
+    GanttAllModule,
+    ChipsModule,
+    NgxSkeletonLoaderModule
   ],
   exports: [],
   providers: [
