@@ -12,6 +12,7 @@ import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
 import { Console } from 'console';
+import { kill } from 'process';
 
 @Component({
   selector: 'app-tender-harbauer-view',
@@ -23,13 +24,55 @@ import { Console } from 'console';
 export class TenderHarbauerViewComponent implements OnInit {
   tabIndexToView = 0;
   buttonname = "Create";
-  filterByList = []
+  filterByList = [];
+  filteroptionList = [];
   Objsearch = new search();
   TenderSerachFormSubmit = false;
   financalList = [];
   tenderOrgList = [];
   TypeList = [];
   privGovt = [];
+ 
+  PSSpinner = false;
+  getAllTenderData = [];
+  cols =[];
+  PaymentList = [];
+  // Update Sunmission date
+  updateSubmissionmodule = false;
+  lastSubmissionDate = new Date();
+  bidopenningDate = new Date();
+  TenderDocID = undefined;
+  // Update Finance
+  updateFinanceModel = false;
+  Spinner = false;
+  EMDSpinner = false;
+  TenderSpinner = false;
+  viewModel = false;
+  viewTenderDelete = undefined;
+    //EMD Detalis
+    ObjEMD = new EMD();
+    EMDIssueDate = new Date();
+    EMDIssueExpiry = new Date();
+    EMDmodeModel = false;
+    EMDmodeselect = undefined;
+    EMDFormSubmitted = false;
+    EMDSubmitted = false;
+    // Tender Fees
+    ObjTenderFees= new TenderFees();
+    TenderFeesIssueDate = new Date();
+    TenderFeesIssueExpiry = new Date();
+    TenderfeesmodeModel = false;
+    Tenderfeesselete = undefined;
+    TenderFormSubmitted = false;
+    TenderSubmit = false;
+    // Performance Security
+    ObjPerformanceSecurity= new PerformanceSecurity();
+    PerformanceSecurityIssueDate = new Date();
+    PerformanceSecurityIssueExpiry = new Date();
+    PerformanceSecuritymodeModel = false;
+    PerformanceSecurityselete = undefined;
+    performanceSubmitted = false;
+    psSubmitted = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -47,10 +90,21 @@ export class TenderHarbauerViewComponent implements OnInit {
       Link: "Project Management -> Tender View (GOVT.)"
     });
     this.filterByList = ['FINANCIAL YEAR','DEPARTMENT',"PRIVATE OR GOVT","TENDER TYPE"];
+    this.filteroptionList = ['NOT RECEIVED TENDER','L1 TENDER','NOT SUBMITTED TENDER','PENDING TENDER']
     this.getFinancial();
     this.GetTenderOrgList();
     this.GetTypeList();
     this.privGovt = ["Private","GOVT"]
+    this.cols = [
+      { field: 'Tender_ID', header: 'Tender ID' },
+      { field: 'Tender_Authority', header: 'Tender Authority' },
+      { field: 'Tender_Value', header: 'Tender Value' },
+      { field: 'Tender_Last_Sub_Date', header: 'Tender Last Sub_Date' },
+      { field: 'State', header: 'State' },
+      { field: 'EMD_Amount', header: 'EMD Amount' },
+      { field: 'Tender_Publish_Date', header: 'Tender Publish Date' },
+      { field: 'Status', header: 'Status' }
+  ];
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -64,23 +118,8 @@ export class TenderHarbauerViewComponent implements OnInit {
   onReject() {
     this.compacctToast.clear("c");
   }
-  onConfirm(){
-
-  }
-  changeFilterBy(){
-    console.log("this.Objsearch.Filter1_Text",this.Objsearch.Filter1_Text);
-    if(this.Objsearch.Filter1_Text === "FINANCIAL YEAR"){
-      
-    }
-    else if(this.Objsearch.Filter1_Text === "DEPARTMENT"){
-          
-    }
-    else if(this.Objsearch.Filter1_Text === "TENDER TYPE"){
-          
-    }
-    else {
-      
-    }
+  changefilterType(){
+  this.Objsearch.Filter1_Data_Value = undefined;
   }
   getFinancial(){
     this.$http
@@ -103,8 +142,527 @@ export class TenderHarbauerViewComponent implements OnInit {
         this.TypeList = data ? JSON.parse(data) : [];
       });
   }
+  
+  SearchTender(valid){
+   console.log("valid",valid);
+   let searchData:any = []
+   this.TenderSerachFormSubmit = true;
+   if(valid){
+    this.TenderSerachFormSubmit = false
+     this.Spinner = true;
+    if(this.Objsearch.Filter1_Text === "FINANCIAL YEAR"){
+      const filterdata = this.financalList.filter(ob => Number(ob.Fin_Year_ID) === Number(this.Objsearch.Filter1_Data_Value))[0];
+      console.log("filterdata",filterdata);
+      searchData = {
+        Filter1_Text: this.Objsearch.Filter1_Text,
+        Filter1_Data_Value:filterdata.Fin_Year_ID,
+        Filter1_Data_Text:filterdata.Fin_Year_Name,
+        Filter2_Text:this.Objsearch.Filter2_Text ? this.Objsearch.Filter2_Text : "NA"
+      }
+    }
+    else if(this.Objsearch.Filter1_Text === "DEPARTMENT"){
+      const filterdata = this.tenderOrgList.filter(ob => Number(ob.Tender_Org_ID) === Number(this.Objsearch.Filter1_Data_Value))[0];
+      console.log("filterdata",filterdata);
+      searchData = {
+        Filter1_Text: this.Objsearch.Filter1_Text,
+        Filter1_Data_Value:filterdata.Tender_Org_ID,
+        Filter1_Data_Text:filterdata.Tender_Organization,
+        Filter2_Text:this.Objsearch.Filter2_Text ? this.Objsearch.Filter2_Text : "NA"
+      }
+    }
+    else if(this.Objsearch.Filter1_Text === "TENDER TYPE"){
+      const filterdata = this.TypeList.filter(ob => Number(ob.Tender_Type_ID) === Number(this.Objsearch.Filter1_Data_Value))[0];
+      console.log("filterdata",filterdata);
+      searchData = {
+        Filter1_Text: this.Objsearch.Filter1_Text,
+        Filter1_Data_Value:filterdata.Tender_Type_ID,
+        Filter1_Data_Text:filterdata.Tender_Type_Name,
+        Filter2_Text:this.Objsearch.Filter2_Text ? this.Objsearch.Filter2_Text : "NA"
+      }
+    }
+    else {
+      searchData = {
+        Filter1_Text: this.Objsearch.Filter1_Text,
+        Filter1_Data_Value:this.Objsearch.Filter1_Data_Value,
+        Filter1_Data_Text:this.Objsearch.Filter1_Data_Value,
+        Filter2_Text:this.Objsearch.Filter2_Text ? this.Objsearch.Filter2_Text : "NA"
+      }
+    }
+  console.log("search data",searchData);
+  const obj = {
+    "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+    "Report_Name_String": "Get_All_Tender_Browse_V2",
+    "Json_Param_String" : JSON.stringify(searchData)
+  }
+  this.GlobalAPI
+      .getData(obj)
+      .subscribe((data: any) => {
+        console.log(data);
+        this.getAllTenderData = data;
+        this.Spinner = false;
+        
+      })
+
+   }
+  }
+  // Update Submission Date
+  updateSubmission(obj){
+  if(obj.Tender_Doc_ID){
+    this.TenderDocID = obj.Tender_Doc_ID;
+   this.updateSubmissionmodule = true;
+   this.getSubmissionData(obj.Tender_Doc_ID);
+  }
+  }
+  saveSubmissionDate(valid){
+    console.log("valid",valid);
+    if(this.TenderDocID){
+      const tempSavedata = {
+        Tender_Doc_ID	: this.TenderDocID,      
+        Tender_Last_Sub_Date : this.DateService.dateTimeConvert(new Date(this.lastSubmissionDate)),
+        Tender_Bid_Opening_Date : this.DateService.dateTimeConvert(new Date(this.bidopenningDate))
+      }
+      console.log("Submission Date Save",tempSavedata);
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String": "Update_Submission_Date",
+        "Json_Param_String" : JSON.stringify([tempSavedata])
+      }
+      this.GlobalAPI
+          .getData(obj)
+          .subscribe((data: any) => {
+            console.log("date",data);
+            if(data[0].message === 'Update done'){
+             this.SavefollowUp(this.TenderDocID);
+            }
+          })
+    }
+    
+  }
+  SavefollowUp(TenderDocID){
+    if(TenderDocID){
+      const saveObj = {
+        Tender_Doc_ID: TenderDocID,									
+				Posted_By: this.commonApi.CompacctCookies.User_ID,							 
+				Send_To:	this.commonApi.CompacctCookies.User_ID,						       			
+				Status:	"BUDGET CREATED",
+				Remarks: "Update done"
+      }
+      console.log("follow save",saveObj);
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String": "BL_CRM_Txn_Enq_Tender_Harbauer_Followup_Save",
+        "Json_Param_String": JSON.stringify(saveObj)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("follow up save",data);
+        if(data[0].Column1 === "SAVED SUCCESSFULLY"){
+          this.Spinner = false;
+          this.updateSubmissionmodule = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: "Update Submission Date Succesfully"
+          });
+          this.SearchTender(true)
+        }
+      
+      })
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error Occured ",
+        detail: "Try again"
+      });
+    }
+  }
+  
+  getSubmissionData(TenderDocID){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Submission_Date",
+      "Json_Param_String" : JSON.stringify([{Tender_Doc_ID : TenderDocID}])
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log("date[0]",data[0].Tender_Last_Sub_Date);
+          console.log("date",data.Tender_Last_Sub_Date);
+          console.log("date",data);
+
+          this.lastSubmissionDate = data[0].Tender_Last_Sub_Date ? new Date(data[0].Tender_Last_Sub_Date) : new Date();
+          this.bidopenningDate = data[0].Tender_Bid_Opening_Date ? new Date(data[0].Tender_Bid_Opening_Date) : new Date();
+          console.log("this.lastSubmissionDate",this.lastSubmissionDate);
+        })
+  }
+  // Update Finance
+
+  updateFinance(obj){
+    this.TenderDocID = undefined;
+    if(obj.Tender_Doc_ID){
+      this.updateFinanceModel = true;
+      this.TenderDocID = obj.Tender_Doc_ID;
+      this.ObjEMD = new EMD();
+      this.ObjTenderFees = new TenderFees();
+      this.ObjPerformanceSecurity = new PerformanceSecurity()
+      this.EMDSubmitted = false;
+      this.TenderSubmit = false;
+      this.psSubmitted = false;
+      this.GetPaymentList();
+      this.ifHaveEMDdata(obj.Tender_Doc_ID);
+      this.ifHaveTenderdata(obj.Tender_Doc_ID);
+      this.ifHavePSdata(obj.Tender_Doc_ID);
+
+    }
+  }
+  EmdmodeCreate(){
+    this.EMDmodeModel = true;
+    this.EMDmodeselect = undefined;
+    this.EMDFormSubmitted = false;
+  }
+  TenderFeesModeCreate(){
+    this.TenderfeesmodeModel = true;
+    this.Tenderfeesselete = undefined;
+  }
+  PerformanceSecurityModeCreate(){
+    this.PerformanceSecuritymodeModel = true;
+    this.PerformanceSecurityselete = undefined;
+  }
+  SaveFinance(valid,FeesType){
+    console.log("valid",valid);
+    console.log("FeesType",FeesType);
+    let saveData:any = []
+    FeesType === 'EMD Details' ? this.EMDSubmitted = true: FeesType === 'Tender Fees' ? this.TenderSubmit = true : this.psSubmitted = true;
+    if(valid){
+      
+       if(FeesType === 'EMD Details'){
+         this.EMDSubmitted = false;
+         this.EMDSpinner = true;
+        this.ObjEMD.Tender_Doc_ID = this.TenderDocID;
+        this.ObjEMD.Fees_Type = FeesType;
+        this.ObjEMD.Date_Of_Issue = this.DateService.dateTimeConvert(new Date(this.EMDIssueDate));
+        this.ObjEMD.Date_Of_Exp = this.DateService.dateTimeConvert(new Date(this.EMDIssueExpiry));
+        console.log(this.ObjEMD);
+        saveData = this.ObjEMD
+       }
+       else if(FeesType === 'Tender Fees'){
+         this.TenderSubmit = false;
+         this.TenderSpinner = true;
+        this.ObjTenderFees.Tender_Doc_ID = this.TenderDocID;
+        this.ObjTenderFees.Fees_Type = FeesType;
+        this.ObjTenderFees.Date_Of_Issue = this.DateService.dateTimeConvert(new Date(this.TenderFeesIssueDate));
+        this.ObjTenderFees.Date_Of_Exp = this.DateService.dateTimeConvert(new Date(this.TenderFeesIssueExpiry))
+        console.log(this.ObjTenderFees);
+        saveData = this.ObjTenderFees
+      }
+       else if(FeesType === 'Performance Security'){
+        this.psSubmitted = false;
+         this.PSSpinner = true;
+        this.ObjPerformanceSecurity.Tender_Doc_ID = this.TenderDocID;
+        this.ObjPerformanceSecurity.Fees_Type = FeesType;
+        this.ObjPerformanceSecurity.Date_Of_Issue = this.DateService.dateTimeConvert(new Date(this.TenderFeesIssueDate));
+        this.ObjPerformanceSecurity.Date_Of_Exp = this.DateService.dateTimeConvert(new Date(this.TenderFeesIssueExpiry))
+       console.log(this.ObjPerformanceSecurity);
+       saveData = this.ObjPerformanceSecurity;
+      }
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String": "Update_Tender_Harbaur_Fee",
+        "Json_Param_String": JSON.stringify(saveData)
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+         console.log(data);
+         if(data[0].Column1 === "SAVED SUCCESSFULLY"){
+          this.SavefollowUpFinance(this.TenderDocID,FeesType);
+        }
+        
+        })
+    
+    }
+  }
+  SavefollowUpFinance(TenderDocID,FeesType){
+    if(TenderDocID){
+      const saveObj = {
+        Tender_Doc_ID: TenderDocID,									
+				Posted_By: this.commonApi.CompacctCookies.User_ID,							 
+				Send_To:	this.commonApi.CompacctCookies.User_ID,						       			
+				Status:	"BUDGET CREATED",
+				Remarks: "Update done"
+      }
+      console.log("follow save",saveObj);
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String": "BL_CRM_Txn_Enq_Tender_Harbauer_Followup_Save",
+        "Json_Param_String": JSON.stringify(saveObj)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("follow up save",data);
+        if(data[0].Column1 === "SAVED SUCCESSFULLY"){
+           this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: FeesType+" Succesfully save"
+          });
+          FeesType === 'EMD Details' ? this.ObjEMD = new EMD(): FeesType === 'Tender Fees' ? this.ObjTenderFees = new TenderFees() : this.ObjPerformanceSecurity = new PerformanceSecurity()
+          this.SearchTender(true)
+        }
+      
+      })
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error Occured ",
+        detail: "Try again"
+      });
+    }
+    this.EMDSpinner = false;
+    this.TenderSpinner = false;
+    this.PSSpinner = false;
+  }
+  CreateEMDmode(valid){
+    this.EMDFormSubmitted = true;
+   if(valid){
+    this.EMDFormSubmitted = false;
+    const obj = {
+      Tender_Payment_Mode : this.EMDmodeselect
+    }
+    this.$http.post("/BL_CRM_Txn_Enq_Tender/Create_Tender_Payment_Type", obj).subscribe((data: any) => {
+      if (data.success) {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "",
+          detail: "Succesfully Tender Payment Mode Created"
+        });
+      this.GetPaymentList();
+      this.EMDFormSubmitted = false;
+      this.EMDmodeselect = undefined;
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+    })
+   }
+  }
+  CreateTenderfeesmode(valid){
+    console.log("valid",valid)
+    this.TenderFormSubmitted = true;
+    if(valid){
+      this.TenderFormSubmitted = false;
+      const obj = {
+        Tender_Payment_Mode : this.Tenderfeesselete
+      }
+      this.$http.post("/BL_CRM_Txn_Enq_Tender/Create_Tender_Payment_Type", obj).subscribe((data: any) => {
+        if (data.success) {
+          this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: "Succesfully Tender Payment Mode Created"
+          });
+          this.GetPaymentList();
+        this.TenderFormSubmitted = false;
+        this.Tenderfeesselete = undefined;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      })
+     }
+  }
+  CreatePerformanceSecuritymode(valid){
+   console.log("valid",valid);
+   this.performanceSubmitted = true;
+   if(valid){
+    this.performanceSubmitted = false;
+    const obj = {
+      Tender_Payment_Mode : this.PerformanceSecurityselete
+    }
+    this.$http.post("/BL_CRM_Txn_Enq_Tender/Create_Tender_Payment_Type", obj).subscribe((data: any) => {
+      if (data.success) {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "",
+          detail: "Succesfully Tender Payment Mode Created"
+        });
+        this.GetPaymentList();
+      this.performanceSubmitted = false;
+      this.PerformanceSecurityselete = undefined;
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+    })
+   }
+  }
+  GetPaymentList() {
+    this.$http
+      .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Payment_Type_Json")
+      .subscribe((data: any) => {
+        this.PaymentList = data ? JSON.parse(data) : [];
+        console.log("PaymentList",this.PaymentList);
+      });
+  }
+  commView(){
+   this.GetPaymentList();
+   this.viewModel = true;
+  }
+  Deleteview(k) {
+    this.viewTenderDelete = undefined;
+   if(k){
+    this.viewTenderDelete = k;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+   }
+   }
+   onConfirm(){
+    if(this.viewTenderDelete){
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String": "Delete_Payment_Mode",
+        "Json_Param_String": JSON.stringify([{Tender_Payment_Mode_ID : this.viewTenderDelete}])
+      }
+      this.GlobalAPI
+      .getData(obj)
+      .subscribe((data: any) => {
+        console.log("data",data)
+        if(data[0].Column1 === "Deleted Successfully"){
+          this.GetPaymentList();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Tender Payment Mode ID "+this.viewTenderDelete,
+            detail: "Succesfully Delete"
+          });
+        }
+      })
+    }
+  }
+  ifHaveEMDdata(DocID){
+   if(DocID){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_EMD_Details",
+      "Json_Param_String": JSON.stringify([{Tender_Doc_ID : DocID}])
+    }
+    this.GlobalAPI
+      .getData(obj)
+      .subscribe((data: any) => {
+       
+        this.ObjEMD = data[0]
+        this.ObjEMD.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
+        this.ObjEMD.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
+        console.log("EMD",this.ObjEMD);
+      })
+   }
+  }
+  ifHaveTenderdata(DocID){
+    if(DocID){
+     const obj = {
+       "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+       "Report_Name_String": "Get_Tender_Fees",
+       "Json_Param_String": JSON.stringify([{Tender_Doc_ID : DocID}])
+     }
+     this.GlobalAPI
+       .getData(obj)
+       .subscribe((data: any) => {
+         this.ObjTenderFees = data[0]
+         this.ObjTenderFees.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
+         this.ObjTenderFees.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
+         console.log("Tender",this.ObjTenderFees);
+       })
+    }
+   }
+   ifHavePSdata(DocID){
+    if(DocID){
+     const obj = {
+       "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+       "Report_Name_String": "Get_Performance_Security",
+       "Json_Param_String": JSON.stringify([{Tender_Doc_ID : DocID}])
+     }
+     this.GlobalAPI
+       .getData(obj)
+       .subscribe((data: any) => {
+         this.ObjPerformanceSecurity = data[0]
+         this.ObjPerformanceSecurity.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
+         this.ObjPerformanceSecurity.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
+         console.log("ObjPerformanceSecurity",this.ObjPerformanceSecurity);
+       })
+    }
+   }
 }
 class search{
   Filter1_Text:string;
   Filter1_Data_Value:string;
+  Filter2_Text :string;
+}
+class EMD{
+  Tender_Doc_ID:any;         
+  Fees_Type:any;	
+  Mode:any;      
+  Voucher_No :any;  
+  Reference_No :any; 
+  Date_Of_Issue :any;  
+  Date_Of_Exp:any;
+  Amount:number= 0;
+}
+class TenderFees{
+  Tender_Doc_ID:any;         
+  Fees_Type:any;	
+  Mode:any;      
+  Voucher_No :any;  
+  Reference_No :any; 
+  Date_Of_Issue :any;  
+  Date_Of_Exp:any;
+  Amount:number = 0
+}
+class PerformanceSecurity{
+  Tender_Doc_ID:any;         
+  Fees_Type:any;	
+  Mode:any;      
+  Voucher_No :any;  
+  Reference_No :any; 
+  Date_Of_Issue :any;  
+  Date_Of_Exp:any;
+  Amount:number
 }
