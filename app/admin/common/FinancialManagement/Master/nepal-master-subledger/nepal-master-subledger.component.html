@@ -707,6 +707,7 @@
                                         name="SWS_GL_Code"
                                         placeholder="SWS GL Code"
                                         #SWS_GL_Code="ngModel"
+                                        CompacctDigitonly="true" 
                                         [ngClass]="{'clearance': SubledgerSubmitted &&  SWS_GL_Code?.errors?.required}"
                                         [(ngModel)]="ObjSubledger.SWS_GL_Code"/>
                                 </div>
@@ -740,6 +741,7 @@
                                         name="SWS_Agent_Code"
                                         placeholder="SWS Agent Code"
                                         #SWS_Agent_Code="ngModel"
+                                        CompacctDigitonly="true" 
                                         [ngClass]="{'clearance': SubledgerSubmitted &&  SWS_Agent_Code?.errors?.required}"
                                         [(ngModel)]="ObjSubledger.SWS_Agent_Code"/>
                                 </div>
@@ -834,7 +836,7 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <button class="btn btn-primary custombutton" (click)='SaveLocationForm(LocationDetailsForm.form.valid)'>
-                                                    <i class="fa fa-fw fa-add"></i>&nbsp;ADD
+                                                    <i class="glyphicon glyphicon-plus"></i>&nbsp;{{ LocationEditFlag ? 'UPDATE' : 'ADD'}}
                                                 </button>
                                             </div>
                                         </div>   
@@ -847,6 +849,7 @@
                                                         <th nowrap>Location Address</th>
                                                         <th nowrap>Mobile No</th>
                                                         <th nowrap>Email</th>
+                                                        <th>Edit</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -856,6 +859,11 @@
                                                         <td>{{obj.Location_Address}}</td>
                                                         <td>{{obj.Mobile_No}}</td>
                                                         <td>{{obj.Email}}</td>
+                                                        <td class="text-center">
+                                                            <a class="btn btn-sm btn-primary" (click)='EditLocationList(i)'>
+                                                                <i class='fa fa-fw fa-pencil'></i>&nbsp;Edit
+                                                            </a>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -865,7 +873,7 @@
                                         </div>
                                     </form>
                                 </p-tabPanel>
-                                <p-tabPanel headerStyleClass="compacct-tabs" header="CONTACT DETAILS" leftIcon= "fa fa-map" aria-hidden="true" >
+                                <p-tabPanel headerStyleClass="compacct-tabs" header="CONTACT" leftIcon= "fa fa-map" aria-hidden="true" >
                                     <form name="ContactDetailsForm" style="margin-top:2em" #ContactDetailsForm="ngForm" novalidate>
                                         <div class="form-group">
                                             <div class="col-sm-4">
@@ -877,7 +885,7 @@
                                                     placeholder="Contact Person Name"
                                                     #Contact_Person_Name="ngModel"
                                                     [ngClass]="{'clearance': SubledgerContactPersonSubmitted &&  Contact_Person_Name?.errors?.required}"
-                                                    [(ngModel)]="ObjSubledger.Sub_Ledger_Name"
+                                                    [(ngModel)]="ObjContact.Contact_Name"
                                                     required/>
                                             </div>
                                             <div class="col-sm-4">
@@ -885,13 +893,14 @@
                                                 <select class="form-control" 
                                                 name="Department" 
                                                 #Department="ngModel" 
-                                                [(ngModel)]="ObjSubledger.Sub_Ledger_Class_ID" 
+                                                [(ngModel)]="ObjContact.Contact_Person_Type" 
                                                 [ngClass]="{clearance: SubledgerContactPersonSubmitted && Department.errors?.required}"
                                                 required>
-                                                    <option [ngValue]="undefined">Select</option>
-                                                    <option *ngFor="let option of CustomerRouteList" value="{{ option.Sub_Ledger_Class_ID  }}">
-                                                    {{ option.Sub_Ledger_Class}}
-                                                    </option>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option value="Operator">Operator</option>
+                                                <option value="Plant Manager">Plant Manager</option>
+                                                <option value="Accounts">Accounts</option>
+                                                <option value="Owner">Owner</option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-4">
@@ -899,12 +908,12 @@
                                                 <select class="form-control" 
                                                 name="Location" 
                                                 #Location="ngModel" 
-                                                [(ngModel)]="ObjSubledger.Sub_Ledger_Class_ID" 
+                                                [(ngModel)]="ObjContact.Location_ID" 
                                                 [ngClass]="{clearance: SubledgerContactPersonSubmitted && Location.errors?.required}"
                                                 required>
                                                     <option [ngValue]="undefined">Select</option>
-                                                    <option *ngFor="let option of CustomerRouteList" value="{{ option.Sub_Ledger_Class_ID  }}">
-                                                    {{ option.Sub_Ledger_Class}}
+                                                    <option *ngFor="let option of LocationList" value="{{ option.Location_ID  }}">
+                                                    {{ option.Location_Name}}
                                                     </option>
                                                 </select>
                                             </div>
@@ -917,7 +926,7 @@
                                                     placeholder="Email"
                                                     #Email="ngModel"
                                                     [ngClass]="{'clearance': SubledgerContactPersonSubmitted &&  Email?.errors?.required}"
-                                                    [(ngModel)]="ObjSubledger.Email"
+                                                    [(ngModel)]="ObjContact.Email_ID"
                                                     required/>
                                             </div>
                                             <div class="col-sm-4">
@@ -929,7 +938,12 @@
                                                     CompacctDigitonly="true" 
                                                     [ngClass]="{clearance: (SubledgerContactPersonSubmitted && Mobile_No.errors?.required) ||
                                                         (Mobile_No.errors?.minlength && Mobile_No.touched)}"
-                                                    [(ngModel)]="ObjSubledger.Mobile_No" placeholder="Mobile Number" minlength="10" maxlength="10" required />
+                                                    [(ngModel)]="ObjContact.Contact_Number" placeholder="Mobile Number" minlength="10" maxlength="10" required />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <button class="btn btn-primary custombutton" (click)='SaveContactForm(ContactDetailsForm.form.valid)'>
+                                                    <i class="glyphicon glyphicon-plus"></i>&nbsp;{{ ContactEditFlag ? 'UPDATE' : 'ADD'}}
+                                                </button>
                                             </div>
                                         </div>    
                                         <div class="form-group" style="margin-top:1em;">                        
@@ -937,23 +951,27 @@
                                                 <thead>
                                                     <tr style="background-color:#3c8dbc;color:white">
                                                         <th nowrap>Contact Person Name</th>
-                                                        <th nowrap>Department</th>
+                                                        <th nowrap>Contact Person Type</th>
                                                         <th nowrap>Location</th>
-                                                        <th nowrap>Designation</th>
-                                                        <th nowrap>Mobile</th>
-                                                        <th nowrap>Land Line No</th>
-                                                        <th nowrap>Active / Deactive</th>
+                                                        <th nowrap>Email</th>
+                                                        <th nowrap>Contact No</th>
+                                                        <th>Edit</th>
+                                                        <!-- <th nowrap>Active / Deactive</th> -->
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let obj of ContactList;let i = index">
-                                                        <td>{{obj.Contact_Person_Name}}</td>
-                                                        <td>{{obj.Department}}</td>
-                                                        <td>{{obj.Location}}</td>
-                                                        <td>{{obj.Designation}}</td>
-                                                        <td>{{obj.Mobile_No}}</td>
-                                                        <td>{{obj.Land_Line_No}}</td>
-                                                        <td>
+                                                        <td>{{obj.Contact_Name}}</td>
+                                                        <td>{{obj.Contact_Person_Type}}</td>
+                                                        <td>{{obj.Location_ID ? getLocationName(obj.Location_ID) : '-'}}</td>
+                                                        <td>{{obj.Email_ID}}</td>
+                                                        <td>{{obj.Contact_Number}}</td>
+                                                        <td class="text-center">
+                                                            <a class="btn btn-sm btn-primary" (click)='EditContactList(i)'>
+                                                                <i class='fa fa-fw fa-pencil'></i>&nbsp;Edit
+                                                            </a>
+                                                        </td>
+                                                        <!-- <td>
                                                             <select class="form-control"
                                                             name='{{i+"contact"}}'
                                                             [(ngModel)]="obj.Active"
@@ -962,7 +980,7 @@
                                                             <option value="1">Active</option>
                                                             <option value="0">Deactive</option>
                                                         </select>
-                                                        </td>
+                                                        </td> -->
                                                     </tr>
                                                 </tbody>
                                             </table>

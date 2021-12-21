@@ -25,7 +25,10 @@ export class NepalMasterSubledgerComponent implements OnInit {
   SubledgerSubmitted = false;
 
   ContactList = [];
+  ObjContact = new Contact();
   SubledgerContactPersonSubmitted = false;
+  ContactEditFlag = false;
+  LocationEditFlag = false;
   LocationList = [];
   ObjLocation = new Location();
   SubledgerLocationSubmitted= false;
@@ -67,6 +70,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
   Is_CR_Note_Enabled = false;
   Is_DR_Enabled = false;
   Is_Adj_Enabled = false;
+
+
   constructor(private $http: HttpClient,
     private Header: CompacctHeader,
     public $CompacctAPI: CompacctCommonApi,
@@ -117,12 +122,24 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.Is_CR_Note_Enabled = false;
     this.Is_DR_Enabled = false;
     this.Is_Adj_Enabled = false;
+    this.ObjContact = new Contact();
+    this.ObjLocation = new Location();
+
+    this.ContactEditFlag = false;
+    this.LocationEditFlag = false;
   }
   TabClick2(e){
     this.ClearData2();
   }
   ClearData2(){
     this.saveSpinner = false;
+    this.SubledgerContactPersonSubmitted = false;
+    this.SubledgerLocationSubmitted = false;
+    this.ContactEditFlag = false;
+    this.LocationEditFlag = false;
+    
+    this.ObjContact = new Contact();
+    this.ObjLocation = new Location();
   }
   // Init Data --
   GetLedgerList() {
@@ -345,25 +362,38 @@ export class NepalMasterSubledgerComponent implements OnInit {
   }
   GetContactList(){
     this.ContactList = [];
-    this.$http.get("/Master_Acctonting_Subledger/Update_Active").subscribe((data: any) => {
-      console.log(data)
-    });
+    if(this.ObjSubledger.Sub_Ledger_ID) {      
+      this.ngxService.start();
+      const obj = {
+        "SP_String": "SP_Create_Subledger_New",
+        "Report_Name_String": "Get_Subledger_Contacts",
+        "Json_Param_String": JSON.stringify([{'Sub_Ledger_ID' : this.ObjSubledger.Sub_Ledger_ID}])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data) => {
+        console.log(data)
+        this.ContactList = data;  
+        this.ngxService.stop();
+      });
+    }
   }
   GetLocationList(){
     this.LocationList = [];
     if(this.ObjSubledger.Sub_Ledger_ID) {      
-    this.ngxService.start();
-    const obj = {
-      "SP_String": "SP_Create_Subledger_New",
-      "Report_Name_String": "Get_Subledger_Location",
-      "Json_Param_String": JSON.stringify([{'Sub_Ledger_ID' : this.ObjSubledger.Sub_Ledger_ID}])
+      this.ngxService.start();
+      const obj = {
+        "SP_String": "SP_Create_Subledger_New",
+        "Report_Name_String": "Get_Subledger_Location",
+        "Json_Param_String": JSON.stringify([{'Sub_Ledger_ID' : this.ObjSubledger.Sub_Ledger_ID}])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data) => {
+        console.log(data)
+        this.LocationList = data;  
+        this.ngxService.stop();
+      });
     }
-    this.GlobalAPI.postData(obj).subscribe((data) => {
-      console.log(data)
-      this.LocationList = data;  
-      this.ngxService.stop();
-    });
-    }
+  }
+  getLocationName(ID){
+    return ID ? this.LocationList.filter(obj => Number(obj.Location_ID) === Number(obj.Location_ID))[0].Location_Name : '-';
   }
 
   //VISTING CARD
@@ -416,7 +446,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
               summary: 'Subledger ID : ' + data[0].Column1,
               detail: "Succesfully Created."
             });
-            this.ClearData();
+           // this.ClearData();
             this.GetSubLedgerList();
         } else {
             this.compacctToast.clear();
@@ -445,7 +475,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
   SaveLocation(DynObj){
     const obj = {
       "SP_String": "SP_Create_Subledger_New",
-      "Report_Name_String":  "Create_Subledger_Location",
+      "Report_Name_String":  this.ContactEditFlag ? "Edit_Subledger_Location":"Create_Subledger_Location",
       "Json_Param_String": JSON.stringify([DynObj])
     }
     this.GlobalAPI.postData(obj).subscribe((data) => {
@@ -455,9 +485,38 @@ export class NepalMasterSubledgerComponent implements OnInit {
             key: "compacct-toast",
             severity: "success",
             summary: 'Subledger ID : ' + data[0].Column1,
-            detail: "Location Succesfully Created."
+            detail: "Location Succesfully "+ (this.ContactEditFlag ? "Updated." : "Created.")
           });
+          this.ClearData2();
           this.GetLocationList();
+      } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured"
+          });
+      }
+      });
+  }
+  SaveContact(DynObj){
+    const obj = {
+      "SP_String": "SP_Create_Subledger_New",
+      "Report_Name_String": this.ContactEditFlag ? "Edit_Subledger_Contacts":"Create_Subledger_Contacts",
+      "Json_Param_String": JSON.stringify([DynObj])
+    }
+    this.GlobalAPI.postData(obj).subscribe((data) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: 'Subledger ID : ' + data[0].Column1,
+            detail: "Contact Succesfully  "+ (this.ContactEditFlag ? "Updated." : "Created.")
+          });
+          this.ClearData2();
+          this.GetContactList();
       } else {
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -477,6 +536,13 @@ export class NepalMasterSubledgerComponent implements OnInit {
       this.SaveLocation(this.ObjLocation);
     }
   }
+  SaveContactForm(valid) {
+    this.SubledgerContactPersonSubmitted = true;
+    if(valid && this.ObjSubledger.Sub_Ledger_ID) {
+      this.ObjContact.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
+      this.SaveContact(this.ObjContact);
+    }
+  }
   // EDIT
   EditSubledger(id) {
     this.ClearData();
@@ -489,7 +555,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{'Sub_Ledger_ID' : id}])
       }
       this.getEditdataTagLedger(id);
-      this.GetLocationList()
+      this.GetLocationList();
+      this.GetContactList();
       this.GlobalAPI.postData(obj).subscribe((data) => {
         console.log(data[0])
         this.ObjSubledger = data[0];
@@ -522,6 +589,17 @@ export class NepalMasterSubledgerComponent implements OnInit {
             }
         }
     })
+  }
+  // EDIT LOCATION
+  EditContactList(i){
+    this.ObjContact = new Contact();
+    this.ObjContact = {...this.ContactList[i]};
+    this.ContactEditFlag = true;
+  }
+  EditLocationList(i){
+    this.ObjLocation = new Location();
+    this.ObjLocation = {...this.LocationList[i]};
+    this.LocationEditFlag = true;
   }
 }
 class Subledger{
@@ -603,4 +681,13 @@ class Location{
   Location_Address:String;
   Mobile_No:String;
   Email:String;
+}
+class Contact{
+  Contact_ID:String;        
+  Location_ID:String;         
+  Sub_Ledger_ID:String; 	      
+  Contact_Person_Type:String;    	
+  Contact_Number:String;                 
+  Contact_Name:String;   
+  Email_ID:String; 
 }
