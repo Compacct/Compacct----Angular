@@ -1,4 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -36,15 +37,13 @@
     </div>
 </div>
 <!-- DYNAMIC POPUP  -->
-<p-dialog [header]="'Create '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="CreateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;"
+<p-dialog [header]="SaveFlag ? 'Create '+ CreateFieldModalTitle : 'Update '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="CreateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;"
     [minY]="70" [maximizable]="true" [baseZIndex]="10000">
-    <form name="CreateSalesUpdate" #CreateSalesUpdate="ngForm" novalidate>
-        <div class="form-group">
+    <div class="form-horizontal">
+      <form name="CreateSalesUpdate"  #CreateSalesUpdate="ngForm" style="margin:1.5em 0" novalidate>
+        <div class="form-group" *ngIf='!ShowDisabled'>
             <div class="col-sm-12">
-                <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger"
-                    >*</span
-                  ></label
-                >
+                <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger" >*</span></label>
                 <p-dropdown
                   [options]="IntroducerList"
                   name="Introducer"
@@ -70,9 +69,9 @@
                 <label class="control-label">{{CreateFieldModalTitle}} Name<sup class="text-danger">*</sup></label>
                 <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle+' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required>
             </div>
-            <div class="col-sm-12">
+            <div class="col-sm-12" *ngIf='!UserNameDisabled'>
                 <label class="control-label">User Name<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control" placeholder="User name" name="User_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required>
+                <input type="text" class="form-control" placeholder="User name" name="User_Name"  #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required>
             </div>
             <div class="col-sm-12">
                 <label class="control-label">Password<sup class="text-danger">*</sup></label>
@@ -82,13 +81,29 @@
 
         </div>
     </form>
+    <div class="text-center" *ngIf='!SaveFlag'>
+      <p-checkbox [(ngModel)]="ShowDisabled" label='Show Disable Option' [binary]="true"></p-checkbox> 
+    </div>
+    <div *ngIf='ShowDisabled && !SaveFlag' class="alert text-center" style="background: #ff00003d;margin-top:1.8em">
+      <strong>Do You Want to disabled {{ObjSaleField.Member_Name}}!</strong> 
+      <br><br>
+      <div class="text-center">
+        <button *ngIf='ObjSaleField.Member_ID' (click)='DisableUser(ObjSaleField.Member_ID)' class="btn btn-danger">DISABLE</button>
+      </div>
+      
+    </div>
+    </div>
+   
 
     <p-footer>
         <button type="button" (click)="CreateFieldModal = false" class="btn btn-default">
       CANCEL
     </button>
-        <button type="button" class="btn btn-primary" (click)="SaveUpdateField(CreateSalesUpdate.form.valid)">
+        <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveUpdateField(CreateSalesUpdate.form.valid)">
       SAVE
+    </button>
+    <button type="button" *ngIf='!SaveFlag' class="btn btn-primary" (click)="UpdateField(CreateSalesUpdate.form.valid)">
+      UPDATE
     </button>
     </p-footer>
 </p-dialog>

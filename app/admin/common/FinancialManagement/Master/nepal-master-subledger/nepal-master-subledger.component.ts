@@ -26,8 +26,9 @@ export class NepalMasterSubledgerComponent implements OnInit {
 
   ContactList = [];
   SubledgerContactPersonSubmitted = false;
-  AdressList = [];
-  SubledgerAddressSubmitted= false;
+  LocationList = [];
+  ObjLocation = new Location();
+  SubledgerLocationSubmitted= false;
   DublicateSubLedgerList = [];
   ExistingSubledgersModalFlag = false;
 
@@ -57,6 +58,15 @@ export class NepalMasterSubledgerComponent implements OnInit {
   StateList = [];
   DistrictList =[];
   SubledgerCategoryList = [];
+
+  Is_Sale_Bill_Enabled = false;
+  Is_Purchase_Bill_Enabled = false;
+  Is_Payment_Enabled = false;
+  Is_Reciept_Enabled = false;
+  Is_Journal_Enabled = false;
+  Is_CR_Note_Enabled = false;
+  Is_DR_Enabled = false;
+  Is_Adj_Enabled = false;
   constructor(private $http: HttpClient,
     private Header: CompacctHeader,
     public $CompacctAPI: CompacctCommonApi,
@@ -83,7 +93,9 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.GetState();
   }
   TabClick(e){
+    console.log(e)
     this.ClearData();
+    this.tabIndexToView = e.index;
     this.buttonName = 'Create';
   }
   ClearData(){
@@ -91,8 +103,25 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.ProductPDFFile = {};
     this.SubledgerSubmitted = false;
     this.SubledgerContactPersonSubmitted = false;
-    this.SubledgerAddressSubmitted= false;
+    this.SubledgerLocationSubmitted= false;
     this.ObjSubledger = new Subledger();
+    this.saveSpinner = false;
+    this.SelectedSubledgerCategory = [];
+    this.SelectedTagLedger = [];
+
+    this.Is_Sale_Bill_Enabled = false;
+    this.Is_Purchase_Bill_Enabled = false;
+    this.Is_Payment_Enabled = false;
+    this.Is_Reciept_Enabled = false;
+    this.Is_Journal_Enabled = false;
+    this.Is_CR_Note_Enabled = false;
+    this.Is_DR_Enabled = false;
+    this.Is_Adj_Enabled = false;
+  }
+  TabClick2(e){
+    this.ClearData2();
+  }
+  ClearData2(){
     this.saveSpinner = false;
   }
   // Init Data --
@@ -198,14 +227,14 @@ export class NepalMasterSubledgerComponent implements OnInit {
       });
     }
   }
-  changeSubledgerType(){
+  changeSubledgerType(id?){
     this.SubledgerCategoryList =[];
     this.SelectedSubledgerCategory =[];
     if(this.ObjSubledger.Subledger_Type){
       this.GetSubLedgerCategoryNameList(this.ObjSubledger.Subledger_Type);
     }
   }
-  GetSubLedgerCategoryNameList(name) {
+  GetSubLedgerCategoryNameList(name,initData?) {
     this.SubledgerCategoryList =[];
     if(name) {
       this.$http.get('/Master_Acctonting_Subledger/Get_Sub_Ledger_Cat_Name_List?cat_type='+name).subscribe((data: any) => {
@@ -215,6 +244,10 @@ export class NepalMasterSubledgerComponent implements OnInit {
           el.value= el.Sub_Ledger_Cat_ID;
         });
         this.SubledgerCategoryList = resDta;
+        if(initData){
+          this.SelectedSubledgerCategory = [];
+          this.SelectedSubledgerCategory = initData.split(',').map(Number);
+        }
       });
     }
   }
@@ -301,9 +334,9 @@ export class NepalMasterSubledgerComponent implements OnInit {
   // OPEN MODAL
   ShowSubledgerAddCntModal(obj) {
     this.SubledgerContactPersonSubmitted = false;
-    this.SubledgerAddressSubmitted= false;
+    this.SubledgerLocationSubmitted= false;
     this.ContactList = [];
-    this.AdressList = [];
+    this.LocationList = [];
     this.ObjSubLedgerVdetails = {};
     if(obj.Sub_Ledger_ID){
       this.ObjSubLedgerVdetails = obj;
@@ -316,11 +349,21 @@ export class NepalMasterSubledgerComponent implements OnInit {
       console.log(data)
     });
   }
-  GetAdressList(){
-    this.AdressList = [];
-    this.$http.get("/Master_Acctonting_Subledger/Update_Active").subscribe((data: any) => {
+  GetLocationList(){
+    this.LocationList = [];
+    if(this.ObjSubledger.Sub_Ledger_ID) {      
+    this.ngxService.start();
+    const obj = {
+      "SP_String": "SP_Create_Subledger_New",
+      "Report_Name_String": "Get_Subledger_Location",
+      "Json_Param_String": JSON.stringify([{'Sub_Ledger_ID' : this.ObjSubledger.Sub_Ledger_ID}])
+    }
+    this.GlobalAPI.postData(obj).subscribe((data) => {
       console.log(data)
+      this.LocationList = data;  
+      this.ngxService.stop();
     });
+    }
   }
 
   //VISTING CARD
@@ -349,6 +392,14 @@ export class NepalMasterSubledgerComponent implements OnInit {
     if(valid && this.SelectedSubledgerCategory.length) {
       this.ObjSubledger.Sub_Ledger_Cat_ID = this.SelectedSubledgerCategory.toString();
       console.log(this.ObjSubledger);
+      this.ObjSubledger.Is_Adj_Enabled = this.Is_Adj_Enabled ? 'Y' : 'N';
+      this.ObjSubledger.Is_CR_Note_Enabled = this.Is_CR_Note_Enabled ? 'Y' : 'N';
+      this.ObjSubledger.Is_DR_Enabled = this.Is_DR_Enabled ? 'Y' : 'N';
+      this.ObjSubledger.Is_Journal_Enabled = this.Is_Journal_Enabled ? 'Y' : 'N';
+      this.ObjSubledger.Is_Payment_Enabled = this.Is_Payment_Enabled ? 'Y' : 'N';
+      this.ObjSubledger.Is_Purchase_Bill_Enabled = this.Is_Purchase_Bill_Enabled ? 'Y' : 'N';
+      this.ObjSubledger.Is_Reciept_Enabled = this.Is_Reciept_Enabled ? 'Y' : 'N';
+      this.ObjSubledger.Is_Sale_Bill_Enabled = this.Is_Sale_Bill_Enabled ? 'Y' : 'N';
       const obj = {
         "SP_String": "SP_Create_Subledger_New",
         "Report_Name_String": this.ObjSubledger.Sub_Ledger_ID ? "Edit_Subledger" : "Create_Subledger",
@@ -356,7 +407,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
       }
       this.GlobalAPI.postData(obj).subscribe((data) => {
           if (data[0].Column1) {
-            this.saveTagLedger(data[0].Column1);
+            this.saveTagLedger(data[0].Column1);            
+           //this.SaveLocation({Sub_Ledger_ID : data[0].Column1 , Location_Name : 'MAIN'	,Location_Address: this.ObjSubledger.Address_1 +' '+ this.ObjSubledger.Address_2 ,Mobile_No : this.ObjSubledger.Mobile_No, Email : this.ObjSubledger.Email})
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
@@ -390,24 +442,86 @@ export class NepalMasterSubledgerComponent implements OnInit {
     }
   
   }
+  SaveLocation(DynObj){
+    const obj = {
+      "SP_String": "SP_Create_Subledger_New",
+      "Report_Name_String":  "Create_Subledger_Location",
+      "Json_Param_String": JSON.stringify([DynObj])
+    }
+    this.GlobalAPI.postData(obj).subscribe((data) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: 'Subledger ID : ' + data[0].Column1,
+            detail: "Location Succesfully Created."
+          });
+          this.GetLocationList();
+      } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "error",
+            detail: "Error Occured"
+          });
+      }
+      });
+  }
+
+  SaveLocationForm(valid) {
+    this.SubledgerLocationSubmitted = true;
+    if(valid && this.ObjSubledger.Sub_Ledger_ID) {
+      this.ObjLocation.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
+      this.SaveLocation(this.ObjLocation);
+    }
+  }
   // EDIT
   EditSubledger(id) {
+    this.ClearData();
     if(id) {
+      this.ObjSubledger.Sub_Ledger_ID = id;
+      this.ngxService.start();
       const obj = {
         "SP_String": "SP_Create_Subledger_New",
         "Report_Name_String": "Get_Subledger_Individual",
         "Json_Param_String": JSON.stringify([{'Sub_Ledger_ID' : id}])
       }
+      this.getEditdataTagLedger(id);
+      this.GetLocationList()
       this.GlobalAPI.postData(obj).subscribe((data) => {
         console.log(data[0])
         this.ObjSubledger = data[0];
-        console.log(this.ObjSubledger)
+        this.Is_Adj_Enabled = this.ObjSubledger.Is_Adj_Enabled === 'Y' ? true : false;
+        this.Is_CR_Note_Enabled = this.ObjSubledger.Is_CR_Note_Enabled === 'Y' ? true : false;
+        this.Is_DR_Enabled = this.ObjSubledger.Is_DR_Enabled === 'Y' ? true : false;
+        this.Is_Journal_Enabled = this.ObjSubledger.Is_Journal_Enabled === 'Y' ? true : false;
+        this.Is_Payment_Enabled = this.ObjSubledger.Is_Payment_Enabled === 'Y' ? true : false;
+        this.Is_Purchase_Bill_Enabled = this.ObjSubledger.Is_Purchase_Bill_Enabled === 'Y'  ? true : false;
+        this.Is_Reciept_Enabled = this.ObjSubledger.Is_Reciept_Enabled === 'Y'  ? true : false;
+        this.Is_Sale_Bill_Enabled = this.ObjSubledger.Is_Sale_Bill_Enabled === 'Y'  ? true : false;
+        this.GetSubLedgerCategoryNameList(this.ObjSubledger.Subledger_Type,this.ObjSubledger.Sub_Ledger_Cat_ID);
+        this.GetStateDistrict(data[0].Pin);
+        console.log(this.ObjSubledger);
         setTimeout(()=>{
           this.tabIndexToView = 1;
           this.buttonName = 'Update';
-        },400)
+          this.ngxService.stop();
+        },800)
       });
     }
+  }
+  getEditdataTagLedger(subLedger) {
+    this.$http.get("/Master_Accounting_Sub_Ledger_Taged_Ledger/Get_Ledger_ID?Sub_Ledger_ID=" + subLedger).subscribe((data:any) => {
+      console.log(data)
+        if (data) {
+            var tempTagLedgerList = JSON.parse(data);
+            for (let i = 0; i < tempTagLedgerList.length; i++) {
+              this.SelectedTagLedger.push(Number(tempTagLedgerList[i].Ledger_ID));
+            }
+        }
+    })
   }
 }
 class Subledger{
@@ -463,14 +577,14 @@ class Subledger{
   TDS_Deduction:String;
   CIRCLE:String;
 
-  Is_Sale_Bill_Enabled:String;
-  Is_Purchase_Bill_Enabled:String;
-  Is_Payment_Enabled:String;
-  Is_Reciept_Enabled:String;
-  Is_Journal_Enabled:String;
-  Is_CR_Note_Enabled:String;
-  Is_DR_Enabled:String;
-  Is_Adj_Enabled:String;
+  Is_Sale_Bill_Enabled:any;
+  Is_Purchase_Bill_Enabled:any;
+  Is_Payment_Enabled:any;
+  Is_Reciept_Enabled:any;
+  Is_Journal_Enabled:any;
+  Is_CR_Note_Enabled:any;
+  Is_DR_Enabled:any;
+  Is_Adj_Enabled:any;
   Route_ID:String;
   Weekly_Closing:String;
   Sub_Ledger_Class_ID:String;
@@ -482,4 +596,11 @@ class Subledger{
   SWS_Agent_Code:String;
   Email2:String;  
   Mobile_No2:String;	
+}
+class Location{
+  Sub_Ledger_ID:String;                   
+  Location_Name:String;
+  Location_Address:String;
+  Mobile_No:String;
+  Email:String;
 }
