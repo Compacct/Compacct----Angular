@@ -326,7 +326,7 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
        To_Date : end,
        User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
        Menu_Ref_Id : this.$CompacctAPI.CompacctCookies.Menu_Ref_ID,
-       Cost_Cen_ID : this.ObjaddbillForm.Browseroutlet
+       Cost_Cen_ID : this.ObjaddbillForm.Browseroutlet ? this.ObjaddbillForm.Browseroutlet : 0
      }
      const obj = {
        "SP_String": "SP_Controller_Master",

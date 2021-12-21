@@ -9,6 +9,7 @@ declare var $: any;
 import * as moment from "moment";
 import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-advance-production',
@@ -58,7 +59,8 @@ export class K4cAdvanceProductionComponent implements OnInit {
     private Header: CompacctHeader,
     public $CompacctAPI: CompacctCommonApi,
     private DateService: DateTimeConvertService,
-    private compacctToast: MessageService
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -106,8 +108,10 @@ export class K4cAdvanceProductionComponent implements OnInit {
     this.datepic = true;
     this.ProductDetailsList = [];
     this.Reject_Date = new Date();
+    this.ngxService.stop();
   }
   onConfirm(){
+    this.ngxService.start();
     const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Add Production Voucher",
@@ -119,6 +123,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
       //this.Adv_Order_No = data[0].Column1;
       if(data[0].Column1){
         this.SearchProduction();
+        this.ngxService.stop();
         this.compacctToast.clear();
         this.compacctToast.add({
          key: "compacct-toast",
@@ -131,6 +136,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
        this.onReject()
       }
       else {
+        this.ngxService.stop();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",

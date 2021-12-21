@@ -39,10 +39,9 @@
                                     </div>
 
                                     <div class="col-sm-4">
-                                        <label class="control-label"> Outlet&nbsp;<span class="text-danger">*</span></label>
-                                        <select class="form-control" name=" Cost_Cen_ID_B" #Cost_Cen_ID_B='ngModel' [(ngModel)]="ObjBrowseData.Cost_Cen_ID_B" [attr.disabled]="Boutletdisableflag ? true : null" [ngClass]="{'clearance': StockSearchFormSubmitted &&  Cost_Cen_ID_B.errors?.required}"
-                                            required>
-                                    <!-- <option [ngValue]="undefined">Select</option> -->
+                                        <label class="control-label"> Outlet</label>
+                                        <select class="form-control" name=" Cost_Cen_ID_B" #Cost_Cen_ID_B='ngModel' [(ngModel)]="ObjBrowseData.Cost_Cen_ID_B" [attr.disabled]="Boutletdisableflag ? true : null" [ngClass]="{'clearance': StockSearchFormSubmitted &&  Cost_Cen_ID_B.errors?.required}">
+                                    <option [ngValue]="undefined">Select</option>
                                     <option *ngFor='let option of OutletNameList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                             </select>
                                     </div>

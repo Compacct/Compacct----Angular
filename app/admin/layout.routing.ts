@@ -143,9 +143,12 @@ import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
 import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq-tender-harbauer/txn-enq-tender-harbauer.component';
 import { TutoUploadDataSupportComponent } from "./common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component";
+import { EnggNepalMachineMasterComponent } from './common/MaterialManagement/Master/engg-nepal-machine-master/engg-nepal-machine-master.component';
+import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master/engg-nepal-spare-parts/engg-nepal-spare-parts.component';
 import { TenderBudgetComponent } from "./common/TenderManagement/tender-budget/tender-budget.component";
 import { TenderHarbauerViewComponent } from "./common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component";
 import { NepalMasterSubledgerComponent } from "./common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component";
+
 
 
 
@@ -833,6 +836,16 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                             data: {title: 'Upload Data Support'}
                                                             },
                                                             {
+                                                              path: 'Engg_Nepal_Machine_Master',
+                                                              component: EnggNepalMachineMasterComponent,
+                                                              data: {title: 'Machine Master'}
+                                                              },
+                                                              {
+                                                                path: 'Engg_Nepal_Spare_Parts',
+                                                                component: EnggNepalSparePartsComponent,
+                                                                data: {title: 'Spare Parts And Ink Master'}
+                                                                },
+                                                              {
                                                               path: 'BL_CRM_Txn_Enq_Tender_Budget',
                                                               component: TenderBudgetComponent,
                                                               data: {title: 'Tender Budget'}

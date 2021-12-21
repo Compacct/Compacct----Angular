@@ -269,7 +269,7 @@ SearchStockBill(valid) {
     const tempDate = {
       From_Date :start,
       To_Date :end,
-      Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID_B,
+      Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID_B ? this.ObjBrowseData.Cost_Cen_ID_B : 0,
       Material_Type : 'Finished'
       //Cost_Cen_ID :30
     }
