@@ -108,7 +108,7 @@
                                         <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
                                         <td>{{col.godown_name}}</td>
                                         <td>{{col.To_godown_name}}</td>
-                                        <td>{{col.Req_Qty}}</td>
+                                        <td>{{col.Req_Qty ? col.Req_Qty : '-'}}</td>
                                         <td>{{col.Total_Qty}}</td>
                                         <td>{{col.Total_Amount}}</td>
                                         <td>{{col.Total_Accepted_Qty}}</td>
