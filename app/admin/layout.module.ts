@@ -233,6 +233,8 @@ import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq
 // Chips
 import {ChipsModule} from 'primeng/chips';
 import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
+import { EnggNepalMachineMasterComponent } from './common/MaterialManagement/Master/engg-nepal-machine-master/engg-nepal-machine-master.component';
+import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master/engg-nepal-spare-parts/engg-nepal-spare-parts.component';
 
 
 
@@ -400,6 +402,8 @@ import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-
     BillEditFromAdminComponent,
     TxnEnqTenderHarbauerComponent,
     TutoUploadDataSupportComponent,
+    EnggNepalMachineMasterComponent,
+    EnggNepalSparePartsComponent,
   ],
   imports: [
     CommonModule,

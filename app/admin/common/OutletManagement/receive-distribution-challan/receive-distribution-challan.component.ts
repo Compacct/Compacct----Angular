@@ -385,7 +385,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
             Accept_Reason_ID : el.Accept_Reason_ID ? el.Accept_Reason_ID  : 0,
             Accept_Reason : el.Accept_Reason ? el.Accept_Reason : "NA",
             Doc_No: el.Doc_No,
-            Doc_Date: el.Doc_Date,
+            Doc_Date: this.DateService.dateConvert(new Date(el.Doc_Date)),
             F_Cost_Cen_ID: el.F_Cost_Cen_ID,
             F_Godown_ID: el.F_Godown_ID,
             To_Cost_Cen_ID: el.To_Cost_Cen_ID,
@@ -401,11 +401,11 @@ export class ReceiveDistributionChallanComponent implements OnInit {
             Fin_Year_ID: el.Fin_Year_ID,
             Vehicle_Details: el.Vehicle_Details,
             Adv_Order_No: "NA",
-            Indent_Date : el.Indent_Date,
+            Indent_Date : this.DateService.dateConvert(new Date(el.Indent_Date)),
             Status : "Updated",
             Material_Type : el.Material_Type,
-            Indent_Date_To : el.Indent_Date_To,
-            Indent_Date_From : el.Indent_Date_From,
+            Indent_Date_To : this.DateService.dateConvert(new Date(el.Indent_Date_To)),
+            Indent_Date_From : this.DateService.dateConvert(new Date(el.Indent_Date_From)),
             Total_Qty : Number(this.getTotal('Qty')),
             Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty'))
           }

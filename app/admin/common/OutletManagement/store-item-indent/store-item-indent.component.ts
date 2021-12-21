@@ -266,7 +266,7 @@ export class StoreItemIndentComponent implements OnInit {
      const tempDate = {
        From_Date :start,
        To_Date :end,
-       Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID_B,
+       Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID_B ? this.ObjBrowseData.Cost_Cen_ID_B : 0,
        Material_Type : 'Store Item'
 
        //Cost_Cen_ID :30

@@ -565,11 +565,17 @@ searchData(valid){
     const end = this.ObjBrowseData.To_Date
       ? this.DateService.dateConvert(new Date(this.ObjBrowseData.To_Date))
       : this.DateService.dateConvert(new Date());
+      var coscenid;
+      if(this.$CompacctAPI.CompacctCookies.User_Type == 'A') {
+        coscenid = 0;
+      } else {
+        coscenid = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      }
       if(valid){
     const tempDate = {
       From_date :start,
       To_Date :end,
-      From_Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      From_Cost_Cen_ID : coscenid,
       Material_Type : this.ObjBrowseData.Material_Type
     }
   const obj = {

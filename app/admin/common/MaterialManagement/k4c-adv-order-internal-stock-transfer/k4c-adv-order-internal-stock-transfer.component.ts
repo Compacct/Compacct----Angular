@@ -8,6 +8,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-adv-order-internal-stock-transfer',
@@ -77,7 +78,9 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
+
   ) { }
 
   ngOnInit() {
@@ -120,8 +123,6 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
       // console.log("Brand List ===",this.BrandList);
      })
    } 
-   onReject(){}
-   onConfirm(){}
    GetProductType(){
      //console.log("brand id ==", this.Objproduction.Brand_ID)
      const tempObj = {
@@ -402,6 +403,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
   //  }
    SaveAdvIntStocktr(){
      console.log("saveqty",this.saveqty());
+     this.ngxService.start();
      if(this.saveqty()){
      if(Number(this.Objproduction.From_Cost_Cen_ID) == Number(this.Objproduction.To_Cost_Cen_ID) &&
        Number(this.Objproduction.From_godown_id) !== Number(this.Objproduction.To_godown_id)){
@@ -418,6 +420,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
        var tempID = data[0].Column1;
        //this.Objproduction.Doc_No = data[0].Column1;
        if(data[0].Column1){
+        this.ngxService.stop();
          this.compacctToast.clear();
          const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
          this.compacctToast.add({
@@ -434,6 +437,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
         this.SelectedProduction = [];
         this.ProductionFilter = [];
        } else{
+        this.ngxService.stop();
          this.compacctToast.clear();
          this.compacctToast.add({
            key: "compacct-toast",
@@ -446,6 +450,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
      }
      else{
        this.displaysavepopup = false;
+       this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
          key: "compacct-toast",
@@ -457,6 +462,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
    }
    else {
      this.editFlag = true;
+     this.ngxService.stop();
      this.compacctToast.clear();
           this.compacctToast.add({
               key: "compacct-toast",
@@ -667,55 +673,55 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
        );
      }
    }
-  //  DeleteIntStocktr(docNo){
-  //     this.Objproduction.Doc_No = undefined ;
-  //     if(docNo.Doc_No){
-  //     this.Objproduction.Doc_No = docNo.Doc_No;
-  //     this.compacctToast.clear();
-  //     this.compacctToast.add({
-  //     key: "c",
-  //     sticky: true,
-  //     severity: "warn",
-  //     summary: "Are you sure?",
-  //     detail: "Confirm to proceed"
-  //    });
-  //    }
-  //  }
-  //  onConfirm() {
-  //    const Tempobj = {
-  //       Doc_No : this.Objproduction.Doc_No,
-  //       User_ID : this.$CompacctAPI.CompacctCookies.User_ID
-  //    }
-  //    const obj = {
-  //      "SP_String" : "SP_Production_Voucher",
-  //      "Report_Name_String" : "Delete Internal Stock transfer",
-  //      "Json_Param_String" : JSON.stringify([Tempobj])
-  //    }
-  //    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //    //  console.log(data);
-  //      if(data[0].Column1 === "Done") {
-  //        this.compacctToast.clear();
-  //        this.compacctToast.add({
-  //          key: "compacct-toast",
-  //          severity: "success",
-  //          summary: "Doc_No : " + this.Objproduction.Doc_No,
-  //          detail:  "Succesfully Delete"
-  //        });
-  //        this.SearchAdvIntStocktr();
-  //      } else{
-  //        this.compacctToast.clear();
-  //        this.compacctToast.add({
-  //          key: "compacct-toast",
-  //          severity: "error",
-  //          summary: "Warn Message",
-  //          detail: "Error Occured "
-  //        });
-  //      }
-  //      })
-  //  }
-  //  onReject() {
-  //    this.compacctToast.clear("c");
-  //  }
+   DeleteIntStocktr(docNo){
+     this.Objproduction.Doc_No = undefined ;
+     if(docNo.Doc_No){
+     this.Objproduction.Doc_No = docNo.Doc_No;
+     this.compacctToast.clear();
+     this.compacctToast.add({
+     key: "c",
+     sticky: true,
+     severity: "warn",
+     summary: "Are you sure?",
+     detail: "Confirm to proceed"
+    });
+    }
+  }
+  onConfirm() {
+    const Tempobj = {
+       Doc_No : this.Objproduction.Doc_No,
+       User_ID : this.$CompacctAPI.CompacctCookies.User_ID
+    }
+    const obj = {
+      "SP_String" : "SP_Production_Voucher",
+      "Report_Name_String" : "Delete Internal Stock transfer",
+      "Json_Param_String" : JSON.stringify([Tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //  console.log(data);
+      if(data[0].Column1 === "Done") {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Doc_No : " + this.Objproduction.Doc_No,
+          detail:  "Succesfully Delete"
+        });
+        this.SearchAdvIntStocktr();
+      } else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      })
+  }
+  onReject() {
+    this.compacctToast.clear("c");
+  }
    clearData() {
      //this.Objproduction = new production ();
      this.ObjproductAdd = new productAdd();
@@ -746,6 +752,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
       this.todayDate = new Date();
       this.ProDate = this.DateService.dateConvert(new Date(this.ProDate));
       this.GetProDate();
+      this.ngxService.stop();
      }
      qtyChqEdit(col){
        this.editFlag = false;

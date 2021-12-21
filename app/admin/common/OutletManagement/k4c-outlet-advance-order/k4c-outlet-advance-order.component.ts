@@ -261,7 +261,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
       Menu_Ref_Id : this.$CompacctAPI.CompacctCookies.Menu_Ref_ID,
       //Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-      Cost_Cent_ID : this.ObjaddbillForm.BrowserDeliveryto,
+      Cost_Cent_ID : this.ObjaddbillForm.BrowserDeliveryto ? this.ObjaddbillForm.BrowserDeliveryto : 0,
       Search_By : this.Search_By
     }
 
