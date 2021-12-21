@@ -22,6 +22,12 @@
         <div class="box box-primary">
             <div class="form-horizontal">
                 <div class="box-body">
+                    <div class='form-control'>
+                        <button *ngIf='SKUList.length'  (click)="exportexcel(SKUList,'Master_SKU')"
+                                    class="btn btn-primary custombutton">
+                                    <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                  </button>
+                    </div>
                     <div class="table-responsive table-id">
                         <p-table #dt [value]="SKUList" [paginator]="SKUList.length ? true : false" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,50,25,10]" [rowHover]="true" [globalFilterFields]='["Product_ID","Product_Description","Tutopia_Product_Description","Tutopia_Product_Count",
                     "Direct_Sale_Min_Sale","Direct_Sale_Commission","Affi_Sale_Min_Sale","Affi_Sale_Commission","Dist_Sale_Min_Sale","Dist_Sale_Commission"]'>

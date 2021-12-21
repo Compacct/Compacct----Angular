@@ -5,6 +5,7 @@ import { DateTimeConvertService } from '../../../../shared/compacct.global/dateT
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 declare var $:any;
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-tuto-master-sku',
   templateUrl: './tuto-master-sku.component.html',
@@ -270,6 +271,12 @@ export class TutoMasterSkuComponent implements OnInit {
   onReject() {
     this.compacctToast.clear("c");
   }
+    // EXPORT TO EXCEL
+exportexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
 }
 class addcommission{
   Product_ID : number;

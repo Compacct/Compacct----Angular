@@ -145,6 +145,11 @@ import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq
 import { TutoUploadDataSupportComponent } from "./common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component";
 import { EnggNepalMachineMasterComponent } from './common/MaterialManagement/Master/engg-nepal-machine-master/engg-nepal-machine-master.component';
 import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master/engg-nepal-spare-parts/engg-nepal-spare-parts.component';
+import { TenderBudgetComponent } from "./common/TenderManagement/tender-budget/tender-budget.component";
+import { TenderHarbauerViewComponent } from "./common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component";
+import { NepalMasterSubledgerComponent } from "./common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component";
+
+
 
 
 
@@ -840,6 +845,22 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                 component: EnggNepalSparePartsComponent,
                                                                 data: {title: 'Spare Parts And Ink Master'}
                                                                 },
+                                                              {
+                                                              path: 'BL_CRM_Txn_Enq_Tender_Budget',
+                                                              component: TenderBudgetComponent,
+                                                              data: {title: 'Tender Budget'}
+                                                              },
+                                                              {
+                                                                path: 'BL_CRM_Txn_Enq_Tender_Harbauer_View',
+                                                                component: TenderHarbauerViewComponent,
+                                                                data: {title: 'Tender View (GOVT.)'}
+                                                                },
+                                                            {
+                                                              path:'Master_Accounting_Subledger_Nepal',
+                                                              component: NepalMasterSubledgerComponent,
+                                                              data: {title: 'Master Subledger'}
+                                                            }
+
         /*{
 
       /*{

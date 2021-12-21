@@ -235,6 +235,12 @@ import {ChipsModule} from 'primeng/chips';
 import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
 import { EnggNepalMachineMasterComponent } from './common/MaterialManagement/Master/engg-nepal-machine-master/engg-nepal-machine-master.component';
 import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master/engg-nepal-spare-parts/engg-nepal-spare-parts.component';
+import { TenderBudgetComponent } from './common/TenderManagement/tender-budget/tender-budget.component';
+import { TenderHarbauerViewComponent } from './common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { NepalMasterSubledgerComponent } from './common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component';
+
+
 
 
 
@@ -404,6 +410,9 @@ import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master
     TutoUploadDataSupportComponent,
     EnggNepalMachineMasterComponent,
     EnggNepalSparePartsComponent,
+    TenderBudgetComponent,
+    TenderHarbauerViewComponent,
+    NepalMasterSubledgerComponent,
   ],
   imports: [
     CommonModule,
@@ -447,7 +456,8 @@ import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master
     PanelModule,
     OverlayPanelModule,
     GanttAllModule,
-    ChipsModule
+    ChipsModule,
+    NgxSkeletonLoaderModule
   ],
   exports: [],
   providers: [

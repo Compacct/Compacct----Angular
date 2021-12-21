@@ -1,11 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MessageService } from "primeng/api";
 import { map } from 'rxjs/operators';
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
+import { NgxUiLoaderService } from "ngx-ui-loader";
  
 @Component({
   selector: 'app-tuto-student-search',
@@ -14,7 +15,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class TutoStudentSearchComponent implements OnInit {
+export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
   url = window["config"];
   ConfirmSearchFormSubmitted = false;
   seachSpinner = false;
@@ -78,6 +79,8 @@ export class TutoStudentSearchComponent implements OnInit {
   ManualPaymentConfirmModal = false;
   ManualPaymentConfirmFormSubmit = false;
   ObjManualPaymentCnfm = new ManualPaymentCnfm();
+  SkeletonShow = true;
+  ShowRefundModal = false;
   constructor(
     private Header: CompacctHeader,
     private $http : HttpClient,
@@ -85,6 +88,7 @@ export class TutoStudentSearchComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private compacctToast: MessageService,
     public $CompacctAPI: CompacctCommonApi,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -99,6 +103,11 @@ export class TutoStudentSearchComponent implements OnInit {
     this.GetActionList();
     this.GetAllUserList2();
   }
+  ngAfterViewInit() {
+    setTimeout(() => {
+    this.SkeletonShow = false;
+   });
+   }
   TabClick(e){
     console.log(e)
     this.tabIndexToView = e.index;
@@ -173,6 +182,7 @@ export class TutoStudentSearchComponent implements OnInit {
   }
   GetBillingdetaillist(){
     this.Billingdetaillist = [];
+    this.ngxService.start();
     const Objtemp = {
       Foot_Fall_ID : this.ObjStusearchForm.Foot_Fall_ID
     };
@@ -182,6 +192,7 @@ export class TutoStudentSearchComponent implements OnInit {
     }
     this.GlobalAPI.CommonTaskData(objj).subscribe((data:any)=>{
       this.Billingdetaillist = data.length ? data : [];
+      this.ngxService.stop();
       console.log(this.Billingdetaillist)
 
      })
@@ -403,6 +414,7 @@ export class TutoStudentSearchComponent implements OnInit {
   }
   GetStudentOrderdetails2() {
     this.Orderdetaillist2 = [];
+    this.ngxService.start();
     const Objtemp = {
       Foot_Fall_ID : this.ObjStusearchForm.Foot_Fall_ID
     };
@@ -414,6 +426,7 @@ export class TutoStudentSearchComponent implements OnInit {
     this.GlobalAPI.getData(objj).subscribe((data:any)=>{
       this.Orderdetaillist2 = data.length ? data : [];
       console.log(this.Orderdetaillist)
+      this.ngxService.stop();
 
      })
   }
@@ -988,12 +1001,30 @@ export class TutoStudentSearchComponent implements OnInit {
   };
 
   // REFUND
+  ShowRefund(obj) {
+    this.ObjStudetail = new Studetail();
+    this.ShowRefundModal = false;
+    this.Studentdetails = undefined;
+    this.Billingdetaillist = [];
+    if(obj.Lead_ID){
+      this.ObjStusearchForm.Foot_Fall_ID = obj.Foot_Fall_ID;
+      this.ObjStusearchForm.Lead_ID = obj.Lead_ID;
+      this.GetStudentdetails();
+      if(obj.Foot_Fall_ID.toString() !== '0') {
+        this.GetBillingdetaillist();
+        }
+      setTimeout(()=>{
+        this.ShowRefundModal = true;
+      },900);
+    }
+  }
   SaveRefund(obj){
-    if(obj.Bill_No && Number(obj.Refund_Amt) > 0) {
+    if(obj.Doc_No && Number(obj.Refund_Amount) > 0) {
       const Objtemp = {
-        Refund_Amount : obj.Refund_Amt,
+        Refund_Amount : obj.Refund_Amount,
         Refund_User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-        Order_No : obj.Bill_No
+        Order_No : obj.Doc_No,
+        Subscription_Txn_ID: obj.Subscription_Txn_ID
       };
       console.log(Objtemp)
       const objj = {
@@ -1006,7 +1037,7 @@ export class TutoStudentSearchComponent implements OnInit {
         const res = data.length ? data[0] : {};
        console.log(res)
        if(res.remarks === 'success'){
-         this.GetStudentOrderdetails2();
+         this.GetBillingdetaillist();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",

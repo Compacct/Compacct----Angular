@@ -1,0 +1,202 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" >
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-compressed" >
+                            <div class="table-responsive no-padding">
+                                <p-table [value]="budGetreqList"
+                                        [paginator]="budGetreqList.length ? true : false" [rows]="100" [rowHover]="true"
+                                         [autoLayout]="true" sortMode="multiple"
+                                         [rowsPerPageOptions]="[100,200,300]"
+                                         [globalFilterFields]="['Tender_ID','Tender_Authority','Tender_Value','Tender_Last_Sub_Date','State','EMD_Amount','Tender_Publish_Date','Status']"
+                                         [rowHover]="true"
+                                         #dt>
+                                           <ng-template pTemplate="caption">
+                                               <div class="row">
+                                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                        </div>
+                                               </div>
+            
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width:5em">Action</th>
+                                                    <th>Tender Id</th>
+                                                    <th>Tender Authority</th>
+                                                    <th>Tender Value</th>
+                                                    <th>Tender Submission Date & Time</th>
+                                                    <th>State</th>
+                                                    <th>EMD value</th>
+                                                    <th>Publish Date & Time</th>
+                                                    <th>Status</th>
+                                                  </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col>
+                                                <tr>
+            
+                                                    <td>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                    type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li >
+                                                                        <a (click)="createBudget(col)">
+                                                                            <i class="fa fa-fw fa-pencil"></i>
+                                                                            Create Budget
+                                                                        </a>
+                                                                    </li>
+                                                                    <!-- <li *ngIf="!col.Tender_Doc_ID">
+                                                                        <a (click)="DeleteCostcenter(col)">
+                                                                            <i class="fa fa-fw fa-trash"></i>
+                                                                            Delete
+                                                                        </a>
+                                                                    </li> -->
+                                                                </ul>
+                                                            </div>
+                                                    </td>
+                                                    <td>{{col.Tender_ID}}</td>
+                                                    <td>{{col.Tender_Authority}}</td>
+                                                    <td>{{col.Tender_Value}}</td>
+                                                    <td>{{col.Tender_Last_Sub_Date | date: 'dd-MMM-yy hh:mm:a'}}</td>
+                                                    <td>{{col.State}}</td>
+                                                    <td>{{col.EMD_Amount}}</td>
+                                                    <td>{{col.Tender_Publish_Date| date: 'dd-MMM-yy hh:mm:a'}}</td>
+                                                    <td>{{col.Status}}</td>
+                                                 </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="paginatorright" let-state>
+                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                            </ng-template>
+                                    </p-table>
+                                </div>
+                            </p-tabPanel>
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-tasks">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="budGetsubList"
+                                    [paginator]="budGetsubList.length ? true : false" [rows]="100" [rowHover]="true"
+                                             [autoLayout]="true" sortMode="multiple"
+                                             [rowsPerPageOptions]="[100,200,300]"
+                                             [globalFilterFields]="['Tender_ID','Tender_Authority','Tender_Value','Tender_Last_Sub_Date','State','EMD_Amount','Tender_Publish_Date','Status']"
+                                             [rowHover]="true"
+                                             #dtt>
+                                               <ng-template pTemplate="caption">
+                                                   <div class="row">
+                                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dtt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                            </div>
+                                                   </div>
+                
+                                                </ng-template>
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th style="width:5em">Action</th>
+                                                        <th>Tender Id</th>
+                                                        <th>Tender Authority</th>
+                                                        <th>Tender Value</th>
+                                                        <th>Tender Submission Date & Time</th>
+                                                        <th>State</th>
+                                                        <th>EMD value</th>
+                                                        <th>Publish Date & Time</th>
+                                                        <th>Status</th>
+                                                      </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-col>
+                                                    <tr>
+                
+                                                        <td>
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                                    <ul class="dropdown-menu">
+                                                                        <!-- <li >
+                                                                            <a (click)="createBudget(col)">
+                                                                                <i class="fa fa-fw fa-pencil"></i>
+                                                                                Create Budget
+                                                                            </a>
+                                                                        </li> -->
+                                                                        <!-- <li *ngIf="!col.Tender_Doc_ID">
+                                                                            <a (click)="DeleteCostcenter(col)">
+                                                                                <i class="fa fa-fw fa-trash"></i>
+                                                                                Delete
+                                                                            </a>
+                                                                        </li> -->
+                                                                    </ul>
+                                                                </div>
+                                                        </td>
+                                                        <td>{{col.Tender_ID}}</td>
+                                                        <td>{{col.Tender_Authority}}</td>
+                                                        <td>{{col.Tender_Value}}</td>
+                                                        <td>{{col.Tender_Last_Sub_Date | date: 'dd-MMM-yy hh:mm:a'}}</td>
+                                                        <td>{{col.State}}</td>
+                                                        <td>{{col.EMD_Amount}}</td>
+                                                        <td>{{col.Tender_Publish_Date| date: 'dd-MMM-yy hh:mm:a'}}</td>
+                                                        <td>{{col.Status}}</td>
+                                                     </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="paginatorright" let-state>
+                                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                </ng-template>
+                                        </p-table>
+                                    </div>
+                            </p-tabPanel>
+                        </p-tabView>
+
+
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    <p-dialog header="Create Budget" [(visible)]="createBudgetmodel" [modal]="true" [responsive]="true" [style]="{width: '350px', minWidth: '200px'}" [minY]="70" 
+                    [maximizable]="true" [baseZIndex]="10000">
+                    <form name="craeteBugetForm" #craeteBugetForm="ngForm" novalidate>
+                        <div class="form-group">
+                            <div class="col-sm-12" style="text-align: center;">
+                                <label class="control-label">Assign To<sup class="text-danger">*</sup>
+                                </label>
+                                <select class="form-control"
+                                name="Budget"
+                                #Budget="ngModel"
+                                [(ngModel)]="createBudgetbox"
+                                [ngClass]="{'clearance': createBudgetFormSubmitted && Budget?.errors?.required}"
+                                required
+                                >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let option of assingList;" [ngValue]="option.User_ID">{{option.Name}}</option>
+                             </select>
+                            </div>
+                        </div>
+                    </form>
+                    <p-footer>
+                        <button type="button" pButton icon="pi pi-check" (click)="saveBudget(craeteBugetForm.form.valid)" label="Create"></button>
+                        <button type="button" pButton icon="pi pi-close" (click)="createBudgetmodel=false" label="Cancel" class="ui-button-secondary"></button>
+                    </p-footer>
+            </p-dialog>
