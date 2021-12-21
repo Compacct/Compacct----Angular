@@ -237,7 +237,6 @@ import { EnggNepalMachineMasterComponent } from './common/MaterialManagement/Mas
 import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master/engg-nepal-spare-parts/engg-nepal-spare-parts.component';
 import { TenderBudgetComponent } from './common/TenderManagement/tender-budget/tender-budget.component';
 import { TenderHarbauerViewComponent } from './common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { NepalMasterSubledgerComponent } from './common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component';
 
 
@@ -456,8 +455,7 @@ import { NepalMasterSubledgerComponent } from './common/FinancialManagement/Mast
     PanelModule,
     OverlayPanelModule,
     GanttAllModule,
-    ChipsModule,
-    NgxSkeletonLoaderModule
+    ChipsModule
   ],
   exports: [],
   providers: [
