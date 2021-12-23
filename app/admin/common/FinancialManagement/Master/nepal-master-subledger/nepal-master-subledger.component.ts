@@ -71,7 +71,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
   Is_DR_Enabled = false;
   Is_Adj_Enabled = false;
 
-
+  SubLedgerID = undefined;
   constructor(private $http: HttpClient,
     private Header: CompacctHeader,
     public $CompacctAPI: CompacctCommonApi,
@@ -263,7 +263,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
         this.SubledgerCategoryList = resDta;
         if(initData){
           this.SelectedSubledgerCategory = [];
-          this.SelectedSubledgerCategory = initData.split(',').map(Number);
+          this.SelectedSubledgerCategory = initData.includes(',') ? initData.split(',').map(Number) : [Number(initData)];
         }
       });
     }
@@ -407,8 +407,9 @@ export class NepalMasterSubledgerComponent implements OnInit {
   }
   async upload(id){
     const formData: FormData = new FormData();
+        formData.append("anint", id);
         formData.append("file", this.ProductPDFFile);
-    let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Manual_Payment_Update?code=NNuTlQBwbP5UMBVVX8eD6x8do/WNOEIbHdwZVwu/bSulcefirS3Siw==&ConTyp='+this.ProductPDFFile['type']+'&ext='+this.ProductPDFFile['name'].split('.').pop()+'&pgid='+id,{ 
+    let response = await fetch(this.urlService.apiUploadVcardSubLedger,{ 
                   method: 'POST',
                   body: formData // This is your file object
                 });
@@ -439,7 +440,13 @@ export class NepalMasterSubledgerComponent implements OnInit {
           if (data[0].Column1) {
             this.saveTagLedger(data[0].Column1);            
            //this.SaveLocation({Sub_Ledger_ID : data[0].Column1 , Location_Name : 'MAIN'	,Location_Address: this.ObjSubledger.Address_1 +' '+ this.ObjSubledger.Address_2 ,Mobile_No : this.ObjSubledger.Mobile_No, Email : this.ObjSubledger.Email})
-            this.compacctToast.clear();
+           if(this.PDFFlag && this.ProductPDFFile) {
+             console.log(' before upload');
+             this.upload(data[0].Column1);
+             console.log(' after upload');
+           }
+           console.log(' dialog upload');
+           this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
               severity: "success",
@@ -596,10 +603,61 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.ObjContact = {...this.ContactList[i]};
     this.ContactEditFlag = true;
   }
+  CancelContactForm(){
+    this.ObjContact = new Contact();
+    this.ContactEditFlag = false;
+  }
   EditLocationList(i){
     this.ObjLocation = new Location();
     this.ObjLocation = {...this.LocationList[i]};
     this.LocationEditFlag = true;
+  }
+  CancelLocationForm(){
+    this.ObjLocation = new Location();
+    this.LocationEditFlag = false;
+  }
+  // 
+  printPDF(subledgerid) {
+    if (subledgerid) {
+      window.open('/AspxPage/PrintOut.aspx?Sub_Ledger_ID=' + subledgerid,'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    }
+   }
+ // DELETE
+  onConfirm() {
+  if (this.SubLedgerID) {
+    this.$http
+      .post('/Master_Acctonting_Subledger/Delete', { id: this.SubLedgerID })
+      .subscribe((data: any) => {
+        if (data.success === true) {
+          this.GetSubLedgerList();
+          this.onReject();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: 'Subledger ID : ' +this.SubLedgerID,
+            detail: "Succesfully Deleted"
+          });
+        }
+      });
+  }
+  }
+  onReject() {
+    this.compacctToast.clear("c");
+  }
+  DeleteSubledger(obj) {
+    this.SubLedgerID = undefined;
+    if (obj.Sub_Ledger_ID) {
+      this.SubLedgerID = obj.Sub_Ledger_ID;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
   }
 }
 class Subledger{
