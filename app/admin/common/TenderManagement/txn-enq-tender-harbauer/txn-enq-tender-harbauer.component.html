@@ -219,13 +219,14 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
-                                                required />
+                                            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='InformedDate'></ejs-datepicker>
+                                            <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
+                                                required /> -->
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Period Of Working<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="WorkCreate" #WorkCreate="ngModel" CompacctDigitonly="true" [(ngModel)]="PeriodOfWork" (change)="TenderPeriodOfWorkChange(PeriodOfWork)" placeholder="Period Of Working" [ngClass]="{'clearance': TenderFormSubmitted && WorkCreate.errors?.required}"
+                                        <label class="control-label">Period Of Working (In Days)<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="WorkCreate" #WorkCreate="ngModel" CompacctDigitonly="true" [(ngModel)]="PeriodOfWork" (change)="TenderPeriodOfWorkChange(PeriodOfWork)" placeholder="Period Of Working (In Days)" [ngClass]="{'clearance': TenderFormSubmitted && WorkCreate.errors?.required}"
                                             required>
                                     </div>
                                 </div>
@@ -236,7 +237,8 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="date" name="budgetrequidby" #budgetrequidby="ngModel" [ngModel]="BudgetRequidBy | date: 'yyyy-MM-dd'" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && budgetrequidby.errors?.required}" required />
+                                            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='BudgetRequidBy'></ejs-datepicker>
+                                            <!-- <input type="date" name="budgetrequidby" #budgetrequidby="ngModel" [ngModel]="BudgetRequidBy | date: 'yyyy-MM-dd'" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && budgetrequidby.errors?.required}" required /> -->
                                         </div>
                                     </div>
                                     <div class="col-sm-4">

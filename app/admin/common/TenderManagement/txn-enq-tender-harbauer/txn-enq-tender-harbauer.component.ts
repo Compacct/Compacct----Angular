@@ -687,6 +687,8 @@ SaveTenderMaster(valid){
       if(data[0].Column1){
        this.FollowUpSave();
        this.testchips =[];
+       this.InformedDate = new Date();
+       this.GetBudgetrequiredDate();
         this.TenderFormSubmitted = false;
       } else{
        // this.ngxService.stop();
