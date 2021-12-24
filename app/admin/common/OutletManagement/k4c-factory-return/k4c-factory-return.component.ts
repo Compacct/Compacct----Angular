@@ -674,6 +674,15 @@ export class K4cFactoryReturnComponent implements OnInit {
         summary: "Insufficient Stock In",
         detail: productDes  +  ' , '  +  batchn
       })
+    } else {
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
     }
   })
 }
@@ -733,7 +742,7 @@ export class K4cFactoryReturnComponent implements OnInit {
           Product_Description : item.Product_Description,
           Batch_No : item.Batch_No,
           Rate : item.Net_Price ? item.Net_Price : 0,
-          Qty : item.Stock_Qty,
+          Qty : Number(item.Stock_Qty),
           Return_Reason : item.Return_Reason,
           Return_Reason_ID : item.Return_Reason_ID,
           Material_Type : item.Material_Type
@@ -898,13 +907,13 @@ console.log(this.editList)
     this.To_cost_cen_ID = data[0].To_Cost_Cen_ID;
   //  this.UOM = data[0].UOM,
     //console.log("this.editList  ===",data);
-    // for(let i = 0; i < this.editList.length ; i++){
-    // if(this.editList[i].Accepted_Qty === 0){
-    //     this.editList[i].Accepted_Qty = this.editList[i].Qty;
-    //     } else {
-    //       this.editList[i].Accepted_Qty = this.editList[i].Accepted_Qty
-    //     }
-    // }
+    for(let i = 0; i < this.editList.length ; i++){
+    if(this.editList[i].Accepted_Qty === 0){
+        this.editList[i].Accepted_Qty = this.editList[i].Qty;
+        } else {
+          this.editList[i].Accepted_Qty = this.editList[i].Accepted_Qty
+        }
+    }
   })
  }
  getTotal(key){
@@ -1207,6 +1216,7 @@ onReject(){
     this.ObjSaveForm.Material_Type = undefined;
     this.selectProduct = [];
   }
+  this.ngxService.stop();
  }
 
 
