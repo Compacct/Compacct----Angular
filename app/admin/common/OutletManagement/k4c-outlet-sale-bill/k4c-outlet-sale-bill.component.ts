@@ -686,6 +686,7 @@ add(valid) {
   // }
 
  // console.log("this.productSubmit",this.productSubmit);
+ 
   this.Batch_NO = [];
   const selectedCostCenter = this.ObjaddbillForm.selectitem;
   const tempBackup = this.ObjaddbillForm;
