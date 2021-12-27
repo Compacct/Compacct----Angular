@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
@@ -408,10 +408,11 @@ export class NepalMasterSubledgerComponent implements OnInit {
   async upload(id){
     const formData: FormData = new FormData();
         formData.append("anint", id);
-        formData.append("file", this.ProductPDFFile);
+        formData.append("aFile", this.ProductPDFFile);
+      const httpHeader =   new HttpHeaders({'Content-Type': undefined,'Accept': 'application/json'})
     let response = await fetch(this.urlService.apiUploadVcardSubLedger,{ 
                   method: 'POST',
-                  body: formData // This is your file object
+                  body: formData, // This is your file object
                 });
     let responseText = await response.text();
     console.log(responseText)

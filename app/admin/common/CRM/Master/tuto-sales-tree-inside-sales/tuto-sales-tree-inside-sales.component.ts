@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Data } from '@syncfusion/ej2-angular-grids';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MessageService, TreeNode } from 'primeng/api';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
@@ -24,6 +25,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
   ObjSaleField = new SalesTreeField();
   DistrictList = [];
   IntroducerList = [];
+  SubDeptList = [];
 
   TreeDataList: TreeNode[];
   loading = false;
@@ -35,7 +37,8 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
 
   UserNameDisabled = false;
   SaveFlag = true;
-  ShowDisabled = false;
+  ShowDisabled = undefined;
+  ShowForward = false;
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -49,9 +52,9 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
       Header: "Sales Team Inside Sales",
       Link: " Channel Sale -> Sales Team Inside Sales"
     });
-    console.log('gg');
     this.GetAllWBdistrict();
     this.GetTreeData();
+    this.GetSubDeptList();
   }
   getAddressOnChange(e) {
     this.ObjSaleField.School_Location = undefined;
@@ -78,15 +81,25 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
         });
     }
   }
+  GetSubDeptList(){
+    this.SubDeptList = [];
+    const obj = {
+      "SP_String": "Tutopia_Inside_sales_Team_Update_SP",
+      "Report_Name_String": "Get_Tele_Sales_Group"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.SubDeptList = data;
+    });
+  } 
   GetIntroducerList(SupDeptName,edit?){
     this.IntroducerList = [];
+    SupDeptName = SupDeptName.includes('- GROUP') ? 'TELE SALES' : SupDeptName;
     const obj = {
       "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
       "Report_Name_String": "Get_Introducer_Dropdown",
       "Json_1_String": JSON.stringify([{Sub_Dept_Name : SupDeptName}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log(data);
       data.forEach(element => {
         element['label'] = element.Member_Name;
         element['value'] = element.Member_ID;
@@ -132,8 +145,24 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
   }
   nodeSelect(event) {
    console.log(event.node);
-  const openField = event.node.label.includes('TELE SALES') ? 'TELE SALES' : event.node.label.includes('SALES HEAD') ? 'SALES HEAD' : '';
-  openField ? this.OpenSaleFieldModal(openField,event.node) : null;
+   if(event.node.Member_ID) {
+    this.ngxService.start();
+    const obj = {
+      "SP_String": "Tutopia_Inside_sales_Team_Update_SP",
+      "Report_Name_String": "Retrieve_Sales_Head_OR_Tele_Sales",
+      "Json_1_String": JSON.stringify([{Member_ID : event.node.Member_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log(data);
+      if(data.length) {
+        const type = data[0].Sub_Dept_Name;
+        const openField = type.includes('TELE SALES') ? true : type.includes('SALES HEAD') ? true : false;
+        openField ? this.OpenSaleFieldModal(type,event.node) : this.ngxService.stop(); 
+      } else{
+        this.ngxService.stop();
+      }
+    });
+   }
   }
   nodeUnselect(event) {
     console.log(event.node.label);
@@ -147,9 +176,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
      "Json_Param_String": JSON.stringify([{"User_ID": this.$CompacctAPI.CompacctCookies.User_ID,"MEM_Type" : 'sales'}])
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     console.log("tree",data);
-     this.ConvertChildParent(data)
-
+      this.ConvertChildParent(data);
     })
 
   }
@@ -172,8 +199,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
       } else {
         roots.push(node);
       }
-    }
-    console.log(roots) ;
+    }    
     this.loading = false;
     this.TreeDataList = roots;
     this.ngxService.stop();
@@ -190,7 +216,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
     this.IntroducerTitle = undefined;
     this.SaveFlag = true;
     this.UserNameDisabled = false;
-    this.ShowDisabled = false;
+    this.ShowDisabled = undefined;
     if(type === 'LEAD MANAGER') {      
       this.IntroducerTitle = 'Admin';
     }
@@ -200,7 +226,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
     if(type === 'SALES HEAD') {      
       this.IntroducerTitle = 'RM';
     }
-    if(type === 'TELE SALES') {      
+    if(type === 'TELE SALES' || type.includes('- GROUP')) {      
       this.IntroducerTitle = 'SALES HEAD';
     }
     if(obj) {
@@ -208,6 +234,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
       this.ObjSaleField.Sales_Type = type;
       this.SaveFlag = false;
       this.UserNameDisabled = true;
+      this.CreateFieldModalTitle = type;
       this.GetIntroducerList(type,obj);
     } else {
       this.CreateFieldModalTitle = type;
@@ -260,7 +287,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
     
     this.SaveFlag = true;
     this.UserNameDisabled = false;
-    this.ShowDisabled = false;
+    this.ShowDisabled = undefined;
 
     if(this.locationInput) {
       this.locationInput.nativeElement.value = '';
@@ -280,8 +307,60 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
         this.ObjSaleField.Member_Name = data[0].Member_Name;
         this.ObjSaleField.Password =  data[0].Password;
         this.ObjSaleField.User_Name =  data[0].User_Name;
+        this.ObjSaleField.Sub_Dept_ID = data[0].Sub_Dept_ID;
+        this.UserNameDisabled = data[0].Sub_Dept_Name.includes('TELE SALES') ? false : true;
         this.CreateFieldModal = true;
+        this.ngxService.stop();
       });
+    }
+  }
+  ForwardDisableActive(){
+    if(this.ShowDisabled ==='Forward') {
+      const type = this.ObjSaleField.Sales_Type.includes('TELE SALES') ? 'SALES HEAD' : '';
+      if(type === 'SALES HEAD') {      
+        this.IntroducerTitle = 'RM';
+        this.GetIntroducerList(type);
+      }
+    }
+  }
+  ForwardUser(MID,INMID) {
+    if(MID && INMID) {
+      const TEMP = {
+        Member_ID : MID,
+        Intro_Member_ID : INMID
+      }
+      const obj = {
+        "SP_String": "Tutopia_Inside_sales_Team_Update_SP",
+        "Report_Name_String": "Edit_Tele_Sales_To_Sales_Head",
+        "Json_1_String": JSON.stringify([TEMP])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log(data);
+        if(data[0].Column1) {
+          let Type:String = this.ObjSaleField.Sales_Type;
+          this.ClearData();
+          this.GetTreeData();
+          this.CreateFieldModal = false;         
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: ''+ Type,
+            detail:  "Succesfully Disabled"
+          });
+
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            life : 6000,
+            summary: "Validation Message",
+            detail: "Sorry , There is one or More TELE SALES under this SALES HEAD."
+          });
+        }
+
+      })
     }
   }
   UpdateField(valid) {
@@ -290,8 +369,10 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
       const tempObj = {
         Member_ID : this.ObjSaleField.Member_ID,              		    
         Intro_Member_ID : this.ObjSaleField.Intro_Member_ID,     
-        Member_Name  : this.ObjSaleField.Member_Name,           			
+        Member_Name  : this.ObjSaleField.Member_Name,   
+        User_Name : this.ObjSaleField.User_Name,        			
         Password : this.ObjSaleField.Password,
+        Sub_Dept_ID : this.ObjSaleField.Sub_Dept_ID,
       }
       const obj = {
         "SP_String": "Tutopia_Inside_sales_Team_Update_SP",
@@ -300,7 +381,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         console.log(data);
-        if(data[0].Column1) {
+        if(data[0].Column1 === 'Done') {
           let Type:String = this.ObjSaleField.Sales_Type;
           this.ClearData();
           this.GetTreeData();
@@ -319,7 +400,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
             key: "compacct-toast",
             severity: "error",
             summary: "Warn Message",
-            detail: "Error Occured "
+            detail:  data[0].Column1 ? data[0].Column1 : "Error Occured "
           });
         }
 
@@ -376,4 +457,5 @@ class SalesTreeField {
   Password :String;
   Sales_Type :String;
   Intro_Member_ID:String;
+  Sub_Dept_ID:String;
 }

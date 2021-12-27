@@ -584,9 +584,9 @@
                                 <div class="col-sm-4">
                                     <label class="control-label">SEZ </label>
                                     <div style="margin-top:5px">
-                                        <p-radioButton name="group3" value="true" label="Yes" [(ngModel)]="ObjSubledger.IS_SEZ" ></p-radioButton>
+                                        <p-radioButton name="group3" [value]="true" label="Yes" [(ngModel)]="ObjSubledger.IS_SEZ" ></p-radioButton>
                                         &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <p-radioButton name="group3" value="false" label="No" [(ngModel)]="ObjSubledger.IS_SEZ" ></p-radioButton>
+                                        <p-radioButton name="group3" [value]="false" label="No" [(ngModel)]="ObjSubledger.IS_SEZ" ></p-radioButton>
                                     </div>                                    
                                 </div>
                             </div>
@@ -699,10 +699,10 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="ui-g-12">
-                                        <p-checkbox label="DR Note"  [(ngModel)]="Is_DR_Enabled" name='checkboxbox5' binary="true"></p-checkbox>
+                                        <p-checkbox label="DR Note"  [(ngModel)]="Is_DR_Enabled" name='checkboxbox7' binary="true"></p-checkbox>
                                     </div>
                                     <div class="ui-g-12">
-                                        <p-checkbox label="Adj" [(ngModel)]="Is_Adj_Enabled"  name='checkboxbox6' binary="true"></p-checkbox>
+                                        <p-checkbox label="Adj" [(ngModel)]="Is_Adj_Enabled"  name='checkboxbox8' binary="true"></p-checkbox>
                                     </div>
                                 </div>
                             </div>
