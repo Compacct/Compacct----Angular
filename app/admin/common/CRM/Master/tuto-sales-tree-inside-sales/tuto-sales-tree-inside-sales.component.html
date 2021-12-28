@@ -104,11 +104,11 @@
 
         </div>
     </form>
-    <div class="row text-center" *ngIf='!SaveFlag'>
+    <div class="row text-center" style="padding: 1em;background: #d8d8d8;" *ngIf='!SaveFlag'>
       <div class="col-sm-6">
         <p-radioButton name="groupname" [(ngModel)]="ShowDisabled" (onClick)='ForwardDisableActive()' label='Show Disable Option' value="Disable"></p-radioButton> 
       </div>
-      <div class="col-sm-6" *ngIf='!UserNameDisabled'>
+      <div class="col-sm-6">
         <p-radioButton name="groupname" [(ngModel)]="ShowDisabled" (onClick)='ForwardDisableActive()'  label='Transfer Designation' value="Forward"></p-radioButton>         
       </div>
     </div>
@@ -120,7 +120,7 @@
       </div>
       
     </div>
-    <div class="row" *ngIf='ShowDisabled === "Forward" && !SaveFlag' style="margin-top:1.8em;margin-bottom:1.8em">
+    <div class="row" *ngIf='ShowDisabled === "Forward" && !SaveFlag' style="margin-top:1.8em;margin-bottom:4.8em">
       <div class="col-sm-12">
         <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger" >*</span></label>
         <p-dropdown
@@ -128,10 +128,10 @@
           name="Introducer"
           [(ngModel)]="ObjSaleField.Intro_Member_ID"
           [showClear]="true"
-          [emptyFilterMessage]="' No Introducer Found'"
+          [emptyFilterMessage]="' No '+IntroducerTitle+' Found'"
           [filter]="true"
           filterBy="label,value.name"
-          [placeholder]="'Select Introducer'"
+          [placeholder]="'Select '+IntroducerTitle"
           [virtualScroll]="true"
           itemSize="30"
           #Introducer="ngModel"
@@ -144,6 +144,20 @@
         >
         </p-dropdown>
       </div>
+      <div class="col-sm-12" *ngIf="ObjSaleField.Sales_Type.includes('SALES HEAD')">
+        <label class="control-label">Sub Department<sup class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="Sub_Dept_ID" 
+        #Sub_Dept_ID="ngModel" 
+        [(ngModel)]="ObjSaleField.Sub_Dept_ID" 
+        [ngClass]="{clearance: CreateFieldModalFormSubmitted && Sub_Dept_ID.errors?.required}"
+        required>
+            <option [ngValue]="undefined">Select</option>
+            <option *ngFor="let option of SubDeptList" value="{{ option.Sub_Dept_ID  }}">
+            {{ option.Sub_Dept_Name}}
+            </option>
+        </select>
+    </div>
       <div class="col-sm-12 text-right" style="margin-top:1em">
         <button *ngIf='ObjSaleField.Member_ID' (click)='ForwardUser(ObjSaleField.Member_ID,ObjSaleField.Intro_Member_ID)' class="btn btn-primary">FORWARD</button>
       </div>

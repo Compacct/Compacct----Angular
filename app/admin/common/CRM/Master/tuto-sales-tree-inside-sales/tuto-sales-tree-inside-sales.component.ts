@@ -316,22 +316,39 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
   }
   ForwardDisableActive(){
     if(this.ShowDisabled ==='Forward') {
-      const type = this.ObjSaleField.Sales_Type.includes('TELE SALES') ? 'SALES HEAD' : '';
+      this.ObjSaleField.Sub_Dept_ID = undefined;
+      const type = this.ObjSaleField.Sales_Type.includes('TELE SALES') ? 'SALES HEAD' : this.ObjSaleField.Sales_Type.includes('SALES HEAD') ? 'TELE SALES' : '';
       if(type === 'SALES HEAD') {      
         this.IntroducerTitle = 'RM';
+        this.GetIntroducerList(type);
+      }
+      if(type === 'TELE SALES' || type.includes('- GROUP')) {      
+        this.IntroducerTitle = 'SALES HEAD';
         this.GetIntroducerList(type);
       }
     }
   }
   ForwardUser(MID,INMID) {
     if(MID && INMID) {
-      const TEMP = {
-        Member_ID : MID,
-        Intro_Member_ID : INMID
+      let TEMP,ReportName;
+      if(this.ObjSaleField.Sales_Type.includes('TELE SALES')) {
+        TEMP = {
+          Member_ID : MID,
+          Intro_Member_ID : INMID
+        }
+        ReportName = "Edit_Tele_Sales_To_Sales_Head";
       }
+      if(this.ObjSaleField.Sales_Type.includes('SALES HEAD')) {
+        TEMP = {
+          Member_ID : MID,
+          Intro_Member_ID : INMID,
+          Sub_Dept_ID : this.ObjSaleField.Sub_Dept_ID
+        }
+      }
+      
       const obj = {
         "SP_String": "Tutopia_Inside_sales_Team_Update_SP",
-        "Report_Name_String": "Edit_Tele_Sales_To_Sales_Head",
+        "Report_Name_String": ReportName,
         "Json_1_String": JSON.stringify([TEMP])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
