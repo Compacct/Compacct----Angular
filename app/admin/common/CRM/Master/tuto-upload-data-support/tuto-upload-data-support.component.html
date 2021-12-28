@@ -13,7 +13,7 @@
                                   border-color: #faebcc;
                                   font-weight: 400;
                                   margin-bottom: 0;" role="alert">
-                                    Column Name Must Be &nbsp;&nbsp;&nbsp;<code>Student_No</code> , <code>User_Name</code> , <code>Call_Date_Time</code> .
+                                    Column Name Must Be &nbsp;&nbsp;&nbsp;<code>[Student_No]</code> , <code>[User_Name]</code> , <code>[Call_Date_Time]</code>. i.e ('01-Sep-21')
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -66,7 +66,7 @@
                                             <tr>
                                                 <td>{{ col.Student_No}}</td>
                                                 <td>{{ col.User_Name}}</td>
-                                                <td>{{ col.Call_Date_Time | date:"dd/MMM/yyyy hh:mm a"}}</td>
+                                                <td>{{ col.Call_Date_Time | date:"dd/MMM/yyyy"}}</td>
 
                                             </tr>
                                         </ng-template>

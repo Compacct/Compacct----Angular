@@ -69,7 +69,7 @@ export class TutoUploadDataSupportComponent implements OnInit {
     if(this.ProductPDFFile['size']) {
        this.seachSpinnersave = true;
        this.LeadListFromFile.forEach(el=>{
-         el.Call_Date_Time = this.DateService.dateTimeConvert(new Date(el.Call_Date_Time));
+         el.Call_Date_Time = this.DateService.dateConvert(new Date(el.Call_Date_Time));
        })
       const obj = {
         "SP_String": "Tutopia_Support_Follouwp_SP",

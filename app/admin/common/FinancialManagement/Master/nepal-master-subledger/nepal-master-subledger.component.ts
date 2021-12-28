@@ -6,6 +6,7 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-nepal-master-subledger',
   templateUrl: './nepal-master-subledger.component.html',
@@ -97,6 +98,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.GetSubLedgerList();
     this.GetState();
   }
+  
   TabClick(e){
     console.log(e)
     this.ClearData();
@@ -127,6 +129,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
 
     this.ContactEditFlag = false;
     this.LocationEditFlag = false;
+    this.ProductPDFLink = undefined;
+    this.PDFViewFlag = false;
   }
   TabClick2(e){
     this.ClearData2();
@@ -416,12 +420,14 @@ export class NepalMasterSubledgerComponent implements OnInit {
                 });
     let responseText = await response.text();
     console.log(responseText)
+    this.saveSpinner = false;
   };
 
   // SAVE 
   SaveSubLedger(valid) {
     this.SubledgerSubmitted = true;
     if(valid && this.SelectedSubledgerCategory.length) {
+      this.saveSpinner = true;
       this.ObjSubledger.Sub_Ledger_Cat_ID = this.SelectedSubledgerCategory.toString();
       console.log(this.ObjSubledger);
       this.ObjSubledger.Is_Adj_Enabled = this.Is_Adj_Enabled ? 'Y' : 'N';
@@ -445,6 +451,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
              console.log(' before upload');
              this.upload(data[0].Column1);
              console.log(' after upload');
+           } else {
+            this.saveSpinner = false;
            }
            console.log(' dialog upload');
            this.compacctToast.clear();
@@ -576,6 +584,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
         this.Is_Purchase_Bill_Enabled = this.ObjSubledger.Is_Purchase_Bill_Enabled === 'Y'  ? true : false;
         this.Is_Reciept_Enabled = this.ObjSubledger.Is_Reciept_Enabled === 'Y'  ? true : false;
         this.Is_Sale_Bill_Enabled = this.ObjSubledger.Is_Sale_Bill_Enabled === 'Y'  ? true : false;
+        this.ProductPDFLink = this.ObjSubledger.Vcard  ? this.ObjSubledger.Vcard : undefined;
+        this.PDFViewFlag =  this.ProductPDFLink ? true : false;
         this.GetSubLedgerCategoryNameList(this.ObjSubledger.Subledger_Type,this.ObjSubledger.Sub_Ledger_Cat_ID);
         this.GetStateDistrict(data[0].Pin);
         console.log(this.ObjSubledger);

@@ -4,6 +4,7 @@ import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@an
 import { Data } from '@syncfusion/ej2-angular-grids';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MessageService, TreeNode } from 'primeng/api';
+import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
@@ -45,7 +46,8 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
     private $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
-    private ngxService: NgxUiLoaderService) { }
+    private ngxService: NgxUiLoaderService,
+    private DateService: DateTimeConvertService) { }
 
   ngOnInit() {
     this.Header.pushHeader({
@@ -153,7 +155,6 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
       "Json_1_String": JSON.stringify([{Member_ID : event.node.Member_ID}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log(data);
       if(data.length) {
         const type = data[0].Sub_Dept_Name;
         const openField = type.includes('TELE SALES') ? true : type.includes('SALES HEAD') ? true : false;
@@ -253,7 +254,6 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
         "Json_1_String": JSON.stringify([this.ObjSaleField])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log(data);
         if(data[0].Column1) {
           let Type:String = this.ObjSaleField.Sales_Type;
           this.ClearData();
@@ -303,7 +303,6 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
         "Json_1_String": JSON.stringify([{Member_ID : temp.Member_ID}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log(data);
         this.ObjSaleField.Member_Name = data[0].Member_Name;
         this.ObjSaleField.Password =  data[0].Password;
         this.ObjSaleField.User_Name =  data[0].User_Name;
@@ -344,6 +343,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
           Intro_Member_ID : INMID,
           Sub_Dept_ID : this.ObjSaleField.Sub_Dept_ID
         }
+        ReportName = "Edit_Sales_Head_To_Tele_Sales";
       }
       
       const obj = {
@@ -352,7 +352,6 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
         "Json_1_String": JSON.stringify([TEMP])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log(data);
         if(data[0].Column1) {
           let Type:String = this.ObjSaleField.Sales_Type;
           this.ClearData();
@@ -363,7 +362,7 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
             key: "compacct-toast",
             severity: "success",
             summary: ''+ Type,
-            detail:  "Succesfully Disabled"
+            detail:  "Succesfully Transfer"
           });
 
         } else {
@@ -397,7 +396,6 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
         "Json_1_String": JSON.stringify([tempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log(data);
         if(data[0].Column1 === 'Done') {
           let Type:String = this.ObjSaleField.Sales_Type;
           this.ClearData();
@@ -432,7 +430,6 @@ export class TutoSalesTreeInsideSalesComponent implements OnInit {
         "Json_1_String": JSON.stringify([{Member_ID : memberId}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log(data);
         if(data[0].Column1) {
           let Type:String = this.ObjSaleField.Sales_Type;
           this.ClearData();
