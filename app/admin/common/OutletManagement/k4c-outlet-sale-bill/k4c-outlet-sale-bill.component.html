@@ -101,6 +101,7 @@
                                             <th>Wallet</th>
                                             <th>Card</th>
                                             <th>Credit</th>
+                                            <th>Advanced</th>
                                             <th>Customer Name</th>
                                             <th>Created By</th>
                                             <th>Transaction Date & Time</th>
@@ -147,6 +148,7 @@
                                             <td>{{col.Wallet_Amount}}</td>
                                             <td>{{col.Card_Amount}}</td>
                                             <td>{{col.Credit_To_Amount}}</td>
+                                            <td>{{col.Advance_Amount}}</td>
                                             <td>{{col.Customer_Name}}</td>
                                             <td>{{col.User_Name}}</td>
                                             <td>{{col.Transaction_Date_Time}}</td>
@@ -165,6 +167,7 @@
                                             <td>{{getTotalValue('Wallet_Amount')}}</td>
                                             <td>{{getTotalValue('Card_Amount')}}</td>
                                             <td>{{getTotalValue('Credit_To_Amount')}}</td>
+                                            <td>{{getTotalValue('Advance_Amount')}}</td>
                                             <td colspan="3"></td>
                                         </tr>
                                     </ng-template>
