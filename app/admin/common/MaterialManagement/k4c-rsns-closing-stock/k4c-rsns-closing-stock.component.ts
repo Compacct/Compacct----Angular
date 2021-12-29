@@ -113,14 +113,14 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.todayDate = new Date(data[0].Column1);
       console.log("todayDate",this.todayDate);
-      let Datetemp:Date =  new Date(data[0].Column1)
-      const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 3);
-      this.minDate = new Date(Timetemp);
-      console.log("minDate==", this.minDate)
+     // let Datetemp:Date =  new Date(data[0].Column1)
+      //const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 3);
+      //this.minDate = new Date(Timetemp);
+     // console.log("minDate==", this.minDate)
       // let tempDate:Date =  new Date(data[0].Column1)
       // const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 1);
-      this.maxDate = this.todayDate;
-      console.log("maxDate==", this.maxDate)
+      //this.maxDate = this.todayDate;
+     // console.log("maxDate==", this.maxDate)
 
     })
   }

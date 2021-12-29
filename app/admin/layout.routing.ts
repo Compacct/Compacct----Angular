@@ -148,6 +148,7 @@ import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master
 import { TenderBudgetComponent } from "./common/TenderManagement/tender-budget/tender-budget.component";
 import { TenderHarbauerViewComponent } from "./common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component";
 import { NepalMasterSubledgerComponent } from "./common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component";
+import { HarbauerMasterProductMechanicalComponent } from './common/Harbauer/harbauer-master-product-mechanical/harbauer-master-product-mechanical.component';
 
 
 
@@ -859,6 +860,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                               path:'Master_Accounting_Subledger_Nepal',
                                                               component: NepalMasterSubledgerComponent,
                                                               data: {title: 'Master Subledger'}
+                                                            },
+                                                            {
+                                                              path:'Harbauer_Master_Product_mechanical',
+                                                              component: HarbauerMasterProductMechanicalComponent,
+                                                              data: {title: 'Master Product mechanical'}
                                                             }
 
         /*{
