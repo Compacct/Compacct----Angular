@@ -1,4 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -13,8 +14,17 @@
                     <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("SALES HEAD")'>
                     <span class="glyphicon glyphicon-plus"></span> Create SALES HEAD
                   </button>
-                    <button class="btn btn-primary btn-sm" (click)='OpenSaleFieldModal("TELE SALES")'>
+                    <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("TELE SALES")'>
                     <span class="glyphicon glyphicon-plus"></span> Create TELE SALES
+                  </button>
+                  <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("TELE SALES - GROUP1")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create TELE SALES - GROUP1
+                  </button>
+                  <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("TELE SALES - GROUP2")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create TELE SALES - GROUP2
+                  </button>
+                  <button class="btn btn-primary btn-sm" (click)='OpenSaleFieldModal("TELE SALES - GROUP3")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create TELE SALES - GROUP3
                   </button>
                 </div>
                 <div class="box-body">
@@ -36,15 +46,13 @@
     </div>
 </div>
 <!-- DYNAMIC POPUP  -->
-<p-dialog [header]="'Create '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="CreateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;"
+<p-dialog [header]="SaveFlag ? 'Create '+ CreateFieldModalTitle : 'Update '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="CreateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;"
     [minY]="70" [maximizable]="true" [baseZIndex]="10000">
-    <form name="CreateSalesUpdate" #CreateSalesUpdate="ngForm" novalidate>
-        <div class="form-group">
+    <div class="form-horizontal">
+      <form name="CreateSalesUpdate"  #CreateSalesUpdate="ngForm" style="margin:1.5em 0" novalidate>
+        <div class="form-group" *ngIf='!ShowDisabled'>
             <div class="col-sm-12">
-                <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger"
-                    >*</span
-                  ></label
-                >
+                <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger" >*</span></label>
                 <p-dropdown
                   [options]="IntroducerList"
                   name="Introducer"
@@ -66,13 +74,27 @@
                 >
                 </p-dropdown>
               </div>
+              <div class="col-sm-12" *ngIf='!UserNameDisabled && !SaveFlag'>
+                <label class="control-label">Sub Department<sup class="text-danger">*</sup></label>
+                <select class="form-control" 
+                name="Sub_Dept_ID" 
+                #Sub_Dept_ID="ngModel" 
+                [(ngModel)]="ObjSaleField.Sub_Dept_ID" 
+                [ngClass]="{clearance: CreateFieldModalFormSubmitted && Sub_Dept_ID.errors?.required}"
+                required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of SubDeptList" value="{{ option.Sub_Dept_ID  }}">
+                    {{ option.Sub_Dept_Name}}
+                    </option>
+                </select>
+            </div>
             <div class="col-sm-12">
                 <label class="control-label">{{CreateFieldModalTitle}} Name<sup class="text-danger">*</sup></label>
                 <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle+' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required>
             </div>
-            <div class="col-sm-12">
+            <div class="col-sm-12" *ngIf='!UserNameDisabled'>
                 <label class="control-label">User Name<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control" placeholder="User name" name="User_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required>
+                <input type="text" class="form-control" placeholder="User name" name="User_Name"  #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required>
             </div>
             <div class="col-sm-12">
                 <label class="control-label">Password<sup class="text-danger">*</sup></label>
@@ -82,13 +104,77 @@
 
         </div>
     </form>
+    <div class="row text-center" style="padding: 1em;background: #d8d8d8;" *ngIf='!SaveFlag'>
+      <div class="col-sm-6">
+        <p-radioButton name="groupname" [(ngModel)]="ShowDisabled" (onClick)='ForwardDisableActive()' label='Show Disable Option' value="Disable"></p-radioButton> 
+      </div>
+      <div class="col-sm-6">
+        <p-radioButton name="groupname" [(ngModel)]="ShowDisabled" (onClick)='ForwardDisableActive()'  label='Transfer Designation' value="Forward"></p-radioButton>         
+      </div>
+    </div>
+    <div *ngIf='ShowDisabled ==="Disable" && !SaveFlag' class="alert text-center" style="background: #ff00003d;margin-top:1.8em">
+      <strong>Do You Want to disabled {{ObjSaleField.Member_Name}}!</strong> 
+      <br><br>
+      <div class="text-center">
+        <button *ngIf='ObjSaleField.Member_ID' (click)='DisableUser(ObjSaleField.Member_ID)' class="btn btn-danger">DISABLE</button>
+      </div>
+      
+    </div>
+    <div class="row" *ngIf='ShowDisabled === "Forward" && !SaveFlag' style="margin-top:1.8em;margin-bottom:4.8em">
+      <div class="col-sm-12">
+        <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger" >*</span></label>
+        <p-dropdown
+          [options]="IntroducerList"
+          name="Introducer"
+          [(ngModel)]="ObjSaleField.Intro_Member_ID"
+          [showClear]="true"
+          [emptyFilterMessage]="' No '+IntroducerTitle+' Found'"
+          [filter]="true"
+          filterBy="label,value.name"
+          [placeholder]="'Select '+IntroducerTitle"
+          [virtualScroll]="true"
+          itemSize="30"
+          #Introducer="ngModel"
+          [styleClass]="
+          CreateFieldModalFormSubmitted && Introducer.errors?.required
+              ? 'clearance'
+              : ''
+          "
+          [required]="true"
+        >
+        </p-dropdown>
+      </div>
+      <div class="col-sm-12" *ngIf="ObjSaleField.Sales_Type.includes('SALES HEAD')">
+        <label class="control-label">Sub Department<sup class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="Sub_Dept_ID" 
+        #Sub_Dept_ID="ngModel" 
+        [(ngModel)]="ObjSaleField.Sub_Dept_ID" 
+        [ngClass]="{clearance: CreateFieldModalFormSubmitted && Sub_Dept_ID.errors?.required}"
+        required>
+            <option [ngValue]="undefined">Select</option>
+            <option *ngFor="let option of SubDeptList" value="{{ option.Sub_Dept_ID  }}">
+            {{ option.Sub_Dept_Name}}
+            </option>
+        </select>
+    </div>
+      <div class="col-sm-12 text-right" style="margin-top:1em">
+        <button *ngIf='ObjSaleField.Member_ID' (click)='ForwardUser(ObjSaleField.Member_ID,ObjSaleField.Intro_Member_ID)' class="btn btn-primary">FORWARD</button>
+      </div>
+      
+    </div>
+    </div>
+   
 
     <p-footer>
         <button type="button" (click)="CreateFieldModal = false" class="btn btn-default">
       CANCEL
     </button>
-        <button type="button" class="btn btn-primary" (click)="SaveUpdateField(CreateSalesUpdate.form.valid)">
+        <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveUpdateField(CreateSalesUpdate.form.valid)">
       SAVE
+    </button>
+    <button type="button" *ngIf='!SaveFlag && !ShowDisabled' class="btn btn-primary" (click)="UpdateField(CreateSalesUpdate.form.valid)">
+      UPDATE
     </button>
     </p-footer>
 </p-dialog>
