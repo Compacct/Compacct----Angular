@@ -41,6 +41,7 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
   FollowupList = [];
   SupportTicketDumplist = [];
   SupportQuestionDumplist = [];
+  SupportFeedbackDetailsFollowupList = [];
 
   ShowOrderModal = false;
   Orderdetaillist2 = [];
@@ -92,7 +93,7 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["Student Detail","Followup Details", "Billing Details","Order Details","Support Question Dump","Support Ticket Dump"];
+    this.items = ["Student Detail","Followup Details", "Billing Details","Order Details","Support Question Dump","Support Ticket Dump" ,"Support Followup Feedback Details"];
     this.Header.pushHeader({
       Header: "Student Search",
       Link: " CRM -> Student Search"
@@ -109,9 +110,8 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
    });
    }
   TabClick(e){
-    console.log(e)
     this.tabIndexToView = e.index;
-    this.items = ["Student Detail","Followup Details", "Billing Details","Order Details","Support Question Dump","Support Ticket Dump"];
+    this.items = ["Student Detail","Followup Details", "Billing Details","Order Details","Support Question Dump","Support Ticket Dump","Support Followup Feedback Details"];
 
   }
   getDateRange(dateRangeObj) {
@@ -262,6 +262,22 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
      })
 
   }
+  GetSupportFeedbackDetailsFollowupList() {
+    this.SupportFeedbackDetailsFollowupList = [];
+    const Objtemp = {
+      Foot_Fall_ID : this.ObjStusearchForm.Foot_Fall_ID
+    };
+    const objj = {
+      "SP_String": "Tutopia_Support_Follouwp_SP_Step2",
+      "Report_Name_String" : "Support_Feedback_Details",
+      "Json_Param_String" : JSON.stringify([Objtemp])
+    }
+    this.GlobalAPI.getData(objj).subscribe((data:any)=>{
+      this.SupportFeedbackDetailsFollowupList = data.length ? data : [];
+      console.log(this.SupportFeedbackDetailsFollowupList)
+
+     })
+  }
   GetAllUserList() {
     const obj = {
       "Report_Name": "Get_Direct_Sale_Users ",
@@ -294,6 +310,7 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
     this.Orderdetaillist = [];
     this.FollowupList = [];
     this.Billingdetaillist = [];
+    this.SupportFeedbackDetailsFollowupList = [];
     if(obj.Lead_ID){
       this.ObjStusearchForm.Foot_Fall_ID = obj.Foot_Fall_ID;
       this.ObjStusearchForm.Lead_ID = obj.Lead_ID;
@@ -304,6 +321,7 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
         this.GetOrderdetaillist();
         this.GetSupportQuestionDumplist();
         this.GetSupportTicketDumplist();
+        this.GetSupportFeedbackDetailsFollowupList();
         }
       setTimeout(()=>{
         this.ShowDetailsModal = true;

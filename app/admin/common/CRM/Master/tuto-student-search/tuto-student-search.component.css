@@ -106,3 +106,12 @@ hr {
   background-color: #19770d;
   border-color: #335232;
 }
+.Done-style{
+  padding: 0.5em; background: green; color: white; font-size: 0.9em; border-radius: 5px;
+}
+.Pending-style{
+  padding: 0.5em;background: red;color: white;font-size: 0.9em;border-radius: 5px;
+}
+.-style{
+  padding: 0.5em; background: #230337; color: white; font-size: 0.9em; border-radius: 5px;
+}
