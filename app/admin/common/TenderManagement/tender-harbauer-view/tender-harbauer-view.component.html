@@ -109,7 +109,7 @@
                                             [paginator]="getAllTenderData.length ? true : false" [rows]="100" [rowHover]="true"
                                              [autoLayout]="true" sortMode="multiple"
                                              [rowsPerPageOptions]="[100,200,300]"
-                                             [globalFilterFields]="['Tender_ID','Tender_Authority','Tender_Value','Tender_Last_Sub_Date','State','EMD_Amount','Tender_Publish_Date','Status']"
+                                             [globalFilterFields]="['Work_Name','Tender_ID','Tender_Authority','Tender_Value','Tender_Last_Sub_Date','State','EMD_Amount','Tender_Publish_Date','Status']"
                                              [rowHover]="true"
                                              #dt>
                                                <ng-template pTemplate="caption">
@@ -157,22 +157,28 @@
                                                                                 Update Submission Data
                                                                             </a>
                                                                         </li>
-                                                                        <!-- <li *ngIf="col.Status === 'BUDGET APPROVED - TENDER NOT SUBMITTED'">
-                                                                            <a (click)="updateFinance(col)">
-                                                                                <i class="fa fa-fw fa-clone"></i>
-                                                                                Update Finance
-                                                                            </a>
-                                                                        </li> -->
-                                                                        <li >
+                                                                        <li *ngIf="col.Status === 'BUDGET APPROVED - TENDER NOT SUBMITTED'">
                                                                             <a (click)="updateFinance(col)">
                                                                                 <i class="fa fa-fw fa-clone"></i>
                                                                                 Update Finance
                                                                             </a>
                                                                         </li>
+                                                                        <li *ngIf="col.Status === 'TENDER SUBMITTED'">
+                                                                          <a (click)="addBidderList(col)">
+                                                                              <i class="fa fa-fw fa-clone"></i>
+                                                                              Add Bidder List
+                                                                          </a>
+                                                                      </li>
+                                                                        <!-- <li >
+                                                                            <a (click)="updateFinance(col)">
+                                                                                <i class="fa fa-fw fa-clone"></i>
+                                                                                Update Finance
+                                                                            </a>
+                                                                        </li> -->
                                                                     </ul>
                                                                 </div>
                                                         </td>
-                                                        <td>{{col.Tender_ID}}</td>
+                                                        <td>{{col.Work_Name}}</td>
                                                         <td>{{col.Tender_Authority}}</td>
                                                         <td>{{col.Tender_Value}}</td>
                                                         <td>{{col.Tender_Last_Sub_Date | date: 'dd-MMM-yy hh:mm:a'}}</td>
@@ -204,42 +210,88 @@
  [closable]="false"
  [modal]="true"
  [responsive]="true"
- [style]="{ width: '40%', minWidth: '200px' }"
+ [style]="{ width: '35%', minWidth: '200px' }"
  style="text-align: center;"
- [minY]="70"
+ [minY]="50"
  [maximizable]="true"
  [baseZIndex]="10000">
                     <form name="dateSubmissionForm" #dateSubmissionForm="ngForm" novalidate>
                         <div class="form-group">
-                            <div class="col-sm-12">
+                            <div class="col-sm-10">
                                 <label class="control-label">Last Submission Date
-                                    <sup class="text-danger">*</sup></label>
-                                <div class="input-group date">
-                                    <div class="input-group-addon">
-                                      <i class="fa fa-calendar"></i>
-                                    </div>
-                                    <input class="form-control"  [owlDateTimeTrigger]="lastsub"   name="bidsub_Submission111"
-                                    [(ngModel)]="lastSubmissionDate" [owlDateTime]="lastsub">
-                                   <owl-date-time  [pickerMode]="'dialog'" [hour12Timer]='true' #lastsub></owl-date-time>
+                                  <sup class="text-danger">*</sup></label>
+                              <div class="input-group date">
+                                  <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
                                   </div>
-                            </div>
-                            <div class="col-sm-12">
+                                  <input class="form-control"  [owlDateTimeTrigger]="lastsub"   name="bidsub_Submission111"
+                                  [(ngModel)]="lastSubmissionDate" [owlDateTime]="lastsub">
+                                 <owl-date-time  [pickerMode]="'dialog'" [hour12Timer]='true' #lastsub></owl-date-time>
+                                </div>
+                              </div>
+                              <div class="col-sm-2">
+                                <button class="btn btn-primary custombutton"
+                                (click)="saveSubmissionDate('Last Submission Date')"
+                                id="load"
+                                [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!Spinner" icon='pi pi-check'></span>Save
+                              </button>
+                              </div>
+                             </div>
+                             <div class="clearfix"></div>
+                            <div class="form-group">
+                              <div class="col-sm-10">
                                 <label class="control-label">Bid Openning Date
-                                    <sup class="text-danger">*</sup></label>
-                                    <div class="input-group date">
-                                        <div class="input-group-addon">
-                                          <i class="fa fa-calendar"></i>
-                                        </div>
-                                        <input class="form-control"  [owlDateTimeTrigger]="Bidopen"   name="bidsub_Submission"
-                                        [(ngModel)]="bidopenningDate" [owlDateTime]="Bidopen">
-                                       <owl-date-time  [pickerMode]="'dialog'" [hour12Timer]='true' #Bidopen></owl-date-time>
+                                  <sup class="text-danger">*</sup></label>
+                                  <div class="input-group date">
+                                      <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
                                       </div>
+                                      <input class="form-control"  [owlDateTimeTrigger]="Bidopen"   name="bidsub_Submission"
+                                      [(ngModel)]="bidopenningDate" [owlDateTime]="Bidopen">
+                                     <owl-date-time  [pickerMode]="'dialog'" [hour12Timer]='true' #Bidopen></owl-date-time>
+                                    </div>
+                              </div>
+                              <div class="col-sm-2">
+                                <button class="btn btn-primary custombutton"
+                                (click)="saveSubmissionDate('Bid Openning Date')"
+                                id="load"
+                                [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!Spinner" icon='pi pi-check'></span>Save
+                              </button>
+                              </div>
+                                
                             </div>
-                            
-                        </div>
-                    </form>
+                            <div class="clearfix"></div>
+                            <div class="form-group">
+                              <div class="col-sm-10">
+                                <label class="control-label">Actual Submission Date
+                                  <sup class="text-danger">*</sup></label>
+                                  <div class="input-group date">
+                                      <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                      </div>
+                                      <input class="form-control"  [owlDateTimeTrigger]="Actualopen"   name="Actual_Submission"
+                                      [(ngModel)]="ActualSubmissionDate" [owlDateTime]="Actualopen">
+                                     <owl-date-time  [pickerMode]="'dialog'" [hour12Timer]='true' #Actualopen></owl-date-time>
+                                    </div>
+                              </div>
+                              <div class="col-sm-2">
+                                <button class="btn btn-primary custombutton"
+                                (click)="saveSubmissionDate('Actual Submission Date')"
+                                id="load"
+                                [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!Spinner" icon='pi pi-check'></span>Save
+                              </button>
+                              </div>
+                                
+                            </div>
+                     </form>
                     <p-footer>
-                        <button type="button" pButton icon="pi pi-check" (click)="saveSubmissionDate(dateSubmissionForm.form.valid)" label="save"></button>
+                        <!-- <button type="button" pButton icon="pi pi-check" (click)="saveSubmissionDate(dateSubmissionForm.form.valid)" label="save"></button> -->
                         <button type="button" pButton icon="pi pi-close" (click)="updateSubmissionmodule=false" label="Close" class="ui-button-secondary"></button>
                     </p-footer>
 </p-dialog>
@@ -753,4 +805,66 @@ header="Update Finance"
                     <p-footer>
                         <button type="button" pButton icon="pi pi-close" (click)="viewModel=false" label="Close" class="ui-button-secondary"></button>
                     </p-footer>
+</p-dialog>
+<!-- Add Bider List -->
+<p-dialog 
+ [header]="'Add Bidder List'"
+ [appendTo]="'body'"
+ [visible]="addBiderListModel"
+ [closeOnEscape]="true"
+ [closable]="false"
+ [modal]="true"
+ [responsive]="true"
+ [style]="{ width: '50%', minWidth: '200px' }"
+ style="text-align: center;"
+ [minY]="70"
+ [maximizable]="true"
+ [baseZIndex]="10000">
+ <form name="addBidderForm" #addBidderForm="ngForm" novalidate>
+  <div class="form-group">
+     <div class="col-sm-9">
+      <label class="control-label">Bidder Name<sup class="text-danger">*</sup></label>
+      <input class="form-control"
+              name="Bidder"
+              #Bidder="ngModel"
+              [(ngModel)]="bidderName"
+              placeholder="Bidder Name"
+              [ngClass]="{'clearance': BidderSubmition && Bidder.errors?.required}" required>
+     </div>
+     <div class="col-sm-3">
+      <button class="btn btn-primary custombutton" data-toggle="modal"
+      (click)="SaveBidder(addBidderForm.form.valid)"
+       id="load"
+       [disabled]="BidderSpinner">
+       <p-progressSpinner *ngIf="BidderSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!BidderSpinner" class="glyphicon glyphicon-saved"></span>&nbsp;Create
+  </button>
+     </div>
+    </div>
+    </form>
+    <div class="clearfix"></div>
+ <div class="table-responsive no-padding table-id" style="margin-top: 15px;">
+  <p-table [value]="GetBidderList"
+          [autoLayout]="true" 
+          sortMode="multiple"
+          [rowHover]="true"
+           >
+             <ng-template pTemplate="header" let-columns let-rowData let-index="rowIndex">
+                   <tr>
+                      <th>Bidder Name</th>
+                      <th>Delete</th>
+                    </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-col>
+                  <tr>
+                     <td>{{col.Bidder_Name}}</td>
+                      <td><button (click)="DeleteBidderName(col.Bidder_ID)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button></td>
+                   </tr>
+              </ng-template>
+              
+      </p-table>
+  </div>
+  <p-footer>
+   <button type="button" pButton icon="pi pi-close" (click)="addBiderListModel=false" label="Close" class="ui-button-secondary"></button>
+   </p-footer>
 </p-dialog>
