@@ -1,0 +1,30 @@
+.productTable .ui-table-auto-layout>.ui-table-wrapper {
+    width: 100% !important;
+    min-height: 170px !important;
+}
+
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+}
+
+.custombutton {
+    margin-top: 25px;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.createPatient {
+    padding: 0 5px !important;
+    border-radius: 3px !important;
+    margin-top: 5px !important;
+}
+
+.pull-right {
+    float: right!important;
+    margin-top: 20px;
+}

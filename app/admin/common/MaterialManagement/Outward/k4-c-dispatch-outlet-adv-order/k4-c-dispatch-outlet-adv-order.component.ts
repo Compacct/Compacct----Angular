@@ -9,6 +9,7 @@ import { CompacctCommonApi } from "../../../../shared/compacct.services/common.a
 import { CompacctHeader } from "../../../../shared/compacct.services/common.header.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
 import * as XLSX from 'xlsx';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 @Component({
@@ -54,6 +55,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   Delivery_Date = new Date();
   ObjadvDispat : advDispat = new advDispat ()
   ObjBrowseData : BrowseData = new BrowseData ()
+  doc_no: any;
+  doc_date: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -61,7 +64,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -100,9 +104,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     //this.ObjadvDispat= new advDispat();
     this.OutletFormSubmit = false;
     this.flag = false;
+    this.ngxService.stop();
    }
-  onConfirm(){ }
-  onReject(){}
   GetDate(){
     const obj = {
       "SP_String": "SP_Production_Voucher",
@@ -270,6 +273,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     console.log(this.saveqty());
     console.log(this.productDetails.length && this.saveqty());
     if(this.productDetails.length && this.saveqty()){
+      this.ngxService.start();
           this.saveData = [];
              this.productDetails.forEach(el=>{
                if(el.Delivery_Qty && Number(el.Delivery_Qty) !== 0 ){
@@ -305,6 +309,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                this.GlobalAPI.getData(obj).subscribe((data:any)=>{
                  var tempID = data[0].Column1;
                  if(data[0].Column1){
+                  this.ngxService.stop();
                    this.compacctToast.clear();
                  this.compacctToast.add({
                  key: "compacct-toast",
@@ -317,11 +322,13 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                this.items = ["BROWSE", "CREATE"];
                this.buttonname = "Create";
                this.clearData();
+               this.searchData();
                this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
                  }
                })
              }
              else{
+              this.ngxService.stop();
               this.compacctToast.clear();
                   this.compacctToast.add({
                     key: "compacct-toast",
@@ -478,8 +485,55 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
-  editmaster(col){}
-  DeleteCostcenter(col){}
+  //editmaster(col){}
+  deleteAdvDispatch(masterProduct){
+    console.log("deleteCol",masterProduct)
+    this.doc_no = undefined;
+    if (masterProduct.Doc_No) {
+     this.doc_no = masterProduct.Doc_No;
+     this.doc_date = masterProduct.Doc_Date;
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+   }
+   }
+   onConfirm(){
+    if(this.doc_no){
+      const TempObj = {
+        Doc_No : this.doc_no,
+        User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+        Doc_Date : this.doc_date
+      }
+      const obj = {
+        "SP_String": "SP_Production_Voucher",
+        "Report_Name_String": "Delete Distribution Challan",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("del Data===", data[0].Column1)
+         if (data[0].Column1 === "Done"){
+           this.onReject();
+           this.searchData();
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Doc No.: " + this.doc_no.toString(),
+             detail: "Succesfully Deleted"
+           });
+           this.clearData();
+         }
+       })
+    }
+  }
+  onReject(){
+    this.compacctToast.clear("c");
+  }
 
 }
 class advDispat{

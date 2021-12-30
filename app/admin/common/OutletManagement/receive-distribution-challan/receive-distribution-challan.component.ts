@@ -160,6 +160,15 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       //  // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
       // })
       // } else {
+        let spname = "";
+        let reportname = "";
+        if(this.ObjBrowseData.Material_Type == "Finished"){
+          spname = "SP_Production_Voucher";
+          reportname = "Get Dispatch Details For Accept Challan"
+        } else {
+          spname = "SP_Store_Item_Indent";
+          reportname = "Get Store Item Dispatch Details For browse"
+        }
       const tempDate = {
         Material_Type : this.ObjBrowseData.Material_Type,
         From_Date :start,
@@ -170,8 +179,8 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       }
 
      const obj = {
-      "SP_String": "SP_Production_Voucher",
-      "Report_Name_String": "Get Dispatch Details For Accept Challan",
+      "SP_String": spname,
+      "Report_Name_String": reportname,
       "Json_Param_String": JSON.stringify([tempDate])
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -303,6 +312,30 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       console.log("this.ReqNolist",this.ReqNolist);
     })
   }
+  getReqNos(){
+    let Rarr =[]
+    if(this.ReqNolist.length) {
+      this.ReqNolist.forEach(el => {
+        if(el){
+          const Dobj = {
+            Req_No : el.Req_No ? el.Req_No : 'NA'
+            }
+            Rarr.push(Dobj)
+        }
+
+    });
+      console.log("Table Data ===", Rarr)
+      return Rarr.length ? JSON.stringify(Rarr) : '';
+    } 
+    // else {
+    //   const Dobj = {
+    //     Req_No : 'NA'
+    //     }
+    //     Rarr.push(Dobj)
+    // }
+    // console.log("Table Data ===", Rarr)
+    //   return Rarr.length ? JSON.stringify(Rarr) : '';
+  }
   CheckLengthProductID(ID) {
     const tempArr = this.productDetails.filter(item=> item.Product_ID == ID);
     return tempArr.length
@@ -385,7 +418,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
             Accept_Reason_ID : el.Accept_Reason_ID ? el.Accept_Reason_ID  : 0,
             Accept_Reason : el.Accept_Reason ? el.Accept_Reason : "NA",
             Doc_No: el.Doc_No,
-            Doc_Date: el.Doc_Date,
+            Doc_Date: this.DateService.dateConvert(new Date(el.Doc_Date)),
             F_Cost_Cen_ID: el.F_Cost_Cen_ID,
             F_Godown_ID: el.F_Godown_ID,
             To_Cost_Cen_ID: el.To_Cost_Cen_ID,
@@ -401,11 +434,11 @@ export class ReceiveDistributionChallanComponent implements OnInit {
             Fin_Year_ID: el.Fin_Year_ID,
             Vehicle_Details: el.Vehicle_Details,
             Adv_Order_No: "NA",
-            Indent_Date : el.Indent_Date,
+            Indent_Date : this.DateService.dateConvert(new Date(el.Indent_Date)),
             Status : "Updated",
             Material_Type : el.Material_Type,
-            Indent_Date_To : el.Indent_Date_To,
-            Indent_Date_From : el.Indent_Date_From,
+            Indent_Date_To : this.DateService.dateConvert(new Date(el.Indent_Date_To)),
+            Indent_Date_From : this.DateService.dateConvert(new Date(el.Indent_Date_From)),
             Total_Qty : Number(this.getTotal('Qty')),
             Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty'))
           }
@@ -414,11 +447,21 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       })
       if(this.saveData.length){
         console.log("this.saveData",this.saveData);
+        let SpName = "";
+        let ReportName = "";
+        if (this.ObjBrowseData.Material_Type == "Finished") {
+          SpName = "SP_Production_Voucher"
+          ReportName = "Add K4C Txn Distribution"
+        } else {
+          SpName = "SP_Store_Item_Indent"
+          ReportName = "Add Store Item Dispatch"
+        }
         const obj = {
-          "SP_String": "SP_Production_Voucher",
-          "Report_Name_String": "Add K4C Txn Distribution",
+          "SP_String": SpName,
+          "Report_Name_String": ReportName,
           "Json_Param_String": JSON.stringify(this.saveData),
-          "Json_1_String" : JSON.stringify(this.ReqNolist)
+          //"Json_1_String" : JSON.stringify(this.ReqNolist)
+          "Json_1_String" : this.getReqNos()
         }
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
           if(data[0].Column1){

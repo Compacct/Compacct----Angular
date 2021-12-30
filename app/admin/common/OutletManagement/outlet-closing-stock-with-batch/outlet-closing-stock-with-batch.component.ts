@@ -378,12 +378,18 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
 const end = this.ObjBrowse.end_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
   : this.DateService.dateConvert(new Date());
+  var costcentid;
+  if(this.$CompacctAPI.CompacctCookies.User_Type=='A'){
+    costcentid = this.ObjBrowse.Cost_Cen_ID ? this.ObjBrowse.Cost_Cen_ID : 0;
+  } else {
+    costcentid = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  }
   if(valid){
 const tempobj = {
   From_Date : start,
   To_Date : end,
-  Brand_ID : this.ObjBrowse.Brand_ID,
-  Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID ? this.ObjBrowse.Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+  Brand_ID : this.ObjBrowse.Brand_ID ? this.ObjBrowse.Brand_ID : 0,
+  Cost_Cen_ID : costcentid,
 }
 const obj = {
   "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
@@ -454,6 +460,14 @@ const obj = {
          }
        })
    }
+   TotalValue(key){
+    let totalAmt = 0;
+    this.editList.forEach((item)=>{
+      totalAmt += Number(item[key]);
+    });
+
+    return totalAmt ? totalAmt : '-';
+  }
    View(DocNo){
     //console.log("View ==",DocNo);
   this.clearData();
@@ -531,7 +545,8 @@ const obj = {
         Expiry_Date : element.Expiry_Date,
         batch_Qty : element.batch_Qty,
         Closing_Qty : element.Closing_Qty,
-        Remarks : element.Remarks
+        Remarks : element.Remarks,
+        Total_Amount : element.Total_Amount
        }
        temp.push(obj)
      });

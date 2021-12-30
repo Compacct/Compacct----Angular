@@ -326,7 +326,7 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
        To_Date : end,
        User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
        Menu_Ref_Id : this.$CompacctAPI.CompacctCookies.Menu_Ref_ID,
-       Cost_Cen_ID : this.ObjaddbillForm.Browseroutlet
+       Cost_Cen_ID : this.ObjaddbillForm.Browseroutlet ? this.ObjaddbillForm.Browseroutlet : 0
      }
      const obj = {
        "SP_String": "SP_Controller_Master",
@@ -446,22 +446,22 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
  
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       if(data.length) {
-         data.forEach(element => {
-           element['label'] = element.Product_Description,
-           element['value'] = element.Product_ID,
-           element['Product_Type_ID'] = element.Product_Type_ID
-         });
+      //  if(data.length) {
+      //    data.forEach(element => {
+      //      element['label'] = element.Product_Description,
+      //      element['value'] = element.Product_ID,
+      //      element['Product_Type_ID'] = element.Product_Type_ID
+      //    });
          this.selectitem = data;
          this.selectitemView = data;
  
          this.Product2.applyFocus()
          this.Product2.containerViewChild.nativeElement.click();
-       } else {
-         this.selectitem = [];
-         this.selectitemView = [];
+      //  } else {
+      //    this.selectitem = [];
+      //    this.selectitemView = [];
  
-       }
+      // }
      // console.log("this.selectitem======",this.selectitem);
  
  
@@ -571,10 +571,10 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
  if(this.ObjaddbillForm.Product_ID) {
    const ctrl = this;
    this.getBatchNo();
-   const productObj = $.grep(ctrl.selectitem,function(item) {return item.Product_ID == ctrl.ObjaddbillForm.Product_ID})[0];
+   const productObj = $.grep(ctrl.selectitem,function(item) {return item.value == ctrl.ObjaddbillForm.Product_ID})[0];
    console.log(productObj);
    //this.rate = productObj.Sale_rate;
-   this.ObjaddbillForm.Product_Description = productObj.Product_Description;
+   this.ObjaddbillForm.Product_Description = productObj.label;
    //this.ObjaddbillForm.Stock_Qty = productObj.Stock_Qty;
    this.ObjaddbillForm.Sale_rate =  productObj.Sale_rate;
    //this.ObjaddbillForm.Sale_rate_Online = productObj.Sale_rate_Online;
@@ -903,33 +903,40 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
  
  AmountChange(){
    //console.log("called");
-   //var coupon_per = this.ObjcashForm.Coupon_Per ? this.ObjcashForm.Coupon_Per : 0;
-   var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
-   var wallet_amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashForm.Wallet_Amount : 0;
-   var cash_amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0 ;
-   var card_amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
- 
-   //if (this.ObjcashForm.Coupon_Per ) { 
-     // credit_amount = Number(this.Net_Payable) * Number(this.ObjcashForm.Coupon_Per ) / 100;
-     // this.ObjcashForm.Credit_To_Amount = (credit_amount).toFixed(2);
-     // this.ObjcashForm.Total_Paid = (Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
-   //} else //if (!this.ObjcashForm.Coupon_Per) {
-     //this.ObjcashForm.Credit_To_Amount = null;
-     //this.ObjcashForm.Total_Paid = null;
-     this.ObjcashForm.Total_Paid = (Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
-   //}
-    if(Number(this.Net_Payable) < this.ObjcashForm.Total_Paid){
-      this.ObjcashForm.Refund_Amount = (Number(this.ObjcashForm.Total_Paid) - Number(this.Net_Payable)).toFixed(2);
+  this.ObjcashForm.Refund_Amount = 0;
+  this.ObjcashForm.Due_Amount = 0;
+  var credit_amount = this.ObjcashForm.Credit_To_Amount ? Number(this.ObjcashForm.Credit_To_Amount) : 0;
+  var wallet_amount = this.ObjcashForm.Wallet_Amount ? Number(this.ObjcashForm.Wallet_Amount) : 0;
+  var cash_amount = this.ObjcashForm.Cash_Amount ? Number(this.ObjcashForm.Cash_Amount) : 0 ;
+  var card_amount = this.ObjcashForm.Card_Amount ? Number(this.ObjcashForm.Card_Amount) : 0;
+
+    this.ObjcashForm.Total_Paid = (Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+  
+  var lefttotal = credit_amount + wallet_amount + card_amount;
+  
+
+  if((Number(this.Net_Payable) > lefttotal) && cash_amount) {
+    const d = (Number(this.Net_Payable) - Number(lefttotal)).toFixed(2);
+    if(cash_amount > Number(d)) {
+      this.ObjcashForm.Refund_Amount = (Number(cash_amount) - Number(d)).toFixed(2);
     }
-    else {
-     this.ObjcashForm.Refund_Amount = 0 ;
-    }
-   // if(Number(this.ObjcashForm.Total_Paid) < Number(this.Net_Payable)){
-   // this.ObjcashForm.Due_Amount = Number(this.Net_Payable) - Number(this.ObjcashForm.Total_Paid) - Number(this.ObjcashForm.Refund_Amount);
-   // }
-   // else {
-     this.ObjcashForm.Due_Amount = (Number(this.ObjcashForm.Total_Paid) - Number(this.ObjcashForm.Refund_Amount) - Number(this.Net_Payable)).toFixed(2);
-   //}
+  
+  } 
+  
+    this.ObjcashForm.Due_Amount = (Number(this.ObjcashForm.Total_Paid) - Number(this.ObjcashForm.Refund_Amount) - Number(this.Net_Payable)).toFixed(2);
+  
+
+  if(Number(lefttotal) > Number(this.Net_Payable)) {
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Collected Amount is more than net payable "
+  });
+  return false;
+  }
  }
  couponperchange(){
    var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;

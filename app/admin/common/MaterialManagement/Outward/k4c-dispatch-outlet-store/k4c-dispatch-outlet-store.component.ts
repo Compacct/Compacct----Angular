@@ -436,7 +436,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
           const saveObj = {
             Doc_No: this.doc_no,
             Accepted_Qty : el.Accepted_Qty,
-            Doc_Date: this.DateService.dateTimeConvert(new Date(this.ChallanDate)),
+            Doc_Date: this.DateService.dateConvert(new Date(this.ChallanDate)),
             F_Cost_Cen_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
             F_Godown_ID: this.Objdispatch.From_Godown_ID,
             To_Cost_Cen_ID: this.Objdispatch.Cost_Cen_ID,
@@ -517,7 +517,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
         : this.DateService.dateConvert(new Date());
           const saveObj = {
             Doc_No: "A",
-            Doc_Date: this.DateService.dateTimeConvert(new Date(this.ChallanDate)),
+            Doc_Date: this.DateService.dateConvert(new Date(this.ChallanDate)),
             F_Cost_Cen_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
             F_Godown_ID: this.Objdispatch.From_Godown_ID,
             To_Cost_Cen_ID: this.Objdispatch.Cost_Cen_ID,

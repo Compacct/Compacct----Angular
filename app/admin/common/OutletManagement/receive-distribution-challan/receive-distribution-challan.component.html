@@ -22,26 +22,19 @@
         <div class="box box-primary">
             <div class="form-horizontal" style="margin-top: 8px;">
                 <div class="box-body">
-                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                     <form name="DistributionSearchForm" #DistributionSearchForm="ngForm" novalidate>
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <form name="DistributionSearchForm" #DistributionSearchForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-3">
                                     <label class="control-label">Period</label>
 
-                                    <app-compacct-daterangepicker
-                                    (DaterangeObj)="getConfirmDateRange($event)"
-                                    [HardCodeDateOpt]="initDate">
+                                    <app-compacct-daterangepicker (DaterangeObj)="getConfirmDateRange($event)" [HardCodeDateOpt]="initDate">
                                     </app-compacct-daterangepicker>
 
                                 </div>
                                 <div class="col-sm-3">
-                                  <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                  <select class="form-control"
-                                          name="materialtype"
-                                          #materialtype="ngModel"
-                                          [(ngModel)]="ObjBrowseData.Material_Type"
-                                          [ngClass]="{'clearance':DistributionSearchFormSubmitted && materialtype?.errors?.required}"
-                                          required>
+                                    <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjBrowseData.Material_Type" [ngClass]="{'clearance':DistributionSearchFormSubmitted && materialtype?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                    <option *ngFor = "let option of mattypelist" [value] ="option.Material_Type">
                                       {{option.Material_Type}}
@@ -49,11 +42,7 @@
                               </select>
                                 </div>
                                 <div class="col-sm-3">
-                                  <button class="btn btn-primary custombutton1" data-toggle="modal"
-                                  (click)="searchData(DistributionSearchForm.form.valid)"
-                                  id="load"
-                                  [disabled]="seachSpinner"
-                                  >
+                                    <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="searchData(DistributionSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                   <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                   <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                </button>
@@ -64,126 +53,112 @@
                             </div>
                         </form>
                         <div class="table-responsive no-padding">
-                            <p-table [value]="GetAllDataList"
-                                     [paginator]="GetAllDataList.length ? true : false" [rows]="100" [rowHover]="true"
-                                     [autoLayout]="true" sortMode="multiple"
-                                     [rowsPerPageOptions]="[100,200,300]"
-                                     [globalFilterFields]="['Doc_No','Doc_Date','godown_name','Total_Qty','Total_Amount','Vehicle_Details']"
-                                     [rowHover]="true"
-                                     #dt1>
-                                       <ng-template pTemplate="caption">
-                                           <div class="row">
-                                                <div class="col-sm-3 pull-right" style="text-align: right">
-                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                    </div>
-                                           </div>
+                            <p-table [value]="GetAllDataList" [paginator]="GetAllDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Indent_No','Doc_No','Doc_Date','godown_name','To_godown_name','Total_Qty','Total_Amount','Vehicle_Details']"
+                                [rowHover]="true" #dt1>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
 
-                                        </ng-template>
-                                        <ng-template pTemplate="header">
-                                            <tr>
-                                                <th style="width:5em">Action</th>
-                                                <th>Indent No</th>
-                                                <th>Doc No</th>
-                                                <th>Doc Date</th>
-                                                <th>From Stock Point</th>
-                                                <th>Indent Qty</th>
-                                                <th>Total Qty</th>
-                                                <th>Total Amount</th>
-                                                <th>Total Accepted Qty</th>
-                                                <th>Total Accepted Amount</th>
-                                               <th>Vehicle Details</th>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th>Indent No</th>
+                                        <th>Doc No</th>
+                                        <th>Doc Date</th>
+                                        <th>From Stock Point</th>
+                                        <th>To Stock Point</th>
+                                        <th>Indent Qty</th>
+                                        <th>Total Qty</th>
+                                        <th>Total Amount</th>
+                                        <th>Total Accepted Qty</th>
+                                        <th>Total Accepted Amount</th>
+                                        <th>Vehicle Details</th>
 
-                                            </tr>
-                                        </ng-template>
-                                        <ng-template pTemplate="body" let-col>
-                                            <tr [class]='col.Total_Qty != col.Total_Accepted_Qty ? "text-red-active" : ""'>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr [class]='col.Total_Qty != col.Total_Accepted_Qty ? "text-red-active" : ""'>
 
-                                                <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle"
-                                                                type="button" data-toggle="dropdown" style="height:27px">
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                 <i class="fa fa-fw fa-bars"></i>
                                                                 <span class="caret"></span>
                                                             </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li *ngIf="col.Total_Qty != col.Total_Accepted_Qty">
-                                                                    <a (click)="editmaster(col)">
-                                                                        <i class="fa fa-fw fa-pencil"></i>
-                                                                        Accept
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <a (click)="view(col)">
-                                                                        <i class="fa fa-fw fa-eye"></i>
-                                                                        View
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                </td>
-                                                <td>{{col.Indent_No}}</td>
-                                                <td>{{col.Doc_No}}</td>
-                                                <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
-                                                <td>{{col.godown_name}}</td>
-                                                <td>{{col.Req_Qty}}</td>
-                                                <td>{{col.Total_Qty}}</td>
-                                                <td>{{col.Total_Amount}}</td>
-                                                <td>{{col.Total_Accepted_Qty}}</td>
-                                                <td>{{col.Total_Accepted_Amount}}</td>
-                                                <td>{{col.Vehicle_Details}}</td>
+                                                <ul class="dropdown-menu">
+                                                    <li *ngIf="col.Total_Qty != col.Total_Accepted_Qty">
+                                                        <a (click)="editmaster(col)">
+                                                            <i class="fa fa-fw fa-pencil"></i> Accept
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="view(col)">
+                                                            <i class="fa fa-fw fa-eye"></i> View
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>{{col.Indent_No}}</td>
+                                        <td>{{col.Doc_No}}</td>
+                                        <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                        <td>{{col.godown_name}}</td>
+                                        <td>{{col.To_godown_name}}</td>
+                                        <td>{{col.Req_Qty ? col.Req_Qty : '-'}}</td>
+                                        <td>{{col.Total_Qty}}</td>
+                                        <td>{{col.Total_Amount}}</td>
+                                        <td>{{col.Total_Accepted_Qty}}</td>
+                                        <td>{{col.Total_Accepted_Amount}}</td>
+                                        <td>{{col.Vehicle_Details}}</td>
 
-                                              </tr>
-                                        </ng-template>
-                                        <ng-template pTemplate="paginatorright" let-state>
-                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                                        </ng-template>
-                                </p-table>
-                            </div>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
 
-                 </p-tabView>
-</div>
-</div>
-</div>
-</div>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- Accept -->
-<p-dialog header="Accept" [appendTo]="'body'" [(visible)]="tabEdit"
- [closeOnEscape]="true" [closable]="true" [modal]="true" [responsive]="true"
- [style]="{ width: '80%', minWidth: '200px' }" style="text-align: center;"
-  [minY]="70" [maximizable]="true"
+<p-dialog header="Accept" [appendTo]="'body'" [(visible)]="tabEdit" [closeOnEscape]="true" [closable]="true" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
-<div class="row">
-    <div class="col-sm-4">
-        <label class="control-label">Challan Date</label>
-            <div  class="label-t">{{date  | date :"dd/MMM/yyyy"}}</div>
+    <div class="row">
+        <div class="col-sm-4">
+            <label class="control-label">Challan Date</label>
+            <div class="label-t">{{date | date :"dd/MMM/yyyy"}}</div>
         </div>
-    <div class="col-sm-4">
-        <label class="control-label">Challan No</label>
-            <div  class="label-t">{{DocNO}}</div>
+        <div class="col-sm-4">
+            <label class="control-label">Challan No</label>
+            <div class="label-t">{{DocNO}}</div>
         </div>
 
-    <div class="col-sm-4">
-        <label class="control-label">From Stoke Point</label>
-            <div  class="label-t">{{FromStokePoint}}</div>
+        <div class="col-sm-4">
+            <label class="control-label">From Stoke Point</label>
+            <div class="label-t">{{FromStokePoint}}</div>
+
+        </div>
+
 
     </div>
-
-
-</div>
-<div class="form-group">
-  <div  class="table-responsive no-padding" style="overflow-x: hidden !important;">
-    <p-table [value]="productDetails"
-            [globalFilterFields]="['Product_Description','Batch_No','Qty']"
-             [rowHover]="true"
-             [autoLayout]="true"
-
-             #dt2>
-               <ng-template pTemplate="caption">
-                   <div class="row">
+    <div class="form-group">
+        <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+            <p-table [value]="productDetails" [globalFilterFields]="['Product_Description','Batch_No','Qty']" [rowHover]="true" [autoLayout]="true" #dt2>
+                <ng-template pTemplate="caption">
+                    <div class="row">
                         <div class="col-sm-3 pull-right" style="text-align: right">
-                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                            </div>
-                   </div>
+                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                        </div>
+                    </div>
 
                 </ng-template>
                 <ng-template pTemplate="header">
@@ -193,112 +168,96 @@
                         <th>Issue Qty</th>
                         <th>Accepted Qty</th>
                         <th>Reason</th>
-                     </tr>
+                    </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-col let-i="rowIndex">
                     <tr>
-                         <td>{{col.Product_Description}}</td>
-                          <td>{{col.Batch_No}}</td>
+                        <td>{{col.Product_Description}}</td>
+                        <td>{{col.Batch_No}}</td>
                         <td>{{col.Qty}}</td>
-                        <td><input type="text" [name]="col.Product_ID"  [(ngModel)]='col.Accepted_Qty'
-                            (ngModelChange)='selectBox(i)'  CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                        <td><select class="form-control"
-                            name = "{{'ReasonId'  + i}}"
-                            [(ngModel)]='col.Accept_Reason_ID'
-                            [disabled] = "col.Accepted_Qty == col.Qty"
-                            [required]="!col.remarks">
+                        <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' (ngModelChange)='selectBox(i)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                        <td><select class="form-control" name="{{'ReasonId'  + i}}" [(ngModel)]='col.Accept_Reason_ID' [disabled]="col.Accepted_Qty == col.Qty" [required]="!col.remarks">
                                 <option  [ngValue]="undefined">Select</option>
                                 <option *ngFor="let option of ReasonList" value="{{option.Accept_Reason_ID}}">{{option.Accept_Reason}}</option>
                           </select></td>
 
                     </tr>
                     <tr *ngIf='i === (productDetails.length - 1)'>
-                      <td colspan="2" class = "text-right">Total</td>
-                      <td>{{getTotal('Qty')}}</td>
-                      <td>{{getTotal('Accepted_Qty')}}</td>
-                      <td></td>
+                        <td colspan="2" class="text-right">Total</td>
+                        <td>{{getTotal('Qty')}}</td>
+                        <td>{{getTotal('Accepted_Qty')}}</td>
+                        <td></td>
                     </tr>
                 </ng-template>
-        </p-table>
+            </p-table>
+        </div>
     </div>
-</div>
     <hr>
     <!-- <p-footer> -->
-        <button
-               type="button"
-                class="btn btn-primary pull-right"
-                (click) = "saveCheck()"
-                id="load"
-                [disabled]="Spinner">
+    <button type="button" class="btn btn-primary pull-right" (click)="saveCheck()" id="load" [disabled]="Spinner">
                 <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
             <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
         </button>
-      <!-- </p-footer> -->
+    <!-- </p-footer> -->
 </p-dialog>
 
 <!-- view -->
-<p-dialog [header]="viewDocNO" [(visible)]="tabView" [modal]="true" [responsive]="true"
-[style]="{width: '80%', minWidth: '300px'}" [minY]="70"[maximizable]="true" [baseZIndex]="10000">
-<div class="form-group">
-    <div class="col-sm-4">
-        <label class="control-label">Challan Date</label>
-            <div  class="label-t">{{viewdate  | date :"dd/MMM/yyyy"}}</div>
+<p-dialog [header]="viewDocNO" [(visible)]="tabView" [modal]="true" [responsive]="true" [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Challan Date</label>
+            <div class="label-t">{{viewdate | date :"dd/MMM/yyyy"}}</div>
         </div>
-    <div class="col-sm-4">
-        <label class="control-label">Challan No</label>
-            <div  class="label-t">{{viewDocNO}}</div>
+        <div class="col-sm-4">
+            <label class="control-label">Challan No</label>
+            <div class="label-t">{{viewDocNO}}</div>
         </div>
 
-    <div class="col-sm-4">
-        <label class="control-label">From Stoke Point</label>
-            <div  class="label-t">{{viewFromStokePoint}}</div>
+        <div class="col-sm-4">
+            <label class="control-label">From Stoke Point</label>
+            <div class="label-t">{{viewFromStokePoint}}</div>
+
+        </div>
+
 
     </div>
+    <div class="clearfix"></div>
+    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="viewproductDetails" [globalFilterFields]="['Product_Description','Batch_No','Qty']" [rowHover]="true" [autoLayout]="true" #dt>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
 
-
-</div>
-<div class="clearfix"></div>
-<div  class="table-responsive no-padding" style="overflow-x: hidden !important;">
-    <p-table [value]="viewproductDetails"
-            [globalFilterFields]="['Product_Description','Batch_No','Qty']"
-             [rowHover]="true"
-             [autoLayout]="true"
-
-             #dt>
-               <ng-template pTemplate="caption">
-                   <div class="row">
-                        <div class="col-sm-3 pull-right" style="text-align: right">
-                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                            </div>
-                   </div>
-
-                </ng-template>
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Product Description</th>
-                        <th>Batch No</th>
-                        <th>Issue Qty</th>
-                        <th>Accepted Qty</th>
-                        <th>Reason</th>
-                     </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-col let-i="rowIndex">
-                    <tr>
-                        <!-- <ng-container *ngIf="CheckLengthProductIDview(col.Product_ID) !== 1 && CheckIndexProductIDview(col.Product_ID) === i;" >
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Product Description</th>
+                    <th>Batch No</th>
+                    <th>Issue Qty</th>
+                    <th>Accepted Qty</th>
+                    <th>Reason</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <!-- <ng-container *ngIf="CheckLengthProductIDview(col.Product_ID) !== 1 && CheckIndexProductIDview(col.Product_ID) === i;" >
                             <td [attr.rowspan]="CheckLengthProductIDview(col.Product_ID)">{{col.Product_Description}}</td>
 
 
                         </ng-container>-->
-                        <!-- <ng-container *ngIf="CheckLengthProductIDview(col.Product_ID) === 1"> -->
-                            <td>{{col.Product_Description}}</td>
-                           <!-- </ng-container> -->
-                        <td>{{col.Batch_No}}</td>
-                        <td>{{col.Qty}}</td>
-                        <td>{{col.Accepted_Qty}}</td>
-                        <td>{{col.Accept_Reason}}</td>
+                    <!-- <ng-container *ngIf="CheckLengthProductIDview(col.Product_ID) === 1"> -->
+                    <td>{{col.Product_Description}}</td>
+                    <!-- </ng-container> -->
+                    <td>{{col.Batch_No}}</td>
+                    <td>{{col.Qty}}</td>
+                    <td>{{col.Accepted_Qty}}</td>
+                    <td>{{col.Accept_Reason}}</td>
 
-                    </tr>
-                </ng-template>
+                </tr>
+            </ng-template>
         </p-table>
     </div>
     <!-- <p-footer>

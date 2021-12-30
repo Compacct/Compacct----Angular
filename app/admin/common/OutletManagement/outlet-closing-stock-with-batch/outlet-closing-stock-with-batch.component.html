@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Brand" #Brand="ngModel" [(ngModel)]="ObjBrowse.Brand_ID" [ngClass]="{'clearance': SearchFormSubmitted && Brand?.errors?.required}" required>
+                                        <select class="form-control" name="Brand" #Brand="ngModel" [(ngModel)]="ObjBrowse.Brand_ID" [attr.disabled]="BrandDisable ? true : null" [ngClass]="{'clearance': SearchFormSubmitted && Brand?.errors?.required}">
                               <option  [ngValue]="undefined">Select</option>
                           <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
                               {{option.Brand_INI}}
@@ -47,8 +47,7 @@
                                     <div class="col-sm-3" *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'A'">
                                         <label class="control-label">Cost center <sup class="text-danger">*</sup>
                               </label>
-                                        <select class="form-control" name="issuecostcenter" #issuecostcenter="ngModel" [(ngModel)]="ObjBrowse.Cost_Cen_ID" [attr.disabled]="costcentdisableflag ? true : null" [ngClass]="{'clearance':OTclosingstockwithbatchFormSubmitted && issuecostcenter?.errors?.required}"
-                                            required>
+                                        <select class="form-control" name="issuecostcenter" #issuecostcenter="ngModel" [(ngModel)]="ObjBrowse.Cost_Cen_ID" [attr.disabled]="costcentdisableflag ? true : null" [ngClass]="{'clearance':OTclosingstockwithbatchFormSubmitted && issuecostcenter?.errors?.required}">
                                     <option  [ngValue]="undefined">Select</option>
                                 <!-- <option *ngFor="let option of CostCenter" value="{{option.Cost_Cen_ID}}">
                                     {{option.Location}}
@@ -100,6 +99,7 @@
                                             <th>From Outlet</th>
                                             <th>From Stock Point</th>
                                             <th>Closing Qty</th>
+                                            <th>Total Amount</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -147,6 +147,7 @@
                                             <td>{{col.Location}}</td>
                                             <td>{{col.godown_name}}</td>
                                             <td>{{col.Closing_Qty}}</td>
+                                            <td>{{col.Total_Amount}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -388,6 +389,7 @@
                     <th>Batch Qty</th>
                     <th>Closing Qty</th>
                     <th>Remarks</th>
+                    <th>Total Amount</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
@@ -402,13 +404,15 @@
                     <td>{{col.batch_Qty}}</td>
                     <td>{{col.Closing_Qty}}</td>
                     <td>{{col.Remarks}}</td>
+                    <td>{{col.Total_Amount}}</td>
 
                 </tr>
                 <tr *ngIf='rowIndex === (productlist.length - 1)'>
                     <td colspan="6" class="text-right">Total</td>
-                    <td>{{getTotalValue('batch_Qty')}}</td>
-                    <td>{{getTotalValue('Closing_Qty')}}</td>
+                    <td>{{TotalValue('batch_Qty')}}</td>
+                    <td>{{TotalValue('Closing_Qty')}}</td>
                     <td></td>
+                    <td>{{TotalValue('Total_Amount')}}</td>
                 </tr>
             </ng-template>
         </p-table>

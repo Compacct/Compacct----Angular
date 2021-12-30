@@ -1,4 +1,21 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
   <div class="col-xs-12">
       <div class="box box-primary">
@@ -45,10 +62,11 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li *ngIf="$CompacctAPI.CompacctCookies.Del_Right ==='Y'"><a  ng-click="update(col.Sub_Ledger_ID)"><i class="fa fa-fw fa-pencil"></i>Edit</a></li>
-                                                <li *ngIf="$CompacctAPI.CompacctCookies.Del_Right ==='Y'"><a  ng-click="delete(col.Sub_Ledger_ID)"><i class="fa fa-fw fa-trash"></i>Delete</a></li>
-                                                <li><a ng-click="View(col.Sub_Ledger_ID)"><i class="fa fa-fw fa-file-text-o"></i>View</a></li>
-                                                <li><a ng-click="printPDF(col.Sub_Ledger_ID)"><i class="fa fa-fw fa-file-pdf-o"></i>PDF</a></li>
+                                                <!-- <li><a (click)="ShowSubledgerAddCntModal(col)"><i class="fa fa-fw fa-pencil"></i>Edit Details</a></li> -->
+                                                <li *ngIf="$CompacctAPI.CompacctCookies.Del_Right ==='Y'"><a  (click)="EditSubledger(col.Sub_Ledger_ID)"><i class="fa fa-fw fa-pencil"></i>Edit</a></li>
+                                                <li *ngIf="$CompacctAPI.CompacctCookies.Del_Right ==='Y'"><a  (click)="DeleteSubledger(col)"><i class="fa fa-fw fa-trash"></i>Delete</a></li>
+                                                <!-- <li><a (click)="View(col.Sub_Ledger_ID)"><i class="fa fa-fw fa-file-text-o"></i>View</a></li> -->
+                                                <li><a (click)="printPDF(col.Sub_Ledger_ID)"><i class="fa fa-fw fa-file-pdf-o"></i>PDF</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -80,15 +98,15 @@
                                     <i class="fa fa-fw fa-fax">
                                     </i> &nbsp;<strong>Sub Ledger Details :</strong>
                                 </h5>
-                                <div class="col-sm-4">
-                                    <label>Ledger &nbsp;<span class="text-danger">*</span></label>
+                                <div class="col-sm-4" style="margin-top: -2px;">
+                                    <label class="control-label">Ledger &nbsp;<span class="text-danger">*</span></label>
                                     <p-dropdown
                                         [options]="LedgerList"
                                         name="Ledger"
                                         [(ngModel)]="ObjSubledger.Ledger_ID"
                                         [showClear]="true"
                                         [emptyFilterMessage]="' No Ledger Found'"
-                                        (onChange)="AccountingGrpChange(ObjSubledger.Ledger_ID)"
+                                        (onChange)="batchCodeEnableDisable(ObjSubledger.Ledger_ID)"
                                         [filter]="true"
                                         filterBy="label,value.name"
                                         [placeholder]="'Select Ledger Name'"
@@ -100,7 +118,9 @@
                                     </p-dropdown>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Name<span class="text-danger">*</span></label>
+                                    <label class="control-label">Name<span class="text-danger">*</span></label>
+                                    <span  *ngIf="ObjSubledger.Sub_Ledger_Name" (click)="SubledgerNameChange(ObjSubledger.Sub_Ledger_Name)" class="btn-vk pull-right text-sm createPatient"><i class="fa fa-fw  fa-refresh"></i> Verify With Existing Subledgers</span>
+                                    
                                     <input
                                         class="form-control"
                                         type="text"
@@ -112,7 +132,19 @@
                                         required/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Email<span class="text-danger">*</span></label>
+                                    <label class="control-label">Alias Name<span class="text-danger">*</span></label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        name="Alias_Name"
+                                        placeholder="Alias Name"
+                                        #Alias_Name="ngModel"
+                                        [ngClass]="{'clearance': SubledgerSubmitted &&  Alias_Name?.errors?.required}"
+                                        [(ngModel)]="ObjSubledger.Alias_Name"
+                                        required/>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Email<span class="text-danger">*</span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -124,7 +156,7 @@
                                         required/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Contact No<span class="text-danger">*</span></label>
+                                    <label class="control-label">Contact No<span class="text-danger">*</span></label>
                                     <input 
                                         class="form-control" 
                                         name="Mobile_No" 
@@ -135,7 +167,7 @@
                                         [(ngModel)]="ObjSubledger.Mobile_No" placeholder="Mobile Number" minlength="10" maxlength="10" required />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Land Line<span class="text-danger">*</span></label>
+                                    <label class="control-label">Land Line<span class="text-danger">*</span></label>
                                     <input 
                                         class="form-control" 
                                         name="Phone" 
@@ -146,14 +178,13 @@
                                         [(ngModel)]="ObjSubledger.Phone" placeholder="Land Line" minlength="10" maxlength="10" required />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Sales Man &nbsp;<span class="text-danger">*</span></label>
+                                    <label class="control-label">Sales Man &nbsp;<span class="text-danger">*</span></label>
                                     <p-dropdown
                                         [options]="SalesmanList"
                                         name="Sales_Man_ID"
                                         [(ngModel)]="ObjSubledger.Sales_Man_ID"
                                         [showClear]="true"
                                         [emptyFilterMessage]="' No Sales Man Found'"
-                                        (onChange)="AccountingGrpChange(ObjSubledger.Ledger_ID)"
                                         [filter]="true"
                                         filterBy="label,value.name"
                                         [placeholder]="'Select Sales Man Name'"
@@ -165,14 +196,13 @@
                                     </p-dropdown>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>User &nbsp;<span class="text-danger">*</span></label>
+                                    <label class="control-label">User &nbsp;<span class="text-danger">*</span></label>
                                     <p-dropdown
                                         [options]="UserList"
                                         name="User"
                                         [(ngModel)]="ObjSubledger.User_ID"
                                         [showClear]="true"
                                         [emptyFilterMessage]="' No User Found'"
-                                        (onChange)="AccountingGrpChange(ObjSubledger.User_ID)"
                                         [filter]="true"
                                         filterBy="label,value.name"
                                         [placeholder]="'Select User Name'"
@@ -184,11 +214,12 @@
                                     </p-dropdown>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Subledger Type<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">Subledger Type<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                     name="Subledger_Type"
                                     #Subledger_Type="ngModel"
                                     [(ngModel)]='ObjSubledger.Subledger_Type'
+                                    (change)='changeSubledgerType()'
                                     [ngClass]="{'clearance': SubledgerSubmitted && Subledger_Type?.errors?.required}"
                                     required>
                                     <option  [ngValue]="undefined">Select</option>
@@ -198,16 +229,19 @@
                                     <option value="Other">Other</option>
                                     </select>
                                 </div>
-                                <div class="col-sm-4">
-                                    <label>Subledger Category <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
+                                <div class="col-sm-4" style="margin-top: -6px;">
+                                    <label class="control-label">Subledger Category <span class="text-danger">*</span></label>
                                     <p-multiSelect [options]="SubledgerCategoryList" [(ngModel)]="SelectedSubledgerCategory" [virtualScroll]="true" itemSize="30"  [styleClass]="'compacct-multiselect'" name="SubcatMulti"></p-multiSelect>                                    
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Route Name<sup class="text-danger"></sup></label>
+                                    <label class="control-label">Route Name<sup class="text-danger"></sup></label>
                                     <select class="form-control" 
                                     name="Route_ID" 
                                     #Route_ID="ngModel" 
                                     [(ngModel)]="ObjSubledger.Route_ID" 
+                                    (change)='ChangeCustomerRoute()'
                                     [ngClass]="{clearance: SubledgerSubmitted && Route_ID.errors?.required}">
                                         <option [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of CustomerRouteList" value="{{ option.Route_ID  }}">
@@ -216,11 +250,12 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Weekly Closing<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">Weekly Closing<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                     name="Weekly_Closing"
                                     #Weekly_Closing="ngModel"
                                     [(ngModel)]='ObjSubledger.Weekly_Closing'
+                                    (change)='ChangeCustomerRoute()'
                                     [ngClass]="{'clearance': SubledgerSubmitted && Weekly_Closing?.errors?.required}"
                                     required>
                                     <option  [ngValue]="undefined">Select</option>
@@ -234,27 +269,26 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Subledger Class<sup class="text-danger"></sup></label>
+                                    <label class="control-label">Subledger Class<sup class="text-danger"></sup></label>
                                     <select class="form-control" 
                                     name="Sub_Ledger_Class_ID" 
                                     #Sub_Ledger_Class_ID="ngModel" 
                                     [(ngModel)]="ObjSubledger.Sub_Ledger_Class_ID" 
                                     [ngClass]="{clearance: SubledgerSubmitted && Sub_Ledger_Class_ID.errors?.required}">
                                         <option [ngValue]="undefined">Select</option>
-                                        <option *ngFor="let option of CustomerRouteList" value="{{ option.Sub_Ledger_Class_ID  }}">
+                                        <option *ngFor="let option of SubledgerClassList" value="{{ option.Sub_Ledger_Class_ID  }}">
                                         {{ option.Sub_Ledger_Class}}
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-sm-4">
-                                    <label>Parent Sub Ledger &nbsp;<span class="text-danger"></span></label>
+                                <div class="col-sm-4"  style="margin-top: -2px;">
+                                    <label class="control-label">Parent Sub Ledger &nbsp;<span class="text-danger"></span></label>
                                     <p-dropdown
                                         [options]="ParentSubledgerList"
                                         name="Parent_Sub_Ledger_ID"
                                         [(ngModel)]="ObjSubledger.Parent_Sub_Ledger_ID"
                                         [showClear]="true"
                                         [emptyFilterMessage]="' No Parent SubLedger Found'"
-                                        (onChange)="AccountingGrpChange(ObjSubledger.Parent_Sub_Ledger_ID)"
                                         [filter]="true"
                                         filterBy="label,value.name"
                                         [placeholder]="'Select Parent SubLedger Name'"
@@ -265,7 +299,7 @@
                                     </p-dropdown>
                                 </div>
                                 <div class="col-sm-2">
-                                    <label>Credit Days<span class="text-danger"></span></label>
+                                    <label class="control-label">Credit Days<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="CR_Days" 
@@ -275,7 +309,7 @@
                                         [(ngModel)]="ObjSubledger.CR_Days" placeholder="Credit Days" />
                                 </div>
                                 <div class="col-sm-2">
-                                    <label>Credit Limit<span class="text-danger"></span></label>
+                                    <label class="control-label">Credit Limit<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="CR_Limit" 
@@ -285,7 +319,7 @@
                                         [(ngModel)]="ObjSubledger.CR_Limit" placeholder="Credit Limit" />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>PAN<span class="text-danger"></span></label>
+                                    <label class="control-label">PAN<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="PAN" 
@@ -294,7 +328,7 @@
                                         [(ngModel)]="ObjSubledger.PAN_No" maxlength="10" placeholder="PAN" />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>GST No.<span class="text-danger"></span></label>
+                                    <label class="control-label">GST No.<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="GST" 
@@ -303,7 +337,7 @@
                                         [(ngModel)]="ObjSubledger.GST"  placeholder="GST No." />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>FSSAI No.<span class="text-danger"></span></label>
+                                    <label class="control-label">FSSAI No.<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="FSSAI_No" 
@@ -312,7 +346,7 @@
                                         [(ngModel)]="ObjSubledger.FSSAI_No"  placeholder="FSSAI No." />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>World Wide Region<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">World Wide Region<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                     name="WORLD_WIDE_REGION"
                                     #WORLD_WIDE_REGION="ngModel"
@@ -329,7 +363,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
-                                    <label>CIN<span class="text-danger"></span></label>
+                                    <label class="control-label">CIN<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="CIN" 
@@ -338,16 +372,17 @@
                                         [(ngModel)]="ObjSubledger.UID_NO" placeholder="CIN" />
                                 </div>
                                 <div class="col-sm-2">
-                                    <label>Batch Code<span class="text-danger"></span></label>
+                                    <label class="control-label">Batch Code<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="Batch_Code" 
                                         #Batch_Code="ngModel" 
+                                        [disabled]='batchCodeAccess'
                                         [ngClass]="{clearance: SubledgerSubmitted && Batch_Code.errors?.required}"
                                         [(ngModel)]="ObjSubledger.Batch_Code"  maxlength="3" placeholder="3 Digit Batch Code" />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Excise No<span class="text-danger"></span></label>
+                                    <label class="control-label">Excise No<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="EXID_NO" 
@@ -356,11 +391,12 @@
                                         [(ngModel)]="ObjSubledger.EXID_NO" placeholder="Exisice Reg. No" />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Composite GST / Unregistered </label>
+                                    <label class="control-label">Composite GST / Unregistered </label>
                                         <span class="pull-right" style="padding-top: 7px;"><small>( GST not chargeable )</small></span>
-                                   <div>
-                                    <p-radioButton name="group1" value="Yes" label="Yes" [(ngModel)]="ObjSubledger.Composite_GST" ></p-radioButton>
-                                    <p-radioButton name="group1" value="No" label="No" [(ngModel)]="ObjSubledger.Composite_GST" ></p-radioButton>
+                                   <div  style="margin-top: 5px;">
+                                    <p-radioButton name="group1" value="Y" label="Yes" [(ngModel)]="ObjSubledger.Composite_GST" ></p-radioButton>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <p-radioButton name="group1" value="N" label="No" [(ngModel)]="ObjSubledger.Composite_GST" ></p-radioButton>
                                    </div> 
                                 </div>
                             </div>
@@ -375,7 +411,7 @@
                                     </i> &nbsp;<strong>Billing Details :</strong>
                                 </h5>
                                 <div class="col-sm-4">
-                                    <label>Billing Name<span class="text-danger">*</span></label>
+                                    <label class="control-label">Billing Name<span class="text-danger">*</span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -387,7 +423,7 @@
                                         required/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Address <span class="text-danger">*</span></label>
+                                    <label class="control-label">Address <span class="text-danger">*</span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -399,7 +435,7 @@
                                         required/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Address 2<span class="text-danger">*</span></label>
+                                    <label class="control-label">Address 2<span class="text-danger">*</span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -411,7 +447,7 @@
                                         required/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Address 3<span class="text-danger">*</span></label>
+                                    <label class="control-label">Address 3<span class="text-danger">*</span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -419,11 +455,11 @@
                                         placeholder="Address Line Three"
                                         #address3="ngModel"
                                         [ngClass]="{'clearance': SubledgerSubmitted &&  address3?.errors?.required}"
-                                        [(ngModel)]="ObjSubledger.Address_2"
+                                        [(ngModel)]="ObjSubledger.Address_3"
                                         required/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Land Mark<span class="text-danger">*</span></label>
+                                    <label class="control-label">Land Mark<span class="text-danger">*</span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -435,46 +471,49 @@
                                         required/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Country<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">Country<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                     name="Country"
                                     #Country="ngModel"
                                     [(ngModel)]='ObjSubledger.Country'
+                                    (change)='onCountryChange(ObjSubledger.Country)'
                                     [ngClass]="{'clearance': SubledgerSubmitted && Country?.errors?.required}"
                                     required>
                                     <option  [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of CountryList" value="{{option}}">
-                                        {{option}}
+                                    <option *ngFor="let option of CountryList" value="{{option.country}}">
+                                        {{option.country}}
                                         </option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>PIN<span class="text-danger">*</span></label>
+                                    <label class="control-label">PIN<span class="text-danger">*</span></label>
                                     <input 
                                         class="form-control" 
                                         name="PIN" 
                                         #PIN="ngModel" 
                                         CompacctDigitonly="true" 
+                                        (change)='GetStateDistrict(ObjSubledger.Pin)'
                                         [ngClass]="{clearance: (SubledgerSubmitted && PIN.errors?.required) ||
                                             (PIN.errors?.minlength && PIN.touched)}"
                                         [(ngModel)]="ObjSubledger.Pin" placeholder="PIN" minlength="6" maxlength="6" required />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>State<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">State<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                     name="State"
                                     #State="ngModel"
                                     [(ngModel)]='ObjSubledger.State'
+                                    (change)='GetDistrict(ObjSubledger.State)'
                                     [ngClass]="{'clearance': SubledgerSubmitted && State?.errors?.required}"
-                                    required>
+                                    [required]="ObjSubledger.Country == 'India'">
                                     <option  [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of StateList" value="{{option}}">
-                                        {{option}}
+                                    <option *ngFor="let option of StateList" value="{{option.State}}">
+                                        {{option.State}}
                                         </option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>District <sup class="text-danger">*</sup></label>
+                                    <label class="control-label">District <sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                     name="District"
                                     #District="ngModel"
@@ -482,21 +521,22 @@
                                     [ngClass]="{'clearance': SubledgerSubmitted && District?.errors?.required}"
                                     [required]="ObjSubledger.Country == 'India'">
                                     <option  [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of DistrictList" value="{{option}}">
-                                        {{option}}
+                                    <option *ngFor="let option of DistrictList" value="{{option.District}}">
+                                        {{option.District}}
                                         </option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Export / Domestic </label>
-                                    <div>
+                                    <label class="control-label">Export / Domestic </label>
+                                    <div style="margin-top:5px">
                                     <p-radioButton name="group2" value="Export" label="Export" [(ngModel)]="ObjSubledger.Export_Domestic" ></p-radioButton>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
                                     <p-radioButton name="group2" value="Domestic" label="Domestic" [(ngModel)]="ObjSubledger.Export_Domestic" ></p-radioButton>
                                     </div> 
                                    
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Brand<span class="text-danger"></span></label>
+                                    <label class="control-label">Brand<span class="text-danger"></span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -507,7 +547,7 @@
                                         [(ngModel)]="ObjSubledger.Brand"/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Website<span class="text-danger"></span></label>
+                                    <label class="control-label">Website<span class="text-danger"></span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -518,7 +558,7 @@
                                         [(ngModel)]="ObjSubledger.Website"/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>TDS Deduction<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">TDS Deduction<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                     name="TDS_Deduction"
                                     #TDS_Deduction="ngModel"
@@ -531,7 +571,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Circle<span class="text-danger"></span></label>
+                                    <label class="control-label">Circle<span class="text-danger"></span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -542,14 +582,17 @@
                                         [(ngModel)]="ObjSubledger.CIRCLE"/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>SEZ </label>
-                                    <div>
-                                        <p-radioButton name="group3" value="true" label="Yes" [(ngModel)]="ObjSubledger.IS_SEZ" ></p-radioButton>
-                                        <p-radioButton name="group3" value="false" label="No" [(ngModel)]="ObjSubledger.IS_SEZ" ></p-radioButton>
+                                    <label class="control-label">SEZ </label>
+                                    <div style="margin-top:5px">
+                                        <p-radioButton name="group3" [value]="true" label="Yes" [(ngModel)]="ObjSubledger.IS_SEZ" ></p-radioButton>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <p-radioButton name="group3" [value]="false" label="No" [(ngModel)]="ObjSubledger.IS_SEZ" ></p-radioButton>
                                     </div>                                    
                                 </div>
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
                                 <div class="col-sm-4">
-                                    <label>Recurring Order Days<span class="text-danger"></span></label>
+                                    <label class="control-label">Recurring Order Days<span class="text-danger"></span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -560,12 +603,12 @@
                                         [ngClass]="{'clearance': SubledgerSubmitted &&  Recurring_Order_Days?.errors?.required}"
                                         [(ngModel)]="ObjSubledger.Recurring_Order_Days"/>
                                 </div>
-                                <div class="col-sm-4">
-                                    <label>Tag Ledger <span class="text-danger">*</span></label>
-                                    <p-multiSelect [options]="LedgerList" [(ngModel)]="SelectedTagLedger" [virtualScroll]="true" itemSize="30"  [styleClass]="'compacct-multiselect'" name="TagLedgerList"></p-multiSelect>                                    
+                                <div class="col-sm-4" style="margin-top: -6px;">
+                                    <label class="control-label">Tag Ledger <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="LedgerList" [(ngModel)]="SelectedTagLedger" [virtualScroll]="true" itemSize="30"  [styleClass]="'compacct-multiselect'" name="TagLedgerList2"></p-multiSelect>                                    
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Amount Business Expected</label>                
+                                    <label class="control-label">Amount Business Expected</label>                
                                     <div class="input-group" style="width:100%">
                                         <input class="form-control" name='Amount_Business_Expected'
                                         [(ngModel)]="ObjSubledger.Amount_Business_Expected"
@@ -581,7 +624,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Special Note<span class="text-danger"></span></label>
+                                    <label class="control-label">Special Note<span class="text-danger"></span></label>
                                     <textarea class="form-control"
                                     name="Special_Note"
                                     rows="2"
@@ -589,7 +632,7 @@
                                     placeholder="Special Note"></textarea>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Client Brief Description<span class="text-danger"></span></label>
+                                    <label class="control-label">Client Brief Description<span class="text-danger"></span></label>
                                     <textarea class="form-control"
                                     name="Client_Brief_Description"
                                     rows="2"
@@ -597,7 +640,7 @@
                                     placeholder="Client Brief Description"></textarea>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Remarks<span class="text-danger"></span></label>
+                                    <label class="control-label">Remarks<span class="text-danger"></span></label>
                                     <textarea class="form-control"
                                     name="Remarks"
                                     rows="2"
@@ -606,7 +649,7 @@
                                 </div>
                                 <!-- <div class="col-sm-4"></div> -->
                                 <div class="col-sm-4">
-                                    <label>Enquiry Source<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">Enquiry Source<sup class="text-danger">*</sup></label>
                                     <select class="form-control" 
                                     name="Enq_Source_ID" 
                                     #Enq_Source_ID="ngModel" 
@@ -632,57 +675,346 @@
                                 </h5>
                                 <div class="col-sm-3">
                                     <div class="ui-g-12">
-                                        <p-checkbox label="Sale Bill"  [(ngModel)]="ObjSubledger.Is_Sale_Bill_Enabled" name='checkboxbox1' binary="true"></p-checkbox>
+                                        <p-checkbox label="Sale Bill"  [(ngModel)]="Is_Sale_Bill_Enabled" name='checkboxbox1' binary="true"></p-checkbox>
                                     </div>
                                     <div class="ui-g-12">
-                                        <p-checkbox label="Purchase Bill" [(ngModel)]="ObjSubledger.Is_Purchase_Bill_Enabled"  name='checkboxbox2' binary="true"></p-checkbox>
+                                        <p-checkbox label="Purchase Bill" [(ngModel)]="Is_Purchase_Bill_Enabled"  name='checkboxbox2' binary="true"></p-checkbox>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="ui-g-12">
-                                        <p-checkbox label="Payment"  [(ngModel)]="ObjSubledger.Is_Payment_Enabled" name='checkboxbox3' binary="true"></p-checkbox>
+                                        <p-checkbox label="Payment"  [(ngModel)]="Is_Payment_Enabled" name='checkboxbox3' binary="true"></p-checkbox>
                                     </div>
                                     <div class="ui-g-12">
-                                        <p-checkbox label="Reciept" [(ngModel)]="ObjSubledger.Is_Reciept_Enabled"  name='checkboxbox4' binary="true"></p-checkbox>
+                                        <p-checkbox label="Reciept" [(ngModel)]="Is_Reciept_Enabled"  name='checkboxbox4' binary="true"></p-checkbox>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="ui-g-12">
-                                        <p-checkbox label="Journal"  [(ngModel)]="ObjSubledger.Is_Journal_Enabled" name='checkboxbox5' binary="true"></p-checkbox>
+                                        <p-checkbox label="Journal"  [(ngModel)]="Is_Journal_Enabled" name='checkboxbox5' binary="true"></p-checkbox>
                                     </div>
                                     <div class="ui-g-12">
-                                        <p-checkbox label="CR Note" [(ngModel)]="ObjSubledger.Is_CR_Note_Enabled"  name='checkboxbox6' binary="true"></p-checkbox>
+                                        <p-checkbox label="CR Note" [(ngModel)]="Is_CR_Note_Enabled"  name='checkboxbox6' binary="true"></p-checkbox>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="ui-g-12">
-                                        <p-checkbox label="DR Note"  [(ngModel)]="ObjSubledger.Is_DR_Enabled" name='checkboxbox5' binary="true"></p-checkbox>
+                                        <p-checkbox label="DR Note"  [(ngModel)]="Is_DR_Enabled" name='checkboxbox7' binary="true"></p-checkbox>
                                     </div>
                                     <div class="ui-g-12">
-                                        <p-checkbox label="Adj" [(ngModel)]="ObjSubledger.Is_Adj_Enabled"  name='checkboxbox6' binary="true"></p-checkbox>
+                                        <p-checkbox label="Adj" [(ngModel)]="Is_Adj_Enabled"  name='checkboxbox8' binary="true"></p-checkbox>
                                     </div>
                                 </div>
-
-
+                            </div>
+                            <div class="form-group" style="margin-top: 1em;">
+                                <h5 style="padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Others :</strong>
+                                </h5>
+                                <div class="col-sm-4">
+                                    <label class="control-label">SWS GL Code<span class="text-danger"></span></label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        name="SWS_GL_Code"
+                                        placeholder="SWS GL Code"
+                                        #SWS_GL_Code="ngModel"
+                                        CompacctDigitonly="true" 
+                                        [ngClass]="{'clearance': SubledgerSubmitted &&  SWS_GL_Code?.errors?.required}"
+                                        [(ngModel)]="ObjSubledger.SWS_GL_Code"/>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">SWS GL Shortname<span class="text-danger"></span></label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        name="SWS_GL_ShortName"
+                                        placeholder="SWS GL Shortname"
+                                        #SWS_GL_ShortName="ngModel"
+                                        [ngClass]="{'clearance': SubledgerSubmitted &&  SWS_GL_ShortName?.errors?.required}"
+                                        [(ngModel)]="ObjSubledger.SWS_GL_ShortName"/>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">SWS GL Category<span class="text-danger"></span></label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        name="SWS_GL_Category"
+                                        placeholder="SWS GL Category"
+                                        #SWS_GL_Category="ngModel"
+                                        [ngClass]="{'clearance': SubledgerSubmitted &&  SWS_GL_Category?.errors?.required}"
+                                        [(ngModel)]="ObjSubledger.SWS_GL_Category"/>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">SWS Agent Code<span class="text-danger"></span></label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        name="SWS_Agent_Code"
+                                        placeholder="SWS Agent Code"
+                                        #SWS_Agent_Code="ngModel"
+                                        CompacctDigitonly="true" 
+                                        [ngClass]="{'clearance': SubledgerSubmitted &&  SWS_Agent_Code?.errors?.required}"
+                                        [(ngModel)]="ObjSubledger.SWS_Agent_Code"/>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Email 2<span class="text-danger">*</span></label>
+                                    <input
+                                        class="form-control"
+                                        type="text"
+                                        name="Email2"
+                                        placeholder="Email2"
+                                        #Email2="ngModel"
+                                        [ngClass]="{'clearance': SubledgerSubmitted &&  Email2?.errors?.required}"
+                                        [(ngModel)]="ObjSubledger.Email2"
+                                        required/>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Contact No 2<span class="text-danger">*</span></label>
+                                    <input 
+                                        class="form-control" 
+                                        name="Mobile_No2" 
+                                        #Mobile_No2="ngModel" 
+                                        CompacctDigitonly="true" 
+                                        [ngClass]="{clearance: (SubledgerSubmitted && Mobile_No2.errors?.required) ||
+                                            (Mobile_No2.errors?.minlength && Mobile_No2.touched)}"
+                                        [(ngModel)]="ObjSubledger.Mobile_No2" placeholder="Mobile Number 2" minlength="10" maxlength="10" required />
+                                </div>
+                                <div class="col-sm-6" style="margin-top:1em;">
+                                    <label class="control-label">Visting Card<sup class="text-danger"></sup></label>
+                                    <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"></p-fileUpload>
+                                    <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+                                </div>
                             </div>
                         </form>                              
                         <div class="box-footer">
-                        <button class="btn btn-primary pull-right custombutton"
-                            (click)="GetSubjectList(SearchForm.form.valid)"
-                            [disabled]="saveSpinner">
-                            <p-progressSpinner *ngIf="saveSpinner" [style]="{ width: '15px', height: '15px' }"
-                                strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
-                            <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Save
-                        </button>
+                            <button class="btn btn-primary pull-right custombutton"
+                                (click)="SaveSubLedger(SubLedgerCreateForm.form.valid)"
+                                [disabled]="saveSpinner">
+                                <p-progressSpinner *ngIf="saveSpinner" [style]="{ width: '15px', height: '15px' }"
+                                    strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>&nbsp;{{buttonName}}
+                            </button>
                         </div>
-                        <div class="form-group" style="margin-top:1em;">
-                            <p-tabView>
-                                <p-tabPanel headerStyleClass="compacct-tabs-2"  header="Address Details">
-                                    Content 1
+                        <hr class="box boxboxDivide-primary" style="margin-top:1em;margin-bottom: 0 !important;">
+                        <div>
+                            <p-tabView activeIndex="0" (onChange)="TabClick2($event)">
+                                <p-tabPanel headerStyleClass="compacct-tabs" header="LOCATION" leftIcon="fa fa-building" aria-hidden="true">
+                                    <form name="LocationDetailsForm" style="margin-top:2em" #LocationDetailsForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Location Name<span class="text-danger">*</span></label>
+                                                <input
+                                                    class="form-control"
+                                                    type="text"
+                                                    name="Location_Name"
+                                                    placeholder="Location Name"
+                                                    #Location_Name="ngModel"
+                                                    [ngClass]="{'clearance': SubledgerLocationSubmitted &&  Location_Name?.errors?.required}"
+                                                    [(ngModel)]="ObjLocation.Location_Name"
+                                                    required/>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Email<span class="text-danger">*</span></label>
+                                                <input
+                                                    class="form-control"
+                                                    type="text"
+                                                    name="Email"
+                                                    placeholder="Email"
+                                                    #Email="ngModel"
+                                                    [ngClass]="{'clearance': SubledgerLocationSubmitted &&  Email?.errors?.required}"
+                                                    [(ngModel)]="ObjLocation.Email"
+                                                    required/>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Mobile No<span class="text-danger">*</span></label>
+                                                <input 
+                                                    class="form-control" 
+                                                    name="Mobile_No" 
+                                                    #Mobile_No="ngModel" 
+                                                    CompacctDigitonly="true" 
+                                                    [ngClass]="{clearance: (SubledgerLocationSubmitted && Mobile_No.errors?.required) ||
+                                                        (Mobile_No.errors?.minlength && Mobile_No.touched)}"
+                                                    [(ngModel)]="ObjLocation.Mobile_No" placeholder="Mobile Number" minlength="10" maxlength="10" required />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Address<span class="text-danger">*</span></label>
+                                                <textarea 
+                                                    class="form-control" 
+                                                    name="Address" 
+                                                    #Address="ngModel" 
+                                                    [ngClass]="{'clearance': SubledgerLocationSubmitted &&  Address?.errors?.required}"
+                                                    [(ngModel)]="ObjLocation.Location_Address" placeholder="Address" rows="3" required></textarea>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <button class="btn btn-primary custombutton" (click)='SaveLocationForm(LocationDetailsForm.form.valid)'>
+                                                    <i class="glyphicon glyphicon-plus"></i>&nbsp;{{ LocationEditFlag ? 'UPDATE' : 'ADD'}}
+                                                </button>
+                                                <button class="btn btn-primary custombutton" *ngIf='LocationEditFlag' (click)='CancelLocationForm()'>
+                                                    <i class="fa fa-fw fa-ban"></i>&nbsp;CANCEL
+                                                </button>
+                                            </div>
+                                        </div>   
+                                        <div class="form-group" style="margin-top:1em;">                        
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr style="background-color:#3c8dbc;color:white">
+                                                        <th>Sl No.</th>
+                                                        <th nowrap>Location Name</th>
+                                                        <th nowrap>Location Address</th>
+                                                        <th nowrap>Mobile No</th>
+                                                        <th nowrap>Email</th>
+                                                        <th>Edit</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let obj of LocationList;let i = index">
+                                                        <td>{{i+1}}</td>
+                                                        <td>{{obj.Location_Name}}</td>
+                                                        <td>{{obj.Location_Address}}</td>
+                                                        <td>{{obj.Mobile_No}}</td>
+                                                        <td>{{obj.Email}}</td>
+                                                        <td class="text-center">
+                                                            <a *ngIf='!LocationEditFlag' class="btn btn-sm btn-primary" (click)='EditLocationList(i)'>
+                                                                <i class='fa fa-fw fa-pencil'></i>&nbsp;Edit
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>             
+                                        <div class="box-footer">
+                                            <h5></h5>
+                                        </div>
+                                    </form>
                                 </p-tabPanel>
-                                <p-tabPanel headerStyleClass="compacct-tabs-2" header="Contact Details">
-                                    Content 2
+                                <p-tabPanel headerStyleClass="compacct-tabs" header="CONTACT" leftIcon= "fa fa-map" aria-hidden="true" >
+                                    <form name="ContactDetailsForm" style="margin-top:2em" #ContactDetailsForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Contact Person Name<span class="text-danger">*</span></label>
+                                                <input
+                                                    class="form-control"
+                                                    type="text"
+                                                    name="Contact_Person_Name"
+                                                    placeholder="Contact Person Name"
+                                                    #Contact_Person_Name="ngModel"
+                                                    [ngClass]="{'clearance': SubledgerContactPersonSubmitted &&  Contact_Person_Name?.errors?.required}"
+                                                    [(ngModel)]="ObjContact.Contact_Name"
+                                                    required/>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Contact Person Type<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" 
+                                                name="Department" 
+                                                #Department="ngModel" 
+                                                [(ngModel)]="ObjContact.Contact_Person_Type" 
+                                                [ngClass]="{clearance: SubledgerContactPersonSubmitted && Department.errors?.required}"
+                                                required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option value="Operator">Operator</option>
+                                                <option value="Plant Manager">Plant Manager</option>
+                                                <option value="Accounts">Accounts</option>
+                                                <option value="Owner">Owner</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Location<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" 
+                                                name="Location" 
+                                                #Location="ngModel" 
+                                                [(ngModel)]="ObjContact.Location_ID" 
+                                                [ngClass]="{clearance: SubledgerContactPersonSubmitted && Location.errors?.required}"
+                                                required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let option of LocationList" value="{{ option.Location_ID  }}">
+                                                    {{ option.Location_Name}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Email<span class="text-danger">*</span></label>
+                                                <input
+                                                    class="form-control"
+                                                    type="text"
+                                                    name="Email"
+                                                    placeholder="Email"
+                                                    #Email="ngModel"
+                                                    [ngClass]="{'clearance': SubledgerContactPersonSubmitted &&  Email?.errors?.required}"
+                                                    [(ngModel)]="ObjContact.Email_ID"
+                                                    required/>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Contact No<span class="text-danger">*</span></label>
+                                                <input 
+                                                    class="form-control" 
+                                                    name="Mobile_No" 
+                                                    #Mobile_No="ngModel" 
+                                                    CompacctDigitonly="true" 
+                                                    [ngClass]="{clearance: (SubledgerContactPersonSubmitted && Mobile_No.errors?.required) ||
+                                                        (Mobile_No.errors?.minlength && Mobile_No.touched)}"
+                                                    [(ngModel)]="ObjContact.Contact_Number" placeholder="Mobile Number" minlength="10" maxlength="10" required />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <button class="btn btn-primary custombutton" (click)='SaveContactForm(ContactDetailsForm.form.valid)'>
+                                                    <i class="glyphicon glyphicon-plus"></i>&nbsp;{{ ContactEditFlag ? 'UPDATE' : 'ADD'}}
+                                                </button>
+                                                <button class="btn btn-primary custombutton" *ngIf='ContactEditFlag' (click)='CancelContactForm()'>
+                                                    <i class="fa fa-fw fa-ban"></i>&nbsp;CANCEL
+                                                </button>
+                                            </div>
+                                        </div>    
+                                        <div class="form-group" style="margin-top:1em;">                        
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr style="background-color:#3c8dbc;color:white">
+                                                        <th nowrap>Contact Person Name</th>
+                                                        <th nowrap>Contact Person Type</th>
+                                                        <th nowrap>Location</th>
+                                                        <th nowrap>Email</th>
+                                                        <th nowrap>Contact No</th>
+                                                        <th>Edit</th>
+                                                        <!-- <th nowrap>Active / Deactive</th> -->
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let obj of ContactList;let i = index">
+                                                        <td>{{obj.Contact_Name}}</td>
+                                                        <td>{{obj.Contact_Person_Type}}</td>
+                                                        <td>{{obj.Location_ID ? getLocationName(obj.Location_ID) : '-'}}</td>
+                                                        <td>{{obj.Email_ID}}</td>
+                                                        <td>{{obj.Contact_Number}}</td>
+                                                        <td class="text-center">
+                                                            <a *ngIf='!ContactEditFlag' class="btn btn-sm btn-primary" (click)='EditContactList(i)'>
+                                                                <i class='fa fa-fw fa-pencil'></i>&nbsp;Edit
+                                                            </a>
+                                                        </td>
+                                                        <!-- <td>
+                                                            <select class="form-control"
+                                                            name='{{i+"contact"}}'
+                                                            [(ngModel)]="obj.Active"
+                                                            (change)="changeAddressActiveDeactive(obj.Txn_ID,obj.Sub_Ledger_ID,obj.Active)">
+                                                            <option  [ngValue]="undefined">Select</option>
+                                                            <option value="1">Active</option>
+                                                            <option value="0">Deactive</option>
+                                                        </select>
+                                                        </td> -->
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                                 
+                                        <div class="box-footer">
+                                            <h5></h5>
+                                        </div>
+                                    </form>
                                 </p-tabPanel>
+                                        
                             </p-tabView>
                         </div>
                     </p-tabPanel>
@@ -693,3 +1025,59 @@
       </div>
   </div>
 </div>
+<!--UPDATE ADDRESS/LOCATION  -->
+<p-dialog header="UPDATE ADDRESS/LOCATION" [appendTo]="'body'" [visible]="SubledgerModalFlag" [closeOnEscape]="true" [closable]="true" [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="row" style="margin: 1em 0">
+        <div class="col-sm-4">
+            <label>Subledger Name</label>
+            <div class="label-t">{{ObjSubLedgerVdetails['Sub_Ledger_Name'] ? ObjSubLedgerVdetails['Sub_Ledger_Name'] : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label>Ledger Name</label>
+            <div class="label-t">{{ObjSubLedgerVdetails['Ledger_Name'] ? ObjSubLedgerVdetails['Ledger_Name'] : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label>Billing Name</label>
+            <div class="label-t">{{ObjSubLedgerVdetails['Billing_Name'] ? ObjSubLedgerVdetails['Billing_Name'] : '-'}}</div>
+        </div>
+    </div>
+   
+    <p-footer>
+        <button type="button" (click)="SubledgerModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    </p-footer>
+</p-dialog>
+<!--UPDATE ADDRESS/LOCATION  -->
+<p-dialog header="Existing Subledgers" [appendTo]="'body'" [visible]="ExistingSubledgersModalFlag" [closeOnEscape]="true" [closable]="true" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">    
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr style="background-color:#3c8dbc;color:white">
+                        <th nowrap>Sl No.</th>
+                        <th nowrap>SubLedger Name</th>
+                        <th nowrap>Mobile No</th>
+                        <th nowrap>Billing Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let obj of DublicateSubLedgerList;let i = index">
+                        <td>{{ i+1}}</td>
+                        <td>{{obj.Sub_Ledger_Name}}</td>
+                        <td>{{obj.Mobile_No}}</td>
+                        <td>{{obj.Billing_Name}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>            
+        <div class="box-footer">
+            <h5></h5>
+        </div>           
+    <p-footer>
+        <button type="button" (click)="ExistingSubledgersModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+    </p-footer>
+</p-dialog>
