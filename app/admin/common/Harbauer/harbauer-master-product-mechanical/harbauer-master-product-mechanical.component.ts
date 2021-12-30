@@ -118,6 +118,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     }
   
   }
+  onConfirm(){}
+  onReject(){}
   GetProductType(){
     const obj = {
       "SP_String": "SP_Harbauer_Master_Product_mechanical",
