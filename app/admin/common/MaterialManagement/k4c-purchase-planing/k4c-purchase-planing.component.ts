@@ -70,6 +70,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
   SelectedDistProductType = [];
   SearchFields = [];
   Appbuttonname = "Approved"
+
+  Vendor_ID : any;
+  Credit_Days : number;
   
 
   constructor(
@@ -108,6 +111,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
     //  this.todayDate = new Date();
       this.productaddSubmit = this.tabIndexToView ? this.productaddSubmit : [];
       this.ObjPurchasePlan = this.tabIndexToView ? this.ObjPurchasePlan : new PurchasePlan();
+      this.Vendor_ID = this.tabIndexToView ? this.Vendor_ID : undefined;
+      this.Credit_Days = this.tabIndexToView ? this.Credit_Days : undefined;
       this.ObjMPtype.Material_Type = this.tabIndexToView ? this.ObjMPtype.Material_Type : undefined;
       this.ObjMPtype.Product_Type = this.tabIndexToView ? this.ObjMPtype.Product_Type : undefined;
       this.productdisabled = this.tabIndexToView ? this.productdisabled : false;
@@ -439,11 +444,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
   checkboxchange(){
     if(this.localpurchaseFLag){
       this.vendordisabled = true;
-      this.ObjPurchasePlan.Vendor_ID = undefined;
-      this.ObjPurchasePlan.Credit_Days = 0;
+      this.Vendor_ID = undefined;
+      this.Credit_Days = 0;
     } else {
       this.vendordisabled = false;
-      this.ObjPurchasePlan.Credit_Days = null;
+      this.Credit_Days = null;
     }
   }
   getvendor(){
@@ -472,13 +477,13 @@ export class K4cPurchasePlaningComponent implements OnInit {
  }
  CreditDaysChange() {
   //this.ExpiredProductFLag = false;
- if(this.ObjPurchasePlan.Vendor_ID) {
+ if(this.Vendor_ID) {
    const ctrl = this;
-   const vendorCrDaysObj = $.grep(ctrl.vendorlist,function(item: any) {return item.Sub_Ledger_ID == ctrl.ObjPurchasePlan.Vendor_ID})[0];
+   const vendorCrDaysObj = $.grep(ctrl.vendorlist,function(item: any) {return item.Sub_Ledger_ID == ctrl.Vendor_ID})[0];
    console.log(vendorCrDaysObj);
-   this.ObjPurchasePlan.Vendor_ID = vendorCrDaysObj.Sub_Ledger_ID;
+   this.Vendor_ID = vendorCrDaysObj.Sub_Ledger_ID;
    this.ObjPurchasePlan.Vendor = vendorCrDaysObj.Sub_Ledger_Name;
-   this.ObjPurchasePlan.Credit_Days = vendorCrDaysObj.CR_Days;
+   this.Credit_Days = vendorCrDaysObj.CR_Days;
    
   }
   }
@@ -529,7 +534,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       // var AmtWithGST = Number(Amount * Number(this.ObjPurchasePlan.GST_Tax_Per) / 100);
       // var lastpurchaseGST = Number(Number(this.ObjPurchasePlan.Last_Purchase_Rate * this.ObjPurchasePlan.Last_Purchase_Qty * Number(this.ObjPurchasePlan.GST_Tax_Per)) / 100);
       var PT = this.producttypelist.filter((el) => el.Product_Type_ID == this.ObjMPtype.Product_Type)[0];
-    //  var VV = this.vendorlist.filter((elem) => elem.Sub_Ledger_ID == this.ObjPurchasePlan.Vendor_ID)[0];
+    //  var VV = this.vendorlist.filter((elem) => elem.Sub_Ledger_ID == this.Vendor_ID)[0];
       var productObj = {
       //Product_Type_ID : this.ObjPurchasePlan.Product_Type_ID,
     // Product_Type : this.ObjPurchasePlan.product_type,
@@ -561,16 +566,16 @@ export class K4cPurchasePlaningComponent implements OnInit {
      // Indent_Qty : this.ObjPurchasePlan.Indent_Qty ? this.ObjPurchasePlan.Indent_Qty : '-',
       Remarks : this.ObjPurchasePlan.Remarks ? this.ObjPurchasePlan.Remarks : '-',
      // Vendor :  VV.Sub_Ledger_Name ? VV.Sub_Ledger_Name : this.ObjPurchasePlan.Vendor,
-      Vendor_ID :  this.localpurchaseFLag ? 456 : this.ObjPurchasePlan.Vendor_ID,
+      Vendor_ID :  this.localpurchaseFLag ? 456 : this.Vendor_ID,
       Vendor : this.localpurchaseFLag ? "Local Purchase" : this.ObjPurchasePlan.Vendor,
-      Credit_days : this.ObjPurchasePlan.Credit_Days
+      Credit_days : this.Credit_Days
     };
     this.productaddSubmit.push(productObj);
     console.log("Product Submit",this.productaddSubmit);
     this.PurchaseFormSubmitted = false;
-    // this.ObjPurchasePlan = new PurchasePlan();
-    // this.localpurchaseFLag = false;
     this.clearData();
+    //this.ObjPurchasePlan = new PurchasePlan();
+    //this.localpurchaseFLag = false;
     }
    }
    getClass(obj){
@@ -677,6 +682,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
          detail: "Succesfully Created" //+ mgs
        });
        this.clearData();
+       this.Vendor_ID = undefined;
+       this.Credit_Days = undefined;
        this.getproduct();
        this.producttypelist = [];
        this.data = "(Show Requisition Products)"

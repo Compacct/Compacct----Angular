@@ -566,9 +566,8 @@
                                                         <p-checkbox [(ngModel)]='localpurchaseFLag' name='localpurchase' (onChange)='checkboxchange()' [binary]="true"></p-checkbox>
 
                                                     </div> -->
-                                                    <p-dropdown [options]="vendorlist" name="vendor" [(ngModel)]="ObjPurchasePlan.Vendor_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="CreditDaysChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Vendor'" [virtualScroll]="true" itemSize="30" #vendor="ngModel" [(disabled)]="vendordisabled" [required]="true" [ngClass]="{'clearance':PurchaseFormSubmitted && vendor?.errors?.required}"
-                                                        required>
+                                                    <p-dropdown [options]="vendorlist" name="vendor" [(ngModel)]="Vendor_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="CreditDaysChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'"
+                                                        [virtualScroll]="true" itemSize="30" #vendor="ngModel" [(disabled)]="vendordisabled" [required]="true" [ngClass]="{'clearance':PurchaseFormSubmitted && vendor?.errors?.required}" required>
                                                     </p-dropdown>
                                                 </div>
                                                 <!-- <select class="form-control" name="vendor" #vendor="ngModel" [(ngModel)]="ObjPurchasePlan.Vendor" [(disabled)]="vendordisabled" [ngClass]="{'clearance': PurchaseFormSubmitted && vendor?.errors?.required}" required>
@@ -580,7 +579,7 @@
                                             </div> -->
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Credit Days <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" CompacctDigitonly="true" name="creditdays" #creditdays="ngModel" [(ngModel)]="ObjPurchasePlan.Credit_Days" [ngClass]="{'clearance':PurchaseFormSubmitted && creditdays?.errors?.required}" required>
+                                                    <input class="form-control" CompacctDigitonly="true" name="creditdays" #creditdays="ngModel" [(ngModel)]="Credit_Days" [ngClass]="{'clearance':PurchaseFormSubmitted && creditdays?.errors?.required}" required>
                                                 </div>
 
                                                 <div class="col-sm-1">
