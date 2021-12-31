@@ -82,7 +82,7 @@
                             </div> -->
                         </form>
                         <div class="table-responsive no-padding">
-                            <p-table [value]="Searchlist" [paginator]="Searchlist.length ? true : false" [rows]="500" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[500,300,100]" [globalFilterFields]="['Bill_Date','Bill_No','Product_Description','Qty','Order_Amount']"
+                            <p-table [value]="Searchlist" [paginator]="Searchlist.length ? true : false" [rows]="500" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[500,300,100]" [globalFilterFields]="['Cost_Cen_Name','Bill_Date','Bill_No','Online_Order_No','Product_Description','Qty','Order_Amount']"
                                 [rowHover]="true" #dt>
                                 <ng-template pTemplate="caption">
                                     <div class="row">
