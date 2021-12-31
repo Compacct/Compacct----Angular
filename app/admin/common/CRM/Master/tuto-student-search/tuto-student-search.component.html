@@ -539,6 +539,47 @@
                         </p-table>
                     </div>
                 </p-tabPanel>
+                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="fa fa-calculator" aria-hidden="true">
+
+                    <div class="table-responsive table-id no-padding">
+                        <p-table [value]="SupportFeedbackDetailsFollowupList" #dt2 [paginator]="SupportFeedbackDetailsFollowupList.length ? true : false"
+                         [rows]="10" [rowHover]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]"
+                         [autoLayout]="true" [rowHover]="true"
+                         [globalFilterFields]='["Followup_On","Slot_Name","Status","User_Nm","Remarks","Next_Follouwp_Date"]'>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th rowspan="2">Followup On</th>
+                                    <th rowspan="2">Slot</th>
+                                    <th rowspan="2">Status</th>
+                                    <th rowspan="2">User Name</th>
+                                    <th rowspan="2">Remarks</th>
+                                    <th rowspan="2">Next Follouwp Date</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-col>
+                                <tr>
+                                    <td>{{col.Followup_On  ? (col.Followup_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                    <td>{{col.Slot_Name}}</td>
+                                    <td> <span [class]='col.Status +"-style"'> {{col.Status ? col.Status : '-'}}</span></td>
+                                    <td>{{col.User_Nm}}</td>
+                                    <td>{{col.Remarks ? col.Remarks : '-'}}</td>
+                                    <td>{{ col.Next_Follouwp_Date ? (col.Next_Follouwp_Date | date : "dd/MMM/yyyy") : '-'}}</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorright" *ngIf="SupportFeedbackDetailsFollowupList.length" let-state>
+                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                </p-tabPanel>
 
             </p-tabView>
         </div>
