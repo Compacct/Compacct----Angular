@@ -82,7 +82,7 @@
                             </div> -->
                         </form>
                         <div class="table-responsive no-padding">
-                            <p-table [value]="Searchlist" [paginator]="Searchlist.length ? true : false" [rows]="500" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[500,300,100]" [globalFilterFields]="['Bill_Date','Bill_No','Product_Description','Qty','Order_Amount']"
+                            <p-table [value]="Searchlist" [paginator]="Searchlist.length ? true : false" [rows]="500" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[500,300,100]" [globalFilterFields]="['Cost_Cen_Name','Bill_Date','Bill_No','Online_Order_No','Product_Description','Qty','Order_Amount']"
                                 [rowHover]="true" #dt>
                                 <ng-template pTemplate="caption">
                                     <div class="row">
@@ -98,6 +98,7 @@
                                         <th>Shop Name</th>
                                         <th>Bill Date</th>
                                         <th>Bill No</th>
+                                        <th>{{Getreportname()}} Order No</th>
                                         <th>Product Description</th>
                                         <th>Qty</th>
                                         <th>Order Amount</th>
@@ -147,12 +148,14 @@
                                             <td [attr.rowspan]="CheckLengthProductID(col.Bill_No)">{{col.Cost_Cen_Name}}</td>
                                             <td [attr.rowspan]="CheckLengthProductID(col.Bill_No)">{{col.Bill_Date | date : 'dd/MMM/yyyy'}}</td>
                                             <td [attr.rowspan]="CheckLengthProductID(col.Bill_No)">{{col.Bill_No}}</td>
+                                            <td [attr.rowspan]="CheckLengthProductID(col.Bill_No)">{{col.Online_Order_No}}</td>
 
                                         </ng-container>
                                         <ng-container *ngIf="CheckLengthProductID(col.Bill_No) === 1">
                                             <td>{{col.Cost_Cen_Name}}</td>
                                             <td>{{col.Bill_Date | date : 'dd/MMM/yyyy'}}</td>
                                             <td>{{col.Bill_No}}</td>
+                                            <td>{{col.Online_Order_No}}</td>
                                         </ng-container>
                                         <!-- <td>{{col.Bill_No}}</td> -->
                                         <td>{{col.Product_Description}}</td>
@@ -167,7 +170,7 @@
 
                                     </tr>
                                     <tr *ngIf='i === (Searchlist.length - 1)'>
-                                        <td colspan="5" class="text-right">Total</td>
+                                        <td colspan="6" class="text-right">Total</td>
                                         <td>{{orderamount}}</td>
                                     </tr>
                                 </ng-template>

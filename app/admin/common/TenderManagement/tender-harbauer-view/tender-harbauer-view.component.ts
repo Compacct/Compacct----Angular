@@ -11,7 +11,6 @@ import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
-import { Console } from 'console';
 import { kill } from 'process';
 
 @Component({
@@ -37,11 +36,16 @@ export class TenderHarbauerViewComponent implements OnInit {
   getAllTenderData = [];
   cols =[];
   PaymentList = [];
-  // Update Sunmission date
-  updateSubmissionmodule = false;
-  lastSubmissionDate = new Date();
-  bidopenningDate = new Date();
-  TenderDocID = undefined;
+  // Update Submission date
+    // Last Submission Data
+      updateSubmissionmoduleStatus = undefined;
+      updateSubmissionmodule = false;
+      lastSubmissionDate = new Date();
+      bidopenningDate = new Date();
+      ActualSubmissionDate = new Date();
+      TenderDocID = undefined;
+      saveCheck:boolean = false;
+      saveButton:boolean = true;
   // Update Finance
   updateFinanceModel = false;
   Spinner = false;
@@ -73,6 +77,13 @@ export class TenderHarbauerViewComponent implements OnInit {
     PerformanceSecurityselete = undefined;
     performanceSubmitted = false;
     psSubmitted = false;
+    getAllPSdata:any = [];
+    // Add Bider List
+      addBiderListModel = false;
+      GetBidderList = [];
+      bidderName = undefined;
+      BidderSubmition = false;
+      BidderSpinner = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -87,7 +98,7 @@ export class TenderHarbauerViewComponent implements OnInit {
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Tender View (GOVT.)",
-      Link: "Project Management -> Tender View (GOVT.)"
+      Link: "Tender Management -> Update"
     });
     this.filterByList = ['FINANCIAL YEAR','DEPARTMENT',"PRIVATE OR GOVT","TENDER TYPE"];
     this.filteroptionList = ['NOT RECEIVED TENDER','L1 TENDER','NOT SUBMITTED TENDER','PENDING TENDER']
@@ -96,10 +107,10 @@ export class TenderHarbauerViewComponent implements OnInit {
     this.GetTypeList();
     this.privGovt = ["Private","GOVT"]
     this.cols = [
-      { field: 'Tender_ID', header: 'Tender ID' },
+      { field: 'Work_Name', header: 'Name of Work' },
       { field: 'Tender_Authority', header: 'Tender Authority' },
       { field: 'Tender_Value', header: 'Tender Value' },
-      { field: 'Tender_Last_Sub_Date', header: 'Tender Last Sub_Date' },
+      { field: 'Tender_Last_Sub_Date', header: 'Tender Last Sub Date' },
       { field: 'State', header: 'State' },
       { field: 'EMD_Amount', header: 'EMD Amount' },
       { field: 'Tender_Publish_Date', header: 'Tender Publish Date' },
@@ -207,24 +218,53 @@ export class TenderHarbauerViewComponent implements OnInit {
   }
   // Update Submission Date
   updateSubmission(obj){
+    this.updateSubmissionmoduleStatus = undefined;
   if(obj.Tender_Doc_ID){
     this.TenderDocID = obj.Tender_Doc_ID;
+    this.updateSubmissionmoduleStatus = obj.Status;
    this.updateSubmissionmodule = true;
    this.getSubmissionData(obj.Tender_Doc_ID);
   }
   }
-  saveSubmissionDate(valid){
-    console.log("valid",valid);
+  saveSubmissionDate(value){
+    console.log("value",value);
+    let tempSavedata:any = [];
+    let reportName = undefined;
     if(this.TenderDocID){
-      const tempSavedata = {
-        Tender_Doc_ID	: this.TenderDocID,      
-        Tender_Last_Sub_Date : this.DateService.dateTimeConvert(new Date(this.lastSubmissionDate)),
-        Tender_Bid_Opening_Date : this.DateService.dateTimeConvert(new Date(this.bidopenningDate))
-      }
+      // tempSavedata = {
+      //   Tender_Doc_ID	: this.TenderDocID,      
+      //   Tender_Last_Sub_Date : this.DateService.dateTimeConvert(new Date(this.lastSubmissionDate)),
+      //   Tender_Bid_Opening_Date : this.DateService.dateTimeConvert(new Date(this.bidopenningDate))
+      // }
+      if(value==="Last Submission Date"){
+        tempSavedata = {
+          Tender_Doc_ID	: this.TenderDocID,      
+          Tender_Last_Sub_Date : this.DateService.dateTimeConvert(new Date(this.lastSubmissionDate))
+         }
+         reportName="Update_Last_Submission_Date";
+       }
+       else if(value==="Bid Openning Date"){
+        tempSavedata = {
+          Tender_Doc_ID	: this.TenderDocID,      
+          Tender_Bid_Opening_Date : this.DateService.dateTimeConvert(new Date(this.bidopenningDate))
+         }
+         reportName="Update_Bid_Opening_Date";
+       }
+       else if(value="Actual Submission Date"){
+        tempSavedata = {
+          Tender_Doc_ID	: this.TenderDocID,      
+          Tender_Publish_Date : this.DateService.dateTimeConvert(new Date(this.ActualSubmissionDate))
+         }
+         reportName="Update_Tender_Publish_Date";
+         this.updateSubmissionmoduleStatus = "TENDER SUBMITTED"
+       }
+       else{
+         console.log("other");
+       }
       console.log("Submission Date Save",tempSavedata);
       const obj = {
         "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
-        "Report_Name_String": "Update_Submission_Date",
+        "Report_Name_String": reportName,
         "Json_Param_String" : JSON.stringify([tempSavedata])
       }
       this.GlobalAPI
@@ -232,19 +272,19 @@ export class TenderHarbauerViewComponent implements OnInit {
           .subscribe((data: any) => {
             console.log("date",data);
             if(data[0].message === 'Update done'){
-             this.SavefollowUp(this.TenderDocID);
+             this.SavefollowUp(this.TenderDocID,this.updateSubmissionmoduleStatus,value);
             }
           })
     }
     
   }
-  SavefollowUp(TenderDocID){
+  SavefollowUp(TenderDocID,status,value){
     if(TenderDocID){
       const saveObj = {
         Tender_Doc_ID: TenderDocID,									
 				Posted_By: this.commonApi.CompacctCookies.User_ID,							 
 				Send_To:	this.commonApi.CompacctCookies.User_ID,						       			
-				Status:	"BUDGET CREATED",
+				Status:	status,
 				Remarks: "Update done"
       }
       console.log("follow save",saveObj);
@@ -257,15 +297,15 @@ export class TenderHarbauerViewComponent implements OnInit {
         console.log("follow up save",data);
         if(data[0].Column1 === "SAVED SUCCESSFULLY"){
           this.Spinner = false;
-          this.updateSubmissionmodule = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
             summary: "",
-            detail: "Update Submission Date Succesfully"
+            detail: "Update "+value+" Succesfully"
           });
-          this.SearchTender(true)
+          this.SearchTender(true);
+          this.getSubmissionData(TenderDocID);
         }
       
       })
@@ -296,6 +336,7 @@ export class TenderHarbauerViewComponent implements OnInit {
 
           this.lastSubmissionDate = data[0].Tender_Last_Sub_Date ? new Date(data[0].Tender_Last_Sub_Date) : new Date();
           this.bidopenningDate = data[0].Tender_Bid_Opening_Date ? new Date(data[0].Tender_Bid_Opening_Date) : new Date();
+          this.ActualSubmissionDate = data[0].Tender_Publish_Date ? new Date(data[0].Tender_Publish_Date) : new Date();
           console.log("this.lastSubmissionDate",this.lastSubmissionDate);
         })
   }
@@ -309,9 +350,12 @@ export class TenderHarbauerViewComponent implements OnInit {
       this.ObjEMD = new EMD();
       this.ObjTenderFees = new TenderFees();
       this.ObjPerformanceSecurity = new PerformanceSecurity()
+      this.PerformanceSecurityIssueDate = new Date();
+      this.PerformanceSecurityIssueExpiry = new Date();
       this.EMDSubmitted = false;
       this.TenderSubmit = false;
       this.psSubmitted = false;
+      this.getAllPSdata = [];
       this.GetPaymentList();
       this.ifHaveEMDdata(obj.Tender_Doc_ID);
       this.ifHaveTenderdata(obj.Tender_Doc_ID);
@@ -327,6 +371,26 @@ export class TenderHarbauerViewComponent implements OnInit {
   TenderFeesModeCreate(){
     this.TenderfeesmodeModel = true;
     this.Tenderfeesselete = undefined;
+  }
+  AddPS(valid){
+    console.log(valid)
+    if(valid){
+       let adddata = {
+        Date_Of_Exp : this.DateService.dateTimeConvert(new Date(this.PerformanceSecurityIssueExpiry)),
+        Date_Of_Issue : this.DateService.dateTimeConvert(new Date(this.PerformanceSecurityIssueDate)),
+        Mode :this.ObjPerformanceSecurity.Mode,
+        Reference_No: this.ObjPerformanceSecurity.Reference_No,
+        Voucher_No : this.ObjPerformanceSecurity.Voucher_No,
+        Amount: this.ObjPerformanceSecurity.Amount,
+        Tender_Doc_ID : this.TenderDocID,         
+        Fees_Type:"Performance Security"
+       }
+      this.getAllPSdata.push(adddata);
+      this.ObjPerformanceSecurity = new EMD();
+      this.PerformanceSecurityIssueDate = new Date();
+      this.PerformanceSecurityIssueExpiry = new Date();
+    }
+    
   }
   PerformanceSecurityModeCreate(){
     this.PerformanceSecuritymodeModel = true;
@@ -362,12 +426,7 @@ export class TenderHarbauerViewComponent implements OnInit {
        else if(FeesType === 'Performance Security'){
         this.psSubmitted = false;
          this.PSSpinner = true;
-        this.ObjPerformanceSecurity.Tender_Doc_ID = this.TenderDocID;
-        this.ObjPerformanceSecurity.Fees_Type = FeesType;
-        this.ObjPerformanceSecurity.Date_Of_Issue = this.DateService.dateTimeConvert(new Date(this.TenderFeesIssueDate));
-        this.ObjPerformanceSecurity.Date_Of_Exp = this.DateService.dateTimeConvert(new Date(this.TenderFeesIssueExpiry))
-       console.log(this.ObjPerformanceSecurity);
-       saveData = this.ObjPerformanceSecurity;
+         saveData = this.getAllPSdata;
       }
       const obj = {
         "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
@@ -392,8 +451,8 @@ export class TenderHarbauerViewComponent implements OnInit {
         Tender_Doc_ID: TenderDocID,									
 				Posted_By: this.commonApi.CompacctCookies.User_ID,							 
 				Send_To:	this.commonApi.CompacctCookies.User_ID,						       			
-				Status:	"BUDGET CREATED",
-				Remarks: "Update done"
+				Status:	FeesType,
+				Remarks: FeesType+" Update done"
       }
       console.log("follow save",saveObj);
       const obj = {
@@ -588,11 +647,13 @@ export class TenderHarbauerViewComponent implements OnInit {
     this.GlobalAPI
       .getData(obj)
       .subscribe((data: any) => {
-       
+       if(data[0]){
         this.ObjEMD = data[0]
-        this.ObjEMD.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
-        this.ObjEMD.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
+        this.EMDIssueDate = new Date(data[0].Date_Of_Issue);
+        this.EMDIssueExpiry = new Date(data[0].Date_Of_Exp);
         console.log("EMD",this.ObjEMD);
+       }
+        
       })
    }
   }
@@ -606,10 +667,13 @@ export class TenderHarbauerViewComponent implements OnInit {
      this.GlobalAPI
        .getData(obj)
        .subscribe((data: any) => {
-         this.ObjTenderFees = data[0]
-         this.ObjTenderFees.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
-         this.ObjTenderFees.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
-         console.log("Tender",this.ObjTenderFees);
+         if(data[0]){
+          this.ObjTenderFees = data[0]
+          this.TenderFeesIssueDate = new Date(data[0].Date_Of_Issue);
+          this.TenderFeesIssueExpiry = new Date(data[0].Date_Of_Exp);
+          console.log("Tender",this.ObjTenderFees);
+         }
+        
        })
     }
    }
@@ -623,13 +687,85 @@ export class TenderHarbauerViewComponent implements OnInit {
      this.GlobalAPI
        .getData(obj)
        .subscribe((data: any) => {
-         this.ObjPerformanceSecurity = data[0]
-         this.ObjPerformanceSecurity.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
-         this.ObjPerformanceSecurity.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
-         console.log("ObjPerformanceSecurity",this.ObjPerformanceSecurity);
+         if(data[0]){
+           console.log("PS Data", data[0]);
+          this.getAllPSdata = data;
+         }
+         
        })
     }
    }
+ // Add Bider List
+ addBidderList(obj){
+  this.TenderDocID = undefined;
+  if(obj.Tender_Doc_ID){
+     this.addBiderListModel = true;
+      this.GetBidderList = [];
+      this.bidderName = undefined;
+      this.BidderSubmition = false;
+      this.BidderSpinner = false;
+      this.TenderDocID = obj.Tender_Doc_ID;
+     this.getBidderList(obj.Tender_Doc_ID);
+  }
+ }
+ getBidderList(DocID){
+  const obj = {
+    "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+    "Report_Name_String": "Get_BL_CRM_Txn_Enq_Tender_Bidder",
+    "Json_Param_String": JSON.stringify([{Tender_Doc_ID : DocID}])
+  }
+  this.GlobalAPI
+    .getData(obj)
+    .subscribe((data: any) => {
+     this.GetBidderList = data;
+     console.log("Bidder List",this.GetBidderList);
+    })
+ }
+ SaveBidder(valid){
+   this.BidderSubmition = true;
+  if(valid){
+    this.BidderSpinner = true;
+     const tempSaveData = {
+      Bidder_Name : this.bidderName,
+      Tender_Doc_ID : this.TenderDocID
+     }
+     const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "BL_CRM_Txn_Enq_Tender_Create_Bidder",
+      "Json_Param_String": JSON.stringify([tempSaveData])
+    }
+    this.GlobalAPI
+      .getData(obj)
+      .subscribe((data: any) => {
+       console.log("save Data", data);
+       if(data[0].Column1 === "SAVED SUCCESSFULLY"){
+        this.BidderSubmition = false;
+        this.getBidderList(this.TenderDocID);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "",
+          detail: "Bidder Name Succesfully Save"
+        });
+        this.BidderSubmition = false;
+        this.BidderSpinner = false;
+        this.bidderName = undefined;
+       }
+      })
+  }
+ }
+ DeleteBidderName(BidderId){
+  console.log("Bidder Id",BidderId)
+ }
+ checkChange(){
+   this.saveButton = this.saveCheck ? false : true;
+ }
+
+//  Edit
+Edit(obj){
+  
+}
 }
 class search{
   Filter1_Text:string;

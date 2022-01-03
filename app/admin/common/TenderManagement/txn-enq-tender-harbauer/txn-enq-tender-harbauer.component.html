@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -10,24 +10,9 @@
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
-            <div class="ui-g-6">
-                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
-            </div>
-        </div>
-    </ng-template>
-</p-toast>
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
-    <ng-template let-message pTemplate="message">
-        <div style="text-align: center">
-            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
-            <h3>{{message.summary}}</h3>
-            <p>{{message.detail}}</p>
-        </div>
-        <div class="ui-g ui-fluid">
-            <div class="ui-g-6">
+            <!-- <div class="ui-g-6" *ngIf="cnfrm_popup && !cnfrm2_popup && !cnfrm3_popup && !cnfrm4_popup && !cnfrm5_popup && !cnfrm6_popup">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
-            </div>
+            </div> -->
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
             </div>
@@ -50,8 +35,15 @@
                                             required>
                                     </div>
                                     <div class="col-sm-4">
+                                        <label class="control-label">Work Details<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="workdetails" #workdetails="ngModel" [(ngModel)]="ObjTender.Work_Details" placeholder="Work Details" [ngClass]="{'clearance': TenderFormSubmitted && workdetails.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
                                         <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
-                                        <span (click)="ToggleOrganization()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        <div class="pull-right">
+                                            <span (click)="ViewOrganization()" class="btn-vk createPatient"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="ToggleOrganization()" class="btn-vk createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="Authority" #Authority="ngModel" [(ngModel)]="ObjTender.Tender_Org_ID" [ngClass]="{'clearance': TenderFormSubmitted && Authority.errors?.required}" required>
                                                                     <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let option of tenderOrgList" [ngValue]="option.Tender_Org_ID">
@@ -59,10 +51,16 @@
                                                                     </option>
                                                             </select>
                                     </div>
+
+
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Calling Div</label>
-                                        <span (click)="Tender_Calling_Div_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
-
+                                        <div class="pull-right">
+                                            <span (click)="ViewCallingDiv()" class="btn-vk  createPatient"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="Tender_Calling_Div_Name.toggle($event)" class="btn-vk createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="TenderCalling" #TenderCalling="ngModel" [(ngModel)]="ObjTender.Tender_Calling_Div_ID" [ngClass]="{'clearance': TenderFormSubmitted && TenderCalling.errors?.required}">
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of TenderCallingDivList" [ngValue]="option.Tender_Calling_Div_ID">
@@ -70,12 +68,12 @@
                                                               </option>
                                                       </select>
                                     </div>
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Execution Div</label>
-                                        <span (click)="Tender_Execution_Div_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        <div class="pull-right">
+                                            <span (click)="ViewExecutionDiv()" class="btn-vk  createPatient"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="Tender_Execution_Div_Name.toggle($event)" class="btn-vk createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="Tender_ExecutionCreate" #Tender_ExecutionCreate="ngModel" [(ngModel)]="ObjTender.Tender_Execution_Div_ID" [ngClass]="{'clearance': TenderFormSubmitted && Tender_ExecutionCreate.errors?.required}">
                                                     <option  [ngValue]="undefined">Select</option>
                                                 <option *ngFor="let option of TenderExecutionDivList" [ngValue]="option.Tender_Execution_Div_ID">
@@ -87,16 +85,19 @@
                                         <label class="control-label">Tender Reference Number<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="reffno" #reffno="ngModel" [(ngModel)]="ObjTender.Tender_Ref_No" placeholder="Tender Reference Number" [ngClass]="{'clearance': TenderFormSubmitted && reffno.errors?.required}" required>
                                     </div>
+
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="TenderIDCreate" #TenderIDCreate="ngModel" [(ngModel)]="ObjTender.Tender_ID" placeholder="Tender ID" (change)='CheckIfTenderIDExist()' [ngClass]="{'clearance': TenderFormSubmitted && TenderIDCreate.errors?.required}" required>
                                     </div>
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Type</label>
-                                        <span (click)="Tender_Type_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
-
+                                        <div class="pull-right">
+                                            <span (click)="ViewTenderType()" class="btn-vk  createPatient"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="Tender_Type_Name.toggle($event)" class="btn-vk createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="TenderTypeCreate" #TenderTypeCreate="ngModel" [(ngModel)]="ObjTender.Tender_Type_ID" [ngClass]="{'clearance': TenderFormSubmitted && TenderTypeCreate.errors?.required}">
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of TypeList" [ngValue]="option.Tender_Type_ID">
@@ -106,7 +107,10 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Category</label>
-                                        <span (click)="Tender_Category_Name.toggle($event)" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        <div class="pull-right">
+                                            <span (click)="Viewcategory()" class="btn-vk  createPatient"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="Tender_Category_Name.toggle($event)" class="btn-vk createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="CategoryTenderCreate" #CategoryTenderCreate="ngModel" [(ngModel)]="ObjTender.Tender_Category_ID" [ngClass]="{'clearance': TenderFormSubmitted && CategoryTenderCreate.errors?.required}">
                                                                 <option  [ngValue]="undefined">Select</option>
                                                             <option *ngFor="let option of tenderCategoryList" [ngValue]="option.Tender_Category_ID">
@@ -115,6 +119,9 @@
                                                         </select>
                                     </div>
 
+
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">State<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" [ngClass]="{'clearance': TenderFormSubmitted && Contact.errors?.required}" required>
@@ -124,9 +131,7 @@
                                                               </option>
                                                       </select>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-8">
                                         <label class="control-label">Work Location<sup class="text-danger">*</sup></label>
                                         <p-chips name="wlocation" #wlocation="ngModel" placeholder="Area" [(ngModel)]="testchips" [ngClass]="{'clearance': TenderFormSubmitted && wlocation.errors?.required}" required>
                                         </p-chips>
@@ -205,7 +210,10 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Information From<sup class="text-danger"></sup></label>
-                                        <span (click)="ToggleInformation()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        <div class="pull-right">
+                                            <span (click)="Viewinformation()" class="btn-vk  createPatient"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="ToggleInformation()" class="btn-vk createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="Tender_Publishing_Info_From" #Tender_Publishing_Info_From="ngModel" [(ngModel)]="ObjTender.Tender_Publishing_Info_From" [ngClass]="{'clearance': TenderFormSubmitted && Tender_Publishing_Info_From.errors?.required}">
                                                       <option  [ngValue]="undefined">Select</option>
                                                   <option *ngFor="let option of TenderInfoEnqList" [ngValue]="option.Enq_Source_ID">
@@ -420,6 +428,172 @@
   class="glyphicon glyphicon-save"
 ></span
 >&nbsp;{{ buttonname }}
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- VIEWS -->
+<!-- Tender Authority -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="tenderOrgList">
+            <!-- <p-table [value]="vieworgList" [globalFilterFields]="['Tender_Organization']" [rowHover]="true" [autoLayout]="true" #dt>
+             <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template> -->
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Tender Organization</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Tender_Organization}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteorg(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Tender Calling Div -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewcallModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="TenderCallingDivList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Tender Calling Div Name</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Tender_Calling_Div_Name}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteCallingdiv(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewcallModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Tender Execution Div -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewExecutionModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="TenderExecutionDivList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th width="50%">Tender Execution Div Name</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Tender_Execution_Div_Name}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteExecutiondiv(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewExecutionModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Tender Typer -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewtendertypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="TypeList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Tender Type Name</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Tender_Type_Name}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteTenderType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewtendertypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Tender Category -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewtendercategoryModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="tenderCategoryList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th width="50%">Tender Category Name</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Tender_Category_Name}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deletecategory(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewtendercategoryModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Information From -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewinformationModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="TenderInfoEnqList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Enq Source Name</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Enq_Source_Name}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteinformation(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewinformationModal = false" class="btn btn-default">
+  CANCEL
 </button>
     </p-footer>
 </p-dialog>

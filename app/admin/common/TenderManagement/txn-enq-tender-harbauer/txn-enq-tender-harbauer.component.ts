@@ -153,6 +153,37 @@ StateList = [];
   Tender_Doc_ID: any;
   BudgetrequidDate : any;
 
+  ViewModal = false;
+  vieworgList = [];
+  Orgid = undefined;
+
+  ViewcallModal = false;
+  viewcallList = [];
+  callid = undefined;
+
+  ViewExecutionModal = false;
+  viewExecutionList = [];
+  executionid = undefined;
+
+  ViewtendertypeModal = false;
+  viewtendertypeList = [];
+  tendertypeid = undefined;
+
+  ViewtendercategoryModal = false;
+  viewtendercategoryList = [];
+  categoryid = undefined;
+  
+  ViewinformationModal = false;
+  viewinformationList = [];
+  informationid = undefined;
+  
+  cnfrm_popup = false;
+  cnfrm2_popup = false;
+  cnfrm3_popup = false;
+  cnfrm4_popup = false;
+  cnfrm5_popup = false;
+  cnfrm6_popup = false;;
+
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
@@ -218,38 +249,327 @@ clearData() {
   this.GetBudgetrequiredDate();
 
 }
-   GetTenderOrgList() {
-    this.$http
-      .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Organization_Json")
-      .subscribe((data: any) => {
-        this.tenderOrgList = data ? JSON.parse(data) : [];
+// Tender Autority
+  GetTenderOrgList() {
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : "Get_Tender_Organization",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.tenderOrgList = data;
+    // this.$http
+    //   .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Organization_Json")
+    //   .subscribe((data: any) => {
+    //    this.tenderOrgList = data ? JSON.parse(data) : [];
       });
   }
+  ViewOrganization(){
+    this.vieworgList = [];
+    this.ViewModal = true;
+    this.GetTenderOrgList();
+    // const obj = {
+    //   "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+    //   "Report_Name_String" : "Get_Tender_Organization",
+    // }
+    // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //   this.vieworgList = data;
+    //   });
+    //this.ViewModal = true;
+  }
+  deleteorg(orgid){
+    this.Orgid = undefined;
+    // this.cnfrm2_popup = false;
+    // this.cnfrm3_popup = false;
+    // this.cnfrm4_popup = false;
+    // this.cnfrm5_popup = false;
+    // this.cnfrm6_popup = false;
+    if(orgid.Tender_Org_ID){
+      //this.cnfrm_popup = true;
+      this.Orgid = orgid.Tender_Org_ID;
+      // const obj = {
+      //   "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      //   "Report_Name_String" : "Delete_Tender_Organization",
+      //   "Json_Param_String": JSON.stringify({Tender_Org_ID: this.Orgid}),
+      // }
+      // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      //   var msg = data[0].Column1;
+      //   if (data[0].Column1) {
+      //    this.compacctToast.clear();
+      //    this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "success",
+      //       summary: "Tender Org ID: " + this.Orgid,
+      //       detail: msg
+      //     });
+      //       this.ViewOrganization();
+      //       this.GetTenderOrgList();
+      //   } 
+      //   else {
+      //     this.compacctToast.clear();
+      //     this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "error",
+      //       summary: "Warn Message",
+      //       detail: "Error Occured "
+      //     });
+      //   }
+      // });
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirm() {
+    let ReportName = '';
+    let ObjTemp;
+    let FunctionRefresh;
+    if (this.Orgid) {
+      ReportName = "Delete_Tender_Organization"
+      ObjTemp = {
+        Tender_Org_ID: this.Orgid
+      }
+      FunctionRefresh = 'GetTenderOrgList'
+    }
+    if (this.callid) {
+      ReportName = "Delete_BL_CRM_Mst_Enq_Tender_Calling_Div"
+      ObjTemp = {
+        Tender_Calling_Div_ID: this.callid
+      }
+      FunctionRefresh = 'GetTenderCallingDiv';
+    }
+    if (this.executionid) {
+      ReportName = "Delete_BL_CRM_Mst_Enq_Tender_Execution_Div"
+      ObjTemp = {
+        Tender_Execution_Div_ID: this.executionid
+      }
+      FunctionRefresh = 'GetTenderExecutionDiv';
+    }
+    if (this.tendertypeid) {
+      ReportName = "Delete_BL_CRM_Mst_Enq_Tender_Type"
+      ObjTemp = {
+        Tender_Type_ID: this.tendertypeid
+      }
+      FunctionRefresh = 'GetTypeList'
+    }
+    if (this.categoryid) {
+      ReportName = "Delete_BL_CRM_Mst_Enq_Tender_Category"
+      ObjTemp = {
+        Tender_Category_ID: this.categoryid
+      }
+      FunctionRefresh = 'GetTenderCategoryList';
+    }
+    if (this.informationid) {
+      ReportName = "Delete_BL_Enq_Source_Master"
+      ObjTemp = {
+        Enq_Source_ID: this.informationid
+      }
+      FunctionRefresh = 'GetTenderInfoEnqSRC';
+    }
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String" : ReportName,
+        "Json_Param_String": JSON.stringify(ObjTemp),
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        var msg = data[0].Column1;
+        if (data[0].Column1) {
+        // this.onReject();
+        //this.GetTenderOrgList();
+        this[FunctionRefresh]();
+         this.compacctToast.clear();
+         this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: msg
+          });
+            //this.SearchTender(true);
+        }
+      });
+    //}
+  }
+  onReject() {
+    this.compacctToast.clear("c");
+  }
+  // Tender Calling Div
   GetTenderCallingDiv() {
-    this.$http
-      .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Calling_Div_Json")
-      .subscribe((data: any) => {
-        this.TenderCallingDivList = data ? JSON.parse(data) : [];
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : "Get_BL_CRM_Mst_Enq_Tender_Calling_Div",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.TenderCallingDivList = data;
       });
   }
+  ViewCallingDiv(){
+    this.viewcallList = [];
+    this.ViewcallModal = true;
+    this.GetTenderCallingDiv();
+  }
+  deleteCallingdiv(callid){
+    console.log("this.cnfrm2_popup")
+    this.callid = undefined;
+    // this.cnfrm_popup = false;
+    // this.cnfrm3_popup = false;
+    // this.cnfrm4_popup = false;
+    // this.cnfrm5_popup = false;
+    // this.cnfrm6_popup = false;
+    if(callid.Tender_Calling_Div_ID){
+      this.callid = callid.Tender_Calling_Div_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  // onConfirm2() {
+  //   console.log("this.callid",this.callid)
+  //   if (this.callid) {
+  //     const obj = {
+  //       "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+  //       "Report_Name_String" : "Delete_BL_CRM_Mst_Enq_Tender_Calling_Div",
+  //       "Json_Param_String": JSON.stringify({Tender_Calling_Div_ID: this.callid}),
+  //     }
+  //     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //       var msg = data[0].Column1;
+  //       if (data[0].Column1) {
+  //         this.GetTenderCallingDiv();
+  //        this.compacctToast.clear();
+  //        this.compacctToast.add({
+  //           key: "compacct-toast",
+  //           severity: "success",
+  //           summary: "Tender Calling Div ID: " + this.callid,
+  //           detail: msg
+  //         });
+  //           //this.SearchTender(true);
+  //       }
+  //     });
+  //   }
+  // }
+  // Tender Execution Div
   GetTenderExecutionDiv() {
-    this.$http
-      .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Execution_Div_Json")
-      .subscribe((data: any) => {
-        this.TenderExecutionDivList = data ? JSON.parse(data) : [];
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : "Get_BL_CRM_Mst_Enq_Tender_Execution_Div",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.TenderExecutionDivList = data;
       });
   }
+  ViewExecutionDiv(){
+    this.viewExecutionList = [];
+    this.ViewExecutionModal = true;
+    this.GetTenderExecutionDiv();
+  }
+  deleteExecutiondiv(executionid){
+    this.executionid = undefined;
+    if(executionid.Tender_Execution_Div_ID){
+      this.executionid = executionid.Tender_Execution_Div_ID;
+      // const obj = {
+      //   "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      //   "Report_Name_String" : "Delete_BL_CRM_Mst_Enq_Tender_Execution_Div",
+      //   "Json_Param_String": JSON.stringify({Tender_Execution_Div_ID: this.executionid}),
+      // }
+      // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      //   var msg = data[0].Column1;
+      //   if (data[0].Column1) {
+      //    this.compacctToast.clear();
+      //    this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "success",
+      //       summary: "Tender Execution Div ID: " + this.executionid,
+      //       detail: msg
+      //     });
+      //       this.ViewExecutionDiv();
+      //       this.GetTenderExecutionDiv();
+      //   } 
+      //   else {
+      //     this.compacctToast.clear();
+      //     this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "error",
+      //       summary: "Warn Message",
+      //       detail: "Error Occured "
+      //     });
+      //   }
+      // });
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  // Tender Type
   GetTypeList() {
-    this.$http
-      .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Type_Json")
-      .subscribe((data: any) => {
-        this.TypeList = data ? JSON.parse(data) : [];
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : "Get_BL_CRM_Mst_Enq_Tender_Type",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.TypeList = data;
       });
   }
+  ViewTenderType(){
+    this.viewtendertypeList = [];
+    this.ViewtendertypeModal = true;
+    this.GetTypeList();
+  }
+  deleteTenderType(ttypeid){
+    this.tendertypeid = undefined;
+    if(ttypeid.Tender_Type_ID){
+      this.tendertypeid = ttypeid.Tender_Type_ID;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  // Tender Category
   GetTenderCategoryList() {
-    this.$http.get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Category_Json").subscribe((data: any) => {
-      this.tenderCategoryList = data ? JSON.parse(data) : [];
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : "Get_BL_CRM_Mst_Enq_Tender_Category",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.tenderCategoryList = data;
     });
+  }
+  Viewcategory(){
+    this.viewtendercategoryList = [];
+    this.ViewtendercategoryModal = true;
+    this.GetTenderCategoryList();
+  }
+  deletecategory(tcategoryid){
+    this.categoryid = undefined;
+    if(tcategoryid.Tender_Category_ID){
+      this.categoryid = tcategoryid.Tender_Category_ID;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
   }
   // INIT DATA
   GetStateList() {
@@ -259,12 +579,14 @@ clearData() {
       this.StateList = data.length ? data : [];
     });
    }
-  
+  // Information From
  GetTenderInfoEnqSRC() {
-  this.$http
-    .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Enq_Source_Json")
-    .subscribe((data: any) => {
-      this.TenderInfoEnqList = data ? JSON.parse(data) : [];
+  const obj = {
+    "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+    "Report_Name_String" : "Get_BL_Enq_Source_Master",
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.TenderInfoEnqList = data;
       console.log("TenderInfoEnqList",this.TenderInfoEnqList);
     });
 }
@@ -278,13 +600,19 @@ clearData() {
   this.InformationSubmitted = true;
   if(valid) {
       this.Spinner = true;
-     const UrlAddress = "BL_CRM_Txn_Enq_Tender/Create_Tender_Enq_Source";
       const obj = {
-        Enq_Source_Name: this.InformationName,
-        };
-      this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String" : "Create_BL_Enq_Source_Master",
+        "Json_Param_String": JSON.stringify({Enq_Source_Name: this.InformationName}),
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //  const UrlAddress = "BL_CRM_Txn_Enq_Tender/Create_Tender_Enq_Source";
+    //   const obj = {
+    //     Enq_Source_Name: this.InformationName,
+    //     };
+    //   this.$http.post(UrlAddress, obj).subscribe((data: any) => {
         console.log(data)
-      if (data.success) {
+      if (data[0].Column1) {
           this.Spinner = false;
         // if (this.ObjTender.Tender_Doc_ID) {
           this.compacctToast.clear();
@@ -318,6 +646,25 @@ clearData() {
       }
       });
   }
+  }
+  Viewinformation(){
+    this.viewinformationList = [];
+    this.ViewinformationModal = true;
+    this.GetTenderInfoEnqSRC();
+  }
+  deleteinformation(tinfoid){
+    this.informationid = undefined;
+    if(tinfoid.Enq_Source_ID){
+      this.informationid = tinfoid.Enq_Source_ID;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
   }
   TenderPeriodOfWorkChange(e){
     this.ObjTender.Period_Of_Work = undefined;
@@ -408,11 +755,17 @@ clearData() {
   this.OrgSubmitted = true;
   if(valid) {
       this.Spinner = true;
-      const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Create_Tender_Organization";
-      const obj = { Tender_Organization: this.TenderOrganization };
-      this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+      // const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Create_Tender_Organization";
+      // const obj = { Tender_Organization: this.TenderOrganization };
+      // this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+        const obj = {
+          "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+          "Report_Name_String" : "Create_Tender_Organization",
+          "Json_Param_String": JSON.stringify({Tender_Organization: this.TenderOrganization}),
+        }
+        this.GlobalAPI.postData(obj).subscribe((data:any)=>{
         console.log(data)
-      if (data.success) {
+      if (data[0].Column1) {
         this.Spinner = false;
         // if (this.ObjTender.Tender_Doc_ID) {
           this.compacctToast.clear();
@@ -452,36 +805,43 @@ clearData() {
   console.log(val)
   if(this[val]) {
     const obj = {};obj[field] = this[val];
-    let UrlAddress;
+    let reportname;
     let refreshFunction;
     if(field === 'Tender_Calling_Div_Name') {
-      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Calling_Div'
+      reportname = 'Create_BL_CRM_Mst_Enq_Tender_Calling_Div'
       refreshFunction = 'GetTenderCallingDiv';
+     // this.GetTenderCallingDiv();
     }
     if(field === 'Tender_Execution_Div_Name') {
-      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Execution_Div'
+      reportname = 'Create_BL_CRM_Mst_Enq_Tender_Execution_Div'
       refreshFunction = 'GetTenderExecutionDiv';
+      //this.GetTenderExecutionDiv();
     }
     if(field === 'Tender_Type_Name') {
-      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Type'
+      reportname = 'Create_BL_CRM_Mst_Enq_Tender_Type'
       refreshFunction = 'GetTypeList';
+      //GetTypeList();
     }
     if(field === 'Tender_Category_Name') {
-      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Category'
+      reportname = 'Create_BL_CRM_Mst_Enq_Tender_Category'
       refreshFunction = 'GetTenderCategoryList';
+      //this.GetTenderCategoryList();
     }
-    if(field === 'Tender_Payment_Mode') {
-      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Payment_Type'
-      refreshFunction = 'GetPaymentList';
-    }
-    if(field === 'Enq_Source_Name') {
-      UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Enq_Source'
-      refreshFunction = 'GetTenderCallingDiv';
-    }
+    // if(field === 'Enq_Source_Name') {
+    //   UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Enq_Source'
+    //   refreshFunction = 'GetTenderCallingDiv';
+    // }
     this.Spinner = true;
-    this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+    const Obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : reportname,
+      "Json_Param_String": JSON.stringify(obj),
+    }
+    this.GlobalAPI.getData(Obj).subscribe((data:any)=>{
+    //   this.tenderOrgList = data;
+    // this.$http.post(UrlAddress, obj).subscribe((data: any) => {
       console.log(data)
-    if (data.success) {
+    if (data[0].Column1) {
         this.Spinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -509,28 +869,8 @@ clearData() {
 
 
 //   // Delete
-   onConfirm() {
-//     if ( this.TenderId) {
-//       this.$http
-//         .post("/BL_CRM_Txn_Enq_Tender/Delete_Tender", { Tender_Doc_ID:  this.TenderId })
-//         .subscribe((data: any) => {
-//           if (data.success === true) {
-//             this.onReject();
-//             this.compacctToast.clear();
-//             this.compacctToast.add({
-//               key: "compacct-toast",
-//               severity: "success",
-//               summary: "LEAD ID: " + this.TenderId,
-//               detail: "Succesfully Deleted"
-//             });
-//             this.SearchTender(true);
-//           }
-//         });
-//     }
-   }
-   onReject() {
-//     this.compacctToast.clear("c");
-   }
+  
+   
 //   DeleteTender(obj) {
 //     this.TenderId = undefined;
 //     if (obj.Tender_Doc_ID) {
@@ -627,6 +967,7 @@ SaveTenderMaster(valid){
    Cost_Cen_ID : this.commonApi.CompacctCookies.Cost_Cen_ID,
    User_ID : this.commonApi.CompacctCookies.User_ID,
    Work_Name : this.ObjTender.Tender_Name,
+   Work_Details : this.ObjTender.Work_Details,
    Tender_Org_ID : this.ObjTender.Tender_Org_ID,
    Tender_Calling_Div_ID : this.ObjTender.Tender_Calling_Div_ID,
    Tender_Execution_Div_ID : this.ObjTender.Tender_Execution_Div_ID,
@@ -640,8 +981,8 @@ SaveTenderMaster(valid){
    Tender_Last_Sub_Date : this.DateService.dateTimeConvert(new Date(this.TenderEndDate)),
    Tender_Bid_Opening_Date : this.DateService.dateTimeConvert(new Date(this.TenderOpenDate)),
    EMD_Amount : this.ObjTender.EMD_Amount,
-   T_Fee_Amount : this.ObjTender.T_Fee_Amount,
-   Enq_Source_ID : this.ObjTender.Tender_Publishing_Info_From.length,
+   T_Fee_Amount : Number(this.ObjTender.T_Fee_Amount),
+   Enq_Source_ID : this.ObjTender.Tender_Publishing_Info_From,
    Tender_Informed_Date : this.DateService.dateConvert(new Date(this.InformedDate)),
    Period_Of_Working : this.PeriodOfWork,
    Budget_Required_By : this.DateService.dateConvert(new Date(this.BudgetRequidBy)),
@@ -764,6 +1105,7 @@ class Tender{
   //Tender_Value : number;
   Tender_Name:string;
   //Work_Name :string;
+  Work_Details:string;
   Work_Location:string;
   Tender_Opening_Date:string;
   Tender_Closing_Date:string;
