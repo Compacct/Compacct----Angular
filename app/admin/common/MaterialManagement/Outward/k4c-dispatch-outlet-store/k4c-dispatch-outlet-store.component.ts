@@ -536,7 +536,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
             Material_Type : el.Material_Type,
             Indent_Date_From : start,
             Indent_Date_To : end,
-            Status : 'Not Updated',
+            Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
             Accepted_Qty : this.Auto_Accepted == "N" ? 0 : Number(el.Delivery_Qty),
             Total_Qty : Number(this.totaldelqty),
             Total_Accepted_Qty  : this.Auto_Accepted == "N" ? 0 : Number(this.totaldelqty)

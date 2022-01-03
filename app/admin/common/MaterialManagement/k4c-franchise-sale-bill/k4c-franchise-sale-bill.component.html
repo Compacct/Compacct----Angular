@@ -119,7 +119,7 @@
                                             <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Select Franchise<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="franchise" #franchise="ngModel" [(ngModel)]="ObjfranchiseSalebill.Franchise" (change)="FranchiseChange()" [disabled]="franshisedisable" [ngClass]="{'clearance': franchiseSalebillFormSubmitted && franchise?.errors?.required}"
+                                                    <select class="form-control" name="franchise" #franchise="ngModel" [(ngModel)]="ObjfranchiseSalebill.Franchise" (change)="FranchiseChange()" [attr.disabled]="franshisedisable ? true : null" [ngClass]="{'clearance': franchiseSalebillFormSubmitted && franchise?.errors?.required}"
                                                         required>
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  *ngFor="let option of FranchiseList" value="{{option.Sub_Ledger_ID}}">
@@ -134,7 +134,7 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Remarks</label>
-                                                    <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjfranchiseSalebill.Remarks" [disabled]="franshisedisable" [ngClass]="{'clearance':franchiseSalebillFormSubmitted && Remarks?.errors?.required}"></textarea>
+                                                    <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjfranchiseSalebill.Remarks" [attr.disabled]="franshisedisable ? true : null" [ngClass]="{'clearance':franchiseSalebillFormSubmitted && Remarks?.errors?.required}"></textarea>
                                                 </div>
                                                 <div class="col-sm-1">
                                                     <!-- <div class="box-footer"> -->

@@ -77,6 +77,13 @@ export class OutletGroupReportComponent implements OnInit {
         ];
   
     }
+  Getreportname() {
+      if(this.Reportlist.length) {
+        const tempArry = this.Reportlist.filter(item => item.Name === this.ObjBrowseStockView.Choose_Report);
+        return  tempArry.length ?  tempArry[0].Name  : '';
+      }
+      return '-'
+  }
   getOutlet(){
     this.DynamicHeader = [];
     this.Searchlist = [];
