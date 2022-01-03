@@ -294,7 +294,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
   onCountryChange (country) {
     this.ObjSubledger.Export_Domestic = 'Domestic';
     if (country) {
-      this.ObjSubledger.Export_Domestic = country == 'India' ?'Domestic' : 'Export';
+      this.ObjSubledger.Export_Domestic = country == 'Nepal' ?'Domestic' : 'Export';
     }
   }
   GetDistrict (stateparm) {

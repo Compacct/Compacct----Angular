@@ -365,6 +365,16 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
         // App_Confirm
       },900);
     }
+    if(!obj.Foot_Fall_ID) {
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error",
+          detail: "Student is Not Registered."
+        });
+    }
+
   }
   CancelOrder(obj) {
     this.CancelOrderObj = {};
@@ -1024,7 +1034,7 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
     this.ShowRefundModal = false;
     this.Studentdetails = undefined;
     this.Billingdetaillist = [];
-    if(obj.Lead_ID){
+    if(obj.Lead_ID && obj.Foot_Fall_ID){
       this.ObjStusearchForm.Foot_Fall_ID = obj.Foot_Fall_ID;
       this.ObjStusearchForm.Lead_ID = obj.Lead_ID;
       this.GetStudentdetails();
@@ -1034,6 +1044,15 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
       setTimeout(()=>{
         this.ShowRefundModal = true;
       },900);
+    } 
+    if(!obj.Foot_Fall_ID) {
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error",
+          detail: "Student is Not Registered."
+        });
     }
   }
   SaveRefund(obj){
