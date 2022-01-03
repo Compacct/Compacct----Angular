@@ -11,7 +11,6 @@ import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
-import { Console } from 'console';
 import { kill } from 'process';
 
 @Component({
@@ -45,7 +44,8 @@ export class TenderHarbauerViewComponent implements OnInit {
       bidopenningDate = new Date();
       ActualSubmissionDate = new Date();
       TenderDocID = undefined;
-
+      saveCheck:boolean = false;
+      saveButton:boolean = true;
   // Update Finance
   updateFinanceModel = false;
   Spinner = false;
@@ -77,6 +77,7 @@ export class TenderHarbauerViewComponent implements OnInit {
     PerformanceSecurityselete = undefined;
     performanceSubmitted = false;
     psSubmitted = false;
+    getAllPSdata:any = [];
     // Add Bider List
       addBiderListModel = false;
       GetBidderList = [];
@@ -349,9 +350,12 @@ export class TenderHarbauerViewComponent implements OnInit {
       this.ObjEMD = new EMD();
       this.ObjTenderFees = new TenderFees();
       this.ObjPerformanceSecurity = new PerformanceSecurity()
+      this.PerformanceSecurityIssueDate = new Date();
+      this.PerformanceSecurityIssueExpiry = new Date();
       this.EMDSubmitted = false;
       this.TenderSubmit = false;
       this.psSubmitted = false;
+      this.getAllPSdata = [];
       this.GetPaymentList();
       this.ifHaveEMDdata(obj.Tender_Doc_ID);
       this.ifHaveTenderdata(obj.Tender_Doc_ID);
@@ -367,6 +371,26 @@ export class TenderHarbauerViewComponent implements OnInit {
   TenderFeesModeCreate(){
     this.TenderfeesmodeModel = true;
     this.Tenderfeesselete = undefined;
+  }
+  AddPS(valid){
+    console.log(valid)
+    if(valid){
+       let adddata = {
+        Date_Of_Exp : this.DateService.dateTimeConvert(new Date(this.PerformanceSecurityIssueExpiry)),
+        Date_Of_Issue : this.DateService.dateTimeConvert(new Date(this.PerformanceSecurityIssueDate)),
+        Mode :this.ObjPerformanceSecurity.Mode,
+        Reference_No: this.ObjPerformanceSecurity.Reference_No,
+        Voucher_No : this.ObjPerformanceSecurity.Voucher_No,
+        Amount: this.ObjPerformanceSecurity.Amount,
+        Tender_Doc_ID : this.TenderDocID,         
+        Fees_Type:"Performance Security"
+       }
+      this.getAllPSdata.push(adddata);
+      this.ObjPerformanceSecurity = new EMD();
+      this.PerformanceSecurityIssueDate = new Date();
+      this.PerformanceSecurityIssueExpiry = new Date();
+    }
+    
   }
   PerformanceSecurityModeCreate(){
     this.PerformanceSecuritymodeModel = true;
@@ -402,12 +426,7 @@ export class TenderHarbauerViewComponent implements OnInit {
        else if(FeesType === 'Performance Security'){
         this.psSubmitted = false;
          this.PSSpinner = true;
-        this.ObjPerformanceSecurity.Tender_Doc_ID = this.TenderDocID;
-        this.ObjPerformanceSecurity.Fees_Type = FeesType;
-        this.ObjPerformanceSecurity.Date_Of_Issue = this.DateService.dateTimeConvert(new Date(this.TenderFeesIssueDate));
-        this.ObjPerformanceSecurity.Date_Of_Exp = this.DateService.dateTimeConvert(new Date(this.TenderFeesIssueExpiry))
-       console.log(this.ObjPerformanceSecurity);
-       saveData = this.ObjPerformanceSecurity;
+         saveData = this.getAllPSdata;
       }
       const obj = {
         "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
@@ -432,8 +451,8 @@ export class TenderHarbauerViewComponent implements OnInit {
         Tender_Doc_ID: TenderDocID,									
 				Posted_By: this.commonApi.CompacctCookies.User_ID,							 
 				Send_To:	this.commonApi.CompacctCookies.User_ID,						       			
-				Status:	"BUDGET CREATED",
-				Remarks: "Update done"
+				Status:	FeesType,
+				Remarks: FeesType+" Update done"
       }
       console.log("follow save",saveObj);
       const obj = {
@@ -628,11 +647,13 @@ export class TenderHarbauerViewComponent implements OnInit {
     this.GlobalAPI
       .getData(obj)
       .subscribe((data: any) => {
-       
+       if(data[0]){
         this.ObjEMD = data[0]
-        this.ObjEMD.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
-        this.ObjEMD.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
+        this.EMDIssueDate = new Date(data[0].Date_Of_Issue);
+        this.EMDIssueExpiry = new Date(data[0].Date_Of_Exp);
         console.log("EMD",this.ObjEMD);
+       }
+        
       })
    }
   }
@@ -646,10 +667,13 @@ export class TenderHarbauerViewComponent implements OnInit {
      this.GlobalAPI
        .getData(obj)
        .subscribe((data: any) => {
-         this.ObjTenderFees = data[0]
-         this.ObjTenderFees.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
-         this.ObjTenderFees.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
-         console.log("Tender",this.ObjTenderFees);
+         if(data[0]){
+          this.ObjTenderFees = data[0]
+          this.TenderFeesIssueDate = new Date(data[0].Date_Of_Issue);
+          this.TenderFeesIssueExpiry = new Date(data[0].Date_Of_Exp);
+          console.log("Tender",this.ObjTenderFees);
+         }
+        
        })
     }
    }
@@ -663,10 +687,11 @@ export class TenderHarbauerViewComponent implements OnInit {
      this.GlobalAPI
        .getData(obj)
        .subscribe((data: any) => {
-         this.ObjPerformanceSecurity = data[0]
-         this.ObjPerformanceSecurity.Date_Of_Issue = new Date(data[0].Date_Of_Issue);
-         this.ObjPerformanceSecurity.Date_Of_Exp = new Date(data[0].Date_Of_Exp);
-         console.log("ObjPerformanceSecurity",this.ObjPerformanceSecurity);
+         if(data[0]){
+           console.log("PS Data", data[0]);
+          this.getAllPSdata = data;
+         }
+         
        })
     }
    }
@@ -733,6 +758,14 @@ export class TenderHarbauerViewComponent implements OnInit {
  DeleteBidderName(BidderId){
   console.log("Bidder Id",BidderId)
  }
+ checkChange(){
+   this.saveButton = this.saveCheck ? false : true;
+ }
+
+//  Edit
+Edit(obj){
+  
+}
 }
 class search{
   Filter1_Text:string;
