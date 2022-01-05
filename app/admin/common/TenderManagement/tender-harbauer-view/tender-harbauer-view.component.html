@@ -175,6 +175,12 @@
                                                                            Edit
                                                                         </a>
                                                                     </li>
+                                                                    <li *ngIf="col.Status === 'TENDER SUBMITTED'">
+                                                                        <a (click)="ViewBidOpening(col)">
+                                                                            <i class="fa fa-fw fa-pencil"></i>
+                                                                            Bid Opening & AOC
+                                                                        </a>
+                                                                    </li>
                                                                         <!-- <li >
                                                                             <a (click)="updateFinance(col)">
                                                                                 <i class="fa fa-fw fa-clone"></i>
@@ -1564,3 +1570,717 @@ style="text-align: center;"
   </div>
 </p-overlayPanel>
 
+<!-- Bid Openning & AOC -->
+<!-- <p-dialog 
+ header='Bid openning & AOC'
+ [appendTo]="'body'"
+ [visible]="BidOpenningModel"
+ [modal]="true"
+ [responsive]="true"
+ [style]="{ width: '90%', minWidth: '1000px',height:'auto',textAlign: 'center'}"
+ style="text-align: center;"
+ [maximizable]="true"
+ [minY]="90"
+ [baseZIndex]="10000">
+ <form name="BidOpeningForm" #BidOpeningForm="ngForm" novalidate>
+    <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Bidder Name<sup class="text-danger">*</sup></label>
+           <select class="form-control"
+                  name="Bidder_Name_Bid"
+                  #Bidder_Name_Bid="ngModel"
+                  [(ngModel)]="ObjBidOpeningList.Bidder_Name"
+                  [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Bidder_Name ==='' || ObjBidOpeningList.Bidder_Name=== null || ObjBidOpeningList.Bidder_Name=== undefined)}" >
+                  <option  [ngValue]="undefined">Select</option>
+              <option *ngFor="let option of GetBidderList" [ngValue]="option.Bidder_Name">
+                  {{option.Bidder_Name}}
+                  </option>
+
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Value<sup class="text-danger">*</sup></label>
+          <input class="form-control"
+          name="Estimate"
+          #Estimate="ngModel"
+          CompacctDigitonly="true"
+          [(ngModel)]="tenderValue"
+          (ngModelChange)="inputBoxClr(tenderValue)"
+          placeholder="Tender Value"
+          [ngClass]="{'clearance': ObjBidOpeningList.Quoted_Rate ? '' : BidOpeningListFormSubmitted && (tenderValue ==='' || tenderValue === null || tenderValue === undefined)}"
+           >
+        </div>
+        <div class="col-sm-4" *ngIf = "tenderValue && tenderValue > 0">
+          <label class="control-label">Quoted Percentage <sup class="text-danger">*</sup></label>
+          <div class="input-group">
+            <input class="form-control"
+            name="Quoted"
+            #Quoted="ngModel"
+            [(ngModel)]="ObjBidOpeningList.Quoted_Percentage"
+            placeholder="Quoted Percentage"
+            [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Quoted_Percentage === '' || ObjBidOpeningList.Quoted_Percentage === null || ObjBidOpeningList.Quoted_Percentage=== undefined)}" >
+            <div class="input-group-addon"><b>%</b></div>
+
+          </div>
+        </div>
+        <div class="col-sm-4" *ngIf = "tenderValue === '' || tenderValue === null || tenderValue === undefined || tenderValue === '0'">
+          <label class="control-label">Quoted Rate <sup class="text-danger">*</sup></label>
+          <div class="input-group">
+            <input class="form-control"
+            name="Quoted_Rate"
+            #Quoted_Rate="ngModel"
+            [(ngModel)]="ObjBidOpeningList.Quoted_Rate"
+            placeholder="Quoted Rate"
+            [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Quoted_Rate === '' || ObjBidOpeningList.Quoted_Rate === null || ObjBidOpeningList.Quoted_Rate=== undefined)}" 
+            CompacctDigitonly="true">
+            
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <button
+          type="submit"
+          name="bidopen"
+          class="btn btn-primary custombutton"
+          (click)="AddBidOpen()"
+        >
+          <span class="glyphicon glyphicon-plus"></span
+          >&nbsp;Add
+        </button>
+        </div>
+
+      </div>
+      <div class="clearfix"></div>
+      <div   style="padding: 2em;">
+        <div class="table-responsive no-padding">
+          <table class="table bidopen table-bordered">
+            <thead>
+              <tr style="background-color:#3c8dbc;color:white;">
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Sl. No.
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Bidder Name
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Tender Value
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Rate
+                </th>
+                <th
+                nowrap
+                rowspan="2"
+                class="text-center"
+                style="vertical-align:middle"
+              >
+                Quoted Percentage
+              </th>
+                <th colspan="2" scope="colgroup" class="text-center">
+                  Quoted Rate In Figures and Words
+                </th>
+                <th nowrap rowspan="2">Delete</th>
+              </tr>
+              <tr style="background-color:#3c8dbc;color:white">
+                <th scope="col" class="text-center">Rate</th>
+                <th scope="col" class="text-center">Amount.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let d of BidOpenListView;
+                  let odd = odd;
+                  let index = index
+                "
+                [class.even]="odd"
+              >
+                <td>{{ d.Sl_No }}</td>
+                <td>{{ d.Bidder_Name }}</td>
+                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }}</td>
+                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
+                 <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+                <td>
+                  <a (click)="DeleteBidOpenList(index)"
+                    ><div><i class="fa fa-fw fa-trash"> </i></div>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button
+        type="submit"
+        name="bidopen"
+        class="btn btn-primary pull-right"
+        (click)="RankBiddingCompanies()"
+      >
+        <span class="glyphicon glyphicon-refresh"></span
+        >&nbsp; Rank Bidding Companies
+      </button>
+      </div>
+      <div  style="padding: 2em;" *ngIf="BidOpenListViewByRateFlag">
+        <div class="table-responsive no-padding">
+          <table class="table bidopen table-bordered">
+            <thead>
+              <tr style="background-color:#3c8dbc;color:white;">
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                 Rank
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Bidder Name
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                Tender Value
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Rate
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Percentage
+                </th>
+                <th colspan="2" scope="colgroup" class="text-center">
+                  Quoted Rate In Figures and Words
+                </th>
+
+              </tr>
+              <tr style="background-color:#3c8dbc;color:white">
+                <th scope="col" class="text-center">Rate</th>
+                <th scope="col" class="text-center">Amount.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let d of BidOpenListViewByRate;
+                  let odd = odd;
+                  let index = index
+                "
+                [class.even]="odd"
+              >
+                <td>{{ d.Rank }}</td>
+                <td>{{ d.Bidder_Name }}</td>
+                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
+                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
+                <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+      <div   style="padding: 2em;" *ngIf="BidOpenListViewByLotteryFlag">
+        <div class="table-responsive no-padding">
+          <table class="table bidopen table-bordered">
+            <thead>
+              <tr style="background-color:#3c8dbc;color:white;">
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Rank
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Bidder Name
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                Tender Value
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Rate
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Percentage
+                </th>
+
+                <th colspan="2" scope="colgroup" class="text-center">
+                  Quoted Rate In Figures and Words
+                </th>
+              </tr>
+              <tr style="background-color:#3c8dbc;color:white">
+                <th scope="col" class="text-center">Rate</th>
+                <th scope="col" class="text-center">Amount.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let d of BidOpenListViewByLottery;
+                  let odd = odd;
+                  let index = index;
+                  trackBy:trackByfn
+                "
+                [class.even]="odd"
+              >
+                <td>{{d.Rank}}
+                </td>
+                <td>
+                  <select class="form-control"
+                  name="Bidder_Name-{{index}}"
+                  #Bidder_Name="ngModel"
+                  [(ngModel)]="d['Bidder_Name']"
+                  (change)="LotteryBidderNameChange(index,d)"
+                  *ngIf="d['Lottery_Flag'] === 'DUPLICATE'"
+                  [ngClass]="{'clearance': (BidOpeningListFormSubmitted && Bidder_Name.errors?.required) || (checkBidderSelectLottery(d['Bidder_Name']))}" required>
+                    <option  [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of d.Temp_Bidder_Array;trackBy:trackByfn" [ngValue]="option.Bidder_Name">
+                        {{option.Bidder_Name}}
+                        </option>
+                  </select>
+                  <span  *ngIf="d['Lottery_Flag'] === 'FIXED'">{{d.Bidder_Name}}</span>
+                </td>
+                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
+                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                <td> {{d.Quoted_Percentage ? d.Quoted_Percentage  +' %':'-' }} </td>
+                <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="box-footer" >
+        <button class="btn btn-primary pull-right"
+                (click)="SaveBidOpening()"
+                id="load"
+                [disabled]="Spinner">
+                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{BidEditFlag ? 'Update Bid' : 'Create Bid'}}
+        </button>
+    </div>
+ </form>
+  <p-footer>
+     <button type="button" pButton icon="pi pi-close" (click)="BidOpenningModel=false" label="Close" class="ui-button-secondary"></button>
+   </p-footer>
+</p-dialog> -->
+<p-dialog 
+header="Bid openning & AOC"
+[appendTo]="'body'"
+[visible]="BidOpenningModel"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '90%', minWidth: '900px',height:'auto',textAlign: 'center'}"
+[minY]="90"
+[maximizable]="true"
+[baseZIndex]="7000">
+<div class="form-horizontal">
+  <form name="BidOpeningForm" #BidOpeningForm="ngForm" novalidate>
+    <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Bidder Name<sup class="text-danger">*</sup></label>
+           <select class="form-control"
+                  name="Bidder_Name_Bid"
+                  #Bidder_Name_Bid="ngModel"
+                  [(ngModel)]="ObjBidOpeningList.Bidder_Name"
+                  [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Bidder_Name ==='' || ObjBidOpeningList.Bidder_Name=== null || ObjBidOpeningList.Bidder_Name=== undefined)}" >
+                  <option  [ngValue]="undefined">Select</option>
+              <option *ngFor="let option of GetBidderList" [ngValue]="option.Bidder_Name">
+                  {{option.Bidder_Name}}
+                  </option>
+
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Value<sup class="text-danger">*</sup></label>
+          <input class="form-control"
+          name="Estimate"
+          #Estimate="ngModel"
+          CompacctDigitonly="true"
+          [(ngModel)]="tenderValue"
+          (ngModelChange)="inputBoxClr(tenderValue)"
+          placeholder="Tender Value"
+          [ngClass]="{'clearance': ObjBidOpeningList.Quoted_Rate ? '' : BidOpeningListFormSubmitted && (tenderValue ==='' || tenderValue === null || tenderValue === undefined)}"
+           >
+        </div>
+        <div class="col-sm-4" *ngIf = "tenderValue && tenderValue > 0">
+          <label class="control-label">Quoted Percentage <sup class="text-danger">*</sup></label>
+          <div class="input-group">
+            <input class="form-control"
+            name="Quoted"
+            #Quoted="ngModel"
+            [(ngModel)]="ObjBidOpeningList.Quoted_Percentage"
+            placeholder="Quoted Percentage"
+            [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Quoted_Percentage === '' || ObjBidOpeningList.Quoted_Percentage === null || ObjBidOpeningList.Quoted_Percentage=== undefined)}" >
+            <div class="input-group-addon"><b>%</b></div>
+
+          </div>
+        </div>
+        <div class="col-sm-4" *ngIf = "tenderValue === '' || tenderValue === null || tenderValue === undefined || tenderValue === '0'">
+          <label class="control-label">Quoted Rate <sup class="text-danger">*</sup></label>
+          <div class="input-group">
+            <input class="form-control"
+            name="Quoted_Rate"
+            #Quoted_Rate="ngModel"
+            [(ngModel)]="ObjBidOpeningList.Quoted_Rate"
+            placeholder="Quoted Rate"
+            [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Quoted_Rate === '' || ObjBidOpeningList.Quoted_Rate === null || ObjBidOpeningList.Quoted_Rate=== undefined)}" 
+            CompacctDigitonly="true">
+            
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <button
+          type="submit"
+          name="bidopen"
+          class="btn btn-primary custombutton"
+          (click)="AddBidOpen()"
+        >
+          <span class="glyphicon glyphicon-plus"></span
+          >&nbsp;Add
+        </button>
+        </div>
+
+      </div>
+      
+      <div style="padding: 2em;">
+        <div class="table-responsive no-padding">
+          <table class="table bidopen table-bordered">
+            <thead>
+              <tr style="background-color:#3c8dbc;color:white;">
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Sl. No.
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Bidder Name
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Tender Value
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Rate
+                </th>
+                <th
+                nowrap
+                rowspan="2"
+                class="text-center"
+                style="vertical-align:middle"
+              >
+                Quoted Percentage
+              </th>
+                <th colspan="2" scope="colgroup" class="text-center">
+                  Quoted Rate In Figures and Words
+                </th>
+                <th nowrap rowspan="2">Delete</th>
+              </tr>
+              <tr style="background-color:#3c8dbc;color:white">
+                <th scope="col" class="text-center">Rate</th>
+                <th scope="col" class="text-center">Amount.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let d of BidOpenListView;
+                  let odd = odd;
+                  let index = index
+                "
+                [class.even]="odd"
+              >
+                <td>{{ d.Sl_No }}</td>
+                <td>{{ d.Bidder_Name }}</td>
+                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }}</td>
+                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
+                 <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+                <td>
+                  <a (click)="DeleteBidOpenList(index)"
+                    ><div><i class="fa fa-fw fa-trash"> </i></div>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button
+        type="submit"
+        name="bidopen"
+        class="btn btn-primary pull-right"
+        (click)="RankBiddingCompanies()"
+      >
+        <span class="glyphicon glyphicon-refresh"></span
+        >&nbsp; Rank Bidding Companies
+      </button>
+      </div>
+      <div  style="padding: 2em;" *ngIf="BidOpenListViewByRateFlag">
+        <div class="table-responsive no-padding">
+          <table class="table bidopen table-bordered">
+            <thead>
+              <tr style="background-color:#3c8dbc;color:white;">
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                 Rank
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Bidder Name
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                Tender Value
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Rate
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Percentage
+                </th>
+                <th colspan="2" scope="colgroup" class="text-center">
+                  Quoted Rate In Figures and Words
+                </th>
+
+              </tr>
+              <tr style="background-color:#3c8dbc;color:white">
+                <th scope="col" class="text-center">Rate</th>
+                <th scope="col" class="text-center">Amount.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let d of BidOpenListViewByRate;
+                  let odd = odd;
+                  let index = index
+                "
+                [class.even]="odd"
+              >
+                <td>{{ d.Rank }}</td>
+                <td>{{ d.Bidder_Name }}</td>
+                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
+                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
+                <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+      <div   style="padding: 2em;" *ngIf="BidOpenListViewByLotteryFlag">
+        <div class="table-responsive no-padding">
+          <table class="table bidopen table-bordered">
+            <thead>
+              <tr style="background-color:#3c8dbc;color:white;">
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Rank
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Bidder Name
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                Tender Value
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Rate
+                </th>
+                <th
+                  nowrap
+                  rowspan="2"
+                  class="text-center"
+                  style="vertical-align:middle"
+                >
+                  Quoted Percentage
+                </th>
+
+                <th colspan="2" scope="colgroup" class="text-center">
+                  Quoted Rate In Figures and Words
+                </th>
+              </tr>
+              <tr style="background-color:#3c8dbc;color:white">
+                <th scope="col" class="text-center">Rate</th>
+                <th scope="col" class="text-center">Amount.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let d of BidOpenListViewByLottery;
+                  let odd = odd;
+                  let index = index;
+                  trackBy:trackByfn
+                "
+                [class.even]="odd"
+              >
+                <td>{{d.Rank}}
+                </td>
+                <td>
+                  <select class="form-control"
+                  name="Bidder_Name-{{index}}"
+                  #Bidder_Name="ngModel"
+                  [(ngModel)]="d['Bidder_Name']"
+                  (change)="LotteryBidderNameChange(index,d)"
+                  *ngIf="d['Lottery_Flag'] === 'DUPLICATE'"
+                  [ngClass]="{'clearance': (BidOpeningListFormSubmitted && Bidder_Name.errors?.required) || (checkBidderSelectLottery(d['Bidder_Name']))}" required>
+                    <option  [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of d.Temp_Bidder_Array;trackBy:trackByfn" [ngValue]="option.Bidder_Name">
+                        {{option.Bidder_Name}}
+                        </option>
+                  </select>
+                  <span  *ngIf="d['Lottery_Flag'] === 'FIXED'">{{d.Bidder_Name}}</span>
+                </td>
+                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
+                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                <td> {{d.Quoted_Percentage ? d.Quoted_Percentage  +' %':'-' }} </td>
+                <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="box-footer" >
+        <button class="btn btn-primary pull-right"
+                (click)="SaveBidOpening()"
+                id="load"
+                [disabled]="Spinner">
+                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{BidEditFlag ? 'Update Bid' : 'Create Bid'}}
+        </button>
+    </div>
+ </form>
+</div>
+
+<p-footer>
+    <button
+  type="button"
+  (click)="BidOpenningModel=false"
+  class="btn btn-default"
+>Close
+</button>
+</p-footer>
+</p-dialog>

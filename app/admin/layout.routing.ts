@@ -149,7 +149,8 @@ import { TenderBudgetComponent } from "./common/TenderManagement/tender-budget/t
 import { TenderHarbauerViewComponent } from "./common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component";
 import { NepalMasterSubledgerComponent } from "./common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component";
 import { HarbauerMasterProductMechanicalComponent } from './common/Harbauer/harbauer-master-product-mechanical/harbauer-master-product-mechanical.component';
-
+import { OutletGroupReportComponent } from './common/OutletManagement/outlet-group-report/outlet-group-report.component';
+import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
 
 
 
@@ -854,7 +855,7 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                               {
                                                                 path: 'BL_CRM_Txn_Enq_Tender_Harbauer_View',
                                                                 component: TenderHarbauerViewComponent,
-                                                                data: {title: 'Tender View (GOVT.)'}
+                                                                data: {title: 'Tender Edit (GOVT.)'}
                                                                 },
                                                             {
                                                               path:'Master_Accounting_Subledger_Nepal',
@@ -865,7 +866,18 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                               path:'Harbauer_Master_Product_mechanical',
                                                               component: HarbauerMasterProductMechanicalComponent,
                                                               data: {title: 'Master Product mechanical'}
-                                                            }
+                                                            },
+                                                              {
+                                                                path:'Outlet_Group_Report',
+                                                                component: OutletGroupReportComponent,
+                                                                data: {title: 'Group Report'}
+                                                              },
+                                                                {
+                                                                  path:'BL_CRM_Txn_Enq_Tender_Harbauer_View_Actual',
+                                                                  component: TenderHarbauerActualViewComponent,
+                                                                  data: {title: 'Tender View (GOVT.)'}
+                                                                }
+
 
         /*{
 
