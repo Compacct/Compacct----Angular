@@ -84,6 +84,54 @@ export class TenderHarbauerViewComponent implements OnInit {
       bidderName = undefined;
       BidderSubmition = false;
       BidderSpinner = false;
+    // Edit
+    GetEditdata = [];
+    ObjTender:Tender = new Tender()
+    editModel = false;
+    StateList = [];
+    TenderPublishDate = new Date();
+    TenderEndDate =  new Date();
+    TenderOpenDate = new Date();
+    testchips = [];
+    editTenderId = undefined;
+    TendermasterFormSubmitted = false;
+     // Tender Authority
+      vieworgList = [];
+      ViewModal = false;
+      tenderOrg = [];
+     tenderAuthFormSummitted = false;
+
+    // Tender Calling Div
+    viewcallList = [];
+    ViewcallModal = false;
+    TenderCallingDivList = [];
+    // Tender Execution Div
+    viewExecutionList = [];
+    ViewExecutionModal = false;
+    TenderExecutionDivList = [];
+    // Tender Type
+    TypeData = [];
+    viewtendertypeList = [];
+    ViewtendertypeModal = false;
+    // Tender Category
+    tenderCategoryList = [];
+    viewtendercategoryList = [];
+    ViewtendercategoryModal = false;
+    // Information From
+   viewinformationList = [];
+   ViewinformationModal = false;
+   TenderInfoEnqList = [];
+  InformationSubmitted = false;
+  InformationName = undefined;
+  InformationModal = false;
+  InformedDate = new Date();
+  PeriodOfWork = undefined;
+  TenderOrganization = undefined;
+  OrgSubmitted = false;
+  OrganizationModal = false;
+  BudgetRequidBy = new Date();
+  UserList = [];
+  CreateLightBoxSubmitted = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -763,9 +811,432 @@ export class TenderHarbauerViewComponent implements OnInit {
  }
 
 //  Edit
-Edit(obj){
-  
+async Edit(col:any){
+  if(col.Tender_Doc_ID){
+    this.editTenderId = undefined;
+    this.editTenderId = col.Tender_Doc_ID;
+    this.editModel = true;
+    this.testchips = [];
+    this.ObjTender = new Tender();
+    this.TendermasterFormSubmitted = false;
+   await this.GetTenderOrg();
+   await this.GetTenderCallingDiv();
+   await this.GetTenderExecutionDiv();
+   await this.GetType();
+   await this.GetTenderCategoryList();
+   await this.GetStateList();
+   await this.getAssignforbudget();
+   await this.GetTenderInfoEnqSRC();
+   await this.GetAllEditData(col.Tender_Doc_ID);
+   await this.getThenderWorkLocation(col.Tender_Doc_ID);
+   
+  }
 }
+GetAllEditData(DocID){
+  const obj = {
+    "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+    "Report_Name_String": "Get_BL_CRM_Txn_Enq_Tender_Harbauer_Data",
+    "Json_Param_String": JSON.stringify([{Tender_Doc_ID : DocID}])
+  }
+  this.GlobalAPI
+    .getData(obj)
+    .subscribe((data: any) => {
+      if(data[0]){
+        this.ObjTender = data[0];
+        this.InformedDate = new Date(data[0].Tender_Informed_Date);
+        this.BudgetRequidBy = new Date(data[0].Budget_Required_By);
+        this.TenderOpenDate = new Date(data[0].Tender_Bid_Opening_Date);
+        this.TenderEndDate = new Date(data[0].Tender_Last_Sub_Date);
+        this.TenderPublishDate = new Date(data[0].Tender_Publish_Date)
+      }
+      console.log("ObjTender",this.ObjTender);
+      
+    })
+}
+getThenderWorkLocation(DocID){
+  const obj = {
+    "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+    "Report_Name_String": "Get_BL_CRM_Txn_Enq_Tender_Work_Location_Data",
+    "Json_Param_String": JSON.stringify([{Tender_Doc_ID : DocID}])
+  }
+  this.GlobalAPI
+    .getData(obj)
+    .subscribe((data: any) => {
+       if(data){
+        this.testchips = data;
+        // data.forEach(ele => {
+        //   this.testchips.push(ele.Work_Location)
+        // });
+      }
+      console.log("testchips",this.testchips);
+
+    })
+}
+checkChip(e) { 
+ const val =  this.testchips.indexOf(e.value);
+ this.testchips.splice(val,1);
+  this.testchips.push({"Tender_Doc_ID":this.editTenderId,"Work_Location":e.value});
+}
+// Check Tender Name
+CheckIfTenderNameExist(){
+  if(this.ObjTender.Tender_Name) {
+    const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
+    const params = new HttpParams().set("Tender_Name", this.ObjTender.Work_Name);
+  this.$http
+    .get("/BL_CRM_Txn_Enq_Tender/Check_Tender_Name_Exist?Tender_Name="+ this.ObjTender.Work_Name, {headers: headers, responseType: 'text'})
+    .subscribe((data: any) => {
+      if(data === 'True') {
+        this.ObjTender.Tender_Name = undefined;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          life: 5000,
+          summary: "Tender Name Error Message",
+          detail: "Work Title Already Exist."
+        });
+      }
+    });
+  }
+}
+// Tender Authority create View
+    CreateOrganization(valid){
+      this.tenderAuthFormSummitted = true;
+      console.log("valid",valid);
+      if(valid) {
+          this.Spinner = true;
+          const obj = {
+              "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+              "Report_Name_String" : "Create_Tender_Organization",
+              "Json_Param_String": JSON.stringify({Tender_Organization: this.TenderOrganization}),
+            }
+            this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+            console.log(data)
+          if (data[0].Column1) {
+            this.Spinner = false;
+            this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: "",
+                detail: "Succesfully Tender Authority Created"
+              });
+            this.GetTenderOrg();
+            this.TenderOrganization = undefined;
+            this.tenderAuthFormSummitted = false;
+            this.OrganizationModal = false;
+            this.Spinner = false;
+          } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+          }
+          });
+      }
+    }
+    ViewOrganization(){
+      this.vieworgList = [];
+      this.ViewModal = true;
+      this.GetTenderOrg();
+    }
+    GetTenderOrg() {
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String" : "Get_Tender_Organization",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.tenderOrg = data;
+        console.log("tenderOrg",this.tenderOrg);
+    });
+    }
+    ToggleOrganization(){
+      this.TenderOrganization = undefined;
+      this.OrgSubmitted = false;
+      this.OrganizationModal = true;
+      this.Spinner = false;
+    }
+//Tender Calling Div
+    GetTenderCallingDiv() {
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String" : "Get_BL_CRM_Mst_Enq_Tender_Calling_Div",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.TenderCallingDivList = data;
+        });
+    }
+    ViewCallingDiv(){
+      this.viewcallList = [];
+      this.ViewcallModal = true;
+      this.GetTenderCallingDiv();
+    }
+ // Tender Execution Div
+    GetTenderExecutionDiv() {
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String" : "Get_BL_CRM_Mst_Enq_Tender_Execution_Div",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.TenderExecutionDivList = data;
+        });
+    }
+    ViewExecutionDiv(){
+      this.viewExecutionList = [];
+      this.ViewExecutionModal = true;
+      this.GetTenderExecutionDiv();
+    }
+    // Light Box Save
+    LightBoxSave(val,field) {
+  console.log(val)
+  if(this[val]) {
+    const obj = {};obj[field] = this[val];
+    let reportname;
+    let refreshFunction;
+    if(field === 'Tender_Calling_Div_Name') {
+      reportname = 'Create_BL_CRM_Mst_Enq_Tender_Calling_Div'
+      refreshFunction = 'GetTenderCallingDiv';
+     // this.GetTenderCallingDiv();
+    }
+    if(field === 'Tender_Execution_Div_Name') {
+      reportname = 'Create_BL_CRM_Mst_Enq_Tender_Execution_Div'
+      refreshFunction = 'GetTenderExecutionDiv';
+      //this.GetTenderExecutionDiv();
+    }
+    if(field === 'Tender_Type_Name') {
+      reportname = 'Create_BL_CRM_Mst_Enq_Tender_Type'
+      refreshFunction = 'GetTypeList';
+      //GetTypeList();
+    }
+    if(field === 'Tender_Category_Name') {
+      reportname = 'Create_BL_CRM_Mst_Enq_Tender_Category'
+      refreshFunction = 'GetTenderCategoryList';
+      //this.GetTenderCategoryList();
+    }
+    // if(field === 'Enq_Source_Name') {
+    //   UrlAddress = '/BL_CRM_Txn_Enq_Tender/Create_Tender_Enq_Source'
+    //   refreshFunction = 'GetTenderCallingDiv';
+    // }
+    this.Spinner = true;
+    const Obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : reportname,
+      "Json_Param_String": JSON.stringify(obj),
+    }
+    this.GlobalAPI.getData(Obj).subscribe((data:any)=>{
+    //   this.tenderOrgList = data;
+    // this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+      console.log(data)
+    if (data[0].Column1) {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "",
+          detail: "Succesfully "+field+" Created"
+        });
+      this[refreshFunction]();
+      this.CreateLightBoxSubmitted = false;
+      this[val] = undefined;
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+    });
+
+  }
+}
+// Tender Id Check
+CheckIfTenderIDExist(){
+  if(this.ObjTender.Tender_ID) {
+    const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8');
+    // const params = new HttpParams().set("Tender_ID", this.ObjTender.Tender_ID);
+    this.$http
+      .get("/BL_CRM_Txn_Enq_Tender/Check_Tender_ID_Exist?Tender_ID="+this.ObjTender.Tender_ID , {headers: headers, responseType: 'text'})
+      .subscribe((data: any) => {
+        console.log(data);
+        if(data === 'True') {
+          this.ObjTender.Tender_ID = undefined;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            life: 5000,
+            summary: "Tender ID Error Message",
+            detail: "Tender ID Already Exist."
+          });
+        }
+      });
+  }
+}
+
+   // Tender Type
+   GetType() {
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : "Get_BL_CRM_Mst_Enq_Tender_Type",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.TypeData = data;
+      });
+  }
+  ViewTenderType(){
+    this.viewtendertypeList = [];
+    this.ViewtendertypeModal = true;
+    this.GetTypeList();
+  }
+  // Tender Category
+  GetTenderCategoryList() {
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : "Get_BL_CRM_Mst_Enq_Tender_Category",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.tenderCategoryList = data;
+    });
+  }
+  Viewcategory(){
+    this.viewtendercategoryList = [];
+    this.ViewtendercategoryModal = true;
+    this.GetTenderCategoryList();
+  }
+  // Get State List
+  GetStateList() {
+    this.$http
+    .get("/Common/Get_State_List")
+    .subscribe((data: any) => {
+      this.StateList = data.length ? data : [];
+    });
+   }
+  // Information From
+
+  Viewinformation(){
+    this.viewinformationList = [];
+    this.ViewinformationModal = true;
+    this.GetTenderInfoEnqSRC();
+  }
+  GetTenderInfoEnqSRC() {
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String" : "Get_BL_Enq_Source_Master",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.TenderInfoEnqList = data;
+        console.log("TenderInfoEnqList",this.TenderInfoEnqList);
+      });
+  }
+  ToggleInformation(){
+    this.InformationSubmitted = false;
+    this.InformationName = undefined;
+    this.InformationModal = true;
+    this.Spinner = false;
+   }
+   getAssignforbudget(){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_User"
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.UserList = data;
+       console.log('UserList =',this.UserList)
+     })
+  }
+  CreateInformation(valid){
+    this.InformationSubmitted = true;
+    if(valid) {
+        this.Spinner = true;
+        const obj = {
+          "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+          "Report_Name_String" : "Create_BL_Enq_Source_Master",
+          "Json_Param_String": JSON.stringify({Enq_Source_Name: this.InformationName}),
+        }
+        this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      
+          console.log(data)
+        if (data[0].Column1) {
+            this.Spinner = false;
+           this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "",
+              detail: "Succesfully Information Created"
+            });
+        
+          this.GetTenderInfoEnqSRC();
+          this.InformationSubmitted = false;
+          this.InformationName = undefined;
+          this.InformationModal = false;
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+        });
+    }
+    }
+  SaveTenderMaster(valid){
+    this.TendermasterFormSubmitted = true;
+    if(valid){
+    console.log("save Data",this.ObjTender);
+    this.ObjTender.Tender_Publish_Date = this.DateService.dateTimeConvert(new Date(this.TenderPublishDate));
+    this.ObjTender.Tender_Last_Sub_Date = this.DateService.dateTimeConvert(new Date(this.TenderEndDate));
+    this.ObjTender.Tender_Bid_Opening_Date = this.DateService.dateTimeConvert(new Date(this.TenderOpenDate));
+    this.ObjTender.Tender_Informed_Date = this.DateService.dateTimeConvert(new Date(this.InformedDate));
+    this.ObjTender.Budget_Required_By = this.DateService.dateTimeConvert(new Date(this.BudgetRequidBy));
+    const infoName = this.TenderInfoEnqList.filter(el=>Number(el.Enq_Source_ID) ===Number(this.ObjTender.Enq_Source_ID));
+    console.log("InfoName",infoName[0]);
+    this.ObjTender.Tender_Publishing_Info_From = infoName[0].Enq_Source_Name;
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Tender_Govt_Update",
+      "Json_Param_String": JSON.stringify([this.ObjTender]),
+      "Json_1_String": JSON.stringify(this.testchips)
+    }
+    this.GlobalAPI
+      .getData(obj)
+      .subscribe((data: any) => {
+        if(data[0].Column1){
+          this.TendermasterFormSubmitted = false;
+          this.ObjTender = new Tender();
+          this.testchips =[];
+          this.editModel = false;
+          this.SearchTender(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         //summary: "Return_ID  " + tempID,
+         detail: "Succesfully Update" 
+       });
+        }
+       else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+       }
+        console.log("After Save",data);
+      })
+    
+   }
+  }
 }
 class search{
   Filter1_Text:string;
@@ -801,4 +1272,33 @@ class PerformanceSecurity{
   Date_Of_Issue :any;  
   Date_Of_Exp:any;
   Amount:number
+}
+class Tender{
+        Tender_Doc_ID :number;
+				Cost_Cen_ID : number;
+				User_ID : number;	
+				Work_Name : string;							
+				Work_Details : string;
+        Tender_Name:string;				
+				Tender_Org_ID:number;
+				Tender_Calling_Div_ID:number;
+				Tender_Execution_Div_ID:number;
+				Tender_Ref_No:string;
+				Tender_ID:number;
+				Tender_Type_ID:number;
+				Tender_Category_ID:number;
+        Tender_Amount : number;
+				State:string;				
+        Tender_Value:any;
+				Tender_Publish_Date:string;
+				Tender_Last_Sub_Date:string;
+				Tender_Bid_Opening_Date:string;
+				EMD_Amount:string;
+				T_Fee_Amount:string;
+				Enq_Source_ID:number;
+				Tender_Informed_Date:string;
+				Period_Of_Working:string;
+				Budget_Required_By:string;
+				Govt_Proposal:string;
+        Tender_Publishing_Info_From:any
 }
