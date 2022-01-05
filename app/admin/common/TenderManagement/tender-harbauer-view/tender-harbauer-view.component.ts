@@ -132,6 +132,18 @@ export class TenderHarbauerViewComponent implements OnInit {
   BudgetRequidBy = new Date();
   UserList = [];
   CreateLightBoxSubmitted = false;
+  // Bid Openning & AOC
+   BidOpenningModel = false;
+   ObjBidOpeningList = new BidOpeningList(); 
+   BidOpeningListFormSubmitted = false;
+   tenderValue = undefined;
+   BidOpenListView = [];
+   BidTenderId = undefined;
+   BidOpenListViewByRate = [];
+    BidOpenListViewByRateFlag = false;
+   BidOpenListViewByLotteryFlag = false;
+   TenderDetails:any = {};
+   BidOpenListViewByLottery: Array<RankBidOpeningList> = [];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -812,6 +824,7 @@ export class TenderHarbauerViewComponent implements OnInit {
 
 //  Edit
 async Edit(col:any){
+  console.log("col",col);
   if(col.Tender_Doc_ID){
     this.editTenderId = undefined;
     this.editTenderId = col.Tender_Doc_ID;
@@ -1237,6 +1250,414 @@ CheckIfTenderIDExist(){
     
    }
   }
+  // Bid Opeing & AOC
+  ViewBidOpening(col){
+   console.log("col",col);
+   if(col.Tender_Doc_ID){
+    this.BidOpenningModel = true;
+    this.BidTenderId = col.Tender_Doc_ID;
+    this.getBidderList(col.Tender_Doc_ID);
+    this.GetIFBidExist(col.Tender_Doc_ID);
+   }
+  }
+  GetIFBidExist(TenderDocID) {
+    if(TenderDocID) {
+       this.GetBidOpenList(TenderDocID);
+            this.GetRankBidOpenList(TenderDocID);
+            // if(obj.Financial_Bid_Status === 'AWARDING THE TENDER') {
+            // this.ISDAmountChange(obj.ISD_Amount);
+            // this.APSDAmountChange(obj.APSD_Amount);
+            // this.ISDMaturityAmountChange(obj.ISD_Maturity_Amount);
+            // this.APSDMaturityAmountChange(obj.APSD_Maturity_Amount);
+            // this.GetDivision(obj.Circle)
+            // if(obj.ISD_FD_Amount){
+            //   this.ISDFDAmountChange(obj.ISD_FD_Amount);
+            // }
+            // if(obj.ISD_FD_Mature_Amount){
+            //   this.ISDFDMaturityAmountChange(obj.ISD_FD_Mature_Amount);
+            // }
+            // if(obj.APSD_FD_Amount){
+            //   this.APSDFDAmountChange(obj.APSD_FD_Amount);
+            // }
+            // if(obj.APSD_FD_Mature_Amount){
+            //   this.APSDFDMaturityAmountChange(obj.APSD_FD_Mature_Amount);
+            // }
+            // this.AgreementValueAmountChange(obj.Agreement_Value);
+            // this.ISDReleaseDate = new Date(obj.ISD_Release_Date);
+            // this.APSDReleaseDate = new Date(obj.APSD_Release_Date);
+            // this.ISDDepositDate = new Date(obj.ISD_Deposit_date);
+            // this.ISDBGDate = obj.ISD_BG_Creation_Date ?  new Date(obj.ISD_BG_Creation_Date) : new Date();
+            // this.ISDBGExpDate =  obj.ISD_BG_Exp_Date ?  new Date(obj.ISD_BG_Exp_Date) : new Date();
+            // this.ISDMatureDate =  obj.ISD_FD_Mature_Date ?  new Date(obj.ISD_FD_Mature_Date) : new Date();
+            // this.ISDNEFTDate =  obj.ISD_NEFT_Txn_Date ?  new Date(obj.ISD_NEFT_Txn_Date) : new Date();
+            // this.APSDDepositDate = new Date(obj.APSD_Deposit_date);
+            // this.APSDBGDate =  obj.APSD_BG_Creation_Date ?  new Date(obj.APSD_BG_Creation_Date) : new Date();
+            // this.APSDBGExpDate =  obj.APSD_BG_Exp_Date ?  new Date(obj.APSD_BG_Exp_Date) : new Date();
+            // this.APSDMatureDate =  obj.APSD_FD_Mature_Date ?  new Date(obj.APSD_FD_Mature_Date) : new Date();
+            // this.APSDNEFTDate =  obj.APSD_NEFT_Txn_Date ?  new Date(obj.APSD_NEFT_Txn_Date) : new Date();
+            // this.CommencementDate = new Date(obj.Date_of_Commencement);
+            // this.CompletionDate = new Date(obj.Date_of_Completion);
+            // this.PeriodOfCompletion = obj.Periods_of_Completion;
+            // }
+            // if(obj.Financial_Bid_Status === 'NOT- AWARDING THE TENDER') {
+            //   const arrTemp =  this.ObjBidOpening.Not_Awarding_Reason ?  this.ObjBidOpening.Not_Awarding_Reason.split(",") : [];
+            //   this.ReasonSelect = arrTemp;
+            // }
+       }
+  }
+  GetBidOpenList(TenderDocID) {
+    if(TenderDocID) {
+      const obj = {
+        "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+        "Report_Name_String" : "Get_Tender_Govt_Bidding_First_Table_harbour",
+        "Json_Param_String": JSON.stringify({Tender_Doc_ID:TenderDocID}),
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{ 
+          this.BidOpenListView = data;
+          // this.BidOpenListView.forEach(el=>{
+          //   this.BidOpenListView['Quoted_Rate'] = el.Rate
+          // })
+          for(let i = 0; i<this.BidOpenListView.length; i++){
+            if(!this.BidOpenListView[i]['Quoted_Percentage']){
+              this.BidOpenListView[i]['Quoted_Rate'] = this.BidOpenListView[i]['Rate']
+            }
+           
+          }
+          console.log("Get BidOpenListView",this.BidOpenListView);
+        });
+    }
+  }
+  GetRankBidOpenList(TenderDocID) {
+    this.BidOpenListViewByRate = [];
+    this.BidOpenListViewByLottery = [];
+    this.BidOpenListViewByRateFlag = false;
+    this.BidOpenListViewByLotteryFlag = false;
+    if(TenderDocID) {
+      const obj = {
+        "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+        "Report_Name_String" : "Get_Tender_Govt_Bidding_Rank_harbour",
+        "Json_Param_String": JSON.stringify({Tender_Doc_ID:TenderDocID}),
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=> {
+          const Arr = data;
+          for(let i = 0; i<Arr.length; i++){
+            if(!Arr[i]['Quoted_Percentage']){
+              Arr[i]['Quoted_Rate'] = Arr[i]['Rate']
+            }
+           
+          }
+            
+            this.BidOpenListViewByLotteryFlag = true;
+            this.RetriveRankBidding(Arr);
+          
+        });
+    }
+  }
+  RetriveRankBidding(RankArr) {
+    const valueArr = RankArr.map(function(item){ return item.Rate });
+    const arr =  [...RankArr];
+    for(let i = 0; i < arr.length; i++) {
+      let k = 0 ;
+      for(let r = 0; r < valueArr.length; r++){
+        if(arr[i].Rate === valueArr[r]) {
+          k++;
+        }
+      }
+      if (k === 1) {
+        arr[i].Lottery_Flag = 'FIXED';
+      }
+      if (k > 1) {
+        arr[i].Lottery_Flag = 'DUPLICATE';
+        arr[i].Temp_Bidder_Array = [];
+        const arrTemp = $.grep(arr,function(val){return val.Rate === arr[i].Rate});
+        arr[i].Temp_Bidder_Array = [...arrTemp];
+      }
+      this.BidOpenListViewByLottery.push(arr[i]);
+    }
+    console.log( "BidOpenListViewByLottery",this.BidOpenListViewByLottery)
+  }
+  AddBidOpen() {
+    this.BidOpeningListFormSubmitted = true;
+    const bid = this.ObjBidOpeningList.Bidder_Name;
+    const exitsFlag =this.ObjBidOpeningList.Bidder_Name ? $.grep(this.BidOpenListView,function(val){ return val.Bidder_Name === bid}) : [];
+    if(!exitsFlag.length && (this.tenderValue || this.ObjBidOpeningList.Quoted_Rate) && this.ObjBidOpeningList.Bidder_Name){
+      if(this.ObjBidOpeningList.Quoted_Percentage){
+       const n = this.ObjBidOpeningList.Quoted_Percentage.includes("-");
+      const percentage = n ? this.ObjBidOpeningList.Quoted_Percentage.replace("-", "") : this.ObjBidOpeningList.Quoted_Percentage;
+      const PercentageVal = (( Number(percentage) / 100) * Number(this.tenderValue));
+      const Rate = n ?  Number(this.tenderValue) - PercentageVal :  Number(this.tenderValue) + PercentageVal;
+      const EstimatedRate = this.tenderValue;
+      const footfall = this.BidTenderId;
+      this.ObjBidOpeningList.Quoted_Percentage = (Number(percentage) === 0) ? '0' : this.ObjBidOpeningList.Quoted_Percentage;
+      this.ObjBidOpeningList.Tender_Doc_ID = footfall;
+      this.ObjBidOpeningList.Rate = Rate;
+      this.ObjBidOpeningList.Rate_In_Words = this.convertNumberToWords(Rate);
+      // this.ObjBidOpeningList.Less_Excess = (n && !(Number(percentage) === 0)) ? 'Less' : Number(this.ObjBidOpeningList.Quoted_Percentage) ? 'Excess' : 'Scheduled Rate';
+      this.ObjBidOpeningList.Sl_No = Number(this.BidOpenListView.length) + 1;
+      this.ObjBidOpeningList.Tender_Value = this.tenderValue;
+      this.BidOpenListView.push(this.ObjBidOpeningList);
+      this.BidOpeningListFormSubmitted = false;
+      this.ObjBidOpeningList = new BidOpeningList();
+      this.tenderValue = undefined
+      this.ObjBidOpeningList.Tender_Value = this.tenderValue;
+      this.ObjBidOpeningList.Tender_Doc_ID = footfall;
+      }
+      else {
+        const Rate = Number(this.ObjBidOpeningList.Quoted_Rate)
+        this.ObjBidOpeningList.Rate = Rate;
+        this.ObjBidOpeningList.Rate_In_Words = this.convertNumberToWords(Rate);
+        // this.ObjBidOpeningList.Less_Excess = (n && !(Number(percentage) === 0)) ? 'Less' : Number(this.ObjBidOpeningList.Quoted_Percentage) ? 'Excess' : 'Scheduled Rate';
+        this.ObjBidOpeningList.Sl_No = Number(this.BidOpenListView.length) + 1;
+        this.ObjBidOpeningList.Tender_Value = this.tenderValue;
+        this.BidOpenListView.push(this.ObjBidOpeningList);
+        this.BidOpeningListFormSubmitted = false;
+        this.ObjBidOpeningList = new BidOpeningList();
+        this.tenderValue = undefined
+        this.ObjBidOpeningList.Tender_Value = this.tenderValue;
+        
+        
+      }
+      console.log("ObjBidOpeningList",this.BidOpenListView);
+    }
+    if (exitsFlag.length) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Bidder already exists."
+      });
+    }
+  }
+  convertNumberToWords(amount) {
+    var words = new Array();
+    words[0] = '';
+    words[1] = 'One';
+    words[2] = 'Two';
+    words[3] = 'Three';
+    words[4] = 'Four';
+    words[5] = 'Five';
+    words[6] = 'Six';
+    words[7] = 'Seven';
+    words[8] = 'Eight';
+    words[9] = 'Nine';
+    words[10] = 'Ten';
+    words[11] = 'Eleven';
+    words[12] = 'Twelve';
+    words[13] = 'Thirteen';
+    words[14] = 'Fourteen';
+    words[15] = 'Fifteen';
+    words[16] = 'Sixteen';
+    words[17] = 'Seventeen';
+    words[18] = 'Eighteen';
+    words[19] = 'Nineteen';
+    words[20] = 'Twenty';
+    words[30] = 'Thirty';
+    words[40] = 'Forty';
+    words[50] = 'Fifty';
+    words[60] = 'Sixty';
+    words[70] = 'Seventy';
+    words[80] = 'Eighty';
+    words[90] = 'Ninety';
+    amount = amount.toString();
+    var atemp = amount.split(".");
+    var number = atemp[0].split(",").join("");
+    var n_length = number.length;
+    var words_string = "";
+    if (n_length <= 9) {
+        let n_array:any = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        var received_n_array = new Array();
+        for (var i = 0; i < n_length; i++) {
+            received_n_array[i] = number.substr(i, 1);
+        }
+        for (var i = 9 - n_length, j = 0; i < 9; i++, j++) {
+            n_array[i] = received_n_array[j];
+        }
+        for (var i = 0, j = 1; i < 9; i++, j++) {
+            if (i == 0 || i == 2 || i == 4 || i == 7) {
+                if (n_array[i] == 1) {
+                    n_array[j] = 10 + Number(n_array[j]);
+                    n_array[i] = 0;
+                }
+            }
+        }
+        let value:any = "";
+        for (var i = 0; i < 9; i++) {
+            if (i == 0 || i == 2 || i == 4 || i == 7) {
+                value = n_array[i] * 10;
+            } else {
+                value = n_array[i];
+            }
+            if (value != 0) {
+                words_string += words[value] + " ";
+            }
+            if ((i == 1 && value != 0) || (i == 0 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Crores ";
+            }
+            if ((i == 3 && value != 0) || (i == 2 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Lakhs ";
+            }
+            if ((i == 5 && value != 0) || (i == 4 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Thousand ";
+            }
+            if (i == 6 && value != 0 && (n_array[i + 1] != 0 && n_array[i + 2] != 0)) {
+                words_string += "Hundred and ";
+            } else if (i == 6 && value != 0) {
+                words_string += "Hundred ";
+            }
+        }
+        words_string = words_string.split("  ").join(" ");
+    }
+    return words_string;
+  }
+  RankBiddingCompanies() {
+    let found = false;
+    this.BidOpenListViewByRateFlag = false;
+    this.BidOpenListViewByLotteryFlag = false;
+    this.BidOpenListViewByLottery = [];
+    this.BidOpenListViewByRate  = [];
+     console.log("BidOpenListView",this.BidOpenListView);
+    for(let i = 0; i < this.BidOpenListView.length; i++) {
+        if (this.BidOpenListView[i].Rate) {
+          if(this.BidOpenListView[i].Rate === this.BidOpenListView[0].Rate) {
+            found = false;
+          } else {
+            found = true;
+            break;
+          }
+        } else{
+          found = false;
+        }
+    }
+    const valueArr = this.BidOpenListView.map(function(item){ return item.Rate });
+  
+    const isDuplicate = valueArr.some(function(item, idx){
+        return valueArr.indexOf(item) !== idx
+    });
+    if (found && !isDuplicate) {
+      const arr =  [...this.BidOpenListView];
+      arr.sort(function(a, b){
+        return parseFloat(a.Rate) - parseFloat(b.Rate);
+      });
+      this.BidOpenListViewByRate = arr;
+      for(let i = 0; i < this.BidOpenListViewByRate.length; i++) {
+        const rank = 'L' + (i+1);
+        this.BidOpenListViewByRate[i].Rank =  rank;
+        this.BidOpenListViewByRate[i].Rank =  rank;
+    }
+      this.BidOpenListViewByRateFlag = true;
+  
+    } else {
+      this.BidOpenListViewByRateFlag = false;
+      const Unique = [];
+      const Duplicate = [];
+      const arr =  [...this.BidOpenListView];
+      arr.sort(function(a, b){
+        return parseFloat(a.Rate) - parseFloat(b.Rate);
+      });
+      for(let i = 0; i < arr.length; i++) {
+        let k = 0 ;
+        const rank = 'L' + (i+1);
+        const objTemp = new RankBidOpeningList ();
+        objTemp.Tender_Doc_ID =  this.TenderDetails.Tender_Doc_ID;
+        objTemp.Tender_Doc_ID =  this.TenderDetails.Tender_Doc_ID;
+        for(let r = 0; r < valueArr.length; r++){
+          if(arr[i].Rate === valueArr[r]) {
+            k++;
+          }
+        }
+        if (k === 1) {
+          objTemp.Lottery_Flag = 'FIXED';
+          objTemp.Sl_No = arr[i].Sl_No;
+          objTemp.Tender_Value = arr[i].Tender_Value;
+          objTemp.Bidder_Name = arr[i].Bidder_Name;
+          objTemp.Quoted_Percentage = arr[i].Quoted_Percentage;
+          objTemp.Quoted_Rate = arr[i].Quoted_Rate;
+          objTemp.Rate = arr[i].Rate;
+          objTemp.Rate_In_Words = this.convertNumberToWords(arr[i].Rate);
+        }
+        if (k > 1) {
+          objTemp.Lottery_Flag = 'DUPLICATE';
+          objTemp.Temp_Bidder_Array = [];
+          const arrTemp = $.grep(arr,function(val){return val.Rate === arr[i].Rate});
+          objTemp.Temp_Bidder_Array = [...arrTemp];
+  
+        }
+        objTemp.Rank = rank;
+        this.BidOpenListViewByLottery.push(objTemp);
+      }
+    this.BidOpenListViewByLotteryFlag = true;
+    }
+    console.log("BidOpenListViewByLottery",this.BidOpenListViewByLottery);
+  }
+  checkBidderSelectLottery(bidderName) {
+    const arr = [...this.BidOpenListViewByLottery]
+    const exitsFlag = bidderName ? $.grep(arr,function(val){ return val.Bidder_Name === bidderName}) : [];
+    return exitsFlag.length > 1 ? true : false;
+  }
+  LotteryBidderNameChange(i,obj) {
+    this.BidOpenListViewByLottery[i].Tender_Value = undefined;
+    this.BidOpenListViewByLottery[i].Quoted_Percentage = undefined;
+    this.BidOpenListViewByLottery[i].Rate = undefined;
+    this.BidOpenListViewByLottery[i].Quoted_Rate = undefined;
+    this.BidOpenListViewByLottery[i].Rate_In_Words = undefined;
+if(obj.Bidder_Name) {
+  const arr =  [...this.BidOpenListView];
+  const bidObj = $.grep(arr,function(elem){ return elem.Bidder_Name === obj.Bidder_Name})[0];
+  const flag = this.checkBidderSelectLottery(obj.Bidder_Name)
+  if(!flag) {
+    this.BidOpenListViewByLottery[i].Tender_Value = bidObj.Tender_Value;
+    this.BidOpenListViewByLottery[i].Quoted_Percentage = bidObj.Quoted_Percentage;
+    this.BidOpenListViewByLottery[i].Quoted_Rate = bidObj.Quoted_Rate;
+    this.BidOpenListViewByLottery[i].Tender_Doc_ID = bidObj.Tender_Doc_ID;
+    this.BidOpenListViewByLottery[i].Rate = bidObj.Rate;
+    this.BidOpenListViewByLottery[i].Rate_In_Words = this.convertNumberToWords(bidObj.Rate);
+  } else {
+    this.BidOpenListViewByLottery[i].Tender_Value = undefined;
+    this.BidOpenListViewByLottery[i].Quoted_Percentage = undefined;
+    this.BidOpenListViewByLottery[i].Rate = undefined;
+    this.BidOpenListViewByLottery[i].Quoted_Rate = bidObj.Quoted_Rate;
+    this.BidOpenListViewByLottery[i].Tender_Doc_ID = bidObj.Tender_Doc_ID;
+    this.BidOpenListViewByLottery[i].Rate_In_Words = undefined;
+    this.BidOpenListViewByLottery[i].Temp_Bidder_Array = [];
+    const arrTemp = $.grep(arr,function(val){return val.Rate === bidObj.Rate});
+    this.BidOpenListViewByLottery[i].Temp_Bidder_Array = [...arrTemp];
+  }
+
+}
+
+
+}
+inputBoxClr(n){
+  if(!n || Number(n) === 0){
+   this.ObjBidOpeningList.Quoted_Rate = undefined;
+  }
+  else {
+    this.ObjBidOpeningList.Quoted_Percentage = undefined;
+  }
+ }
+ BidAmountView(e){
+  if(e) {
+    const x= e.toString();
+    const number = Number(e);
+   const k =  number.toLocaleString('en-IN', {
+       maximumFractionDigits: 2,
+       style: 'currency',
+       currency: 'INR'
+   });
+   return  k;
+  }
+}
+DeleteBidOpenList(index){
+  this.BidOpenListView.splice(index, 1);
+  for(let i = 0; i < this.BidOpenListView.length; i++) {
+    this.BidOpenListView[i].Sl_No = i + 1;
+  }
+  this.RankBiddingCompanies();
+}
+  SaveBidOpening(){
+
+  }
 }
 class search{
   Filter1_Text:string;
@@ -1301,4 +1722,84 @@ class Tender{
 				Budget_Required_By:string;
 				Govt_Proposal:string;
         Tender_Publishing_Info_From:any
+}
+class BidOpeningList {
+  Schedule_ID:string;
+  Sl_No	:number;
+  Bidder_Name:string;
+  Tender_Value:number;
+  Quoted_Percentage:string;
+  Quoted_Rate:number;
+  Less_Excess:string;
+  Rate:number;
+  Rate_In_Words:string;
+  Tender_Doc_ID:string;
+  
+}
+class RankBidOpeningList {
+  Rank_ID:string;
+  Rank:string;
+  Sl_No	:number;
+  Bidder_Name:string;
+  Tender_Value:number;
+  Quoted_Percentage:string;
+  Less_Excess:string;
+  Rate:number;
+  Rate_In_Words:string;
+  Tender_Doc_ID:string;
+  Lottery_Flag:string;
+  Quoted_Rate:string;
+  Temp_Bidder_Array:any = [];
+  
+}
+class BidOpening{
+  Tender_Doc_ID:string;
+  Tender_Inviting_Authority:string;
+  Financial_Bid_Status:string;
+  Fin_Year_Name:string;
+  ISD_Amount:number;
+  ISD_Maturity_Amount:number;
+  ISD_Bank:string;
+  ISD_Deposit_date:string;
+  ISD_Release_Date: string;
+  ISD_Deposit_Type:string;
+  ISD_Deposit_Number:string;
+  ISD_Through_BG_FD:string;
+  ISD_BG_Creation_Date:string;
+  ISD_BG_Exp_Date:string;
+  ISD_FD_Amount:number;
+  ISD_FD_Mature_Amount:number;
+  ISD_FD_Mature_Date:string;
+  ISD_NEFT_Txn_Date:string;
+  ISD_NEFT_TXN_No:string;
+  APSD_Amount:number;
+  APSD_Maturity_Amount:number;
+  APSD_Bank:string;
+  APSD_Deposit_date:string;
+  APSD_Release_Date: string;
+  APSD_Deposit_Type:string;
+  APSD_Deposit_Number:string;
+  APSD_Through_BG_FD:string;
+  APSD_BG_Creation_Date:string;
+  APSD_BG_Exp_Date:string;
+  APSD_FD_Amount:number;
+  APSD_FD_Mature_Amount:number;
+  APSD_FD_Mature_Date:string;
+  APSD_NEFT_Txn_Date:string;
+  APSD_NEFT_TXN_No:string;
+  Agreement_Number:string;
+  Agreement_Value:any;
+  Date_of_Commencement:string;
+  Date_of_Completion:string;
+  Periods_of_Completion:string;
+  Circle:string;
+  Division:string;
+  Not_Awarding_Reason:string;
+  Disqualify:string;
+  EOT_Applied:string;
+  Rank_Type: string;
+  BOQ_File_Name:string;
+  Project_Short_Name:string;
+  Agreement_value : string;
+ 
 }
