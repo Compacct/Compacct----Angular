@@ -148,10 +148,10 @@
                                     <input
                                         class="form-control"
                                         type="text"
-                                        name="Email"
+                                        name="Emailttt"
                                         placeholder="Email"
-                                        #Email="ngModel"
-                                        [ngClass]="{'clearance': SubledgerSubmitted &&  Email?.errors?.required}"
+                                        #Emailttt="ngModel"
+                                        [ngClass]="{'clearance': SubledgerSubmitted &&  Emailttt?.errors?.required}"
                                         [(ngModel)]="ObjSubledger.Email"
                                         required/>
                                 </div>
@@ -159,11 +159,11 @@
                                     <label class="control-label">Contact No<span class="text-danger">*</span></label>
                                     <input 
                                         class="form-control" 
-                                        name="Mobile_No" 
-                                        #Mobile_No="ngModel" 
+                                        name="Mobile_Nottt" 
+                                        #Mobile_Nottt="ngModel" 
                                         CompacctDigitonly="true" 
-                                        [ngClass]="{clearance: (SubledgerSubmitted && Mobile_No.errors?.required) ||
-                                            (Mobile_No.errors?.minlength && Mobile_No.touched)}"
+                                        [ngClass]="{clearance: (SubledgerSubmitted && Mobile_Nottt.errors?.required) ||
+                                            (Mobile_Nottt.errors?.minlength && Mobile_Nottt.touched)}"
                                         [(ngModel)]="ObjSubledger.Mobile_No" placeholder="Mobile Number" minlength="10" maxlength="10" required />
                                 </div>
                                 <div class="col-sm-4">
@@ -447,7 +447,7 @@
                                         required/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">Address 3<span class="text-danger">*</span></label>
+                                    <label class="control-label">Address 3<span class="text-danger"></span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -455,11 +455,10 @@
                                         placeholder="Address Line Three"
                                         #address3="ngModel"
                                         [ngClass]="{'clearance': SubledgerSubmitted &&  address3?.errors?.required}"
-                                        [(ngModel)]="ObjSubledger.Address_3"
-                                        required/>
+                                        [(ngModel)]="ObjSubledger.Address_3"/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">Land Mark<span class="text-danger">*</span></label>
+                                    <label class="control-label">Land Mark<span class="text-danger"></span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -467,8 +466,7 @@
                                         placeholder="Land Mark"
                                         #Land_Mark="ngModel"
                                         [ngClass]="{'clearance': SubledgerSubmitted &&  Land_Mark?.errors?.required}"
-                                        [(ngModel)]="ObjSubledger.Land_Mark"
-                                        required/>
+                                        [(ngModel)]="ObjSubledger.Land_Mark"/>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Country<sup class="text-danger">*</sup></label>
@@ -498,7 +496,7 @@
                                         [(ngModel)]="ObjSubledger.Pin" placeholder="PIN" minlength="6" maxlength="6" required />
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">State<sup class="text-danger" *ngIf="ObjSubledger.Country == 'India'">*</sup></label>
                                     <select class="form-control"
                                     name="State"
                                     #State="ngModel"
@@ -513,7 +511,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">District <sup class="text-danger">*</sup></label>
+                                    <label class="control-label">District <sup class="text-danger" *ngIf="ObjSubledger.Country == 'India'">*</sup></label>
                                     <select class="form-control"
                                     name="District"
                                     #District="ngModel"
@@ -763,7 +761,7 @@
                                         [(ngModel)]="ObjSubledger.SWS_Agent_Code"/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">Email 2<span class="text-danger">*</span></label>
+                                    <label class="control-label">Email 2<span class="text-danger"></span></label>
                                     <input
                                         class="form-control"
                                         type="text"
@@ -771,11 +769,10 @@
                                         placeholder="Email2"
                                         #Email2="ngModel"
                                         [ngClass]="{'clearance': SubledgerSubmitted &&  Email2?.errors?.required}"
-                                        [(ngModel)]="ObjSubledger.Email2"
-                                        required/>
+                                        [(ngModel)]="ObjSubledger.Email2"/>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">Contact No 2<span class="text-danger">*</span></label>
+                                    <label class="control-label">Contact No 2<span class="text-danger"></span></label>
                                     <input 
                                         class="form-control" 
                                         name="Mobile_No2" 
@@ -783,7 +780,7 @@
                                         CompacctDigitonly="true" 
                                         [ngClass]="{clearance: (SubledgerSubmitted && Mobile_No2.errors?.required) ||
                                             (Mobile_No2.errors?.minlength && Mobile_No2.touched)}"
-                                        [(ngModel)]="ObjSubledger.Mobile_No2" placeholder="Mobile Number 2" minlength="10" maxlength="10" required />
+                                        [(ngModel)]="ObjSubledger.Mobile_No2" placeholder="Mobile Number 2" minlength="10" maxlength="10" />
                                 </div>
                                 <div class="col-sm-6" style="margin-top:1em;">
                                     <label class="control-label">Visting Card<sup class="text-danger"></sup></label>

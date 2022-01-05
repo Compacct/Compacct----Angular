@@ -157,6 +157,7 @@ import { TenderHarbauerActualViewComponent } from './common/TenderManagement/ten
 
 
 
+
 const layoutRoutes: Routes = [
   {
     path: "",
@@ -876,8 +877,7 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   path:'BL_CRM_Txn_Enq_Tender_Harbauer_View_Actual',
                                                                   component: TenderHarbauerActualViewComponent,
                                                                   data: {title: 'Tender View (GOVT.)'}
-                                                                }
-
+                                                                },
 
         /*{
 

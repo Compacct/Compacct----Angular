@@ -549,7 +549,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
             Indent_Date : this.DateService.dateConvert(new Date(this.todayDate)),
             Accept_Reason_ID : null,
             Accept_Reason : null,
-            Status : "Not Updated",
+            Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
             Material_Type : "Finished",
             Total_Qty : Number(this.totaldelqty),
             Total_Accepted_Qty  : this.Auto_Accepted == "N" ? 0 : Number(this.totaldelqty)

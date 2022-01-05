@@ -57,6 +57,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   ObjBrowseData : BrowseData = new BrowseData ()
   doc_no: any;
   doc_date: any;
+  Auto_Accepted: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -147,6 +148,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       if(this.ObjadvDispat.To_Godown_ID){
         this.To_Godown_ID_Dis = true;
       }
+      this.autoacceptedChange();
     })
   }
   getCostcenter(){
@@ -269,6 +271,16 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       this.ObjBrowseData.To_Date = dateRangeObj[1];
     }
   }
+  autoacceptedChange() {
+    //this.ExpiredProductFLag = false;
+   if(this.ObjadvDispat.Cost_Cen_ID) {
+     const ctrl = this;
+     const autoacceptedObj = $.grep(ctrl.costcenterList,function(item: any) {return item.Cost_Cen_ID == ctrl.ObjadvDispat.Cost_Cen_ID})[0];
+     console.log(autoacceptedObj);
+     this.Auto_Accepted = autoacceptedObj.Auto_Accepted;
+     
+    }
+    }
   saveAdv(){
     console.log(this.saveqty());
     console.log(this.productDetails.length && this.saveqty());
@@ -295,7 +307,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                  Fin_Year_ID: el.Fin_Year_ID,
                  Vehicle_Details : el.Vehicle_Details,
                  Adv_Order_No : el.Adv_Order_No,
-                 Status : 'NA'
+                 Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated"
                }
                this.saveData.push(saveObj)
               }

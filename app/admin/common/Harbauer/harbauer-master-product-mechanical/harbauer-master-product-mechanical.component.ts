@@ -118,6 +118,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     }
   
   }
+  onConfirm(){}
   onReject(){}
   GetProductType(){
     const obj = {

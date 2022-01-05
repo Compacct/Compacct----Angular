@@ -237,11 +237,11 @@ import { EnggNepalMachineMasterComponent } from './common/MaterialManagement/Mas
 import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master/engg-nepal-spare-parts/engg-nepal-spare-parts.component';
 import { TenderBudgetComponent } from './common/TenderManagement/tender-budget/tender-budget.component';
 import { TenderHarbauerViewComponent } from './common/TenderManagement/tender-harbauer-view/tender-harbauer-view.component';
-
 import { NepalMasterSubledgerComponent } from './common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component';
 import { HarbauerMasterProductMechanicalComponent } from './common/Harbauer/harbauer-master-product-mechanical/harbauer-master-product-mechanical.component';
 import { OutletGroupReportComponent } from './common/OutletManagement/outlet-group-report/outlet-group-report.component';
 import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
+
 
 
 
@@ -463,7 +463,6 @@ import { TenderHarbauerActualViewComponent } from './common/TenderManagement/ten
     OverlayPanelModule,
     GanttAllModule,
     ChipsModule,
-    ChipsModule
   ],
   exports: [],
   providers: [
