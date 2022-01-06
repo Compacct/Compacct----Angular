@@ -39,6 +39,7 @@ export class TenderHarbauerActualViewComponent implements OnInit {
   tenderCategoryList = [];
   StateList = [];
   UserList = [];
+  editTenderId = undefined;
   TenderInfoEnqList = [];
   ObjTender:Tender = new Tender();
   testchips = [];
@@ -176,6 +177,7 @@ export class TenderHarbauerActualViewComponent implements OnInit {
      console.log("View Obj",col);
      if(col.Tender_Doc_ID){
       this.viewModel = true;
+      this.editTenderId = col.Tender_Doc_ID; 
       this.testchips = [];
       this.ObjTender = new Tender();
      await this.GetTenderOrg();
@@ -318,6 +320,11 @@ export class TenderHarbauerActualViewComponent implements OnInit {
   
       })
   }
+  checkChip(e) { 
+    const val =  this.testchips.indexOf(e.value);
+    this.testchips.splice(val,1);
+     this.testchips.push({"Tender_Doc_ID":this.editTenderId,"Work_Location":e.value});
+   }
 }
 class search{
   Filter1_Text:string;

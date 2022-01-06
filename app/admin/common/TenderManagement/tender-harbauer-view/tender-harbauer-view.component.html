@@ -1327,7 +1327,7 @@ style="text-align: center;"
                     <label class="control-label">Information<sup class="text-danger">*</sup
   ></label>
                     <input type="text" class="form-control" name="nameInformation" #nameInformation="ngModel" [(ngModel)]="InformationName" placeholder="Information" allow-pattern="([a-z ]|\.)" [ngClass]="{
-          clearance: DivisionSubmitted && nameInformation?.errors?.required
+          clearance: InformationSubmitted && nameInformation?.errors?.required
         }" required />
                 </div>
             </div>
@@ -1571,358 +1571,6 @@ style="text-align: center;"
 </p-overlayPanel>
 
 <!-- Bid Openning & AOC -->
-<!-- <p-dialog 
- header='Bid openning & AOC'
- [appendTo]="'body'"
- [visible]="BidOpenningModel"
- [modal]="true"
- [responsive]="true"
- [style]="{ width: '90%', minWidth: '1000px',height:'auto',textAlign: 'center'}"
- style="text-align: center;"
- [maximizable]="true"
- [minY]="90"
- [baseZIndex]="10000">
- <form name="BidOpeningForm" #BidOpeningForm="ngForm" novalidate>
-    <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">Bidder Name<sup class="text-danger">*</sup></label>
-           <select class="form-control"
-                  name="Bidder_Name_Bid"
-                  #Bidder_Name_Bid="ngModel"
-                  [(ngModel)]="ObjBidOpeningList.Bidder_Name"
-                  [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Bidder_Name ==='' || ObjBidOpeningList.Bidder_Name=== null || ObjBidOpeningList.Bidder_Name=== undefined)}" >
-                  <option  [ngValue]="undefined">Select</option>
-              <option *ngFor="let option of GetBidderList" [ngValue]="option.Bidder_Name">
-                  {{option.Bidder_Name}}
-                  </option>
-
-          </select>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Value<sup class="text-danger">*</sup></label>
-          <input class="form-control"
-          name="Estimate"
-          #Estimate="ngModel"
-          CompacctDigitonly="true"
-          [(ngModel)]="tenderValue"
-          (ngModelChange)="inputBoxClr(tenderValue)"
-          placeholder="Tender Value"
-          [ngClass]="{'clearance': ObjBidOpeningList.Quoted_Rate ? '' : BidOpeningListFormSubmitted && (tenderValue ==='' || tenderValue === null || tenderValue === undefined)}"
-           >
-        </div>
-        <div class="col-sm-4" *ngIf = "tenderValue && tenderValue > 0">
-          <label class="control-label">Quoted Percentage <sup class="text-danger">*</sup></label>
-          <div class="input-group">
-            <input class="form-control"
-            name="Quoted"
-            #Quoted="ngModel"
-            [(ngModel)]="ObjBidOpeningList.Quoted_Percentage"
-            placeholder="Quoted Percentage"
-            [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Quoted_Percentage === '' || ObjBidOpeningList.Quoted_Percentage === null || ObjBidOpeningList.Quoted_Percentage=== undefined)}" >
-            <div class="input-group-addon"><b>%</b></div>
-
-          </div>
-        </div>
-        <div class="col-sm-4" *ngIf = "tenderValue === '' || tenderValue === null || tenderValue === undefined || tenderValue === '0'">
-          <label class="control-label">Quoted Rate <sup class="text-danger">*</sup></label>
-          <div class="input-group">
-            <input class="form-control"
-            name="Quoted_Rate"
-            #Quoted_Rate="ngModel"
-            [(ngModel)]="ObjBidOpeningList.Quoted_Rate"
-            placeholder="Quoted Rate"
-            [ngClass]="{'clearance': BidOpeningListFormSubmitted && (ObjBidOpeningList.Quoted_Rate === '' || ObjBidOpeningList.Quoted_Rate === null || ObjBidOpeningList.Quoted_Rate=== undefined)}" 
-            CompacctDigitonly="true">
-            
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <button
-          type="submit"
-          name="bidopen"
-          class="btn btn-primary custombutton"
-          (click)="AddBidOpen()"
-        >
-          <span class="glyphicon glyphicon-plus"></span
-          >&nbsp;Add
-        </button>
-        </div>
-
-      </div>
-      <div class="clearfix"></div>
-      <div   style="padding: 2em;">
-        <div class="table-responsive no-padding">
-          <table class="table bidopen table-bordered">
-            <thead>
-              <tr style="background-color:#3c8dbc;color:white;">
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Sl. No.
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Bidder Name
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Tender Value
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Quoted Rate
-                </th>
-                <th
-                nowrap
-                rowspan="2"
-                class="text-center"
-                style="vertical-align:middle"
-              >
-                Quoted Percentage
-              </th>
-                <th colspan="2" scope="colgroup" class="text-center">
-                  Quoted Rate In Figures and Words
-                </th>
-                <th nowrap rowspan="2">Delete</th>
-              </tr>
-              <tr style="background-color:#3c8dbc;color:white">
-                <th scope="col" class="text-center">Rate</th>
-                <th scope="col" class="text-center">Amount.</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="
-                  let d of BidOpenListView;
-                  let odd = odd;
-                  let index = index
-                "
-                [class.even]="odd"
-              >
-                <td>{{ d.Sl_No }}</td>
-                <td>{{ d.Bidder_Name }}</td>
-                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }}</td>
-                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
-                <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
-                 <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
-                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
-                <td>
-                  <a (click)="DeleteBidOpenList(index)"
-                    ><div><i class="fa fa-fw fa-trash"> </i></div>
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <button
-        type="submit"
-        name="bidopen"
-        class="btn btn-primary pull-right"
-        (click)="RankBiddingCompanies()"
-      >
-        <span class="glyphicon glyphicon-refresh"></span
-        >&nbsp; Rank Bidding Companies
-      </button>
-      </div>
-      <div  style="padding: 2em;" *ngIf="BidOpenListViewByRateFlag">
-        <div class="table-responsive no-padding">
-          <table class="table bidopen table-bordered">
-            <thead>
-              <tr style="background-color:#3c8dbc;color:white;">
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                 Rank
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Bidder Name
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                Tender Value
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Quoted Rate
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Quoted Percentage
-                </th>
-                <th colspan="2" scope="colgroup" class="text-center">
-                  Quoted Rate In Figures and Words
-                </th>
-
-              </tr>
-              <tr style="background-color:#3c8dbc;color:white">
-                <th scope="col" class="text-center">Rate</th>
-                <th scope="col" class="text-center">Amount.</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="
-                  let d of BidOpenListViewByRate;
-                  let odd = odd;
-                  let index = index
-                "
-                [class.even]="odd"
-              >
-                <td>{{ d.Rank }}</td>
-                <td>{{ d.Bidder_Name }}</td>
-                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
-                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
-                <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
-                <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
-                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
-
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        </div>
-      <div   style="padding: 2em;" *ngIf="BidOpenListViewByLotteryFlag">
-        <div class="table-responsive no-padding">
-          <table class="table bidopen table-bordered">
-            <thead>
-              <tr style="background-color:#3c8dbc;color:white;">
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Rank
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Bidder Name
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                Tender Value
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Quoted Rate
-                </th>
-                <th
-                  nowrap
-                  rowspan="2"
-                  class="text-center"
-                  style="vertical-align:middle"
-                >
-                  Quoted Percentage
-                </th>
-
-                <th colspan="2" scope="colgroup" class="text-center">
-                  Quoted Rate In Figures and Words
-                </th>
-              </tr>
-              <tr style="background-color:#3c8dbc;color:white">
-                <th scope="col" class="text-center">Rate</th>
-                <th scope="col" class="text-center">Amount.</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="
-                  let d of BidOpenListViewByLottery;
-                  let odd = odd;
-                  let index = index;
-                  trackBy:trackByfn
-                "
-                [class.even]="odd"
-              >
-                <td>{{d.Rank}}
-                </td>
-                <td>
-                  <select class="form-control"
-                  name="Bidder_Name-{{index}}"
-                  #Bidder_Name="ngModel"
-                  [(ngModel)]="d['Bidder_Name']"
-                  (change)="LotteryBidderNameChange(index,d)"
-                  *ngIf="d['Lottery_Flag'] === 'DUPLICATE'"
-                  [ngClass]="{'clearance': (BidOpeningListFormSubmitted && Bidder_Name.errors?.required) || (checkBidderSelectLottery(d['Bidder_Name']))}" required>
-                    <option  [ngValue]="undefined">Select</option>
-                    <option *ngFor="let option of d.Temp_Bidder_Array;trackBy:trackByfn" [ngValue]="option.Bidder_Name">
-                        {{option.Bidder_Name}}
-                        </option>
-                  </select>
-                  <span  *ngIf="d['Lottery_Flag'] === 'FIXED'">{{d.Bidder_Name}}</span>
-                </td>
-                <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
-                <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
-                <td> {{d.Quoted_Percentage ? d.Quoted_Percentage  +' %':'-' }} </td>
-                <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
-                <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="box-footer" >
-        <button class="btn btn-primary pull-right"
-                (click)="SaveBidOpening()"
-                id="load"
-                [disabled]="Spinner">
-                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{BidEditFlag ? 'Update Bid' : 'Create Bid'}}
-        </button>
-    </div>
- </form>
-  <p-footer>
-     <button type="button" pButton icon="pi pi-close" (click)="BidOpenningModel=false" label="Close" class="ui-button-secondary"></button>
-   </p-footer>
-</p-dialog> -->
 <p-dialog 
 header="Bid openning & AOC"
 [appendTo]="'body'"
@@ -1935,9 +1583,9 @@ header="Bid openning & AOC"
 [minY]="90"
 [maximizable]="true"
 [baseZIndex]="7000">
-<div class="form-horizontal">
+<div class="form-horizontal" style="margin-bottom: 10em;">
   <form name="BidOpeningForm" #BidOpeningForm="ngForm" novalidate>
-    <div class="form-group">
+    <div class="form-group" style="padding: 2em;">
         <div class="col-sm-4">
           <label class="control-label">Bidder Name<sup class="text-danger">*</sup></label>
            <select class="form-control"
@@ -2263,24 +1911,210 @@ header="Bid openning & AOC"
           </table>
         </div>
       </div>
-      <div class="box-footer" >
+      <div class="box-footer" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'">
         <button class="btn btn-primary pull-right"
-                (click)="SaveBidOpening()"
+                (click)="SaveBidOpening(BidOpeningForm.form.valid)"
                 id="load"
                 [disabled]="Spinner">
                 <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
             <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{BidEditFlag ? 'Update Bid' : 'Create Bid'}}
         </button>
     </div>
- </form>
-</div>
+    <div class="form-group">
+      <div class="col-sm-4">
+        <label class="control-label"
+        >Status<sup class="text-danger">*</sup
+      ></label>
+      <select
+      class="form-control"
+      name="Bid_Status"
+      #Bid_Status="ngModel"
+      [(ngModel)]="ObjBidOpening.Financial_Bid_Status"
+      (change)="StatusChange(ObjBidOpening.Financial_Bid_Status)"
+      [ngClass]="{
+        clearance: BidOpeningListFormSubmitted && Bid_Status?.errors?.required
+      }"
+      required
+    >
+      <option [ngValue]="undefined">Select</option>
+      <option value="AWARDING THE TENDER"> AWARDING THE TENDER</option>
+      <option value="NOT- AWARDING THE TENDER"> NOT- AWARDING THE TENDER</option>
+    </select>
+      </div>
+      <div class="col-sm-4" *ngIf="ObjBidOpening.Financial_Bid_Status ==='NOT- AWARDING THE TENDER'">
+        <label class="control-label">Reason<sup class="text-danger">*</sup></label>
+        <span (click)="ToggleReason()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+        <p-multiSelect [options]="ReasonList" [(ngModel)]="ReasonSelect" [styleClass]="'compacct-multiselect'" name="Reason"></p-multiSelect>
 
+       </div>
+    </div>
+ </form>
+ <div class="form-group" *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER'" >
+  <form name="AgreementForm" #AgreementForm="ngForm" novalidate>
+  <h5 style="
+  padding: 0.5em 1em;
+  background: #c1c1c185;
+  border-top: 5px solid #3c8dbc;
+  border-bottom: 1px solid #c6c6c6;
+  margin-top: 15px;
+  ">
+    <i class="fa fa-fw fa-fax">
+    </i> &nbsp;<strong>Agreement Details :</strong>
+  </h5>
+    <div class="col-sm-4">
+    <label class="control-label">Agreement Number<sup class="text-danger">*</sup></label>
+
+    <input class="form-control"
+    name="Agreement"
+    #Agreement="ngModel"
+    [(ngModel)]="ObjAgreement.Agreement_Number"
+    placeholder="Agreement Number"
+    [ngClass]="{'clearance': AgreementSubmitted && Agreement.errors?.required}" required>
+   </div>
+   <div class="col-sm-4">
+    <label class="control-label">Agreement Value<sup class="text-danger">*</sup></label>
+    <input class="form-control"
+    name="AgreementValue"
+    #AgreementValue="ngModel"
+    [(ngModel)]="ObjAgreement.Agreement_Value"
+    placeholder="Agreement value"
+    [ngClass]="{'clearance': AgreementSubmitted && AgreementValue.errors?.required}" required>
+    
+   </div>
+  <div class="col-sm-4">
+    <label class="control-label">Date of Commencement<sup class="text-danger">*</sup></label>
+    <div class="input-group date">
+      <div class="input-group-addon">
+        <i class="fa fa-calendar"></i>
+      </div>
+      <input
+      type="date"
+      name="Commencement"
+      #Commencement="ngModel"
+      [ngModel]="CommencementDate | date: 'yyyy-MM-dd'"
+     
+      class="form-control"
+    />
+  </div>
+  </div>
+  <div class="col-sm-4">
+    <label class="control-label">Date of Completion<sup class="text-danger">*</sup></label>
+    <div class="input-group date">
+      <div class="input-group-addon">
+        <i class="fa fa-calendar"></i>
+      </div>
+      <input
+      type="date"
+      name="Completion"
+      #Completion="ngModel"
+      [ngModel]="CompletionDate | date: 'yyyy-MM-dd'"
+      [min]="CompletionDate | date: 'yyyy-MM-dd'"
+      class="form-control"
+    />
+  </div>
+  </div>
+  <div class="col-sm-4">
+    <button class="btn btn-primary custombutton"
+            (click)="saveAgreement(AgreementForm.form.valid)"
+            id="load"
+            [disabled]="SpinnerAg">
+            <p-progressSpinner *ngIf="SpinnerAg" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!SpinnerAg" class="glyphicon glyphicon-save"></span>{{BidEditFlag ? 'Update Agreement' : 'Create Agreement'}}
+    </button>
+  </div>
+   </form>
+</div>
+<div class="box-footer" *ngIf="ObjBidOpening.Financial_Bid_Status !=='AWARDING THE TENDER'">
+  <button class="btn btn-primary pull-right"
+          (click)="SaveBidOpening(BidOpeningForm.form.valid)"
+          id="load"
+          [disabled]="Spinner">
+          <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{BidEditFlag ? 'Update Bid' : 'Create Bid'}}
+  </button>
+</div>
+</div>
+  
 <p-footer>
     <button
   type="button"
   (click)="BidOpenningModel=false"
   class="btn btn-default"
 >Close
+</button>
+</p-footer>
+</p-dialog>
+<!-- Reason -->
+<p-dialog
+  [header]="'Create Reason'"
+  [appendTo]="'body'"
+  [visible]="ReasonModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+<form
+name="ReasonForm"
+#ReasonForm="ngForm"
+novalidate
+>
+<div class="form-group">
+  <div class="col-sm-12">
+    <label class="control-label"
+    >Reason<sup class="text-danger">*</sup
+  ></label>
+  <input
+        type="text"
+        class="form-control"
+        name="name"
+        #name="ngModel"
+        [(ngModel)]="ReasonName"
+        placeholder="Reason"
+        allow-pattern="([a-z ]|\.)"
+        [ngClass]="{
+          clearance: ReasonSubmitted && name?.errors?.required
+        }"
+        required
+      />
+  </div>
+</div>
+
+</form>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="ReasonModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+<button
+type="submit"
+name="bill"
+class="btn btn-primary pull-right custombutton"
+(click)="CreateReason(ReasonForm.form.valid)"
+id="load2"
+[disabled]="Spinner"
+>
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{ buttonname }}
 </button>
 </p-footer>
 </p-dialog>

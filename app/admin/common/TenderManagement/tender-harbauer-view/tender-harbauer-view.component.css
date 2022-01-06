@@ -19,3 +19,7 @@
       border-radius: 3px !important;
       margin-top: 5px !important;
     }
+    body .ui-dialog .ui-dialog-content {
+      overflow: scroll;
+      max-height: 70%;
+    }

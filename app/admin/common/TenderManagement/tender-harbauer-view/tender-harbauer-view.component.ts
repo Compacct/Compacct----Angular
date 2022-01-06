@@ -12,6 +12,7 @@ import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
 import { kill } from 'process';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-tender-harbauer-view',
@@ -31,11 +32,15 @@ export class TenderHarbauerViewComponent implements OnInit {
   tenderOrgList = [];
   TypeList = [];
   privGovt = [];
- 
+  TenderType = undefined;
+  TenderCategory = undefined; 
+  TenderExecutionDiv = undefined;
   PSSpinner = false;
   getAllTenderData = [];
   cols =[];
+  BidEditFlag = false;
   PaymentList = [];
+  TenderCallingDiv = undefined;
   // Update Submission date
     // Last Submission Data
       updateSubmissionmoduleStatus = undefined;
@@ -132,6 +137,7 @@ export class TenderHarbauerViewComponent implements OnInit {
   BudgetRequidBy = new Date();
   UserList = [];
   CreateLightBoxSubmitted = false;
+  DivisionSubmitted = false;
   // Bid Openning & AOC
    BidOpenningModel = false;
    ObjBidOpeningList = new BidOpeningList(); 
@@ -144,6 +150,17 @@ export class TenderHarbauerViewComponent implements OnInit {
    BidOpenListViewByLotteryFlag = false;
    TenderDetails:any = {};
    BidOpenListViewByLottery: Array<RankBidOpeningList> = [];
+   ObjAgreement = new Agreement();
+   ReasonSelect = [];
+   AgreementSubmitted = false;
+   ReasonList =[];
+  ReasonSubmitted = false;
+  ReasonName = undefined;
+  ReasonModal = false;
+  ObjBidOpening = new BidOpening()
+  SpinnerAg = false;
+  CompletionDate = new Date();
+  CommencementDate = new Date();
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -153,6 +170,7 @@ export class TenderHarbauerViewComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
     private GetDistinctItems :CompacctGetDistinctService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -1253,17 +1271,25 @@ CheckIfTenderIDExist(){
   // Bid Opeing & AOC
   ViewBidOpening(col){
    console.log("col",col);
+   this.BidOpenListViewByRateFlag = false;
+   this.BidOpenListViewByLotteryFlag = false;
    if(col.Tender_Doc_ID){
-    this.BidOpenningModel = true;
+    this.ngxService.start();
+    this.BidOpeningListFormSubmitted = false;
+    this.ObjBidOpeningList = new BidOpeningList();
+    this.ReasonList = [];
+    this.BidOpenListView = [];
+    this.BidOpenListViewByRate = [];
+    this.BidOpenListViewByLottery = [];
     this.BidTenderId = col.Tender_Doc_ID;
     this.getBidderList(col.Tender_Doc_ID);
     this.GetIFBidExist(col.Tender_Doc_ID);
+    this.GetReasonList();
    }
   }
   GetIFBidExist(TenderDocID) {
     if(TenderDocID) {
        this.GetBidOpenList(TenderDocID);
-            this.GetRankBidOpenList(TenderDocID);
             // if(obj.Financial_Bid_Status === 'AWARDING THE TENDER') {
             // this.ISDAmountChange(obj.ISD_Amount);
             // this.APSDAmountChange(obj.APSD_Amount);
@@ -1323,6 +1349,7 @@ CheckIfTenderIDExist(){
             }
            
           }
+          this.GetRankBidOpenList(TenderDocID);
           console.log("Get BidOpenListView",this.BidOpenListView);
         });
     }
@@ -1349,6 +1376,8 @@ CheckIfTenderIDExist(){
             
             this.BidOpenListViewByLotteryFlag = true;
             this.RetriveRankBidding(Arr);
+            this.ngxService.stop();
+            this.BidOpenningModel = true;
           
         });
     }
@@ -1380,7 +1409,7 @@ CheckIfTenderIDExist(){
     this.BidOpeningListFormSubmitted = true;
     const bid = this.ObjBidOpeningList.Bidder_Name;
     const exitsFlag =this.ObjBidOpeningList.Bidder_Name ? $.grep(this.BidOpenListView,function(val){ return val.Bidder_Name === bid}) : [];
-    if(!exitsFlag.length && (this.tenderValue || this.ObjBidOpeningList.Quoted_Rate) && this.ObjBidOpeningList.Bidder_Name){
+    if(!exitsFlag.length && this.tenderValue && this.ObjBidOpeningList.Bidder_Name){
       if(this.ObjBidOpeningList.Quoted_Percentage){
        const n = this.ObjBidOpeningList.Quoted_Percentage.includes("-");
       const percentage = n ? this.ObjBidOpeningList.Quoted_Percentage.replace("-", "") : this.ObjBidOpeningList.Quoted_Percentage;
@@ -1409,6 +1438,7 @@ CheckIfTenderIDExist(){
         // this.ObjBidOpeningList.Less_Excess = (n && !(Number(percentage) === 0)) ? 'Less' : Number(this.ObjBidOpeningList.Quoted_Percentage) ? 'Excess' : 'Scheduled Rate';
         this.ObjBidOpeningList.Sl_No = Number(this.BidOpenListView.length) + 1;
         this.ObjBidOpeningList.Tender_Value = this.tenderValue;
+        this.ObjBidOpeningList.Tender_Doc_ID = this.BidTenderId;
         this.BidOpenListView.push(this.ObjBidOpeningList);
         this.BidOpeningListFormSubmitted = false;
         this.ObjBidOpeningList = new BidOpeningList();
@@ -1559,8 +1589,8 @@ CheckIfTenderIDExist(){
         let k = 0 ;
         const rank = 'L' + (i+1);
         const objTemp = new RankBidOpeningList ();
-        objTemp.Tender_Doc_ID =  this.TenderDetails.Tender_Doc_ID;
-        objTemp.Tender_Doc_ID =  this.TenderDetails.Tender_Doc_ID;
+        objTemp.Tender_Doc_ID =  this.BidTenderId;
+        objTemp.Tender_Doc_ID =  this.BidTenderId;
         for(let r = 0; r < valueArr.length; r++){
           if(arr[i].Rate === valueArr[r]) {
             k++;
@@ -1617,7 +1647,7 @@ if(obj.Bidder_Name) {
     this.BidOpenListViewByLottery[i].Quoted_Percentage = undefined;
     this.BidOpenListViewByLottery[i].Rate = undefined;
     this.BidOpenListViewByLottery[i].Quoted_Rate = bidObj.Quoted_Rate;
-    this.BidOpenListViewByLottery[i].Tender_Doc_ID = bidObj.Tender_Doc_ID;
+    this.BidOpenListViewByLottery[i].Tender_Doc_ID = this.BidTenderId;
     this.BidOpenListViewByLottery[i].Rate_In_Words = undefined;
     this.BidOpenListViewByLottery[i].Temp_Bidder_Array = [];
     const arrTemp = $.grep(arr,function(val){return val.Rate === bidObj.Rate});
@@ -1655,9 +1685,196 @@ DeleteBidOpenList(index){
   }
   this.RankBiddingCompanies();
 }
-  SaveBidOpening(){
-
+StatusChange(data){
+  if(data === 'AWARDING THE TENDER') {
+    this.ObjAgreement.Date_of_Commencement = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
+    this.ObjAgreement.Date_of_Completion = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
+    this.ReasonSelect = [];
   }
+  else if (data === 'NOT- AWARDING THE TENDER'){
+    this.ObjAgreement = new Agreement();
+    this.AgreementSubmitted = false;
+  }
+}
+GetReasonList() {
+  this.$http
+    .get("/BL_CRM_Txn_Enq_Tender/Get_Not_Awarding_Reason_Json")
+    .subscribe((data: any) => {
+      const List = data ? JSON.parse(data) : [];
+      List.forEach(el => {
+        this.ReasonList.push({
+          label: el.Reason,
+          value: el.Reason
+        });
+      });
+
+    });
+}
+ToggleReason(){
+  this.ReasonSubmitted = false;
+  this.ReasonName = undefined;
+  this.ReasonModal = true;
+  this.Spinner = false;
+ }
+ CreateReason(valid){
+  this.ReasonSubmitted = true;
+  if(valid) {
+      this.Spinner = true;
+      const UrlAddress = "/BL_CRM_Txn_Enq_Tender/Create_Not_Awarding_Reason";
+      const obj = {
+        Reason : this.ReasonName
+       };
+      this.$http.post(UrlAddress, obj).subscribe((data: any) => {
+        console.log(data)
+      if (data.success) {
+        this.Spinner = false;
+        // if (this.ObjTender.Tender_Doc_ID) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: "Succesfully Reason Created"
+          });
+        
+        this.GetReasonList();
+        this.ReasonSubmitted = false;
+        this.ReasonName = undefined;
+        this.ReasonModal = false;
+        this.Spinner = false;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      });
+  }
+  }
+  SaveBidOpening(valid){
+   console.log("valid",valid);
+   console.log("BidOpenListView",this.BidOpenListView);
+   this.BidOpeningListFormSubmitted = true;
+   const resonFlag = (this.ObjBidOpening.Financial_Bid_Status === 'NOT- AWARDING THE TENDER' &&  this.ReasonSelect.length ) ? true : (this.ObjBidOpening.Financial_Bid_Status === 'AWARDING THE TENDER') ?  true : false;
+   if (valid && this.BidOpenListView.length && resonFlag && (this.BidOpenListViewByRate.length || this.BidOpenListViewByLottery.length)) {
+    const obj = {
+      "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+      "Report_Name_String" : "Tender_Govt_Bidding_Add_harbour",
+      "Json_Param_String": JSON.stringify(this.BidOpenListView),
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log("data",data);
+       if(data[0].Column1){
+        this.saveLottery()
+       }
+       else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error"
+        });
+       }
+       
+    })
+  }
+  }
+  saveLottery(){
+    let saveData = [];
+    if(this.BidOpenListViewByRateFlag){
+     console.log("BidOpenListViewByRateFlag",this.BidOpenListViewByRate);
+     saveData = this.BidOpenListViewByRate;
+    }
+    else if(this.BidOpenListViewByLotteryFlag){
+     console.log("BidOpenListViewByLotteryFlag",this.BidOpenListViewByLottery)
+     saveData = this.BidOpenListViewByLottery;
+    }
+    saveData.forEach(ele => {
+      ele.Temp_Bidder_Array = undefined;
+    });
+    const obj = {
+      "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+      "Report_Name_String" : "Tender_Govt_Bidding_Rank_Add_harbour",
+      "Json_Param_String": JSON.stringify(saveData),
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     console.log("data",data);
+     if(data[0].Column1){
+      this.BidOpeningListFormSubmitted = false;
+      this.ObjBidOpeningList = new BidOpeningList();
+      this.saveStatus();
+     }
+    })
+  }
+  saveStatus(){
+    console.log("ReasonList",this.ReasonSelect);
+    let saveDate = []
+    this.ReasonSelect.forEach(ele => {
+      saveDate.push({
+        Tender_Doc_ID : this.BidTenderId,
+        Status : this.ObjBidOpening.Financial_Bid_Status,
+        Not_Awarding_Reason : ele
+      })
+    });
+    const obj = {
+      "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+      "Report_Name_String" : "Tender_Govt_Bidding_Award_Status",
+      "Json_Param_String": JSON.stringify(saveDate),
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data[0].Column1){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "",
+          detail: "Succesfully Created"
+        });
+      }
+    })
+  }
+  saveAgreement(valid){
+ this.AgreementSubmitted = true;
+    console.log("valid",valid);
+   if(valid){
+     this.SpinnerAg = true;
+    this.ObjAgreement.Date_of_Commencement = this.ObjAgreement.Date_of_Commencement ? this.ObjAgreement.Date_of_Commencement : this.DateService.dateTimeConvert(new Date(this.CommencementDate));
+    this.ObjAgreement.Date_of_Completion = this.ObjAgreement.Date_of_Completion ? this.ObjAgreement.Date_of_Completion : this.DateService.dateTimeConvert(new Date(this.CompletionDate));
+    const obj = {
+      "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+      "Report_Name_String" : "Tender_Govt_Bidding_Rank_Add_harbour",
+      "Json_Param_String": JSON.stringify([this.ObjAgreement]),
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("data",data);
+        if (data.success) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Estimate Management ' ,
+          detail: "Succesfully Save."
+        });
+         this.SpinnerAg = false;
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+          this.SpinnerAg = false;
+        }
+      })
+   }
+  }
+ 
+  
 }
 class search{
   Filter1_Text:string;
@@ -1728,8 +1945,8 @@ class BidOpeningList {
   Sl_No	:number;
   Bidder_Name:string;
   Tender_Value:number;
-  Quoted_Percentage:string;
-  Quoted_Rate:number;
+  Quoted_Percentage:any = 0;
+  Quoted_Rate:number = 0;
   Less_Excess:string;
   Rate:number;
   Rate_In_Words:string;
@@ -1803,3 +2020,10 @@ class BidOpening{
   Agreement_value : string;
  
 }
+class Agreement{
+  Tender_Doc_ID : number;
+  Agreement_Number :any;
+  Agreement_Value :any;
+  Date_of_Commencement :any;
+  Date_of_Completion :any;
+ }
