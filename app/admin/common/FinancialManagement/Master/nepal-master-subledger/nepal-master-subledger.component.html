@@ -791,7 +791,7 @@
                         </form>                              
                         <div class="box-footer">
                             <button class="btn btn-primary pull-right custombutton"
-                                (click)="SaveSubLedger(SubLedgerCreateForm.form.valid)"
+                                (click)="SaveSubLedger(SubLedgerCreateForm.form)"
                                 [disabled]="saveSpinner">
                                 <p-progressSpinner *ngIf="saveSpinner" [style]="{ width: '15px', height: '15px' }"
                                     strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
