@@ -95,6 +95,7 @@
                                                 <th>Package</th>
                                                 <th>Sub Type</th>
                                                 <th>Chargeable</th>
+                                                <th>Audiologist Status</th>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -122,21 +123,15 @@
                                                                 </a>
                                                             </li>
                                                             <li>
-                                                                <a (click)="FluencyModal(col)">
-                                                                    <i class="fa fa-stethoscope" ></i>
-                                                                    Fluency Assessment
-                                                                </a>
-                                                            </li>
-                                                            <li>
                                                                 <a (click)="Therapy(col)">
                                                                     <i class="fa fa-wheelchair"></i>
                                                                     Therapy Plan
                                                                 </a>
                                                             </li>
                                                             <li>
-                                                                <a (click)="Adult(col)">
+                                                                <a (click)="Therapy(col)">
                                                                     <i class="fa fa-wheelchair"></i>
-                                                                    Adult Assessment
+                                                                    Therapy Plan
                                                                 </a>
                                                             </li>
                                                         </ul>
@@ -154,9 +149,10 @@
                                                 <td>{{col.Cost_Cen_Name}}</td>
                                                 <td>{{col.Consultancy_Type}}</td>
                                                 <td>{{col.Consultancy_Descr}}</td>
-                                                <td>{{col.Package_Name}}</td>
-                                                <td>{{col.Session_Name}}</td>
+                                                <td>{{col.PRI_ALT}}</td>
+                                                <td>{{col.PRI_ALT}}</td>
                                                 <td>{{col.Chargeable ? 'Yes' : 'No'}}</td>
+                                                <td>{{col.PRI_ALT}}</td>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="paginatorright" let-state>
@@ -704,7 +700,7 @@
                                                         </button></td>
                                                         <td> <button class="btn btn-primary" (click)="GetTherapyprint(col)"
                                                             id="load">
-                                                            <span class="glyphicon glyphicon-print" ></span> Print
+                                                            <span class="glyphicon glyphicon-print" ></span>Print
                                                         </button></td>
                                                 </tr>
                                             </ng-template>
@@ -871,30 +867,30 @@
                                     <hr>
                                     <div class="clearfix"></div>
                                     <div class="table-responsive no-padding">
-                                        <p-table [value]="browseFluencyList" *ngIf="browseFluencyList.length"
-                                            [paginator]="browseFluencyList.length ? true : false" [rows]="3"
+                                        <p-table [value]="browseAssesmentList" *ngIf="browseAssesmentList.length"
+                                            [paginator]="browseAssesmentList.length ? true : false" [rows]="3"
                                             [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowHover]="true">
                                             <ng-template pTemplate="header">
                                                 <tr>
-                                                    <th>ID</th>
                                                     <th>Assesment Date</th>
                                                     <th>Center</th>
+                                                    <th>Mode Communication</th>
                                                     <th></th>
                                                     <th></th>
                                                 </tr>
                                             </ng-template>
                                             <ng-template pTemplate="body" let-col>
                                                 <tr>
-                                                    <td>{{col.Txn_ID}}</td>
-                                                    <td>{{col.Date | date: "dd/MMM/yyyy"}}</td>
+                                                    <td>{{col.Assesment_Date | date: "dd/MMM/yyyy"}}</td>
                                                     <td>{{col.Cost_Cen_Name}}</td>
-                                                     <td> <button class="btn btn-primary" (click)="GetFluencyview(col)"
+                                                    <td>{{col.MODE_COMMUNICATION}}</td>
+                                                    <td> <button class="btn btn-primary" (click)="GetView(col)"
                                                             id="load">
                                                             <span class="glyphicon glyphicon-view"></span>View
                                                         </button></td>
-                                                        <td><button class="btn btn-primary" (click)="GetFluencyprint(col)"
+                                                        <td><button class="btn btn-primary" (click)="GetPrint(col)"
                                                             id="load">
-                                                            <span class="glyphicon glyphicon-print"></span>&nbsp;Print
+                                                            <span class="glyphicon glyphicon-print"></span>Print
                                                         </button></td>
                                                 </tr>
                                             </ng-template>
@@ -916,63 +912,51 @@
                                         <i class="fa fa-fw fa-fax">
                                         </i> &nbsp;<strong>SECTION-I HISTORY :</strong>
                                     </h5>
+                                    <label class="control-label">VARIATIONS IN STUTTERING WITH</label>
                                     <div class="col-sm-4">
-                                            <label class="control-label">FIRST EXHIBITION OF DYSFLUENCIES</label>
-                                            <input type="text" class="form-control" placeholder="FIRST EXHIBITION OF DYSFLUENCIES"
-                                                name="Sec_I_First_Exhibition" #Sec_I_First_Exhibition="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_I_First_Exhibition">
+                                            <label class="control-label">RESPECT TO SPECIFIC SITUATION</label>
+                                            <input type="text" class="form-control" placeholder="Vocalization"
+                                                name="Vocalization" #Vocalization="ngModel"
+                                                [(ngModel)]="ObjAssessment.Vocalization">
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">GRADUAL/SUDDEN ONSET</label>
-                                            <input type="text" class="form-control" placeholder="GRADUAL/SUDDEN ONSET"
-                                                name="Sec_I_Gradual_Sudden" #Sec_I_Gradual_Sudden="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_I_Gradual_Sudden">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">RESPECT TO SPECIFIC INDIVIDUALS</label>
+                                            <input type="text" class="form-control" placeholder="First word"
+                                                name="First_word" #First_word="ngModel"
+                                                [(ngModel)]="ObjAssessment.First_word">
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">FIRST NOTICED BY WHOM</label>
-                                            <input type="text" class="form-control" placeholder="FIRST NOTICED BY WHOM"
-                                                name="Sec_I_First_Notice" #Sec_I_First_Notice="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_I_First_Notice">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">RESPECT TO SPECIFIC INDIVIDUALS</label>
+                                            <input type="text" class="form-control" placeholder="First sentence"
+                                                name="First_sentence" #First_sentence="ngModel"
+                                                [(ngModel)]="ObjAssessment.First_sentence">
                                         </div>
-                                     </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">RESPECT TO SPECIFIC INDIVIDUALS</label>
+                                            <input type="text" class="form-control" placeholder="First sentence"
+                                                name="First_sentence" #First_sentence="ngModel"
+                                                [(ngModel)]="ObjAssessment.First_sentence">
+                                        </div>
+                                    </div>
                                     <br>
                                     <div class="clearfix"></div>
-                                    <div class="form-group" style="padding: 1em;">
+                                    <div class="form-group">
                                         <div class="col-sm-4">
-                                            <label class="control-label">WHAT WERE THE RELATED CIRCUMSTANCES
+                                            <label class="control-label">HISTORY OF CONTACT WITH A STUTTERER(RELATIONSHIP, DURATION)
                                             </label>
-                                            <input type="text" class="form-control" placeholder="WHAT WERE THE RELATED CIRCUMSTANCES"
-                                                name="Sec_I_Related_Circumstances" #Sec_I_Related_Circumstances="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_I_Related_Circumstances">
+                                            <input type="text" class="form-control" placeholder="First sentence"
+                                                name="First_sentence" #First_sentence="ngModel"
+                                                [(ngModel)]="ObjAssessment.First_sentence">
                                         </div>
                                         <div class="col-sm-4">
-                                            <label class="control-label">IS THE SEVERITY INCREASING/ DECREASING
-                                            </label>
-                                            <input type="text" class="form-control" placeholder="IS THE SEVERITY INCREASING/ DECREASING"
-                                                name="Sec_I_Severity_Inc_Dec" #Sec_I_Severity_Inc_Dec="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_I_Severity_Inc_Dec">
+                                           
                                         </div>
                                         <div class="col-sm-4">
-                                            <label class="control-label">HAVE ANY FAMILY MEMBERS EVER STUTTERED
-                                            </label>
-                                            <input type="text" class="form-control" placeholder="HAVE ANY FAMILY MEMBERS EVER STUTTERED"
-                                                name="Sec_I_Stuttered_Or_Not" #Sec_I_Stuttered_Or_Not="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_I_Stuttered_Or_Not">
+                                            
                                         </div>
 
                                     </div>
-                                    <div class="clearfix"></div>
-                                    <div class="form-group" style="padding: 1em;">
-                                        <div class="col-sm-5">
-                                            <label class="control-label">HISTORY OF CONTACT WITH A STUTTERER(RELATIONSHIP, DURATION)
-                                            </label>
-                                            <input type="text" class="form-control" placeholder="HISTORY OF CONTACT WITH A STUTTERER"
-                                                name="Sec_I_Stutterer_Contact" #Sec_I_Stutterer_Contact="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_I_Stutterer_Contact">
-                                        </div>
-                                        <div class="col-sm-4"></div>
-                                        <div class="col-sm-3"></div>
-                                    </div>
+
                                     <br>
                                     <div class="clearfix"></div>
                                     <div class="form-group" style="padding: 1em;">
@@ -986,24 +970,25 @@
                                         <i class="fa fa-fw fa-fax">
                                         </i> &nbsp;<strong>SECTION-II REACTIONS :</strong>
                                     </h5>
-                                    <h3>REACTION TO THE PROBLEM</h3>
+                                    <label class="control-label">REACTION TO THE PROBLEM
+                                    </label>
                                     <div class="col-sm-4">
                                         <label class="control-label">BY PARENTS </label>
-                                        <input type="text" class="form-control" placeholder="BY PARENTS"
-                                            name="Sec_II_By_Parents" #Sec_II_By_Parents="ngModel"
-                                            [(ngModel)]="ObjFluency.Sec_II_By_Parents">
+                                        <input type="text" class="form-control" placeholder="Vocalization"
+                                            name="Vocalization" #Vocalization="ngModel"
+                                            [(ngModel)]="ObjAssessment.Vocalization">
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">BY SELF</label>
-                                        <input type="text" class="form-control" placeholder="BY SELF"
-                                            name="Sec_II_By_Self" #Sec_II_By_Self="ngModel"
-                                            [(ngModel)]="ObjFluency.Sec_II_By_Self">
+                                        <input type="text" class="form-control" placeholder="First word"
+                                            name="First_word" #First_word="ngModel"
+                                            [(ngModel)]="ObjAssessment.First_word">
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">BY OTHERS</label>
-                                        <input type="text" class="form-control" placeholder="BY OTHERS"
-                                            name="Sec_II_By_Others" #Sec_II_By_Others="ngModel"
-                                            [(ngModel)]="ObjFluency.Sec_II_By_Others">
+                                        <input type="text" class="form-control" placeholder="First sentence"
+                                            name="First_sentence" #First_sentence="ngModel"
+                                            [(ngModel)]="ObjAssessment.First_sentence">
                                     </div>
                                     </div>
                                     <div class="clearfix"></div>
@@ -1018,544 +1003,391 @@
                                         <i class="fa fa-fw fa-fax">
                                         </i> &nbsp;<strong>SECTION –III SEVERITY :</strong>
                                     </h5>
-                                    <h3>VARIATIONS IN STUTTERING WITH
-                                    </h3>
+                                    <label class="control-label">VARIATIONS IN STUTTERING WITH
+                                    </label>
                                     <div class="col-sm-3">
-                                        <label class="control-label">RESPECT TO SPECIFIC SITUATION</label>
-                                        <input type="text" class="form-control" placeholder="RESPECT TO SPECIFIC SITUATION"
-                                            name="Sec_III_Res_Spec_Situation" #Sec_III_Res_Spec_Situation="ngModel"
-                                            [(ngModel)]="ObjFluency.Sec_III_Res_Spec_Situation">
+                                        <label class="control-label">FIRST EXHIBITION OF DYSFLUENCIES</label>
+                                        <input type="text" class="form-control" placeholder="Vocalization"
+                                            name="Vocalization" #Vocalization="ngModel"
+                                            [(ngModel)]="ObjAssessment.Vocalization">
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">RESPECT TO SPECIFIC INDIVIDUALS</label>
-                                        <input type="text" class="form-control" placeholder="RESPECT TO SPECIFIC INDIVIDUALS"
-                                            name="Sec_III_Res_Spec_Individuals" #Sec_III_Res_Spec_Individuals="ngModel"
-                                            [(ngModel)]="ObjFluency.Sec_III_Res_Spec_Individuals">
+                                        <label class="control-label">GRADUAL/SUDDEN ONSET</label>
+                                        <input type="text" class="form-control" placeholder="First word"
+                                            name="First_word" #First_word="ngModel"
+                                            [(ngModel)]="ObjAssessment.First_word">
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">RESPECT TO SPECIFIC SOUNDS</label>
-                                        <input type="text" class="form-control" placeholder="RESPECT TO SPECIFIC SOUNDS"
-                                            name="Sec_III_Res_Spec_Sounds" #Sec_III_Res_Spec_Sounds="ngModel"
-                                            [(ngModel)]="ObjFluency.Sec_III_Res_Spec_Sounds">
+                                        <label class="control-label">HAVE ANY FAMILY MEMBERS EVER STUTTERED</label>
+                                        <input type="text" class="form-control" placeholder="First sentence"
+                                            name="First_sentence" #First_sentence="ngModel"
+                                            [(ngModel)]="ObjAssessment.First_sentence">
                                     </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">RESPECT TO SENTENCE STRUCTURE</label>
-                                        <input type="text" class="form-control" placeholder="RESPECT TO SENTENCE STRUCTURE"
-                                            name="Sec_III_Res_Sentance_Struc" #Sec_III_Res_Sentance_Struc="ngModel"
-                                            [(ngModel)]="ObjFluency.Sec_III_Res_Sentance_Struc">
                                     </div>
+                                    <div class="clearfix"></div>
+                                    <label class="control-label" style="margin-top: 7px;">EXPRESSION</label>
+                                    <div class="form-group">
+                                        <div class="col-sm-2">
+                                            <p-checkbox name="Exp_Vocalizations" #Exp_Vocalizations="ngModel"
+                                                [(ngModel)]="ObjAssessment.Exp_Vocalizations" label="Vocalizations">
+                                            </p-checkbox>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <p-checkbox name="Exp_Words" #Exp_Words="ngModel"
+                                                [(ngModel)]="ObjAssessment.Exp_Words" label="Words"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <p-checkbox name="Exp_Phrases" #Exp_Phrases="ngModel"
+                                                [(ngModel)]="ObjAssessment.Exp_Phrases" label="Phrases"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <p-checkbox name="Exp_Simple_Sentence" #Exp_Simple_Sentence="ngModel"
+                                                [(ngModel)]="ObjAssessment.Exp_Simple_Sentence" label="Simple Sentence">
+                                            </p-checkbox>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <p-checkbox name="Exp_Complex_Sentence" #Exp_Complex_Sentence="ngModel"
+                                                [(ngModel)]="ObjAssessment.Exp_Complex_Sentence"
+                                                label="Complex Sentence"></p-checkbox>
+                                        </div>
+                                    </div>
+
+                                    <br>
+                                    <div class="clearfix"></div>
+                                    <label class="control-label">NON VERBAL COMMUNICATION :-</label>
+                                    <br>
+                                    <label class="control-label">COMPREHENSION</label>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <p-checkbox name="Comp_Signs" #Comp_Signs="ngModel"
+                                                [(ngModel)]="ObjAssessment.Comp_Signs" label="Signs"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <p-checkbox name="Comp_Gestures" #Comp_Gestures="ngModel"
+                                                [(ngModel)]="ObjAssessment.Comp_Gestures" label="Gestures"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <p-checkbox name="Comp_Facial_expression" #Comp_Facial_expression="ngModel"
+                                                [(ngModel)]="ObjAssessment.Comp_Facial_expression"
+                                                label="Facial expression"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <!-- <p-checkbox name="Complex _Sentence" value="Complex_Sentence" label="Complex Sentence"></p-checkbox> -->
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <label class="control-label" style="margin-top: 7px;">EXPRESSION</label>
+                                    <div class="form-group">
+
+                                        <div class="col-sm-3">
+                                            <p-checkbox name="Exp_Signs" #Exp_Signs="ngModel"
+                                                [(ngModel)]="ObjAssessment.Exp_Signs" label="Signs"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <p-checkbox name="Exp_Gestures" #Exp_Gestures="ngModel"
+                                                [(ngModel)]="ObjAssessment.Exp_Gestures" label="Gestures">
+                                            </p-checkbox>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <!-- <p-checkbox name="Simple_Sentence" value="Simple_Sentence" label="Simple Sentence"></p-checkbox> -->
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <!-- <p-checkbox name="Complex _Sentence" value="Complex_Sentence" label="Complex Sentence"></p-checkbox> -->
+                                        </div>
                                     </div>
                                     <br>
                                     <div class="clearfix"></div>
+                                    <label class="control-label">ORAL MOTOR ASSESSMENT</label>
                                     <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
                                         <table class="table table-bordered" style="margin-left: 5px;">
                                             <thead>
                                                 <tr style="background-color:#3c8dbc;color:white;">
                                                     <th class="text-center" style="vertical-align:middle">
-                                                        AVOIDANCE BEHAVIOUR((SPECIFY))
+
                                                     </th>
                                                     <th class="text-center" style="vertical-align:middle">
-                                                        SITUATION
+                                                        Appearance
                                                     </th>
                                                     <th class="text-center" style="vertical-align:middle">
-                                                        SOUNDS
+                                                        Functions
                                                     </th>
                                                 </tr>
                                                 <tr>
                                                     <td class="control-label"><span
-                                                            style="text-align: cente;">COPING MECHANISM USED</span></td>
-                                                    <td><input type="text" name="Sec_III_Situation_Mechanism" #Sec_III_Situation_Mechanism="ngModel"
-                                                            [(ngModel)]="ObjFluency.Sec_III_Situation_Mechanism" class="form-control">
+                                                            style="text-align: cente;">Lips</span></td>
+                                                    <td><input type="text" name="App_Lips" #App_Lips="ngModel"
+                                                            [(ngModel)]="ObjAssessment.App_Lips" class="form-control">
                                                     </td>
-                                                    <td><input type="text" name="Sec_III_Sounds_Mechanism" #Sec_III_Sounds_Mechanism="ngModel"
-                                                            [(ngModel)]="ObjFluency.Sec_III_Sounds_Mechanism" class="form-control">
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="control-label">REPORTED</td>
-                                                    <td><input type="text" name="Sec_III_Situation_Reported" #Sec_III_Situation_Reported="ngModel"
-                                                            [(ngModel)]="ObjFluency.Sec_III_Situation_Reported" class="form-control">
-                                                    </td>
-                                                    <td><input type="text" name="Sec_III_Sounds_Reported" #Sec_III_Sounds_Reported="ngModel"
-                                                            [(ngModel)]="ObjFluency.Sec_III_Sounds_Reported" class="form-control">
+                                                    <td><input type="text" name="Fun_Lips" #Fun_Lips="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Fun_Lips" class="form-control">
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="control-label">OBSERVED</td>
-                                                    <td><input type="text" name="Sec_III_Situation_Observed" #Sec_III_Situation_Observed="ngModel"
-                                                            [(ngModel)]="ObjFluency.Sec_III_Situation_Observed" class="form-control">
+                                                    <td class="control-label">Tongue</td>
+                                                    <td><input type="text" name="App_Tongue" #App_Tongue="ngModel"
+                                                            [(ngModel)]="ObjAssessment.App_Tongue" class="form-control">
                                                     </td>
-                                                    <td><input type="text" name="Sec_III_Sounds_Observed" #Sec_III_Sounds_Observed="ngModel"
-                                                            [(ngModel)]="ObjFluency.Sec_III_Sounds_Observed" class="form-control">
+                                                    <td><input type="text" name="Fun_Tongue" #Fun_Tongue="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Fun_Tongue" class="form-control">
                                                     </td>
                                                 </tr>
-                                             </thead>
+                                                <tr>
+                                                    <td class="control-label">Teeth</td>
+                                                    <td><input type="text" name="App_Teeth" #App_Teeth="ngModel"
+                                                            [(ngModel)]="ObjAssessment.App_Teeth" class="form-control">
+                                                    </td>
+                                                    <td><input type="text" name="Fun_Teeth" #Fun_Teeth="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Fun_Teeth" class="form-control">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="control-label">Hard Palate</td>
+                                                    <td><input type="text" name="App_Hard_Palate"
+                                                            #App_Hard_Palate="ngModel"
+                                                            [(ngModel)]="ObjAssessment.App_Hard_Palate"
+                                                            class="form-control"></td>
+                                                    <td><input type="text" name="Fun_Hard_Palate"
+                                                            #Fun_Hard_Palate="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Fun_Hard_Palate"
+                                                            class="form-control"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="control-label">Soft Palate</td>
+                                                    <td><input type="text" name="App_Soft_Palate"
+                                                            #App_Soft_Palate="ngModel"
+                                                            [(ngModel)]="ObjAssessment.App_Soft_Palate"
+                                                            class="form-control"></td>
+                                                    <td><input type="text" name="Fun_Soft_Palate"
+                                                            #Fun_Soft_Palate="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Fun_Soft_Palate"
+                                                            class="form-control"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="control-label">Mandible</td>
+                                                    <td><input type="text" name="App_Mandible" #App_Mandible="ngModel"
+                                                            [(ngModel)]="ObjAssessment.App_Mandible"
+                                                            class="form-control"></td>
+                                                    <td><input type="text" name="Fun_Mandible" #Fun_Mandible="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Fun_Mandible"
+                                                            class="form-control"></td>
+                                                </tr>
+                                            </thead>
                                         </table>
                                     </div>
-                                    <div class="form-group" style="padding: 1em;">
-                                        <div class="col-sm-5">
-                                            <label class="control-label">SELF CONCERNED ABOUT THE PROBLEM</label>
-                                            <input type="text" class="form-control" placeholder="SELF CONCERNED ABOUT THE PROBLEM"
-                                                name="Sec_III_Self_Cencern" #Sec_III_Self_Cencern="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_III_Self_Cencern">
+                                    <div class="clearfix"></div>
+                                    <label class="control-label">VOICE EXAMINATION</label>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Loudness</label>
+                                            <input type="text" class="form-control" placeholder="Loudness"
+                                                name="Voice_Loudness" #Voice_Loudness="ngModel"
+                                                [(ngModel)]="ObjAssessment.Voice_Loudness">
                                         </div>
                                         <div class="col-sm-4">
-                                            
+                                            <label class="control-label">Pitch</label>
+                                            <input type="text" class="form-control" placeholder="Pitch"
+                                                name="Voice_Pitch" #Voice_Pitch="ngModel"
+                                                [(ngModel)]="ObjAssessment.Voice_Pitch">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Quality</label>
+                                            <input type="text" class="form-control" placeholder="Quality"
+                                                name="Voice_Quality" #Voice_Quality="ngModel"
+                                                [(ngModel)]="ObjAssessment.Voice_Quality">
+                                        </div>
+
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <label class="control-label">SEGMENTAL ASPECTS</label>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Vowels</label>
+                                            <input type="text" class="form-control" placeholder="Vowels"
+                                                name="Seg_Vowels" #Seg_Vowels="ngModel"
+                                                [(ngModel)]="ObjAssessment.Seg_Vowels">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Consonants</label>
+                                            <input type="text" class="form-control" placeholder="Consonants"
+                                                name="Seg_Consonants" #Seg_Consonants="ngModel"
+                                                [(ngModel)]="ObjAssessment.Seg_Consonants">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Blends</label>
+                                            <input type="text" class="form-control" placeholder="Blends"
+                                                name="Seg_Blends" #Seg_Blends="ngModel"
+                                                [(ngModel)]="ObjAssessment.Seg_Blends">
+                                        </div>
+
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <label class="control-label">NON SEGMENTAL ASPECTS</label>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Phonation Duration</label>
+                                            <input type="text" class="form-control" placeholder="Phonation Duration"
+                                                name="Phonation_duration" #Phonation_duration="ngModel"
+                                                [(ngModel)]="ObjAssessment.Phonation_duration">
+                                        </div>
+                                        <div class="col-sm-4">
+
+                                        </div>
+                                        <div class="col-sm-4">
+
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <label class="control-label">SUPRASEGMENTAL ASPECTS</label>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Accent </label>
+                                            <input type="text" class="form-control" placeholder="Accent"
+                                                name="Supr_Accent" #Supr_Accent="ngModel"
+                                                [(ngModel)]="ObjAssessment.Supr_Accent">
                                         </div>
                                         <div class="col-sm-3">
-                                           
+                                            <label class="control-label">Stress</label>
+                                            <input type="text" class="form-control" placeholder="Stress"
+                                                name="Supr_Stress" #Supr_Stress="ngModel"
+                                                [(ngModel)]="ObjAssessment.Supr_Stress">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Intonation</label>
+                                            <input type="text" class="form-control" placeholder="Intonation"
+                                                name="Supr_Intonation" #Supr_Intonation="ngModel"
+                                                [(ngModel)]="ObjAssessment.Supr_Intonation">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Rate of speech</label>
+                                            <input type="text" class="form-control" placeholder="Rate of speech"
+                                                name="Supr_Rate_speech" #Supr_Rate_speech="ngModel"
+                                                [(ngModel)]="ObjAssessment.Supr_Rate_speech">
                                         </div>
 
                                     </div>
                                     <div class="clearfix"></div>
-                                     <div class="form-group" style="padding: 1em;">
-                                        <h5 style="
-                                        padding: 0.5em 1em;
-                                        background: #c1c1c185;
-                                        border-top: 5px solid #3c8dbc;
-                                        border-bottom: 1px solid #c6c6c6;
-                                        margin-top: 15px;
-                                        ">
-                                        <i class="fa fa-fw fa-fax">
-                                        </i> &nbsp;<strong>SECTION-IV ANALYSIS AND SAMPLE RECORDING :</strong>
-                                    </h5>
-                                    <div class="col-sm-4">
-                                            <label class="control-label">NO. OF PROLONGATION</label>
-                                            <input type="text" class="form-control" placeholder="NO. OF PROLONGATION"
-                                                name="Sec_IV_No_Of_Prolongation" #Sec_IV_No_Of_Prolongation="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_IV_No_Of_Prolongation">
+                                    <label class="control-label">TEST ADMINISTERED</label>
+                                    <p>Cognitive Pre- requisites of Language development</p>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Phonology </label>
+                                            <input type="text" class="form-control" placeholder="Phonology"
+                                                name="Test_Phonology" #Test_Phonology="ngModel"
+                                                [(ngModel)]="ObjAssessment.Test_Phonology">
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">NO. OF REPITIONS</label>
-                                            <input type="text" class="form-control" placeholder="NO. OF REPITIONS"
-                                                name="Sec_IV_No_Of_Repitions" #Sec_IV_No_Of_Repitions="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_IV_No_Of_Repitions">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Syntax</label>
+                                            <input type="text" class="form-control" placeholder="Syntax"
+                                                name="Test_Syntax" #Test_Syntax="ngModel"
+                                                [(ngModel)]="ObjAssessment.Test_Syntax">
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">NO. OF HESITATIONS</label>
-                                            <input type="text" class="form-control" placeholder="NO. OF HESITATIONS"
-                                                name="Sec_IV_No_Of_Hesitations" #Sec_IV_No_Of_Hesitations="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_IV_No_Of_Hesitations">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Semantics</label>
+                                            <input type="text" class="form-control" placeholder="Semantics"
+                                                name="Test_Semantics" #Test_Semantics="ngModel"
+                                                [(ngModel)]="ObjAssessment.Test_Semantics">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Pragmatics</label>
+                                            <input type="text" class="form-control" placeholder="Pragmatics"
+                                                name="Test_Pragmatics" #Test_Pragmatics="ngModel"
+                                                [(ngModel)]="ObjAssessment.Test_Pragmatics">
                                         </div>
 
                                     </div>
                                     <div class="clearfix"></div>
-                                    <div class="form-group" style="padding: 1em;">
-                                        <div class="col-sm-4">
-                                            <label class="control-label">NO. OF BLOCKS</label>
-                                            <input type="text" class="form-control" placeholder="NO. OF BLOCKS"
-                                                name="Sec_IV_No_Of_Blocks" #Sec_IV_No_Of_Blocks="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_IV_No_Of_Blocks">
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">SECONDARY BEHAVIOURS</label>
-                                            <input type="text" class="form-control" placeholder="SECONDARY BEHAVIOURS"
-                                                name="Sec_IV_Secondary_Behave" #Sec_IV_Secondary_Behave="ngModel"
-                                                [(ngModel)]="ObjFluency.Sec_IV_Secondary_Behave">
-                                        </div>
-                                        <div class="col-sm-4">
-
-                                        </div>
+                                    <label class="control-label">AUDITORY BEHAVIOR</label>
+                                    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+                                        <table class="table table-bordered" style="margin-left: 5px;">
+                                            <thead>
+                                                <tr style="background-color:#3c8dbc;color:white;">
+                                                    <th class="text-center" style="vertical-align:middle">
+                                                        Stimulus
+                                                    </th>
+                                                    <th class="text-center" style="vertical-align:middle">
+                                                        Intensity
+                                                    </th>
+                                                    <th class="text-center" style="vertical-align:middle">
+                                                        Behavior
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td class="control-label">Name calling</td>
+                                                    <td><input type="text" class="form-control" name="Int_Name_calling"
+                                                            #Int_Name_calling="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Int_Name_calling"></td>
+                                                    <td><input type="text" class="form-control" name="Beh_Name_calling"
+                                                            #Beh_Name_calling="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Beh_Name_calling"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="control-label">Hand clapping</td>
+                                                    <td><input type="text" class="form-control" name="Int_Hand_clapping"
+                                                            #Int_Hand_clapping="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Int_Hand_clapping"></td>
+                                                    <td><input type="text" class="form-control" name="Beh_Hand_clapping"
+                                                            #Beh_Hand_clapping="ngModel"
+                                                            [(ngModel)]="ObjAssessment.Beh_Hand_clapping"></td>
+                                                </tr>
+                                            </thead>
+                                        </table>
                                     </div>
                                     <div class="clearfix"></div>
-                                     <label class="control-label">OTHER TESTS </label>
-                                    <p-editor name="Sec_IV_Other_Test" #Sec_IV_Other_Test="ngModel"
-                                        [(ngModel)]="ObjFluency.Sec_IV_Other_Test" [style]="{'height':'320px'}"></p-editor>
+                                    <label class="control-label">LITERACY AND NARRATIVE SKILLS</label>
+                                    <div class="form-group">
+
+                                        <div class="col-sm-4">
+                                            <p-checkbox name="Letter_recognition " #Letter_recognition="ngModel"
+                                                [(ngModel)]="ObjAssessment.Letter_recognition"
+                                                label="Letter recognition"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <p-checkbox name="Copying" #Copying="ngModel"
+                                                label="Copying" [(ngModel)]="ObjAssessment.Copying"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <p-checkbox name="Word_recognition" #Word_recognition="ngModel"
+                                                [(ngModel)]="ObjAssessment.Word_recognition" label="Word recognition">
+                                            </p-checkbox>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+
+                                        <div class="col-sm-4">
+                                            <p-checkbox name="Writing_dictation" label="Writing to dictation"
+                                                #Writing_dictation="ngModel"
+                                                [(ngModel)]="ObjAssessment.Writing_dictation"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <p-checkbox name="Reading_comprehension" label="Reading comprehension"
+                                                #Reading_comprehension="ngModel"
+                                                [(ngModel)]="ObjAssessment.Reading_comprehension"></p-checkbox>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <p-checkbox name="Spontaneous_writing" label="Spontaneous writing"
+                                                #Spontaneous_writing="ngModel"
+                                                [(ngModel)]="ObjAssessment.Spontaneous_writing"></p-checkbox>
+                                        </div>
+
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <label class="control-label">OTHER TESTS </label>
+                                    <p-editor name="OTHER_TESTS" #OTHER_TESTS="ngModel"
+                                        [(ngModel)]="ObjAssessment.OTHER_TESTS" [style]="{'height':'320px'}"></p-editor>
                                     <div class="clearfix"></div>
                                     <label class="control-label">PROVISIONAL DIAGNOSIS</label>
-                                    <p-editor name="Sec_IV_Provisional_Diagnosis" #Sec_IV_Provisional_Diagnosis="ngModel"
-                                        [(ngModel)]="ObjFluency.Sec_IV_Provisional_Diagnosis" [style]="{'height':'250px'}">
+                                    <p-editor name="PROVISIONAL_DIAGNOSIS" #PROVISIONAL_DIAGNOSIS="ngModel"
+                                        [(ngModel)]="ObjAssessment.PROVISIONAL_DIAGNOSIS" [style]="{'height':'250px'}">
                                     </p-editor>
                                     <div class="clearfix"></div>
                                     <label class="control-label">RECOMMENDATIONS</label>
-                                    <p-editor name="Sec_IV_Recommendation" #Sec_IV_Recommendation="ngModel"
-                                        [(ngModel)]="ObjFluency.Sec_IV_Recommendation" [style]="{'height':'250px'}">
+                                    <p-editor name="RECOMMENDATIONS" #RECOMMENDATIONS="ngModel"
+                                        [(ngModel)]="ObjAssessment.RECOMMENDATIONS" [style]="{'height':'250px'}">
                                     </p-editor>
                                 </form>
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" id="load" (click)="saveFluency()"
-                                        [disabled]="Spinner">
-                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}"
-                                            strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
-                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                                    </button>
-                                </div>
-                            </div>  
-                            <div *ngIf="Tabitems.TabView === 'Adult'">
-                                <form name="AdultForm" #AdultForm="ngForm" novalidate>
-                                    <div class="form-group">
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Name</label>
-                                            <div class="label-t">{{name}}</div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Age</label>
-                                            <div class="label-t">{{age}}</div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Sex</label>
-                                            <div class="label-t">{{sex}}</div>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="clearfix"></div>
-                                    <div class="table-responsive no-padding">
-                                        <p-table [value]="browseAdultList" *ngIf="browseAdultList.length"
-                                            [paginator]="browseAdultList.length ? true : false" [rows]="3"
-                                            [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowHover]="true">
-                                            <ng-template pTemplate="header">
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Assesment Date</th>
-                                                    <th>Center</th>
-                                                    <th></th>
-                                                    <th></th>
-                                                </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-col>
-                                                <tr>
-                                                    <td>{{col.Txn_ID}}</td>
-                                                    <td>{{col.Date | date: "dd/MMM/yyyy"}}</td>
-                                                    <td>{{col.Cost_Cen_Name}}</td>
-                                                     <td> <button class="btn btn-primary" (click)="GetAdultview(col)"
-                                                            id="load">
-                                                            <span class="glyphicon glyphicon-view"></span>View
-                                                        </button></td>
-                                                        <td><button class="btn btn-primary" (click)="GetAdultprint(col)"
-                                                            id="load">
-                                                            <span class="glyphicon glyphicon-print"></span>&nbsp;Print
-                                                        </button></td>
-                                                </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="paginatorright" let-state>
-                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
-                                                {{state.totalRecords}}
-                                            </ng-template>
-                                        </p-table>
-                                    </div>
-                                    <!-- <label class="control-label">HISTORY OF SPEECH DEVELOPMENT</label> -->
-                                    <div class="form-group">
-                                    <div class="col-sm-6">
-                                            <label class="control-label">LANGUAGE</label>
-                                            <input type="text" class="form-control" placeholder="LANGUAGE"
-                                                name="Language" #Language="ngModel"
-                                                [(ngModel)]="ObjAdult.Language">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label class="control-label">REF. BY</label>
-                                            <input type="text" class="form-control" placeholder="REF. BY"
-                                                name="Ref_By" #Ref_By="ngModel"
-                                                [(ngModel)]="ObjAdult.Ref_By">
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="clearfix"></div>
-                                    <label class="control-label">GENERAL COMPLAINT :</label>
-                                    <p-editor name="General_Complaint" #General_Complaint="ngModel"
-                                        [(ngModel)]="ObjAdult.General_Complaint" [style]="{'height':'180px'}">
-                                    </p-editor>
-                                    <div class="clearfix"></div>
-                                    <label class="control-label">MEDICAL HISTORY :</label>
-                                    <p-editor name="Medical_History" #Medical_History="ngModel"
-                                        [(ngModel)]="ObjAdult.Medical_History" [style]="{'height':'180px'}">
-                                    </p-editor>
-                                    <div class="clearfix"></div>
-                                    <div class="form-group">
-                                        <div class="col-sm-6">
-                                            <label class="control-label">PRE- MORBID STATUS
-                                            </label>
-                                            <select
-                                            class="form-control"
-                                            name="Pre_Morbid_Status"
-                                            #Pre_Morbid_Status="ngModel"
-                                            [(ngModel)]="ObjAdult.Pre_Morbid_Status"
-                                            >
-                                            <option value="undefined">Select</option>
-                                            <option value="VERBAL">VERBAL</option>
-                                            <option value="NON-VERBAL">NON-VERBAL</option>
-                                            <option value="BOTH">BOTH</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-6"></div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                    <div class="form-group" style="padding: 1em;">
-                                        <h5 style="
-                                        padding: 0.5em 1em;
-                                        background: #c1c1c185;
-                                        border-top: 5px solid #3c8dbc;
-                                        border-bottom: 1px solid #c6c6c6;
-                                        margin-top: 15px;
-                                        ">
-                                        <i class="fa fa-fw fa-fax">
-                                        </i> &nbsp;<strong>ASSESSMENT FOR DYSPHAGIA (MASA):</strong>
-                                    </h5>
-                                    <h3>REACTION TO THE PROBLEM</h3>
-                                        <div class="col-sm-6">
-                                            <label class="control-label">SCORE</label>
-                                            <input type="text" class="form-control" placeholder="SCORE"
-                                                name="Score" #Score="ngModel"
-                                                [(ngModel)]="ObjAdult.Score">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label class="control-label">IMPRESSION</label>
-                                            <input type="text" class="form-control" placeholder="IMPRESSION"
-                                                name="Impression" #Impression="ngModel"
-                                                [(ngModel)]="ObjAdult.Impression">
-                                        </div>
-                                      </div>
-                                    <br>
-                                    <div class="clearfix"></div>
-                                    <div class="form-group" style="padding: 1em;">
-                                        <h5 style="
-                                        padding: 0.5em 1em;
-                                        background: #c1c1c185;
-                                        border-top: 5px solid #3c8dbc;
-                                        border-bottom: 1px solid #c6c6c6;
-                                        margin-top: 15px;
-                                        ">
-                                        <i class="fa fa-fw fa-fax">
-                                        </i> &nbsp;<strong>ASSESSMENT OF DYSARTHRIA :</strong>
-                                    </h5>
-                                    <h3>FRENCHAY DYSARTHRIA ASSESSMENT</h3>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">REFLEXES </label>
-                                        <input type="text" class="form-control" placeholder="REFLEXES"
-                                            name="Reflexes" #Reflexes="ngModel"
-                                            [(ngModel)]="ObjAdult.Reflexes">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">LIPS</label>
-                                        <input type="text" class="form-control" placeholder="LIPS"
-                                            name="Lips" #Lips="ngModel"
-                                            [(ngModel)]="ObjAdult.Lips">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">LARYNGEAL</label>
-                                        <input type="text" class="form-control" placeholder="LARYNGEAL"
-                                            name="Laryngeal" #Laryngeal="ngModel"
-                                            [(ngModel)]="ObjAdult.Laryngeal">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">INTELLIGIBILITY</label>
-                                        <input type="text" class="form-control" placeholder="INTELLIGIBILITY"
-                                            name="Intelligibility" #Intelligibility="ngModel"
-                                            [(ngModel)]="ObjAdult.Intelligibility">
-                                    </div>
-                                    </div>
-                                    <div class="form-group" style="padding: 1em;">
-                                     <div class="col-sm-3">
-                                        <label class="control-label">RESPIRATION </label>
-                                        <input type="text" class="form-control" placeholder="RESPIRATION"
-                                            name="Respiration" #Respiration="ngModel"
-                                            [(ngModel)]="ObjAdult.Respiration">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">PALATE</label>
-                                        <input type="text" class="form-control" placeholder="PALATE"
-                                            name="Palate" #Palate="ngModel"
-                                            [(ngModel)]="ObjAdult.Palate">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">TONGUE</label>
-                                        <input type="text" class="form-control" placeholder="TONGUE"
-                                            name="Tongue" #Tongue="ngModel"
-                                            [(ngModel)]="ObjAdult.Tongue">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">IMPRESSION</label>
-                                        <input type="text" class="form-control" placeholder="IMPRESSION"
-                                            name="Dysarthria_Impression" #Dysarthria_Impression="ngModel"
-                                            [(ngModel)]="ObjAdult.Dysarthria_Impression">
-                                    </div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                    <label class="control-label">CRANIAL NERVE ASSESSMENT :</label>
-                                    <p-editor name="Cranial_Nerve_Assesment" #Cranial_Nerve_Assesment="ngModel"
-                                        [(ngModel)]="ObjAdult.Cranial_Nerve_Assesment" [style]="{'height':'180px'}">
-                                    </p-editor>
-                                    <div class="clearfix"></div>
-                                    <div class="form-group" style="padding: 1em;">
-                                        <h5 style="
-                                        padding: 0.5em 1em;
-                                        background: #c1c1c185;
-                                        border-top: 5px solid #3c8dbc;
-                                        border-bottom: 1px solid #c6c6c6;
-                                        margin-top: 15px;
-                                        ">
-                                        <i class="fa fa-fw fa-fax">
-                                        </i> &nbsp;<strong>VOICE EVALUATION :</strong>
-                                    </h5>
-                                    <label class="control-label"  style="padding: 1em;">PITCH : </label>
-                                    <div class="form-group" style="padding: 1em;">
-                                        <div class="col-sm-3">
-                                            <p-radioButton name="Voice_Evaluation_Pitch" #Voice_Evaluation_Pitch="ngModel"
-                                                [(ngModel)]="ObjAdult.Voice_Evaluation_Pitch" value="LOW"
-                                                label="LOW" inputId="preopt1"></p-radioButton>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <p-radioButton name="Voice_Evaluation_Pitch" #Voice_Evaluation_Pitch="ngModel"
-                                            [(ngModel)]="ObjAdult.Voice_Evaluation_Pitch"  value="HIGH"
-                                                label="HIGH" inputId="preopt2"></p-radioButton>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <p-radioButton name="Voice_Evaluation_Pitch" #Voice_Evaluation_Pitch="ngModel"
-                                            [(ngModel)]="ObjAdult.Voice_Evaluation_Pitch" value="MONOPITCH" label="MONOPITCH"
-                                                inputId="preopt3"></p-radioButton>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <p-radioButton name="Voice_Evaluation_Pitch" #Voice_Evaluation_Pitch="ngModel"
-                                            [(ngModel)]="ObjAdult.Voice_Evaluation_Pitch" value="DIPLOPHONIA" label="DIPLOPHONIA"
-                                                inputId="preopt3"></p-radioButton>
-                                        </div>
-
-                                    </div>
-                                    <label class="control-label"  style="padding: 1em;">LOUDNESS : </label>
-                                    
-                                        <div class="form-group" style="padding: 1em;">
-                                            <div class="col-sm-3">
-                                                <p-radioButton name="Voice_Evaluation_Loudness" #Voice_Evaluation_Loudness="ngModel"
-                                                    [(ngModel)]="ObjAdult.Voice_Evaluation_Loudness" value="TOO_SOFT"
-                                                    label="TOO SOFT" inputId="preopt1"></p-radioButton>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <p-radioButton name="Voice_Evaluation_Loudness" #Voice_Evaluation_Loudness="ngModel"
-                                                [(ngModel)]="ObjAdult.Voice_Evaluation_Loudness"  value="SOFT"
-                                                    label="SOFT" inputId="preopt2"></p-radioButton>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <p-radioButton name="Voice_Evaluation_Loudness" #Voice_Evaluation_Loudness="ngModel"
-                                                [(ngModel)]="ObjAdult.Voice_Evaluation_Loudness" value="LOUD" label="LOUD"
-                                                    inputId="preopt3"></p-radioButton>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <p-radioButton name="Voice_Evaluation_Loudness" #Voice_Evaluation_Loudness="ngModel"
-                                                [(ngModel)]="ObjAdult.Voice_Evaluation_Loudness" value="TOO_LOUD" label="TOO LOUD"
-                                                    inputId="preopt3"></p-radioButton>
-                                            </div>
-    
-                                        </div>
-                                    
-                                    <label class="control-label"  style="padding: 1em;">QUALITY : </label>
-                                    <div class="form-group"  style="padding: 1em;">
-                                        <div class="col-sm-4">
-                                            <p-radioButton name="Voice_Evaluation_Quality" #Voice_Evaluation_Quality="ngModel"
-                                                [(ngModel)]="ObjAdult.Voice_Evaluation_Quality" value="HOARSE_VOICE"
-                                                label="HOARSE VOICE" inputId="preopt1"></p-radioButton>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <p-radioButton name="Voice_Evaluation_Quality" #Voice_Evaluation_Quality="ngModel"
-                                            [(ngModel)]="ObjAdult.Voice_Evaluation_Quality"  value="HARSH_VOICE"
-                                                label="HARSH VOICE" inputId="preopt2"></p-radioButton>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <p-radioButton name="Voice_Evaluation_Quality" #Voice_Evaluation_Quality="ngModel"
-                                            [(ngModel)]="ObjAdult.Voice_Evaluation_Quality" value="BREATHY_VOICE" label="BREATHY VOICE"
-                                                inputId="preopt3"></p-radioButton>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                     <div class="form-group" style="padding: 1em;">
-                                        <div class="col-sm-6">
-                                            <label class="control-label">PHONATION DURATION</label>
-                                            <input type="text" class="form-control" placeholder="PHONATION DURATION"
-                                                name="Phonation_Duration" #Phonation_Duration="ngModel"
-                                                [(ngModel)]="ObjAdult.Phonation_Duration">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label class="control-label">S/Z RATIO</label>
-                                            <input type="text" class="form-control" placeholder="S/Z RATIO"
-                                                name="S_Z_Ratio" #S_Z_Ratio="ngModel"
-                                                [(ngModel)]="ObjAdult.S_Z_Ratio">
-                                        </div>
-                                     </div>
-                                     <div class="clearfix"></div>
-                                     <div class="form-group" style="padding: 1em;">
-                                        <div class="col-sm-6">
-                                            <label class="control-label">INSTRUMENTAL ASSESSMENT (IF ANY)</label>
-                                            <input type="text" class="form-control" placeholder="INSTRUMENTAL ASSESSMENT"
-                                                name="Instrumental_Assessment" #Instrumental_Assessment="ngModel"
-                                                [(ngModel)]="ObjAdult.Instrumental_Assessment">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label class="control-label">GRBAS SCALE</label>
-                                            <input type="text" class="form-control" placeholder="GRBAS SCALE"
-                                                name="Grbas_Scale" #Grbas_Scale="ngModel"
-                                                [(ngModel)]="ObjAdult.Grbas_Scale">
-                                        </div>
-                                     </div>
-                                     <div class="clearfix"></div>
-                                    <label class="control-label">APRAXIA ASSESSMENT( APRAXIA BATTERY FOR ADULTS-2) :</label>
-                                    <p-editor name="Apraxia_Assessment" #Apraxia_Assessment="ngModel"
-                                        [(ngModel)]="ObjAdult.Apraxia_Assessment" [style]="{'height':'180px'}">
-                                    </p-editor>
-                                    <div class="clearfix"></div>
-                                     <div class="form-group" style="padding: 1em;">
-                                        <h5 style="
-                                        padding: 0.5em 1em;
-                                        background: #c1c1c185;
-                                        border-top: 5px solid #3c8dbc;
-                                        border-bottom: 1px solid #c6c6c6;
-                                        margin-top: 15px;
-                                        ">
-                                        <i class="fa fa-fw fa-fax">
-                                        </i> &nbsp;<strong>ASSESSMENT FOR APHASIA( WAB) :</strong>
-                                    </h5>
-                                    <div class="col-sm-4">
-                                            <label class="control-label">FLUENCY</label>
-                                            <input type="text" class="form-control" placeholder="FLUENCY"
-                                                name="Fluency" #Fluency="ngModel"
-                                                [(ngModel)]="ObjAdult.Fluency">
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">NAMING</label>
-                                            <input type="text" class="form-control" placeholder="NAMING"
-                                                name="Naming" #Naming="ngModel"
-                                                [(ngModel)]="ObjAdult.Naming">
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">IMPRESSION</label>
-                                            <input type="text" class="form-control" placeholder="IMPRESSION"
-                                                name="Aphasia_Impression" #Aphasia_Impression="ngModel"
-                                                [(ngModel)]="ObjAdult.Aphasia_Impression">
-                                        </div>
-
-                                    </div>
-                                    <div class="clearfix"></div>
-                                     <div class="form-group" style="padding: 1em;">
-                                     <div class="col-sm-4">
-                                            <label class="control-label">COMPREHENSION</label>
-                                            <input type="text" class="form-control" placeholder="COMPREHENSION"
-                                                name="Comprehension" #Comprehension="ngModel"
-                                                [(ngModel)]="ObjAdult.Comprehension">
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">REPETITION</label>
-                                            <input type="text" class="form-control" placeholder="REPETITION"
-                                                name="Repetition" #Repetition="ngModel"
-                                                [(ngModel)]="ObjAdult.Repetition">
-                                        </div>
-                                        <div class="col-sm-4"></div>
-
-                                    </div>
-                                    <div class="clearfix"></div>
-                                     <label class="control-label">Other tests Administered </label>
-                                    <p-editor name="Other_Test" #Other_Test="ngModel"
-                                        [(ngModel)]="ObjAdult.Other_Test" [style]="{'height':'320px'}"></p-editor>
-                                    <div class="clearfix"></div>
-                                    <label class="control-label">PROVISIONAL DIAGNOSIS</label>
-                                    <p-editor name="Provisional_Diagnosis" #Provisional_Diagnosis="ngModel"
-                                        [(ngModel)]="ObjAdult.Provisional_Diagnosis" [style]="{'height':'250px'}">
-                                    </p-editor>
-                                    <div class="clearfix"></div>
-                                    <label class="control-label">RECOMMENDATION</label>
-                                    <p-editor name="Recommendation" #Recommendation="ngModel"
-                                        [(ngModel)]="ObjAdult.Recommendation" [style]="{'height':'250px'}">
-                                    </p-editor>
-                                </form>
-                                <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" id="load" (click)="saveAdult()"
+                                    <button class="btn btn-primary pull-right" id="load" (click)="saveAssessment()"
                                         [disabled]="Spinner">
                                         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}"
                                             strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
@@ -2088,664 +1920,4 @@
                                         </span>
                                     </p-header>
                                 </p-editor>
-</p-dialog>
-<!-- Fluency View -->
-<p-dialog header="{{name}}" [(visible)]="viewFluencypopUp" [modal]="true" [responsive]="true"
-    [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
-    <div class="form-group" style="padding: 1em;">
-        <h5 style="
-        padding: 0.5em 1em;
-        background: #c1c1c185;
-        border-top: 5px solid #3c8dbc;
-        border-bottom: 1px solid #c6c6c6;
-        margin-top: 15px;
-        ">
-        <i class="fa fa-fw fa-fax">
-        </i> &nbsp;<strong>SECTION-I HISTORY :</strong>
-    </h5>
-    <div class="col-sm-4">
-            <label class="control-label">FIRST EXHIBITION OF DYSFLUENCIES</label>
-            <input type="text" class="form-control" placeholder="FIRST EXHIBITION OF DYSFLUENCIES"
-                name="Sec_I_First_Exhibition" #Sec_I_First_Exhibition="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_I_First_Exhibition" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-            <label class="control-label">GRADUAL/SUDDEN ONSET</label>
-            <input type="text" class="form-control" placeholder="GRADUAL/SUDDEN ONSET"
-                name="Sec_I_Gradual_Sudden" #Sec_I_Gradual_Sudden="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_I_Gradual_Sudden" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-            <label class="control-label">FIRST NOTICED BY WHOM</label>
-            <input type="text" class="form-control" placeholder="FIRST NOTICED BY WHOM"
-                name="Sec_I_First_Notice" #Sec_I_First_Notice="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_I_First_Notice" [disabled] = "true">
-
-        </div>
-     </div>
-    <br>
-    <div class="clearfix"></div>
-    <div class="form-group" style="padding: 1em;">
-        <div class="col-sm-4">
-            <label class="control-label">WHAT WERE THE RELATED CIRCUMSTANCES
-            </label>
-            <input type="text" class="form-control" placeholder="WHAT WERE THE RELATED CIRCUMSTANCES"
-                name="Sec_I_Related_Circumstances" #Sec_I_Related_Circumstances="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_I_Related_Circumstances" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-            <label class="control-label">IS THE SEVERITY INCREASING/ DECREASING
-            </label>
-            <input type="text" class="form-control" placeholder="IS THE SEVERITY INCREASING/ DECREASING"
-                name="Sec_I_Severity_Inc_Dec" #Sec_I_Severity_Inc_Dec="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_I_Severity_Inc_Dec" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-            <label class="control-label">HAVE ANY FAMILY MEMBERS EVER STUTTERED
-            </label>
-            <input type="text" class="form-control" placeholder="HAVE ANY FAMILY MEMBERS EVER STUTTERED"
-                name="Sec_I_Stuttered_Or_Not" #Sec_I_Stuttered_Or_Not="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_I_Stuttered_Or_Not" [disabled] = "true">
-        </div>
-
-    </div>
-    <div class="clearfix"></div>
-    <div class="form-group" style="padding: 1em;">
-        <div class="col-sm-5">
-            <label class="control-label">HISTORY OF CONTACT WITH A STUTTERER(RELATIONSHIP, DURATION)
-            </label>
-            <input type="text" class="form-control" placeholder="HISTORY OF CONTACT WITH A STUTTERER"
-                name="Sec_I_Stutterer_Contact" #Sec_I_Stutterer_Contact="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_I_Stutterer_Contact" [disabled] = "true">
-        </div>
-        <div class="col-sm-4"></div>
-        <div class="col-sm-3"></div>
-    </div>
-    <br>
-    <div class="clearfix"></div>
-    <div class="form-group" style="padding: 1em;">
-        <h5 style="
-        padding: 0.5em 1em;
-        background: #c1c1c185;
-        border-top: 5px solid #3c8dbc;
-        border-bottom: 1px solid #c6c6c6;
-        margin-top: 15px;
-        ">
-        <i class="fa fa-fw fa-fax">
-        </i> &nbsp;<strong>SECTION-II REACTIONS :</strong>
-    </h5>
-    <h3>REACTION TO THE PROBLEM</h3>
-    <div class="col-sm-4">
-        <label class="control-label">BY PARENTS </label>
-        <input type="text" class="form-control" placeholder="BY PARENTS"
-            name="Sec_II_By_Parents" #Sec_II_By_Parents="ngModel"
-            [(ngModel)]="ObjFluencyview.Sec_II_By_Parents" [disabled] = "true">
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label">BY SELF</label>
-        <input type="text" class="form-control" placeholder="BY SELF"
-            name="Sec_II_By_Self" #Sec_II_By_Self="ngModel"
-            [(ngModel)]="ObjFluencyview.Sec_II_By_Self" [disabled] = "true">
-    </div>
-    <div class="col-sm-4">
-        <label class="control-label">BY OTHERS</label>
-        <input type="text" class="form-control" placeholder="BY OTHERS"
-            name="Sec_II_By_Others" #Sec_II_By_Others="ngModel"
-            [(ngModel)]="ObjFluencyview.Sec_II_By_Others" [disabled] = "true">
-    </div>
-    </div>
-    <div class="clearfix"></div>
-    <div class="form-group" style="padding: 1em;">
-        <h5 style="
-        padding: 0.5em 1em;
-        background: #c1c1c185;
-        border-top: 5px solid #3c8dbc;
-        border-bottom: 1px solid #c6c6c6;
-        margin-top: 15px;
-        ">
-        <i class="fa fa-fw fa-fax">
-        </i> &nbsp;<strong>SECTION –III SEVERITY :</strong>
-    </h5>
-    <h3>VARIATIONS IN STUTTERING WITH
-    </h3>
-    <div class="col-sm-3">
-        <label class="control-label">RESPECT TO SPECIFIC SITUATION</label>
-        <input type="text" class="form-control" placeholder="RESPECT TO SPECIFIC SITUATION"
-            name="Sec_III_Res_Spec_Situation" #Sec_III_Res_Spec_Situation="ngModel"
-            [(ngModel)]="ObjFluencyview.Sec_III_Res_Spec_Situation" [disabled] = "true">
-    </div>
-    <div class="col-sm-3">
-        <label class="control-label">RESPECT TO SPECIFIC INDIVIDUALS</label>
-        <input type="text" class="form-control" placeholder="RESPECT TO SPECIFIC INDIVIDUALS"
-            name="Sec_III_Res_Spec_Individuals" #Sec_III_Res_Spec_Individuals="ngModel"
-            [(ngModel)]="ObjFluencyview.Sec_III_Res_Spec_Individuals" [disabled] = "true">
-    </div>
-    <div class="col-sm-3">
-        <label class="control-label">RESPECT TO SPECIFIC SOUNDS</label>
-        <input type="text" class="form-control" placeholder="RESPECT TO SPECIFIC SOUNDS"
-            name="Sec_III_Res_Spec_Sounds" #Sec_III_Res_Spec_Sounds="ngModel"
-            [(ngModel)]="ObjFluencyview.Sec_III_Res_Spec_Sounds" [disabled] = "true">
-    </div>
-    <div class="col-sm-3">
-        <label class="control-label">RESPECT TO SENTENCE STRUCTURE</label>
-        <input type="text" class="form-control" placeholder="RESPECT TO SENTENCE STRUCTURE"
-            name="Sec_III_Res_Sentance_Struc" #Sec_III_Res_Sentance_Struc="ngModel"
-            [(ngModel)]="ObjFluencyview.Sec_III_Res_Sentance_Struc" [disabled] = "true">
-    </div>
-    </div>
-    <br>
-    
-    <div class="clearfix"></div>
-    <div class="table-responsive no-padding" style="overflow-x: hidden !important;margin-top: 7px;">
-        <table class="table table-bordered" style="margin-left: 5px;">
-            <thead>
-                <tr style="background-color:#3c8dbc;color:white;">
-                    <th class="text-center" style="vertical-align:middle">
-                        AVOIDANCE BEHAVIOUR((SPECIFY))
-                    </th>
-                    <th class="text-center" style="vertical-align:middle">
-                        SITUATION
-                    </th>
-                    <th class="text-center" style="vertical-align:middle">
-                        SOUNDS
-                    </th>
-                </tr>
-                <tr>
-                    <td class="control-label"><span
-                            style="text-align: cente;">COPING MECHANISM USED</span></td>
-                    <td><input type="text" name="Sec_III_Situation_Mechanism" #Sec_III_Situation_Mechanism="ngModel"
-                            [(ngModel)]="ObjFluencyview.Sec_III_Situation_Mechanism" class="form-control" [disabled] = "true">
-                    </td>
-                    <td><input type="text" name="Sec_III_Sounds_Mechanism" #Sec_III_Sounds_Mechanism="ngModel"
-                            [(ngModel)]="ObjFluencyview.Sec_III_Sounds_Mechanism" class="form-control" [disabled] = "true">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="control-label">REPORTED</td>
-                    <td><input type="text" name="Sec_III_Situation_Reported" #Sec_III_Situation_Reported="ngModel"
-                            [(ngModel)]="ObjFluencyview.Sec_III_Situation_Reported" class="form-control" [disabled] = "true">
-                    </td>
-                    <td><input type="text" name="Sec_III_Sounds_Reported" #Sec_III_Sounds_Reported="ngModel"
-                            [(ngModel)]="ObjFluencyview.Sec_III_Sounds_Reported" class="form-control" [disabled] = "true">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="control-label">OBSERVED</td>
-                    <td><input type="text" name="Sec_III_Situation_Observed" #Sec_III_Situation_Observed="ngModel"
-                            [(ngModel)]="ObjFluencyview.Sec_III_Situation_Observed" class="form-control" [disabled] = "true">
-                    </td>
-                    <td><input type="text" name="Sec_III_Sounds_Observed" #Sec_III_Sounds_Observed="ngModel"
-                            [(ngModel)]="ObjFluencyview.Sec_III_Sounds_Observed" class="form-control" [disabled] = "true">
-                    </td>
-                </tr>
-             </thead>
-        </table>
-    </div>
-    <div class="form-group" style="padding: 1em;">
-        <div class="col-sm-5">
-            <label class="control-label">SELF CONCERNED ABOUT THE PROBLEM</label>
-            <input type="text" class="form-control" placeholder="SELF CONCERNED ABOUT THE PROBLEM"
-                name="Sec_III_Self_Cencern" #Sec_III_Self_Cencern="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_III_Self_Cencern" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-            
-        </div>
-        <div class="col-sm-3">
-           
-        </div>
-
-    </div>
-    <div class="clearfix"></div>
-     <div class="form-group" style="padding: 1em;">
-        <h5 style="
-        padding: 0.5em 1em;
-        background: #c1c1c185;
-        border-top: 5px solid #3c8dbc;
-        border-bottom: 1px solid #c6c6c6;
-        margin-top: 15px;
-        ">
-        <i class="fa fa-fw fa-fax">
-        </i> &nbsp;<strong>SECTION-IV ANALYSIS AND SAMPLE RECORDING :</strong>
-    </h5>
-    <div class="col-sm-4">
-            <label class="control-label">NO. OF PROLONGATION</label>
-            <input type="text" class="form-control" placeholder="NO. OF PROLONGATION"
-                name="Sec_IV_No_Of_Prolongation" #Sec_IV_No_Of_Prolongation="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_IV_No_Of_Prolongation" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-            <label class="control-label">NO. OF REPITIONS</label>
-            <input type="text" class="form-control" placeholder="NO. OF REPITIONS"
-                name="Sec_IV_No_Of_Repitions" #Sec_IV_No_Of_Repitions="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_IV_No_Of_Repitions" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-            <label class="control-label">NO. OF HESITATIONS</label>
-            <input type="text" class="form-control" placeholder="NO. OF HESITATIONS"
-                name="Sec_IV_No_Of_Hesitations" #Sec_IV_No_Of_Hesitations="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_IV_No_Of_Hesitations" [disabled] = "true">
-        </div>
-
-    </div>
-    <div class="clearfix"></div>
-    <div class="form-group" style="padding: 1em;">
-        <div class="col-sm-4">
-            <label class="control-label">NO. OF BLOCKS</label>
-            <input type="text" class="form-control" placeholder="NO. OF BLOCKS"
-                name="Sec_IV_No_Of_Blocks" #Sec_IV_No_Of_Blocks="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_IV_No_Of_Blocks" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-            <label class="control-label">SECONDARY BEHAVIOURS</label>
-            <input type="text" class="form-control" placeholder="SECONDARY BEHAVIOURS"
-                name="Sec_IV_Secondary_Behave" #Sec_IV_Secondary_Behave="ngModel"
-                [(ngModel)]="ObjFluencyview.Sec_IV_Secondary_Behave" [disabled] = "true">
-        </div>
-        <div class="col-sm-4">
-
-        </div>
-    </div>
-    <div class="clearfix"></div>
-     <label class="control-label">OTHER TESTS </label>
-    <p-editor name="Sec_IV_Other_Test" #Sec_IV_Other_Test="ngModel"
-        [(ngModel)]="ObjFluencyview.Sec_IV_Other_Test" [style]="{'height':'320px'}" [readonly] = 'true'>
-        <p-header>
-            <span class="ql-formats">
-               
-            </span>
-        </p-header></p-editor>
-    <div class="clearfix"></div>
-    <label class="control-label">PROVISIONAL DIAGNOSIS</label>
-    <p-editor name="Sec_IV_Provisional_Diagnosis" #Sec_IV_Provisional_Diagnosis="ngModel"
-        [(ngModel)]="ObjFluencyview.Sec_IV_Provisional_Diagnosis" [style]="{'height':'250px'}" [readonly] = 'true'>
-        <p-header>
-            <span class="ql-formats">
-               
-            </span>
-        </p-header>
-    </p-editor>
-    <div class="clearfix"></div>
-    <label class="control-label">RECOMMENDATIONS</label>
-    <p-editor name="Sec_IV_Recommendation" #Sec_IV_Recommendation="ngModel"
-        [(ngModel)]="ObjFluencyview.Sec_IV_Recommendation" [style]="{'height':'250px'}" [readonly] = 'true'>
-        <p-header>
-            <span class="ql-formats">
-               
-            </span>
-        </p-header>
-    </p-editor>
-</p-dialog>
-<!-- Adult View -->
-<p-dialog header="{{name}}" [(visible)]="viewAdultpopUp" [modal]="true" [responsive]="true"
-    [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
-    <div class="form-group">
-        <div class="col-sm-6">
-                <label class="control-label">LANGUAGE</label>
-                <input type="text" class="form-control" placeholder="LANGUAGE"
-                    name="Language" #Language="ngModel"
-                    [(ngModel)]="objAdultview.Language" [disabled]="true">
-            </div>
-            <div class="col-sm-6">
-                <label class="control-label">REF. BY</label>
-                <input type="text" class="form-control" placeholder="REF. BY"
-                    name="Ref_By" #Ref_By="ngModel"
-                    [(ngModel)]="objAdultview.Ref_By" [disabled]="true">
-            </div>
-        </div>
-        <br>
-        <div class="clearfix"></div>
-        <label class="control-label">GENERAL COMPLAINT :</label>
-        <p-editor name="General_Complaint" #General_Complaint="ngModel"
-            [(ngModel)]="objAdultview.General_Complaint" [style]="{'height':'180px'}" [readonly] = 'true'>
-            <p-header>
-                <span class="ql-formats">
-                   
-                </span>
-            </p-header>
-        </p-editor>
-        <div class="clearfix"></div>
-        <label class="control-label">MEDICAL HISTORY :</label>
-        <p-editor name="Medical_History" #Medical_History="ngModel"
-            [(ngModel)]="objAdultview.Medical_History" [style]="{'height':'180px'}" [readonly] = 'true'>
-            <p-header>
-                <span class="ql-formats">
-                   
-                </span>
-            </p-header>
-        </p-editor>
-        <div class="clearfix"></div>
-        <div class="form-group">
-            <div class="col-sm-6">
-                <label class="control-label">PRE- MORBID STATUS
-                </label>
-                <select
-                class="form-control"
-                name="Pre_Morbid_Status"
-                #Pre_Morbid_Status="ngModel"
-                [(ngModel)]="objAdultview.Pre_Morbid_Status"
-                [disabled]="true"
-                >
-                <option value="undefined">Select</option>
-                <option value="VERBAL">VERBAL</option>
-                <option value="NON-VERBAL">NON-VERBAL</option>
-                <option value="BOTH">BOTH</option>
-                </select>
-            </div>
-            <div class="col-sm-6"></div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="form-group" style="padding: 1em;">
-            <h5 style="
-            padding: 0.5em 1em;
-            background: #c1c1c185;
-            border-top: 5px solid #3c8dbc;
-            border-bottom: 1px solid #c6c6c6;
-            margin-top: 15px;
-            ">
-            <i class="fa fa-fw fa-fax">
-            </i> &nbsp;<strong>ASSESSMENT FOR DYSPHAGIA (MASA):</strong>
-        </h5>
-        <h3>REACTION TO THE PROBLEM</h3>
-            <div class="col-sm-6">
-                <label class="control-label">SCORE</label>
-                <input type="text" class="form-control" placeholder="SCORE"
-                    name="Score" #Score="ngModel"
-                    [(ngModel)]="objAdultview.Score"
-                    [disabled]="true">
-            </div>
-            <div class="col-sm-6">
-                <label class="control-label">IMPRESSION</label>
-                <input type="text" class="form-control" placeholder="IMPRESSION"
-                    name="Impression" #Impression="ngModel"
-                    [(ngModel)]="objAdultview.Impression"
-                    [disabled]="true">
-            </div>
-          </div>
-        <br>
-        <div class="clearfix"></div>
-        <div class="form-group" style="padding: 1em;">
-            <h5 style="
-            padding: 0.5em 1em;
-            background: #c1c1c185;
-            border-top: 5px solid #3c8dbc;
-            border-bottom: 1px solid #c6c6c6;
-            margin-top: 15px;
-            ">
-            <i class="fa fa-fw fa-fax">
-            </i> &nbsp;<strong>ASSESSMENT OF DYSARTHRIA :</strong>
-        </h5>
-        <h3>FRENCHAY DYSARTHRIA ASSESSMENT</h3>
-        <div class="col-sm-3">
-            <label class="control-label">REFLEXES </label>
-            <input type="text" class="form-control" placeholder="REFLEXES"
-                name="Reflexes" #Reflexes="ngModel"
-                [(ngModel)]="objAdultview.Reflexes"
-                [disabled]="true">
-        </div>
-        <div class="col-sm-3">
-            <label class="control-label">LIPS</label>
-            <input type="text" class="form-control" placeholder="LIPS"
-                name="Lips" #Lips="ngModel"
-                [(ngModel)]="objAdultview.Lips"
-                [disabled]="true">
-        </div>
-        <div class="col-sm-3">
-            <label class="control-label">LARYNGEAL</label>
-            <input type="text" class="form-control" placeholder="LARYNGEAL"
-                name="Laryngeal" #Laryngeal="ngModel"
-                [(ngModel)]="objAdultview.Laryngeal"
-                [disabled]="true">
-        </div>
-        <div class="col-sm-3">
-            <label class="control-label">INTELLIGIBILITY</label>
-            <input type="text" class="form-control" placeholder="INTELLIGIBILITY"
-                name="Intelligibility" #Intelligibility="ngModel"
-                [(ngModel)]="objAdultview.Intelligibility"
-                [disabled]="true">
-        </div>
-        </div>
-        <div class="form-group" style="padding: 1em;">
-         <div class="col-sm-3">
-            <label class="control-label">RESPIRATION </label>
-            <input type="text" class="form-control" placeholder="RESPIRATION"
-                name="Respiration" #Respiration="ngModel"
-                [(ngModel)]="objAdultview.Respiration"
-                [disabled]="true">
-        </div>
-        <div class="col-sm-3">
-            <label class="control-label">PALATE</label>
-            <input type="text" class="form-control" placeholder="PALATE"
-                name="Palate" #Palate="ngModel"
-                [(ngModel)]="objAdultview.Palate"
-                [disabled]="true">
-        </div>
-        <div class="col-sm-3">
-            <label class="control-label">TONGUE</label>
-            <input type="text" class="form-control" placeholder="TONGUE"
-                name="Tongue" #Tongue="ngModel"
-                [(ngModel)]="objAdultview.Tongue"
-                [disabled]="true">
-        </div>
-        <div class="col-sm-3">
-            <label class="control-label">IMPRESSION</label>
-            <input type="text" class="form-control" placeholder="IMPRESSION"
-                name="Dysarthria_Impression" #Dysarthria_Impression="ngModel"
-                [(ngModel)]="objAdultview.Dysarthria_Impression"
-                [disabled]="true">
-        </div>
-        </div>
-        <div class="clearfix"></div>
-        <label class="control-label">CRANIAL NERVE ASSESSMENT :</label>
-        <p-editor name="Cranial_Nerve_Assesment" #Cranial_Nerve_Assesment="ngModel"
-            [(ngModel)]="objAdultview.Cranial_Nerve_Assesment" [style]="{'height':'180px'}" [readonly] = 'true'>
-            <p-header>
-                <span class="ql-formats">
-                   
-                </span>
-            </p-header>
-        </p-editor>
-        <div class="clearfix"></div>
-        <div class="form-group" style="padding: 1em;">
-            <h5 style="
-            padding: 0.5em 1em;
-            background: #c1c1c185;
-            border-top: 5px solid #3c8dbc;
-            border-bottom: 1px solid #c6c6c6;
-            margin-top: 15px;
-            ">
-            <i class="fa fa-fw fa-fax">
-            </i> &nbsp;<strong>VOICE EVALUATION :</strong>
-        </h5>
-        <label class="control-label"  style="padding: 1em;">PITCH : </label>
-        <div class="form-group" style="padding: 1em;">
-            <div class="col-sm-3">
-                <p-radioButton name="Voice_Evaluation_Pitch" #Voice_Evaluation_Pitch="ngModel"
-                    [(ngModel)]="objAdultview.Voice_Evaluation_Pitch" value="LOW"
-                    label="LOW" inputId="preopt1" [disabled] = "true"></p-radioButton>
-            </div>
-            <div class="col-sm-3">
-                <p-radioButton name="Voice_Evaluation_Pitch" #Voice_Evaluation_Pitch="ngModel"
-                [(ngModel)]="objAdultview.Voice_Evaluation_Pitch"  value="HIGH"
-                    label="HIGH" inputId="preopt2" [disabled] = "true"></p-radioButton>
-            </div>
-            <div class="col-sm-3">
-                <p-radioButton name="Voice_Evaluation_Pitch" #Voice_Evaluation_Pitch="ngModel"
-                [(ngModel)]="objAdultview.Voice_Evaluation_Pitch" value="MONOPITCH" label="MONOPITCH"
-                    inputId="preopt3" [disabled] = "true"></p-radioButton>
-            </div>
-            <div class="col-sm-3">
-                <p-radioButton name="Voice_Evaluation_Pitch" #Voice_Evaluation_Pitch="ngModel"
-                [(ngModel)]="objAdultview.Voice_Evaluation_Pitch" value="DIPLOPHONIA" label="DIPLOPHONIA"
-                    inputId="preopt3" [disabled] = "true"></p-radioButton>
-            </div>
-
-        </div>
-        <label class="control-label"  style="padding: 1em;">LOUDNESS : </label>
-        
-            <div class="form-group" style="padding: 1em;">
-                <div class="col-sm-3">
-                    <p-radioButton name="Voice_Evaluation_Loudness" #Voice_Evaluation_Loudness="ngModel"
-                        [(ngModel)]="objAdultview.Voice_Evaluation_Loudness" value="TOO_SOFT"
-                        label="TOO SOFT" inputId="preopt1" [disabled] = "true"></p-radioButton>
-                </div>
-                <div class="col-sm-3">
-                    <p-radioButton name="Voice_Evaluation_Loudness" #Voice_Evaluation_Loudness="ngModel"
-                    [(ngModel)]="objAdultview.Voice_Evaluation_Loudness"  value="SOFT"
-                        label="SOFT" inputId="preopt2" [disabled] = "true"></p-radioButton>
-                </div>
-                <div class="col-sm-3">
-                    <p-radioButton name="Voice_Evaluation_Loudness" #Voice_Evaluation_Loudness="ngModel"
-                    [(ngModel)]="objAdultview.Voice_Evaluation_Loudness" value="LOUD" label="LOUD"
-                        inputId="preopt3" [disabled] = "true"></p-radioButton>
-                </div>
-                <div class="col-sm-3">
-                    <p-radioButton name="Voice_Evaluation_Loudness" #Voice_Evaluation_Loudness="ngModel"
-                    [(ngModel)]="objAdultview.Voice_Evaluation_Loudness" value="TOO_LOUD" label="TOO LOUD"
-                        inputId="preopt3" [disabled] = "true"></p-radioButton>
-                </div>
-
-            </div>
-        
-        <label class="control-label"  style="padding: 1em;">QUALITY : </label>
-        <div class="form-group"  style="padding: 1em;">
-            <div class="col-sm-4">
-                <p-radioButton name="Voice_Evaluation_Quality" #Voice_Evaluation_Quality="ngModel"
-                    [(ngModel)]="objAdultview.Voice_Evaluation_Quality" value="HOARSE_VOICE"
-                    label="HOARSE VOICE" inputId="preopt1" [disabled] = "true"></p-radioButton>
-            </div>
-            <div class="col-sm-4">
-                <p-radioButton name="Voice_Evaluation_Quality" #Voice_Evaluation_Quality="ngModel"
-                [(ngModel)]="objAdultview.Voice_Evaluation_Quality"  value="HARSH_VOICE"
-                    label="HARSH VOICE" inputId="preopt2" [disabled] = "true"></p-radioButton>
-            </div>
-            <div class="col-sm-4">
-                <p-radioButton name="Voice_Evaluation_Quality" #Voice_Evaluation_Quality="ngModel"
-                [(ngModel)]="objAdultview.Voice_Evaluation_Quality" value="BREATHY_VOICE" label="BREATHY VOICE"
-                    inputId="preopt3" [disabled] = "true"></p-radioButton>
-            </div>
-          </div>
-        </div>
-        <div class="clearfix"></div>
-         <div class="form-group" style="padding: 1em;">
-            <div class="col-sm-6">
-                <label class="control-label">PHONATION DURATION</label>
-                <input type="text" class="form-control" placeholder="PHONATION DURATION"
-                    name="Phonation_Duration" #Phonation_Duration="ngModel"
-                    [(ngModel)]="objAdultview.Phonation_Duration"
-                    [disabled]="true">
-            </div>
-            <div class="col-sm-6">
-                <label class="control-label">S/Z RATIO</label>
-                <input type="text" class="form-control" placeholder="S/Z RATIO"
-                    name="S_Z_Ratio" #S_Z_Ratio="ngModel"
-                    [(ngModel)]="objAdultview.S_Z_Ratio"
-                    [disabled]="true">
-            </div>
-         </div>
-         <div class="clearfix"></div>
-         <div class="form-group" style="padding: 1em;">
-            <div class="col-sm-6">
-                <label class="control-label">INSTRUMENTAL ASSESSMENT (IF ANY)</label>
-                <input type="text" class="form-control" placeholder="INSTRUMENTAL ASSESSMENT"
-                    name="Instrumental_Assessment" #Instrumental_Assessment="ngModel"
-                    [(ngModel)]="objAdultview.Instrumental_Assessment"
-                    [disabled]="true">
-            </div>
-            <div class="col-sm-6">
-                <label class="control-label">GRBAS SCALE</label>
-                <input type="text" class="form-control" placeholder="GRBAS SCALE"
-                    name="Grbas_Scale" #Grbas_Scale="ngModel"
-                    [(ngModel)]="objAdultview.Grbas_Scale"
-                    [disabled]="true">
-            </div>
-         </div>
-         <div class="clearfix"></div>
-        <label class="control-label">APRAXIA ASSESSMENT( APRAXIA BATTERY FOR ADULTS-2) :</label>
-        <p-editor name="Apraxia_Assessment" #Apraxia_Assessment="ngModel"
-            [(ngModel)]="objAdultview.Apraxia_Assessment" [style]="{'height':'180px'}" [readonly] = 'true'>
-        </p-editor>
-        <div class="clearfix"></div>
-         <div class="form-group" style="padding: 1em;">
-            <h5 style="
-            padding: 0.5em 1em;
-            background: #c1c1c185;
-            border-top: 5px solid #3c8dbc;
-            border-bottom: 1px solid #c6c6c6;
-            margin-top: 15px;
-            ">
-            <i class="fa fa-fw fa-fax">
-            </i> &nbsp;<strong>ASSESSMENT FOR APHASIA( WAB) :</strong>
-        </h5>
-        <div class="col-sm-4">
-                <label class="control-label">FLUENCY</label>
-                <input type="text" class="form-control" placeholder="FLUENCY"
-                    name="Fluency" #Fluency="ngModel"
-                    [(ngModel)]="objAdultview.Fluency"
-                    [disabled]="true">
-            </div>
-            <div class="col-sm-4">
-                <label class="control-label">NAMING</label>
-                <input type="text" class="form-control" placeholder="NAMING"
-                    name="Naming" #Naming="ngModel"
-                    [(ngModel)]="objAdultview.Naming"
-                    [disabled]="true">
-            </div>
-            <div class="col-sm-4">
-                <label class="control-label">IMPRESSION</label>
-                <input type="text" class="form-control" placeholder="IMPRESSION"
-                    name="Aphasia_Impression" #Aphasia_Impression="ngModel"
-                    [(ngModel)]="objAdultview.Aphasia_Impression"
-                    [disabled]="true">
-            </div>
-
-        </div>
-        <div class="clearfix"></div>
-         <div class="form-group" style="padding: 1em;">
-         <div class="col-sm-4">
-                <label class="control-label">COMPREHENSION</label>
-                <input type="text" class="form-control" placeholder="COMPREHENSION"
-                    name="Comprehension" #Comprehension="ngModel"
-                    [(ngModel)]="objAdultview.Comprehension"
-                    [disabled]="true">
-            </div>
-            <div class="col-sm-4">
-                <label class="control-label">REPETITION</label>
-                <input type="text" class="form-control" placeholder="REPETITION"
-                    name="Repetition" #Repetition="ngModel"
-                    [(ngModel)]="objAdultview.Repetition"
-                    [disabled]="true">
-            </div>
-            <div class="col-sm-4"></div>
-
-        </div>
-        <div class="clearfix"></div>
-         <label class="control-label">Other tests Administered </label>
-        <p-editor name="Other_Test" #Other_Test="ngModel"
-            [(ngModel)]="objAdultview.Other_Test" [style]="{'height':'320px'}" [readonly] = 'true'>
-            <p-header>
-                <span class="ql-formats">
-                   
-                </span>
-            </p-header></p-editor>
-        <div class="clearfix"></div>
-        <label class="control-label">PROVISIONAL DIAGNOSIS</label>
-        <p-editor name="Provisional_Diagnosis" #Provisional_Diagnosis="ngModel"
-            [(ngModel)]="objAdultview.Provisional_Diagnosis" [style]="{'height':'250px'}" [readonly] = 'true'>
-            <p-header>
-                <span class="ql-formats">
-                   
-                </span>
-            </p-header>
-        </p-editor>
-        <div class="clearfix"></div>
-        <label class="control-label">RECOMMENDATION</label>
-        <p-editor name="Recommendation" #Recommendation="ngModel"
-            [(ngModel)]="objAdultview.Recommendation" [style]="{'height':'250px'}" [readonly] = 'true'>
-            <p-header>
-                <span class="ql-formats">
-                   
-                </span>
-            </p-header>
-        </p-editor>
 </p-dialog>

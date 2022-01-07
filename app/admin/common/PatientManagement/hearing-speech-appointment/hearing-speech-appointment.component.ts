@@ -300,35 +300,12 @@ export class HearingSpeechAppointmentComponent implements OnInit {
       this.TabView = "Fluency";
       this.footFall_ID = obj.Foot_Fall_ID;
       this.AppoID = obj.Appo_ID;
-      this.GetbrowseFluency(this.footFall_ID);
+      this.GetbrowseAssesment(this.footFall_ID);
       this.Tabitems = {
         headerStyleClass: "compacct-tabs",
         header: "Fluency Assessment",
         leftIcon: "fa fa-stethoscope",
         TabView: "Fluency"
-      }
-      const ctrl = this;
-      setTimeout(function () {
-        ctrl.tabIndexToView = 1;
-        ctrl.GetnameDetails();
-      }, 100);
-      console.log(this.tabIndexToView);
-    }
-  }
-  Adult(obj) {
-    if (obj) {
-      this.TabView = "";
-      this.Tabitems = {};
-      this.showTabs = true;
-      this.TabView = "Adult";
-      this.footFall_ID = obj.Foot_Fall_ID;
-      this.AppoID = obj.Appo_ID;
-      this.GetbrowseAdult(this.footFall_ID);
-      this.Tabitems = {
-        headerStyleClass: "compacct-tabs",
-        header: "Adult Assessment",
-        leftIcon: "fa fa-stethoscope",
-        TabView: "Adult"
       }
       const ctrl = this;
       setTimeout(function () {
