@@ -43,6 +43,7 @@ export class TutoOrderManagementComponent implements OnInit {
   SuscbID = undefined;
 
   BDA_ID = undefined;
+  Discount = undefined;
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -71,6 +72,7 @@ export class TutoOrderManagementComponent implements OnInit {
           this.GetStudentID();
         }
         this.BDA_ID = params['BDA_ID'] ? window.atob(params['BDA_ID']) : 0;
+        this.Discount = params['Discount_Amount'] ? window.atob(params['Discount_Amount']) : 0;
 
          console.log (this.Param_Flag);
         })
@@ -320,7 +322,8 @@ export class TutoOrderManagementComponent implements OnInit {
         User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
         Billing_Type : BILL[0].Pay_Type , 
         Pay_ID : BILL[0].Pay_ID,
-        BDA_ID : this.BDA_ID ? this.BDA_ID : 0
+        BDA_ID : this.BDA_ID ? this.BDA_ID : 0,
+        Discount : this.Discount ? this.Discount : 0
       })
     });
     console.log("save Data",this.showProductList);

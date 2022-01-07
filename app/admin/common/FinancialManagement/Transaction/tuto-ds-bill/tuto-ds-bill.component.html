@@ -145,6 +145,43 @@
                                 </div>
                             </p-fieldset>
                         </div>
+                        <div class="col-sm-12" style="margin-top:1em;" *ngIf='ObjDSBill.Foot_Fall_ID'>
+                            <p-fieldset legend="Show Previous Bills Details" [toggleable]="true">
+                                <div *ngIf='!PreviousBillList.length'>No Data Found...</div>
+                                <div *ngIf='PreviousBillList.length' class="table table-responsive">
+                                                                  
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#3c8dbc;color:white;">
+                                                <th>Bill No</th>
+                                                <th>Billing Type</th>
+                                                <th>Discount</th>
+                                                <th>Order Date</th>
+                                                <th>Order No</th>
+                                                <th>Product Description</th>
+                                                <th>Qty</th>
+                                                <th>Rate</th>
+                                                <th>Taxable Amt</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor='let obj of PreviousBillList' >
+                                                <td> <a class='btn btn-xs' (click)='GetPDF(obj)'>{{obj.Bill_No ? obj.Bill_No : '-'}}</a></td>
+                                                <td>{{obj.Billing_Type ? obj.Billing_Type : '-'}}</td>
+                                                <td>{{obj.Discount ? obj.Discount : '-'}}</td>
+                                                <td>{{obj.Order_Date ? obj.Order_Date : '-'}}</td>
+                                                <td>{{obj.Order_No ? obj.Order_No : '-'}}</td>
+                                                <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                                <td>{{obj.Qty ? obj.Qty : '-'}}</td>
+                                                <td>{{obj.Rate ? obj.Rate : '-'}}</td>
+                                                <td>{{obj.Taxable_Amt ? obj.Taxable_Amt : '-'}}</td>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </p-fieldset>
+                        </div>
                     </form>
                     <hr class="box boxboxDivide-primary" />
                     <form name="addProductForm" #addProductForm="ngForm" novalidate>
@@ -166,6 +203,7 @@
                                         <option Value="Sale_rate"> Normal Amount </option>
                                         <option Value="DS_DIS_Amount_Price"> Discounted Amount </option>
                                         <option *ngIf='$CompacctAPI.CompacctCookies.User_ID == 4' Value="Custom"> Custom Amount </option>
+                                        <option Value="Coupon_Discount">Coupon Discount</option>
                                 </select>
                             </div>
 

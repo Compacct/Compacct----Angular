@@ -23,6 +23,7 @@ export class TutoDsBillComponent implements OnInit {
   ProductList = [];
   AddedProductList = [];
   TransactionList = [];
+  PreviousBillList = [];
   TotalAmount = 0;
   TotalProductAddedAmount = 0;
   Spinner = false;
@@ -36,6 +37,8 @@ export class TutoDsBillComponent implements OnInit {
 
   BDAList = [];
   BDA_ID = undefined;
+
+  CouponObj: any = {};
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -84,6 +87,7 @@ export class TutoDsBillComponent implements OnInit {
     });
   }
   GetStudentsDetails() {
+    this.CouponObj = {};
     this.ObjDSBill.Foot_Fall_ID = undefined;
     this.ObjDSBill.Contact_Name = undefined;
     this.ObjDSBill.Class_Name = undefined;
@@ -95,6 +99,7 @@ export class TutoDsBillComponent implements OnInit {
     this.TotalAmount = 0;
     this.TotalProductAddedAmount = 0;
     this.TransactionList = [];
+    this.PreviousBillList = [];
     if(this.ObjDSBill.Mobile_No && this.ObjDSBill.Mobile_No.length === 10) {
       const obj = {
         "SP_String": "Tutopia_Subscription_Accounts_PG_Request",
@@ -114,6 +119,7 @@ export class TutoDsBillComponent implements OnInit {
              this.ObjDSBill.Pin = ReturnObj.Pin;
              this.GetProductDetaisl();
              this.GetTransactionDetails();
+             this.GetPreviousBill();
            } else {
             this.ObjDSBill.Foot_Fall_ID = undefined;
             this.ObjDSBill.Contact_Name = undefined;
@@ -168,6 +174,31 @@ export class TutoDsBillComponent implements OnInit {
          })
     });
   }
+  GetPreviousBill(){
+    if(this.ObjDSBill.Foot_Fall_ID) {
+      const obj = {
+        "SP_String": "Tutopia_Subscription_Accounts",
+        "Report_Name_String": "GET_Previous_Bill",
+        "Json_Param_String" : JSON.stringify([{'Foot_Fall_ID' : this.ObjDSBill.Foot_Fall_ID}])
+      }
+      this.GlobalAPI
+          .getData(obj)
+          .subscribe((data: any) => {
+           console.log(data);
+           this.PreviousBillList = data;
+      });
+    }    
+  }
+  GetPDF(obj) {
+    if (obj.Bill_No) {
+      if(obj.Bill_No.startsWith("O")) {
+        window.open("/Report/Crystal_Files/Tutopia/Receipt_Cum_Invoice.aspx?Order_No=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      } else {
+        window.open("/Report/Crystal_Files/Finance/SaleBill/tutopia_final.aspx?Doc_No=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      }
+
+    }
+  }
   GetPGInvDetails(PG_Inv_ID){
     this.PGInvDetailsList = [];
     const obj = {
@@ -184,6 +215,7 @@ export class TutoDsBillComponent implements OnInit {
     });
   }
   ProductChange() {
+    this.CouponObj = {};
     this.ObjDSProduct.Rate = undefined;
     this.ObjDSProduct.Product_Description = undefined;
     this.AmtMin = 0;
@@ -205,6 +237,7 @@ export class TutoDsBillComponent implements OnInit {
   }
   AmountTypeChange() { 
     this.AmtDisabledFlag = true;
+    this.CouponObj = {};
     if(this.ObjDSProduct.Amount_Type){
       const ProductObjArr = this.ProductList.filter(item => item.Product_ID == this.ObjDSProduct.Product_ID);
       if(ProductObjArr.length) {
@@ -213,6 +246,34 @@ export class TutoDsBillComponent implements OnInit {
             this.AmtMax =  ProductObjArr[0]['Sale_rate'];
             this.ObjDSProduct.Rate = ProductObjArr[0]['Sale_rate'];
             this.AmtDisabledFlag = false;
+        } else if(this.ObjDSProduct.Amount_Type === 'Coupon_Discount' && this.ObjDSBill.Foot_Fall_ID){
+          const obj = {
+            "SP_String": "Tutopia_Subscription_Accounts",
+            "Report_Name_String": "GET_COUPON_PRODUCTS",
+            "Json_Param_String" : JSON.stringify([{'Foot_Fall_ID' : this.ObjDSBill.Foot_Fall_ID}])
+          }
+          this.GlobalAPI
+              .getData(obj)
+              .subscribe((data: any) => {
+               console.log(data);
+               this.CouponObj = data[0];
+               if(this.CouponObj.Coupon_Discount && this.CouponObj.Subscription_Txn_ID) {
+                this.AmtDisabledFlag = true;
+                this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
+                const disAmt =  Number(ProductObjArr[0].Sale_rate) -  Number(this.CouponObj.Coupon_Discount);
+                this.AmtMin = Number(disAmt);
+                this.AmtMax = Number(disAmt);
+                this.ObjDSProduct.Rate = Number(disAmt);;
+               } else {
+                this.compacctToast.clear();
+                this.compacctToast.add({
+                  key: "compacct-toast",
+                  severity: "error",
+                  summary: "Coupon Validation",
+                  detail: "Sorry No Coupon Found."
+                });
+               }
+          });
         } else {
           this.AmtDisabledFlag = true;
           this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
@@ -358,7 +419,8 @@ export class TutoDsBillComponent implements OnInit {
           this.Spinner = false;
           if(data[0].remarks === "success") {
           const obj1 = {
-            Subscription_Txn_ID :  window.btoa('0'),
+            Subscription_Txn_ID : (this.CouponObj && this.CouponObj.Subscription_Txn_ID) ? window.btoa(this.CouponObj.Subscription_Txn_ID) : window.btoa('0'),
+            Discount_Amount : (this.CouponObj && this.CouponObj.Coupon_Discount) ?  window.btoa(this.CouponObj.Coupon_Discount) :  window.btoa('0'),
             Menu_Ref_ID : window.btoa(this.$CompacctAPI.CompacctCookies.Menu_Ref_ID),
             Foot_Fall_ID : window.btoa(this.ObjDSBill.Foot_Fall_ID),
             BDA_ID :  window.btoa(this.BDA_ID)
@@ -375,6 +437,7 @@ export class TutoDsBillComponent implements OnInit {
         Foot_Fall_ID : this.ObjDSBill.Foot_Fall_ID,
         Product_ID : item.Product_ID,
         Direct_Sale_Revised_Amt :item.Rate,
+        Discount_Amount : (this.CouponObj && this.CouponObj.Coupon_Discount) ? this.CouponObj.Coupon_Discount : 0,
       }
       arr.push(obj);
     })
