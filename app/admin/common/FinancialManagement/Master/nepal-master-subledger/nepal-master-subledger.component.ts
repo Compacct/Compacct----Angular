@@ -58,6 +58,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
   SubledgerClassList = [];
   ParentSubledgerList = [];
   EnqSrcList = [];
+  EngineerList =[];
   CountryList = [];
   StateList = [];
   DistrictList =[];
@@ -97,6 +98,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.GetEnqSrcList();  
     this.GetSubLedgerList();
     this.GetState();
+    this.GetEngineerList();
   }
   
   TabClick(e){
@@ -219,6 +221,16 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.$http.get(this.urlService.apiGetEnquerySource).subscribe((data: any) => {
       const resDta = data.length ? data : [];
       this.EnqSrcList = resDta;
+    });
+  }
+  GetEngineerList() {
+    const obj = {
+      "SP_String": "SP_Create_Subledger_New",
+      "Report_Name_String": "Get_Engineer_Dropdown"
+    }
+    this.GlobalAPI.postData(obj).subscribe((data) => {
+      console.log('engi',data)
+      this.EngineerList = data; 
     });
   }
   GetState() {
@@ -427,7 +439,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
   SaveSubLedger(valid) {
     this.SubledgerSubmitted = true;
     console.log(valid)
-    if(false && this.SelectedSubledgerCategory.length) {
+    if(this.SelectedSubledgerCategory.length) {
       this.saveSpinner = true;
       this.ObjSubledger.Sub_Ledger_Cat_ID = this.SelectedSubledgerCategory.toString();
       console.log(this.ObjSubledger);
@@ -722,6 +734,7 @@ class Subledger{
   FSSAI_No:String;
   WORLD_WIDE_REGION:String;
   Enq_Source_ID:String;
+  Engg_Member_ID:String;
   TDS_Deduction:String;
   CIRCLE:String;
 
@@ -745,12 +758,13 @@ class Subledger{
   Email2:String;  
   Mobile_No2:String;	
 }
-class Location{
+class Location{ 
   Sub_Ledger_ID:String;                   
   Location_Name:String;
   Location_Address:String;
   Mobile_No:String;
   Email:String;
+  Engg_Member_ID:String;
 }
 class Contact{
   Contact_ID:String;        

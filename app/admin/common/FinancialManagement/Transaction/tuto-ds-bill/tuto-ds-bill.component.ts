@@ -260,7 +260,8 @@ export class TutoDsBillComponent implements OnInit {
                if(this.CouponObj.Coupon_Discount && this.CouponObj.Subscription_Txn_ID) {
                 this.AmtDisabledFlag = true;
                 this.ObjDSProduct.Product_Description = ProductObjArr[0].Product_Description;
-                const disAmt =  Number(ProductObjArr[0].Sale_rate) -  Number(this.CouponObj.Coupon_Discount);
+                const disbaseAmt =  Number(ProductObjArr[0].Base_Price) -  Number(this.CouponObj.Coupon_Discount);
+                const disAmt = Number((disbaseAmt + (disbaseAmt * 18) / 100).toFixed());
                 this.AmtMin = Number(disAmt);
                 this.AmtMax = Number(disAmt);
                 this.ObjDSProduct.Rate = Number(disAmt);;

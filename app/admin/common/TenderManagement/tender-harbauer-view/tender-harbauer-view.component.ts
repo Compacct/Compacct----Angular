@@ -157,10 +157,13 @@ export class TenderHarbauerViewComponent implements OnInit {
   ReasonSubmitted = false;
   ReasonName = undefined;
   ReasonModal = false;
-  ObjBidOpening = new BidOpening()
+  ObjBidOpening = new BidOpening();
   SpinnerAg = false;
   CompletionDate = new Date();
   CommencementDate = new Date();
+
+  AgreementList =[];
+  TenderWorkName = undefined;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -183,6 +186,8 @@ export class TenderHarbauerViewComponent implements OnInit {
     this.getFinancial();
     this.GetTenderOrgList();
     this.GetTypeList();
+    
+    this.GetReasonList();
     this.privGovt = ["Private","GOVT"]
     this.cols = [
       { field: 'Work_Name', header: 'Name of Work' },
@@ -452,7 +457,9 @@ export class TenderHarbauerViewComponent implements OnInit {
   }
   AddPS(valid){
     console.log(valid)
+    this.psSubmitted = true;
     if(valid){
+      this.psSubmitted = false;
        let adddata = {
         Date_Of_Exp : this.DateService.dateTimeConvert(new Date(this.PerformanceSecurityIssueExpiry)),
         Date_Of_Issue : this.DateService.dateTimeConvert(new Date(this.PerformanceSecurityIssueDate)),
@@ -788,7 +795,7 @@ export class TenderHarbauerViewComponent implements OnInit {
  }
  getBidderList(DocID){
   const obj = {
-    "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+    "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_step2",
     "Report_Name_String": "Get_BL_CRM_Txn_Enq_Tender_Bidder",
     "Json_Param_String": JSON.stringify([{Tender_Doc_ID : DocID}])
   }
@@ -808,7 +815,7 @@ export class TenderHarbauerViewComponent implements OnInit {
       Tender_Doc_ID : this.TenderDocID
      }
      const obj = {
-      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_step2",
       "Report_Name_String": "BL_CRM_Txn_Enq_Tender_Create_Bidder",
       "Json_Param_String": JSON.stringify([tempSaveData])
     }
@@ -835,6 +842,28 @@ export class TenderHarbauerViewComponent implements OnInit {
  }
  DeleteBidderName(BidderId){
   console.log("Bidder Id",BidderId)
+     const tempSaveData = {
+      Bidder_ID : BidderId
+     }
+     const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_step2",
+      "Report_Name_String": "Delete_BL_CRM_Txn_Enq_Tender_Bidder",
+      "Json_Param_String": JSON.stringify([tempSaveData])
+    }
+    this.GlobalAPI
+      .getData(obj)
+      .subscribe((data: any) => {
+       if(data[0].Column1){
+        this.getBidderList(this.TenderDocID);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "",
+          detail: "Bidder Name Succesfully Deleted"
+        });
+       }
+      })
  }
  checkChange(){
    this.saveButton = this.saveCheck ? false : true;
@@ -1273,19 +1302,50 @@ CheckIfTenderIDExist(){
    console.log("col",col);
    this.BidOpenListViewByRateFlag = false;
    this.BidOpenListViewByLotteryFlag = false;
+   this.BidTenderId = undefined;
+   this.ObjAgreement = new Agreement();
+   this.BidOpeningListFormSubmitted = false;
+   this.ObjBidOpeningList = new BidOpeningList();
+   this.BidOpenListView = [];
+   this.BidOpenListViewByRate = [];
+   this.BidOpenListViewByLottery = [];
+   this.AgreementList = [];
+   this.TenderWorkName = undefined;
+   this.ObjBidOpening = new BidOpening();
+   this.ReasonSelect = [];
    if(col.Tender_Doc_ID){
     this.ngxService.start();
-    this.BidOpeningListFormSubmitted = false;
-    this.ObjBidOpeningList = new BidOpeningList();
-    this.ReasonList = [];
-    this.BidOpenListView = [];
-    this.BidOpenListViewByRate = [];
-    this.BidOpenListViewByLottery = [];
+    this.TenderWorkName = col.Work_Name;
     this.BidTenderId = col.Tender_Doc_ID;
     this.getBidderList(col.Tender_Doc_ID);
     this.GetIFBidExist(col.Tender_Doc_ID);
-    this.GetReasonList();
+    this.GetAgreementList(col.Tender_Doc_ID);
    }
+  }
+  GetAgreementList(TenderDocID) {
+    if(TenderDocID) {
+      const obj = {
+        "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+        "Report_Name_String" : "Get_Tender_Agreement_And_Final_Value_Harbour",
+        "Json_Param_String": JSON.stringify({Tender_Doc_ID:TenderDocID}),
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{ 
+        if(data.length && data[0].Status) {
+          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Agreement_Number){
+            this.ObjBidOpening.Financial_Bid_Status = data[0].Status;
+            this.AgreementList = data;
+            this.ObjAgreement.Tender_Negotiated_Value = data[0].Agreement_Number;
+            this.ObjAgreement.Tender_Doc_ID = TenderDocID;
+          }
+          if(data[0].Status === 'NOT- AWARDING THE TENDER' && data[0].Not_Awarding_Reason){    
+            this.ObjBidOpening.Financial_Bid_Status = data[0].Status; 
+            this.ReasonSelect = data[0].Not_Awarding_Reason.split(',');
+            console.log(this.ReasonSelect)
+          }
+        }
+        
+        });
+    }
   }
   GetIFBidExist(TenderDocID) {
     if(TenderDocID) {
@@ -1686,14 +1746,14 @@ DeleteBidOpenList(index){
   this.RankBiddingCompanies();
 }
 StatusChange(data){
+  this.ReasonSelect = [];
+  this.ObjAgreement.Date_of_Commencement = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
+  this.ObjAgreement.Date_of_Completion = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
   if(data === 'AWARDING THE TENDER') {
-    this.ObjAgreement.Date_of_Commencement = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
-    this.ObjAgreement.Date_of_Completion = this.DateService.dateConvert(moment(new Date(), "YYYY-MM-DD")["_d"]);
+    this.AgreementSubmitted = false; 
+   }
+  else if (data === 'NOT- AWARDING THE TENDER'){    
     this.ReasonSelect = [];
-  }
-  else if (data === 'NOT- AWARDING THE TENDER'){
-    this.ObjAgreement = new Agreement();
-    this.AgreementSubmitted = false;
   }
 }
 GetReasonList() {
@@ -1813,20 +1873,19 @@ ToggleReason(){
   saveStatus(){
     console.log("ReasonList",this.ReasonSelect);
     let saveDate = []
-    this.ReasonSelect.forEach(ele => {
-      saveDate.push({
-        Tender_Doc_ID : this.BidTenderId,
-        Status : this.ObjBidOpening.Financial_Bid_Status,
-        Not_Awarding_Reason : ele
-      })
-    });
+    saveDate.push({
+      Tender_Doc_ID : this.BidTenderId,
+      Status : this.ObjBidOpening.Financial_Bid_Status,
+      Not_Awarding_Reason : this.ReasonSelect.length ? this.ReasonSelect.toString() : ''
+    })
     const obj = {
       "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
       "Report_Name_String" : "Tender_Govt_Bidding_Award_Status",
       "Json_Param_String": JSON.stringify(saveDate),
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      if(data[0].Column1){
+      if(data[0].message){
+        this.SavefollowUpCommon(this.ObjBidOpening.Financial_Bid_Status);
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -1841,13 +1900,99 @@ ToggleReason(){
  this.AgreementSubmitted = true;
     console.log("valid",valid);
    if(valid){
-     this.SpinnerAg = true;
+     this.SpinnerAg = true;     
+     this.ObjAgreement.Tender_Doc_ID = this.BidTenderId;
+     this.ObjAgreement.Tender_Negotiated_Value = this.getHarbaurValRankTop();
+     this.ObjAgreement.Tender_Final_Value = this.getHarbaurValRankTop();
     this.ObjAgreement.Date_of_Commencement = this.ObjAgreement.Date_of_Commencement ? this.ObjAgreement.Date_of_Commencement : this.DateService.dateTimeConvert(new Date(this.CommencementDate));
     this.ObjAgreement.Date_of_Completion = this.ObjAgreement.Date_of_Completion ? this.ObjAgreement.Date_of_Completion : this.DateService.dateTimeConvert(new Date(this.CompletionDate));
     const obj = {
       "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
-      "Report_Name_String" : "Tender_Govt_Bidding_Rank_Add_harbour",
+      "Report_Name_String" : "Tender_Agreement_And_Final_Value_Harbour",
       "Json_Param_String": JSON.stringify([this.ObjAgreement]),
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("data",data);
+        if (data[0].Column1) {
+          this.SavefollowUpCommon(this.ObjBidOpening.Financial_Bid_Status);
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Agreement ' ,
+          detail: "Succesfully Saved"
+        });
+        this.GetAgreementList(this.BidTenderId);
+         this.SpinnerAg = false;
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+          this.SpinnerAg = false;
+        }
+      })
+   }
+  }
+
+  SavefollowUpCommon(Status){
+    if(this.BidTenderId && Status){
+      const saveObj = {
+        Tender_Doc_ID: this.BidTenderId,									
+				Posted_By: this.commonApi.CompacctCookies.User_ID,							 
+				Send_To:	this.commonApi.CompacctCookies.User_ID,						       			
+				Status:	Status,
+				Remarks: Status
+      }
+      console.log("follow save",saveObj);
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String": "BL_CRM_Txn_Enq_Tender_Harbauer_Followup_Save",
+        "Json_Param_String": JSON.stringify(saveObj)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("follow up save",data);      
+      })
+    }
+  }
+
+
+  getHarbaurValRankTop() {
+    let Val = 0;
+    if(this.BidOpenListViewByRate.length){
+    if(this.BidOpenListViewByRate[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
+if(this.BidOpenListViewByRate[0].Bidder_Name ==='HARBAUER India [P] Ltd') {
+  Val = this.BidOpenListViewByRate[0].Rate;
+}
+}
+    }
+    if(this.BidOpenListViewByLottery.length){
+if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
+  if(this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd') {
+    Val = this.BidOpenListViewByLottery[0].Rate;
+    
+  }
+}
+
+    }
+    return Val;
+  }
+  saveAgreementNegotiateValue(valid){
+ this.AgreementSubmitted = true;
+    console.log("valid",valid);
+   if(valid){
+     this.SpinnerAg = true;  
+     const tempobj = {
+      Tender_Doc_ID : this.ObjAgreement.Tender_Doc_ID,
+      Tender_Negotiated_Value : this.ObjAgreement.Tender_Negotiated_Value
+     } 
+    const obj = {
+      "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+      "Report_Name_String" : "Update_Tender_Negotiated_Value_Harbour",
+      "Json_Param_String": JSON.stringify([tempobj]),
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("data",data);
@@ -1873,7 +2018,6 @@ ToggleReason(){
       })
    }
   }
- 
   
 }
 class search{
@@ -2026,4 +2170,6 @@ class Agreement{
   Agreement_Value :any;
   Date_of_Commencement :any;
   Date_of_Completion :any;
+  Tender_Final_Value:any;
+  Tender_Negotiated_Value:any;
  }
