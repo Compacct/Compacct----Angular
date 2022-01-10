@@ -240,6 +240,10 @@ import { TenderHarbauerViewComponent } from './common/TenderManagement/tender-ha
 import { NepalMasterSubledgerComponent } from './common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component';
 import { HarbauerMasterProductMechanicalComponent } from './common/Harbauer/harbauer-master-product-mechanical/harbauer-master-product-mechanical.component';
 import { OutletGroupReportComponent } from './common/OutletManagement/outlet-group-report/outlet-group-report.component';
+
+import { K4cCrateInOuComponent } from './common/MaterialManagement/Outward/k4c-crate-in-ou/k4c-crate-in-ou.component';
+import { BlCrmEnggMasterNepalComponent } from './common/MaterialManagement/Master/bl-crm-engg-master-nepal/bl-crm-engg-master-nepal.component';
+
 import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
 
 
@@ -418,6 +422,8 @@ import { TenderHarbauerActualViewComponent } from './common/TenderManagement/ten
     NepalMasterSubledgerComponent,
     HarbauerMasterProductMechanicalComponent,
     OutletGroupReportComponent,
+    K4cCrateInOuComponent,
+    BlCrmEnggMasterNepalComponent,
     TenderHarbauerActualViewComponent,
   ],
   imports: [
