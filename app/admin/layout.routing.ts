@@ -150,6 +150,8 @@ import { TenderHarbauerViewComponent } from "./common/TenderManagement/tender-ha
 import { NepalMasterSubledgerComponent } from "./common/FinancialManagement/Master/nepal-master-subledger/nepal-master-subledger.component";
 import { HarbauerMasterProductMechanicalComponent } from './common/Harbauer/harbauer-master-product-mechanical/harbauer-master-product-mechanical.component';
 import { OutletGroupReportComponent } from './common/OutletManagement/outlet-group-report/outlet-group-report.component';
+import { K4cCrateInOuComponent } from './common/MaterialManagement/Outward/k4c-crate-in-ou/k4c-crate-in-ou.component';
+import { BlCrmEnggMasterNepalComponent } from './common/MaterialManagement/Master/bl-crm-engg-master-nepal/bl-crm-engg-master-nepal.component';
 
 
 
@@ -871,6 +873,16 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                               path:'Outlet_Group_Report',
                                                               component: OutletGroupReportComponent,
                                                               data: {title: 'Group Report'}
+                                                            },
+                                                            {
+                                                              path:'BL_Txn_K4C_Crate_IN_OUT',
+                                                              component: K4cCrateInOuComponent,
+                                                              data: {title: 'BL Txn K4C Crate IN OUT'}
+                                                            },
+                                                            {
+                                                              path:'BL_CRM_ENGG_Master_Nepal',
+                                                              component: BlCrmEnggMasterNepalComponent,
+                                                              data: {title: 'BL CRM ENGG Master Nepal'}
                                                             }
 
         /*{
