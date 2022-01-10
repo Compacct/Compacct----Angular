@@ -294,7 +294,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
   onCountryChange (country) {
     this.ObjSubledger.Export_Domestic = 'Domestic';
     if (country) {
-      this.ObjSubledger.Export_Domestic = country == 'India' ?'Domestic' : 'Export';
+      this.ObjSubledger.Export_Domestic = country == 'Nepal' ?'Domestic' : 'Export';
     }
   }
   GetDistrict (stateparm) {
@@ -426,7 +426,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
   // SAVE 
   SaveSubLedger(valid) {
     this.SubledgerSubmitted = true;
-    if(valid && this.SelectedSubledgerCategory.length) {
+    console.log(valid)
+    if(false && this.SelectedSubledgerCategory.length) {
       this.saveSpinner = true;
       this.ObjSubledger.Sub_Ledger_Cat_ID = this.SelectedSubledgerCategory.toString();
       console.log(this.ObjSubledger);
