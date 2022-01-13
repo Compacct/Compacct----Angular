@@ -153,6 +153,8 @@ import { OutletGroupReportComponent } from './common/OutletManagement/outlet-gro
 import { K4cCrateInOuComponent } from './common/MaterialManagement/Outward/k4c-crate-in-ou/k4c-crate-in-ou.component';
 import { BlCrmEnggMasterNepalComponent } from './common/MaterialManagement/Master/bl-crm-engg-master-nepal/bl-crm-engg-master-nepal.component';
 import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
+import { EnggCrmInstalledMachineComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine/engg-crm-installed-machine.component';
+import { EnggCrmInstalledMachineServiceContractComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine-service-contract/engg-crm-installed-machine-service-contract.component';
 
 
 
@@ -895,6 +897,16 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   path:'BL_CRM_Txn_Enq_Tender_Harbauer_View_Actual',
                                                                   component: TenderHarbauerActualViewComponent,
                                                                   data: {title: 'Tender View (GOVT.)'}
+                                                                },
+                                                                {
+                                                                  path:'Engg_CRM_Installed_Machine',
+                                                                  component: EnggCrmInstalledMachineComponent,
+                                                                  data: {title: 'Installed Machine'}
+                                                                },
+                                                                {
+                                                                  path:'Engg_CRM_Installed_Machine_Service_Contract',
+                                                                  component: EnggCrmInstalledMachineServiceContractComponent,
+                                                                  data: {title: 'Service Contract'}
                                                                 },
 
 
