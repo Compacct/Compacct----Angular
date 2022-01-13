@@ -27,7 +27,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
 
                             <div class="table-responsive no-padding productTable">
-                                <p-table #dt [value]="BrowseList" [globalFilterFields]="['Product_Code','Product_Description','Mfg_Company']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
+                                <p-table #dt [value]="BrowseList" [globalFilterFields]="['User_Name','Name','User_Email','User_Mobile']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
                                     [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">

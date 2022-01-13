@@ -83,8 +83,11 @@ import { TimePickerModule } from '@syncfusion/ej2-angular-calendars';
 // DATE TIME
 
 import { OwlDateTimeModule, OwlNativeDateTimeModule ,OWL_DATE_TIME_FORMATS, OWL_DATE_TIME_LOCALE } from 'ng-pick-datetime';
-// NEPAL DATE 
+
+
+// Nepali Date
 import { NpDatepickerModule } from 'angular-nepali-datepicker';
+
 // SERVICE
 import { CookieService } from "ngx-cookie-service";
 import { CompacctCommonApi } from "./shared/compacct.services/common.api.service";
@@ -246,7 +249,12 @@ import { K4cCrateInOuComponent } from './common/MaterialManagement/Outward/k4c-c
 import { BlCrmEnggMasterNepalComponent } from './common/MaterialManagement/Master/bl-crm-engg-master-nepal/bl-crm-engg-master-nepal.component';
 
 import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
+
+import { EnggCrmInstalledMachineComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine/engg-crm-installed-machine.component';
+import { EnggCrmInstalledMachineServiceContractComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine-service-contract/engg-crm-installed-machine-service-contract.component';
+
 import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
+
 
 
 
@@ -427,6 +435,8 @@ import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-b
     K4cCrateInOuComponent,
     BlCrmEnggMasterNepalComponent,
     TenderHarbauerActualViewComponent,
+    EnggCrmInstalledMachineComponent,
+    EnggCrmInstalledMachineServiceContractComponent,
     TenderBudgetAprovalComponent,
   ],
   imports: [
