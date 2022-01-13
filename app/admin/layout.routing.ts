@@ -153,6 +153,7 @@ import { OutletGroupReportComponent } from './common/OutletManagement/outlet-gro
 import { K4cCrateInOuComponent } from './common/MaterialManagement/Outward/k4c-crate-in-ou/k4c-crate-in-ou.component';
 import { BlCrmEnggMasterNepalComponent } from './common/MaterialManagement/Master/bl-crm-engg-master-nepal/bl-crm-engg-master-nepal.component';
 import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
+import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
 
 
 
@@ -896,6 +897,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   component: TenderHarbauerActualViewComponent,
                                                                   data: {title: 'Tender View (GOVT.)'}
                                                                 },
+                                                                {
+                                                                  path : 'BL_CRM_Txn_Enq_Budget_Aproval',
+                                                                  component:TenderBudgetAprovalComponent,
+                                                                  data: {title: 'Budget Approval'}
+                                                                }
 
 
         /*{
