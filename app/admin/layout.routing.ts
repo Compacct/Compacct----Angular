@@ -155,6 +155,8 @@ import { BlCrmEnggMasterNepalComponent } from './common/MaterialManagement/Maste
 import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
 import { EnggCrmInstalledMachineComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine/engg-crm-installed-machine.component';
 import { EnggCrmInstalledMachineServiceContractComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine-service-contract/engg-crm-installed-machine-service-contract.component';
+import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
+
 
 
 
@@ -908,6 +910,10 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   component: EnggCrmInstalledMachineServiceContractComponent,
                                                                   data: {title: 'Service Contract'}
                                                                 },
+                                                                  path : 'BL_CRM_Txn_Enq_Budget_Aproval',
+                                                                  component:TenderBudgetAprovalComponent,
+                                                                  data: {title: 'Budget Approval'}
+                                                                }
 
 
         /*{
