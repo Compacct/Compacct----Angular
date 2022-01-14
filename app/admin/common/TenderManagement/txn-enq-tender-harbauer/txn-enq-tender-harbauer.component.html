@@ -34,10 +34,14 @@
                                         <input class="form-control" name="RemarksCreate" #RemarksCreate="ngModel" [(ngModel)]="ObjTender.Tender_Name" (change)='CheckIfTenderNameExist()' placeholder="Work Name" [ngClass]="{'clearance': TenderFormSubmitted && RemarksCreate.errors?.required}"
                                             required>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-8">
                                         <label class="control-label">Work Details<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="workdetails" #workdetails="ngModel" [(ngModel)]="ObjTender.Work_Details" placeholder="Work Details" [ngClass]="{'clearance': TenderFormSubmitted && workdetails.errors?.required}" required>
+                                        <textarea class="form-control" name="workdetails" #workdetails="ngModel" [(ngModel)]="ObjTender.Work_Details" placeholder="Work Details" [ngClass]="{'clearance': TenderFormSubmitted && workdetails.errors?.required}" required></textarea>
                                     </div>
+
+
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
@@ -51,10 +55,6 @@
                                                                     </option>
                                                             </select>
                                     </div>
-
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Calling Div</label>
                                         <div class="pull-right">
@@ -81,13 +81,13 @@
                                                     </option>
                                             </select>
                                     </div>
+
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Reference Number<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="reffno" #reffno="ngModel" [(ngModel)]="ObjTender.Tender_Ref_No" placeholder="Tender Reference Number" [ngClass]="{'clearance': TenderFormSubmitted && reffno.errors?.required}" required>
                                     </div>
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="TenderIDCreate" #TenderIDCreate="ngModel" [(ngModel)]="ObjTender.Tender_ID" placeholder="Tender ID" (change)='CheckIfTenderIDExist()' [ngClass]="{'clearance': TenderFormSubmitted && TenderIDCreate.errors?.required}" required>
@@ -105,6 +105,10 @@
                                                               </option>
                                                       </select>
                                     </div>
+
+
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Category</label>
                                         <div class="pull-right">
@@ -117,19 +121,6 @@
                                                                 {{option.Tender_Category_Name}}
                                                                 </option>
                                                         </select>
-                                    </div>
-
-
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">State<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" [ngClass]="{'clearance': TenderFormSubmitted && Contact.errors?.required}" required>
-                                                              <option  [ngValue]="undefined">Select</option>
-                                                          <option *ngFor="let option of StateList" [ngValue]="option.State">
-                                                              {{option.State}}
-                                                              </option>
-                                                      </select>
                                     </div>
                                     <div class="col-sm-8">
                                         <label class="control-label">Work Location<sup class="text-danger">*</sup></label>
@@ -159,6 +150,16 @@
                                     <!-- </div> -->
                                 </div>
                                 <div class="form-group">
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" [ngClass]="{'clearance': TenderFormSubmitted && Contact.errors?.required}" required>
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of StateList" [ngValue]="option.State">
+                                                              {{option.State}}
+                                                              </option>
+                                                      </select>
+                                    </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Value <sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="AmountTenderCreate" #AmountTenderCreate="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjTender.Tender_Amount" (change)="TenderAmountChange(ObjTender.Tender_Amount)" (focus)="onFocusInEvent('TenderAmount',TenderAmount)"
@@ -174,6 +175,8 @@
                                             <owl-date-time [hour12Timer]='true' #pub></owl-date-time>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Submission Date & Time<sup class="text-danger">*</sup></label>
                                         <div class="input-group date">
@@ -184,8 +187,6 @@
                                             <owl-date-time [hour12Timer]='true' #end></owl-date-time>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Bid Opening Date & Time<sup class="text-danger">*</sup></label>
                                         <div class="input-group date">
@@ -201,13 +202,13 @@
                                         <input class="form-control" name="EMD" #EMD="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjTender.EMD_Amount" (focus)="onFocusInEvent('EMDAmount',EMDAmount)" (focusout)="onFocusOutEvent('EMDAmount',EMDAmount)" placeholder="EMD Value" autocomplete="off"
                                             [ngClass]="{'clearance': TenderFormSubmitted && EMD.errors?.required}" required>
                                     </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Tender Fee <sup *ngIf="ObjTender.T_Fee_Payment_Mode" class="text-danger">*</sup></label>
                                         <input class="form-control" name="Fee" #Fee="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjTender.T_Fee_Amount" (focus)="onFocusInEvent('TFeeAmount',TFeeAmount)" (focusout)="onFocusOutEvent('TFeeAmount',TFeeAmount)" placeholder="Tender Fee" autocomplete="off"
                                             [ngClass]="{'clearance': TenderFormSubmitted && Fee.errors?.required}" [required]="ObjTender.T_Fee_Payment_Mode">
                                     </div>
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Information From<sup class="text-danger"></sup></label>
                                         <div class="pull-right">
@@ -232,13 +233,13 @@
                                                 required /> -->
                                         </div>
                                     </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Period Of Working (In Days)<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="WorkCreate" #WorkCreate="ngModel" CompacctDigitonly="true" [(ngModel)]="PeriodOfWork" (change)="TenderPeriodOfWorkChange(PeriodOfWork)" placeholder="Period Of Working (In Days)" [ngClass]="{'clearance': TenderFormSubmitted && WorkCreate.errors?.required}"
                                             required>
                                     </div>
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Budget Required By <sup class="text-danger">*</sup></label>
                                         <div class="input-group date">
