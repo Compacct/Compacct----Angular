@@ -98,6 +98,13 @@ export class TenderBudgetComponent implements OnInit {
     { field: 'Amount', header: 'Purchase Amount' },
     { field: 'zzzz', header: 'Delete' }
 ];
+ExcelGroupDetails =[];
+
+PDFFlag = false;
+  PDFViewFlag = false;
+  ProductPDFLink = undefined;
+  ProductPDFFile:any = {};
+  SingleSchemeFromFile = [];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -153,6 +160,7 @@ updateRowGroupMetaData() {
     this.GetEstimateGroup();
     this.getworkDetails();
     this.GetProduct();
+    this.GetExcelGroupDetails();
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -195,7 +203,15 @@ updateRowGroupMetaData() {
      console.log("SUB",data);
     })
   }
- 
+  GetExcelGroupDetails(){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Group_Sub_Group_for_excel"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.ExcelGroupDetails = data;
+    })
+  }
 
   // ESTIMATE -- Single Scheme
   CreateSingleScheme(obj){
@@ -212,6 +228,8 @@ updateRowGroupMetaData() {
     this.Spinner = false;
     this.tenderDocID = obj.Tender_Doc_ID;
     this.TenderDocID = obj.Tender_Doc_ID;
+    this.ObjEstimate.Budget_Short_Description = obj.Work_Name;
+    this.ObjEstimate.Tender_Create_User_ID = obj.Tender_Create_User_ID;
     this.GetEditSingleScheme();
     setTimeout(()=>{
       this.tabIndexToView = 2;
@@ -234,10 +252,14 @@ updateRowGroupMetaData() {
           this.editData = data;
           this.ShowAddedEstimateProductList = data;
           this.AddedEstimateProductList = this.ShowAddedEstimateProductList;
+          this.ObjEstimate.Budget_Short_Description = data[0].Budget_Short_Description;
+          this.ObjEstimate.No_of_Site = data[0].No_of_Site;
           console.log(data)
         });
     }
   }
+
+
   ToggleEstimateGrp() {
     this.EstimateGrpSubmitted = false;
     this.EstimateGrpName = undefined;
@@ -259,6 +281,7 @@ updateRowGroupMetaData() {
           el['value'] = el.Budget_Group_ID;
         });
         this.EstimateGroupList = data;
+        this.GetExcelGroupDetails();
       });
   }
 
@@ -475,6 +498,7 @@ updateRowGroupMetaData() {
             this.EstimateSubGrpName = undefined;
             this.EstimateSubGrpModal = false;
             this.Spinner = false;
+            this.GetExcelGroupDetails();
           } else {
             this.compacctToast.clear();
             this.compacctToast.add({
@@ -820,7 +844,7 @@ updateRowGroupMetaData() {
       const saveObj = {
         Tender_Doc_ID: this.TenderDocID,									
 				Posted_By: this.commonApi.CompacctCookies.User_ID,							 
-				Send_To:	this.commonApi.CompacctCookies.User_ID,						       			
+				Send_To:	this.ObjEstimate.Tender_Create_User_ID,						       			
 				Status:	"BUDGET CREATED",
 				Remarks: "BUDGET CREATED (SINGLE SCHEME)"
       }
@@ -902,6 +926,81 @@ updateRowGroupMetaData() {
     console.log(id);
     this.GetEditdata();
   }
+ // CSV
+ // EXPORT TO EXCEL
+ exportexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
+exportexcelDummy(): void {
+  let tempArr = [];
+  const tempObj = {
+    SL_No: null,
+    Budget_Short_Description : null,
+    No_of_Site : null,
+    Budget_Group_ID: null,
+    Budget_Sub_Group_ID: null,
+    Product_ID: null,
+    Product_Description: null,
+    TQty: null,
+    UOM: null,
+    Rate: null,
+    Amount: null,
+    Tender_Doc_ID: this.TenderDocID,
+    project_ID: null,
+    site_ID:null,
+    Work_Details_ID: null,
+    unit: null,
+    Qty: null,
+    Nos: null,
+    saleRate: null,
+    Sale_Amount: null,
+  }
+  tempArr.push(tempObj);
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(tempArr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, 'DummyBudget.xlsx');
+}
+ handleFileSelect(event) {
+  this.PDFFlag = false;
+  this.ProductPDFFile = {};
+  this.SingleSchemeFromFile = [];
+  if (event) {
+    console.log(event)
+    this.ngxService.start();
+    this.ProductPDFFile = event.files[0];
+    this.PDFFlag = true;
+    var reader : any = new FileReader();
+    console.log(reader)
+    const ctrl = this;
+    reader.onload = function(e){
+      console.log(e)
+        var fileData = reader.result;
+        var wb = XLSX.read(fileData, {type : 'binary' , cellDates: true, dateNF: 'mm/dd/yyyy;@'});
+
+        wb.SheetNames.forEach(function(sheetName){
+          ctrl.SingleSchemeFromFile =XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
+          
+          ctrl.editData = [];
+    
+          ctrl.ShowAddedEstimateProductList = [];
+          ctrl.AddedEstimateProductList = [];
+          if(ctrl.ShowAddedEstimateProductList.length) {      
+            ctrl.editData = ctrl.ShowAddedEstimateProductList;      
+          ctrl.AddedEstimateProductList = ctrl.ShowAddedEstimateProductList;
+          ctrl.ObjEstimate.Budget_Short_Description = ctrl.ShowAddedEstimateProductList[0].Budget_Short_Description;
+          ctrl.ObjEstimate.No_of_Site = ctrl.ShowAddedEstimateProductList[0].No_of_Site;
+          console.log(ctrl.SingleSchemeFromFile);
+          }
+          this.ngxService.stop();
+
+        })
+    };
+    reader.readAsBinaryString(event.files[0]);
+}
+}
+
 
 
   DynamicRedirectTo (){

@@ -130,24 +130,13 @@ export class TenderBudgetAprovalComponent implements OnInit {
       const saveObj = { Tender_Doc_ID: this.TenderDocID}
       const obj = {
         "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
-        "Report_Name_String": "BL_CRM_Txn_Enq_Tender_Harbauer_Followup_Save",
+        "Report_Name_String": "Update_Approve_Budget",
         "Json_Param_String": JSON.stringify(saveObj)
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log("follow up save",data);
-        if(data[0].Column1 === "SAVED SUCCESSFULLY"){   
-          this.TenderDocID = undefined;
-          this.Aspinner = false;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: 'Estimate Management ',
-            detail: "Succesfully Approved."
-          });
-          this.GetPendinApvList();
-          this.GetAprvBudgetList();
-          this.GetNotAprvBudgetList();
+        if(data[0].Column1 === "Update successfully"){  
+          this.SavefollowUp('BUDGET APPROVED - TENDER NOT SUBMITTED');  
+          
         }
       
       })
@@ -173,27 +162,73 @@ export class TenderBudgetAprovalComponent implements OnInit {
       const saveObj = { Tender_Doc_ID: this.TenderDocID}
       const obj = {
         "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+        "Report_Name_String": "Update_Disapprove_Budget",
+        "Json_Param_String": JSON.stringify(saveObj)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if(data[0].Column1 === "Update successfully"){   
+          this.SavefollowUp('BUDGET NOT APPROVED');
+        }
+      
+      })
+    }
+  }
+
+  
+  SavefollowUp(falg){
+    if(this.TenderDocID && falg){
+      const saveObj = {
+        Tender_Doc_ID: this.TenderDocID,									
+				Posted_By: this.commonApi.CompacctCookies.User_ID,							 
+				Send_To:	this.commonApi.CompacctCookies.User_ID,						       			
+				Status:	falg,
+				Remarks: falg
+      }
+      console.log("follow save",saveObj);
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
         "Report_Name_String": "BL_CRM_Txn_Enq_Tender_Harbauer_Followup_Save",
         "Json_Param_String": JSON.stringify(saveObj)
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         console.log("follow up save",data);
-        if(data[0].Column1 === "SAVED SUCCESSFULLY"){   
+        if(data[0].Column1 === "SAVED SUCCESSFULLY"){         
           this.TenderDocID = undefined;
-          this.Dspinner = false;
+          if(falg ==='BUDGET NOT APPROVED'){
+            this.Dspinner = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'Estimate Management ',
+              detail: "Succesfully Disapproved."
+            });
+          }
+          if(falg ==='BUDGET APPROVED - TENDER NOT SUBMITTED'){
+          this.Aspinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
             summary: 'Estimate Management ',
-            detail: "Succesfully Disapproved."
+            detail: "Succesfully Approved."
           });
+        }
           this.GetPendinApvList();
           this.GetAprvBudgetList();
           this.GetNotAprvBudgetList();
         }
       
       })
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error Occured ",
+        detail: "Select Assing "
+      });
     }
   }
 }
