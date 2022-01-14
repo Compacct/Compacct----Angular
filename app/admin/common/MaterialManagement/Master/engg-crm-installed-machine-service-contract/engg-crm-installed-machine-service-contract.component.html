@@ -200,7 +200,7 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en" name='sdate' inputClass="form-control" [(ngModel)]="ServiceStartDate"></np-datepicker>
+                                            <np-datepicker id='sdate' name='sdate' inputClass="form-control" [(ngModel)]="ServiceStartDate"></np-datepicker>
                                             <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ServiceStartDate'></ejs-datepicker> -->
                                             <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
                                                     required /> -->
@@ -212,7 +212,7 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en" name="edate" inputClass="form-control" [(ngModel)]="ServiceEndDate"></np-datepicker>
+                                            <np-datepicker id='edate' name="edate" inputClass="form-control" [(ngModel)]="ServiceEndDate"></np-datepicker>
                                             <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ServiceEndDate'></ejs-datepicker> -->
                                             <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
                                                     required /> -->
@@ -235,7 +235,8 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PaymentDate'></ejs-datepicker>
+                                            <np-datepicker id='pdate' name="pdate" inputClass="form-control" [(ngModel)]="PaymentDate"></np-datepicker>
+                                            <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PaymentDate'></ejs-datepicker> -->
                                             <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
                                                 required /> -->
                                         </div>
