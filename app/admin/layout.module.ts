@@ -87,6 +87,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule ,OWL_DATE_TIME_FORMATS, OWL_
 
 // Nepali Date
 import { NpDatepickerModule } from 'angular-nepali-datepicker';
+import { DateNepalConvertService } from "./shared/compacct.global/dateNepal.service";
 
 // SERVICE
 import { CookieService } from "ngx-cookie-service";
@@ -254,6 +255,7 @@ import { EnggCrmInstalledMachineComponent } from './common/MaterialManagement/Ma
 import { EnggCrmInstalledMachineServiceContractComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine-service-contract/engg-crm-installed-machine-service-contract.component';
 
 import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
+import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/support-ticket-nepal/support-ticket-nepal.component';
 
 
 
@@ -438,6 +440,7 @@ import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-b
     EnggCrmInstalledMachineComponent,
     EnggCrmInstalledMachineServiceContractComponent,
     TenderBudgetAprovalComponent,
+    SupportTicketNepalComponent,
   ],
   imports: [
     CommonModule,
@@ -494,6 +497,7 @@ import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-b
     CompacctGetDistinctService,
     CompacctAccountJournal,
     DateTimeConvertService,
+    DateNepalConvertService,
     SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
   ]

@@ -22,6 +22,9 @@ import {
   DateTimeConvertService
 } from '../../../../shared/compacct.global/dateTime.service';
 import {
+  DateNepalConvertService
+} from '../../../../shared/compacct.global/dateNepal.service';
+import {
   MessageService
 } from "primeng/api";
 import {
@@ -100,12 +103,12 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private Header: CompacctHeader,
     private compacctToast: MessageService,
-    private DateService: DateTimeConvertService
+    private DateService: DateTimeConvertService,
+    private DateNepalConvertService : DateNepalConvertService
   ) {
-    const year = NepaliFunctions.GetCurrentBsDate().year.toString().length == 1 ? "0" + NepaliFunctions.GetCurrentBsDate().year : NepaliFunctions.GetCurrentBsDate().year;
-    const month = NepaliFunctions.GetCurrentBsDate().month.toString().length == 1 ? "0" + NepaliFunctions.GetCurrentBsDate().month : NepaliFunctions.GetCurrentBsDate().month;
-    const day = NepaliFunctions.GetCurrentBsDate().day.toString().length == 1 ? "0" + NepaliFunctions.GetCurrentBsDate().day : NepaliFunctions.GetCurrentBsDate().day;
-    this.CurrentDateNepal = NepaliFunctions.GetCurrentBsDate()
+   
+    this.CurrentDateNepal = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    console.log(this.DateNepalConvertService.convertNepaliDateToEngDate(this.CurrentDateNepal))
   }
 
   ngOnInit() {
@@ -114,9 +117,9 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       Header: "Service Contract",
       Link: " Engineering CRM -> Master -> Service Contract"
     });
-    this.ServiceStartDate = this.CurrentDateNepal;
-    this.ServiceEndDate = this.CurrentDateNepal;
-    this.PaymentDate = this.CurrentDateNepal;
+    this.ServiceStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.ServiceEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.PaymentDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.GetCustomer();
     this.GetManufacturer();
     this.GetSerialNo();
@@ -136,9 +139,9 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     this.ServiceContractFormSubmit = false;
     this.MachineList = [];
     this.LoctionList = [];
-    this.ServiceStartDate = this.CurrentDateNepal;
-    this.ServiceEndDate = this.CurrentDateNepal;
-    this.PaymentDate = this.CurrentDateNepal;
+    this.ServiceStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.ServiceEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.PaymentDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     // this.GetBrowseList();
     this.EditList = [];
     this.Contract_ID = undefined;
@@ -284,15 +287,19 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       month: month,
       day: day
     });
-    const nyear = NepalDateObj.year.toString().length == 1 ? "0" + NepalDateObj.year : NepalDateObj.year;
-    const nmonth = NepalDateObj.month.toString().length == 1 ? "0" + NepalDateObj.month : NepalDateObj.month;
-    const nday = NepalDateObj.day.toString().length == 1 ? "0" + NepalDateObj.day : NepalDateObj.day;
+    //const NepalDate = {nyear: NepalDateObj.year, nmonth: Number(NepalDateObj.month) - 1, nday: NepalDateObj.day};
+    const d1 = new NepaliDate(NepalDateObj.year, Number(NepalDateObj.month) - 1, NepalDateObj.day)
+    // const nyear = NepalDateObj.year.toString().length == 1 ? "0" + NepalDateObj.year : NepalDateObj.year;
+    // const nmonth = NepalDateObj.month.toString().length == 1 ? "0" + NepalDateObj.month : NepalDateObj.month;
+    // const nday = NepalDateObj.day.toString().length == 1 ? "0" + NepalDateObj.day : NepalDateObj.day;
     //const NepalDate = NepalDateObj.day + '/' + NepalDateObj.month + '/' + NepalDateObj.year;
-    return {
-      day: Number(nday),
-      month: Number(nmonth),
-      year: nyear
-    };;
+    //const NepalDate = nday + '/' + nmonth + '/' + nyear;
+    return d1.format('dd mmmm, yyyy');
+    // return {
+    //   day: Number(nday),
+    //   month: Number(nmonth),
+    //   year: nyear
+    // };
   }
   ValidatedNepaliDate(dateObj) {
     const year = dateObj.year.toString().length == 1 ? "0" + dateObj.year : dateObj.year;
@@ -303,11 +310,19 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   SaveServiceContract(valid) {
     this.ServiceContractFormSubmit = true;
     this.Spinner = true;
+    console.log(
+      {
+        Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
+        Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
+        Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
+        Service_Start_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceStartDate),
+        Service_End_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceEndDate),
+        Payment_Date_nepali	 : this.DateNepalConvertService.GetNepaliDateStr(this.PaymentDate),
+      }
+    )
     if (valid && this.Contract_ID) {
 
-      const d1 = new NepaliDate(this.ServiceStartDate.year, this.ServiceStartDate.month, this.ServiceStartDate.day);
-      const d2 = new NepaliDate(this.ServiceEndDate.year, this.ServiceEndDate.month, this.ServiceEndDate.day);
-      const d3 = new NepaliDate(this.PaymentDate.year, this.PaymentDate.month, this.PaymentDate.day);
+    
       const Obj = {
         Contract_ID: this.Contract_ID,
         Sub_Ledger_ID: this.ObjServiceContract.Customer_Name,
@@ -316,10 +331,13 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
         Product_ID: this.ObjServiceContract.Machine,
         Serial_No: this.ObjServiceContract.Serial_No,
         Service_Type: this.ObjServiceContract.Type_of_Service,
-        Service_Start_Date: d1.format('dd-mm-yyyy'),
-        Service_End_Date: d2.format('dd-mm-yyyy'),
         Payment_Status: this.ObjServiceContract.Payment_Status,
-        Payment_Date: d3.format('dd-mm-yyyy')
+        Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
+        Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
+        Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
+        Service_Start_Date_nepali : this.ValidatedNepaliDate(this.ServiceStartDate),
+        Service_End_Date_nepali : this.ValidatedNepaliDate(this.ServiceEndDate),
+        Payment_Date_nepali	 : this.ValidatedNepaliDate(this.PaymentDate),
       }
       const obj = {
         "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
@@ -362,11 +380,7 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     } else {
       this.ServiceContractFormSubmit = true;
       this.Spinner = true;
-      if (valid) {
-
-        const d1 = new NepaliDate(this.ServiceStartDate.year, this.ServiceStartDate.month, this.ServiceStartDate.day);
-        const d2 = new NepaliDate(this.ServiceEndDate.year, this.ServiceEndDate.month, this.ServiceEndDate.day);
-        const d3 = new NepaliDate(this.PaymentDate.year, this.PaymentDate.month, this.PaymentDate.day);
+      if (valid) {       
         const TempObj = {
           Sub_Ledger_ID: this.ObjServiceContract.Customer_Name,
           Location_ID: this.ObjServiceContract.Location,
@@ -374,13 +388,13 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
           Product_ID: this.ObjServiceContract.Machine,
           Serial_No: this.ObjServiceContract.Serial_No,
           Service_Type: this.ObjServiceContract.Type_of_Service,
-          Service_Start_Date: this.DateService.dateConvert(d1.getEnglishDate()),
-          Service_End_Date:  this.DateService.dateConvert(d2.getEnglishDate()),
-          Payment_Date:  this.DateService.dateConvert(d3.getEnglishDate()),
-          Service_Start_Date_nepali: d1.format('dd-mm-yyyy'),
-          Service_End_Date_nepali:  d2.format('dd-mm-yyyy'),
-          Payment_Date_nepali: d3.format('dd-mm-yyyy'),
           Payment_Status: this.ObjServiceContract.Payment_Status,
+          Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
+          Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
+          Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
+          Service_Start_Date_nepali : this.ValidatedNepaliDate(this.ServiceStartDate),
+          Service_End_Date_nepali : this.ValidatedNepaliDate(this.ServiceEndDate),
+          Payment_Date_nepali	 : this.ValidatedNepaliDate(this.PaymentDate),
         }
         const obj = {
           "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
@@ -448,6 +462,12 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
         // console.log('Search list=====',this.BrowseList)
         this.seachSpinner = false;
         this.SearchFormSubmit = false;
+        for(let i = 0; i < this.BrowseList.length ; i++){
+           this.BrowseList[i]['Service_Start_Date'] = this.convertToNepaliDateObj(this.BrowseList[i]['Service_Start_Date']);
+           this.BrowseList[i]['Service_End_Date'] = this.convertToNepaliDateObj(this.BrowseList[i]['Service_End_Date']);
+           this.BrowseList[i]['Payment_Date'] = this.convertToNepaliDateObj(this.BrowseList[i]['Payment_Date']);
+          // console.log('Service_Start_Date==', this.BrowseList[i]['Service_Start_Date'])
+        }  
       })
     }
   }
@@ -490,11 +510,15 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
         this.ObjServiceContract.Machine = data[0].Product_ID;
         this.ObjServiceContract.Serial_No = data[0].Serial_No;
         this.ObjServiceContract.Type_of_Service = data[0].Service_Type;
-        this.ServiceStartDate = this.convertToNepaliDateObj(data[0].Service_Start_Date);
+        this.ServiceStartDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Service_Start_Date);
         console.log('this.ServiceStartDate==', this.ServiceStartDate)
-        this.ServiceEndDate = this.convertToNepaliDateObj(data[0].Service_End_Date);
+        this.ServiceEndDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Service_End_Date);
         this.ObjServiceContract.Payment_Status = data[0].Payment_Status;
-        this.PaymentDate = this.convertToNepaliDateObj(data[0].Payment_Date)
+        this.PaymentDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Payment_Date)
+        console.log(data)
+        console.log(this.ServiceStartDate)
+        console.log(this.ServiceEndDate)
+        console.log(this.PaymentDate)
       })
     }
   }
