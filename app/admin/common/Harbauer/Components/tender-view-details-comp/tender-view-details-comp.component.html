@@ -1,0 +1,236 @@
+<p-tabView [activeIndex]="0">
+  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[0]" leftIcon="glyphicon glyphicon-time">
+    <form name="TenderForm" #TenderForm="ngForm" novalidate>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Work Name<sup class="text-danger">*</sup></label>
+          <input class="form-control" name="RemarksCreate" #RemarksCreate="ngModel" [(ngModel)]="ObjTender.Work_Name"
+            placeholder="Work Name" disabled>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Work Details<sup class="text-danger">*</sup></label>
+          <input class="form-control" name="workdetails" #workdetails="ngModel" [(ngModel)]="ObjTender.Work_Details"
+            placeholder="Work Details" disabled>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
+          <input class="form-control" name="Authority" #Authority="ngModel" [(ngModel)]="ObjTender.Tender_Org_ID"
+            disabled>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Tender Calling Div</label>
+          <input class="form-control" name="TenderCalling" #TenderCalling="ngModel"
+            [(ngModel)]="ObjTender.Tender_Calling_Div_ID" disabled>
+
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Execution Div</label>
+          <input class="form-control" name="Tender_ExecutionCreate" #Tender_ExecutionCreate="ngModel"
+            [(ngModel)]="ObjTender.Tender_Execution_Div_ID" disabled>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Reference Number<sup class="text-danger">*</sup></label>
+          <input class="form-control" name="reffno" #reffno="ngModel" [(ngModel)]="ObjTender.Tender_Ref_No"
+            placeholder="Tender Reference Number" disabled>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
+          <input class="form-control" name="TenderIDCreate" #TenderIDCreate="ngModel" [(ngModel)]="ObjTender.Tender_ID"
+            placeholder="Tender ID" disabled>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Type</label>
+          <input class="form-control" name="TenderTypeCreate" #TenderTypeCreate="ngModel"
+            [(ngModel)]="ObjTender.Tender_Type_ID" disabled>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Category</label>
+          <input class="form-control" name="CategoryTenderCreate" #CategoryTenderCreate="ngModel"
+            [(ngModel)]="ObjTender.Tender_Category_ID" disabled>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">State<sup class="text-danger">*</sup></label>
+          <input class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" disabled>
+
+        </div>
+        <div class="col-sm-8">
+          <label class="control-label">Work Location<sup class="text-danger">*</sup></label>
+          <p-chips name="wlocation" #wlocation="ngModel" placeholder="Area" [(ngModel)]="testchips"
+            [field]="'Work_Location'" (onAdd)='checkChip($event)' [disabled]="true">
+          </p-chips>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Tender Value <sup class="text-danger">*</sup></label>
+          <input class="form-control" name="AmountTenderCreate" #AmountTenderCreate="ngModel" CompacctDigitonly="true"
+            [(ngModel)]="ObjTender.Tender_Value" placeholder="Tender Value" autocomplete="off" disabled>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Published Date & Time<sup class="text-danger">*</sup></label>
+          <div class="input-group date">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <input class="form-control" [owlDateTimeTrigger]="pub" name="pub_Date_Submission"
+              [(ngModel)]="TenderPublishDate" [owlDateTime]="pub" disabled>
+            <owl-date-time [hour12Timer]='true' #pub></owl-date-time>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Submission Date & Time<sup class="text-danger">*</sup></label>
+          <div class="input-group date">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <input class="form-control" [owlDateTimeTrigger]="end" name="END_Date_Submission"
+              [(ngModel)]="TenderEndDate" [owlDateTime]="end" disabled>
+            <owl-date-time [hour12Timer]='true' #end></owl-date-time>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Bid Opening Date & Time<sup class="text-danger">*</sup></label>
+          <div class="input-group date">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <input class="form-control" [owlDateTimeTrigger]="open" name="Date_Submission" [(ngModel)]="TenderOpenDate"
+              [owlDateTime]="open" disabled>
+            <owl-date-time [hour12Timer]='true' #open></owl-date-time>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">EMD Value <sup class="text-danger">*</sup></label>
+          <input class="form-control" name="EMD" #EMD="ngModel" CompacctDigitonly="true"
+            [(ngModel)]="ObjTender.EMD_Amount" placeholder="EMD Value" autocomplete="off" disabled>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Tender Fee <sup class="text-danger">*</sup></label>
+          <input class="form-control" name="Fee" #Fee="ngModel" CompacctDigitonly="true"
+            [(ngModel)]="ObjTender.T_Fee_Amount" placeholder="Tender Fee" autocomplete="off" disabled>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Information From<sup class="text-danger"></sup></label>
+          <input class="form-control" name="Tender_Publishing_Info_From" #Tender_Publishing_Info_From="ngModel"
+            [(ngModel)]="ObjTender.Enq_Source_ID" disabled>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Informed Date <sup class="text-danger">*</sup></label>
+          <div class="input-group date">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='InformedDate' [enabled]="false"></ejs-datepicker>
+            <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
+                  required /> -->
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Period Of Working (In Days)<sup class="text-danger">*</sup></label>
+          <input class="form-control" name="WorkCreate" #WorkCreate="ngModel" CompacctDigitonly="true"
+            [(ngModel)]="ObjTender.Period_Of_Working" placeholder="Period Of Working (In Days)" disabled>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-4">
+          <label class="control-label">Budget Required By <sup class="text-danger">*</sup></label>
+          <div class="input-group date">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='BudgetRequidBy' [enabled]="false"></ejs-datepicker>
+            <!-- <input type="date" name="budgetrequidby" #budgetrequidby="ngModel" [ngModel]="BudgetRequidBy | date: 'yyyy-MM-dd'" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && budgetrequidby.errors?.required}" required /> -->
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <label class="control-label">Assign To For Budget<sup class="text-danger">*</sup></label>
+          <input class="form-control" name="assignedforbudget" #assignedforbudget="ngModel"
+            [(ngModel)]="ObjTender.User_ID" disabled>
+
+        </div>
+      </div>
+    </form>
+  </p-tabPanel>
+  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[1]" leftIcon="glyphicon glyphicon-upload">
+    <div class="table-responsive no-padding">
+      <table class="table bidopen table-bordered">
+        <thead>
+          <tr style="background-color:#3c8dbc;color:white;">
+            <th class="text-center" style="vertical-align:middle">
+              Sl No.
+            </th>
+            <th class="text-center" style="vertical-align:middle">
+              Trip By
+            </th>
+            <th class="text-center" style="vertical-align:middle">
+              Vehicle No.
+            </th>
+            <th class="text-center" style="vertical-align:middle">
+              Number of Trips
+            </th>
+            <th class="text-center" style="vertical-align:middle">
+              Loose Qnty. per Trip
+            </th>
+            <th class="text-center" style="vertical-align:middle">
+              Item Unit
+            </th>
+
+            <th class="text-center" style="vertical-align:middle">
+              Total Loose Qnty.
+            </th>
+            <th class="text-center" style="vertical-align:middle">
+              Item Received From
+            </th>
+
+            <th class="text-center" style="vertical-align:middle">
+              Sub-Total Loose Qnty.(Cum.)
+            </th>
+            <th class="text-center" style="vertical-align:middle">
+              Delete
+            </th>
+          </tr>
+
+        </thead>
+        <tbody>
+          <tr *ngFor="
+                let d of BudgetDetails | async;
+                let odd = odd;
+                let index = index
+              " [class.even]="odd">
+            <td>{{ index + 1 }}</td>
+            <td>{{ d.Trip_By }}</td>
+            <td>{{ d.Vehicle_No ? d.Vehicle_No : '-'  }}</td>
+            <td>{{ d.No_Of_Trip ? d.No_Of_Trip : '-'  }}</td>
+            <td>{{ d.Loose_Qty_Per_Trip ? d.Loose_Qty_Per_Trip : '-'  }}</td>
+            <td>{{ d.Material_Unit ? d.Material_Unit : '-'  }}</td>
+            <td>{{ d.Total_Loose_Qty ? d.Total_Loose_Qty+' '+d.Material_Unit: '-'  }}</td>
+            <td>{{ d.Received_From ? d.Received_From : '-'  }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[2]" leftIcon="glyphicon glyphicon-upload">
+
+  </p-tabPanel>
+  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[3]" leftIcon="glyphicon glyphicon-upload">
+
+  </p-tabPanel>
+  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[4]" leftIcon="glyphicon glyphicon-upload">
+
+  </p-tabPanel>
+  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[5]" leftIcon="glyphicon glyphicon-upload">
+
+  </p-tabPanel>
+</p-tabView>

@@ -30,6 +30,26 @@ export class TenderBudgetAprovalComponent implements OnInit {
   TenderDocID = undefined;
   Aspinner = false;
   Dspinner = false;
+
+  ShowAddedEstimateProductList = [];
+  ApproveDisApproveModalFlag = false;
+  rowGroupMetadata: any;
+  cols = [
+    { field: 'SL_No', header: 'SL No.' },
+    { field: 'Budget_Group_Name', header: 'Group Name' },
+    { field: 'Budget_Sub_Group_Name', header: 'Sub Group Name' },
+    { field: 'Work_Details', header: 'Work Details' },
+    { field: 'Product_Description', header: 'Product' },
+    { field: 'unit', header: 'Unit' },
+    { field: 'Qty', header: 'Qty' },
+    { field: 'Nos', header: 'Nos' },
+    { field: 'TQty', header: 'Total Qty' },
+    { field: 'UOM', header: 'UOM' },
+    { field: 'saleRate', header: 'Sale Rate' },
+    { field: 'Sale_Amount', header: 'Sale Amount' },
+    { field: 'Rate', header: 'Purchase Rate' },
+    { field: 'Amount', header: 'Purchase Amount' }
+];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -109,21 +129,67 @@ export class TenderBudgetAprovalComponent implements OnInit {
      console.log("SUB",data);
     })
   }
+  // 
+  onSort() {
+    this.updateRowGroupMetaData();
+  }
+  updateRowGroupMetaData() {
+      this.rowGroupMetadata = {};
+      if (this.ShowAddedEstimateProductList) {
+          for (let i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+              let rowData = this.ShowAddedEstimateProductList[i];
+              let brand = rowData.Budget_Group_Name;
+              if (i == 0) {
+                  this.rowGroupMetadata[brand] = { index: 0, size: 1 };
+              }
+              else {
+                  let previousRowData = this.ShowAddedEstimateProductList[i - 1];
+                  let previousRowGroup = previousRowData.Budget_Group_Name;
+                  if (brand === previousRowGroup)
+                      this.rowGroupMetadata[brand].size++;
+                  else
+                      this.rowGroupMetadata[brand] = { index: i, size: 1 };
+              }
+          }
+      }
+  }
+  getPurchaseAmt(){
+    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0)
+  }
+  getTotalPurchaseAmt(){
+    return this.ShowAddedEstimateProductList.length ? Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt() : '-';
+  }
+  GetEditSingleScheme(){
+    this.ShowAddedEstimateProductList = [];
+    if(this.TenderDocID) {
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Get Data Tender Estimate",
+        "Json_Param_String": JSON.stringify([{ 'Tender_Doc_ID': this.TenderDocID }])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          if(data.length) {
+            this.ShowAddedEstimateProductList = data;
+            this.ApproveDisApproveModalFlag = true;
+            console.log(data)
+          }
+        });
+    }
+  }
 
-  ApproveBudget(obj) {
+//
+  ApproveDisApproveModal(obj) {
     this.TenderDocID = undefined;
     if(obj.Tender_Doc_ID) {
       this.TenderDocID = obj.Tender_Doc_ID;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "c",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure To Approve this Budget ?",
-        detail: "Confirm to proceed"
-      });
+      this.GetEditSingleScheme();
     }
   }
+
+
+  
   Approve() {
     if(this.TenderDocID) {
       this.Aspinner = true;
@@ -140,20 +206,6 @@ export class TenderBudgetAprovalComponent implements OnInit {
         }
       
       })
-    }
-  }
-  DisApproveBudget(obj) {
-    this.TenderDocID = undefined;
-    if(obj.Tender_Doc_ID) {
-      this.TenderDocID = obj.Tender_Doc_ID;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "c1",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure To Disapprove this Budget ?",
-        detail: "Confirm to proceed"
-      });
     }
   }
   Disapprove(){
@@ -217,6 +269,7 @@ export class TenderBudgetAprovalComponent implements OnInit {
           this.GetPendinApvList();
           this.GetAprvBudgetList();
           this.GetNotAprvBudgetList();
+          this.ApproveDisApproveModalFlag = false;
         }
       
       })

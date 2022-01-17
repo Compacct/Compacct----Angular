@@ -1,15 +1,43 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { CompacctCommonApi } from "../../../../shared/compacct.services/common.api.service";
-import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
-import { CompacctHeader } from "../../../../shared/compacct.services/common.header.service";
-import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
-import { MessageService } from "primeng/api";
-import { FileUpload } from "primeng/primeng";
-import { AnyTxtRecord } from 'dns';
-import { NonNullAssert } from '@angular/compiler';
-declare var NepaliFunctions:any;
-
+import {
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  ViewChild
+} from '@angular/core';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams
+} from "@angular/common/http";
+import {
+  CompacctCommonApi
+} from "../../../../shared/compacct.services/common.api.service";
+import {
+  CompacctGlobalApiService
+} from '../../../../shared/compacct.services/compacct.global.api.service';
+import {
+  CompacctHeader
+} from "../../../../shared/compacct.services/common.header.service";
+import {
+  DateTimeConvertService
+} from '../../../../shared/compacct.global/dateTime.service';
+import {
+  DateNepalConvertService
+} from '../../../../shared/compacct.global/dateNepal.service';
+import {
+  MessageService
+} from "primeng/api";
+import {
+  FileUpload
+} from "primeng/primeng";
+import {
+  AnyTxtRecord
+} from 'dns';
+import {
+  NonNullAssert
+} from '@angular/compiler';
+declare var NepaliFunctions: any;
+const NepaliDate = require('nepali-date');
 @Component({
   selector: 'app-engg-crm-installed-machine-service-contract',
   templateUrl: './engg-crm-installed-machine-service-contract.component.html',
@@ -50,10 +78,10 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   LoctionList = [];
   ServiceList = [];
   //ServiceStartDate = new Date();
-  ServiceStartDate : any ={};
-  ServiceEndDate :  any ={};
+  ServiceStartDate: any = {};
+  ServiceEndDate: any = {};
   StatusList = [];
-  PaymentDate = new Date();
+  PaymentDate: any = {};
 
   currentdate = new Date();
   ObjBrowse = new Browse();
@@ -62,12 +90,12 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   EditList = [];
   Contract_ID = undefined;
   browsestartdate: Date;
-  CurrentDateNepal= undefined;
+  CurrentDateNepal = undefined;
   // getdate: any;
   // memberid = undefined;
   // deluserid = undefined;
   // delmemberid = undefined;
-  
+
 
   constructor(
     private $http: HttpClient,
@@ -75,13 +103,13 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private Header: CompacctHeader,
     private compacctToast: MessageService,
-    private DateService: DateTimeConvertService
+    private DateService: DateTimeConvertService,
+    private DateNepalConvertService : DateNepalConvertService
   ) {
-    const year = NepaliFunctions.GetCurrentBsDate().year.toString().length == 1 ? "0" + NepaliFunctions.GetCurrentBsDate().year : NepaliFunctions.GetCurrentBsDate().year;
-        const month = NepaliFunctions.GetCurrentBsDate().month.toString().length == 1 ? "0" + NepaliFunctions.GetCurrentBsDate().month : NepaliFunctions.GetCurrentBsDate().month;
-        const day = NepaliFunctions.GetCurrentBsDate().day.toString().length == 1 ? "0" + NepaliFunctions.GetCurrentBsDate().day : NepaliFunctions.GetCurrentBsDate().day;
-     this.CurrentDateNepal = {day : Number(day), month:Number(month), year :year};
-   }
+   
+    this.CurrentDateNepal = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    console.log(this.DateNepalConvertService.convertNepaliDateToEngDate(this.CurrentDateNepal))
+  }
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
@@ -90,12 +118,13 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       Link: " Engineering CRM -> Master -> Service Contract"
     });
     this.ServiceStartDate = this.CurrentDateNepal;
-    this.ServiceEndDate =  this.CurrentDateNepal;
-      this.GetCustomer();
-      this.GetManufacturer();
-      this.GetSerialNo();
-      this.gettypeofservice();
-      this.getStatus();
+    this.ServiceEndDate = this.CurrentDateNepal;
+    this.PaymentDate = this.CurrentDateNepal;
+    this.GetCustomer();
+    this.GetManufacturer();
+    this.GetSerialNo();
+    this.gettypeofservice();
+    this.getStatus();
   }
   // Clear & Tab
   TabClick(e) {
@@ -111,65 +140,65 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     this.MachineList = [];
     this.LoctionList = [];
     this.ServiceStartDate = this.CurrentDateNepal;
-    this.ServiceEndDate =  this.CurrentDateNepal;
-    this.PaymentDate = new Date();
+    this.ServiceEndDate = this.CurrentDateNepal;
+    this.PaymentDate = this.CurrentDateNepal;
     // this.GetBrowseList();
-     this.EditList = [];
-     this.Contract_ID = undefined;
-     this.previouscontractList = [];
+    this.EditList = [];
+    this.Contract_ID = undefined;
+    this.previouscontractList = [];
   }
-  GetCustomer(){
+  GetCustomer() {
     const obj = {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
       "Report_Name_String": "Get_Customer"
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.CustomerList = data;
-     //console.log('CustomerList ==', this.CustomerList)
-  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.CustomerList = data;
+      //console.log('CustomerList ==', this.CustomerList)
+
     });
   }
-  GetLocation(){
+  GetLocation() {
     const TObj = {
-      Sub_Ledger_ID : this.ObjServiceContract.Customer_Name
+      Sub_Ledger_ID: this.ObjServiceContract.Customer_Name
     }
     const obj = {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
       "Report_Name_String": "Get_Location",
       "Json_Param_String": JSON.stringify([TObj])
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.LoctionList = data;
-    // console.log('LoctionList ==', this.LoctionList)
-  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.LoctionList = data;
+      // console.log('LoctionList ==', this.LoctionList)
+
     });
   }
-  GetManufacturer(){
+  GetManufacturer() {
     const obj = {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
       "Report_Name_String": "Get_Manufacturer"
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.MfList = data;
-    // console.log('MfList ==', this.MfList)
-  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.MfList = data;
+      // console.log('MfList ==', this.MfList)
+
     });
   }
-  GetMachine(){
+  GetMachine() {
     const TObj = {
-      Product_Mfg_Comp_ID : this.ObjServiceContract.Machine_Manufacturer
+      Product_Mfg_Comp_ID: this.ObjServiceContract.Machine_Manufacturer
     }
     const obj = {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
       "Report_Name_String": "Get_Machine",
       "Json_Param_String": JSON.stringify([TObj])
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.MachineList = data;
-    // console.log('MachineList ==', this.MachineList)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.MachineList = data;
+      // console.log('MachineList ==', this.MachineList)
     });
   }
-  GetSerialNo(){
+  GetSerialNo() {
     // const TObj = {
     //   Product_Mfg_Comp_ID : this.ObjServiceContract.Machine_Manufacturer
     // }
@@ -177,17 +206,17 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
       "Report_Name_String": "Get_Serial_NOs",
       //"Json_Param_String": JSON.stringify([TObj])
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.SerialNoList = data;
-    // console.log('SerialNoList ==', this.SerialNoList)
-  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.SerialNoList = data;
+      // console.log('SerialNoList ==', this.SerialNoList)
+
     });
   }
-  previouscontract(){
+  previouscontract() {
     this.PreviousContractPopup = true;
   }
-  Getpreviouscontract(){
+  Getpreviouscontract() {
     this.previouscontractList = [];
     this.customername = undefined;
     this.locationname = undefined;
@@ -200,56 +229,73 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     this.paystatus = undefined;
     this.paydate = undefined;
     const TObj = {
-      Product_Mfg_Comp_ID : this.ObjServiceContract.Machine_Manufacturer,
-      Product_ID : this.ObjServiceContract.Machine,
-      Serial_No : this.ObjServiceContract.Serial_No
+      Product_Mfg_Comp_ID: this.ObjServiceContract.Machine_Manufacturer,
+      Product_ID: this.ObjServiceContract.Machine,
+      Serial_No: this.ObjServiceContract.Serial_No
     }
     const obj = {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
       "Report_Name_String": "Get_Previous_Contract",
       "Json_Param_String": JSON.stringify([TObj])
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.previouscontractList = data;
-     //this.PreviousContractPopup = true;
-    // console.log('previouscontractList ==', this.previouscontractList)
-    //  this.customername = data[0].Sub_Ledger_Name;
-    //  this.locationname = data[0].Location_Name;
-    //  this.manufacturer = data[0].Mfg_Company;
-    //  this.machinename = data[0].Machine;
-    //  this.slno = data[0].Serial_No;
-    //  this.servicetype = data[0].Service_Type;
-    //  this.sstartdate = this.DateService.dateConvert(new Date(data[0].Service_Start_Date));
-    //  this.senddate = this.DateService.dateConvert(new Date(data[0].Service_End_Date));
-    //  this.paystatus = data[0].Payment_Status;
-    //  this.paydate = this.DateService.dateConvert(new Date(data[0].Payment_Date));
-  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.previouscontractList = data;
+      //this.PreviousContractPopup = true;
+      // console.log('previouscontractList ==', this.previouscontractList)
+      //  this.customername = data[0].Sub_Ledger_Name;
+      //  this.locationname = data[0].Location_Name;
+      //  this.manufacturer = data[0].Mfg_Company;
+      //  this.machinename = data[0].Machine;
+      //  this.slno = data[0].Serial_No;
+      //  this.servicetype = data[0].Service_Type;
+      //  this.sstartdate = this.DateService.dateConvert(new Date(data[0].Service_Start_Date));
+      //  this.senddate = this.DateService.dateConvert(new Date(data[0].Service_End_Date));
+      //  this.paystatus = data[0].Payment_Status;
+      //  this.paydate = this.DateService.dateConvert(new Date(data[0].Payment_Date));
+
     });
   }
-  gettypeofservice(){
-  //  console.log("ServiceList ===", this.ServiceList)
-      this.ServiceList =[
-        {Name : "AMC"},
-        {Name : "Warranty"}
-      ];
+  gettypeofservice() {
+    //  console.log("ServiceList ===", this.ServiceList)
+    this.ServiceList = [{
+        Name: "AMC"
+      },
+      {
+        Name: "Warranty"
+      }
+    ];
 
   }
-  getStatus(){
-  //  console.log("StatusList ===", this.StatusList)
-      this.StatusList =[
-        {Name : "Paid"},
-        {Name : "Due"}
-      ];
+  getStatus() {
+    //  console.log("StatusList ===", this.StatusList)
+    this.StatusList = [{
+        Name: "Paid"
+      },
+      {
+        Name: "Due"
+      }
+    ];
 
   }
-  convertToNepaliDate = function (_Date) {
+  convertToNepaliDateObj = function (_Date) {
     const EnglishDate = new Date(_Date);
     var month = EnglishDate.getUTCMonth() + 1;
     var day = EnglishDate.getDate();
     var year = EnglishDate.getUTCFullYear();
-    const NepalDateObj = NepaliFunctions.AD2BS({ year: year, month: month, day: day });
-    const NepalDate = NepalDateObj.day + '/' + NepalDateObj.month + '/' + NepalDateObj.year;
-    return NepalDate;
+    const NepalDateObj = NepaliFunctions.AD2BS({
+      year: year,
+      month: month,
+      day: day
+    });
+    const nyear = NepalDateObj.year.toString().length == 1 ? "0" + NepalDateObj.year : NepalDateObj.year;
+    const nmonth = NepalDateObj.month.toString().length == 1 ? "0" + NepalDateObj.month : NepalDateObj.month;
+    const nday = NepalDateObj.day.toString().length == 1 ? "0" + NepalDateObj.day : NepalDateObj.day;
+    //const NepalDate = NepalDateObj.day + '/' + NepalDateObj.month + '/' + NepalDateObj.year;
+    return {
+      day: Number(nday),
+      month: Number(nmonth),
+      year: nyear
+    };;
   }
   ValidatedNepaliDate(dateObj) {
     const year = dateObj.year.toString().length == 1 ? "0" + dateObj.year : dateObj.year;
@@ -257,104 +303,66 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     const day = dateObj.day.toString().length == 1 ? "0" + dateObj.day : dateObj.day;
     return day + '/' + month + '/' + year
   }
-  SaveServiceContract(valid){
+  SaveServiceContract(valid) {
     this.ServiceContractFormSubmit = true;
     this.Spinner = true;
-    if(valid && this.Contract_ID){
-      const Obj = {
-        Contract_ID  : this.Contract_ID,
-        Sub_Ledger_ID : this.ObjServiceContract.Customer_Name,
-        Location_ID : this.ObjServiceContract.Location,
-        Product_Mfg_Comp_ID : this.ObjServiceContract.Machine_Manufacturer,
-        Product_ID : this.ObjServiceContract.Machine,
-        Serial_No : this.ObjServiceContract.Serial_No,
-        Service_Type : this.ObjServiceContract.Type_of_Service,
-        Service_Start_Date : this.ValidatedNepaliDate(this.ServiceStartDate),
-        Service_End_Date :  this.ValidatedNepaliDate(this.ServiceEndDate),
-        Payment_Status : this.ObjServiceContract.Payment_Status,
-        Payment_Date : this.DateService.dateConvert(new Date (this.PaymentDate))
+    console.log(
+      {
+        Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
+        Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
+        Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
+        Service_Start_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceStartDate),
+        Service_End_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceEndDate),
+        Payment_Date_nepali	 : this.DateNepalConvertService.GetNepaliDateStr(this.PaymentDate),
       }
-         const obj = {
-           "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
-           "Report_Name_String" : "Update_Engg_CRM_Installed_Machine_Service_Contract",
-           "Json_Param_String": JSON.stringify([Obj])
-       
-         }
-         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-           console.log(data);
-           //var tempID = data[0].Column1;
-           if(data[0].Column1){
-            this.compacctToast.clear();
-            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-            this.compacctToast.add({
-             key: "compacct-toast",
-             severity: "success",
-             summary: "Installed Machine",
-             detail: "Succesfully Updated" //+ mgs
-           });
-           this.clearData();
-           this.GetSearchedList(true);
-           this.Contract_ID = undefined;
-           this.tabIndexToView = 0;
-           this.items = ["BROWSE", "CREATE"];
-          //  this.buttonname = "Save";
-            // this.testchips =[];
-       
-           } else{
-            // this.ngxService.stop();
-             this.Spinner = false;
-             this.compacctToast.clear();
-             this.compacctToast.add({
-               key: "compacct-toast",
-               severity: "error",
-               summary: "Warn Message",
-               detail: "Error Occured "
-             });
-           }
-         })
-        } 
-        else {
-    this.ServiceContractFormSubmit = true;
-    this.Spinner = true;
-    if(valid) {
-      const TempObj = {
-        Sub_Ledger_ID : this.ObjServiceContract.Customer_Name,
-        Location_ID : this.ObjServiceContract.Location,
-        Product_Mfg_Comp_ID : this.ObjServiceContract.Machine_Manufacturer,
-        Product_ID : this.ObjServiceContract.Machine,
-        Serial_No : this.ObjServiceContract.Serial_No,
-        Service_Type : this.ObjServiceContract.Type_of_Service,       
-        Service_Start_Date : this.ValidatedNepaliDate(this.ServiceStartDate),
-        Service_End_Date :  this.ValidatedNepaliDate(this.ServiceEndDate),
-        Payment_Status : this.ObjServiceContract.Payment_Status,
-        Payment_Date : this.DateService.dateConvert(new Date (this.PaymentDate))
+    )
+    if (valid && this.Contract_ID) {
+
+    
+      const Obj = {
+        Contract_ID: this.Contract_ID,
+        Sub_Ledger_ID: this.ObjServiceContract.Customer_Name,
+        Location_ID: this.ObjServiceContract.Location,
+        Product_Mfg_Comp_ID: this.ObjServiceContract.Machine_Manufacturer,
+        Product_ID: this.ObjServiceContract.Machine,
+        Serial_No: this.ObjServiceContract.Serial_No,
+        Service_Type: this.ObjServiceContract.Type_of_Service,
+        Payment_Status: this.ObjServiceContract.Payment_Status,
+        Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
+        Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
+        Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
+        Service_Start_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceStartDate),
+        Service_End_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceEndDate),
+        Payment_Date_nepali	 : this.DateNepalConvertService.GetNepaliDateStr(this.PaymentDate),
       }
       const obj = {
         "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
-        "Report_Name_String": "Create_Engg_CRM_Installed_Machine_Service_Contract",
-        "Json_Param_String":  JSON.stringify([TempObj])
+        "Report_Name_String": "Update_Engg_CRM_Installed_Machine_Service_Contract",
+        "Json_Param_String": JSON.stringify([Obj])
+
       }
-      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
         console.log(data);
-        var msg = data[0].Column1;
-        if(data[0].Column1) {
+        //var tempID = data[0].Column1;
+        if (data[0].Column1) {
           this.compacctToast.clear();
+          //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
             summary: "Installed Machine",
-            detail:  msg != "Already Exists" ? "Succesfully Saved" : "Already Exists"
+            detail: "Succesfully Updated" //+ mgs
           });
-          if (msg != "Already Exists") {
           this.clearData();
-          }
-          // this.ServiceContractFormSubmit = false;
-           this.Spinner = false;
-          // this.ObjServiceContract = new ServiceContract();
-          // this.MachineList = [];
-          // this.LoctionList = [];
+          this.GetSearchedList(true);
+          this.Contract_ID = undefined;
+          this.tabIndexToView = 0;
+          this.items = ["BROWSE", "CREATE"];
+          //  this.buttonname = "Save";
+          // this.testchips =[];
 
         } else {
+          // this.ngxService.stop();
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -364,42 +372,96 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
             detail: "Error Occured "
           });
         }
+      })
+    } else {
+      this.ServiceContractFormSubmit = true;
+      this.Spinner = true;
+      if (valid) {       
+        const TempObj = {
+          Sub_Ledger_ID: this.ObjServiceContract.Customer_Name,
+          Location_ID: this.ObjServiceContract.Location,
+          Product_Mfg_Comp_ID: this.ObjServiceContract.Machine_Manufacturer,
+          Product_ID: this.ObjServiceContract.Machine,
+          Serial_No: this.ObjServiceContract.Serial_No,
+          Service_Type: this.ObjServiceContract.Type_of_Service,
+          Payment_Status: this.ObjServiceContract.Payment_Status,
+          Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
+          Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
+          Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
+          Service_Start_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceStartDate),
+          Service_End_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceEndDate),
+          Payment_Date_nepali	 : this.DateNepalConvertService.GetNepaliDateStr(this.PaymentDate),
+        }
+        const obj = {
+          "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
+          "Report_Name_String": "Create_Engg_CRM_Installed_Machine_Service_Contract",
+          "Json_Param_String": JSON.stringify([TempObj])
+        }
+        this.GlobalAPI.postData(obj).subscribe((data: any) => {
+          console.log(data);
+          var msg = data[0].Column1;
+          if (data[0].Column1) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "Installed Machine",
+              detail: msg != "Already Exists" ? "Succesfully Saved" : "Already Exists"
+            });
+            if (msg != "Already Exists") {
+              this.clearData();
+            }
+            // this.ServiceContractFormSubmit = false;
+            this.Spinner = false;
+            // this.ObjServiceContract = new ServiceContract();
+            // this.MachineList = [];
+            // this.LoctionList = [];
 
+          } else {
+            this.Spinner = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+          }
+
+        })
+      } else {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    }
+  }
+  GetSearchedList(valid) {
+    this.SearchFormSubmit = true;
+    if (valid) {
+      this.seachSpinner = true;
+      const tempobj = {
+        Sub_Ledger_ID: this.ObjBrowse.Customer_Name
+      }
+      const obj = {
+        "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
+        "Report_Name_String": "Browse_Engg_CRM_Installed_Machine_Service_Contract",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        this.BrowseList = data;
+        // console.log('Search list=====',this.BrowseList)
+        this.seachSpinner = false;
+        this.SearchFormSubmit = false;
       })
     }
-    else {
-      this.Spinner = false;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-        summary: "Warn Message",
-        detail: "Error Occured "
-      });
-    }
-    }
   }
-  GetSearchedList(valid){
-    this.SearchFormSubmit = true;
-    if(valid){
-      this.seachSpinner = true;
-    const tempobj = {
-      Sub_Ledger_ID : this.ObjBrowse.Customer_Name
-    }
-    const obj = {
-    "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
-    "Report_Name_String": "Browse_Engg_CRM_Installed_Machine_Service_Contract",
-    "Json_Param_String": JSON.stringify([tempobj])
-    }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.BrowseList = data;
-    // console.log('Search list=====',this.BrowseList)
-     this.seachSpinner = false;
-     this.SearchFormSubmit = false;
-    })
-    }
-  }
-  textcolor(col){
+  textcolor(col) {
     this.browsestartdate = new Date(col.Service_Start_Date);
     // this.getdate = this.DateService.dateConvert(new Date(this.currentdate));
     // console.log('browsestartdate==',this.browsestartdate.getDate())
@@ -408,56 +470,61 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     // console.log('currentdate===',this.currentdate.getMonth() + 1)
     // console.log('browsestartdate==',this.browsestartdate.getFullYear())
     // console.log('currentdate===',this.currentdate.getFullYear())
-    return  this.browsestartdate < this.currentdate ? "text-red-active" : "";
-  //  if (this.browsestartdate.getTime() < this.currentdate.getTime()) {
-  //     return "text-red-active";
-  //  }
+    return this.browsestartdate < this.currentdate ? "text-red-active" : "";
+    //  if (this.browsestartdate.getTime() < this.currentdate.getTime()) {
+    //     return "text-red-active";
+    //  }
   }
-  Edit(edit){
+  Edit(edit) {
     this.clearData();
-    if(edit.Contract_ID) {
+    if (edit.Contract_ID) {
       this.Contract_ID = edit.Contract_ID;
       this.tabIndexToView = 1;
       this.items = ["BROWSE", "UPDATE"];
       this.buttonname = "Update";
       const ObjT = {
-        Contract_ID : this.Contract_ID
+        Contract_ID: this.Contract_ID
       }
-     const obj = {
-       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
-       "Report_Name_String": "Get_Engg_CRM_Installed_Machine_Service_Contract",
-       "Json_Param_String": JSON.stringify([ObjT])
-     }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.EditList = data;
-       this.ObjServiceContract.Customer_Name = data[0].Sub_Ledger_ID;
-       this.GetLocation();
-       this.ObjServiceContract.Location = data[0].Location_ID;
-       this.ObjServiceContract.Machine_Manufacturer = data[0].Product_Mfg_Comp_ID;
-       this.GetMachine();
-       this.ObjServiceContract.Machine = data[0].Product_ID;
-       this.ObjServiceContract.Serial_No = data[0].Serial_No;
-       this.ObjServiceContract.Type_of_Service = data[0].Service_Type;
-       this.ServiceStartDate = new Date(data[0].Service_Start_Date);
-       this.ServiceEndDate = new Date(data[0].Service_End_Date);
-       this.ObjServiceContract.Payment_Status = data[0].Payment_Status;
-       this.PaymentDate = new Date(data[0].Payment_Date)
-    })
+      const obj = {
+        "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
+        "Report_Name_String": "Get_Engg_CRM_Installed_Machine_Service_Contract",
+        "Json_Param_String": JSON.stringify([ObjT])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        this.EditList = data;
+        this.ObjServiceContract.Customer_Name = data[0].Sub_Ledger_ID;
+        this.GetLocation();
+        this.ObjServiceContract.Location = data[0].Location_ID;
+        this.ObjServiceContract.Machine_Manufacturer = data[0].Product_Mfg_Comp_ID;
+        this.GetMachine();
+        this.ObjServiceContract.Machine = data[0].Product_ID;
+        this.ObjServiceContract.Serial_No = data[0].Serial_No;
+        this.ObjServiceContract.Type_of_Service = data[0].Service_Type;
+        this.ServiceStartDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Service_Start_Date);
+        console.log('this.ServiceStartDate==', this.ServiceStartDate)
+        this.ServiceEndDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Service_End_Date);
+        this.ObjServiceContract.Payment_Status = data[0].Payment_Status;
+        this.PaymentDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Payment_Date)
+        console.log(data)
+        console.log(this.ServiceStartDate)
+        console.log(this.ServiceEndDate)
+        console.log(this.PaymentDate)
+      })
     }
   }
-  onConfirm(){}
-  onReject(){}
+  onConfirm() {}
+  onReject() {}
 
 }
-class ServiceContract{
-  Customer_Name:string;
-  Location:string;
-  Machine_Manufacturer:string;
-  Machine:string;
-  Serial_No:any;
-  Type_of_Service:string;
-  Payment_Status:string;
+class ServiceContract {
+  Customer_Name: string;
+  Location: string;
+  Machine_Manufacturer: string;
+  Machine: string;
+  Serial_No: any;
+  Type_of_Service: string;
+  Payment_Status: string;
 }
-class Browse{
-  Customer_Name:string;
+class Browse {
+  Customer_Name: string;
 }

@@ -255,6 +255,7 @@ import { EnggCrmInstalledMachineComponent } from './common/MaterialManagement/Ma
 import { EnggCrmInstalledMachineServiceContractComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine-service-contract/engg-crm-installed-machine-service-contract.component';
 
 import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
+import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/tender-view-details-comp/tender-view-details-comp.component';
 
 
 
@@ -439,6 +440,7 @@ import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-b
     EnggCrmInstalledMachineComponent,
     EnggCrmInstalledMachineServiceContractComponent,
     TenderBudgetAprovalComponent,
+    TenderViewDetailsCompComponent,
   ],
   imports: [
     CommonModule,

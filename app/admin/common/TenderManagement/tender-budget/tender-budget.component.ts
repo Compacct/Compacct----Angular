@@ -173,6 +173,7 @@ updateRowGroupMetaData() {
     this.clearData();
   }
   clearData(){
+    this.ShowSingleScheme = false;
     this.createBudgetmodel = false;
   }
   GetBudgetreq(){
@@ -248,13 +249,14 @@ updateRowGroupMetaData() {
       this.GlobalAPI
         .getData(obj)
         .subscribe((data: any) => {
-          
-          this.editData = data;
-          this.ShowAddedEstimateProductList = data;
-          this.AddedEstimateProductList = this.ShowAddedEstimateProductList;
-          this.ObjEstimate.Budget_Short_Description = data[0].Budget_Short_Description;
-          this.ObjEstimate.No_of_Site = data[0].No_of_Site;
-          console.log(data)
+          if(data.length) {
+            this.editData = data;
+            this.ShowAddedEstimateProductList = data;
+            this.AddedEstimateProductList = this.ShowAddedEstimateProductList;
+            this.ObjEstimate.Budget_Short_Description = data[0].Budget_Short_Description;
+            this.ObjEstimate.No_of_Site = data[0].No_of_Site;
+            console.log(data)
+          }
         });
     }
   }
