@@ -28,20 +28,29 @@
                             <form name="SearchForm" #SearchForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
+                                        <label class="control-label">From Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <np-datepicker id='BSdate' name="BSdate" inputClass="form-control" [(ngModel)]="BrowseStartDate"></np-datepicker>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">To Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <np-datepicker id='BEdate' name="BEdate" inputClass="form-control" [(ngModel)]="BrowseEndDate"></np-datepicker>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-sm-4">
                                         <label class="control-label">Customer<span class="text-danger">*</span></label>
                                         <select class="form-control" name="Bcustomer" #Bcustomer="ngModel" [(ngModel)]='ObjBrowse.Customer_Name' [ngClass]="{'clearance': SearchFormSubmit && Bcustomer?.errors?.required}" required>
                                   <option  [ngValue]="undefined">Select</option>
                                   <option *ngFor="let option of CustomerList" [value]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
                             </select>
-                                    </div>
-                                    <!-- <div class="col-sm-4">
-                                        <label class="control-label">Status<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Bstatus" #Bstatus="ngModel" [(ngModel)]="ObjBrowse.Status" [ngClass]="{'clearance': SearchFormSubmit && Bstatus.errors?.required}" required>
-                                                        <option  [ngValue]="undefined">Select</option>
-                                                    <option *ngFor="let option of StatusList" [ngValue]="option.Name">
-                                                        {{option.Name}}
-                                                        </option>
-                                                </select>
                                     </div> -->
                                     <div class="col-sm-3">
                                         <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="GetSearchedList(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
@@ -80,20 +89,22 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
+                                            <th>Support Ticket No</th>
+                                            <th>Support Ticket Date</th>
+                                            <th>Call Type</th>
+                                            <th>Customer Name</th>
                                             <th>Location</th>
-                                            <th>Manufacturer</th>
+                                            <th>Machine Make</th>
                                             <th>Machine</th>
-                                            <th>Serial No</th>
-                                            <th>Type of Service</th>
-                                            <th>Service Start Date</th>
-                                            <th>Service End Date</th>
-                                            <th>Payment Status</th>
-                                            <th>Payment Date</th>
-                                            <th>Status</th>
+                                            <th>Machine Serial No</th>
+                                            <th>Engineer</th>
+                                            <th>Contract Status</th>
+                                            <!-- <th>Support Ticket Status</th> -->
+                                            <th>Remarks</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
-                                        <tr [class]='col.Status != "Active" ? "text-red-active" : ""'>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
 
                                             <td>
                                                 <div class="dropdown">
@@ -115,18 +126,19 @@
                                                     </ul>
                                                 </div>
                                             </td>
+                                            <td>{{col.Support_Ticket_No}}</td>
+                                            <td>{{col.Support_Ticket_Date}}</td>
+                                            <td>{{col.Call_Type}}</td>
+                                            <td>{{col.Sub_Ledger_Name}}</td>
                                             <td>{{col.Location_Name}}</td>
+                                            <!-- <td>{{col.User_Email ? col.Mfg_Company : '-' }}</td> -->
                                             <td>{{col.Mfg_Company}}</td>
                                             <td>{{col.Machine}}</td>
                                             <td>{{col.Serial_No}}</td>
-                                            <!-- <td>{{col.User_Email ? col.Mfg_Company : '-' }}</td> -->
-                                            <td>{{col.Service_Type}}</td>
-                                            <!-- <td>{{col.Service_Start_Date | date : 'dd/MMM/yyyy'}}</td> -->
-                                            <td>{{col.Service_Start_Date}}</td>
-                                            <td>{{col.Service_End_Date}}</td>
-                                            <td>{{col.Payment_Status}}</td>
-                                            <td>{{col.Payment_Date}}</td>
-                                            <td>{{col.Status}}</td>
+                                            <td>{{col.Member_Name}}</td>
+                                            <td>{{col.Contract_Status}}</td>
+                                            <!-- <td>{{col.Support_Ticket_Status}}</td> -->
+                                            <td>{{col.Remarks}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -136,18 +148,38 @@
                             </div>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
-                            <form name="ServiceContractForm" #ServiceContractForm="ngForm" novalidate>
+                            <form name="SupportTicketForm" #SupportTicketForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Customer<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="customer" #customer="ngModel" [(ngModel)]='ObjServiceContract.Customer_Name' (change)="GetLocation()" [ngClass]="{'clearance': ServiceContractFormSubmit && customer?.errors?.required}" required>
+                                        <label class="control-label">Support Ticket Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <np-datepicker id='STdate' name="STdate" inputClass="form-control" [(ngModel)]="SupportTicketDate"></np-datepicker>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Call Type<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="calltype" #calltype="ngModel" [(ngModel)]="ObjSupportTicket.Call_Type" [ngClass]="{'clearance': SupportTicketFormSubmit && calltype.errors?.required}" required>
+                                                                <option  [ngValue]="undefined">Select</option>
+                                                            <option *ngFor="let option of CallTypeList" [ngValue]="option.Name">
+                                                                {{option.Name}}
+                                                                </option>
+                                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Customer Name<span class="text-danger">*</span></label>
+                                        <select class="form-control" name="customer" #customer="ngModel" [(ngModel)]='ObjSupportTicket.Customer_Name' (change)="GetLocation()" [ngClass]="{'clearance': SupportTicketFormSubmit && customer?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of CustomerList" [value]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
                                     </select>
                                     </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Location<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjServiceContract.Location" [ngClass]="{'clearance': ServiceContractFormSubmit && location.errors?.required}" required>
+                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjSupportTicket.Location" [ngClass]="{'clearance': SupportTicketFormSubmit && location.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of LoctionList" [ngValue]="option.Location_ID">
                                                               {{option.Location_Name}}
@@ -155,9 +187,9 @@
                                                       </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Manufacturer<sup class="text-danger">*</sup>
+                                        <label class="control-label">Machine Make<sup class="text-danger">*</sup>
                                 </label>
-                                        <select class="form-control" name="Manufacturer" #Manufacturer="ngModel" [(ngModel)]="ObjServiceContract.Machine_Manufacturer" (change)="GetMachine()" [ngClass]="{'clearance': ServiceContractFormSubmit && Manufacturer?.errors?.required}" required>
+                                        <select class="form-control" name="Manufacturer" #Manufacturer="ngModel" [(ngModel)]="ObjSupportTicket.Machine_Manufacturer" (change)="GetMachine()" [ngClass]="{'clearance': SupportTicketFormSubmit && Manufacturer?.errors?.required}" required>
                                       <option  [ngValue]="undefined">Select</option>
                                   <option *ngFor="let option of MfList" value="{{option.Product_Mfg_Comp_ID}}">
                                       {{option.Mfg_Company}}
@@ -165,90 +197,63 @@
                               </select>
 
                                     </div>
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Machine<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="machine" #machine="ngModel" [(ngModel)]='ObjServiceContract.Machine' (change)="Getpreviouscontract()" [ngClass]="{'clearance': ServiceContractFormSubmit && machine?.errors?.required}" required>
+                                        <select class="form-control" name="machine" #machine="ngModel" [(ngModel)]='ObjSupportTicket.Machine' [ngClass]="{'clearance': SupportTicketFormSubmit && machine?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of MachineList" [value]="option.Product_ID">{{option.Machine}}</option>
                                     </select>
                                     </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Serial No<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
-                                            <button (click)="previouscontract()" [disabled]="!previouscontractList.length" class="btn btn-primary pull-right createPatient"> Show Previous Contract</button>
-                                        </div>
-                                        <select class="form-control" name="serialno" #serialno="ngModel" [(ngModel)]="ObjServiceContract.Serial_No" (change)="Getpreviouscontract()" [ngClass]="{'clearance': ServiceContractFormSubmit && serialno?.errors?.required}" required>
+                                        <label class="control-label">Machine Serial No<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="serialno" #serialno="ngModel" [(ngModel)]="ObjSupportTicket.Serial_No" (change)="GetPreContractStatus()" [ngClass]="{'clearance': SupportTicketFormSubmit && serialno?.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of SerialNoList" value="{{option.Serial_No}}">
-                                            {{option.Serial_No}}
+                                            {{option.Serial_No_Show}}
                                             </option>
                                     </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Type of service<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="typeofservice" #typeofservice="ngModel" [(ngModel)]="ObjServiceContract.Type_of_Service" [ngClass]="{'clearance': ServiceContractFormSubmit && typeofservice.errors?.required}" required>
+                                        <label class="control-label">Engineer<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="engineer" #engineer="ngModel" [(ngModel)]="ObjSupportTicket.Engineer" [ngClass]="{'clearance': SupportTicketFormSubmit && engineer.errors?.required}" required>
                                                                 <option  [ngValue]="undefined">Select</option>
-                                                            <option *ngFor="let option of ServiceList" [ngValue]="option.Name">
-                                                                {{option.Name}}
+                                                            <option *ngFor="let option of EngineerList" [ngValue]="option.User_ID">
+                                                                {{option.Member_Name}}
                                                                 </option>
                                                         </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Contract Status <sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <button (click)="ViewContract()" [disabled]="!previouscontractList.length" class="btn btn-primary pull-right createPatient"> View Contract</button>
+                                        </div>
+                                        <select class="form-control" name="contractstatus" #contractstatus="ngModel" [(ngModel)]="ObjSupportTicket.Contract_Status" [ngClass]="{'clearance': SupportTicketFormSubmit && contractstatus.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of ContractStatusList" [ngValue]="option.Service_Type">
+                                            {{option.Service_Type}}
+                                            </option>
+                                    </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Service Start Date <sup class="text-danger">*</sup></label>
-                                        <div class="input-group date">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <np-datepicker id='sdate' name='sdate' inputClass="form-control" [(ngModel)]="ServiceStartDate"></np-datepicker>
-                                            <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ServiceStartDate'></ejs-datepicker> -->
-                                            <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
-                                                    required /> -->
-                                        </div>
+                                        <label class="control-label">Symptom <sup class="text-danger">*</sup></label>
+                                        <p-multiSelect itemSize="30" [options]="SymptomList" [styleClass]="'compacct-multiselect'" name="symptom" #symptom="ngModel" [(ngModel)]="ObjSupportTicket.Symptom" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [ngClass]="{'clearance': SupportTicketFormSubmit && symptom.errors?.required}"
+                                            required>
+                                        </p-multiSelect>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Service End Date <sup class="text-danger">*</sup></label>
-                                        <div class="input-group date">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <np-datepicker id='edate' name="edate" inputClass="form-control" [(ngModel)]="ServiceEndDate"></np-datepicker>
-                                            <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ServiceEndDate'></ejs-datepicker> -->
-                                            <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
-                                                    required /> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Payment Status<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="paymentstatus" #paymentstatus="ngModel" [(ngModel)]="ObjServiceContract.Payment_Status" [ngClass]="{'clearance': ServiceContractFormSubmit && paymentstatus.errors?.required}" required>
-                                                                <option  [ngValue]="undefined">Select</option>
-                                                            <option *ngFor="let option of StatusList" [ngValue]="option.Name">
-                                                                {{option.Name}}
-                                                                </option>
-                                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Payment Date <sup class="text-danger">*</sup></label>
-                                        <div class="input-group date">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <np-datepicker id='pdate' name="pdate" inputClass="form-control" [(ngModel)]="PaymentDate"></np-datepicker>
-                                            <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PaymentDate'></ejs-datepicker> -->
-                                            <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
-                                                required /> -->
-                                        </div>
+                                        <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+                                        <textarea class="form-control" style="margin: 0px -16.6719px 0px 0px; width: 334px;height: 69px;" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjSupportTicket.Remarks" [ngClass]="{'clearance': SupportTicketFormSubmit && contractstatus.errors?.required}"
+                                            required></textarea>
                                     </div>
                                 </div>
                             </form>
                             <!-- <div class="col-sm-6"> -->
                             <div class="box-footer">
-                                <button class="btn btn-primary pull-right1" (click)="SaveServiceContract(ServiceContractForm.form.valid)" id="load" [disabled]="Spinner">
+                                <button class="btn btn-primary pull-right1" (click)="SaveSupportTicket(SupportTicketForm.form.valid)" id="load" [disabled]="Spinner">
                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                                     </button>
@@ -261,7 +266,6 @@
         </div>
     </div>
 </div>
-
 <!-- SHOW PREVIOUS CONTRACT -->
 <p-dialog header="Contract Details" [appendTo]="'body'" [visible]="PreviousContractPopup" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '300px' }" style="text-align: center;" [minY]="80"
     [maximizable]="true" [baseZIndex]="10000">
