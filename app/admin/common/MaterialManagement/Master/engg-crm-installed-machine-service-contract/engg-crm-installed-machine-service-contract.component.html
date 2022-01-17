@@ -89,10 +89,11 @@
                                             <th>Service End Date</th>
                                             <th>Payment Status</th>
                                             <th>Payment Date</th>
+                                            <th>Status</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-col>
-                                        <tr [class]='textcolor(col)'>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr [class]='col.Status != "Active" ? "text-red-active" : ""'>
 
                                             <td>
                                                 <div class="dropdown">
@@ -120,10 +121,12 @@
                                             <td>{{col.Serial_No}}</td>
                                             <!-- <td>{{col.User_Email ? col.Mfg_Company : '-' }}</td> -->
                                             <td>{{col.Service_Type}}</td>
-                                            <td>{{col.Service_Start_Date | date : 'dd/MMM/yyyy'}}</td>
-                                            <td>{{col.Service_End_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <!-- <td>{{col.Service_Start_Date | date : 'dd/MMM/yyyy'}}</td> -->
+                                            <td>{{col.Service_Start_Date}}</td>
+                                            <td>{{col.Service_End_Date}}</td>
                                             <td>{{col.Payment_Status}}</td>
-                                            <td>{{col.Payment_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Payment_Date}}</td>
+                                            <td>{{col.Status}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
