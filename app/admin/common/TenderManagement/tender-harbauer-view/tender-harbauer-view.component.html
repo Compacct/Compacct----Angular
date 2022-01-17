@@ -157,7 +157,7 @@
                                                                           Update Submission Data
                                                                       </a>
                                                                   </li>
-                                                                  <li *ngIf="col.Status === 'BUDGET APPROVED - TENDER NOT SUBMITTED'">
+                                                                  <li *ngIf="col.Status === 'BUDGET APPROVED - TENDER NOT SUBMITTED' || col.Status === 'TENDER SUBMITTED' ||  col.Status === 'AWARDING THE TENDER'">
                                                                       <a (click)="updateFinance(col)">
                                                                           <i class="fa fa-fw fa-clone"></i>
                                                                           Update Finance

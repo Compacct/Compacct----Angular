@@ -172,12 +172,12 @@
               <form name="EstimateForm" #EstimateForm="ngForm" novalidate>
                 <div class="form-group" style="padding: 0 1em;">
                   <div class="col-sm-6">
-                    <label class="control-label">Budget Short Description&nbsp;<span
+                    <label class="control-label">Project Name&nbsp;<span
                         class="text-danger">*</span></label>
                     <input class="form-control" name="Budget_Short_Description" #Budget_Short_Description="ngModel"
                       [(ngModel)]="ObjEstimate.Budget_Short_Description"
                       [ngClass]="{'clearance': EstimateInfoSubmitted && Budget_Short_Description?.errors?.required}"
-                      placeholder="Budget Short Description" [required]="true" [disabled]="editData.length" />
+                      placeholder="Project Name" [required]="true" [disabled]="editData.length" />
                   </div>
                   <div class="col-sm-6">
                     <label class="control-label">No of Site&nbsp;<span class="text-danger">*</span></label>
@@ -327,6 +327,22 @@
                     </button>
                   </div>
 
+                </div>
+                <hr class="box boxboxDivide-primary"/>
+                <div class="form-group">
+                  <div class="col-sm-8">
+                    <label>Or Import via Excel</label>
+                    <span (click)="exportexcel(workdetalisList,'workdetalisList')" class="btn-vk custombutton pull-right createPatient"><i class="fa fa-fw  fa-download"></i> Export Work Details</span>
+                    <span (click)="exportexcel(EstimateGroupProductList,'EstimateGroupProductList')" class="btn-vk custombutton pull-right createPatient"><i class="fa fa-fw  fa-download"></i> Export Product Details</span>
+                    <span (click)="exportexcel(ExcelGroupDetails,'EstimateGroupDetails')" class="btn-vk  pull-right custombutton createPatient"><i class="fa fa-fw  fa-download"></i> Export Group Details</span>
+                    <span (click)="exportexcelDummy()" class="btn-vk  pull-right custombutton createPatient"><i class="fa fa-fw  fa-download"></i> Export Dummy File</span>
+                    <div style="padding: 15px;">
+                        <label class="control-label">Upload File</label>
+                        <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept=".csv" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="handleFileSelect($event)"></p-fileUpload>
+                        <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+                    </div>
+
+                </div>
                 </div>
                 <div class="form-group" style="margin-top:2.5em;padding: 0 1em;">
                   <div class="table-responsive no-padding">
@@ -505,7 +521,7 @@
 
                   </div>
                 </div>
-              </form>
+              </form>              
               <div class="box-footer">
                 <div class="col-sm-12">
                   <p-checkbox class="pull-right" name="final" [(ngModel)]="Final_Create_Flag" label='Final Save'
