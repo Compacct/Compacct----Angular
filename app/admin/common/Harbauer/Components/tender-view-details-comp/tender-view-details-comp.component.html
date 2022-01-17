@@ -204,7 +204,7 @@
         </thead>
         <tbody>
           <tr *ngFor="
-                let d of BudgetDetails | async;
+                let d of BudgetDetails$ | async;
                 let odd = odd;
                 let index = index
               " [class.even]="odd">

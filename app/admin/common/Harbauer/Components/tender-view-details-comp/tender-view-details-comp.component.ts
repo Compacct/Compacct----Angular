@@ -146,6 +146,12 @@ export class TenderViewDetailsCompComponent implements OnInit {
        console.log("TenderInfoEnqList",this.TenderInfoEnqList);
      });
  }
+ 
+ checkChip(e) { 
+  const val =  this.testchips.indexOf(e.value);
+  this.testchips.splice(val,1);
+   this.testchips.push({"Tender_Doc_ID":this._TenderId,"Work_Location":e.value});
+ }
 
  // Tender Details 
  GetAllEditData(){

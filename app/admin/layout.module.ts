@@ -95,7 +95,6 @@ import { CompacctCommonApi } from "./shared/compacct.services/common.api.service
 import { CompacctHeader } from "./shared/compacct.services/common.header.service";
 import { CompacctGetDistinctService } from "./shared/compacct.services/compacct-get-distinct.service";
 import { DateTimeConvertService } from "./shared/compacct.global/dateTime.service";
-import { DateNepalConvertService } from "./shared/compacct.global/dateNepal.service";
 import { CompacctGlobalUrlService } from "./shared/compacct.global/global.service.service";
 import { MasterProductComponent } from "./common/MaterialManagement/Master/master.product/master.product.component";
 import { SafeHtmlPipe } from "./shared/compacct.pipes/compacct.safeHtml/safe-html.pipe";
