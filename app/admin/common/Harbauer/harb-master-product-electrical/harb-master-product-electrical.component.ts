@@ -13,15 +13,14 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 import { ActivatedRoute } from '@angular/router';
 import { Console } from 'console';
 
-
 @Component({
-  selector: 'app-harbauer-master-product-mechanical',
-  templateUrl: './harbauer-master-product-mechanical.component.html',
-  styleUrls: ['./harbauer-master-product-mechanical.component.css'],
+  selector: 'app-harb-master-product-electrical',
+  templateUrl: './harb-master-product-electrical.component.html',
+  styleUrls: ['./harb-master-product-electrical.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class HarbauerMasterProductMechanicalComponent implements OnInit {
+export class HarbMasterProductElectricalComponent implements OnInit {
   tabIndexToView = 0;
   // tabIndexToView2 = 0;
   // items2 =['General Information','EMD / Tender Fee','Document','Task'];
@@ -30,15 +29,18 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   //persons: [];
   buttonname = "Create";
   Spinner = false;
-  MasterProductmFormSubmitted = false;
-  ObjMasterProductm = new MasterProductm();
+  MasterProductelFormSubmitted = false;
+  ObjMasterProductel = new MasterProductel();
 
   ProductTypeList = [];
   ProductSubTypeList = [];
   ProductCategoryList = [];
   MocList = [];
   CapacitySizeList = [];
-  ProductFeatureList = [];
+  AddFeature1List = [];
+  AddFeature2List = [];
+  AddFeature3List = [];
+  AddFeature4List = [];
   GradeList = [];
   MakeList = [];
   uploadedFiles: any[] = [];
@@ -55,9 +57,18 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   CapacityModal = false;
   CapacityFormSubmitted = false;
   CapacityName = undefined;
-  ProFeatureModal = false;
-  ProFeatureFormSubmitted = false;
-  ProFeature = undefined;
+  AddFeature1Modal = false;
+  AddFeature1FormSubmitted = false;
+  AddFeature1 = undefined;
+  AddFeature2Modal = false;
+  AddFeature2FormSubmitted = false;
+  AddFeature2 = undefined;
+  AddFeature3Modal = false;
+  AddFeature3FormSubmitted = false;
+  AddFeature3 = undefined;
+  AddFeature4Modal = false;
+  AddFeature4FormSubmitted = false;
+  AddFeature4 = undefined;
   GradeModal = false;
   GradeFormSubmitted = false;
   GradeName = undefined;
@@ -66,14 +77,20 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   ViewProSubTModal = false;
   ViewMocModal = false;
   ViewCapacityModal = false;
-  ViewProFeatureModal = false;
+  ViewAddFeature1Modal = false;
+  ViewAddFeature2Modal = false;
+  ViewAddFeature3Modal = false;
+  ViewAddFeature4Modal = false;
   ViewGradeModal = false;
 
   protypeid = undefined;
   protypesubid = undefined;
   mocid = undefined;
   capacityid = undefined;
-  Profeatureid = undefined;
+  addfeatureid1 = undefined;
+  addfeaid2 = undefined;
+  addfid3 = undefined;
+  adfeaiid4 = undefined;
   gradeid = undefined;
 
   BrowseList = [];
@@ -87,20 +104,21 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   tempDocumentArr = [];
   Product_Mfg_Comp_ID:any;
 
-  protyid = undefined;
-  pstypeid = undefined;
-  pcatid = undefined;
-  prodes = undefined;
-  matocid = undefined;
-  sizeid = undefined;
-  pfetureid = undefined;
-  grdid = undefined;
-  rmrk = undefined;
-  hcode = undefined;
-  per = undefined;
-  uom = undefined;
+  // protyid = undefined;
+  // pstypeid = undefined;
+  // pcatid = undefined;
+  // prodes = undefined;
+  // matocid = undefined;
+  // sizeid = undefined;
+  // pfetureid = undefined;
+  // grdid = undefined;
+  // rmrk = undefined;
+  // hcode = undefined;
+  // per = undefined;
+  // uom = undefined;
 
   makedisabled = false;
+
   is_Active = false;
   Is_View = false;
   Browseproid = undefined;
@@ -125,8 +143,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Master Product Mechanical",
-      Link: " Tender Management -> Master -> Master Product Mechanical"
+      Header: "Master Product Electrical",
+      Link: " Tender Management -> Master -> Master Product Electrical"
     });
     
      this.GetProductType();
@@ -134,7 +152,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
      this.GetProductCategory();
      this.GetMOC();
      this.GetCapacity();
-     this.GetProductFeature();
+     this.GetAddFeature1();
+     this.GetAddFeature2();
+     this.GetAddFeature3();
+     this.GetAddFeature4();
      this.GetGrade();
      this.GetMake();
      this.GetBrowseList();
@@ -149,16 +170,17 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   clearData() {
      this.Spinner = false;
     // this.TenderSearchForm = false;
-     this.ObjMasterProductm = new MasterProductm();
-     this.MasterProductmFormSubmitted = false;
+     this.ObjMasterProductel = new MasterProductel();
+     this.MasterProductelFormSubmitted = false;
      this.Product_Mfg_Comp_ID = undefined;
      this.makedisabled = false;
      this.GetBrowseList();
-     this.PDFViewFlag = false;
-     if (this.PDFViewFlag === false) {
-      this.fileInput.clear();
-    }
+    //  this.PDFViewFlag = false;
+    //  if (this.PDFViewFlag === false) {
+    //   this.fileInput.clear();
+    // }
   
+  //PRODUCT TYPE
   }
   GetProductType(){
     const obj = {
@@ -191,7 +213,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     this.protypesubid = undefined;
     this.mocid = undefined;
     this.capacityid = undefined;
-    this.Profeatureid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
     this.gradeid = undefined;
     if(protypeid.Product_Type_ID){
       this.protypeid = protypeid.Product_Type_ID;
@@ -206,309 +231,6 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       });
     }
   }
-  GetProductSubType(){
-    const Obj = {
-      Product_Type_ID : this.ObjMasterProductm.Product_Type_ID
-    }
-    const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Get_Master_Product_Sub_Type",
-      "Json_Param_String": JSON.stringify([Obj])
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.ProductSubTypeList = data;
-     console.log('ProductSubTypeList ==', this.ProductSubTypeList)
-  
-    });
-  }
-  ViewProductSubType(){
-    this.ProductSubTypeList = [];
-    this.ViewProSubTModal = true;
-    this.GetProductSubType();
-  }
-  deleteProSubT(protypesubid){
-    this.is_Active = false;
-    this.Is_View = true;
-    this.protypeid = undefined;
-    this.protypesubid = undefined;
-    this.mocid = undefined;
-    this.capacityid = undefined;
-    this.Profeatureid = undefined;
-    this.gradeid = undefined;
-    if(protypesubid.Product_Sub_Type_ID){
-      this.protypesubid = protypesubid.Product_Sub_Type_ID;
-     // this.cnfrm2_popup = true;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "c",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-    }
-  }
-  GetProductCategory(){
-    const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Get_Master_Product_Category"
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.ProductCategoryList = data;
-     console.log('ProductCategoryList ==', this.ProductCategoryList)
-  
-    });
-  }
-  GetMOC(){
-    const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Get_Master_Product_Mech_MOC_Data"
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.MocList = data;
-     console.log('MocList ==', this.MocList)
-  
-    });
-  }
-  ViewMoc(){
-    this.MocList = [];
-    this.ViewMocModal = true;
-    this.GetMOC();
-  }
-  deleteMoc(mocid){
-    this.is_Active = false;
-    this.Is_View = true;
-    this.protypeid = undefined;
-    this.protypesubid = undefined;
-    this.mocid = undefined;
-    this.capacityid = undefined;
-    this.Profeatureid = undefined;
-    this.gradeid = undefined;
-    if(mocid.MOC_ID){
-      this.mocid = mocid.MOC_ID;
-     // this.cnfrm2_popup = true;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "c",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-    }
-  }
-  GetCapacity(){
-    const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Get_Master_Product_Mech_Capacity_Size_Data"
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.CapacitySizeList = data;
-     console.log('CapacitySizeList ==', this.CapacitySizeList)
-  
-    });
-  }
-  ViewCapacity(){
-    this.CapacitySizeList = [];
-    this.ViewCapacityModal = true;
-    this.GetCapacity();
-  }
-  deleteCapacity(capacityid){
-    this.is_Active = false;
-    this.Is_View = true;
-    this.protypeid = undefined;
-    this.protypesubid = undefined;
-    this.mocid = undefined;
-    this.capacityid = undefined;
-    this.Profeatureid = undefined;
-    this.gradeid = undefined;
-    if(capacityid.Capacity_Size_ID){
-      this.capacityid = capacityid.Capacity_Size_ID;
-     // this.cnfrm2_popup = true;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "c",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-    }
-  }
-  GetProductFeature(){
-    const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Get_Master_Product_Mech_Product_Feature_Data"
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.ProductFeatureList = data;
-     console.log('ProductFeatureList ==', this.ProductFeatureList)
-  
-    });
-  }
-  ViewProFeature(){
-    this.ProductFeatureList = [];
-    this.ViewProFeatureModal = true;
-    this.GetProductFeature();
-  }
-  deleteProFeature(Profeatureid){
-    this.is_Active = false;
-    this.Is_View = true;
-    this.protypeid = undefined;
-    this.protypesubid = undefined;
-    this.mocid = undefined;
-    this.capacityid = undefined;
-    this.Profeatureid = undefined;
-    this.gradeid = undefined;
-    if(Profeatureid.Product_Feature_ID){
-      this.Profeatureid = Profeatureid.Product_Feature_ID;
-     // this.cnfrm2_popup = true;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "c",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-    }
-  }
-  GetGrade(){
-    const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Get_Master_Product_Mech_Grade_Data"
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.GradeList = data;
-     console.log('GradeList ==', this.GradeList)
-  
-    });
-  }
-  ViewGrade(){
-    this.GradeList = [];
-    this.ViewGradeModal = true;
-    this.GetGrade();
-  }
-  deleteGrade(gradeid){
-    this.is_Active = false;
-    this.Is_View = true;
-    this.protypeid = undefined;
-    this.protypesubid = undefined;
-    this.mocid = undefined;
-    this.capacityid = undefined;
-    this.Profeatureid = undefined;
-    this.gradeid = undefined;
-    if(gradeid.Grade_ID){
-      this.gradeid = gradeid.Grade_ID;
-     // this.cnfrm2_popup = true;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "c",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-    }
-  }
-  GetMake(){
-    const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Get_Master_Product_mfg"
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      if(data.length) {
-        data.forEach(element => {
-          element['label'] = element.Mfg_Company,
-          element['value'] = element.Product_Mfg_Comp_ID
-        });
-        this.MakeList = data;
-      } else {
-        this.MakeList = [];
-  
-       }
-    // this.MakeList = data;
-     console.log('MakeList ==', this.MakeList)
-  
-    });
-  }
-
- //Common Delete
-  onConfirm() {
-    this.is_Active = false;
-    this.Is_View = true;
-    let ReportName = '';
-    let ObjTemp;
-    let FunctionRefresh;
-    if (this.protypeid) {
-      ReportName = "Delete_Master_Product_Type"
-      ObjTemp = {
-        Product_Type_ID: this.protypeid
-      }
-      FunctionRefresh = 'GetProductType'
-    }
-    if (this.protypesubid) {
-      ReportName = "Delete_Product_Sub_Type"
-      ObjTemp = {
-        Product_Sub_Type_ID: this.protypesubid
-      }
-      FunctionRefresh = 'GetProductSubType';
-    }
-    if (this.mocid) {
-      ReportName = "Delete_Master_Product_Mech_MOC_Data"
-      ObjTemp = {
-        MOC_ID: this.mocid
-      }
-      FunctionRefresh = 'GetMOC';
-    }
-    if (this.capacityid) {
-      ReportName = "Delete_Master_Product_Mech_Capacity_Size_Data"
-      ObjTemp = {
-        Capacity_Size_ID: this.capacityid
-      }
-      FunctionRefresh = 'GetCapacity'
-    }
-    if (this.Profeatureid) {
-      ReportName = "Delete_Master_Product_Mech_Product_Feature_Data"
-      ObjTemp = {
-        Product_Feature_ID: this.Profeatureid
-      }
-      FunctionRefresh = 'GetProductFeature';
-    }
-    if (this.gradeid) {
-      ReportName = "Delete_Master_Product_Mech_Grade_Data"
-      ObjTemp = {
-        Grade_ID: this.gradeid
-      }
-      FunctionRefresh = 'GetGrade';
-    }
-      const obj = {
-        "SP_String": "SP_Harbauer_Master_Product_mechanical",
-        "Report_Name_String" : ReportName,
-        "Json_Param_String": JSON.stringify(ObjTemp),
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        var msg = data[0].Column1;
-        if (data[0].Column1) {
-        // this.onReject();
-        //this.GetTenderOrgList();
-        this[FunctionRefresh]();
-         this.compacctToast.clear();
-         this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "",
-            detail: msg
-          });
-            //this.SearchTender(true);
-        }
-      });
-    //}
-  }
-  onReject() {
-    this.compacctToast.clear("c");
-  }
-
   ProTypePopup(){
     this.ProductTypeFormSubmitted = false;
     this.ProductTypeName = undefined;
@@ -561,6 +283,53 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
        
         }
   }
+
+  //PRODUCT SUB TYPE
+  GetProductSubType(){
+    const Obj = {
+      Product_Type_ID : this.ObjMasterProductel.Product_Type_ID
+    }
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_mechanical",
+      "Report_Name_String": "Get_Master_Product_Sub_Type",
+      "Json_Param_String": JSON.stringify([Obj])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.ProductSubTypeList = data;
+     console.log('ProductSubTypeList ==', this.ProductSubTypeList)
+  
+    });
+  }
+  ViewProductSubType(){
+    this.ProductSubTypeList = [];
+    this.ViewProSubTModal = true;
+    this.GetProductSubType();
+  }
+  deleteProSubT(protypesubid){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    if(protypesubid.Product_Sub_Type_ID){
+      this.protypesubid = protypesubid.Product_Sub_Type_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
   ProSubTypePopup(){
     this.ProductSubTypeFormSubmitted = false;
     this.ProductSubTypeName = undefined;
@@ -572,7 +341,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     this.Spinner = true;
       const Obj = {
         Product_Sub_Type : this.ProductSubTypeName,
-        Product_Type_ID : this.ObjMasterProductm.Product_Type_ID
+        Product_Type_ID : this.ObjMasterProductel.Product_Type_ID
       }
       if(valid){
          const obj = {
@@ -612,6 +381,62 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
          })
        
         }
+  }
+
+  //PRODUCT CATEGORY
+  GetProductCategory(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_mechanical",
+      "Report_Name_String": "Get_Master_Product_Category"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.ProductCategoryList = data;
+     console.log('ProductCategoryList ==', this.ProductCategoryList)
+  
+    });
+  }
+  
+  //MOC
+  GetMOC(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_mechanical",
+      "Report_Name_String": "Get_Master_Product_Mech_MOC_Data"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.MocList = data;
+     console.log('MocList ==', this.MocList)
+  
+    });
+  }
+  ViewMoc(){
+    this.MocList = [];
+    this.ViewMocModal = true;
+    this.GetMOC();
+  }
+  deleteMoc(mocid){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    if(mocid.MOC_ID){
+      this.mocid = mocid.MOC_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
   }
   MocPopup(){
     this.CreateMocFormSubmitted = false;
@@ -664,6 +489,49 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
        
         }
   }
+
+  //CAPACITY
+  GetCapacity(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_mechanical",
+      "Report_Name_String": "Get_Master_Product_Mech_Capacity_Size_Data"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.CapacitySizeList = data;
+     console.log('CapacitySizeList ==', this.CapacitySizeList)
+  
+    });
+  }
+  ViewCapacity(){
+    this.CapacitySizeList = [];
+    this.ViewCapacityModal = true;
+    this.GetCapacity();
+  }
+  deleteCapacity(capacityid){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    if(capacityid.Capacity_Size_ID){
+      this.capacityid = capacityid.Capacity_Size_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
   CapacityPopup(){
     this.CapacityFormSubmitted = false;
     this.CapacityName = undefined;
@@ -715,22 +583,65 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
        
         }
   }
-  ProFeaturePopup(){
-    this.ProFeatureFormSubmitted = false;
-    this.ProFeature = undefined;
-    this.ProFeatureModal = true;
+
+  // ADDITIONAL FEATURE 1
+  GetAddFeature1(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_Electrical",
+      "Report_Name_String": "Get_Master_Product_Additional_Feature_1_Data"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.AddFeature1List = data;
+     console.log('AddFeature1List ==', this.AddFeature1List)
+  
+    });
+  }
+  ViewAddFeature1(){
+    this.AddFeature1List = [];
+    this.ViewAddFeature1Modal = true;
+    this.GetAddFeature1();
+  }
+  deleteAddFeature1(addfeatureid1){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    if(addfeatureid1.Additional_Feature_ID_1){
+      this.addfeatureid1 = addfeatureid1.Additional_Feature_ID_1;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  AddFeature1Popup(){
+    this.AddFeature1FormSubmitted = false;
+    this.AddFeature1 = undefined;
+    this.AddFeature1Modal = true;
     this.Spinner = false;
   }
-  CreateProFeature(valid){
-    this.ProFeatureFormSubmitted = true;
+  CreateAddFeature1(valid){
+    this.AddFeature1FormSubmitted = true;
     this.Spinner = true;
       const Obj = {
-        Product_Feature_Desc : this.ProFeature
+        Additional_Feature : this.AddFeature1
       }
       if(valid){
          const obj = {
-           "SP_String": "SP_Harbauer_Master_Product_mechanical",
-           "Report_Name_String" : "Master_Product_Mech_Product_Feature_Create",
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Additional_Feature_1_Create",
            "Json_Param_String": JSON.stringify([Obj])
        
          }
@@ -746,11 +657,11 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
              summary: "Return_ID  " + tempID,
              detail: "Succesfully Created" //+ mgs
            });
-           this.ProFeatureFormSubmitted = false;
-           this.ProFeature = undefined;
-           this.ProFeatureModal = false;
+           this.AddFeature1FormSubmitted = false;
+           this.AddFeature1 = undefined;
+           this.AddFeature1Modal = false;
            this.Spinner = false;
-           this.GetProductFeature();
+           this.GetAddFeature1();
        
            } else{
              this.Spinner = false;
@@ -765,6 +676,331 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
          })
        
         }
+  }
+
+  // ADDITIONAL FEATURE 2
+  GetAddFeature2(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_Electrical",
+      "Report_Name_String": "Get_Master_Product_Additional_Feature_2_Data"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.AddFeature2List = data;
+     console.log('AddFeature2List ==', this.AddFeature2List)
+  
+    });
+  }
+  ViewAddFeature2(){
+    this.AddFeature2List = [];
+    this.ViewAddFeature2Modal = true;
+    this.GetAddFeature2();
+  }
+  deleteAddFeature2(addfeatureid2){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    if(addfeatureid2.Additional_Feature_ID_2){
+      this.addfeaid2 = addfeatureid2.Additional_Feature_ID_2;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  AddFeature2Popup(){
+    this.AddFeature2FormSubmitted = false;
+    this.AddFeature2 = undefined;
+    this.AddFeature2Modal = true;
+    this.Spinner = false;
+  }
+  CreateAddFeature2(valid){
+    this.AddFeature2FormSubmitted = true;
+    this.Spinner = true;
+      const Obj = {
+        Additional_Feature : this.AddFeature2
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Additional_Feature_2_Create",
+           "Json_Param_String": JSON.stringify([Obj])
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Return_ID  " + tempID,
+             detail: "Succesfully Created" //+ mgs
+           });
+           this.AddFeature2FormSubmitted = false;
+           this.AddFeature2 = undefined;
+           this.AddFeature2Modal = false;
+           this.Spinner = false;
+           this.GetAddFeature2();
+       
+           } else{
+             this.Spinner = false;
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       
+        }
+  }
+
+  // ADDITIONAL FEATURE 3
+  GetAddFeature3(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_Electrical",
+      "Report_Name_String": "Get_Master_Product_Additional_Feature_3_Data"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.AddFeature3List = data;
+     console.log('AddFeature3List ==', this.AddFeature3List)
+  
+    });
+  }
+  ViewAddFeature3(){
+    this.AddFeature3List = [];
+    this.ViewAddFeature3Modal = true;
+    this.GetAddFeature3();
+  }
+  deleteAddFeature3(addfeatureid3){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    if(addfeatureid3.Additional_Feature_ID_3){
+      this.addfid3 = addfeatureid3.Additional_Feature_ID_3;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  AddFeature3Popup(){
+    this.AddFeature3FormSubmitted = false;
+    this.AddFeature3 = undefined;
+    this.AddFeature3Modal = true;
+    this.Spinner = false;
+  }
+  CreateAddFeature3(valid){
+    this.AddFeature3FormSubmitted = true;
+    this.Spinner = true;
+      const Obj = {
+        Additional_Feature : this.AddFeature3
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Additional_Feature_3_Create",
+           "Json_Param_String": JSON.stringify([Obj])
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Return_ID  " + tempID,
+             detail: "Succesfully Created" //+ mgs
+           });
+           this.AddFeature3FormSubmitted = false;
+           this.AddFeature3 = undefined;
+           this.AddFeature3Modal = false;
+           this.Spinner = false;
+           this.GetAddFeature3();
+       
+           } else{
+             this.Spinner = false;
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       
+        }
+  }
+
+  // ADDITIONAL FEATURE 4
+  GetAddFeature4(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_Electrical",
+      "Report_Name_String": "Get_Master_Product_Additional_Feature_4_Data"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.AddFeature4List = data;
+     console.log('AddFeature4List ==', this.AddFeature4List)
+  
+    });
+  }
+  ViewAddFeature4(){
+    this.AddFeature4List = [];
+    this.ViewAddFeature4Modal = true;
+    this.GetAddFeature4();
+  }
+  deleteAddFeature4(addfeatureid4){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    if(addfeatureid4.Additional_Feature_ID_4){
+      this.adfeaiid4 = addfeatureid4.Additional_Feature_ID_4;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  AddFeature4Popup(){
+    this.AddFeature4FormSubmitted = false;
+    this.AddFeature4 = undefined;
+    this.AddFeature4Modal = true;
+    this.Spinner = false;
+  }
+  CreateAddFeature4(valid){
+    this.AddFeature4FormSubmitted = true;
+    this.Spinner = true;
+      const Obj = {
+        Additional_Feature : this.AddFeature4
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Additional_Feature_4_Create",
+           "Json_Param_String": JSON.stringify([Obj])
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Return_ID  " + tempID,
+             detail: "Succesfully Created" //+ mgs
+           });
+           this.AddFeature4FormSubmitted = false;
+           this.AddFeature4 = undefined;
+           this.AddFeature4Modal = false;
+           this.Spinner = false;
+           this.GetAddFeature4();
+       
+           } else{
+             this.Spinner = false;
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       
+        }
+  }
+
+  //GRADE
+  GetGrade(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_mechanical",
+      "Report_Name_String": "Get_Master_Product_Mech_Grade_Data"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.GradeList = data;
+     console.log('GradeList ==', this.GradeList)
+  
+    });
+  }
+  ViewGrade(){
+    this.GradeList = [];
+    this.ViewGradeModal = true;
+    this.GetGrade();
+  }
+  deleteGrade(gradeid){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    if(gradeid.Grade_ID){
+      this.gradeid = gradeid.Grade_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
   }
   GradePopup(){
     this.GradeFormSubmitted = false;
@@ -817,6 +1053,138 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
        
         }
   }
+
+  //MAKE (MULTIPLE)
+  GetMake(){
+    const obj = {
+      "SP_String": "SP_Harbauer_Master_Product_mechanical",
+      "Report_Name_String": "Get_Master_Product_mfg"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Mfg_Company,
+          element['value'] = element.Product_Mfg_Comp_ID
+        });
+        this.MakeList = data;
+      } else {
+        this.MakeList = [];
+  
+       }
+    // this.MakeList = data;
+     console.log('MakeList ==', this.MakeList)
+  
+    });
+  }
+
+ //Common Delete From View
+  onConfirm() {
+    this.is_Active = false;
+    this.Is_View = true;
+    let SpName = '';
+    let ReportName = '';
+    let ObjTemp;
+    let FunctionRefresh;
+    if (this.protypeid) {
+      SpName = "SP_Harbauer_Master_Product_mechanical"
+      ReportName = "Delete_Master_Product_Type"
+      ObjTemp = {
+        Product_Type_ID: this.protypeid
+      }
+      FunctionRefresh = 'GetProductType'
+    }
+    if (this.protypesubid) {
+      SpName = "SP_Harbauer_Master_Product_mechanical"
+      ReportName = "Delete_Product_Sub_Type"
+      ObjTemp = {
+        Product_Sub_Type_ID: this.protypesubid
+      }
+      FunctionRefresh = 'GetProductSubType';
+    }
+    if (this.mocid) {
+      SpName = "SP_Harbauer_Master_Product_mechanical"
+      ReportName = "Delete_Master_Product_Mech_MOC_Data"
+      ObjTemp = {
+        MOC_ID: this.mocid
+      }
+      FunctionRefresh = 'GetMOC';
+    }
+    if (this.capacityid) {
+      SpName = "SP_Harbauer_Master_Product_mechanical"
+      ReportName = "Delete_Master_Product_Mech_Capacity_Size_Data"
+      ObjTemp = {
+        Capacity_Size_ID: this.capacityid
+      }
+      FunctionRefresh = 'GetCapacity'
+    }
+    if (this.addfeatureid1) {
+      SpName = "SP_Harbauer_Master_Product_Electrical"
+      ReportName = "Delete_Master_Product_Additional_Feature_1_Data"
+      ObjTemp = {
+        Additional_Feature_ID_1 : this.addfeatureid1
+      }
+      FunctionRefresh = 'GetAddFeature1';
+    }
+    if (this.addfeaid2) {
+      SpName = "SP_Harbauer_Master_Product_Electrical"
+      ReportName = "Delete_Master_Product_Additional_Feature_2_Data"
+      ObjTemp = {
+        Additional_Feature_ID_2 : this.addfeaid2
+      }
+      FunctionRefresh = 'GetAddFeature2';
+    }
+    if (this.addfid3) {
+      SpName = "SP_Harbauer_Master_Product_Electrical"
+      ReportName = "Delete_Master_Product_Additional_Feature_3_Data"
+      ObjTemp = {
+        Additional_Feature_ID_3 : this.addfid3
+      }
+      FunctionRefresh = 'GetAddFeature3';
+    }
+    if (this.adfeaiid4) {
+      SpName = "SP_Harbauer_Master_Product_Electrical"
+      ReportName = "Delete_Master_Product_Additional_Feature_4_Data"
+      ObjTemp = {
+        Additional_Feature_ID_4 : this.adfeaiid4
+      }
+      FunctionRefresh = 'GetAddFeature4';
+    }
+    if (this.gradeid) {
+      SpName = "SP_Harbauer_Master_Product_mechanical"
+      ReportName = "Delete_Master_Product_Mech_Grade_Data"
+      ObjTemp = {
+        Grade_ID: this.gradeid
+      }
+      FunctionRefresh = 'GetGrade';
+    }
+      const obj = {
+        "SP_String": SpName,
+        "Report_Name_String" : ReportName,
+        "Json_Param_String": JSON.stringify(ObjTemp),
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        var msg = data[0].Column1;
+        if (data[0].Column1) {
+        // this.onReject();
+        //this.GetTenderOrgList();
+        this[FunctionRefresh]();
+         this.compacctToast.clear();
+         this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: msg
+          });
+            //this.SearchTender(true);
+        }
+      });
+    //}
+  }
+  onReject() {
+    this.compacctToast.clear("c");
+  }
+
+  
   // onUpload(event) {
   //   for (let file of event.files) {
   //     this.uploadedFiles.push(file);
@@ -852,7 +1220,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   //     }
   //   }
   // }
-  SaveMasterProductM(valid){
+  SaveMasterProductel(valid){
     //if(this.Product_Mfg_Comp_ID.length) {
       let UpdateArr =[]
       this.Product_Mfg_Comp_ID.forEach(item => {
@@ -861,7 +1229,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
             Product_Mfg_Comp_ID : item
            // Mfg_Company : item.label
         }
-        UpdateArr.push({...Obj,...this.ObjMasterProductm})
+        UpdateArr.push({...Obj,...this.ObjMasterProductel})
     });
     console.log("Update =" , UpdateArr)
     if(valid && this.productid){
@@ -870,24 +1238,24 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       //   Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
       // }
          const obj = {
-           "SP_String": "SP_Harbauer_Master_Product_mechanical",
-           "Report_Name_String" : "Master_Product_Mech_Update",
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Electrical_Update",
            "Json_Param_String": JSON.stringify(UpdateArr)
        
          }
          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
            console.log(data);
            var tempID = data[0].Column1;
-           this.upload(data[0].Column1);
+           //this.upload(data[0].Column1);
            if(data[0].Column1){
-          //   this.compacctToast.clear();
-          //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-          //   this.compacctToast.add({
-          //    key: "compacct-toast",
-          //    severity: "success",
-          //    summary: "Return_ID  " + tempID,
-          //    detail: "Succesfully Updated" //+ mgs
-          //  });
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: '', //"Return_ID  " + tempID,
+             detail: "Succesfully Updated" //+ mgs
+           });
            this.clearData();
            this.productid = undefined;
            this.tabIndexToView = 0;
@@ -910,7 +1278,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       } 
         else {
       this.Spinner = true;
-      this.MasterProductmFormSubmitted = true;
+      this.MasterProductelFormSubmitted = true;
       // const Obj = {
       //   Product_Code : this.ObjMachineMaster.Product_Model,
       //   Product_Description : this.ObjMachineMaster.Product_Description,
@@ -924,32 +1292,32 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
               Product_Mfg_Comp_ID : item
              // Mfg_Company : item.label
           }
-        tempArr.push({...obj,...this.ObjMasterProductm})
+        tempArr.push({...obj,...this.ObjMasterProductel})
       });
       console.log("create =" , tempArr)
      // return JSON.stringify(tempArr);
-      if(valid && this.ProductPDFFile['size']){
+      if(valid){
          const obj = {
-           "SP_String": "SP_Harbauer_Master_Product_mechanical",
-           "Report_Name_String" : "Master_Product_Mech_Create",
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Electrical_Create",
            "Json_Param_String": JSON.stringify(tempArr)
        
          }
          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
            console.log(data);
-           this.ObjMasterProductm.Product_ID = data[0].Product_Manufacturing_Group;
+           this.ObjMasterProductel.Product_ID = data[0].Product_Manufacturing_Group;
            if(data[0].Product_Manufacturing_Group){
-            this.upload(data[0].Product_Manufacturing_Group);
-          //   this.compacctToast.clear();
-          //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-          //   this.compacctToast.add({
-          //    key: "compacct-toast",
-          //    severity: "success",
-          //    summary: "Return_ID  " + tempID,
-          //    detail: "Succesfully Saved" //+ mgs
-          //  });
-          //  this.clearData();
-            // this.testchips =[];
+            //this.upload(data[0].Product_Manufacturing_Group);
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: '', //"Return_ID  " + tempID,
+             detail: "Succesfully Saved" //+ mgs
+           });
+           this.clearData();
+            //this.testchips =[];
        
            } else{
             // this.ngxService.stop();
@@ -963,15 +1331,15 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
              });
            }
          })
-        }
-        if(!this.ProductPDFFile['size']) {
+        } else {
+       // if(!this.ProductPDFFile['size']) {
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
-            summary: "Validation",
-            detail: "No Docs Selected"
+            summary: "Warn Message",
+            detail: "Error Occured "
           });
       }
     }
@@ -1013,8 +1381,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   // BROWSE TAB
   GetBrowseList(){
     const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Browse_Master_Product_Mech"
+      "SP_String": "SP_Harbauer_Master_Product_Electrical",
+      "Report_Name_String": "Browse_Master_Product_Electrical"
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.BrowseList = data;
@@ -1041,7 +1409,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       this.items = ["BROWSE", "UPDATE"];
       this.buttonname = "Update";
       this.clearData();
-      this.GetEdit(this.protyid);
+      this.GetEdit(this.productid);
       this.makedisabled = true;
     }
   }
@@ -1065,27 +1433,30 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
 
     }
     const obj = {
-      "SP_String": "SP_Harbauer_Master_Product_mechanical",
-      "Report_Name_String": "Get_Master_Product_Mech",
+      "SP_String": "SP_Harbauer_Master_Product_Electrical",
+      "Report_Name_String": "Get_Master_Product_Electrical",
       "Json_Param_String": JSON.stringify(temobj)
   
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.editList = data;
        //this.myDate = data[0].Date;
-       this.ObjMasterProductm.Product_Type_ID = data[0].Product_Type_ID;
+       this.ObjMasterProductel.Product_Type_ID = data[0].Product_Type_ID;
        this.GetProductSubType();
-       this.ObjMasterProductm.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
-       this.ObjMasterProductm.Cat_ID = data[0].Cat_ID;
-       this.ObjMasterProductm.Product_Description = data[0].Product_Description;
-       this.ObjMasterProductm.MOC_ID = data[0].MOC_ID;
-       this.ObjMasterProductm.Capacity_Size_ID = data[0].Capacity_Size_ID;
-       this.ObjMasterProductm.Product_Feature_ID = data[0].Product_Feature_ID;
-       this.ObjMasterProductm.Grade_ID = data[0].Grade_ID;
-       this.ObjMasterProductm.Remarks = data[0].Remarks;
-       this.ObjMasterProductm.HSN_NO = data[0].HSN_NO;
-       this.ObjMasterProductm.GST_Percentage = data[0].GST_Percentage;
-       this.ObjMasterProductm.UOM = data[0].UOM;
+       this.ObjMasterProductel.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
+       this.ObjMasterProductel.Cat_ID = data[0].Cat_ID;
+       this.ObjMasterProductel.Product_Description = data[0].Product_Description;
+       this.ObjMasterProductel.MOC_ID = data[0].MOC_ID;
+       this.ObjMasterProductel.Capacity_Size_ID = data[0].Capacity_Size_ID;
+       this.ObjMasterProductel.Additional_Feature_ID_1 = data[0].Additional_Feature_ID_1;
+       this.ObjMasterProductel.Additional_Feature_ID_2 = data[0].Additional_Feature_ID_2;
+       this.ObjMasterProductel.Additional_Feature_ID_3 = data[0].Additional_Feature_ID_3;
+       this.ObjMasterProductel.Additional_Feature_ID_4 = data[0].Additional_Feature_ID_4;
+       this.ObjMasterProductel.Grade_ID = data[0].Grade_ID;
+       this.ObjMasterProductel.Remarks = data[0].Remarks;
+       this.ObjMasterProductel.HSN_NO = data[0].HSN_NO;
+       this.ObjMasterProductel.GST_Percentage = data[0].GST_Percentage;
+       this.ObjMasterProductel.UOM = data[0].UOM;
       // this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
        this.GetMakedist();
        this.makedisabled = true;
@@ -1227,15 +1598,18 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   // }
 
 }
-class MasterProductm{
+class MasterProductel{
    Product_Type_ID:number;
    Product_Sub_Type_ID:number;
-   Cat_ID:number;
-   Product_ID:number;
+   Cat_ID : number;
    Product_Description:string;
    MOC_ID:number;
    Capacity_Size_ID:number;
-   Product_Feature_ID:number;
+   Additional_Feature_ID_1 :number;
+   Additional_Feature_ID_2 :number;
+   Additional_Feature_ID_3 :number;
+   Additional_Feature_ID_4 :number;
+   Product_ID:number;
    Grade_ID	:number;
    Remarks	:string;
    HSN_NO:number;

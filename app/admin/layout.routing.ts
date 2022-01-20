@@ -157,6 +157,8 @@ import { EnggCrmInstalledMachineComponent } from './common/MaterialManagement/Ma
 import { EnggCrmInstalledMachineServiceContractComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine-service-contract/engg-crm-installed-machine-service-contract.component';
 import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
 import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/support-ticket-nepal/support-ticket-nepal.component';
+import { StockTransferToStoreComponent } from './common/MaterialManagement/Outward/stock-transfer-to-store/stock-transfer-to-store.component';
+import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-master-product-electrical/harb-master-product-electrical.component';
 import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
 import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
 
@@ -923,6 +925,15 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   data: {title: 'Support Ticket'}
                                                                 },
                                                                 {
+                                                                  path : 'Stock_Transfer_To_Store',
+                                                                  component:StockTransferToStoreComponent,
+                                                                  data: {title: 'Stock Transfer To Store'}
+                                                                },
+                                                                {
+                                                                  path : 'Harbauer_Master_Product_Electrical',
+                                                                  component:HarbMasterProductElectricalComponent,
+                                                                  data: {title: 'Master Product Electrical'}
+                                                                },
                                                                   path : 'BL_CRM_Txn_Enq_Tender_Budget_Single',
                                                                   component:TenderSingleSchBudgetComponent,
                                                                   data: {title: 'Single Scheme Budget'}

@@ -986,7 +986,8 @@ SaveTenderMaster(valid){
    Tender_Informed_Date : this.DateService.dateConvert(new Date(this.InformedDate)),
    Period_Of_Working : this.PeriodOfWork,
    Budget_Required_By : this.DateService.dateConvert(new Date(this.BudgetRequidBy)),
-   Govt_Proposal : "Govt"
+   Govt_Proposal : "Govt",
+   Remarks : this.ObjTender.Remarks
  }
   tempArr.push(TempObj)
 // console.log(tempArr)

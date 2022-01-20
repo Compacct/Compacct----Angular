@@ -50,7 +50,10 @@
                                             <th>Product Category</th>
                                             <th>Material of Cons.</th>
                                             <th>Capacity</th>
-                                            <th>Product Feature</th>
+                                            <th>Additional Feature 1</th>
+                                            <th>Additional Feature 2</th>
+                                            <th>Additional Feature 3</th>
+                                            <th>Additional Feature 4</th>
                                             <th>Grade</th>
                                             <th>Remarks</th>
                                             <th>HSN Code</th>
@@ -100,7 +103,10 @@
                                             <td>{{col.Cat_Name}}</td>
                                             <td>{{col.MOC_Description}}</td>
                                             <td>{{col.Capacity_Size_Desc}}</td>
-                                            <td>{{col.Product_Feature_Desc}}</td>
+                                            <td>{{col.Additional_Feature_1}}</td>
+                                            <td>{{col.Additional_Feature_2}}</td>
+                                            <td>{{col.Additional_Feature_3}}</td>
+                                            <td>{{col.Additional_Feature_4}}</td>
                                             <td>{{col.Grade_Description}}</td>
                                             <td>{{col.Remarks}}</td>
                                             <td>{{col.HSN_NO}}</td>
@@ -116,7 +122,7 @@
                             </div>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
-                            <form name="MasterProductmForm" #MasterProductmForm="ngForm" novalidate>
+                            <form name="MasterProductelForm" #MasterProductelForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
@@ -124,7 +130,7 @@
                                             <button (click)="ViewProductType()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
                                             <button (click)="ProTypePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
                                         </div>
-                                        <select class="form-control" name="producttype" #producttype="ngModel" [(ngModel)]="ObjMasterProductm.Product_Type_ID" (change)="GetProductSubType()" [ngClass]="{'clearance': MasterProductmFormSubmitted && producttype.errors?.required}" required>
+                                        <select class="form-control" name="producttype" #producttype="ngModel" [(ngModel)]="ObjMasterProductel.Product_Type_ID" (change)="GetProductSubType()" [ngClass]="{'clearance': MasterProductelFormSubmitted && producttype.errors?.required}" required>
                                                 <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of ProductTypeList" [ngValue]="option.Product_Type_ID">
                                                 {{option.Product_Type}}
@@ -134,10 +140,10 @@
                                     <div class="col-sm-4">
                                         <label class="control-label">Product Sub Type<sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
-                                            <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductm.Product_Type_ID"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductm.Product_Type_ID"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                            <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductel.Product_Type_ID"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                            <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductel.Product_Type_ID"><i class="fa fa-fw  fa-plus"></i> Create</button>
                                         </div>
-                                        <select class="form-control" name="productsubtype" #productsubtype="ngModel" [(ngModel)]="ObjMasterProductm.Product_Sub_Type_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && productsubtype.errors?.required}" required>
+                                        <select class="form-control" name="productsubtype" #productsubtype="ngModel" [(ngModel)]="ObjMasterProductel.Product_Sub_Type_ID" [ngClass]="{'clearance': MasterProductelFormSubmitted && productsubtype.errors?.required}" required>
                                                                     <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let option of ProductSubTypeList" [ngValue]="option.Product_Sub_Type_ID">
                                                                     {{option.Product_Sub_Type}}
@@ -146,7 +152,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Product Category<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="productcategory" #productcategory="ngModel" [(ngModel)]="ObjMasterProductm.Cat_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && productcategory.errors?.required}" required>
+                                        <select class="form-control" name="productcategory" #productcategory="ngModel" [(ngModel)]="ObjMasterProductel.Cat_ID" [ngClass]="{'clearance': MasterProductelFormSubmitted && productcategory.errors?.required}" required>
                                                                     <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let option of ProductCategoryList" [ngValue]="option.Cat_ID">
                                                                     {{option.Cat_Name}}
@@ -157,7 +163,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="prodescription" #prodescription="ngModel" [(ngModel)]="ObjMasterProductm.Product_Description" placeholder="Product Description" [ngClass]="{'clearance': MasterProductmFormSubmitted && prodescription.errors?.required}"
+                                        <input class="form-control" name="prodescription" #prodescription="ngModel" [(ngModel)]="ObjMasterProductel.Product_Description" placeholder="Product Description" [ngClass]="{'clearance': MasterProductelFormSubmitted && prodescription.errors?.required}"
                                             required>
                                     </div>
                                     <div class="col-sm-4">
@@ -166,7 +172,7 @@
                                             <button (click)="ViewMoc()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
                                             <button (click)="MocPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
                                         </div>
-                                        <select class="form-control" name="moc" #moc="ngModel" [(ngModel)]="ObjMasterProductm.MOC_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && moc.errors?.required}">
+                                        <select class="form-control" name="moc" #moc="ngModel" [(ngModel)]="ObjMasterProductel.MOC_ID" [ngClass]="{'clearance': MasterProductelFormSubmitted && moc.errors?.required}">
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of MocList" [ngValue]="option.MOC_ID">
                                                               {{option.MOC_Description}}
@@ -179,7 +185,7 @@
                                             <button (click)="ViewCapacity()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
                                             <button (click)="CapacityPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
                                         </div>
-                                        <select class="form-control" name="capacity" #capacity="ngModel" [(ngModel)]="ObjMasterProductm.Capacity_Size_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && capacity.errors?.required}">
+                                        <select class="form-control" name="capacity" #capacity="ngModel" [(ngModel)]="ObjMasterProductel.Capacity_Size_ID" [ngClass]="{'clearance': MasterProductelFormSubmitted && capacity.errors?.required}">
                                                     <option  [ngValue]="undefined">Select</option>
                                                 <option *ngFor="let option of CapacitySizeList" [ngValue]="option.Capacity_Size_ID">
                                                     {{option.Capacity_Size_Desc}}
@@ -190,15 +196,56 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Product Feature<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">Additional Feature 1<sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
-                                            <button (click)="ViewProFeature()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="ProFeaturePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                            <button (click)="ViewAddFeature1()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                            <button (click)="AddFeature1Popup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
                                         </div>
-                                        <select class="form-control" name="productfeature" #productfeature="ngModel" [(ngModel)]="ObjMasterProductm.Product_Feature_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && productfeature.errors?.required}" required>
+                                        <select class="form-control" name="addfeature1" #addfeature1="ngModel" [(ngModel)]="ObjMasterProductel.Additional_Feature_ID_1" [ngClass]="{'clearance': MasterProductelFormSubmitted && addfeature1.errors?.required}" required>
+                                                                    <option  [ngValue]="undefined">Select</option>
+                                                                <option *ngFor="let option of AddFeature1List" [ngValue]="option.Additional_Feature_ID_1">
+                                                                    {{option.Additional_Feature}}
+                                                                    </option>
+                                                            </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Additional Feature 2<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <button (click)="ViewAddFeature2()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                            <button (click)="AddFeature2Popup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                        </div>
+                                        <select class="form-control" name="addfeature2" #addfeature2="ngModel" [(ngModel)]="ObjMasterProductel.Additional_Feature_ID_2" [ngClass]="{'clearance': MasterProductelFormSubmitted && addfeature2.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
-                                                <option *ngFor="let option of ProductFeatureList" [ngValue]="option.Product_Feature_ID">
-                                                    {{option.Product_Feature_Desc}}
+                                                <option *ngFor="let option of AddFeature2List" [ngValue]="option.Additional_Feature_ID_2">
+                                                    {{option.Additional_Feature}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Additional Feature 3<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <button (click)="ViewAddFeature3()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                            <button (click)="AddFeature3Popup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                        </div>
+                                        <select class="form-control" name="addfeature3" #addfeature3="ngModel" [(ngModel)]="ObjMasterProductel.Additional_Feature_ID_3" [ngClass]="{'clearance': MasterProductelFormSubmitted && addfeature3.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of AddFeature3List" [ngValue]="option.Additional_Feature_ID_3">
+                                                    {{option.Additional_Feature}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Additional Feature 4<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <button (click)="ViewAddFeature4()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                            <button (click)="AddFeature4Popup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                        </div>
+                                        <select class="form-control" name="addfeature4" #addfeature4="ngModel" [(ngModel)]="ObjMasterProductel.Additional_Feature_ID_4" [ngClass]="{'clearance': MasterProductelFormSubmitted && addfeature4.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of AddFeature4List" [ngValue]="option.Additional_Feature_ID_4">
+                                                    {{option.Additional_Feature}}
                                                     </option>
                                         </select>
                                     </div>
@@ -209,7 +256,7 @@
                                             <button (click)="GradePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
                                         </div>
 
-                                        <select class="form-control" name="grade" #grade="ngModel" [(ngModel)]="ObjMasterProductm.Grade_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && grade.errors?.required}">
+                                        <select class="form-control" name="grade" #grade="ngModel" [(ngModel)]="ObjMasterProductel.Grade_ID" [ngClass]="{'clearance': MasterProductelFormSubmitted && grade.errors?.required}">
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of GradeList" [ngValue]="option.Grade_ID">
                                                               {{option.Grade_Description}}
@@ -218,28 +265,35 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="ObjMasterProductm.Remarks" placeholder="Remarks" [ngClass]="{'clearance': MasterProductmFormSubmitted && remarks.errors?.required}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">HSN Code<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="hsncode" #hsncode="ngModel" [(ngModel)]="ObjMasterProductm.HSN_NO" placeholder="HSN Code" [ngClass]="{'clearance': MasterProductmFormSubmitted && hsncode.errors?.required}" required>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">GST Percentage<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="gstper" #gstper="ngModel" [(ngModel)]="ObjMasterProductm.GST_Percentage" CompacctDigitonly="true" placeholder="GST %" [ngClass]="{'clearance': MasterProductmFormSubmitted && gstper.errors?.required}" required>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">UOM<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]="ObjMasterProductm.UOM" placeholder="UOM" [ngClass]="{'clearance': MasterProductmFormSubmitted && uom.errors?.required}" required>
+                                        <input class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="ObjMasterProductel.Remarks" placeholder="Remarks" [ngClass]="{'clearance': MasterProductelFormSubmitted && remarks.errors?.required}" required>
                                     </div>
 
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4">
+                                        <label class="control-label">HSN Code<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="hsncode" #hsncode="ngModel" [(ngModel)]="ObjMasterProductel.HSN_NO" placeholder="HSN Code" [ngClass]="{'clearance': MasterProductelFormSubmitted && hsncode.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">GST Percentage<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="gstper" #gstper="ngModel" [(ngModel)]="ObjMasterProductel.GST_Percentage" CompacctDigitonly="true" placeholder="GST %" [ngClass]="{'clearance': MasterProductelFormSubmitted && gstper.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]="ObjMasterProductel.UOM" placeholder="UOM" [ngClass]="{'clearance': MasterProductelFormSubmitted && uom.errors?.required}" required>
+                                    </div>
+                                    <!-- <div class="col-sm-6">
+                                        <label class="control-label">File Upload</label>
+                                        <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" url="/Harbauer_Master_Product_mechanical/Upload_Doc">
+                                            
+                                        </p-fileUpload>
+                                        <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+                                    </div> -->
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
                                         <label class="control-label">Make (Multiple)<sup class="text-danger">*</sup></label>
-                                        <p-multiSelect itemSize="30" [options]="MakeList" [styleClass]="'compacct-multiselect'" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [disabled]="makedisabled" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}"
+                                        <p-multiSelect itemSize="30" [options]="MakeList" [styleClass]="'compacct-multiselect'" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [disabled]="makedisabled" [ngClass]="{'clearance': MasterProductelFormSubmitted && make.errors?.required}"
                                             required>
                                         </p-multiSelect>
                                         <!-- <select class="form-control" name="make" #make="ngModel" [(ngModel)]="ObjMasterProductm.Product_Mfg_Comp_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}" required>
@@ -249,27 +303,10 @@
                                                               </option>
                                                       </select> -->
                                     </div>
-                                    <div class="col-sm-6">
-                                        <label class="control-label">File Upload</label>
-                                        <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" url="/Harbauer_Master_Product_mechanical/Upload_Doc">
-                                            <!-- <ng-template let-aFile pTemplate='aFile'>
-                                                <div class="ui-fileupload-row">
-                                                    <div><img [src]="aFile.type.includes('image') ? aFile.objectURL :'/PDF_Logo/PDF-logo.png'" width="50"></div>
-                                                    <div>{{aFile.name}}</div>
-                                                    <div>{{aFile.size}} bytes</div>
-                                                    <div>
-                                                        <button type="button" class="btn btn-danger" (click)="onClear($event,aFile)"><i class="fa fa-fw fa-close"></i></button>
-                                                    </div>
-                                                </div>
-                                            </ng-template> -->
-                                        </p-fileUpload>
-                                        <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
-                                        <!-- <p-fileUpload name="myfile[]" customUpload="true" multiple="multiple" (uploadHandler)="onUpload($event)" accept=""image/*,.csv,.xml,.doc,.docx,.pdf""></p-fileUpload> -->
-                                    </div>
                                 </div>
 
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" type="button" (click)="SaveMasterProductM(MasterProductmForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <button class="btn btn-primary pull-right" type="button" (click)="SaveMasterProductel(MasterProductelForm.form.valid)" id="load" [disabled]="Spinner">
                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                                     </button>
@@ -285,6 +322,7 @@
 </div>
 
 <!-- CREATE -->
+<!-- Product Type -->
 <p-dialog [header]="'Create Product Type'" [appendTo]="'body'" [visible]="ProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
     [maximizable]="true" [baseZIndex]="10000">
     <div class="form-horizontal">
@@ -320,6 +358,7 @@
 </button>
     </p-footer>
 </p-dialog>
+<!-- Product Sub Type -->
 <p-dialog [header]="'Create Product Sub Type'" [appendTo]="'body'" [visible]="ProSubTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
     [maximizable]="true" [baseZIndex]="10000">
     <div class="form-horizontal">
@@ -355,6 +394,7 @@
 </button>
     </p-footer>
 </p-dialog>
+<!-- Material Of Cons. -->
 <p-dialog [header]="'Create MOC'" [appendTo]="'body'" [visible]="CreateMocModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="form-horizontal">
@@ -390,6 +430,7 @@
 </button>
     </p-footer>
 </p-dialog>
+<!-- Capacity / Size -->
 <p-dialog [header]="'Create Capacity/Size'" [appendTo]="'body'" [visible]="CapacityModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
     [maximizable]="true" [baseZIndex]="10000">
     <div class="form-horizontal">
@@ -425,16 +466,17 @@
 </button>
     </p-footer>
 </p-dialog>
-<p-dialog [header]="'Create Product Feature'" [appendTo]="'body'" [visible]="ProFeatureModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
-    [maximizable]="true" [baseZIndex]="10000">
+<!-- Additional Feature 1-->
+<p-dialog [header]="'Create Additional Feature 1'" [appendTo]="'body'" [visible]="AddFeature1Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
     <div class="form-horizontal">
-        <form name="ProFeatureForm" #ProFeatureForm="ngForm" novalidate>
+        <form name="AddFeature1Form" #AddFeature1Form="ngForm" novalidate>
             <div class="form-group">
                 <div class="col-sm-12">
-                    <label class="control-label">Product Feature<sup class="text-danger">*</sup
+                    <label class="control-label">Additional Feature 1<sup class="text-danger">*</sup
   ></label>
-                    <input type="text" class="form-control" name="profeature" #profeature="ngModel" [(ngModel)]="ProFeature" placeholder="Product Feature" allow-pattern="([a-z ]|\.)" [ngClass]="{
-          clearance: ProFeatureFormSubmitted && profeature?.errors?.required
+                    <input type="text" class="form-control" name="additionalf1" #additionalf1="ngModel" [(ngModel)]="AddFeature1" placeholder="Additional Feature 1" allow-pattern="([a-z ]|\.)" [ngClass]="{
+          clearance: AddFeature1FormSubmitted && additionalf1?.errors?.required
         }" required />
                 </div>
             </div>
@@ -442,10 +484,10 @@
         </form>
     </div>
     <p-footer>
-        <button type="button" (click)="ProFeatureModal = false" class="btn btn-default">
+        <button type="button" (click)="AddFeature1Modal = false" class="btn btn-default">
   CANCEL
 </button>
-        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateProFeature(ProFeatureForm.form.valid)" id="load2" [disabled]="Spinner">
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateAddFeature1(AddFeature1Form.form.valid)" id="load2" [disabled]="Spinner">
 <p-progressSpinner
   *ngIf="Spinner"
   [style]="{ width: '15px', height: '15px' }"
@@ -460,6 +502,115 @@
 </button>
     </p-footer>
 </p-dialog>
+<!-- Additional Feature 2-->
+<p-dialog [header]="'Create Additional Feature 2'" [appendTo]="'body'" [visible]="AddFeature2Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="AddFeature2Form" #AddFeature2Form="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Additional Feature 2<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" class="form-control" name="additionalf2" #additionalf2="ngModel" [(ngModel)]="AddFeature2" placeholder="Additional Feature 2" allow-pattern="([a-z ]|\.)" [ngClass]="{
+          clearance: AddFeature2FormSubmitted && additionalf2?.errors?.required
+        }" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="AddFeature2Modal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateAddFeature2(AddFeature2Form.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Additional Feature 3-->
+<p-dialog [header]="'Create Additional Feature 3'" [appendTo]="'body'" [visible]="AddFeature3Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="AddFeature3Form" #AddFeature3Form="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Additional Feature 3<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" class="form-control" name="additionalf3" #additionalf3="ngModel" [(ngModel)]="AddFeature3" placeholder="Additional Feature 3" allow-pattern="([a-z ]|\.)" [ngClass]="{
+          clearance: AddFeature3FormSubmitted && additionalf3?.errors?.required
+        }" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="AddFeature3Modal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateAddFeature3(AddFeature3Form.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Additional Feature 4-->
+<p-dialog [header]="'Create Additional Feature 4'" [appendTo]="'body'" [visible]="AddFeature4Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="AddFeature4Form" #AddFeature4Form="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Additional Feature 4<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" class="form-control" name="additionalf4" #additionalf4="ngModel" [(ngModel)]="AddFeature4" placeholder="Additional Feature 4" allow-pattern="([a-z ]|\.)" [ngClass]="{
+          clearance: AddFeature4FormSubmitted && additionalf4?.errors?.required
+        }" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="AddFeature4Modal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateAddFeature4(AddFeature4Form.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Grade -->
 <p-dialog [header]="'Create Grade'" [appendTo]="'body'" [visible]="GradeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="form-horizontal">
@@ -609,28 +760,106 @@
 </button>
     </p-footer>
 </p-dialog>
-<!-- Product Feature -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProFeatureModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<!-- Additional Feature 1 -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewAddFeature1Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
-        <p-table [value]="ProductFeatureList">
+        <p-table [value]="AddFeature1List">
 
             <ng-template pTemplate="header">
                 <tr>
-                    <th width="50%">Product Feature</th>
+                    <th width="50%">Additional Feature 1</th>
                     <th>Delete</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col let-i="rowIndex">
                 <tr>
 
-                    <td>{{col.Product_Feature_Desc}}</td>
-                    <td><button class="btn btn-sm btn-danger" (click)="deleteProFeature(col)"><i class="fa fa-trash"></i></button></td>
+                    <td>{{col.Additional_Feature}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteAddFeature1(col)"><i class="fa fa-trash"></i></button></td>
             </ng-template>
         </p-table>
     </div>
     <p-footer>
-        <button type="button" (click)="ViewProFeatureModal = false" class="btn btn-default">
+        <button type="button" (click)="ViewAddFeature1Modal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Additional Feature 2 -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewAddFeature2Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="AddFeature2List">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th width="50%">Additional Feature 2</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Additional_Feature}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteAddFeature2(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewAddFeature2Modal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Additional Feature 3 -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewAddFeature3Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="AddFeature3List">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th width="50%">Additional Feature 3</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Additional_Feature}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteAddFeature3(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewAddFeature3Modal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Additional Feature 4 -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewAddFeature4Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="AddFeature4List">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th width="50%">Additional Feature 4</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Additional_Feature}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteAddFeature4(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewAddFeature4Modal = false" class="btn btn-default">
   CANCEL
 </button>
     </p-footer>

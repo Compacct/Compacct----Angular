@@ -1,0 +1,67 @@
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+
+
+/* .col-sm-1 {
+    width: 40%;
+  } */
+
+.box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+}
+
+.ta-editor {
+    min-height: 160px;
+}
+
+body .ui-widget {
+    font-family: source sans pro, sans-serif !important;
+}
+
+textarea.form-control {
+    height: auto;
+}
+
+.btn {
+    border: red;
+}
+
+.box.boxboxDivide-primary {
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+}
+
+
+/* .custombutton {
+    margin-top: 28px;
+    margin-left: 130px;
+  } */
+
+.custombutton1 {
+    margin-top: 28px;
+    margin-left: 85%;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.Outlet {
+    display: inline-block !important;
+}
+
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}

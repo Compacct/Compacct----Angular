@@ -87,7 +87,6 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule ,OWL_DATE_TIME_FORMATS, OWL_
 
 // Nepali Date
 import { NpDatepickerModule } from 'angular-nepali-datepicker';
-import { DateNepalConvertService } from "./shared/compacct.global/dateNepal.service";
 
 // SERVICE
 import { CookieService } from "ngx-cookie-service";
@@ -256,6 +255,8 @@ import { EnggCrmInstalledMachineServiceContractComponent } from './common/Materi
 
 import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
 import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/support-ticket-nepal/support-ticket-nepal.component';
+import { StockTransferToStoreComponent } from './common/MaterialManagement/Outward/stock-transfer-to-store/stock-transfer-to-store.component';
+import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-master-product-electrical/harb-master-product-electrical.component';
 import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/tender-view-details-comp/tender-view-details-comp.component';
 import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
 import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
@@ -445,6 +446,8 @@ import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tend
     EnggCrmInstalledMachineServiceContractComponent,
     TenderBudgetAprovalComponent,
     SupportTicketNepalComponent,
+    StockTransferToStoreComponent,
+    HarbMasterProductElectricalComponent,
     TenderViewDetailsCompComponent,
     TenderSingleSchBudgetComponent,
     TenderMultipleSchBudgetComponent,
