@@ -913,8 +913,7 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   component: EnggCrmInstalledMachineServiceContractComponent,
                                                                   data: {title: 'Service Contract'}
                                                                 },
-                                                                {
-                                                                  path : 'BL_CRM_Txn_Enq_Budget_Aproval',
+                                                                 { path : 'BL_CRM_Txn_Enq_Budget_Aproval',
                                                                   component:TenderBudgetAprovalComponent,
                                                                   data: {title: 'Budget Approval'}
                                                                 },

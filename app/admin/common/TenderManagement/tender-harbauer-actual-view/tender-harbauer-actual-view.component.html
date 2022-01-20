@@ -194,6 +194,9 @@
  [minY]="70"
  [maximizable]="true"
  [baseZIndex]="10000">
+ <div>
+     <app-tender-view-details-comp  *ngIf="editTenderId" [TenderId]='editTenderId'></app-tender-view-details-comp>
+ </div>
  <form name="TenderForm" #TenderForm="ngForm" novalidate>
   <div class="form-group">
     <div class="col-sm-4">

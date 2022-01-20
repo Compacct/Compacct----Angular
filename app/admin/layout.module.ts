@@ -87,7 +87,6 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule ,OWL_DATE_TIME_FORMATS, OWL_
 
 // Nepali Date
 import { NpDatepickerModule } from 'angular-nepali-datepicker';
-import { DateNepalConvertService } from "./shared/compacct.global/dateNepal.service";
 
 // SERVICE
 import { CookieService } from "ngx-cookie-service";
@@ -95,6 +94,7 @@ import { CompacctCommonApi } from "./shared/compacct.services/common.api.service
 import { CompacctHeader } from "./shared/compacct.services/common.header.service";
 import { CompacctGetDistinctService } from "./shared/compacct.services/compacct-get-distinct.service";
 import { DateTimeConvertService } from "./shared/compacct.global/dateTime.service";
+import { DateNepalConvertService } from "./shared/compacct.global/dateNepal.service";
 import { CompacctGlobalUrlService } from "./shared/compacct.global/global.service.service";
 import { MasterProductComponent } from "./common/MaterialManagement/Master/master.product/master.product.component";
 import { SafeHtmlPipe } from "./shared/compacct.pipes/compacct.safeHtml/safe-html.pipe";
@@ -258,6 +258,8 @@ import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-b
 import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/support-ticket-nepal/support-ticket-nepal.component';
 import { StockTransferToStoreComponent } from './common/MaterialManagement/Outward/stock-transfer-to-store/stock-transfer-to-store.component';
 import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-master-product-electrical/harb-master-product-electrical.component';
+import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/tender-view-details-comp/tender-view-details-comp.component';
+
 
 
 
@@ -445,6 +447,7 @@ import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-mas
     SupportTicketNepalComponent,
     StockTransferToStoreComponent,
     HarbMasterProductElectricalComponent,
+    TenderViewDetailsCompComponent,
   ],
   imports: [
     CommonModule,
