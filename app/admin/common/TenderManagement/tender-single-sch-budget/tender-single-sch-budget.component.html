@@ -628,28 +628,7 @@
     </button>
   </p-footer>
 </p-dialog>
-<p-dialog header="Create Budget" [(visible)]="createBudgetmodel" [modal]="true" [responsive]="true"
-  [style]="{width: '350px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
-  <form name="craeteBugetForm" #craeteBugetForm="ngForm" novalidate>
-    <div class="form-group">
-      <div class="col-sm-12" style="text-align: center;">
-        <label class="control-label">Assign To<sup class="text-danger">*</sup>
-        </label>
-        <select class="form-control" name="Budget" #Budget="ngModel" [(ngModel)]="createBudgetbox"
-          [ngClass]="{'clearance': createBudgetFormSubmitted && Budget?.errors?.required}" required>
-          <option [ngValue]="undefined">Select</option>
-          <option *ngFor="let option of assingList;" [ngValue]="option.User_ID">{{option.Name}}</option>
-        </select>
-      </div>
-    </div>
-  </form>
-  <p-footer>
-    <button type="button" pButton icon="pi pi-check" (click)="saveBudget(craeteBugetForm.form.valid)"
-      label="Create"></button>
-    <button type="button" pButton icon="pi pi-close" (click)="createBudgetmodel=false" label="Cancel"
-      class="ui-button-secondary"></button>
-  </p-footer>
-</p-dialog>
+
 <!-- view -->
 <p-dialog [header]="'Tender View'" [appendTo]="'body'" [visible]="viewModel" [closeOnEscape]="true" [closable]="false"
   [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }" style="text-align: center;"
