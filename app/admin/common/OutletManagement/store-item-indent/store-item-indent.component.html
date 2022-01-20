@@ -90,15 +90,25 @@
                                                     <ul class="dropdown-menu">
                                                         <li>
                                                             <a (click)="view(col)">
-                                                                <i class="fa fa-fw fa-pencil"></i> View
+                                                                <i class="fa fa-fw fa-eye"></i> View
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Is_Active == 'N' && col.Can_Cancel =='Y'">
+                                                        <li *ngIf="col.Is_Active == 'N' && col.Can_Cancel =='Y' && $CompacctAPI.CompacctCookies.User_Type == 'U'">
                                                             <a (click)="Active(col)">
                                                                 <i class="fa fa-power-off"></i> Active
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Is_Active == 'Y' && col.Can_Cancel =='Y'">
+                                                        <li *ngIf="col.Is_Active == 'N' && $CompacctAPI.CompacctCookies.User_Type == 'A'">
+                                                            <a (click)="Active(col)">
+                                                                <i class="fa fa-power-off"></i> Active
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Is_Active == 'Y' && col.Can_Cancel =='Y' && $CompacctAPI.CompacctCookies.User_Type == 'U'">
+                                                            <a (click)="Cancle(col)">
+                                                                <i class="fa fa-times"></i> Cancel
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Is_Active == 'Y' && $CompacctAPI.CompacctCookies.User_Type == 'A'">
                                                             <a (click)="Cancle(col)">
                                                                 <i class="fa fa-times"></i> Cancel
                                                             </a>

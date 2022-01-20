@@ -613,6 +613,36 @@ export class StoreItemIndentComponent implements OnInit {
  }
   onConfirm(){
    console.log("cen_popup");
+   if(this.$CompacctAPI.CompacctCookies.User_Type === 'A'){
+    if(this.requistionId){
+      const TempObj ={
+        Req_No_Gen : this.requistion_no_gen
+      }
+      const obj = {
+        "SP_String": "SP_Controller_Master",
+        "Report_Name_String": "Cancle Store Requisition From Admin Side",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         console.log("del Data===", data[0].Column1);
+         var msg = data[0].Column1
+        if (data[0].Column1){
+          this.onReject();
+         // this.getRowData();
+         this.can_popup = false;
+         this.valid = true;
+         this.SearchStockBill(this.valid);
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Indent No: " + this.requistionId.toString(),
+            detail: msg
+          });
+         }
+      })
+    }
+  } else {
    if(this.requistionId){
        const TempObj ={
          Req_No_Gen : this.requistion_no_gen
@@ -648,6 +678,7 @@ export class StoreItemIndentComponent implements OnInit {
          }
        })
      }
+    }
 
  }
  Active(row){

@@ -127,7 +127,7 @@ export class K4cCrateInOuComponent implements OnInit {
     //  else {
     //   this.Objcrate.From_Cost_Cen_ID = undefined;
     //  }
-      console.log("this.FromOutletList ======",this.FromOutletList);
+    //  console.log("this.FromOutletList ======",this.FromOutletList);
       
       // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
       //   //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
@@ -159,7 +159,7 @@ export class K4cCrateInOuComponent implements OnInit {
        this.Objcrate.From_Godown_Id = undefined;
        this.fromstockdisableflag = false;
      }
-      console.log("this.FromGodownList ======",this.FromGodownList);
+     // console.log("this.FromGodownList ======",this.FromGodownList);
 
     });
   }
@@ -174,12 +174,12 @@ export class K4cCrateInOuComponent implements OnInit {
      this.ToOutletList = data;
      //this.Objcrate.To_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      //this.getToGodown();
-     if (this.$CompacctAPI.CompacctCookies.User_Type != "A") {
+     if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
       this.Objcrate.To_Cost_Cen_ID = 2;
       this.tooutletdisableflag = true;
       this.getToGodown();
      }
-      console.log("this.ToOutletList ======",this.ToOutletList);
+    //  console.log("this.ToOutletList ======",this.ToOutletList);
 
     });
   }
@@ -210,7 +210,7 @@ export class K4cCrateInOuComponent implements OnInit {
     //      this.tostockdisableflag = false;
     //    }
     }
-      console.log("this.ToGodownList ======",this.ToGodownList);
+    //  console.log("this.ToGodownList ======",this.ToGodownList);
 
     });
   }
@@ -315,7 +315,7 @@ export class K4cCrateInOuComponent implements OnInit {
      //this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // this.fromoutletdisableflag = true;
     // this.getFromGodown();
-      console.log("this.BFromOutletList ======",this.BFromOutletList);
+    //  console.log("this.BFromOutletList ======",this.BFromOutletList);
       
       if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
         this.ObjBrowse.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
@@ -346,7 +346,7 @@ export class K4cCrateInOuComponent implements OnInit {
        this.ObjBrowse.From_Godown_Id = undefined;
        this.Bfromstockdisableflag = false;
      }
-      console.log("this.BFromGodownList ======",this.BFromGodownList);
+     // console.log("this.BFromGodownList ======",this.BFromGodownList);
 
     });
   }
@@ -391,7 +391,7 @@ export class K4cCrateInOuComponent implements OnInit {
   //   this.crateinout = el.Crate_IN;
   //  }
   // })
-   console.log('Search list=====',this.Searchedlist)
+  // console.log('Search list=====',this.Searchedlist)
    this.seachSpinner = false;
    this.SearchFormSubmitted = false;
   })
@@ -432,7 +432,7 @@ export class K4cCrateInOuComponent implements OnInit {
       //     el.Accepted_Qty = el.Qty;
       //   }
       // })
-         console.log("ViewList",this.ViewList);
+       //  console.log("ViewList",this.ViewList);
      })
    
     }
@@ -481,7 +481,7 @@ export class K4cCrateInOuComponent implements OnInit {
       //     el.Accepted_Qty = el.Qty;
       //   }
       // })
-         console.log("AcceptList",this.AcceptList);
+       //  console.log("AcceptList",this.AcceptList);
      })
    
     }
@@ -576,7 +576,7 @@ export class K4cCrateInOuComponent implements OnInit {
        if (data[0].Crate_Out == 0) {
         this.Objcrate.Crate = data[0].Crate_IN;
        }
-         console.log("EditList",this.EditList);
+       //  console.log("EditList",this.EditList);
      })
    
     }
@@ -642,7 +642,7 @@ export class K4cCrateInOuComponent implements OnInit {
     // this.Objcrate.From_Godown_Id = undefined;
     // this.fromstockdisableflag = false;  
     //this.Objcrate.To_Cost_Cen_ID = undefined;
-    if (this.$CompacctAPI.CompacctCookies.User_Type != "A") {
+    if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
       this.Objcrate.To_Cost_Cen_ID = 2;
       this.tooutletdisableflag = true;
       this.getToGodown();
