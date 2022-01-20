@@ -632,7 +632,8 @@ Cancle(row){
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
          console.log("del Data===", data[0].Column1);
-        if (data[0].Column1 === "Done"){
+         var msg = data[0].Column1
+        if (data[0].Column1){
           this.onReject();
          // this.getRowData();
          this.can_popup = false;
@@ -643,7 +644,7 @@ Cancle(row){
             key: "compacct-toast",
             severity: "success",
             summary: "Indent No: " + this.requistionId.toString(),
-            detail: "Succesfully Cancel"
+            detail: msg
           });
          }
       })

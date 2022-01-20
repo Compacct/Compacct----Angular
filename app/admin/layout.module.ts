@@ -256,6 +256,8 @@ import { EnggCrmInstalledMachineServiceContractComponent } from './common/Materi
 
 import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
 import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/support-ticket-nepal/support-ticket-nepal.component';
+import { StockTransferToStoreComponent } from './common/MaterialManagement/Outward/stock-transfer-to-store/stock-transfer-to-store.component';
+import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-master-product-electrical/harb-master-product-electrical.component';
 
 
 
@@ -441,6 +443,8 @@ import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/
     EnggCrmInstalledMachineServiceContractComponent,
     TenderBudgetAprovalComponent,
     SupportTicketNepalComponent,
+    StockTransferToStoreComponent,
+    HarbMasterProductElectricalComponent,
   ],
   imports: [
     CommonModule,
