@@ -157,6 +157,8 @@ import { EnggCrmInstalledMachineComponent } from './common/MaterialManagement/Ma
 import { EnggCrmInstalledMachineServiceContractComponent } from './common/MaterialManagement/Master/engg-crm-installed-machine-service-contract/engg-crm-installed-machine-service-contract.component';
 import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
 import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/support-ticket-nepal/support-ticket-nepal.component';
+import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
+import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
 
 
 
@@ -919,6 +921,16 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   path : 'Support_Ticket_Nepal',
                                                                   component:SupportTicketNepalComponent,
                                                                   data: {title: 'Support Ticket'}
+                                                                },
+                                                                {
+                                                                  path : 'BL_CRM_Txn_Enq_Tender_Budget_Single',
+                                                                  component:TenderSingleSchBudgetComponent,
+                                                                  data: {title: 'Single Scheme Budget'}
+                                                                },
+                                                                {
+                                                                  path : 'BL_CRM_Txn_Enq_Tender_Budget_Multiple',
+                                                                  component:TenderMultipleSchBudgetComponent,
+                                                                  data: {title: 'Multiple Scheme Budget'}
                                                                 }
 
 

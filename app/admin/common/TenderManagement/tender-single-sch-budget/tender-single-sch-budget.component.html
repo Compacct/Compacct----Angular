@@ -1,0 +1,664 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{message.summary}}</h3>
+      <p>{{message.detail}}</p>
+    </div>
+
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+      </div>
+      <div class="ui-g-6">
+        <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body">
+          <div class='row row-sty' *ngIf='fromQuery'>
+            <div class="col-sm-6">
+              <small><b> Work Name : </b></small>
+              <h3 class="to">{{ObjEstimate.Budget_Short_Description}}</h3>
+            </div>
+            <div class="col-sm-6 text-right">
+              <h5 style="margin-top: 0;" class="invoice-id">Tender ID : {{TenderIDView}}</h5>
+              <button (click)="DynamicRedirectToR({},'./BL_CRM_Txn_Enq_Tender_Budget')" class="btn btn-linkedin btn-social btn-xs"><i class="fa fa-chevron-circle-left fa-fw"></i>Go Bact To Pending Budget</button>
+            </div>
+          </div>
+          <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-tasks">
+              <div class="table-responsive no-padding">
+                <p-table [value]="budGetsubList" [paginator]="budGetsubList.length ? true : false" [rows]="100"
+                  [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]"
+                  [globalFilterFields]="['Tender_ID','Tender_Authority','Tender_Value','Tender_Last_Sub_Date','State','EMD_Amount','Tender_Publish_Date','Status']"
+                  [rowHover]="true" #dtt>
+                  <ng-template pTemplate="caption">
+                    <div class="row">
+                      <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search"
+                          (input)="dtt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                      </div>
+                    </div>
+
+                  </ng-template>
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Tender Id</th>
+                      <th>Tender Authority</th>
+                      <th>Tender Value</th>
+                      <th>Tender Submission Date & Time</th>
+                      <th>State</th>
+                      <th>EMD value</th>
+                      <th>Publish Date & Time</th>
+                      <th>Status</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-col>
+                    <tr>
+                      <td class="text-center"><b>{{col.Tender_ID}}</b>
+                        &nbsp;<a title="Tender Details" class="border-left btn btn-info btn-xs"
+                          (click)='viewTender(col)'><i class="fa fa-fw fa-info"></i></a>
+                      </td>
+                      <td>{{col.Tender_Authority}}</td>
+                      <td>{{col.Tender_Value}}</td>
+                      <td>{{col.Tender_Last_Sub_Date | date: 'dd-MMM-yy hh:mm:a'}}</td>
+                      <td>{{col.State}}</td>
+                      <td>{{col.EMD_Amount}}</td>
+                      <td>{{col.Tender_Publish_Date| date: 'dd-MMM-yy hh:mm:a'}}</td>
+                      <td>{{col.Status}}</td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="paginatorright" let-state>
+                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                  </ng-template>
+                </p-table>
+              </div>
+            </p-tabPanel>
+            <p-tabPanel *ngIf='ShowSingleScheme' headerStyleClass="compacct-tabs" [header]="items[1]"
+              leftIcon="glyphicon glyphicon-calendar">
+              <form name="EstimateForm" #EstimateForm="ngForm" novalidate>
+                <div class="form-group" style="padding: 0 1em;">
+                  <div class="col-sm-6">
+                    <label class="control-label">Project Name&nbsp;<span class="text-danger">*</span></label>
+                    <input class="form-control" name="Budget_Short_Description" #Budget_Short_Description="ngModel"
+                      [(ngModel)]="ObjEstimate.Budget_Short_Description"
+                      [ngClass]="{'clearance': EstimateInfoSubmitted && Budget_Short_Description?.errors?.required}"
+                      placeholder="Project Name" [required]="true" [disabled]="editData.length" />
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="control-label">No of Site&nbsp;<span class="text-danger">*</span></label>
+                    <input class="form-control" name="No_of_Site" #No_of_Site="ngModel"
+                      [(ngModel)]="ObjEstimate.No_of_Site"
+                      [ngClass]="{'clearance': EstimateInfoSubmitted && No_of_Site?.errors?.required}"
+                      placeholder="No of Site" [required]="true"  />
+                  </div>
+                </div>
+                <div class="form-group" style="padding: 0 1em;">
+                  <div class="col-sm-6">
+                    <label class="control-label">Estimate Group Name&nbsp;<span class="text-danger">*</span></label>
+                    <span (click)="ToggleEstimateGrp()" class="btn-vk  pull-right createPatient"><i
+                        class="fa fa-fw  fa-plus"></i> Create</span>
+
+                    <p-dropdown [options]="EstimateGroupList" name="EstimateGroup"
+                      [(ngModel)]="ObjEstimate.Budget_Group_ID" [showClear]="true"
+                      [emptyFilterMessage]="' No Estimate Group Found'"
+                      (onChange)="EstimateGroupChange(ObjEstimate.Budget_Group_ID)" [filter]="true"
+                      filterBy="label,value.name" [placeholder]="'Select Estimate Group'" [virtualScroll]="true"
+                      itemSize="30" #EstimateGroup="ngModel" [styleClass]="
+                                              EstimateInfoSubmitted && EstimateGroup.errors?.required? 'clearance': ''"
+                      [required]="true">
+                    </p-dropdown>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="control-label">Estimate Sub Group Name&nbsp;<span class="text-danger">*</span></label>
+                    <span (click)="ToggleEstimateSubGrp()" *ngIf='ObjEstimate.Budget_Group_ID'
+                      class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                    <p-dropdown [options]="EstimateSubGroupList" name="EstimateSubGroup"
+                      [(ngModel)]="ObjEstimate.Budget_Sub_Group_ID" [showClear]="true"
+                      [emptyFilterMessage]="' No Estimate Sub Group Found'"
+                      (onChange)="EstimateSubGroupChange(ObjEstimate.Budget_Sub_Group_ID)" [filter]="true"
+                      filterBy="label,value.name" [placeholder]="'Select Estimate Sub Group'" [virtualScroll]="true"
+                      itemSize="30" #EstimateSubGroup="ngModel"
+                      [styleClass]="
+                                              EstimateInfoSubmitted && EstimateSubGroup.errors?.required? 'clearance': ''" [required]="true">
+                    </p-dropdown>
+                  </div>
+                </div>
+                <div class="form-group" style="padding: 0 1em;">
+                  <div class="clearfix"></div>
+                  <div class="col-sm-4">
+                    <label class="control-label">Work Details&nbsp;<span class="text-danger">*</span></label>
+                    <span (click)="Toggleworkdetalis()" *ngIf='ObjEstimate.Budget_Group_ID'
+                      class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                    <p-dropdown [options]="workdetalisList" name="Work_Details"
+                      [(ngModel)]="ObjEstimate.Work_Details_ID" [showClear]="true"
+                      [emptyFilterMessage]="' No Work Details Found'"
+                      (onChange)="EstimateworkDetailsChange(ObjEstimate.Work_Details_ID)" [filter]="true"
+                      filterBy="label,value.name" [placeholder]="'Select Work Details'" [virtualScroll]="true"
+                      itemSize="30" #Work_Details="ngModel" [styleClass]="
+                                              EstimateInfoSubmitted && Work_Details.errors?.required? 'clearance': ''"
+                      [required]="true">
+                    </p-dropdown>
+
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">Enter Product Details</label><br />
+                    <p-radioButton name="groupname" #groupname='ngModel' value="No" (onClick)='Cleardata3()' label="No"
+                      [(ngModel)]="ObjEstimate.Product_Req"></p-radioButton> &nbsp;&nbsp;&nbsp;
+                    <p-radioButton name="groupname" #groupname='ngModel' value="Yes" (onClick)='Cleardata3()'
+                      label="Yes" [(ngModel)]="ObjEstimate.Product_Req"></p-radioButton>
+
+                  </div>
+                  <div class="col-sm-5" *ngIf='ObjEstimate.Product_Req ==="Yes"'>
+                    <label class="control-label" style="margin-top: -1px;">Product&nbsp;<span
+                        class="text-danger">*</span></label>
+                    <p-dropdown [options]="EstimateGroupProductList" name="EstimateGroupProduct"
+                      [(ngModel)]="ObjEstimate.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'"
+                      (onChange)="EstimateGroupProductChange(ObjEstimate.Product_ID)" [filter]="true"
+                      filterBy="label,value.name" [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30"
+                      #EstimateGroupProduct="ngModel"
+                      [styleClass]="
+                                              EstimateInfoSubmitted && EstimateGroupProduct.errors?.required? 'clearance': ''" [required]="true">
+                    </p-dropdown>
+                  </div>
+
+                </div>
+                <div class="form-group" style="padding: 0 1em;">
+                  <div class="col-sm-3">
+                    <label class="control-label">Unit Description<sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="unit" #unit="ngModel" [(ngModel)]="ObjEstimate.unit"
+                      [ngClass]="{'clearance': EstimateInfoSubmitted && unit?.errors?.required}"
+                      placeholder="Unit Description" [required]="true" />
+                  </div>
+                  <div class="col-sm-2">
+                    <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjEstimate.Qty"
+                      (ngModelChange)="CalculateEstimateQty()" CompacctDigitonly="true"
+                      [ngClass]="{'clearance': EstimateInfoSubmitted && Qty?.errors?.required}" placeholder="Qty"
+                      [required]="true" />
+                  </div>
+                  <div class="col-sm-2">
+                    <label class="control-label">Nos<sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="Nos" #Nos="ngModel" [(ngModel)]="ObjEstimate.Nos"
+                      (ngModelChange)="CalculateEstimateQty()" CompacctDigitonly="true"
+                      [ngClass]="{'clearance': EstimateInfoSubmitted && Nos?.errors?.required}" placeholder="NOs"
+                      [required]="true" />
+                  </div>
+                  <div class="col-sm-2">
+                    <label class="control-label">Total Qty<sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="TQty" #TQty="ngModel" [(ngModel)]="ObjEstimate.TQty"
+                      (ngModelChange)="CalculateEstimateAmount()" CompacctDigitonly="true"
+                      [ngClass]="{'clearance': EstimateInfoSubmitted && TQty?.errors?.required}"
+                      placeholder="Total Quantity" [required]="true" [readonly]="true" />
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="UOM" #UOM="ngModel" [(ngModel)]="ObjEstimate.UOM"
+                      [ngClass]="{'clearance': EstimateInfoSubmitted && unit?.errors?.required}" placeholder="Unit"
+                      [required]="true" />
+                  </div>
+                </div>
+                <div class="form-group" style="padding: 0 1em;">
+                  <div class="col-sm-2">
+                    <label class="control-label">Purchase Rate<sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="rate" type="text"
+                      [ngClass]="{'clearance':EstimateInfoSubmitted && rate?.errors?.required }" #rate="ngModel"
+                      [(ngModel)]="ObjEstimate.Rate" (ngModelChange)="CalculateEstimateAmount()"
+                      CompacctDigitonly="true" [required]="true" placeholder="Rate" />
+                  </div>
+                  <div class="col-sm-2">
+                    <label class="control-label">Purchase Amount<sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="tolamt" #tolamt="ngModel" (change)="CalculateEstimateAmount()"
+                      [(ngModel)]="ObjEstimate.Amount" placeholder="Total Amount" [disabled]='true' />
+                  </div>
+                  <div class="col-sm-2">
+                    <label class="control-label">Sale Rate</label>
+                    <input class="form-control" name="saleRate" #saleRate="ngModel" [(ngModel)]="ObjEstimate.saleRate"
+                      (ngModelChange)="CalculateEstimatesaleAmount()" placeholder="Sale Rate" />
+                  </div>
+                  <div class="col-sm-2">
+                    <label class="control-label">Sale Amount</label>
+                    <input class="form-control" name="Sale_Amount" #Sale_Amount="ngModel"
+                      [(ngModel)]="ObjEstimate.Sale_Amount" placeholder="Sale Amount" disabled='true' />
+                  </div>
+                  <div class="col-sm-2">
+                    <button class="btn btn-primary custombutton pull-right"
+                      (click)="AddEstimate(EstimateForm.form.valid)">
+                      <span class="fa fa-plus"></span>&nbsp;Add
+                    </button>
+                  </div>
+                  <div class="col-sm-2">
+                    <button class="btn btn-primary custombutton pull-left" (click)="cleardata()">
+                      <span class="fa fa-remove"></span>&nbsp;Clear
+                    </button>
+                  </div>
+
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="form-group">
+                  <div class="col-sm-8">
+                    <label>Or Import via Excel</label>
+                    <span (click)="exportexcel(workdetalisList,'workdetalisList')"
+                      class="btn-vk custombutton pull-right createPatient"><i class="fa fa-fw  fa-download"></i> Export
+                      Work Details</span>
+                    <span (click)="exportexcel(EstimateGroupProductList,'EstimateGroupProductList')"
+                      class="btn-vk custombutton pull-right createPatient"><i class="fa fa-fw  fa-download"></i> Export
+                      Product Details</span>
+                    <span (click)="exportexcel(ExcelGroupDetails,'EstimateGroupDetails')"
+                      class="btn-vk  pull-right custombutton createPatient"><i class="fa fa-fw  fa-download"></i> Export
+                      Group Details</span>
+                    <span (click)="exportexcelDummy()" class="btn-vk  pull-right custombutton createPatient"><i
+                        class="fa fa-fw  fa-download"></i> Export Dummy File</span>
+                    <div style="padding: 15px;">
+                      <label class="control-label">Upload File</label>
+                      <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept=".csv" customUpload="true"
+                        [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="handleFileSelect($event)">
+                      </p-fileUpload>
+                      <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img
+                          src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px "
+                          alt="PDF"></a>
+                    </div>
+
+                  </div>
+                </div>
+                <div class="form-group" style="margin-top:2.5em;padding: 0 1em;">
+                  <div class="table-responsive no-padding">
+                    <!-- <p-table [columns]="cols" [value]="ShowAddedEstimateProductList"
+                                              [rowHover]="true" [autoLayout]="true"
+                                               (onRowReorder)='RowReOrder($event)'
+                                               [reorderableColumns]="false">
+                                                <ng-template pTemplate="header" let-columns>
+                                                    <tr>
+                                                        <th style="width:2.5em"></th>
+                                                        <th *ngFor="let col of columns" pReorderableColumn>
+                                                            {{col.header}}
+                                                        </th>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex">
+                                                    <tr [pReorderableRow]="index">
+                                                        <td>
+                                                            <i class="fa fa-bars" pReorderableRowHandle></i>
+                                                        </td>
+                                                        <td *ngFor="let col of columns;let i = index;">
+                                                           <span *ngIf='i !== (columns.length -1)'> {{ rowData[col.field]}}</span>
+                                                           <button *ngIf='i === (columns.length -1)' (click)="DeleteEstimate(index)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr *ngIf='(index + 1)  === ShowAddedEstimateProductList.length'>
+                                                      <td colspan="15" class="text-bold text-right"> Total Purchase Amount : {{getPurchaseAmt()}}</td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table> -->
+
+                    <p-table [value]="ShowAddedEstimateProductList" sortField="Budget_Group_Name" sortMode="single"
+                      [rowHover]="true" [autoLayout]="true" (onSort)="onSort()">
+                      <ng-template pTemplate="header">
+                        <tr>
+                          <th *ngFor="let col of cols">
+                            {{col.header}}
+                          </th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                        <tr>
+                          <td>{{rowData.SL_No}}</td>
+                          <td *ngIf="rowGroupMetadata[rowData.Budget_Group_Name].index === rowIndex"
+                            [attr.rowspan]="rowGroupMetadata[rowData.Budget_Group_Name].size">
+                            {{rowData.Budget_Group_Name}}
+                          </td>
+                          <td>{{rowData.Budget_Sub_Group_Name}}</td>
+                          <td>{{rowData.Work_Details}}</td>
+                          <td>{{rowData.Product_Description}}</td>
+                          <td>{{rowData.unit}}</td>
+                          <td>{{rowData.Qty}}</td>
+                          <td>{{rowData.Nos}}</td>
+                          <td>{{rowData.TQty}}</td>
+                          <td>{{rowData.UOM}}</td>
+                          <td>{{rowData.saleRate}}</td>
+                          <td>{{rowData.Sale_Amount}}</td>
+                          <td>{{rowData.Rate}}</td>
+                          <td>{{rowData.Amount}}</td>
+                          <td> <button (click)="DeleteEstimate(rowIndex)" class="btn btn-xs btn-danger"><i
+                                class="fa fa-trash"></i></button></td>
+                        </tr>
+                        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                          <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+                        </tr>
+                        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                          <td colspan="15" class="text-bold text-right"> No of Site : {{ObjEstimate.No_of_Site}}</td>
+                        </tr>
+                        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                          <td colspan="15" class="text-bold text-right"> Total Project Amount :
+                            {{getTotalPurchaseAmt()}}</td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                    <!-- <table  class="table table-bordered">
+                                             <thead>
+                                            <tr style="background-color:#3c8dbc;color:white;" >
+                                                <th>SL No.</th>
+                                                <th>Group Name</th>
+                                                <th>SL No.</th>
+                                                <th>Sub Group Name</th>
+                                                <th>Work Details</th>
+                                                <th>Product</th>
+                                                <th>Unit Description</th>
+                                                <th>Qty</th>
+                                                <th>Nos</th>
+                                                <th>Total Qty</th>
+                                                <th>UOM</th>
+                                                <th>Sale Rate</th>
+                                                <th>Sale Amount</th>
+                                                <th>Purchase Rate</th>
+                                                <th>Purchase Amount</th>
+                                             </tr>
+                                            </thead>
+                                            <tbody *ngIf='ShowAddedEstimateProductList.length'>
+                                              <ng-container *ngFor="let data of ShowAddedEstimateProductList;let h =index;">
+                                                
+                                              <tr *ngIf='h === 0'>
+                                                <td class="text-right" colspan="15"><span class="badge bg-yellow">Total : {{data.Total_Amt}}</span></td>
+                                              </tr>    
+                                                  <tr>
+                                                    <td style="vertical-align: middle;text-align: center;" [attr.rowspan]="data.No_of_Child + 1">{{data.Sl_No}}</td>
+                                                    <td style="vertical-align: middle;text-align: center;" [attr.rowspan]="data.No_of_Child + 1">{{data.Root_Parent_Name}}</td>
+                                                  <ng-container *ngFor="let rowData of data.items; let i= index;">
+                                                      <td style="vertical-align: middle;text-align: center;" *ngIf="i === 0" [attr.rowspan]="rowData.items.length">{{rowData.Sl_No}}</td>
+                                                      <td style="vertical-align: middle;text-align: center;" *ngIf="i === 0" [attr.rowspan]="rowData.items.length">{{rowData.Child_Parent_Name}}</td>
+                                                        <ng-container *ngFor="let rowData2 of rowData.items;let k= index;" >
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.Work_Details ? rowData2.Work_Details : '-' }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.Product_Description ? rowData2.Product_Description : '-' }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.unit ? rowData2.unit : '-' }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.Qty ? rowData2.Qty : '-' }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.Nos ? rowData2.Nos : '-' }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.TQty ? rowData2.TQty : '-' }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.UOM ? rowData2.UOM : "-" }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.saleRate ? rowData2.saleRate : '-' }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.Sale_Amount ? rowData2.Sale_Amount : '-' }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.Rate ? rowData2.Rate : "-" }}</td>
+                                                          <td  *ngIf="i===0 && k === 0">{{ rowData2.Amount ? rowData2.Amount : "-" }}</td>  
+                                                          
+                                                        </ng-container> 
+                                                  </ng-container>
+                                                </tr>
+                                                <ng-container *ngFor="let rowData of data.items;let k= index; ">
+                                                  <ng-container *ngFor="let rowData2 of rowData.items; let i= index;">
+                                                    <ng-container *ngIf="k!=0">
+                                                      <tr>
+                                                      <td style="vertical-align: middle;text-align: center;" *ngIf="k!=0" name='ddd' [attr.rowspan]="rowData.items.length + 1">{{rowData.Sl_No}}</td>
+                                                      <td style="vertical-align: middle;text-align: center;" *ngIf="k!=0" [attr.rowspan]="rowData.items.length + 1">{{rowData.Child_Parent_Name}}</td>
+                                                      <td >{{ rowData2.Work_Details ? rowData2.Work_Details : '-' }}</td>
+                                                      <td >{{ rowData2.Product_Description ? rowData2.Product_Description : '-' }}</td>
+                                                      <td >{{ rowData2.unit ? rowData2.unit : '-' }}</td>
+                                                      <td >{{ rowData2.Qty ? rowData2.Qty : '-' }}</td>
+                                                      <td >{{ rowData2.Nos ? rowData2.Nos : '-' }}</td>
+                                                      <td >{{ rowData2.TQty ? rowData2.TQty : '-' }}</td>
+                                                      <td >{{ rowData2.UOM ? rowData2.UOM : "-" }}</td>
+                                                      <td >{{ rowData2.saleRate ? rowData2.saleRate : '-' }}</td>
+                                                      <td >{{ rowData2.Sale_Amount ? rowData2.Sale_Amount : '-' }}</td>
+                                                      <td >{{ rowData2.Rate ? rowData2.Rate : "-" }}</td>
+                                                      <td >{{ rowData2.Amount ? rowData2.Amount : "-" }}</td>  
+                                                    </tr>
+                                                    <tr>
+                                                      <td class="text-right" colspan="14"><span class="badge bg-blue">Sub Group Total :  {{rowData.Total_Sub_Group_Amt}}</span></td>
+                                                    </tr>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="i!=0">
+                                                      <td style="vertical-align: middle;text-align: center;" *ngIf="k!=0" name='ddd' [attr.rowspan]="rowData.items.length + 1">{{rowData.Sl_No}}</td>
+                                                      <td style="vertical-align: middle;text-align: center;" *ngIf="k!=0" [attr.rowspan]="rowData.items.length + 1">{{rowData.Child_Parent_Name}}</td>
+                                                      <tr >
+                                                        <td >{{ rowData2.Work_Details ? rowData2.Work_Details : '-' }}</td>
+                                                      <td >{{ rowData2.Product_Description ? rowData2.Product_Description : '-' }}</td>
+                                                      <td >{{ rowData2.unit ? rowData2.unit : '-' }}</td>
+                                                      <td >{{ rowData2.Qty ? rowData2.Qty : '-' }}</td>
+                                                      <td >{{ rowData2.Nos ? rowData2.Nos : '-' }}</td>
+                                                      <td >{{ rowData2.TQty ? rowData2.TQty : '-' }}</td>
+                                                      <td >{{ rowData2.UOM ? rowData2.UOM : "-" }}</td>
+                                                      <td >{{ rowData2.saleRate ? rowData2.saleRate : '-' }}</td>
+                                                      <td >{{ rowData2.Sale_Amount ? rowData2.Sale_Amount : '-' }}</td>
+                                                      <td >{{ rowData2.Rate ? rowData2.Rate : "-" }}</td>
+                                                      <td >{{ rowData2.Amount ? rowData2.Amount : "-" }}</td> 
+                                                        </tr>
+                                                        <tr>
+                                                          <td class="text-right" colspan="14"><span class="badge bg-blue">Sub Group Total :  {{rowData.Total_Sub_Group_Amt}}</span></td>
+                                                        </tr>
+                                                    </ng-container>
+                                                   
+                                                  </ng-container>  
+                                              </ng-container>  
+                                              <tr>
+                                                <td class="text-right" colspan="15"><span class="badge bg-green">Group Total : {{data.Total_Group_Amt}}</span></td>
+                                              </tr>
+                                          </ng-container>
+                                        
+                                              
+                                            </tbody>
+                                           </table> -->
+
+                  </div>
+                </div>
+              </form>
+              <div class="box-footer">
+                <div class="col-sm-12">
+                  <p-checkbox class="pull-right" name="final" [(ngModel)]="Final_Create_Flag" label='Final Save'
+                    binary="true"></p-checkbox>
+                </div>
+                <div class="col-sm-12">
+                  <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+                    (click)="SaveEsitimate()" id="load2" [disabled]="saveSpinner">
+                    <p-progressSpinner *ngIf="saveSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                      animationDuration=".5s"></p-progressSpinner>
+                    <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>&nbsp; SAVE
+                  </button>
+                </div>
+
+              </div>
+            </p-tabPanel>
+          </p-tabView>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<p-dialog [header]="'Create Estimate Group'" [appendTo]="'body'" [visible]="EstimateGrpModal" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <form name="EstimategrForm" #EstimategrForm="ngForm" novalidate>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label">Estimate Group Name<sup class="text-danger">*</sup></label>
+          <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="EstimateGrpName"
+            placeholder="Estimate Group Name" allow-pattern="([a-z ]|\.)" [ngClass]="{
+        clearance: EstimateGrpSubmitted && name?.errors?.required
+      }" required />
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <p-footer>
+    <button type="button" (click)="EstimateGrpModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+      (click)="CreateEstimateGrp(EstimategrForm.form.valid)" id="load2" [disabled]="Spinner">
+      <p-progressSpinner *ngIf="Spinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+<p-dialog [header]="'Create Estimate Sub Group'" [appendTo]="'body'" [visible]="EstimateSubGrpModal"
+  [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true"
+  [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+  [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <form name="EstimateSubgrForm" #EstimateSubgrForm="ngForm" novalidate>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label">Estimate Group Sub Name<sup class="text-danger">*</sup></label>
+          <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="EstimateSubGrpName"
+            placeholder="Estimate Group Sub Name" allow-pattern="([a-z ]|\.)" [ngClass]="{
+        clearance: EstimateSubGrpSubmitted && name?.errors?.required
+      }" required />
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <p-footer>
+    <button type="button" (click)="EstimateSubGrpModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+      (click)="CreateEstimateSubGrp(EstimateSubgrForm.form.valid)" id="load2" [disabled]="Spinner">
+      <p-progressSpinner *ngIf="Spinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+<p-dialog [header]="'Create Work Details'" [appendTo]="'body'" [visible]="workdetalisModal" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <form name="EstimateworkdetailsForm" #EstimateworkdetailsForm="ngForm" novalidate>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label">Work Details<sup class="text-danger">*</sup></label>
+          <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="workdetalisName"
+            placeholder="Work Details" allow-pattern="([a-z ]|\.)" [ngClass]="{
+        clearance: workdetalisSubmitted && name?.errors?.required
+      }" required />
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <p-footer>
+    <button type="button" (click)="workdetalisModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+      (click)="CreateEstimateworkdetails(EstimateworkdetailsForm.form.valid)" id="load2" [disabled]="Spinner">
+      <p-progressSpinner *ngIf="Spinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'Create Project'" [appendTo]="'body'" [visible]="projectModal" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <form name="ProjectSubmittedForm" #ProjectSubmittedForm="ngForm" novalidate>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label">Project Name<sup class="text-danger">*</sup></label>
+          <input type="text" class="form-control" name="Projectname" #Projectname="ngModel" [(ngModel)]="ProjectName"
+            placeholder="Project Name" allow-pattern="([a-z ]|\.)" [ngClass]="{
+        clearance: ProjectSubmitted && Projectname?.errors?.required
+      }" required />
+        </div>
+        <div class="col-sm-12">
+          <label class="control-label">Project Remarks<sup class="text-danger">*</sup></label>
+          <input type="text" class="form-control" name="Projectremark" #Projectremark="ngModel"
+            [(ngModel)]="ProjectRemark" placeholder="Project Remark" allow-pattern="([a-z ]|\.)" [ngClass]="{
+        clearance: ProjectSubmitted && Projectremark?.errors?.required
+      }" required />
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <p-footer>
+    <button type="button" (click)="projectModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+      (click)="CreateProject(ProjectSubmittedForm.form.valid)" id="load2" [disabled]="Spinnerproject">
+      <p-progressSpinner *ngIf="Spinnerproject" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinnerproject" class="glyphicon glyphicon-save"></span>&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'Create Site'" [appendTo]="'body'" [visible]="siteModal" [closeOnEscape]="true" [closable]="false"
+  [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;"
+  [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <form name="SiteSubmittedForm" #SiteSubmittedForm="ngForm" novalidate>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <label class="control-label">Site Name<sup class="text-danger">*</sup></label>
+          <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="siteCreate"
+            placeholder="Site Name" allow-pattern="([a-z ]|\.)" [ngClass]="{
+        clearance: siteSubmitted && name?.errors?.required
+      }" required />
+        </div>
+
+      </div>
+
+    </form>
+  </div>
+  <p-footer>
+    <button type="button" (click)="siteModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+    <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+      (click)="CreateSite(SiteSubmittedForm.form.valid)" id="load2" [disabled]="Spinnersite">
+      <p-progressSpinner *ngIf="Spinnersite" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinnersite" class="glyphicon glyphicon-save"></span>&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+<p-dialog header="Create Budget" [(visible)]="createBudgetmodel" [modal]="true" [responsive]="true"
+  [style]="{width: '350px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <form name="craeteBugetForm" #craeteBugetForm="ngForm" novalidate>
+    <div class="form-group">
+      <div class="col-sm-12" style="text-align: center;">
+        <label class="control-label">Assign To<sup class="text-danger">*</sup>
+        </label>
+        <select class="form-control" name="Budget" #Budget="ngModel" [(ngModel)]="createBudgetbox"
+          [ngClass]="{'clearance': createBudgetFormSubmitted && Budget?.errors?.required}" required>
+          <option [ngValue]="undefined">Select</option>
+          <option *ngFor="let option of assingList;" [ngValue]="option.User_ID">{{option.Name}}</option>
+        </select>
+      </div>
+    </div>
+  </form>
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" (click)="saveBudget(craeteBugetForm.form.valid)"
+      label="Create"></button>
+    <button type="button" pButton icon="pi pi-close" (click)="createBudgetmodel=false" label="Cancel"
+      class="ui-button-secondary"></button>
+  </p-footer>
+</p-dialog>
+<!-- view -->
+<p-dialog [header]="'Tender View'" [appendTo]="'body'" [visible]="viewModel" [closeOnEscape]="true" [closable]="false"
+  [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }" style="text-align: center;"
+  [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div>
+    <app-tender-view-details-comp *ngIf="ViewTenderID" [TenderId]='ViewTenderID'></app-tender-view-details-comp>
+  </div>
+  <p-footer>
+    <button type="button" pButton icon="pi pi-close" (click)="viewModel=false" label="Close"
+      class="ui-button-secondary"></button>
+  </p-footer>
+</p-dialog>

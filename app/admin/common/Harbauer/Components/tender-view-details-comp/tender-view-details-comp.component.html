@@ -1,236 +1,713 @@
-<p-tabView [activeIndex]="0">
-  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[0]" leftIcon="glyphicon glyphicon-time">
-    <form name="TenderForm" #TenderForm="ngForm" novalidate>
-      <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">Work Name<sup class="text-danger">*</sup></label>
-          <input class="form-control" name="RemarksCreate" #RemarksCreate="ngModel" [(ngModel)]="ObjTender.Work_Name"
-            placeholder="Work Name" disabled>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Work Details<sup class="text-danger">*</sup></label>
-          <input class="form-control" name="workdetails" #workdetails="ngModel" [(ngModel)]="ObjTender.Work_Details"
-            placeholder="Work Details" disabled>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
-          <input class="form-control" name="Authority" #Authority="ngModel" [(ngModel)]="ObjTender.Tender_Org_ID"
-            disabled>
-        </div>
+<div id="invoice">
+  <div class="invoice overflow-auto" *ngIf='ObjTender?.Tender_ID'>
+    <div class="contacts">
+      <div class="col invoice-to">
+        <h2 class="to">{{ObjTender['Work_Name']}}</h2>
+        <div class="mobile">Tender Type: <span class="text-bold">{{ObjTender['Tender_Type_ID']}}</span></div>
+        <div class="address">Tender Category:<span
+            class="text-bold">{{ObjTender['ObjTender.Tender_Category_ID']}}</span> </div>
       </div>
-      <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">Tender Calling Div</label>
-          <input class="form-control" name="TenderCalling" #TenderCalling="ngModel"
-            [(ngModel)]="ObjTender.Tender_Calling_Div_ID" disabled>
-
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Execution Div</label>
-          <input class="form-control" name="Tender_ExecutionCreate" #Tender_ExecutionCreate="ngModel"
-            [(ngModel)]="ObjTender.Tender_Execution_Div_ID" disabled>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Reference Number<sup class="text-danger">*</sup></label>
-          <input class="form-control" name="reffno" #reffno="ngModel" [(ngModel)]="ObjTender.Tender_Ref_No"
-            placeholder="Tender Reference Number" disabled>
-        </div>
+      <div class="col invoice-details">
+        <h5 class="invoice-id">Tender ID : {{ObjTender['Tender_ID']}}</h5>
+        <div class="classname">Tender Value: {{ObjTender['Tender_Value']}}</div>
       </div>
-      <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
-          <input class="form-control" name="TenderIDCreate" #TenderIDCreate="ngModel" [(ngModel)]="ObjTender.Tender_ID"
-            placeholder="Tender ID" disabled>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Type</label>
-          <input class="form-control" name="TenderTypeCreate" #TenderTypeCreate="ngModel"
-            [(ngModel)]="ObjTender.Tender_Type_ID" disabled>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Category</label>
-          <input class="form-control" name="CategoryTenderCreate" #CategoryTenderCreate="ngModel"
-            [(ngModel)]="ObjTender.Tender_Category_ID" disabled>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">State<sup class="text-danger">*</sup></label>
-          <input class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" disabled>
-
-        </div>
-        <div class="col-sm-8">
-          <label class="control-label">Work Location<sup class="text-danger">*</sup></label>
-          <p-chips name="wlocation" #wlocation="ngModel" placeholder="Area" [(ngModel)]="testchips"
-            [field]="'Work_Location'" (onAdd)='checkChip($event)' [disabled]="true">
-          </p-chips>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">Tender Value <sup class="text-danger">*</sup></label>
-          <input class="form-control" name="AmountTenderCreate" #AmountTenderCreate="ngModel" CompacctDigitonly="true"
-            [(ngModel)]="ObjTender.Tender_Value" placeholder="Tender Value" autocomplete="off" disabled>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Published Date & Time<sup class="text-danger">*</sup></label>
-          <div class="input-group date">
-            <div class="input-group-addon">
-              <i class="fa fa-calendar"></i>
-            </div>
-            <input class="form-control" [owlDateTimeTrigger]="pub" name="pub_Date_Submission"
-              [(ngModel)]="TenderPublishDate" [owlDateTime]="pub" disabled>
-            <owl-date-time [hour12Timer]='true' #pub></owl-date-time>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Submission Date & Time<sup class="text-danger">*</sup></label>
-          <div class="input-group date">
-            <div class="input-group-addon">
-              <i class="fa fa-calendar"></i>
-            </div>
-            <input class="form-control" [owlDateTimeTrigger]="end" name="END_Date_Submission"
-              [(ngModel)]="TenderEndDate" [owlDateTime]="end" disabled>
-            <owl-date-time [hour12Timer]='true' #end></owl-date-time>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">Bid Opening Date & Time<sup class="text-danger">*</sup></label>
-          <div class="input-group date">
-            <div class="input-group-addon">
-              <i class="fa fa-calendar"></i>
-            </div>
-            <input class="form-control" [owlDateTimeTrigger]="open" name="Date_Submission" [(ngModel)]="TenderOpenDate"
-              [owlDateTime]="open" disabled>
-            <owl-date-time [hour12Timer]='true' #open></owl-date-time>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">EMD Value <sup class="text-danger">*</sup></label>
-          <input class="form-control" name="EMD" #EMD="ngModel" CompacctDigitonly="true"
-            [(ngModel)]="ObjTender.EMD_Amount" placeholder="EMD Value" autocomplete="off" disabled>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Tender Fee <sup class="text-danger">*</sup></label>
-          <input class="form-control" name="Fee" #Fee="ngModel" CompacctDigitonly="true"
-            [(ngModel)]="ObjTender.T_Fee_Amount" placeholder="Tender Fee" autocomplete="off" disabled>
-        </div>
-      </div>
-      <div class="clearfix"></div>
-      <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">Information From<sup class="text-danger"></sup></label>
-          <input class="form-control" name="Tender_Publishing_Info_From" #Tender_Publishing_Info_From="ngModel"
-            [(ngModel)]="ObjTender.Enq_Source_ID" disabled>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Informed Date <sup class="text-danger">*</sup></label>
-          <div class="input-group date">
-            <div class="input-group-addon">
-              <i class="fa fa-calendar"></i>
-            </div>
-            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='InformedDate' [enabled]="false"></ejs-datepicker>
-            <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
-                  required /> -->
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Period Of Working (In Days)<sup class="text-danger">*</sup></label>
-          <input class="form-control" name="WorkCreate" #WorkCreate="ngModel" CompacctDigitonly="true"
-            [(ngModel)]="ObjTender.Period_Of_Working" placeholder="Period Of Working (In Days)" disabled>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-4">
-          <label class="control-label">Budget Required By <sup class="text-danger">*</sup></label>
-          <div class="input-group date">
-            <div class="input-group-addon">
-              <i class="fa fa-calendar"></i>
-            </div>
-            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='BudgetRequidBy' [enabled]="false"></ejs-datepicker>
-            <!-- <input type="date" name="budgetrequidby" #budgetrequidby="ngModel" [ngModel]="BudgetRequidBy | date: 'yyyy-MM-dd'" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && budgetrequidby.errors?.required}" required /> -->
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <label class="control-label">Assign To For Budget<sup class="text-danger">*</sup></label>
-          <input class="form-control" name="assignedforbudget" #assignedforbudget="ngModel"
-            [(ngModel)]="ObjTender.User_ID" disabled>
-
-        </div>
-      </div>
-    </form>
-  </p-tabPanel>
-  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[1]" leftIcon="glyphicon glyphicon-upload">
-    <div class="table-responsive no-padding">
-      <table class="table bidopen table-bordered">
-        <thead>
-          <tr style="background-color:#3c8dbc;color:white;">
-            <th class="text-center" style="vertical-align:middle">
-              Sl No.
-            </th>
-            <th class="text-center" style="vertical-align:middle">
-              Trip By
-            </th>
-            <th class="text-center" style="vertical-align:middle">
-              Vehicle No.
-            </th>
-            <th class="text-center" style="vertical-align:middle">
-              Number of Trips
-            </th>
-            <th class="text-center" style="vertical-align:middle">
-              Loose Qnty. per Trip
-            </th>
-            <th class="text-center" style="vertical-align:middle">
-              Item Unit
-            </th>
-
-            <th class="text-center" style="vertical-align:middle">
-              Total Loose Qnty.
-            </th>
-            <th class="text-center" style="vertical-align:middle">
-              Item Received From
-            </th>
-
-            <th class="text-center" style="vertical-align:middle">
-              Sub-Total Loose Qnty.(Cum.)
-            </th>
-            <th class="text-center" style="vertical-align:middle">
-              Delete
-            </th>
-          </tr>
-
-        </thead>
-        <tbody>
-          <tr *ngFor="
-                let d of BudgetDetails$ | async;
-                let odd = odd;
-                let index = index
-              " [class.even]="odd">
-            <td>{{ index + 1 }}</td>
-            <td>{{ d.Trip_By }}</td>
-            <td>{{ d.Vehicle_No ? d.Vehicle_No : '-'  }}</td>
-            <td>{{ d.No_Of_Trip ? d.No_Of_Trip : '-'  }}</td>
-            <td>{{ d.Loose_Qty_Per_Trip ? d.Loose_Qty_Per_Trip : '-'  }}</td>
-            <td>{{ d.Material_Unit ? d.Material_Unit : '-'  }}</td>
-            <td>{{ d.Total_Loose_Qty ? d.Total_Loose_Qty+' '+d.Material_Unit: '-'  }}</td>
-            <td>{{ d.Received_From ? d.Received_From : '-'  }}</td>
-          </tr>
-        </tbody>
-      </table>
     </div>
-  </p-tabPanel>
-  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[2]" leftIcon="glyphicon glyphicon-upload">
+    <p-tabView [activeIndex]="0">
+      <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[0]" leftIcon="fa fa-fw fa-sticky-note">
+        <form name="TenderForm" #TenderForm="ngForm" novalidate>
+          <div class="form-group">
+            <div class="col-sm-4">
+              <label class="control-label">Work Name<sup class="text-danger">*</sup></label>
+              <input class="form-control" name="RemarksCreate" #RemarksCreate="ngModel"
+                [(ngModel)]="ObjTender.Work_Name" placeholder="Work Name" disabled>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Work Details<sup class="text-danger">*</sup></label>
+              <input class="form-control" name="workdetails" #workdetails="ngModel" [(ngModel)]="ObjTender.Work_Details"
+                placeholder="Work Details" disabled>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Tender Authority<sup class="text-danger">*</sup></label>
+              <input class="form-control" name="Authority" #Authority="ngModel" [(ngModel)]="ObjTender.Tender_Org_ID"
+                disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-4">
+              <label class="control-label">Tender Calling Div</label>
+              <input class="form-control" name="TenderCalling" #TenderCalling="ngModel"
+                [(ngModel)]="ObjTender.Tender_Calling_Div_ID" disabled>
 
-  </p-tabPanel>
-  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[3]" leftIcon="glyphicon glyphicon-upload">
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Tender Execution Div</label>
+              <input class="form-control" name="Tender_ExecutionCreate" #Tender_ExecutionCreate="ngModel"
+                [(ngModel)]="ObjTender.Tender_Execution_Div_ID" disabled>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Tender Reference Number<sup class="text-danger">*</sup></label>
+              <input class="form-control" name="reffno" #reffno="ngModel" [(ngModel)]="ObjTender.Tender_Ref_No"
+                placeholder="Tender Reference Number" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-4">
+              <label class="control-label">Tender ID<sup class="text-danger">*</sup></label>
+              <input class="form-control" name="TenderIDCreate" #TenderIDCreate="ngModel"
+                [(ngModel)]="ObjTender.Tender_ID" placeholder="Tender ID" disabled>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Tender Type</label>
+              <input class="form-control" name="TenderTypeCreate" #TenderTypeCreate="ngModel"
+                [(ngModel)]="ObjTender.Tender_Type_ID" disabled>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Tender Category</label>
+              <input class="form-control" name="CategoryTenderCreate" #CategoryTenderCreate="ngModel"
+                [(ngModel)]="ObjTender.Tender_Category_ID" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-4">
+              <label class="control-label">State<sup class="text-danger">*</sup></label>
+              <input class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" disabled>
 
-  </p-tabPanel>
-  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[4]" leftIcon="glyphicon glyphicon-upload">
+            </div>
+            <div class="col-sm-8">
+              <label class="control-label">Work Location<sup class="text-danger">*</sup></label>
+              <p-chips name="wlocation" #wlocation="ngModel" placeholder="Area" [(ngModel)]="testchips"
+                [field]="'Work_Location'" (onAdd)='checkChip($event)' [disabled]="true">
+              </p-chips>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-4">
+              <label class="control-label">Tender Value <sup class="text-danger">*</sup></label>
+              <input class="form-control" name="AmountTenderCreate" #AmountTenderCreate="ngModel"
+                CompacctDigitonly="true" [(ngModel)]="ObjTender.Tender_Value" placeholder="Tender Value"
+                autocomplete="off" disabled>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Tender Published Date & Time<sup class="text-danger">*</sup></label>
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>
+                <input class="form-control" [owlDateTimeTrigger]="pub" name="pub_Date_Submission"
+                  [(ngModel)]="TenderPublishDate" [owlDateTime]="pub" disabled>
+                <owl-date-time [hour12Timer]='true' #pub></owl-date-time>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Tender Submission Date & Time<sup class="text-danger">*</sup></label>
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>
+                <input class="form-control" [owlDateTimeTrigger]="end" name="END_Date_Submission"
+                  [(ngModel)]="TenderEndDate" [owlDateTime]="end" disabled>
+                <owl-date-time [hour12Timer]='true' #end></owl-date-time>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-4">
+              <label class="control-label">Bid Opening Date & Time<sup class="text-danger">*</sup></label>
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>
+                <input class="form-control" [owlDateTimeTrigger]="open" name="Date_Submission"
+                  [(ngModel)]="TenderOpenDate" [owlDateTime]="open" disabled>
+                <owl-date-time [hour12Timer]='true' #open></owl-date-time>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">EMD Value <sup class="text-danger">*</sup></label>
+              <input class="form-control" name="EMD" #EMD="ngModel" CompacctDigitonly="true"
+                [(ngModel)]="ObjTender.EMD_Amount" placeholder="EMD Value" autocomplete="off" disabled>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Tender Fee <sup class="text-danger">*</sup></label>
+              <input class="form-control" name="Fee" #Fee="ngModel" CompacctDigitonly="true"
+                [(ngModel)]="ObjTender.T_Fee_Amount" placeholder="Tender Fee" autocomplete="off" disabled>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+          <div class="form-group">
+            <div class="col-sm-4">
+              <label class="control-label">Information From<sup class="text-danger"></sup></label>
+              <input class="form-control" name="Tender_Publishing_Info_From" #Tender_Publishing_Info_From="ngModel"
+                [(ngModel)]="ObjTender.Enq_Source_ID" disabled>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Informed Date <sup class="text-danger">*</sup></label>
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>
+                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='InformedDate' [enabled]="false"></ejs-datepicker>
+                <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
+                  required /> -->
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Period Of Working (In Days)<sup class="text-danger">*</sup></label>
+              <input class="form-control" name="WorkCreate" #WorkCreate="ngModel" CompacctDigitonly="true"
+                [(ngModel)]="ObjTender.Period_Of_Working" placeholder="Period Of Working (In Days)" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-4">
+              <label class="control-label">Budget Required By <sup class="text-danger">*</sup></label>
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>
+                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='BudgetRequidBy' [enabled]="false"></ejs-datepicker>
+                <!-- <input type="date" name="budgetrequidby" #budgetrequidby="ngModel" [ngModel]="BudgetRequidBy | date: 'yyyy-MM-dd'" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && budgetrequidby.errors?.required}" required /> -->
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Assign To For Budget<sup class="text-danger">*</sup></label>
+              <input class="form-control" name="assignedforbudget" #assignedforbudget="ngModel"
+                [(ngModel)]="ObjTender.User_ID" disabled>
 
-  </p-tabPanel>
-  <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[5]" leftIcon="glyphicon glyphicon-upload">
+            </div>
+          </div>
+        </form>
+      </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[1]" leftIcon="fa fa-fw fa-money">
+        <div class="table-responsive no-padding" style="margin-top: 15px;">
 
-  </p-tabPanel>
-</p-tabView>
+          <p-table [value]="ShowAddedEstimateProductList" sortField="Budget_Group_Name" sortMode="single"
+            [rowHover]="true" [autoLayout]="true" (onSort)="onSort()">
+            <ng-template pTemplate="header">
+              <tr>
+                <th *ngFor="let col of cols">
+                  {{col.header}}
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+              <tr>
+                <td>{{rowData.SL_No}}</td>
+                <td *ngIf="rowGroupMetadata[rowData.Budget_Group_Name].index === rowIndex"
+                  [attr.rowspan]="rowGroupMetadata[rowData.Budget_Group_Name].size">
+                  {{rowData.Budget_Group_Name}}
+                </td>
+                <td>{{rowData.Budget_Sub_Group_Name}}</td>
+                <td>{{rowData.Work_Details}}</td>
+                <td>{{rowData.Product_Description}}</td>
+                <td>{{rowData.unit}}</td>
+                <td>{{rowData.Qty}}</td>
+                <td>{{rowData.Nos}}</td>
+                <td>{{rowData.TQty}}</td>
+                <td>{{rowData.UOM}}</td>
+                <td>{{rowData.saleRate}}</td>
+                <td>{{rowData.Sale_Amount}}</td>
+                <td>{{rowData.Rate}}</td>
+                <td>{{rowData.Amount}}</td>
+              </tr>
+              <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+              </tr>
+              <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                <td colspan="15" class="text-bold text-right"> No of Site :
+                  {{ShowAddedEstimateProductList.length ? ShowAddedEstimateProductList[0].No_of_Site : '-'}}</td>
+              </tr>
+              <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                <td colspan="15" class="text-bold text-right"> Total Purchase Amount :
+                  {{getTotalPurchaseAmt()}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[2]" leftIcon="fa fa-fw fa-fax">
+        <div class="form-horizontal" style="margin-top: 15px;">
+          <form name="EmdForm" #EmdForm="ngForm" novalidate>
+            <div class="form-group" style="padding: 1em;">
+              <h5 style="
+            padding: 0.5em 1em;
+            background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            margin-top: 5px;
+            ">
+                <i class="fa fa-fw fa-fax">
+                </i> &nbsp;<strong>EMD Detalis :</strong>
+              </h5>
+              <div class="col-sm-4">
+                <label class="control-label">Mode<sup class="text-danger">*</sup></label>
+                <select class="form-control" name="EMDmode" #EMDmode="ngModel" [(ngModel)]="ObjEMD.Mode" disabled>
+                  <option [ngValue]="undefined">Select</option>
+                  <option *ngFor="let option of PaymentList" [ngValue]="option.Tender_Payment_Mode">
+                    {{option.Tender_Payment_Mode}}
+                  </option>
+
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Acc voucher <sup class="text-danger">*</sup></label>
+                <input class="form-control" name="EMD_Acc_voucher" #EMD_Acc_voucher="ngModel"
+                  [(ngModel)]="ObjEMD.Voucher_No" placeholder="Acc voucher" disabled>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">EMD Reference No <sup class="text-danger">*</sup></label>
+                <input class="form-control" name="EMD_Reference_No" #EMD_Reference_No="ngModel"
+                  [(ngModel)]="ObjEMD.Reference_No" placeholder="EMD Reference No" disabled>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="date" name="EMDDateIssue" #EMDDateIssue="ngModel"
+                    [ngModel]="EMDIssueDate | date: 'yyyy-MM-dd'" (ngModelChange)="EMDIssueDate = $event"
+                    class="form-control" disabled>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Date of Expiry <sup class="text-danger">*</sup></label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="date" name="EMDDateExpiry" #EMDDateExpiry="ngModel"
+                    [ngModel]="EMDIssueExpiry | date: 'yyyy-MM-dd'" (ngModelChange)="EMDIssueExpiry = $event"
+                    class="form-control" disabled>
+                </div>
+              </div>
+            </div>
+
+          </form>
+          <form name="TenderFeesForm" #TenderFeesForm="ngForm" novalidate>
+            <div class="form-group" style="padding: 1em;">
+              <h5 style="
+            padding: 0.5em 1em;
+            background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            margin-top: 15px;
+            ">
+                <i class="fa fa-fw fa-fax">
+                </i> &nbsp;<strong>Tender Fees :</strong>
+              </h5>
+              <div class="col-sm-4">
+                <label class="control-label">Mode<sup class="text-danger">*</sup></label>
+                <select class="form-control" name="Tendermode" #Tendermode="ngModel" [(ngModel)]="ObjTenderFees.Mode"
+                  disabled>
+                  <option [ngValue]="undefined">Select</option>
+                  <option *ngFor="let option of PaymentList" [ngValue]="option.Tender_Payment_Mode">
+                    {{option.Tender_Payment_Mode}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Acc voucher <sup class="text-danger">*</sup></label>
+                <input class="form-control" name="Tender_Acc_voucher" #Tender_Acc_voucher="ngModel"
+                  [(ngModel)]="ObjTenderFees.Voucher_No" placeholder="Acc voucher" disabled>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Tender Fees Reference No <sup class="text-danger">*</sup></label>
+                <input class="form-control" name="Tender_Reference_No" #Tender_Reference_No="ngModel"
+                  [(ngModel)]="ObjTenderFees.Reference_No" placeholder="Tender Fees Reference No" disabled>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Date of Issue <sup class="text-danger">*</sup></label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="date" name="TenderFeesIssue" #TenderFeesIssue="ngModel"
+                    [ngModel]="TenderFeesIssueDate | date: 'yyyy-MM-dd'" (ngModelChange)="TenderFeesIssueDate = $event"
+                    class="form-control" disabled>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Date of Expiry <sup class="text-danger">*</sup></label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="date" name="TenderFeesExpiry" #TenderFeesExpiry="ngModel"
+                    [ngModel]="TenderFeesIssueExpiry | date: 'yyyy-MM-dd'"
+                    (ngModelChange)="TenderFeesIssueExpiry = $event" class="form-control" disabled>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="clearfix"></div>
+          <div class="form-group" style="padding: 1em;">
+            <h5 style="
+      padding: 0.5em 1em;
+      background: #c1c1c185;
+      border-top: 5px solid #3c8dbc;
+      border-bottom: 1px solid #c6c6c6;
+      margin-top: 15px;
+      ">
+              <i class="fa fa-fw fa-fax">
+              </i> &nbsp;<strong>Performance Security :</strong>
+            </h5>
+            <div class="table-responsive no-padding table-id">
+              <p-table [value]="AllPSdata" [autoLayout]="true" sortMode="multiple" [rowHover]="true">
+
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <th>Mode</th>
+                    <th>Amount</th>
+                    <th>Tender Rees Reference No</th>
+                    <th>Date of Issue </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-col>
+                  <tr>
+                    <td>{{col.Mode}}</td>
+                    <td>{{col.Amount}}</td>
+                    <td>{{col.Reference_No}}</td>
+                    <td>{{col.Date_Of_Issue | date: 'dd-MMM-yy hh:mm:a'}}</td>
+                  </tr>
+                </ng-template>
+
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[3]" leftIcon="fa fa-fw fa-exchange">
+        <form name="FollowupModalUpdate" #FollowupModalUpdate="ngForm" novalidate>
+          <div class="row">
+              <div class="col-md-12">
+                  <div class="col-md-4">
+                      <div class="form-horizontal">
+                          <div class="box-body ">
+                              <div class="timelinescroll style-3">
+                                  <ul class="timeline ">
+                                      <li class="time-label" style="margin-bottom: -20px" *ngFor="let objMain of distinctDateArray">
+                                          <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
+                                          <ul class="timeline" style="margin: 7px 0 30px 0">
+                                              <li *ngFor="let objSub of getFollowupByDate(objMain)">
+                                                  <i class="fa fa-user bg-blue"></i>
+                                                  <div class="timeline-item">
+                                                      <!-- <span class="time" *ngIf="false"><i class="fa fa-clock-o"></i> 12:05</span> -->
+                                                      <h3 class="timeline-header"><a href="#">{{objSub.CreatedBy}}</a>
+                                                          <!-- <font size="2"> <strong>{{objSub.Current_Action}}</strong></font> -->
+                                                      </h3>
+                                                      <div class="timeline-body">
+                                                          {{objSub.Last_Remarks}}
+                                                      </div>
+                                                      <div class="timeline-footer" style="padding-bottom: 10px">
+                                                          <a class="btn btn-primary btn-social  btn-xs" *ngIf="objSub.Send_To_Name">
+                                                              <i class="fa fa-user"></i>&nbsp;Assign To : {{objSub.Send_To_Name}}
+                                                          </a>
+                                                          <div class="btn btn-reddit btn-social  btn-xs" style="white-space: pre-line;width: 82%;">
+                                                              <i class="fa fa-comments"></i> Remarks : <span style="font-weight: 600;">{{objSub.Remarks}}</span>
+                                                              <hr style="margin:1px"> Posted By :<b>&nbsp;{{objSub.posted_By_Name}}</b>
+                                                              <hr style="margin:1px"> Posted Date & Time :<b>&nbsp;{{objSub.Posted_On | date:"dd/MMM/yyyy h:mma"}}</b>
+  
+                                                          </div>
+                                                          <a class="btn btn-danger btn-social  btn-xs">
+                                                              Status :
+                                                              <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Status}}
+                                                          </a>
+                                                          <br>
+                                                      </div>
+                                                  </div>
+                                              </li>
+                                          </ul>
+                                      </li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-md-8">
+                      <div class="form-horizontal">
+                          <div class="box-body">
+                            <div class="table-responsive no-padding table-id" style="margin-top: 15px;">
+                              <p-table [value]="TenderLogList" [autoLayout]="true" sortMode="multiple" [rowHover]="true">
+                                <ng-template pTemplate="header" >
+                                  <tr>
+                                    <th>Posted On</th>
+                                    <th>Posted By</th>
+                                    <th>Send To</th>
+                                    <th>Status</th>
+                                    <th>Remarks</th>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                  <tr>
+                                    <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
+                                    <td>{{col.Posted_By}}</td>
+                                    <td>{{col.Send_To_Name}}</td>
+                                    <td>{{col.Status}}</td>
+                                    <td>{{col.Remarks}}</td>
+                                  </tr>
+                                </ng-template>
+                    
+                              </p-table>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </form>
+      </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[4]" leftIcon="fa fa-fw fa-bullhorn">
+        <div class="table-responsive no-padding table-id" style="margin-top: 15px;">
+          <p-table [value]="BidderList" [autoLayout]="true" sortMode="multiple" [rowHover]="true">
+            <ng-template pTemplate="header" let-columns let-rowData let-index="rowIndex">
+              <tr>
+                <th>Bidder Name</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+              <tr>
+                <td>{{col.Bidder_Name}}</td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[5]" leftIcon="fa fa-fw fa-cubes">
+
+        <div class="form-horizontal" style="margin-top: 15px;">
+          <div style="background-color: #9e9e9e61;margin: 1em 0;border-radius: 5px;">
+            <div class="table-responsive no-padding">
+              <table class="table bidopen table-bordered">
+                <thead>
+                  <tr style="background-color:#3c8dbc;color:white;">
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Sl. No.
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Bidder Name
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Tender Value
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Quoted Rate
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Quoted Percentage
+                    </th>
+                    <th colspan="2" scope="colgroup" class="text-center">
+                      Quoted Rate In Figures and Words
+                    </th>
+                  </tr>
+                  <tr style="background-color:#3c8dbc;color:white">
+                    <th scope="col" class="text-center">Rate</th>
+                    <th scope="col" class="text-center">Amount.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="
+                    let d of BidOpenListView;
+                    let odd = odd;
+                    let index = index
+                  " [class.even]="odd">
+                    <td>{{ d.Sl_No }}</td>
+                    <td>{{ d.Bidder_Name }}</td>
+                    <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }}</td>
+                    <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                    <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
+                    <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                    <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-responsive no-padding" *ngIf="BidOpenListViewByRateFlag">
+              <table class="table bidopen table-bordered">
+                <thead>
+                  <tr style="background-color:#3c8dbc;color:white;">
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Rank
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Bidder Name
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Tender Value
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Quoted Rate
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Quoted Percentage
+                    </th>
+                    <th colspan="2" scope="colgroup" class="text-center">
+                      Quoted Rate In Figures and Words
+                    </th>
+
+                  </tr>
+                  <tr style="background-color:#3c8dbc;color:white">
+                    <th scope="col" class="text-center">Rate</th>
+                    <th scope="col" class="text-center">Amount.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="
+                    let d of BidOpenListViewByRate;
+                    let odd = odd;
+                    let index = index
+                  " [class.even]="odd">
+                    <td>{{ d.Rank }}</td>
+                    <td>{{ d.Bidder_Name }}</td>
+                    <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
+                    <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                    <td>{{ d.Quoted_Percentage ? d.Quoted_Percentage +' %' : "-" }}</td>
+                    <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                    <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-responsive no-padding" *ngIf="BidOpenListViewByLotteryFlag">
+              <table class="table bidopen table-bordered">
+                <thead>
+                  <tr style="background-color:#3c8dbc;color:white;">
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Rank
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Bidder Name
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Tender Value
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Quoted Rate
+                    </th>
+                    <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">
+                      Quoted Percentage
+                    </th>
+
+                    <th colspan="2" scope="colgroup" class="text-center">
+                      Quoted Rate In Figures and Words
+                    </th>
+                  </tr>
+                  <tr style="background-color:#3c8dbc;color:white">
+                    <th scope="col" class="text-center">Rate</th>
+                    <th scope="col" class="text-center">Amount.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="
+                    let d of BidOpenListViewByLottery;
+                    let odd = odd;
+                    let index = index;
+                    trackBy:trackByfn
+                  " [class.even]="odd">
+                    <td>{{d.Rank}}
+                    </td>
+                    <td>
+                      <select class="form-control" name="Bidder_Name-{{index}}" #Bidder_Name="ngModel"
+                        [(ngModel)]="d['Bidder_Name']" (change)="LotteryBidderNameChange(index,d)"
+                        *ngIf="d['Lottery_Flag'] === 'DUPLICATE'" disabled
+                        [ngClass]="{'clearance': (BidOpeningListFormSubmitted && Bidder_Name.errors?.required) || (checkBidderSelectLottery(d['Bidder_Name']))}"
+                        required>
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of d.Temp_Bidder_Array;trackBy:trackByfn"
+                          [ngValue]="option.Bidder_Name">
+                          {{option.Bidder_Name}}
+                        </option>
+                      </select>
+                      <span *ngIf="d['Lottery_Flag'] === 'FIXED'">{{d.Bidder_Name}}</span>
+                    </td>
+                    <td>{{ d.Tender_Value ? BidAmountView(d.Tender_Value) : 0 }} </td>
+                    <td>{{ d.Quoted_Rate ? d.Quoted_Rate: "-" }}</td>
+                    <td> {{d.Quoted_Percentage ? d.Quoted_Percentage  +' %':'-' }} </td>
+                    <td>{{ d.Rate ? BidAmountView(d.Rate) : "-" }}</td>
+                    <td>{{ d.Rate_In_Words ? d.Rate_In_Words : "-" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <hr class="box boxboxDivide-primary">
+          <div class="row">
+            <div class="col-sm-4">
+              <label class="control-label">Status<sup class="text-danger">*</sup></label>
+              <select class="form-control" name="Bid_Status" #Bid_Status="ngModel"
+                [(ngModel)]="ObjBidOpening.Financial_Bid_Status"
+                (change)="StatusChange(ObjBidOpening.Financial_Bid_Status)" disabled>
+                <option [ngValue]="undefined">Select</option>
+                <option value="AWARDING THE TENDER"> AWARDING THE TENDER</option>
+                <option value="NOT- AWARDING THE TENDER"> NOT- AWARDING THE TENDER</option>
+              </select>
+            </div>
+            <div class="col-sm-4" *ngIf="ObjBidOpening.Financial_Bid_Status === 'NOT- AWARDING THE TENDER'">
+              <label class="control-label">Reason<sup class="text-danger">*</sup></label>
+              <div>{{ReasonSelect}}</div>
+
+            </div>
+          </div>
+          <div class="form-group"
+            *ngIf="ObjBidOpening.Financial_Bid_Status ==='AWARDING THE TENDER' && getHarbaurValRankTop()">
+            <form name="AgreementForm" #AgreementForm="ngForm" novalidate>
+              <h5 style="
+          padding: 0.5em 1em;
+          background: #c1c1c185;
+          border-top: 5px solid #3c8dbc;
+          border-bottom: 1px solid #c6c6c6;
+          margin-top: 15px;
+          ">
+                <i class="fa fa-fw fa-fax">
+                </i> &nbsp;<strong>Agreement Details :</strong>
+              </h5>
+              <div class="col-sm-4">
+                <label class="control-label">Agreement Number<sup class="text-danger">*</sup></label>
+
+                <input class="form-control" name="Agreement" #Agreement="ngModel"
+                  [(ngModel)]="ObjAgreement.Agreement_Number" CompacctDigitonly="true" placeholder="Agreement Number"
+                  disabled>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Agreement Value<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="AgreementValue" #AgreementValue="ngModel"
+                  [(ngModel)]="ObjAgreement.Agreement_Value" CompacctDigitonly="true" placeholder="Agreement value"
+                  disabled>
+
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Date of Commencement<sup class="text-danger">*</sup></label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="date" name="Commencement" #Commencement="ngModel"
+                    [ngModel]="CommencementDate | date: 'yyyy-MM-dd'" disabled class="form-control" />
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Date of Completion<sup class="text-danger">*</sup></label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="date" name="Completion" #Completion="ngModel"
+                    [ngModel]="CompletionDate | date: 'yyyy-MM-dd'" [min]="CompletionDate | date: 'yyyy-MM-dd'"
+                    class="form-control" disabled />
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <label class="control-label">Tender Negotiated Value<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="Tender_Negotiated_Value" #Tender_Negotiated_Value="ngModel"
+                  [(ngModel)]="ObjAgreement.Tender_Negotiated_Value" placeholder="Tender Negotiated Value" disabled>
+
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

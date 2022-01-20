@@ -257,6 +257,8 @@ import { EnggCrmInstalledMachineServiceContractComponent } from './common/Materi
 import { TenderBudgetAprovalComponent } from './common/TenderManagement/tender-budget-aproval/tender-budget-aproval.component';
 import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/support-ticket-nepal/support-ticket-nepal.component';
 import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/tender-view-details-comp/tender-view-details-comp.component';
+import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
+import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
 
 
 
@@ -444,6 +446,8 @@ import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/ten
     TenderBudgetAprovalComponent,
     SupportTicketNepalComponent,
     TenderViewDetailsCompComponent,
+    TenderSingleSchBudgetComponent,
+    TenderMultipleSchBudgetComponent,
   ],
   imports: [
     CommonModule,
