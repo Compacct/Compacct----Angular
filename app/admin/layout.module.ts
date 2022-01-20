@@ -260,6 +260,7 @@ import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-mas
 import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/tender-view-details-comp/tender-view-details-comp.component';
 import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
 import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
+import { DateNepalConvertService } from "./shared/compacct.global/dateNepal.service";
 
 
 

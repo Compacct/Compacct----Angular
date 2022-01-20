@@ -186,7 +186,7 @@ updateRowGroupMetaData() {
       "Json_Param_String": JSON.stringify(tempObj)
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      const a3 = data.map(t1 => ({...t1, ...this.budGetreqList.find(t2 => t2.Tender_Doc_ID === t1.Tender_Doc_ID)}))
+      this.budGetreqList = data.map(t1 => ({...t1, ...this.budGetreqList.find(t2 => t2.Tender_Doc_ID === t1.Tender_Doc_ID)}))
    
      console.log("REQ",this.budGetreqList);
      this.ngxService.stop();

@@ -133,11 +133,11 @@
                     <input class="form-control" name="Budget_Short_Description" #Budget_Short_Description="ngModel"
                       [(ngModel)]="ObjEstimate.Budget_Short_Description"
                       [ngClass]="{'clearance': EstimateInfoSubmitted && Budget_Short_Description?.errors?.required}"
-                      placeholder="Project Name" [required]="true" [disabled]="editData.length" />
+                      placeholder="Project Name" [required]="true" (change)='getSiteList()' />
                   </div>
                   <div class="col-sm-6">
                     <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
-                    <span (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i
+                    <span *ngIf='ObjEstimate.Budget_Short_Description' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i
                         class="fa fa-fw  fa-plus"></i> Create</span>
                     <p-dropdown [options]="siteList" name="siteName" [(ngModel)]="ObjEstimate.site_ID"
                       [showClear]="true" [emptyFilterMessage]="' No Site Found'"

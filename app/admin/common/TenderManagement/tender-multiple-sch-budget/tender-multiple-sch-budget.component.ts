@@ -131,6 +131,7 @@ PDFFlag = false;
       if(val.TenderID) {
         this.fromQuery = true;
         const obj = {
+          'Tender_ID' : window.atob(val['TenderIDView']),
           'Tender_Doc_ID' : window.atob(val['TenderID']),
           'Tender_Create_User_ID' : window.atob(val['Tender_CreUserID']),
           'Work_Name' : window.atob(val['Work_Name']),
@@ -485,11 +486,11 @@ ngOnInit() {
   }
   getSiteList() {
     this.siteList = [];
-    if (this.TenderDocID) {
+    if (this.TenderDocID && this.ObjEstimate.Budget_Short_Description) {
       const obj = {
         "SP_String": "SP_Tender_Management_All",
         "Report_Name_String": "Get Site",
-        "Json_Param_String": JSON.stringify([{ 'Tender_Doc_ID': this.TenderDocID }])
+        "Json_Param_String": JSON.stringify([{ 'Tender_Doc_ID': this.TenderDocID , 'Budget_Short_Description' :  this.ObjEstimate.Budget_Short_Description}])
       }
       this.GlobalAPI
         .getData(obj)
@@ -722,11 +723,12 @@ ngOnInit() {
   }
   CreateSite(valid) {
     this.siteSubmitted = true;
-    if (valid) {
+    if (valid && this.ObjEstimate.Budget_Short_Description) {
       this.Spinnersite = true;
       const temp = {
         Tender_Doc_ID: this.TenderDocID,
-        Site_Description: this.siteCreate
+        Site_Description: this.siteCreate,
+        Budget_Short_Description : this.ObjEstimate.Budget_Short_Description
       }
       console.log("Site Save Data",temp);
       const obj = {
