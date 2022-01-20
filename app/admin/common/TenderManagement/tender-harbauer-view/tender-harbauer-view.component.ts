@@ -164,6 +164,10 @@ export class TenderHarbauerViewComponent implements OnInit {
 
   AgreementList =[];
   TenderWorkName = undefined;
+
+  
+  ViewTenderID = undefined;
+  TenderviewModel = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -190,6 +194,7 @@ export class TenderHarbauerViewComponent implements OnInit {
     this.GetReasonList();
     this.privGovt = ["Private","GOVT"]
     this.cols = [
+      { field: 'Tender_ID', header: 'Tender ID' },
       { field: 'Work_Name', header: 'Name of Work' },
       { field: 'Tender_Authority', header: 'Tender Authority' },
       { field: 'Tender_Value', header: 'Tender Value' },
@@ -298,6 +303,19 @@ export class TenderHarbauerViewComponent implements OnInit {
       })
 
    }
+  }
+
+  
+  viewTender(col:any){
+    this.ViewTenderID = undefined;
+    if(col.Tender_Doc_ID){
+      this.ngxService.start();
+     this.ViewTenderID = col.Tender_Doc_ID; 
+     setTimeout(()=>{
+      this.TenderviewModel = true;
+      this.ngxService.stop();
+    },1200)
+    }
   }
   // Update Submission Date
   updateSubmission(obj){
