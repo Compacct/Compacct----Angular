@@ -190,6 +190,10 @@
                                                               </ul>
                                                           </div>
                                                   </td>
+                                                  
+                                                  <td class="text-center"><b>{{col.Tender_ID}}</b>
+                                                    &nbsp;<a title="Tender Details" class="border-left btn btn-info btn-xs" (click)='viewTender(col)'><i class="fa fa-fw fa-info"></i></a>
+                                                  </td>
                                                   <td>{{col.Work_Name}}</td>
                                                   <td>{{col.Tender_Authority}}</td>
                                                   <td>{{col.Tender_Value}}</td>
@@ -2135,4 +2139,26 @@ id="load2"
 >&nbsp;{{ buttonname }}
 </button>
 </p-footer>
+</p-dialog>
+
+<!-- view -->
+<p-dialog 
+ [header]="'Tender View'"
+ [appendTo]="'body'"
+ [visible]="TenderviewModel"
+ [closeOnEscape]="true"
+ [closable]="false"
+ [modal]="true"
+ [responsive]="true"
+ [style]="{ width: '80%', minWidth: '200px' }"
+ style="text-align: center;"
+ [minY]="70"
+ [maximizable]="true"
+ [baseZIndex]="10000">
+ <div>
+     <app-tender-view-details-comp  *ngIf="ViewTenderID" [TenderId]='ViewTenderID'></app-tender-view-details-comp>
+ </div>
+  <p-footer>
+   <button type="button" pButton icon="pi pi-close" (click)="TenderviewModel=false" label="Close" class="ui-button-secondary"></button>
+   </p-footer>
 </p-dialog>

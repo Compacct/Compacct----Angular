@@ -12,6 +12,7 @@ import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
 import { kill } from 'process';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-tender-harbauer-actual-view',
@@ -57,7 +58,8 @@ export class TenderHarbauerActualViewComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
-    private GetDistinctItems :CompacctGetDistinctService,) { }
+    private GetDistinctItems :CompacctGetDistinctService,
+    private ngxService: NgxUiLoaderService) { }
 
   ngOnInit() {
     this.Header.pushHeader({
@@ -176,20 +178,24 @@ export class TenderHarbauerActualViewComponent implements OnInit {
    async view(col:any){
      console.log("View Obj",col);
      if(col.Tender_Doc_ID){
-      this.viewModel = true;
+      this.ngxService.start();
       this.editTenderId = col.Tender_Doc_ID; 
       this.testchips = [];
       this.ObjTender = new Tender();
-     await this.GetTenderOrg();
-     await this.GetTenderCallingDiv();
-     await this.GetTenderExecutionDiv();
-     await this.GetType();
-     await this.GetTenderCategoryList();
-     await this.GetStateList();
-     await this.getAssignforbudget();
-     await this.GetTenderInfoEnqSRC();
-     await this.GetAllEditData(col.Tender_Doc_ID);
-     await this.getThenderWorkLocation(col.Tender_Doc_ID);
+      setTimeout(()=>{
+        this.viewModel = true;
+        this.ngxService.stop();
+      },1200)
+    //  await this.GetTenderOrg();
+    //  await this.GetTenderCallingDiv();
+    //  await this.GetTenderExecutionDiv();
+    //  await this.GetType();
+    //  await this.GetTenderCategoryList();
+    //  await this.GetStateList();
+    //  await this.getAssignforbudget();
+    //  await this.GetTenderInfoEnqSRC();
+    //  await this.GetAllEditData(col.Tender_Doc_ID);
+    //  await this.getThenderWorkLocation(col.Tender_Doc_ID);
      
     }
    }

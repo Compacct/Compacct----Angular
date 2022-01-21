@@ -50,6 +50,8 @@ export class TenderBudgetAprovalComponent implements OnInit {
     { field: 'Rate', header: 'Purchase Rate' },
     { field: 'Amount', header: 'Purchase Amount' }
 ];
+ViewTenderID = undefined;
+viewModel = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -179,6 +181,18 @@ export class TenderBudgetAprovalComponent implements OnInit {
     }
   }
 
+  
+  viewTender(col:any){
+    this.ViewTenderID = undefined;
+    if(col.Tender_Doc_ID){
+      this.ngxService.start();
+     this.ViewTenderID = col.Tender_Doc_ID; 
+     setTimeout(()=>{
+      this.viewModel = true;
+      this.ngxService.stop();
+    },1200)
+    }
+  }
 //
   ApproveDisApproveModal(obj) {
     this.TenderDocID = undefined;

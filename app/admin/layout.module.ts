@@ -94,7 +94,6 @@ import { CompacctCommonApi } from "./shared/compacct.services/common.api.service
 import { CompacctHeader } from "./shared/compacct.services/common.header.service";
 import { CompacctGetDistinctService } from "./shared/compacct.services/compacct-get-distinct.service";
 import { DateTimeConvertService } from "./shared/compacct.global/dateTime.service";
-import { DateNepalConvertService } from "./shared/compacct.global/dateNepal.service";
 import { CompacctGlobalUrlService } from "./shared/compacct.global/global.service.service";
 import { MasterProductComponent } from "./common/MaterialManagement/Master/master.product/master.product.component";
 import { SafeHtmlPipe } from "./shared/compacct.pipes/compacct.safeHtml/safe-html.pipe";
@@ -259,6 +258,8 @@ import { SupportTicketNepalComponent } from './common/MaterialManagement/Master/
 import { StockTransferToStoreComponent } from './common/MaterialManagement/Outward/stock-transfer-to-store/stock-transfer-to-store.component';
 import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-master-product-electrical/harb-master-product-electrical.component';
 import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/tender-view-details-comp/tender-view-details-comp.component';
+import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
+import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
 
 
 
@@ -448,6 +449,8 @@ import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/ten
     StockTransferToStoreComponent,
     HarbMasterProductElectricalComponent,
     TenderViewDetailsCompComponent,
+    TenderSingleSchBudgetComponent,
+    TenderMultipleSchBudgetComponent,
   ],
   imports: [
     CommonModule,

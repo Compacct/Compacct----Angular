@@ -59,7 +59,9 @@
                           </ul>
                         </div>
                       </td>
-                      <td>{{col.Tender_ID}}</td>
+                      <td class="text-center"><b>{{col.Tender_ID}}</b>
+                        &nbsp;<a title="Tender Details" class="border-left btn btn-info btn-xs" (click)='viewTender(col)'><i class="fa fa-fw fa-info"></i></a>
+                      </td>
                       <td>{{col.Tender_Authority}}</td>
                       <td>{{col.Tender_Value}}</td>
                       <td>{{col.Tender_Last_Sub_Date | date: 'dd-MMM-yy hh:mm:a'}}</td>
@@ -104,7 +106,9 @@
                   </ng-template>
                   <ng-template pTemplate="body" let-col>
                     <tr>
-                      <td>{{col.Tender_ID}}</td>
+                      <td class="text-center"><b>{{col.Tender_ID}}</b>
+                        &nbsp;<a title="Tender Details" class="border-left btn btn-info btn-xs" (click)='viewTender(col)'><i class="fa fa-fw fa-info"></i></a>
+                      </td>
                       <td>{{col.Tender_Authority}}</td>
                       <td>{{col.Tender_Value}}</td>
                       <td>{{col.Tender_Last_Sub_Date | date: 'dd-MMM-yy hh:mm:a'}}</td>
@@ -149,7 +153,9 @@
                   </ng-template>
                   <ng-template pTemplate="body" let-col>
                     <tr>
-                      <td>{{col.Tender_ID}}</td>
+                      <td class="text-center"><b>{{col.Tender_ID}}</b>
+                        &nbsp;<a title="Tender Details" class="border-left btn btn-info btn-xs" (click)='viewTender(col)'><i class="fa fa-fw fa-info"></i></a>
+                      </td>
                       <td>{{col.Tender_Authority}}</td>
                       <td>{{col.Tender_Value}}</td>
                       <td>{{col.Tender_Last_Sub_Date | date: 'dd-MMM-yy hh:mm:a'}}</td>
@@ -173,7 +179,7 @@
     </div>
   </div>
 </div>
-<p-dialog [header]="'Create Work Details'" [appendTo]="'body'" [visible]="ApproveDisApproveModalFlag" [closeOnEscape]="true"
+<p-dialog [header]="'Approve / Disapprove Budget'" [appendTo]="'body'" [visible]="ApproveDisApproveModalFlag" [closeOnEscape]="true"
   [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '65%', minWidth: '200px' }"
   style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
   <div class="form-horizontal">
@@ -253,4 +259,26 @@
       CANCEL
     </button>
   </p-footer>
+</p-dialog>
+
+<!-- view -->
+<p-dialog 
+ [header]="'Tender View'"
+ [appendTo]="'body'"
+ [visible]="viewModel"
+ [closeOnEscape]="true"
+ [closable]="false"
+ [modal]="true"
+ [responsive]="true"
+ [style]="{ width: '80%', minWidth: '200px' }"
+ style="text-align: center;"
+ [minY]="70"
+ [maximizable]="true"
+ [baseZIndex]="10000">
+ <div>
+     <app-tender-view-details-comp  *ngIf="ViewTenderID" [TenderId]='ViewTenderID'></app-tender-view-details-comp>
+ </div>
+  <p-footer>
+   <button type="button" pButton icon="pi pi-close" (click)="viewModel=false" label="Close" class="ui-button-secondary"></button>
+   </p-footer>
 </p-dialog>
