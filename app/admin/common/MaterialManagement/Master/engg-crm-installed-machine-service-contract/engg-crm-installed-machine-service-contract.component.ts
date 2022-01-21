@@ -62,16 +62,6 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
 
   previouscontractList = [];
   PreviousContractPopup = false;
-  customername = undefined;
-  locationname = undefined;
-  manufacturer = undefined;
-  machinename = undefined;
-  slno = undefined;
-  servicetype = undefined;
-  sstartdate = undefined;
-  senddate = undefined;
-  paystatus = undefined;
-  paydate = undefined;
   precontractdisable = true;
 
   CustomerList = [];
@@ -95,6 +85,12 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   // memberid = undefined;
   // deluserid = undefined;
   // delmemberid = undefined;
+  PDFViewFlag = false;
+  PDFFlag = false;
+  ProductPDFFile:any = {};
+  ProductPDFLink = undefined;
+
+  @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
 
 
   constructor(
@@ -146,6 +142,10 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     this.EditList = [];
     this.Contract_ID = undefined;
     this.previouscontractList = [];
+    this.PDFViewFlag = false;
+     if (this.PDFViewFlag === false) {
+      this.fileInput.clear();
+    }
   }
   GetCustomer() {
     const obj = {
@@ -218,16 +218,6 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   }
   Getpreviouscontract() {
     this.previouscontractList = [];
-    this.customername = undefined;
-    this.locationname = undefined;
-    this.manufacturer = undefined;
-    this.machinename = undefined;
-    this.slno = undefined;
-    this.servicetype = undefined;
-    this.sstartdate = undefined;
-    this.senddate = undefined;
-    this.paystatus = undefined;
-    this.paydate = undefined;
     const TObj = {
       Product_Mfg_Comp_ID: this.ObjServiceContract.Machine_Manufacturer,
       Product_ID: this.ObjServiceContract.Machine,
@@ -242,16 +232,12 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       this.previouscontractList = data;
       //this.PreviousContractPopup = true;
       // console.log('previouscontractList ==', this.previouscontractList)
-      //  this.customername = data[0].Sub_Ledger_Name;
-      //  this.locationname = data[0].Location_Name;
-      //  this.manufacturer = data[0].Mfg_Company;
-      //  this.machinename = data[0].Machine;
-      //  this.slno = data[0].Serial_No;
-      //  this.servicetype = data[0].Service_Type;
-      //  this.sstartdate = this.DateService.dateConvert(new Date(data[0].Service_Start_Date));
-      //  this.senddate = this.DateService.dateConvert(new Date(data[0].Service_End_Date));
-      //  this.paystatus = data[0].Payment_Status;
-      //  this.paydate = this.DateService.dateConvert(new Date(data[0].Payment_Date));
+      for(let i = 0; i < this.previouscontractList.length ; i++){
+        this.previouscontractList[i]['Service_Start_Date'] = this.convertToNepaliDateObj(this.previouscontractList[i]['Service_Start_Date']);
+        this.previouscontractList[i]['Service_End_Date'] = this.convertToNepaliDateObj(this.previouscontractList[i]['Service_End_Date']);
+        this.previouscontractList[i]['Payment_Date'] = this.convertToNepaliDateObj(this.previouscontractList[i]['Payment_Date']);
+       // console.log('Service_Start_Date==', this.BrowseList[i]['Service_Start_Date'])
+     }  
 
     });
   }
@@ -307,6 +293,14 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     const day = dateObj.day.toString().length == 1 ? "0" + dateObj.day : dateObj.day;
     return day + '/' + month + '/' + year
   }
+  FetchPDFFile(event) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+    }
+  }
   SaveServiceContract(valid) {
     this.ServiceContractFormSubmit = true;
     this.Spinner = true;
@@ -348,15 +342,16 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
         console.log(data);
         //var tempID = data[0].Column1;
+        this.upload(data[0].Column1);
         if (data[0].Column1) {
-          this.compacctToast.clear();
-          //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Installed Machine",
-            detail: "Succesfully Updated" //+ mgs
-          });
+          // this.compacctToast.clear();
+          // //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+          // this.compacctToast.add({
+          //   key: "compacct-toast",
+          //   severity: "success",
+          //   summary: "Installed Machine",
+          //   detail: "Succesfully Updated" //+ mgs
+          // });
           this.clearData();
           this.GetSearchedList(true);
           this.Contract_ID = undefined;
@@ -405,16 +400,28 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
           console.log(data);
           var msg = data[0].Column1;
           if (data[0].Column1) {
-            this.compacctToast.clear();
-            this.compacctToast.add({
-              key: "compacct-toast",
-              severity: "success",
-              summary: "Installed Machine",
-              detail: msg != "Already Exists" ? "Succesfully Saved" : "Already Exists"
-            });
-            if (msg != "Already Exists") {
-              this.clearData();
+            if (data[0].Column1 != "Already Exists") {
+            this.upload(data[0].Column1);
             }
+            else {
+               this.compacctToast.clear();
+               this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "success",
+               summary: "Installed Machine",
+               detail: "Already Exists "
+            });
+            }
+            // this.compacctToast.clear();
+            // this.compacctToast.add({
+            //   key: "compacct-toast",
+            //   severity: "success",
+            //   summary: "Installed Machine",
+            //   detail: msg != "Already Exists" ? "Succesfully Saved" : "Already Exists"
+            // });
+            // if (msg != "Already Exists") {
+            //   this.clearData();
+            // }
             // this.ServiceContractFormSubmit = false;
             this.Spinner = false;
             // this.ObjServiceContract = new ServiceContract();
@@ -445,6 +452,36 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       }
     }
   }
+  async upload(id){
+    const formData: FormData = new FormData();
+        formData.append("aFile", this.ProductPDFFile)
+        formData.append("Contract_ID", id);
+    let response = await fetch('/Engg_CRM_Installed_Machine_Service_Contract/Upload_Doc',{ 
+                  method: 'POST',
+                  body: formData // This is your file object
+                });
+    let responseText = await response.text();
+    var msg = this.buttonname != "Create" ? "Succesfully Updated " : "Succesfully Created " ;
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: '',//'Return_ID : ' + this.ObjMasterProductm.Product_ID,
+        detail: msg
+      });
+      // this.ObjManualPaymentCnfm = new ManualPaymentCnfm();
+      // this.ManualPaymentConfirmFormSubmit = false;
+      // this.ManualPaymentConfirmModal = false;
+      this.clearData();
+      if(this.buttonname != "Create") {
+        this.clearData();
+          this.GetSearchedList(true);
+          this.Contract_ID = undefined;
+          this.tabIndexToView = 0;
+          this.items = ["BROWSE", "CREATE"];
+      }
+  };
   GetSearchedList(valid) {
     this.SearchFormSubmit = true;
     if (valid) {
@@ -519,6 +556,10 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
         console.log(this.ServiceStartDate)
         console.log(this.ServiceEndDate)
         console.log(this.PaymentDate)
+        this.PDFViewFlag = data[0].Document_Upload ? true : false;
+        this.ProductPDFLink = data[0].Document_Upload
+         ? data[0].Document_Upload
+         : undefined;
       })
     }
   }

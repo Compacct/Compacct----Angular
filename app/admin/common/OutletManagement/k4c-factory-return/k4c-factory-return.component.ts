@@ -82,6 +82,26 @@ export class K4cFactoryReturnComponent implements OnInit {
   Remarksdisabled = false;
   MTdisabled = false;
 
+  RTFchallanno : any;
+  FranchiseProductList = [];
+  FranchiseList = [];
+  taxable: any;
+  cgst: any;
+  sgst: any;
+  igst: any;
+  grossamount: any;
+  netamount: any;
+  Round_Off: any;
+  currentDate: any = new Date();
+  ToCostId = undefined;
+  ToGodownId = undefined;
+  subledgerid:any;
+  franchisecostcenid:any;
+
+  Franchise = [];
+  FranchiseBill:any;
+  FranchiseCostCentId = undefined;
+
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -127,6 +147,8 @@ export class K4cFactoryReturnComponent implements OnInit {
     //   }
     // } );
     //this.DateService.dateConvert(new Date(this.myDate));
+    this.GetFranchiseBill();
+    this.GetFranchiseList();
   }
   TabClick(e){
     //console.log(e)
@@ -472,7 +494,8 @@ export class K4cFactoryReturnComponent implements OnInit {
     Return_Reason : RR.Return_Reason,
     //Return_Reason : ExitsProduct.item,
     Return_Reason_ID : this.ObjSaveForm.Return_Reason_ID,
-    Material_Type : this.ObjSaveForm.Material_Type
+    Material_Type : this.ObjSaveForm.Material_Type,
+    Remarks : this.ObjProductaddForm.Remarks
   };
   this.productaddSubmit.push(productObj);
   if(this.ExpiredProductFLag) {
@@ -745,7 +768,8 @@ export class K4cFactoryReturnComponent implements OnInit {
           Qty : Number(item.Stock_Qty),
           Return_Reason : item.Return_Reason,
           Return_Reason_ID : item.Return_Reason_ID,
-          Material_Type : item.Material_Type
+          Material_Type : item.Material_Type,
+          Outlet_Remarks : item.Remarks
       }
 
       const TempObj = {
@@ -838,12 +862,17 @@ const obj = {
   this.From_outlet = undefined;
   this.To_outlet = undefined;
   this.Return_reason = undefined;
+  this.FranchiseCostCentId = undefined;
   if(DocNo.Doc_No){
   this.ObjBrowse.Doc_No = DocNo.Doc_No;
+  this.FranchiseCostCentId = DocNo.F_Cost_Cen_ID;
   this.AcceptChallanPoppup = true;
   //this.ViewPoppup = true;
    //console.log("this.EditDoc_No ", this.Adv_Order_No );
-  this.geteditdetails(this.ObjBrowse.Doc_No);;
+  this.geteditdetails(this.ObjBrowse.Doc_No);
+  this.GetFranchiseBill();
+  this.GetFranchiseList();
+  this.getsubledgerid();
   }
  }
  changeRemarks(col){
@@ -871,8 +900,10 @@ console.log(this.editList)
   this.From_outlet = undefined;
   this.To_outlet = undefined;
   this.Return_reason = undefined;
+  this.FranchiseCostCentId = undefined;
   if(DocNo.Doc_No){
   this.ObjBrowse.Doc_No = DocNo.Doc_No;
+  this.FranchiseCostCentId = DocNo.F_Cost_Cen_ID;
   // if(this.router.navigate(['./K4C_Factory_Return'], { queryParams: { Redirect_To : './K4C_Factory_Return' , Create_Flag : true} })){
   // this.tabIndexToView = 1;
   // }
@@ -880,7 +911,10 @@ console.log(this.editList)
   //this.ViewPoppup = true;
   //this.tabIndexToView = 1;
    //console.log("this.EditDoc_No ", this.Adv_Order_No );
-  this.geteditdetails(this.ObjBrowse.Doc_No);;
+  this.geteditdetails(this.ObjBrowse.Doc_No);
+  this.GetFranchiseBill();
+  this.GetFranchiseList();
+  this.getsubledgerid();
   }
  }
  geteditdetails(Doc_No){
@@ -906,13 +940,15 @@ console.log(this.editList)
     this.From_cost_cen_ID = data[0].F_Cost_Cen_ID;
     this.To_cost_cen_ID = data[0].To_Cost_Cen_ID;
   //  this.UOM = data[0].UOM,
-    //console.log("this.editList  ===",data);
+    //console.log("this.editList  ===",data);     
+    if (this.AcceptChallanPoppup) {
     for(let i = 0; i < this.editList.length ; i++){
     if(this.editList[i].Accepted_Qty === 0){
         this.editList[i].Accepted_Qty = this.editList[i].Qty;
         } else {
           this.editList[i].Accepted_Qty = this.editList[i].Accepted_Qty
         }
+      }
     }
   })
  }
@@ -1027,8 +1063,9 @@ saveCheckUpdate(){
           To_Godown_ID : this.T_Godown_ID,
           Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
           Remarks : Number(el.Qty) === Number(el.Accepted_Qty) ? 'NA' : el.Remarks ,
+          Outlet_Remarks : el.Outlet_Remarks,
           Total_Qty : Number(this.getTotal('Qty')),
-          Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty'))
+          Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty')),
 
         }
         this.updateData.push(updateObj)
@@ -1043,7 +1080,11 @@ saveCheckUpdate(){
         "Json_Param_String": JSON.stringify(this.updateData)
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.RTFchallanno = data[0].Column1;
         if(data[0].Column1){
+          if(this.FranchiseBill != "N" && Number(this.getTotal('Qty')) == Number(this.getTotal('Accepted_Qty'))) {
+            this.SaveFranchisechallan();
+          }
         this.GetSearchedlist(true);
       this.EditPoppup = false;
       this.AcceptChallanPoppup = false;
@@ -1219,6 +1260,201 @@ onReject(){
   this.ngxService.stop();
  }
 
+ // SAVE FRANCHISE
+ SaveFranchisechallan(){
+ // if (this.dispatchchallanno){
+  const Obj = {
+    Doc_No : this.Doc_no,
+    Cost_Cen_ID : this.From_cost_cen_ID ? this.From_cost_cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    From_Date : this.DateService.dateConvert(new Date(this.myDate)),
+    To_Date :  this.DateService.dateConvert(new Date(this.myDate))
+  }
+     const obj = {
+       "SP_String": "SP_K4C_Accounting_Journal",
+       "Report_Name_String" : "Product Rate Update In RTF Table",
+       "Json_Param_String": JSON.stringify([Obj])
+     }
+     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      this.FranchiseProductList = data;
+      console.log("this.FranchiseProductList======",this.FranchiseProductList);
+      this.calculateTotalAmt();
+      this.SaveFranSaleBill();
+     })
+   
+  //  }
+  }
+  GetFranchiseBill(){
+    const tempObj = {
+      Cost_Cen_ID : this.FranchiseCostCentId
+    }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Franchise Or not",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.Franchise = data;
+      this.FranchiseBill = data[0].Franchise;
+      console.log("this.FranchiseList ===", this.FranchiseList)
+      // this.FranchiseList.forEach(item => {
+      //   item.Cost_Cen_ID = this.ObjfranchiseSalebill.Cost_Cen_ID
+      // });
+     })
+  }
+  GetFranchiseList(){
+    // const tempObj = {
+    //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    //   //Material_Type : this.MaterialType_Flag
+    // }
+    const obj = {
+      "SP_String": "SP_Franchise_Sale_Bill",
+      "Report_Name_String": "Get Franchise",
+      //"Json_Param_String": JSON.stringify([tempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.FranchiseList = data;
+      console.log("this.FranchiseList ===", this.FranchiseList)
+      // this.FranchiseList.forEach(item => {
+      //   item.Cost_Cen_ID = this.ObjfranchiseSalebill.Cost_Cen_ID
+      // });
+     })
+  }
+  getsubledgerid(){
+    //this.ExpiredProductFLag = false;
+   if(this.FranchiseCostCentId) {
+    const ctrl = this;
+    const subledgeridObj = $.grep(ctrl.FranchiseList,function(item: any) {return item.Cost_Cen_ID == ctrl.FranchiseCostCentId})[0];
+    console.log(subledgeridObj);
+    this.subledgerid = subledgeridObj.Sub_Ledger_ID;
+    this.franchisecostcenid = subledgeridObj.Cost_Cen_ID;
+    console.log("this.subledgerid ==", this.subledgerid)
+    
+   }
+  }
+  calculateTotalAmt(){
+    this.taxable = undefined;
+    this.cgst = undefined;
+    this.sgst = undefined;
+    this.igst = undefined;
+    this.grossamount = undefined;
+    let totaltax = 0; 
+    let totalcgst = 0;
+    let totalsgst = 0;
+    let totaligst = 0;
+    let grossamt = 0;
+    this.FranchiseProductList.forEach(item => {
+      totaltax = totaltax + Number(item.Taxable);
+      totalcgst = totalcgst + Number(item.CGST_AMT);
+      totalsgst = totalsgst + Number(item.SGST_AMT);
+      totaligst = totaligst + Number(item.IGST_AMT);
+      grossamt = grossamt + Number(item.Net_Amount);
+    });
+    this.taxable = (totaltax).toFixed(2);
+    this.cgst = (totalcgst).toFixed(2);
+    this.sgst = (totalsgst).toFixed(2);
+    this.igst = (totaligst).toFixed(2);
+    this.grossamount = (grossamt).toFixed(2);
+    // Round Off
+    this.Round_Off = (Number(this.grossamount) - Math.round(this.grossamount)).toFixed(2);
+    this.netamount = Math.round(this.grossamount);
+    //console.log(this.Net_Amount);
+  }
+ getdataforSaveFranchise(){
+    this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
+    if(this.FranchiseProductList.length) {
+      let tempArr =[]
+      this.FranchiseProductList.forEach(item => {
+       // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+     const TempObj = {
+            Doc_No:  "A",
+            Doc_Date: this.currentDate,
+            Sub_Ledger_ID : Number(this.subledgerid),
+            Cost_Cen_ID	: this.franchisecostcenid,
+            Product_ID	: item.Product_ID,
+            Product_Name	: item.Product_Description,
+            Qty	: item.Qty,
+            UOM	: item.UOM,
+            MRP : item.Sale_rate,
+            Rate : item.Sale_rate,
+            Amount : Number(item.Qty) * Number(item.Sale_rate),
+            Discount : 0,
+            Taxable_Amount : item.Taxable,
+            CAT_ID : item.Cat_ID,
+            CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
+            CGST_Rate : item.CGST_PER,
+            CGST_Amount : item.CGST_AMT,
+            SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
+            SGST_Rate : item.SGST_PER,
+            SGST_Amount : item.SGST_AMT,
+            IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
+            IGST_Rate : item.IGST_PER,
+            IGST_Amount : item.IGST_AMT,
+            Bill_Gross_Amt : Number(this.taxable),
+            Rounded_Off : Number(this.Round_Off),
+            Bill_Net_Amt : this.netamount,
+            User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+            Remarks : 'NA',
+            Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
+            Total_Taxable : Number(this.taxable),
+            Total_CGST_Amt : Number(this.cgst),
+            Total_SGST_Amt : Number(this.sgst),
+            Total_IGST_Amt : Number(this.igst),
+            Total_Net_Amt : this.netamount,
+            HSL_No : item.HSN_NO
+         }
+      tempArr.push(TempObj)
+      });
+      console.log("Save Data ===", tempArr)
+      return JSON.stringify(tempArr);
+
+    }
+  }
+  SaveFranSaleBill(){
+    const obj = {
+      "SP_String" : "SP_K4C_Accounting_Journal",
+      "Report_Name_String" : "Credit_Note_RTF",
+      "Json_Param_String" : this.getdataforSaveFranchise(),
+      "Json_1_String" : JSON.stringify([{Order_No : this.RTFchallanno}])
+
+    }
+    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      //console.log(data);
+      var tempID = data[0].Column1;
+      console.log("After Save",tempID);
+     // this.Objproduction.Doc_No = data[0].Column1;
+      if(data[0].Column1){
+        this.compacctToast.clear();
+        const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         summary: "Production Voucher  " + tempID,
+         detail: "Succesfully  " + mgs
+       });
+      // this.GetSearchedList();
+       this.clearData();
+      //  this.ProductList =[];
+      //  this.franchiseSalebillFormSubmitted = false;
+      } else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+}
+SaleBillPrint(obj) {
+ // console.log("CR_No ===", true)
+  if (obj.CR_No) {
+    window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.CR_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
+}
+
 
 }
 class SaveForm{
@@ -1240,6 +1476,7 @@ class ProductaddForm{
   Net_Price : number;
   Stock_Qty : number;
   Avl_Qty : number;
+  Remarks : string;
 }
 
 class Browse {

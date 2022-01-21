@@ -179,7 +179,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Location<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjSupportTicket.Location" [ngClass]="{'clearance': SupportTicketFormSubmit && location.errors?.required}" required>
+                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjSupportTicket.Location" (change)="GetAlignedEngineer()" [ngClass]="{'clearance': SupportTicketFormSubmit && location.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of LoctionList" [ngValue]="option.Location_ID">
                                                               {{option.Location_Name}}
@@ -216,14 +216,20 @@
                                     </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Engineer<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="engineer" #engineer="ngModel" [(ngModel)]="ObjSupportTicket.Engineer" [ngClass]="{'clearance': SupportTicketFormSubmit && engineer.errors?.required}" required>
+                                        <label class="control-label">Assigned Engineer<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="engineer" #engineer="ngModel" [(ngModel)]="ObjSupportTicket.Assigned_Engineer" [ngClass]="{'clearance': SupportTicketFormSubmit && engineer.errors?.required}" required>
                                                                 <option  [ngValue]="undefined">Select</option>
                                                             <option *ngFor="let option of EngineerList" [ngValue]="option.User_ID">
                                                                 {{option.Member_Name}}
                                                                 </option>
                                                         </select>
                                     </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Aligned Engineer</label>
+                                        <div class="form-control" name="alengg" disabled="true">{{alignedengineer}}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Contract Status <sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
@@ -236,8 +242,6 @@
                                             </option>
                                     </select>
                                     </div>
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Symptom <sup class="text-danger">*</sup></label>
                                         <p-multiSelect itemSize="30" [options]="SymptomList" [styleClass]="'compacct-multiselect'" name="symptom" #symptom="ngModel" [(ngModel)]="ObjSupportTicket.Symptom" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [ngClass]="{'clearance': SupportTicketFormSubmit && symptom.errors?.required}"

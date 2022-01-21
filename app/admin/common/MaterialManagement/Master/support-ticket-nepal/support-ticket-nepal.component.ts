@@ -59,6 +59,10 @@ export class SupportTicketNepalComponent implements OnInit {
   browsestartdate: Date;
   CurrentDateNepal= undefined;
 
+  alignedenggid = undefined;
+  alignedengineer = undefined;
+  AlEngineerList = [];
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -109,6 +113,8 @@ export class SupportTicketNepalComponent implements OnInit {
      this.Contract_ID = undefined;
      this.previouscontractList = [];
      this.GetContractStatus();
+     this.alignedenggid = undefined;
+     this.alignedengineer = undefined;
   }
   GetCallType(){
     //  console.log("StatusList ===", this.StatusList)
@@ -120,7 +126,7 @@ export class SupportTicketNepalComponent implements OnInit {
   }
   GetCustomer(){
       const obj = {
-        "SP_String": "SP_Support_Ticket_Nepal",
+        "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
         "Report_Name_String": "Get_Customer"
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -196,6 +202,31 @@ export class SupportTicketNepalComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.EngineerList = data;
     // console.log('SerialNoList ==', this.SerialNoList)
+  
+    });
+  }
+  GetAlignedEngineer(){
+    this.alignedenggid = undefined;
+    this.alignedengineer = undefined;
+    const TObj = {
+      Location_ID : this.ObjSupportTicket.Location
+    }
+    const obj = {
+      "SP_String": "SP_Support_Ticket_Nepal",
+      "Report_Name_String": "Get_Engineer_Aligned",
+      "Json_Param_String": JSON.stringify([TObj])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.AlEngineerList = data;
+     this.alignedenggid = data[0].User_ID;
+     this.alignedengineer = data[0].Member_Name;
+     this.EngineerList.forEach(el => {
+       if (el.User_ID == this.alignedenggid) {
+        this.ObjSupportTicket.Assigned_Engineer = el.User_ID;
+       }
+    })
+    // this.ObjSupportTicket.Assigned_Engineer = this.EngineerList[0].User_ID;
+    console.log('Aligned EngineerList ==', this.AlEngineerList)
   
     });
   }
@@ -408,7 +439,7 @@ export class SupportTicketNepalComponent implements OnInit {
           Product_Mfg_Comp_ID: this.ObjSupportTicket.Machine_Manufacturer,
           Product_ID: this.ObjSupportTicket.Machine,
           Serial_No: this.ObjSupportTicket.Serial_No,
-          Engineer_User_ID: this.ObjSupportTicket.Engineer,
+          Engineer_User_ID: this.ObjSupportTicket.Assigned_Engineer,
           Contract_Status: this.ObjSupportTicket.Contract_Status,
           Remarks: this.ObjSupportTicket.Remarks
         }
@@ -512,7 +543,8 @@ class SupportTicket{
   Machine_Manufacturer:string;
   Machine:string;
   Serial_No:any;
-  Engineer:string;
+  Assigned_Engineer:string;
+  Aligned_Engineer:string;
   Contract_Status:string;
   Symptom:any;
   Remarks:string

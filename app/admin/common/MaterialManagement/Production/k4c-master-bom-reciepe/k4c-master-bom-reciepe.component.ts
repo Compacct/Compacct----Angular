@@ -4,6 +4,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { CompacctCommonApi } from "../../../../shared/compacct.services/common.api.service";
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
+import { timeStamp } from 'console';
 
 @Component({
   selector: 'app-k4c-master-bom-reciepe',
@@ -47,6 +48,21 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
   editList = [];
   editdisableflag = false;
 
+  //TotalfQty : number;
+  ViewPoppup = false;
+  tabIndexToView2 = 0;
+  items2 = [];
+  BrandID = undefined;
+  ProductTypeID = undefined;
+  ProductID = undefined;
+  FinalMaterialQty = undefined;
+  FinalMaterialUOM = undefined;
+  TypeofMaterial = undefined;
+  RMviewlist = [];
+  Finviewlist = [];
+
+  flag = false;
+
   constructor(
     private Header: CompacctHeader,
     private $http : HttpClient,
@@ -58,6 +74,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
   ngOnInit() {
     this.items1 = ["BROWSE", "CREATE"];
     this.items = ["RAW MATERIALS", "SEMI FINISHED"];
+    this.items2 = ["RAW MATERIALS", "SEMI FINISHED"];
     this.Header.pushHeader({
       Header: "Master BOM-Recipe",
       Link: "Material Management -> Production -> Master BOM-Recipe"
@@ -86,6 +103,14 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
     //console.log(e)
     this.tabIndexToView = e.index;
     this.items = ["RAW MATERIALS", "SEMI FINISHED"];
+    //this.buttonname = "Save";
+    //this.clearData();
+
+  }
+  TabClick2(e){
+    //console.log(e)
+    this.tabIndexToView2 = e.index;
+    this.items2 = ["RAW MATERIALS", "SEMI FINISHED"];
     //this.buttonname = "Save";
     //this.clearData();
 
@@ -218,6 +243,63 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
   this.getrawmaterialtabledata = [...this.BackupRMSearchedlist] ;
   }
   }
+//   function addZeroes(ev) {
+//     debugger;
+//     // Convert input string to a number and store as a variable.
+//     var value = Number(ev.value);
+//     // Split the input string into two arrays containing integers/decimals
+//     var res = ev.value.split(".");
+//     // If there is no decimal point or only one decimal place found.
+//     if (res.length == 1 || res[1].length < 3) {
+//         // Set the number to two decimal places
+//         value = value.toFixed(2);
+//     }
+//     // Return updated or original number.
+//     if (ev.value != "") {
+//         ev.value = String(value);
+//     }
+// }
+  qtyChq(col){
+    // this.flag = false;
+    // console.log("col",col);
+    // if(col.Qty){
+    //   var value = Number(col.Qty)
+    //   var res = col.Qty.split(".");
+    //   if(col.Decimal_Place == 0){
+    //     this.flag = false;
+    //     return value;
+    //   }
+    //   if(col.Decimal_Place == 1){
+    //     this.flag = false;
+    //     if (res.length == 1 || res[1].length < 1) {
+    //       return value.toFixed(1);
+    //   }
+    //   }
+    //   if(col.Decimal_Place == 2){
+    //     this.flag = false;
+    //     if (res.length == 1 || res[1].length < 2) {
+    //       return value.toFixed(2);
+    //   }
+    //   }
+    //   if(col.Decimal_Place == 3){
+    //     this.flag = false;
+    //     if (res.length == 1 || res[1].length < 3) {
+    //       return value.toFixed(3);
+    //   }
+    //   }
+    //   else {
+    //     this.flag = true;
+    //     this.compacctToast.clear();
+    //          this.compacctToast.add({
+    //              key: "compacct-toast",
+    //              severity: "error",
+    //              summary: "Warn Message",
+    //              detail: "Error Occured "
+    //            });
+  
+    //          }
+    // }
+   }
   // GetSemiFinishedProType(){
   //   const tempObj = {
   //     Brand_ID : this.ObjBomReciepe.Brand_ID
@@ -248,6 +330,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
       this.getsemifinishedtabledata = data;
       this.BackupSearchedlist = data;
       this.GetDistinctSF();
+      //this.AddFinalMatQty();
        console.log("semi finished table List ===",this.getsemifinishedtabledata);
     })
   }
@@ -285,6 +368,27 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
   this.getsemifinishedtabledata = [...this.BackupSearchedlist] ;
   }
   }
+  // ADD FINAL MATERIAL QTY
+  // AddFinalMatQty(){
+  //   if(this.ObjBomReciepe.Brand_ID) {
+  //   this.ObjBomReciepe.Final_Material_Qty = 0;
+  //   let RMTotal = 0;
+  //   this.getrawmaterialtabledata.forEach(ele => {
+  //     RMTotal += Number(ele.Qty);
+  //   });
+  //   console.log("RMTotal ==", RMTotal)
+
+  //   let fTotal = 0;
+  //   this.getsemifinishedtabledata.forEach(el => {
+  //     fTotal += Number(el.Qty);
+  //   });
+  //   console.log("finishTotal ==", fTotal)
+  //   var TotalfQty = Number(RMTotal + fTotal) ;
+  //   this.ObjBomReciepe.Final_Material_Qty = TotalfQty;
+  //   console.log("this.TotalfQty ==", this.TotalfQty)
+  //   console.log("this.ObjBomReciepe.Final_Material_Qty ==", this.ObjBomReciepe.Final_Material_Qty)
+  //   }
+  // }
   // FOR SAVE
   DataForSaveBomRecipe(){
     if(this.BackupRMSearchedlist.length && this.BackupSearchedlist.length) {
@@ -509,6 +613,81 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
 
   })
   }
+  // VIEW 
+  view(Row){
+    this.BrandID = undefined;
+    this.ProductTypeID = undefined;
+    this.ProductID = undefined;
+    this.FinalMaterialQty = undefined;
+    this.FinalMaterialUOM = undefined;
+    this.TypeofMaterial = undefined;
+   if(Row){
+   this.BrandID = Row.Brand_ID;
+   this.ProductTypeID = Row.Final_Product_Type_ID;
+   this.ProductID = Row.Final_Product_ID;
+   this.FinalMaterialQty = Row.Final_Product_Qty;
+   this.FinalMaterialUOM = Row.Final_Product_UOM;
+   //const ctrl = this;
+  // setTimeout(function(){
+    this.items2 = ["RAW MATERIALS", "SEMI FINISHED"];
+    this.GetRMViewData();
+    this.GetFinViewData();
+    //ctrl.editdisableflag = true;
+
+   //},600)
+   }
+  }
+  GetRMViewData(){
+    // this.items2 = ["RAW MATERIALS", "SEMI FINISHED"];
+    this.RMviewlist = [];
+    const tempObj = {
+      Brand_ID : this.BrandID,
+      Final_Product_Type_ID : this.ProductTypeID,
+      Final_Product_ID : this.ProductID,
+      Final_Product_Qty : this.FinalMaterialQty,
+      Final_Product_UOM : this.FinalMaterialUOM
+    }
+    const obj = {
+      "SP_String": "SP_Master_BOM_Reciepe",
+      "Report_Name_String": "Get_View_Raw_Material_Data_Master_BOM_Reciepe",
+      "Json_Param_String": JSON.stringify([tempObj])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.RMviewlist = data;
+      this.ViewPoppup = true;
+      console.log("this.RMviewlist  ===",this.RMviewlist);
+      this.BrandID = data[0].Brand_INI;
+      //this.ProductTypeID = data[0].Final_Product_Type_Name;
+      this.TypeofMaterial = data[0].Final_Material_Type;
+      this.ProductID = data[0].Final_Product_Description;
+      this.FinalMaterialQty = data[0].Final_Product_Qty;
+      this.FinalMaterialUOM = data[0].Final_Product_UOM;
+
+  })
+  }
+  GetFinViewData(){
+   // this.items2 = ["RAW MATERIALS", "SEMI FINISHED"];
+    this.Finviewlist = [];
+    const tempObj = {
+      Brand_ID : this.BrandID,
+      Final_Product_Type_ID : this.ProductTypeID,
+      Final_Product_ID : this.ProductID,
+      Final_Product_Qty : this.FinalMaterialQty,
+      Final_Product_UOM : this.FinalMaterialUOM
+    }
+    const obj = {
+      "SP_String": "SP_Master_BOM_Reciepe",
+      "Report_Name_String": "Get_View_Semi_Finished_Data_Master_BOM_Reciepe",
+      "Json_Param_String": JSON.stringify([tempObj])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.Finviewlist = data;
+     // this.ViewPoppup = true;
+      console.log("this.Finviewlist  ===",this.Finviewlist);
+  })
+  }
   // FOR UPDATE
   DataForUpdateBomRecipe(){
     if(this.ObjBomReciepe.Brand_ID &&
@@ -703,20 +882,20 @@ class Browse {
 }
 class BomReciepe {
   Doc_No : string;
-  Brand_ID : string;
-  Product_Type_ID : number;
-  Product_Type : string;
-  Product_ID : string;
-  Type_of_Material : string;
-  Select_Final_Material : string;
-  Final_Material_Qty : string;
+  Brand_ID : number;
+  Product_Type_ID : any;
+  Product_Type : any;
+  Product_ID : any;
+  Type_of_Material : any;
+  Select_Final_Material : any;
+  Final_Material_Qty : any;
   Final_Material_UOM : string;
 }
 class RawMaterial {
-  Product_Type_ID : number;
+  Product_Type_ID : any;
   Product_Type : string;
 }
 class SemiFinished {
-  Product_Type_ID : number;
-  Product_Type : string;
+  Product_Type_ID : any;
+  Product_Type : any;
 }

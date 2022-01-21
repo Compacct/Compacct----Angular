@@ -1026,7 +1026,8 @@ saveprintAndUpdate(){
     });
     return false;
   }
-  if(this.ObjcashForm.Coupon_Per && !this.Objcustomerdetail.Bill_Remarks){
+  if(this.ObjcashForm.Coupon_Per && !this.Objcustomerdetail.Bill_Remarks ||
+    this.ObjcashForm.Credit_To_Ac_ID && !this.Objcustomerdetail.Bill_Remarks){
       this.Spinner = false;
       this.ngxService.stop();
     this.compacctToast.clear();
@@ -1038,6 +1039,18 @@ saveprintAndUpdate(){
     });
     return false;
   }
+//   if(this.ObjcashForm.Credit_To_Ac_ID && !this.Objcustomerdetail.Bill_Remarks){
+//     this.Spinner = false;
+//     this.ngxService.stop();
+//   this.compacctToast.clear();
+//   this.compacctToast.add({
+//     key: "compacct-toast",
+//     severity: "error",
+//     summary: "Warn Message",
+//     detail: "Enter Remarks"
+//   });
+//   return false;
+// }
 }
 // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){
 
