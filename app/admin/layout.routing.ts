@@ -934,6 +934,7 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   component:HarbMasterProductElectricalComponent,
                                                                   data: {title: 'Master Product Electrical'}
                                                                 },
+                                                                {
                                                                   path : 'BL_CRM_Txn_Enq_Tender_Budget_Single',
                                                                   component:TenderSingleSchBudgetComponent,
                                                                   data: {title: 'Single Scheme Budget'}
