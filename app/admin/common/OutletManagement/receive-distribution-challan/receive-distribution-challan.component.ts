@@ -76,6 +76,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
 
   Franchise = [];
   FranchiseBill:any;
+  ToCostCentId = undefined;
 
   constructor(
     private $http: HttpClient,
@@ -217,15 +218,18 @@ export class ReceiveDistributionChallanComponent implements OnInit {
   }
   editmaster(masterProduct){
    this.clearData();
+   this.ToCostCentId = undefined;
    if(masterProduct.Doc_No){
     this.fromCostId = undefined;
     this.fromGodownId = undefined;
+    this.ToCostCentId = masterProduct.To_Cost_Cen_ID;
     this.tabIndexToView = 1;
     this.items = ["BROWSE", "UPDATE"];
     this.buttonname = "Update";
     console.log("this.tabIndexToView ",this.tabIndexToView )
     this.geteditmaster(masterProduct);
     this.getReqNo(masterProduct);
+    this.getsubledgerid();
     }
   }
   geteditmaster(masterProduct){
@@ -310,9 +314,9 @@ export class ReceiveDistributionChallanComponent implements OnInit {
         //  this.productDetails[i]['Accepted_Qty'] = this.productDetails[i]['Accepted_Qty']
         // }
       }
-      this.getsubledgerid();
+      //this.getsubledgerid();
       console.log("this.EditList",this.productDetails);
-     this.tabEdit = true;
+      this.tabEdit = true;
 
     })
   //}
@@ -603,9 +607,9 @@ export class ReceiveDistributionChallanComponent implements OnInit {
   }
   getsubledgerid(){
     //this.ExpiredProductFLag = false;
-   if(this.ToCostId) {
+   if(this.ToCostCentId) {
     const ctrl = this;
-    const subledgeridObj = $.grep(ctrl.FranchiseList,function(item: any) {return item.Cost_Cen_ID == ctrl.ToCostId})[0];
+    const subledgeridObj = $.grep(ctrl.FranchiseList,function(item: any) {return item.Cost_Cen_ID == ctrl.ToCostCentId})[0];
     console.log(subledgeridObj);
     this.subledgerid = subledgeridObj.Sub_Ledger_ID;
     this.franchisecostcenid = subledgeridObj.Cost_Cen_ID;

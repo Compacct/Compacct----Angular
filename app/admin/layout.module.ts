@@ -87,6 +87,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule ,OWL_DATE_TIME_FORMATS, OWL_
 
 // Nepali Date
 import { NpDatepickerModule } from 'angular-nepali-datepicker';
+import { DateNepalConvertService } from "./shared/compacct.global/dateNepal.service";
 
 // SERVICE
 import { CookieService } from "ngx-cookie-service";
