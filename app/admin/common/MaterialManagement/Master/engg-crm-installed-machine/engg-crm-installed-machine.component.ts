@@ -5,6 +5,10 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
 import { CompacctHeader } from "../../../../shared/compacct.services/common.header.service";
 import { MessageService } from "primeng/api";
 import { FileUpload } from "primeng/primeng";
+import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
+import { DateNepalConvertService } from '../../../../shared/compacct.global/dateNepal.service';
+declare var NepaliFunctions: any;
+const NepaliDate = require('nepali-date');
 
 @Component({
   selector: 'app-engg-crm-installed-machine',
@@ -38,14 +42,20 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
   // memberid = undefined;
   // deluserid = undefined;
   // delmemberid = undefined;
+  CurrentDateNepal = undefined;
+  DateOfInstallation : any = {};
 
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
     private Header: CompacctHeader,
-    private compacctToast: MessageService
-  ) { }
+    private compacctToast: MessageService,
+    private DateService: DateTimeConvertService,
+    private DateNepalConvertService : DateNepalConvertService
+  ) {
+    this.CurrentDateNepal = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+   }
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
@@ -53,6 +63,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
       Header: "Installed Machine",
       Link: " Engineering CRM -> Master -> Installed Machine"
     });
+      this.DateOfInstallation = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
       this.GetManufacturer();
       this.GetCustomer();
       this.getStatus();
@@ -76,6 +87,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
     // this.memberid = undefined;
     // this.deluserid = undefined;
     // this.delmemberid = undefined;
+    this.DateOfInstallation = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
   }
   GetManufacturer(){
     const obj = {
@@ -141,6 +153,12 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
       ];
 
   }
+  ValidatedNepaliDate(dateObj) {
+    const year = dateObj.year.toString().length == 1 ? "0" + dateObj.year : dateObj.year;
+    const month = dateObj.month.toString().length == 1 ? "0" + dateObj.month : dateObj.month;
+    const day = dateObj.day.toString().length == 1 ? "0" + dateObj.day : dateObj.day;
+    return day + '/' + month + '/' + year
+  }
   SaveInstalledMachine(valid){
     this.InstalledMachineFormSubmit = true;
     this.Spinner = true;
@@ -151,7 +169,10 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
         Sub_Ledger_ID : this.ObjInstalledMachine.Customer_Name,
         Location_ID : this.ObjInstalledMachine.Location,
         Serial_No : this.ObjInstalledMachine.Serial_No,
-        Status : this.ObjInstalledMachine.Status
+        Status : this.ObjInstalledMachine.Status,
+        Year_Manufacturing : this.ObjInstalledMachine.Year_Manufacturing,
+        Installation_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DateOfInstallation)),
+        Installation_Date_Nepali : this.ValidatedNepaliDate(this.DateOfInstallation),
       }
          const obj = {
            "SP_String": "SP_Engg_CRM_Installed_Machine",
@@ -201,7 +222,10 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
         Sub_Ledger_ID : this.ObjInstalledMachine.Customer_Name,
         Location_ID : this.ObjInstalledMachine.Location,
         Serial_No : this.ObjInstalledMachine.Serial_No,
-        Status : this.ObjInstalledMachine.Status
+        Status : this.ObjInstalledMachine.Status,
+        Year_Manufacturing : this.ObjInstalledMachine.Year_Manufacturing,
+        Installation_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DateOfInstallation)),
+        Installation_Date_Nepali : this.ValidatedNepaliDate(this.DateOfInstallation)
       }
       const obj = {
         "SP_String": "SP_Engg_CRM_Installed_Machine",
@@ -221,6 +245,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
           this.InstalledMachineFormSubmit = false;
           this.Spinner = false;
           this.ObjInstalledMachine = new InstalledMachine();
+          this.DateOfInstallation = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
           this.MachineList = [];
           this.LoctionList = [];
 
@@ -295,6 +320,8 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
        this.ObjInstalledMachine.Location = data[0].Location_ID;
        this.ObjInstalledMachine.Serial_No = data[0].Serial_No;
        this.ObjInstalledMachine.Status = data[0].Status;
+       this.ObjInstalledMachine.Year_Manufacturing = data[0].Year_Manufacturing;
+       this.DateOfInstallation = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Installation_Date);
     })
     }
   }
@@ -358,6 +385,7 @@ class InstalledMachine{
   Location:string;
   Serial_No:any;
   Status:string;
+  Year_Manufacturing:any;
 }
 class Browse{
   Customer_Name:string;

@@ -83,6 +83,7 @@
                                             <th style="width:5em">Action</th>
                                             <th>Doc No</th>
                                             <th>Date</th>
+                                            <th>RTF Voucher No</th>
                                             <th>From Outlet</th>
                                             <th>To Stock Point</th>
                                             <th>Total Qty</th>
@@ -120,6 +121,11 @@
                                                                 <i class="fa fa-print" aria-hidden="true"></i> Print
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.CR_No != 'NA'">
+                                                            <a (click)="SaleBillPrint(col.CR_No)">
+                                                                <i class="fa fa-print"></i> Voucher Print
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
@@ -130,6 +136,7 @@
                                             </td>
                                             <td>{{col.Doc_No}}</td>
                                             <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.CR_No}}</td>
                                             <td>{{col.From_Location}}</td>
                                             <td>{{col.To_godown_name}}</td>
                                             <td>{{col.Toyal_Qty}}</td>
@@ -189,6 +196,7 @@
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
                                             <th>Remarks</th>
+                                            <th>Outlet Remarks</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-i="rowIndex">
@@ -200,6 +208,7 @@
                                             <td>{{col.Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
                                             <td>{{col.Remarks}}</td>
+                                            <td>{{col.Outlet_Remarks}}</td>
 
                                         </tr>
                                     </ng-template>
@@ -257,6 +266,7 @@
                                             <th>Return Reason</th>
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
+                                            <th>Outlet Remarks</th>
                                             <th>Remarks</th>
                                         </tr>
                                     </ng-template>
@@ -274,6 +284,8 @@
                                                   CompacctDigitonly="true"
                                                   [disabled] = "AQtyflag"
                                                   class="form-control" style="width: 71px;" /></td> -->
+                                            <!-- <td>{{col.Outlet_Remarks}}</td> -->
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Outlet_Remarks' class="form-control" style="width: 200px;" /></td>
                                             <td>{{col.Remarks}}</td>
                                             <!-- <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks'  [disabled] = "true"   class="form-control" style="width: 200px;" /></td> -->
 
@@ -340,6 +352,7 @@
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
                                             <th style="width: 200px;">Remarks</th>
+                                            <th>Outlet Remarks</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-i="rowIndex">
@@ -358,6 +371,8 @@
                                             <!-- <td>{{col.Accepted_Qty}}</td> -->
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" (ngModelChange)="changeRemarks(col)" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.Accepted_Qty == col.Qty" class="form-control" style="width: 200px;" /></td>
+                                            <td>{{col.Outlet_Remarks}}</td>
+
 
                                         </tr>
                                         <tr *ngIf='i === (editList.length - 1)'>
@@ -456,8 +471,14 @@
                                       </option>
                                 </select>
                                         </div>
+                                        <div class="col-sm-3" *ngIf="!ExpiredProductFLag">
+                                            <label class="control-label">Remarks</label>
+                                            <textarea class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="ObjProductaddForm.Remarks" placeholder="Remarks" [ngClass]="{'clearance': RFactoryaddFormSubmitted && remarks.errors?.required}"></textarea>
+                                        </div>
+                                    </div>
 
-                                        <button id="row-Add" class="btn btn-primary custombutton2" (click)="addProduct(RFactoryaddForm.form.valid)">
+                                    <div class="box-footer">
+                                        <button id="row-Add" class="btn btn-primary pull-right" (click)="addProduct(RFactoryaddForm.form.valid)">
                                 <!-- <i class="fa fa-fw fa-add"></i>&nbsp; Add --> Add
                             </button>
                                     </div>
@@ -472,6 +493,7 @@
                                                     <th>Batch</th>
                                                     <th>Quantity</th>
                                                     <th>Return Reason</th>
+                                                    <th>Remarks</th>
                                                     <th>Delete</th>
                                                 </tr>
                                             </thead>
@@ -483,6 +505,7 @@
                                                     <td>{{obj.Batch_No}}</td>
                                                     <td>{{obj.Stock_Qty}}</td>
                                                     <td>{{obj.Return_Reason}}</td>
+                                                    <td>{{obj.Remarks ? obj.Remarks : '-'}}</td>
                                                     <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                 </tr>
                                             </tbody>

@@ -34,34 +34,11 @@ hr {
     /* margin-top: 20px; */
 }
 
-
-/* Previous Contract */
-
-.col-md-6 {
-    padding-right: 15px;
-    padding-left: 15px;
-    position: center;
-    min-height: 1px;
-    box-sizing: border-box;
-}
-
-.box.box-successMP {
-    border-top-color: #56ceba;
-}
-
-.well-smMP {
-    padding: 9px;
-    border-radius: 3px;
-}
-
-.wellMP {
-    background-color: #bbe7d9
-}
-
-.col-sm-6 {
-    width: 100%;
-}
-
 .text-red-active>td {
     color: red;
+}
+
+div.label-t {
+    padding: 17px 12px;
+    background: rgb(206 216 216 / 51%);
 }

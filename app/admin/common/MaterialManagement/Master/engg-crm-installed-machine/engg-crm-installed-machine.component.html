@@ -182,6 +182,22 @@
                                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Year of Manufacturer<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="year" #year="ngModel" CompacctDigitonly="true" [ngClass]="{'clearance': InstalledMachineFormSubmit && year.errors?.required}" [(ngModel)]="ObjInstalledMachine.Year_Manufacturing" placeholder="Year of Manufacturer" minlength="4"
+                                            maxlength="4" required/>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date of Installation <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <np-datepicker id='date' name="date" inputClass="form-control" [(ngModel)]="DateOfInstallation"></np-datepicker>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                             <!-- <div class="col-sm-6"> -->
                             <div class="box-footer">

@@ -26,6 +26,7 @@ export class MasterUomComponent implements OnInit {
   matchDisplay = false;
   buttonname = "Create";
   ObjUom : uom = new uom ();
+  decimallist = [];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -43,7 +44,6 @@ export class MasterUomComponent implements OnInit {
       Header: "Master UOM",
       Link: " Material Management -> Master -> Master UOM"
     });
-
     this.GetAlldata();
   }
   TabClick(e) {
@@ -94,11 +94,14 @@ export class MasterUomComponent implements OnInit {
  }
  uomMaster(valid){
   this.uomFormSubmitted = true;
-  
+  this.ObjUom.Decimal_Place = this.ObjUom.Decimal_Place != 4 ? this.ObjUom.Decimal_Place : 0 ;
   if (valid) {
     const ctrl = this;
     console.log(ctrl.ObjUom)
-    const DuplicateFlag = $.grep(ctrl.AllCostcenterList,function(item){return (item.UOM.toUpperCase() === ctrl.ObjUom.UOM.toUpperCase()) && (item.PRI_ALT.toUpperCase() === ctrl.ObjUom.PRI_ALT.toUpperCase())});
+    const DuplicateFlag = $.grep(ctrl.AllCostcenterList,function(item)
+    {return (item.UOM.toUpperCase() === ctrl.ObjUom.UOM.toUpperCase()) && 
+      (item.PRI_ALT.toUpperCase() === ctrl.ObjUom.PRI_ALT.toUpperCase() && 
+      (Number(item.Decimal_Place) === Number(ctrl.ObjUom.Decimal_Place)))});
     if(!DuplicateFlag.length) {
       if(this.ObjUom.UOM_Id){
         console.log("Update");
@@ -183,6 +186,7 @@ export class MasterUomComponent implements OnInit {
     const editList = data[0] ;
     console.log("editList===",editList);
     this.ObjUom = editList ;
+    this.ObjUom.Decimal_Place = data[0].Decimal_Place != 0 ? data[0].Decimal_Place : 4 ;
      console.log("this.ObjUom===",this.ObjUom);
      console.log("this.ObjUom.UOM_Id===",this.ObjUom.UOM_Id);
      
@@ -219,4 +223,5 @@ class uom {
   UOM_Id = 0;
   UOM : any ;
   PRI_ALT : string ;
+  Decimal_Place : any;
 }
