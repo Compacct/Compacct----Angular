@@ -108,6 +108,7 @@ PDFFlag = false;
 
   ViewTenderID = undefined;
   viewModel = false;
+  budGetsubList2 = [];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -161,16 +162,75 @@ updateRowGroupMetaData() {
     this.GetBudgetSub();
 
     this.GetExcelGroupDetails();
+    this.GetSingleScheCreatedList();
+    this.GetSingleScheCreatedList2();
   }
   onReject() {
     this.compacctToast.clear("c");
   }
+  GetSingleScheCreatedList(){
+    this.budGetsubList = [];
+    const tempObj = {
+      Send_To : this.commonApi.CompacctCookies.User_ID
+    }
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Budget_Sub_Tab",
+      "Json_Param_String": JSON.stringify(tempObj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.budGetsubList = data;
+     console.log("SUB",data);
+    })
+  }
+  GetSingleScheCreatedList2(){  
+    this.budGetsubList2 = [];
+    const tempObj = {
+      Send_To : this.commonApi.CompacctCookies.User_ID
+    }
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Budget_Sub_Tab_Multiple",
+      "Json_Param_String": JSON.stringify(tempObj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // if(this.fromQuery) {
+      //   this.budGetsubList = this.TenderDocID ? data.filter(i=> i.Tender_Doc_ID === this.TenderDocID) : data;
+      // } else {
+        this.budGetsubList2 = data;
+    //  }
+     console.log("SUB",data);
+    })
+  }
+
+  CreateMulitple(obj) {
+    this.ngxService.start();
+    setTimeout(()=>{
+      const RediRecObj = {
+        'TenderIDView' : window.btoa(obj.Tender_ID),
+        'TenderID' : window.btoa(obj.Tender_Doc_ID),
+        'Tender_CreUserID' : window.btoa(obj.Tender_Create_User_ID),
+        'Work_Name' : window.btoa(obj.Work_Name),
+        'From' : 'CreatedBudget',
+      }
+      this.ngxService.stop();
+      this.DynamicRedirectToR(RediRecObj,'./BL_CRM_Txn_Enq_Tender_Budget_Multiple')
+    },500)
+
+  }
+
+  GotoMultipleListTab(obj) {
+      this.CreateMultipleScheme(obj)
+  }
+
   onConfirm(){}
   TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["Pending Budget", "Created Budget", "Create Single Scheme"];
     this.buttonname = "Create";
     this.clearData();
+    this.GetSingleScheCreatedList();
+    this.GetSingleScheCreatedList2();
   }
   clearData(){
     this.ShowSingleScheme = false;
@@ -218,7 +278,7 @@ updateRowGroupMetaData() {
       "Json_Param_String": JSON.stringify(tempObj)
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.budGetsubList = data;
+    // this.budGetsubList = data;
      console.log("SUB",data);
     })
   }

@@ -114,6 +114,7 @@ PDFFlag = false;
 
   MultipleSchemeList = [];
   TenderIDView = undefined;
+  EditSiteFlag = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -135,6 +136,7 @@ PDFFlag = false;
           'Tender_Doc_ID' : window.atob(val['TenderID']),
           'Tender_Create_User_ID' : window.atob(val['Tender_CreUserID']),
           'Work_Name' : window.atob(val['Work_Name']),
+          'From' : val['From'],
 
         }
         this.CreateSingleScheme(obj);
@@ -196,7 +198,11 @@ ngOnInit() {
       "Json_Param_String": JSON.stringify(tempObj)
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.budGetsubList = data;
+      // if(this.fromQuery) {
+      //   this.budGetsubList = this.TenderDocID ? data.filter(i=> i.Tender_Doc_ID === this.TenderDocID) : data;
+      // } else {
+        this.budGetsubList = data;
+    //  }
      console.log("SUB",data);
     })
   }
@@ -209,6 +215,9 @@ ngOnInit() {
     this.items = ["Multiple Scheme", "Create Multiple Scheme","Created Budget"];
     this.buttonname = "Create";
     this.clearData();
+    this.EditSiteFlag = false;
+    this.ShowAddedEstimateProductList = [];
+    this.AddedEstimateProductList = [];
   }
   clearData(){
     this.ShowSingleScheme = this.fromQuery ? true : false;
@@ -262,8 +271,10 @@ ngOnInit() {
   }
  
 // 
-  CreateMulitple() {
+  CreateMulitple(create?) {
     this.ngxService.start();
+
+    this.EditSiteFlag = create ? false : true;
   //  this.ShowSingleScheme = true;
     setTimeout(()=>{
       this.tabIndexToView = 1;
@@ -276,6 +287,9 @@ ngOnInit() {
 
   }
   EDitSiteFromMultiple(obj) {
+    this.EditSiteFlag = false;
+    this.ShowAddedEstimateProductList = [];
+    this.AddedEstimateProductList = [];
     if(this.TenderDocID && obj.Site_ID) {
       const temp = {
         Tender_Doc_ID: this.TenderDocID ,
@@ -283,7 +297,7 @@ ngOnInit() {
       }
       const obj2 = {
         "SP_String": "SP_Tender_Management_All",
-        "Report_Name_String": "Get Data Tender Estimate",
+        "Report_Name_String": "Get_Data_Tender_Estimate_Multiple_Site",
         "Json_Param_String": JSON.stringify([temp])
       }
       this.GlobalAPI
@@ -294,7 +308,8 @@ ngOnInit() {
             this.ShowAddedEstimateProductList = data;
             this.AddedEstimateProductList = this.ShowAddedEstimateProductList;
             this.ObjEstimate.Budget_Short_Description = data[0].Budget_Short_Description;
-            this.ObjEstimate.No_of_Site = data[0].No_of_Site;
+            this.getSiteList(obj.Site_ID);
+            this.EditSiteFlag = true;
             this.CreateMulitple();
             console.log(data)
           }
@@ -326,8 +341,12 @@ ngOnInit() {
     this.GetReferenceSiteMultipleScheme();
     this.GetMultipleSchemeList();
     setTimeout(()=>{
-      this.tabIndexToView = 0;
-      this.ngxService.stop();
+      if(obj.From && obj.From ==='CreatedBudget') {
+        this.CreateMulitple(true);
+      } else {
+        this.tabIndexToView = 0;
+        this.ngxService.stop();
+      }
     },500)
    }
   }
@@ -367,7 +386,7 @@ ngOnInit() {
       searchFields.push('Site_ID');
       DReffSite = this.ReffSite;
     }
-    if (searchFields.length) {
+    if (searchFields.length && this.ObjEstimate.site_ID) {
       this.ngxService.start();
       let LeadArr = this.DistRefferanceList.filter(function (e) {
         return  (DReffSite.length ? DReffSite.includes(e['Site_ID']) : true)
@@ -380,6 +399,7 @@ ngOnInit() {
           const data = SiteDta ?  JSON.parse(SiteDta) : [];     
           console.log(data);
           data.forEach((ele2:any)=>{  
+            ele2.site_ID = this.ObjEstimate.site_ID;
             TempPushArr.push(ele2);
           }) 
         }
@@ -484,7 +504,7 @@ ngOnInit() {
     }
     
   }
-  getSiteList() {
+  getSiteList(id?) {
     this.siteList = [];
     if (this.TenderDocID && this.ObjEstimate.Budget_Short_Description) {
       const obj = {
@@ -500,6 +520,8 @@ ngOnInit() {
             el['value'] = el.Site_ID;
           });
           this.siteList = data;
+          this.ObjEstimate.site_ID = id ? id : undefined;
+
         });
     }
   }
@@ -1023,6 +1045,10 @@ ngOnInit() {
         console.log("follow up save",data);
         if(data[0].Column1 === "SAVED SUCCESSFULLY"){         
             this.EstimateInfoSubmitted = false;
+            
+    this.GetReferenceSiteMultipleScheme();    
+    this.GetMultipleSchemeList();
+    this.GetSingleScheCreatedList();
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
@@ -1030,8 +1056,8 @@ ngOnInit() {
               summary: 'Estimate Management ',
               detail: "Succesfully Save."
             });
-            this.ObjEstimate = {};
-            this.TenderDocID = undefined;
+         //   this.ObjEstimate = {};
+         //   this.TenderDocID = undefined;
             this.EstimateModalFlag = false;
             this.ShowAddedEstimateProductList = [];
             this.saveSpinner = false;

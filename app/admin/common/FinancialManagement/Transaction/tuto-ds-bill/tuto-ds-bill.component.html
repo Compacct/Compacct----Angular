@@ -46,26 +46,32 @@
                                 </label >
                                 <div  class="label-t">{{ObjDSBill['City'] ? ObjDSBill['City'] : '-'}}</div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <label class="control-label">
                                     Pincode <sup class="text-danger">*</sup>
                                 </label >
-                                <div *ngIf='ObjDSBill?.Pin && ObjDSBill.Pin.length === 6' class="label-t">{{ObjDSBill['Pin'] ? ObjDSBill['Pin'] : '-'}}</div>
-                                <input class="form-control"
-                                name="Pin"
-                                #Pin="ngModel"
-                                [(ngModel)]="ObjDSBill.Pin"
-                                placeholder="Pincode"
-                                minlength="6"
-                                maxlength="6"
-                                *ngIf='ObjDSBill.Foot_Fall_ID && ObjDSBill.Pin.length !== 6'
-                                CompacctDigitonly="true"
-                                [ngClass]="{'clearance':DSBillFormSubmitted && Pin?.errors?.required ||
-                                (Pin.errors?.minlength && Pin.touched)}"
-                                 required>
+                                <div *ngIf='ObjDSBill.Foot_Fall_ID && PiniValidSaved' class="label-t">{{ObjDSBill['Pin'] ? ObjDSBill['Pin'] : '-'}}</div>
+                                <div class="input-group" *ngIf='ObjDSBill.Foot_Fall_ID && !PiniValidSaved'>
+                                        <input class="form-control"
+                                        name="Pin"
+                                        #Pin="ngModel"
+                                        [(ngModel)]="ObjDSBill.Pin"
+                                        placeholder="Pincode"
+                                        minlength="6"
+                                        maxlength="6"
+                                        CompacctDigitonly="true"
+                                        [ngClass]="{'clearance':DSBillFormSubmitted && Pin?.errors?.required ||
+                                        (Pin.errors?.minlength && Pin.touched)}"
+                                        required>
+                                        <div class="input-group-addon" style="padding:0;">
+                                           <button class="btn btn-warning" (click)='CallTutopiaAppApi()'>
+                                            &nbsp;<i class="fa fa-download"></i>&nbsp;UPDATE PIN
+                                           </button>
+                                          </div>
+                                </div>
                             </div>
                             <div class="col-sm-3">
-                                <button class="btn btn-primary custombutton" (click)="CreatPaymentLink()" id="Bill55" [disabled]="!ObjDSBill.Mobile_No">
+                                <button class="btn btn-primary custombutton2" (click)="CreatPaymentLink()" id="Bill55" [disabled]="!ObjDSBill.Mobile_No">
                                       
                                     <i class="fa fa-fw fa-credit-card-alt"></i>&nbsp; Create Payment Link
                                 </button>
@@ -213,7 +219,7 @@
                                     required>
                             </div>
                             <div class="col-sm-4">
-                                <button class="btn btn-primary custombutton" (click)="AddProduct(addProductForm.form.valid)" [disabled]="addSnipper">
+                                <button class="btn btn-primary custombutton" (click)="AddProduct(addProductForm.form.valid)" [disabled]="addSnipper || !PiniValidSaved">
                                     <p-progressSpinner *ngIf="addSnipper" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                 <span *ngIf="!addSnipper" class="glyphicon glyphicon-add"></span> ADD</button>
                             </div>
@@ -254,7 +260,7 @@
                         </div>
                     </div>
                     <div class='box-footer'>
-                        <button class="btn btn-primary pull-right" (click)="SaveDSbill(SearchForm.form.valid)" id="load" [disabled]="Spinner || (ObjDSBill.Foot_Fall_ID && ObjDSBill.Pin.length != 6)">
+                        <button class="btn btn-primary pull-right" (click)="SaveDSbill(SearchForm.form.valid)" id="load" [disabled]="Spinner || !PiniValidSaved">
                          <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> SAVE
                  </button>

@@ -39,6 +39,7 @@ export class TutoDsBillComponent implements OnInit {
   BDA_ID = undefined;
 
   CouponObj: any = {};
+  PiniValidSaved = false;
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -88,6 +89,7 @@ export class TutoDsBillComponent implements OnInit {
   }
   GetStudentsDetails() {
     this.CouponObj = {};
+    this.PiniValidSaved = false;
     this.ObjDSBill.Foot_Fall_ID = undefined;
     this.ObjDSBill.Contact_Name = undefined;
     this.ObjDSBill.Class_Name = undefined;
@@ -116,7 +118,10 @@ export class TutoDsBillComponent implements OnInit {
              this.ObjDSBill.Contact_Name = ReturnObj.Contact_Name;
              this.ObjDSBill.Class_Name = ReturnObj.Class_Name;
              this.ObjDSBill.City = ReturnObj.City;
+             ReturnObj.Pin = 'NA';
              this.ObjDSBill.Pin = ReturnObj.Pin;
+             this.ObjDSBill.Student_ID =  ReturnObj.Student_ID;
+             this.PiniValidSaved = (ReturnObj.Foot_Fall_ID && ReturnObj.Pin && +ReturnObj.Pin && ReturnObj.Pin.length === 6) ? true : false;
              this.GetProductDetaisl();
              this.GetTransactionDetails();
              this.GetPreviousBill();
@@ -126,6 +131,8 @@ export class TutoDsBillComponent implements OnInit {
             this.ObjDSBill.Class_Name = undefined;
             this.ObjDSBill.City = undefined;
             this.ObjDSBill.Pin = undefined;
+            this.ObjDSBill.Student_ID =  undefined;
+            this.PiniValidSaved =  true;
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
@@ -393,7 +400,14 @@ export class TutoDsBillComponent implements OnInit {
           .subscribe((data: any) => {
             this.Spinner = false;
             if(data[0].Column1 === "Save Successfully") {
-            this.savePinForBill();
+              const obj1 = {
+                Subscription_Txn_ID : (this.CouponObj && this.CouponObj.Subscription_Txn_ID) ? window.btoa(this.CouponObj.Subscription_Txn_ID) : window.btoa('0'),
+                Discount_Amount : (this.CouponObj && this.CouponObj.Coupon_Discount) ?  window.btoa(this.CouponObj.Coupon_Discount) :  window.btoa('0'),
+                Menu_Ref_ID : window.btoa(this.$CompacctAPI.CompacctCookies.Menu_Ref_ID),
+                Foot_Fall_ID : window.btoa(this.ObjDSBill.Foot_Fall_ID),
+                BDA_ID :  window.btoa(this.BDA_ID)
+              }
+              this.DynamicRedirectTo(obj1,'./Tutopia_Student_Order');
            console.log(data);
           }
       });
@@ -408,28 +422,82 @@ export class TutoDsBillComponent implements OnInit {
       });
     }
   }
-  savePinForBill() {
-    const obj = {
-      "SP_String": "Tutopia_Subscription_Accounts",
-      "Report_Name_String": "Update_PIN_Code",
-      "Json_Param_String" : JSON.stringify([{ Foot_Fall_ID :this.ObjDSBill.Foot_Fall_ID,PIN_Code : this.ObjDSBill.Pin}])
-    }
-    this.GlobalAPI
-        .getData(obj)
+  // Save Pin 
+  PinCodeValidCheck() {
+    return (this.ObjDSBill.Foot_Fall_ID && this.ObjDSBill.Pin && +this.ObjDSBill.Pin && this.ObjDSBill.Pin.length === 6);
+  }
+  CallTutopiaAppApi() {
+    if (this.ObjDSBill.Student_ID && this.PinCodeValidCheck()) {
+      const httpOptions = {
+        headers: new HttpHeaders()
+          .set('Authorization', 'Bearer aZyAs0ynGvmOSNyyAOkJauiV')
+      }
+      const TempObj = {
+        "student_id":this.ObjDSBill.Student_ID,
+        "pincode":this.ObjDSBill.Pin
+      };
+      this.$http
+        .post("https://api.tutopia.in/api/crm/v1/student/update", TempObj, httpOptions)
         .subscribe((data: any) => {
-          this.Spinner = false;
-          if(data[0].remarks === "success") {
-          const obj1 = {
-            Subscription_Txn_ID : (this.CouponObj && this.CouponObj.Subscription_Txn_ID) ? window.btoa(this.CouponObj.Subscription_Txn_ID) : window.btoa('0'),
-            Discount_Amount : (this.CouponObj && this.CouponObj.Coupon_Discount) ?  window.btoa(this.CouponObj.Coupon_Discount) :  window.btoa('0'),
-            Menu_Ref_ID : window.btoa(this.$CompacctAPI.CompacctCookies.Menu_Ref_ID),
-            Foot_Fall_ID : window.btoa(this.ObjDSBill.Foot_Fall_ID),
-            BDA_ID :  window.btoa(this.BDA_ID)
+          console.log('tutopia',data);
+          if(data.status) {
+            this.savePinForBill();
+          } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Tutopia App Api Error."
+            });
           }
-          this.DynamicRedirectTo(obj1,'./Tutopia_Student_Order');
-         console.log(data);
-        }
-    });
+          
+        });
+    } 
+    if(!(this.PinCodeValidCheck())) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Validation",
+        detail: "Enter a valid poncode."
+      });
+    }
+    }
+  savePinForBill() {
+    if(this.ObjDSBill.Student_ID && this.PinCodeValidCheck()) {
+      const obj = {
+        "SP_String": "Tutopia_Subscription_Accounts",
+        "Report_Name_String": "Update_PIN_Code",
+        "Json_Param_String" : JSON.stringify([{ Foot_Fall_ID :this.ObjDSBill.Foot_Fall_ID,PIN_Code : this.ObjDSBill.Pin}])
+      }
+      this.GlobalAPI
+          .getData(obj)
+          .subscribe((data: any) => {
+            this.Spinner = false;
+            console.log('app',data);
+            if(data[0].remarks === "success") {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'Success',
+                detail: "Succesfully Pincode Updated."
+              });
+              this.PiniValidSaved =  this.PinCodeValidCheck();
+           console.log(data);
+          }
+      });
+    }   
+    if(!(this.PinCodeValidCheck())) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Validation",
+        detail: "Enter a valid poncode."
+      });
+    }
   }
   ObjArrMerge() {
     let arr = [];
@@ -461,6 +529,7 @@ class DSBill{
   Class_Name:string;
   City:string;
   Pin:string;
+  Student_ID:string;
 
 }
 class DSProduct {
