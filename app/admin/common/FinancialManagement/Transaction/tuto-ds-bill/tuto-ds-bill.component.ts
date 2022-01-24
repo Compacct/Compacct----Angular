@@ -118,7 +118,6 @@ export class TutoDsBillComponent implements OnInit {
              this.ObjDSBill.Contact_Name = ReturnObj.Contact_Name;
              this.ObjDSBill.Class_Name = ReturnObj.Class_Name;
              this.ObjDSBill.City = ReturnObj.City;
-             ReturnObj.Pin = 'NA';
              this.ObjDSBill.Pin = ReturnObj.Pin;
              this.ObjDSBill.Student_ID =  ReturnObj.Student_ID;
              this.PiniValidSaved = (ReturnObj.Foot_Fall_ID && ReturnObj.Pin && +ReturnObj.Pin && ReturnObj.Pin.length === 6) ? true : false;
@@ -385,6 +384,8 @@ export class TutoDsBillComponent implements OnInit {
     };
     this.router.navigate(['./Tutopia_DS_Payment_Link'], navigationExtras);
   }
+
+  
 
   SaveDSbill(valid) {
     if(valid && this.AddedProductList.length && (this.TotalProductAddedAmount && this.TotalAmount && this.TotalProductAddedAmount === this.TotalAmount)) {
