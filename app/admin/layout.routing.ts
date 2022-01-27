@@ -161,6 +161,7 @@ import { StockTransferToStoreComponent } from './common/MaterialManagement/Outwa
 import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-master-product-electrical/harb-master-product-electrical.component';
 import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
 import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
+import { HarbMasterProductCivilComponent } from './common/Harbauer/harb-master-product-civil/harb-master-product-civil.component';
 
 
 
@@ -943,6 +944,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   path : 'BL_CRM_Txn_Enq_Tender_Budget_Multiple',
                                                                   component:TenderMultipleSchBudgetComponent,
                                                                   data: {title: 'Multiple Scheme Budget'}
+                                                                },
+                                                                {
+                                                                  path : 'Harbauer_Master_Product_Civil',
+                                                                  component:HarbMasterProductCivilComponent,
+                                                                  data: {title: 'Master Product Civil'}
                                                                 }
 
 
