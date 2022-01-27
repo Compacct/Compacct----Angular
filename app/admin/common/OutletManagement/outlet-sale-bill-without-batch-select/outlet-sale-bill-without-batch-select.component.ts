@@ -1074,8 +1074,8 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
      });
      return false;
    }
-   if(this.ObjcashForm.Coupon_Per && !this.Objcustomerdetail.Bill_Remarks ||
-    this.ObjcashForm.Credit_To_Ac_ID && !this.Objcustomerdetail.Bill_Remarks){
+   if(!this.QueryStringObj.Ledger_Name && this.ObjcashForm.Coupon_Per && !this.Objcustomerdetail.Bill_Remarks ||
+    !this.QueryStringObj.Ledger_Name && this.ObjcashForm.Credit_To_Ac_ID && !this.Objcustomerdetail.Bill_Remarks){
        this.Spinner = false;
        this.ngxService.stop();
      this.compacctToast.clear();

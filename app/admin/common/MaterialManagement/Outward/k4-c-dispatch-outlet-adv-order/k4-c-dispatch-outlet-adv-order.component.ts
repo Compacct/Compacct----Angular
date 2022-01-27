@@ -58,6 +58,28 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   doc_no: any;
   doc_date: any;
   Auto_Accepted: any;
+
+  dispatchchallanno : any;
+  FranchiseProductList = [];
+  FranchiseList = [];
+  taxable: any;
+  cgst: any;
+  sgst: any;
+  igst: any;
+  grossamount: any;
+  netamount: any;
+  Round_Off: any;
+  currentDate: any = new Date();
+  ToCostId = undefined;
+  ToGodownId = undefined;
+  subledgerid:any;
+  franchisecostcenid:any;
+
+  totalaccpqty: any;
+  totaldelqty: any;
+  Franchise = [];
+  FranchiseBill:any;
+  ToCostCentId = undefined;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -83,6 +105,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     this.getBrand();
     this.GetVehicle();
     this.GetFromGodown();
+    this.GetFranchiseList();
 
   }
   TabClick(e) {
@@ -149,6 +172,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
         this.To_Godown_ID_Dis = true;
       }
       this.autoacceptedChange();
+      this.autoaFranchiseBill();
+      this.getsubledgerid();
     })
   }
   getCostcenter(){
@@ -168,6 +193,18 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
 
     })
   }
+  // FRANCISE BILL
+  autoaFranchiseBill() {
+    //this.ExpiredProductFLag = false;
+   if(this.ObjadvDispat.Cost_Cen_ID) {
+     const ctrl = this;
+     const autofrnchiseObj = $.grep(ctrl.costcenterList,function(item: any) {return item.Cost_Cen_ID == ctrl.ObjadvDispat.Cost_Cen_ID})[0];
+     console.log(autofrnchiseObj);
+     this.FranchiseBill = autofrnchiseObj.Franchise;
+     console.log("this.FranchiseBill ==", this.FranchiseBill)
+     
+    }
+    }
   GetVehicle(){
     const obj = {
       "SP_String": "SP_Controller_Master",
@@ -281,6 +318,17 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
      
     }
     }
+  // getTotalIssueValue(){
+  //     let issueval = 0;
+  //     let acceptedval = 0;
+  //     this.productDetails.forEach((item)=>{
+  //       issueval += Number(item.Delivery_Qty)
+  //       acceptedval += Number(item.Delivery_Qty)
+  //     });
+  //     this.totaldelqty = (issueval).toFixed(2);
+  //     this.totalaccpqty = (acceptedval).toFixed(2);
+  //   //  return issueval ? issueval.toFixed(2) : '-';
+  // }
   saveAdv(){
     console.log(this.saveqty());
     console.log(this.productDetails.length && this.saveqty());
@@ -319,8 +367,12 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                  "Json_Param_String": JSON.stringify(this.saveData)
                }
                this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+                this.dispatchchallanno = data[0].Column1;
                  var tempID = data[0].Column1;
                  if(data[0].Column1){
+                  if(this.FranchiseBill != "N") {
+                    this.SaveFranchisechallan();
+                  }
                   this.ngxService.stop();
                    this.compacctToast.clear();
                  this.compacctToast.add({
@@ -336,7 +388,16 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                this.clearData();
                this.searchData();
                this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
-                 }
+                 } else{
+                  this.ngxService.stop();
+                  this.compacctToast.clear();
+                      this.compacctToast.add({
+                        key: "compacct-toast",
+                        severity: "error",
+                        summary: "Warn Message",
+                        detail: "Something Wrong"
+                      });
+                }
                })
              }
              else{
@@ -350,6 +411,16 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                   });
             }
 
+            }
+            else{
+              this.ngxService.stop();
+              this.compacctToast.clear();
+                  this.compacctToast.add({
+                    key: "compacct-toast",
+                    severity: "error",
+                    summary: "Warn Message",
+                    detail: "Something Wrong"
+                  });
             }
         }
   qtyChq(col){
@@ -376,7 +447,6 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
 
 
   }
-
   saveqty(){
     let flag = true;
    for(let i = 0; i < this.productDetails.length ; i++){
@@ -387,6 +457,185 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
    }
    return flag;
   }
+
+  // SAVE FRANCHISE
+ SaveFranchisechallan(){
+  // if (this.dispatchchallanno){
+   const Obj = {
+     Doc_No : this.dispatchchallanno,
+     Cost_Cen_ID : this.ObjadvDispat.Cost_Cen_ID,
+     From_Date : this.DateService.dateConvert(new Date(this.ChallanDate)),
+     To_Date :  this.DateService.dateConvert(new Date(this.ChallanDate))
+   }
+      const obj = {
+        "SP_String": "SP_K4C_Accounting_Journal",
+        "Report_Name_String" : "Get Franchise Bill Ageinst Challan",
+        "Json_Param_String": JSON.stringify([Obj])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+       this.FranchiseProductList = data;
+       console.log("this.FranchiseProductList======",this.FranchiseProductList);
+       this.calculateTotalAmt();
+       this.SaveFranSaleBill();
+      })
+    
+   //  }
+   }
+   GetFranchiseList(){
+     // const tempObj = {
+     //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+     //   //Material_Type : this.MaterialType_Flag
+     // }
+     const obj = {
+       "SP_String": "SP_Franchise_Sale_Bill",
+       "Report_Name_String": "Get Franchise",
+       //"Json_Param_String": JSON.stringify([tempObj])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.FranchiseList = data;
+       console.log("this.FranchiseList ===", this.FranchiseList)
+       // this.FranchiseList.forEach(item => {
+       //   item.Cost_Cen_ID = this.ObjfranchiseSalebill.Cost_Cen_ID
+       // });
+      })
+   }
+   getsubledgerid(){
+     //this.ExpiredProductFLag = false;
+    if(this.ObjadvDispat.Cost_Cen_ID) {
+     const ctrl = this;
+     const subledgeridObj = $.grep(ctrl.FranchiseList,function(item: any) {return item.Cost_Cen_ID == ctrl.ObjadvDispat.Cost_Cen_ID})[0];
+     console.log(subledgeridObj);
+     this.subledgerid = subledgeridObj.Sub_Ledger_ID;
+     this.franchisecostcenid = subledgeridObj.Cost_Cen_ID;
+     console.log("this.subledgerid ==", this.subledgerid)
+     
+    }
+   }
+   calculateTotalAmt(){
+     this.taxable = undefined;
+     this.cgst = undefined;
+     this.sgst = undefined;
+     this.igst = undefined;
+     this.grossamount = undefined;
+     let totaltax = 0; 
+     let totalcgst = 0;
+     let totalsgst = 0;
+     let totaligst = 0;
+     let grossamt = 0;
+     this.FranchiseProductList.forEach(item => {
+       totaltax = totaltax + Number(item.Taxable);
+       totalcgst = totalcgst + Number(item.CGST_AMT);
+       totalsgst = totalsgst + Number(item.SGST_AMT);
+       totaligst = totaligst + Number(item.IGST_AMT);
+       grossamt = grossamt + Number(item.Net_Amount);
+     });
+     this.taxable = (totaltax).toFixed(2);
+     this.cgst = (totalcgst).toFixed(2);
+     this.sgst = (totalsgst).toFixed(2);
+     this.igst = (totaligst).toFixed(2);
+     this.grossamount = (grossamt).toFixed(2);
+     // Round Off
+     this.Round_Off = (Number(this.grossamount) - Math.round(this.grossamount)).toFixed(2);
+     this.netamount = Math.round(this.grossamount);
+     //console.log(this.Net_Amount);
+   }
+  getdataforSaveFranchise(){
+     this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
+     if(this.FranchiseProductList.length) {
+       let tempArr =[]
+       this.FranchiseProductList.forEach(item => {
+        // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+      const TempObj = {
+             Doc_No:  "A",
+             Doc_Date: this.currentDate,
+             Sub_Ledger_ID : Number(this.subledgerid),
+             Cost_Cen_ID	: 2,
+             Product_ID	: item.Product_ID,
+             Product_Name	: item.Product_Description,
+             Qty	: item.Qty,
+             UOM	: item.UOM,
+             MRP : item.Sale_rate,
+             Rate : item.Sale_rate,
+             Amount : Number(item.Qty) * Number(item.Sale_rate),
+             Discount : 0,
+             Taxable_Amount : item.Taxable,
+             CAT_ID : item.Cat_ID,
+             CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
+             CGST_Rate : item.CGST_PER,
+             CGST_Amount : item.CGST_AMT,
+             SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
+             SGST_Rate : item.SGST_PER,
+             SGST_Amount : item.SGST_AMT,
+             IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
+             IGST_Rate : item.IGST_PER,
+             IGST_Amount : item.IGST_AMT,
+             Bill_Gross_Amt : Number(this.taxable),
+             Rounded_Off : Number(this.Round_Off),
+             Bill_Net_Amt : this.netamount,
+             User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+             Remarks : 'NA',
+             Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
+             Total_Taxable : Number(this.taxable),
+             Total_CGST_Amt : Number(this.cgst),
+             Total_SGST_Amt : Number(this.sgst),
+             Total_IGST_Amt : Number(this.igst),
+             Total_Net_Amt : this.netamount,
+             HSL_No : item.HSN_NO
+          }
+       tempArr.push(TempObj)
+       });
+       console.log("Save Data ===", tempArr)
+       return JSON.stringify(tempArr);
+ 
+     }
+   }
+   SaveFranSaleBill(){
+     const obj = {
+       "SP_String" : "SP_K4C_Accounting_Journal",
+       "Report_Name_String" : "Save_Franchise_Sale_Bill",
+       "Json_Param_String" : this.getdataforSaveFranchise(),
+       "Json_1_String" : JSON.stringify([{Order_No : this.dispatchchallanno}])
+ 
+     }
+     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+       //console.log(data);
+       var tempID = data[0].Column1;
+       console.log("After Save",tempID);
+      // this.Objproduction.Doc_No = data[0].Column1;
+       if(data[0].Column1){
+         this.compacctToast.clear();
+         const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+         this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Production Voucher  " + tempID,
+          detail: "Succesfully  " + mgs
+        });
+       // this.GetSearchedList();
+        this.clearData();
+        this.searchData();
+       //  this.ProductList =[];
+       //  this.franchiseSalebillFormSubmitted = false;
+       } else{
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           detail: "Error Occured "
+         });
+       }
+     })
+ }
+ SaleBillPrint(obj) {
+  // console.log("billno ===", true)
+   if (obj.Bill_NO) {
+     window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Bill_NO, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+ 
+     );
+   }
+ }
+
   // getCostcenterBro(){
   //   this.OutletFilter = [];
   //   this.SelectedOutLet = [];

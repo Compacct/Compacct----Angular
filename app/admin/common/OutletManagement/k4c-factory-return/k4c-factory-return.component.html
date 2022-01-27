@@ -444,10 +444,10 @@
                                             <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
                                             <div class="col-sm-2 pull-right" style="width:170px;">
                                                 <small>Show Expired Products</small>
-                                                <p-checkbox [(ngModel)]='ExpiredProductFLag' name='ExpiredProduct' (onChange)='ExpiredProducts()' id="exProdFlag" [binary]="true"></p-checkbox>
+                                                <p-checkbox [(ngModel)]='ExpiredProductFLag' name='ExpiredProduct' (onChange)='ExpiredProducts()' [disabled]="checkboxdisable" id="exProdFlag" [binary]="true"></p-checkbox>
 
                                             </div>
-                                            <select class="form-control" name="Batchno" #Batchno="ngModel" [(ngModel)]="ObjProductaddForm.Batch_No" [ngClass]="{'clearance': RFactoryaddFormSubmitted && Batchno?.errors?.required}" [disabled]="DisabledBatch" required>
+                                            <select class="form-control" name="Batchno" #Batchno="ngModel" [(ngModel)]="ObjProductaddForm.Batch_No" (change)='getProductTimeChecking()' [ngClass]="{'clearance': RFactoryaddFormSubmitted && Batchno?.errors?.required}" [disabled]="DisabledBatch" required>
                                   <option  [ngValue]="undefined">Select</option>
                                     <option *ngFor = "let option of BatchNo" value="{{option.Batch_NO}}">
                                       {{option.Batch_No_Show}}

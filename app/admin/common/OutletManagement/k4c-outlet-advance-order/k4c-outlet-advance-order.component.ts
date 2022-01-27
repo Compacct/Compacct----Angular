@@ -725,38 +725,40 @@ add(valid) {
     GST_Tax_Per_Amt : this.ObjaddbillForm.GST_Tax_Per_Amt,
     Net_Amount : this.ObjaddbillForm.Delivery_Charge ? (Number(totalAmt) + Number(this.ObjaddbillForm.Delivery_Charge)).toFixed(2) : Number(totalAmt).toFixed(2)
   };
+    this.productSubmit.push(productObj);
 
  // console.log(productObj);
 
-  var sameProdTypeFlag = false;
-  this.productSubmit.forEach(item => {
-    //console.log('enter select');
-    //console.log(item.Product_ID);
-    //console.log(this.ObjaddbillForm.Product_ID);
-    //console.log(item.Product_ID == this.ObjaddbillForm.Product_ID);
-    if(item.Product_ID == this.ObjaddbillForm.Product_ID && item.Modifier == this.ObjaddbillForm.Modifier1) {
-      //console.log('select item true');
-      item.Delivery_Charge = Number(item.Delivery_Charge) + Number( productObj.Delivery_Charge);
-      item.Stock_Qty = Number(item.Stock_Qty) + Number( productObj.Stock_Qty);
-      item.Weight_in_Pound = Number(item.Weight_in_Pound) + Number( productObj.Weight_in_Pound);
-      item.Max_Discount = Number(item.Max_Discount) + Number(productObj.Max_Discount);
-      item.Amount = Number(item.Amount) + Number(productObj.Amount);
-      item.Gross_Amount = Number(item.Gross_Amount) + Number(productObj.Gross_Amount);
-      item.Dis_Amount = Number(item.Dis_Amount) + Number(productObj.Dis_Amount);
-      item.SGST_Amount = (Number(item.SGST_Amount) + Number(productObj.SGST_Amount)).toFixed(2);
-      item.CGST_Amount = (Number(item.CGST_Amount) + Number(productObj.CGST_Amount)).toFixed(2);
-      item.Net_Amount = (Number(item.Net_Amount) + Number(productObj.Net_Amount)).toFixed(2);
+//   var sameProdTypeFlag = false;
+//   this.productSubmit.forEach(item => {
+//     //console.log('enter select');
+//     //console.log(item.Product_ID);
+//     //console.log(this.ObjaddbillForm.Product_ID);
+//     //console.log(item.Product_ID == this.ObjaddbillForm.Product_ID);
+//     if(item.Product_ID == this.ObjaddbillForm.Product_ID && item.Modifier == this.ObjaddbillForm.Modifier1) {
+//       //console.log('select item true');
+//       item.Delivery_Charge = Number(item.Delivery_Charge) + Number( productObj.Delivery_Charge);
+//       item.Stock_Qty = Number(item.Stock_Qty) + Number( productObj.Stock_Qty);
+//       item.Weight_in_Pound = Number(item.Weight_in_Pound) + Number( productObj.Weight_in_Pound);
+//       item.Max_Discount = Number(item.Max_Discount) + Number(productObj.Max_Discount);
+//       item.Amount = Number(item.Amount) + Number(productObj.Amount);
+//       item.Gross_Amount = Number(item.Gross_Amount) + Number(productObj.Gross_Amount);
+//       item.Dis_Amount = Number(item.Dis_Amount) + Number(productObj.Dis_Amount);
+//       item.SGST_Amount = (Number(item.SGST_Amount) + Number(productObj.SGST_Amount)).toFixed(2);
+//       item.CGST_Amount = (Number(item.CGST_Amount) + Number(productObj.CGST_Amount)).toFixed(2);
+//       item.Net_Amount = (Number(item.Net_Amount) + Number(productObj.Net_Amount)).toFixed(2);
 
-      sameProdTypeFlag = true;
-    }
-    // count = count + Number(item.Net_Amount);
-  });
+//       sameProdTypeFlag = true;
+//     }
+//     // count = count + Number(item.Net_Amount);
+//   });
 
-  if(sameProdTypeFlag == false) {
-    this.productSubmit.push(productObj);
-  }
+//   if(sameProdTypeFlag == false) {
+//     this.productSubmit.push(productObj);
+//   } 
 
- console.log("this.productSubmit",this.productSubmit);
+//  console.log("this.productSubmit",this.productSubmit); 
+
   const selectedCostCenter = this.ObjaddbillForm.selectitem;
   this.ObjaddbillForm = new addbillForm();
   this.ObjaddbillForm.selectitem = selectedCostCenter;

@@ -102,6 +102,9 @@ export class K4cFactoryReturnComponent implements OnInit {
   FranchiseBill:any;
   FranchiseCostCentId = undefined;
 
+  checkboxdisable = false;
+  TimeStatus : any;
+
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -159,6 +162,7 @@ export class K4cFactoryReturnComponent implements OnInit {
     this.clearData();
     this.ExpiredProductFLag = false;
     this.getReturnReason("N");
+    this.checkboxdisable = false;
   }
   // CREATE TAB
   getDate(){
@@ -395,7 +399,16 @@ export class K4cFactoryReturnComponent implements OnInit {
    }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.BatchNo = data;
-   this.ObjProductaddForm.Batch_No = this.BatchNo.length ? this.BatchNo[0].Batch_NO : undefined;
+  //  this.ObjProductaddForm.Batch_No = this.BatchNo.length ? this.BatchNo[0].Batch_NO : undefined;
+  //  this.getProductTimeChecking();
+   if (this.BatchNo.length) {
+    this.ObjProductaddForm.Batch_No = this.BatchNo[0].Batch_NO;
+    this.getProductTimeChecking();
+   } 
+   else {
+    this.ObjProductaddForm.Batch_No = undefined;
+    this.getProductTimeChecking();
+   }
   // console.log('Batch No ==', data)
 
   });
@@ -454,6 +467,34 @@ export class K4cFactoryReturnComponent implements OnInit {
      //console.log('Expire Batch No =',this.BatchNo)
    })
   }
+  getProductTimeChecking(){
+    const TempObj = {
+      Product_ID : this.ObjProductaddForm.Product_ID,
+      Batch_NO : this.ObjProductaddForm.Batch_No
+     }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "RTF Product Time Checking",
+      "Json_Param_String": JSON.stringify([TempObj])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.TimeStatus = data[0].Column1;
+      // this.ObjProductaddForm.Batch_No = this.BatchNo.length ? this.BatchNo[0].Batch_NO : undefined;
+       console.log('Expire TimeStatus =',this.TimeStatus)
+       if (this.TimeStatus === "false") {
+        //this.getReturnReason("N");
+        var ReturnReasonid2 = this.ReturnReasonid.filter(function(value, index, arr){
+        return value.Return_Reason_ID != 5;
+      });
+        this.ReturnReasonid = ReturnReasonid2;
+        console.log("this.ReturnReasonid2", this.ReturnReasonid);
+        this.ObjSaveForm.Return_Reason_ID = ReturnReasonid2.length ? ReturnReasonid2[0].Return_Reason_ID : undefined;
+       } else 
+       {
+        this.getReturnReason("N");
+       }
+     })
+    }
 
   getReturnReason(expireflag){
   const obj = {
@@ -507,6 +548,8 @@ export class K4cFactoryReturnComponent implements OnInit {
   this.RFactoryaddFormSubmitted = false;
   this.ObjProductaddForm = new ProductaddForm();
   this.BatchNo = [];
+  this.checkboxdisable = true;
+  //this.getProductTimeChecking();
   //this.MTdisabled = true;
   // this.exProdFlag = false;
   // this.ExpiredProductFLag = false;
@@ -733,6 +776,7 @@ export class K4cFactoryReturnComponent implements OnInit {
      this.productaddSubmit =[];
      this.RFactoryaddFormSubmitted = false;
      this.MTdisabled = false;
+     this.checkboxdisable = false;
     // this.ExpiredProductFLag = true;
      if(this.ExpiredProductFLag){
        this.getReturnReason("Y");
@@ -1239,6 +1283,7 @@ onReject(){
   this.ngxService.stop();
  }
  clearbutton(){
+  this.checkboxdisable = false;
   this.ObjSaveForm.Material_Type = undefined;
   this.ObjProductaddForm = new ProductaddForm();
   //this.ObjSaveForm = new SaveForm();
@@ -1369,7 +1414,7 @@ onReject(){
             Doc_No:  "A",
             Doc_Date: this.currentDate,
             Sub_Ledger_ID : Number(this.subledgerid),
-            Cost_Cen_ID	: this.franchisecostcenid,
+            Cost_Cen_ID	: 2, //this.franchisecostcenid,
             Product_ID	: item.Product_ID,
             Product_Name	: item.Product_Description,
             Qty	: item.Qty,
@@ -1431,8 +1476,8 @@ onReject(){
          summary: "Production Voucher  " + tempID,
          detail: "Succesfully  " + mgs
        });
-      // this.GetSearchedList();
        this.clearData();
+       this.GetSearchedlist(true);
       //  this.ProductList =[];
       //  this.franchiseSalebillFormSubmitted = false;
       } else{

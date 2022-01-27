@@ -8,6 +8,7 @@ import { CompacctCommonApi } from "../../../../shared/compacct.services/common.a
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
 import { CompacctHeader } from "../../../../shared/compacct.services/common.header.service";
+import * as XLSX from 'xlsx';
 
 
 @Component({
@@ -393,15 +394,6 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     this.totalaccpqty = (acceptedval).toFixed(2);
     return issueval ? issueval.toFixed(2) : '-';
   }
-  getTotalaccepqty(){
-    let acceptv = 0;
-    this.productDetails.forEach((item)=>{
-      if (this.AccQtydis) {
-        acceptv += Number(item.Accepted_Qty)
-        }
-    });
-    this.totalacpt = (acceptv).toFixed(2);
-  }
   showDialog() {
     this.displaysavepopup = true;
     this.filteredData = [];
@@ -507,8 +499,10 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
       this.editdocno = data[0].Column1;
       if(data[0].Column1){
         if(this.FranchiseBill != "N" && Number(this.totaldelqty) == Number(this.totalaccpqty)) {
+        //  console.log("franchise ==", true)
           this.SaveFranchisechallan();
-        }
+        } 
+        this.clearData();
         this.inputBoxDisabled = false;
         this.indentdateDisabled = true;
         this.From_Godown_ID_Dis = false;
@@ -524,17 +518,28 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
       this.tabIndexToView = 0;
       this.items = ["BROWSE", "CREATE"];
       this.buttonname = "Create";
-      this.clearData()
+      //this.clearData()
       this.ObjBrowseData.Cost_Cen_ID = this.Objdispatch.Cost_Cen_ID;
       this.ObjBrowseData.Brand_ID = this.Objdispatch.Brand_ID;
       this.searchData(true);
       this.displaysavepopup = false;
-     }
-     })
+
+      
      this.Objdispatch = new dispatch();
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.clearData();
+     }
+     else{
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
+    }
+     })
     }
 
     else{
@@ -591,6 +596,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
         if(this.FranchiseBill != "N" && Number(this.totaldelqty) == Number(this.totalaccpqty)) {
           this.SaveFranchisechallan();
         }
+        this.clearData();
         this.inputBoxDisabled = false;
         this.indentdateDisabled = true;
         this.From_Godown_ID_Dis = false;
@@ -606,13 +612,19 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
       this.tabIndexToView = 0;
       this.items = ["BROWSE", "CREATE"];
       this.buttonname = "Create";
-      this.clearData()
+      //this.clearData()
       this.ObjBrowseData.Cost_Cen_ID = this.Objdispatch.Cost_Cen_ID;
       this.ObjBrowseData.Brand_ID = this.Objdispatch.Brand_ID;
       this.searchData(true);
       this.displaysavepopup = false;
       this.SelectedIndent = [];
       this.IndentFilter = [];
+
+      
+     this.Objdispatch = new dispatch();
+     this.productDetails = [];
+     this.BackUpproductDetails = [];
+     this.clearData();
      }
      else{
       this.compacctToast.clear();
@@ -624,10 +636,6 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
           });
     }
      })
-     this.Objdispatch = new dispatch();
-     this.productDetails = [];
-     this.BackUpproductDetails = [];
-     this.clearData();
 
     }
   }
@@ -733,7 +741,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
             Doc_No:  "A",
             Doc_Date: this.currentDate,
             Sub_Ledger_ID : Number(this.subledgerid),
-            Cost_Cen_ID	: this.franchisecostcenid,
+            Cost_Cen_ID	: 2, //this.franchisecostcenid,
             Product_ID	: item.Product_ID,
             Product_Name	: item.Product_Description,
             Qty	: item.Qty,
@@ -797,6 +805,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
        });
       // this.GetSearchedList();
        this.clearData();
+       this.searchData(true);
       //  this.ProductList =[];
       //  this.franchiseSalebillFormSubmitted = false;
       } else{
@@ -1608,6 +1617,21 @@ GetProductType(){
       this.productTypeList = data;
       console.log("productTypeList",this.productTypeList);
       //this.Getitem2();
+  })
+}
+
+exportoexcel(tempobj,fileName){
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Dispatch Challan Excel",
+    "Json_Param_String": JSON.stringify([{Doc_No : tempobj.Doc_No}])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    
   })
 }
 }

@@ -245,8 +245,9 @@
                                                                     <td>{{col.Product_Type}}</td>
                                                                     <td>{{col.Product_Description}}</td>
                                                                     <td>{{col.UOM}}</td>
-                                                                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
-                                                                        /></td>
+                                                                    <td>
+                                                                        <input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' CompacctDigitonly="true" [ngClass]="{'clearance': CheckDecimal(col)}" class="form-control" style="width: 71px;" />
+                                                                    </td>
                                                                 </tr>
                                                             </ng-template>
                                                             <ng-template pTemplate="paginatorright" let-state>
@@ -310,7 +311,7 @@
                                                                     <td>{{col.Product_Type}}</td>
                                                                     <td>{{col.Product_Description}}</td>
                                                                     <td>{{col.UOM}}</td>
-                                                                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                                                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' [ngClass]="{'clearance':  CheckDecimal(col)}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                                                 </tr>
                                                             </ng-template>
                                                             <ng-template pTemplate="paginatorright" let-state>
