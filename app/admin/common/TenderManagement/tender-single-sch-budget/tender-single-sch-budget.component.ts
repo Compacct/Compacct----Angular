@@ -253,7 +253,7 @@ ngOnInit() {
     this.ObjEstimate.Tender_Create_User_ID = obj.Tender_Create_User_ID;
     this.GetEditSingleScheme();
     setTimeout(()=>{
-      this.tabIndexToView = 1;
+      this.tabIndexToView = 0;
       this.ngxService.stop();
     },500)
    }
@@ -880,6 +880,7 @@ ngOnInit() {
         console.log("follow up save",data);
         if(data[0].Column1 === "SAVED SUCCESSFULLY"){         
             this.EstimateInfoSubmitted = false;
+            this.GetSingleScheCreatedList()
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
@@ -887,8 +888,8 @@ ngOnInit() {
               summary: 'Estimate Management ',
               detail: "Succesfully Save."
             });
-            this.ObjEstimate = {};
-            this.TenderDocID = undefined;
+           // this.ObjEstimate = {};
+           // this.TenderDocID = undefined;
             this.EstimateModalFlag = false;
             this.ShowAddedEstimateProductList = [];
             this.saveSpinner = false;
