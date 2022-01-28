@@ -125,6 +125,11 @@
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
+                                                        <li>
+                                                            <a (click)="exportoexcel(col,'Dispatch_Challan')">
+                                                                <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
+                                                            </a>
+                                                        </li>
                                                         <!-- <li *ngIf="col.Total_Qty === col.Total_Accepted_Qty">
                                                                       <a (click)="UpdateDispatch(col)">
                                                                           <i class="glyphicon glyphicon-save"></i>

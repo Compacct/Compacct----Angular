@@ -100,6 +100,7 @@
                                             <th>From Stock Point</th>
                                             <th>Closing Qty</th>
                                             <th>Total Amount</th>
+                                            <th>Created By</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -148,6 +149,7 @@
                                             <td>{{col.godown_name}}</td>
                                             <td>{{col.Closing_Qty}}</td>
                                             <td>{{col.Total_Amount}}</td>
+                                            <td>{{col.Name}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>

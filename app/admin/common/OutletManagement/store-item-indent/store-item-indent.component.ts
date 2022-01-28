@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-store-item-indent',
@@ -64,6 +65,7 @@ export class StoreItemIndentComponent implements OnInit {
   ObjBrowseData: BrowseData = new BrowseData();
   Boutletdisableflag = false;
   outletdisableflag = false;
+  excelList = [];
 
   constructor(
     private $http: HttpClient,
@@ -730,7 +732,37 @@ export class StoreItemIndentComponent implements OnInit {
 
      })
    }
+ }
+
+ exportoexcel(tempobj,fileName){
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Indent Data Excel",
+    "Json_Param_String": JSON.stringify([{Req_No_Gen : tempobj.Req_No}])
+
   }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.excelList = data;
+    let temp = [];
+    this.excelList.forEach(element => {
+       const obj = {
+        Req_No : element.Req_No,
+        Req_Date : this.DateService.dateConvert(new Date(element.Req_Date)),
+        Cost_Cen_Name : element.Cost_Cen_Name,
+        Product_ID : element.Product_ID,
+        Product_Type : element.Product_Type,
+        Product_Description : element.Product_Description,
+        Req_Qty : element.Req_Qty,
+        UOM : element.UOM
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    
+  })
+}
 
 }
 class Requistion {

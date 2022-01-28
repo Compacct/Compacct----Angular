@@ -655,7 +655,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
             Doc_No:  "A",
             Doc_Date: this.currentDate,
             Sub_Ledger_ID : Number(this.subledgerid),
-            Cost_Cen_ID	: this.fromCostId,
+            Cost_Cen_ID	: 2,//this.fromCostId,
             Product_ID	: item.Product_ID,
             Product_Name	: item.Product_Description,
             Qty	: item.Qty,
@@ -719,6 +719,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
        });
       // this.GetSearchedList();
        this.clearData();
+       this.searchData(true);
       //  this.ProductList =[];
       //  this.franchiseSalebillFormSubmitted = false;
       } else{
