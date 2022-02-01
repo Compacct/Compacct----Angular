@@ -262,6 +262,7 @@ import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/ten
 import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
 import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
 import { HarbMasterProductCivilComponent } from './common/Harbauer/harb-master-product-civil/harb-master-product-civil.component';
+import { SupportTicketPendingCallsNepalComponent } from './common/MaterialManagement/Master/support-ticket-pending-calls-nepal/support-ticket-pending-calls-nepal.component';
 
 
 
@@ -455,6 +456,7 @@ import { HarbMasterProductCivilComponent } from './common/Harbauer/harb-master-p
     TenderSingleSchBudgetComponent,
     TenderMultipleSchBudgetComponent,
     HarbMasterProductCivilComponent,
+    SupportTicketPendingCallsNepalComponent,
   ],
   imports: [
     CommonModule,

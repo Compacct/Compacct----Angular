@@ -191,7 +191,7 @@
                                 <i class="glyphicon glyphicon-tasks"></i> Browse Site
                               </a>
                             </li>
-                            <li>
+                            <li *ngIf='(col.Status.toUpperCase() !== "AWARDING THE TENDER" && col.Status.toUpperCase() !== "TENDER SUBMITTED" && col.Status.toUpperCase() !== "NOT AWARDING THE TENDER")'>
                               <a (click)="CreateMulitple(col)">
                                 <i class="fa fa-fw fa-plus"></i> Create New
                               </a>

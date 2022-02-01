@@ -97,6 +97,10 @@ export class TenderViewDetailsCompComponent implements OnInit {
       header: 'Work Details'
     },
     {
+      field: 'Site_Description',
+      header: 'Site'
+    },
+    {
       field: 'Product_Description',
       header: 'Product'
     },

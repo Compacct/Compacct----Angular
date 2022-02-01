@@ -38,7 +38,7 @@
             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-tasks">
               <div class="row">
                 <div class="col-sm-12">
-                  <button (click)='CreateMulitple(true)' class="btn btn-primary pull-right">
+                  <button (click)='CreateMulitple(true)' *ngIf='Created' class="btn btn-primary pull-right">
                     <i class='fa fa-fw fa-plus'></i>&nbsp;CREATE
                   </button>
                 </div>
@@ -77,17 +77,17 @@
                           </button>
                           <ul class="dropdown-menu">
                             <li>
-                              <a (click)="EDitSiteFromMultiple(col)">
+                              <a *ngIf='Created' (click)="EDitSiteFromMultiple(col)">
                                 <i class="fa fa-fw fa-pencil"></i>
                                 Edit
                               </a>
                             </li>
-                            <!-- <li *ngIf="!col.Tender_Doc_ID">
-                                                                                <a (click)="DeleteCostcenter(col)">
-                                                                                    <i class="fa fa-fw fa-trash"></i>
-                                                                                    Delete
-                                                                                </a>
-                                                                            </li> -->
+                            <li *ngIf="!col.Tender_Doc_ID">
+                              <a (click)="ShowSiteDetails(col)">
+                                  <i class="fa fa-fw fa-info"></i>
+                                  View
+                              </a>
+                            </li>
                           </ul>
                         </div>
                       </td>
@@ -680,8 +680,79 @@
   </p-footer>
 </p-dialog>
 
+<p-dialog [header]="'View Budget'" [appendTo]="'body'" [visible]="ShowDetailsModalFlag" [closeOnEscape]="true"
+  [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '72%', minWidth: '200px' }"
+  style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <div class="form-group" style="padding: 0 1em;margin-bottom: 2em;">
+      <div class="col-sm-6">
+        <label class="control-label">Project Name&nbsp;<span class="text-danger">*</span></label>
+        <input class="form-control" name="Budget_Short_Description2" 
+          [(ngModel)]="ObjEstimate.Budget_Short_Description"
+          placeholder="Project Name" [required]="true"  disabled/>
+      </div>
+      <div class="col-sm-6">
+        <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
+    
+        <p-dropdown [options]="siteList" name="siteName2" [(ngModel)]="ObjEstimate.site_ID"
+          [showClear]="true" [emptyFilterMessage]="' No Site Found'"
+          (onChange)="testchange(ObjEstimate.site_ID)" [filter]="true" filterBy="label,value.name"
+          [placeholder]="'Select Site Name'" [virtualScroll]="true" itemSize="30" [required]="true"
+           [disabled]='true'>
+        </p-dropdown>
+      </div>
+      </div>
+    <p-table [value]="ShowAddedEstimateProductList" sortField="Budget_Group_Name" sortMode="single"
+    [rowHover]="true" [autoLayout]="true" (onSort)="onSort()">
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols2">
+          {{col.header}}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+      <tr>
+        <td>{{rowData.SL_No}}</td>
+        <td *ngIf="rowGroupMetadata[rowData.Budget_Group_Name].index === rowIndex"
+          [attr.rowspan]="rowGroupMetadata[rowData.Budget_Group_Name].size">
+          {{rowData.Budget_Group_Name}}
+        </td>
+        <td>{{rowData.Budget_Sub_Group_Name}}</td>
+        <td>{{rowData.Work_Details}}</td>
+        <td>{{rowData.Product_Description}}</td>
+        <td>{{rowData.unit}}</td>
+        <td>{{rowData.Qty}}</td>
+        <td>{{rowData.Nos}}</td>
+        <td>{{rowData.TQty}}</td>
+        <td>{{rowData.UOM}}</td>
+        <td>{{rowData.saleRate}}</td>
+        <td>{{rowData.Sale_Amount}}</td>
+        <td>{{rowData.Rate}}</td>
+        <td>{{rowData.Amount}}</td>
+      </tr>
+      <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+        <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
 
-<!-- view -->
+  </div>
+  <hr class="box boxboxDivide-primary" />
+  <div class="box-footer">
+    <div class="col-sm-12">
+
+      <span class="text-bold text-right"> Total Project Amount :
+        {{getTotalPurchaseAmt()}}</span>
+    </div>
+    </div>
+  <p-footer>
+    <button type="button" (click)="ShowDetailsModalFlag = false" class="btn btn-default">
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+<!-- tender view -->
 <p-dialog [header]="'Tender View'" [appendTo]="'body'" [visible]="viewModel" [closeOnEscape]="true" [closable]="false"
   [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }" style="text-align: center;"
   [minY]="70" [maximizable]="true" [baseZIndex]="10000">

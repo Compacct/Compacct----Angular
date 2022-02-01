@@ -487,7 +487,7 @@ import {
   HarbMasterProductCivilComponent
 } from './common/Harbauer/harb-master-product-civil/harb-master-product-civil.component';
 
-
+import { SupportTicketPendingCallsNepalComponent } from './common/MaterialManagement/Master/support-ticket-pending-calls-nepal/support-ticket-pending-calls-nepal.component';
 
 
 
@@ -1590,6 +1590,13 @@ const layoutRoutes: Routes = [{
       component: HarbMasterProductCivilComponent,
       data: {
         title: 'Master Product Civil'
+      }
+    },
+    {
+      path: 'Support_Ticket_Pending_Calls_Nepal',
+      component: SupportTicketPendingCallsNepalComponent,
+      data: {
+        title: 'Pending Calls'
       }
     }
 

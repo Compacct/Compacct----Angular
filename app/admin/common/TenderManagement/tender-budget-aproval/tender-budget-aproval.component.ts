@@ -39,6 +39,7 @@ export class TenderBudgetAprovalComponent implements OnInit {
     { field: 'Budget_Group_Name', header: 'Group Name' },
     { field: 'Budget_Sub_Group_Name', header: 'Sub Group Name' },
     { field: 'Work_Details', header: 'Work Details' },
+    { field: 'Site_Description', header: 'Site' },
     { field: 'Product_Description', header: 'Product' },
     { field: 'unit', header: 'Unit' },
     { field: 'Qty', header: 'Qty' },
