@@ -94,6 +94,11 @@
                                                             </a>
                                                         </li>
                                                         <!-- <li>
+                                                            <a (click)="viewbrowsedetails(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> View Order Details
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li>
                                                             <a (click)="editmaster(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
@@ -537,6 +542,242 @@
         <div class="col-sm-4">
             <label class="control-label">Delivery Near By</label>
             <div class="label-t">{{viewData?.Delivery_Near_By ? viewData?.Delivery_Near_By : '-'}}</div>
+        </div>
+    </div>
+
+</p-dialog>
+
+<!-- Browse view -->
+<p-dialog header="view Details" [(visible)]="viewbrowsepopUp" [modal]="true" [responsive]="true" [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <h3>Order Details:</h3>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Adv Order No</label>
+            <div class="label-t">{{advno}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Order Date</label>
+            <div class="label-t" *ngIf="ordate"> {{ordate | date :"dd/MMM/yyyy"}}</div>
+        </div>
+
+        <div class="col-sm-4">
+            <label class="control-label">Order from </label>
+            <div class="label-t">{{orcostcen}}</div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Date Time</label>
+            <div class="label-t"><span *ngIf="ordeldate"> {{ordeldate | date :"dd/MMM/yyyy"}} - {{ordelTime}}</span></div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Customer Name</label>
+            <div class="label-t">{{orcustname}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Customer Mobile</label>
+            <div class="label-t"> {{orcustmob}}</div>
+        </div>
+    </div>
+    <h3>Product Details:</h3>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Product Description</label>
+            <div class="label-t">{{orprodes}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Message on Cake 1</label>
+            <div class="label-t">{{orpromod}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Message on Cake 2</label>
+            <div class="label-t"> {{orpromd1}}</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Message on Cake 3</label>
+            <div class="label-t">{{oqpromode2}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Message on Cake 4</label>
+            <div class="label-t">{{orprom3}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Message on Cake 5</label>
+            <div class="label-t"> {{prom4}}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Flavour</label>
+            <div class="label-t">{{orflavour}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Finishing</label>
+            <div class="label-t">{{orfinish}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Shape</label>
+            <div class="label-t"> {{orshape}}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Tier</label>
+            <div class="label-t">{{ortier}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Boxes</label>
+            <div class="label-t">{{orbox}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Base</label>
+            <div class="label-t"> {{orbase}}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Changes on Cake</label>
+            <div class="label-t">{{orchangoncake}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Order Taken By</label>
+            <div class="label-t">{{ortakenby}}</div>
+        </div>
+        <div class="col-sm-4">
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <h3>Costing:</h3>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Rate</label>
+            <div class="label-t">{{orrate}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Qty</label>
+            <div class="label-t">{{orqty}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Weight in Poundy</label>
+            <div class="label-t">{{orwtinpound}}</div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Accomplishment Amt</label>
+            <div class="label-t">{{oraccomp}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Amount</label>
+            <div class="label-t">{{oramt}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Discount Amt</label>
+            <div class="label-t">{{ordisamt}}</div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Gross Amt</label>
+            <div class="label-t">{{orgrossamt}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Net Amount</label>
+            <div class="label-t">{{ornetamt}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Rounded Off</label>
+            <div class="label-t">{{orroundoff}}</div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Amount Payable</label>
+            <div class="label-t">{{oramtpay}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Net Payable</label>
+            <div class="label-t">{{ornetpay}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Total Paid</label>
+            <div class="label-t">{{orttlpaid}}</div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Net Due</label>
+            <div class="label-t">{{ornetdue}}</div>
+
+        </div>
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4">
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <h3>Delivery :</h3>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Outlet Name</label>
+            <div class="label-t">{{ordelcostname}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Delivery Type</label>
+            <div class="label-t">{{ordeltype}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label"> Delivery Mobile No</label>
+            <div class="label-t">{{ordelmob}}</div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Alt Mobile No</label>
+            <div class="label-t">{{ordelaltmob}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Name</label>
+            <div class="label-t">{{ordelname}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Address</label>
+            <div class="label-t">{{ordeladd}}</div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Pin Code</label>
+            <div class="label-t">{{ordelpin}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Delivery Near By</label>
+            <div class="label-t">{{ordelnearby}}</div>
         </div>
     </div>
 

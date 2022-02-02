@@ -30,6 +30,9 @@ export class SupportTicketNepalComponent implements OnInit {
   ObjSupportTicket = new SupportTicket();
   SupportTicketFormSubmit = false;
   SupportTicketDate : any = {};
+  ExpectedcompletionDate : any = {};
+  SupportStartDate : any = {};
+  SupportEndDate : any = {};
   CallTypeList = [];
   CustomerList = [];
   LoctionList = [];
@@ -84,6 +87,9 @@ export class SupportTicketNepalComponent implements OnInit {
       Link: " Engineering CRM -> Master -> Support Ticket"
     });
     this.SupportTicketDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.ExpectedcompletionDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.SupportStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.SupportEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.BrowseStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.BrowseEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
        this.GetCallType();
@@ -105,6 +111,9 @@ export class SupportTicketNepalComponent implements OnInit {
     this.Spinner = false;
     this.ObjSupportTicket = new SupportTicket();
     this.SupportTicketDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.ExpectedcompletionDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.SupportStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.SupportEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.SupportTicketFormSubmit = false;
     this.MachineList = [];
     this.LoctionList = [];
@@ -433,6 +442,9 @@ export class SupportTicketNepalComponent implements OnInit {
         //  Support_Ticket_Date_Nepali: d1.format('dd-mm-yyyy'),
           Support_Ticket_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportTicketDate)),
           Support_Ticket_Date_Nepali: this.ValidatedNepaliDate(this.SupportTicketDate),
+          Expected_Completion_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ExpectedcompletionDate)),
+          Support_Start_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportStartDate)),
+          Support_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportEndDate)),
           Call_Type: this.ObjSupportTicket.Call_Type,
           Sub_Ledger_ID: this.ObjSupportTicket.Customer_Name,
           Location_ID: this.ObjSupportTicket.Location,
