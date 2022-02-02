@@ -262,6 +262,8 @@ import { TenderViewDetailsCompComponent } from './common/Harbauer/Components/ten
 import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
 import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
 import { HarbMasterProductCivilComponent } from './common/Harbauer/harb-master-product-civil/harb-master-product-civil.component';
+import { SemiFinishedProductionVoucherComponent } from './common/MaterialManagement/Production/semi-finished-production-voucher/semi-finished-production-voucher.component';
+
 
 
 
@@ -455,6 +457,7 @@ import { HarbMasterProductCivilComponent } from './common/Harbauer/harb-master-p
     TenderSingleSchBudgetComponent,
     TenderMultipleSchBudgetComponent,
     HarbMasterProductCivilComponent,
+    SemiFinishedProductionVoucherComponent,
   ],
   imports: [
     CommonModule,

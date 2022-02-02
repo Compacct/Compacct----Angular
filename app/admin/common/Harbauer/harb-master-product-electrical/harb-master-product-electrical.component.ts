@@ -175,10 +175,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
      this.Product_Mfg_Comp_ID = undefined;
      this.makedisabled = false;
      this.GetBrowseList();
-    //  this.PDFViewFlag = false;
-    //  if (this.PDFViewFlag === false) {
-    //   this.fileInput.clear();
-    // }
+     this.PDFViewFlag = false;
+     if (this.PDFViewFlag === false) {
+      this.fileInput.clear();
+    }
   
   //PRODUCT TYPE
   }
@@ -1246,16 +1246,16 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
            console.log(data);
            var tempID = data[0].Column1;
-           //this.upload(data[0].Column1);
+           this.upload(data[0].Product_Manufacturing_Group);
            if(data[0].Column1){
-            this.compacctToast.clear();
-            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-            this.compacctToast.add({
-             key: "compacct-toast",
-             severity: "success",
-             summary: '', //"Return_ID  " + tempID,
-             detail: "Succesfully Updated" //+ mgs
-           });
+          //   this.compacctToast.clear();
+          //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+          //   this.compacctToast.add({
+          //    key: "compacct-toast",
+          //    severity: "success",
+          //    summary: '', //"Return_ID  " + tempID,
+          //    detail: "Succesfully Updated" //+ mgs
+          //  });
            this.clearData();
            this.productid = undefined;
            this.tabIndexToView = 0;
@@ -1296,7 +1296,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       });
       console.log("create =" , tempArr)
      // return JSON.stringify(tempArr);
-      if(valid){
+      if(valid && this.ProductPDFFile['size']){
          const obj = {
            "SP_String": "SP_Harbauer_Master_Product_Electrical",
            "Report_Name_String" : "Master_Product_Electrical_Create",
@@ -1307,16 +1307,16 @@ export class HarbMasterProductElectricalComponent implements OnInit {
            console.log(data);
            this.ObjMasterProductel.Product_ID = data[0].Product_Manufacturing_Group;
            if(data[0].Product_Manufacturing_Group){
-            //this.upload(data[0].Product_Manufacturing_Group);
-            this.compacctToast.clear();
-            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-            this.compacctToast.add({
-             key: "compacct-toast",
-             severity: "success",
-             summary: '', //"Return_ID  " + tempID,
-             detail: "Succesfully Saved" //+ mgs
-           });
-           this.clearData();
+            this.upload(data[0].Product_Manufacturing_Group);
+          //   this.compacctToast.clear();
+          //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+          //   this.compacctToast.add({
+          //    key: "compacct-toast",
+          //    severity: "success",
+          //    summary: '', //"Return_ID  " + tempID,
+          //    detail: "Succesfully Saved" //+ mgs
+          //  });
+          //  this.clearData();
             //this.testchips =[];
        
            } else{
@@ -1331,8 +1331,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
              });
            }
          })
-        } else {
-       // if(!this.ProductPDFFile['size']) {
+        } 
+        // else {
+       if(!this.ProductPDFFile['size']) {
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({

@@ -162,6 +162,8 @@ import { HarbMasterProductElectricalComponent } from './common/Harbauer/harb-mas
 import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender-single-sch-budget/tender-single-sch-budget.component';
 import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
 import { HarbMasterProductCivilComponent } from './common/Harbauer/harb-master-product-civil/harb-master-product-civil.component';
+import { SemiFinishedProductionVoucherComponent } from './common/MaterialManagement/Production/semi-finished-production-voucher/semi-finished-production-voucher.component';
+
 
 
 
@@ -949,7 +951,13 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   path : 'Harbauer_Master_Product_Civil',
                                                                   component:HarbMasterProductCivilComponent,
                                                                   data: {title: 'Master Product Civil'}
+                                                                },
+                                                                {
+                                                                  path : 'Semi_Finished_Production_Voucher',
+                                                                  component:SemiFinishedProductionVoucherComponent,
+                                                                  data: {title: 'Production_Voucher (Semi Finished)'}
                                                                 }
+
 
 
         /*{

@@ -153,10 +153,10 @@ export class HarbMasterProductCivilComponent implements OnInit {
      this.Product_Mfg_Comp_ID = undefined;
      this.makedisabled = false;
      this.GetBrowseList();
-    //  this.PDFViewFlag = false;
-    //  if (this.PDFViewFlag === false) {
-    //   this.fileInput.clear();
-    // }
+     this.PDFViewFlag = false;
+     if (this.PDFViewFlag === false) {
+      this.fileInput.clear();
+    }
   
   }
   // PRODUCT TYPE
@@ -844,14 +844,14 @@ export class HarbMasterProductCivilComponent implements OnInit {
   }
 
   
-  // FetchPDFFile(event) {
-  //   this.PDFFlag = false;
-  //   this.ProductPDFFile = {};
-  //   if (event) {
-  //     this.ProductPDFFile = event.files[0];
-  //     this.PDFFlag = true;
-  //   }
-  // }
+  FetchPDFFile(event) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+    }
+  }
   
   SaveMasterProductCivil(valid){
     //if(this.Product_Mfg_Comp_ID.length) {
@@ -879,16 +879,16 @@ export class HarbMasterProductCivilComponent implements OnInit {
          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
            console.log(data);
            var tempID = data[0].Column1;
-           //this.upload(data[0].Column1);
+           this.upload(data[0].Product_Manufacturing_Group);
            if(data[0].Column1){
-            this.compacctToast.clear();
-            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-            this.compacctToast.add({
-             key: "compacct-toast",
-             severity: "success",
-             summary: " " ,//"Return_ID  " + tempID,
-             detail: "Succesfully Updated" //+ mgs
-           });
+            // this.compacctToast.clear();
+            // //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            // this.compacctToast.add({
+            //  key: "compacct-toast",
+            //  severity: "success",
+            //  summary: " " ,//"Return_ID  " + tempID,
+            //  detail: "Succesfully Updated" //+ mgs
+            //  });
            this.clearData();
            this.productid = undefined;
            this.tabIndexToView = 0;
@@ -929,7 +929,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
      // return JSON.stringify(tempArr);
      this.Spinner = true;
      this.MasterProductCivilFormSubmitted = true;
-      if(valid){
+      if(valid && this.ProductPDFFile['size']){
          const obj = {
            "SP_String": "SP_Harbauer_Master_Product_Civil",
            "Report_Name_String" : "Master_Product_Civil_Create",
@@ -940,17 +940,16 @@ export class HarbMasterProductCivilComponent implements OnInit {
            console.log(data);
            this.ObjMasterProductCivil.Product_ID = data[0].Product_Manufacturing_Group;
            if(data[0].Product_Manufacturing_Group){
-          //  this.upload(data[0].Product_Manufacturing_Group);
-            this.compacctToast.clear();
-            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-            this.compacctToast.add({
-             key: "compacct-toast",
-             severity: "success",
-             summary: "", //"Return_ID  " + tempID,
-             detail: "Succesfully Saved" //+ mgs
-           });
-           this.clearData();
-            // this.testchips =[];
+            this.upload(data[0].Product_Manufacturing_Group);
+          //   this.compacctToast.clear();
+          //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+          //   this.compacctToast.add({
+          //    key: "compacct-toast",
+          //    severity: "success",
+          //    summary: "", //"Return_ID  " + tempID,
+          //    detail: "Succesfully Saved" //+ mgs
+          //  });
+          //  this.clearData();
        
            } else{
             // this.ngxService.stop();
@@ -964,43 +963,43 @@ export class HarbMasterProductCivilComponent implements OnInit {
              });
            }
          })
-        } else {
-       // if(!this.ProductPDFFile['size']) {
+        }
+       if(!this.ProductPDFFile['size']) {
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
-            summary: "Warn Message",
-            detail: "Error Occured "
+            summary: "Validation",
+            detail: "No Docs Selected"
           });
       }
     }
   }
   }
-  // async upload(id){
-  //   const formData: FormData = new FormData();
-  //       formData.append("aFile", this.ProductPDFFile)
-  //       formData.append("Product_Manufacturing_Group", id);
-  //   let response = await fetch('/Harbauer_Master_Product_mechanical/Upload_Doc',{ 
-  //                 method: 'POST',
-  //                 body: formData // This is your file object
-  //               });
-  //   let responseText = await response.text();
-  //   var msg = this.buttonname != "Create" ? "Succesfully Updated " : "Succesfully Created " ;
-  //     this.Spinner = false;
-  //     this.compacctToast.clear();
-  //     this.compacctToast.add({
-  //       key: "compacct-toast",
-  //       severity: "success",
-  //       summary: '',//'Return_ID : ' + this.ObjMasterProductm.Product_ID,
-  //       detail: msg
-  //     });
-  //     // this.ObjManualPaymentCnfm = new ManualPaymentCnfm();
-  //     // this.ManualPaymentConfirmFormSubmit = false;
-  //     // this.ManualPaymentConfirmModal = false;
-  //     this.clearData();
-  // };
+  async upload(id){
+    const formData: FormData = new FormData();
+        formData.append("aFile", this.ProductPDFFile)
+        formData.append("Product_Manufacturing_Group", id);
+    let response = await fetch('/Harbauer_Master_Product_mechanical/Upload_Doc',{ 
+                  method: 'POST',
+                  body: formData // This is your file object
+                });
+    let responseText = await response.text();
+    var msg = this.buttonname != "Create" ? "Succesfully Updated " : "Succesfully Created " ;
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: '',//'Return_ID : ' + this.ObjMasterProductm.Product_ID,
+        detail: msg
+      });
+      // this.ObjManualPaymentCnfm = new ManualPaymentCnfm();
+      // this.ManualPaymentConfirmFormSubmit = false;
+      // this.ManualPaymentConfirmModal = false;
+      this.clearData();
+  };
   // upload(id) {
   //   const endpoint = "/Harbauer_Master_Product_mechanical/Upload_Doc";
   //   const formData: FormData = new FormData();

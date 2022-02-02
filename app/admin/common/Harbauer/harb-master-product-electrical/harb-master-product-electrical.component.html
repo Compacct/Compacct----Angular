@@ -303,6 +303,23 @@
                                                               </option>
                                                       </select> -->
                                     </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">File Upload</label>
+                                        <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" url="/Harbauer_Master_Product_mechanical/Upload_Doc">
+                                            <!-- <ng-template let-aFile pTemplate='aFile'>
+                                                <div class="ui-fileupload-row">
+                                                    <div><img [src]="aFile.type.includes('image') ? aFile.objectURL :'/PDF_Logo/PDF-logo.png'" width="50"></div>
+                                                    <div>{{aFile.name}}</div>
+                                                    <div>{{aFile.size}} bytes</div>
+                                                    <div>
+                                                        <button type="button" class="btn btn-danger" (click)="onClear($event,aFile)"><i class="fa fa-fw fa-close"></i></button>
+                                                    </div>
+                                                </div>
+                                            </ng-template> -->
+                                        </p-fileUpload>
+                                        <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+                                        <!-- <p-fileUpload name="myfile[]" customUpload="true" multiple="multiple" (uploadHandler)="onUpload($event)" accept=""image/*,.csv,.xml,.doc,.docx,.pdf""></p-fileUpload> -->
+                                    </div>
                                 </div>
 
                                 <div class="box-footer">
