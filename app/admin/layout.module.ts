@@ -263,6 +263,7 @@ import { TenderSingleSchBudgetComponent } from './common/TenderManagement/tender
 import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tender-multiple-sch-budget/tender-multiple-sch-budget.component';
 import { HarbMasterProductCivilComponent } from './common/Harbauer/harb-master-product-civil/harb-master-product-civil.component';
 import { SemiFinishedProductionVoucherComponent } from './common/MaterialManagement/Production/semi-finished-production-voucher/semi-finished-production-voucher.component';
+import { SupportTicketPendingCallsNepalComponent } from './common/MaterialManagement/Master/support-ticket-pending-calls-nepal/support-ticket-pending-calls-nepal.component';
 
 
 
@@ -458,6 +459,7 @@ import { SemiFinishedProductionVoucherComponent } from './common/MaterialManagem
     TenderMultipleSchBudgetComponent,
     HarbMasterProductCivilComponent,
     SemiFinishedProductionVoucherComponent,
+    SupportTicketPendingCallsNepalComponent,
   ],
   imports: [
     CommonModule,

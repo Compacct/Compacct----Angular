@@ -206,12 +206,13 @@ updateRowGroupMetaData() {
   CreateMulitple(obj) {
     this.ngxService.start();
     setTimeout(()=>{
+      const flag = (obj.Status.toUpperCase() !== "AWARDING THE TENDER" && obj.Status.toUpperCase() !== "TENDER SUBMITTED" && obj.Status.toUpperCase() !== "NOT AWARDING THE TENDER");
       const RediRecObj = {
         'TenderIDView' : window.btoa(obj.Tender_ID),
         'TenderID' : window.btoa(obj.Tender_Doc_ID),
         'Tender_CreUserID' : window.btoa(obj.Tender_Create_User_ID),
         'Work_Name' : window.btoa(obj.Work_Name),
-        'From' : 'CreatedBudget',
+        'From' : flag ? 'CreatedBudget' : 'onlyview',
       }
       this.ngxService.stop();
       this.DynamicRedirectToR(RediRecObj,'./BL_CRM_Txn_Enq_Tender_Budget_Multiple')
@@ -220,7 +221,35 @@ updateRowGroupMetaData() {
   }
 
   GotoMultipleListTab(obj) {
-      this.CreateMultipleScheme(obj)
+    this.tenderDocID = undefined;
+    this.TenderDocID = undefined;
+    this.ObjEstimate = {};
+    this.editData = [];
+    
+    this.ShowAddedEstimateProductList = [];
+     this.AddedEstimateProductList = [];
+   if(obj.Tender_Doc_ID){
+     this.ngxService.start();
+    // this.ShowSingleScheme = true;
+    // this.Spinner = false;
+    // this.tenderDocID = obj.Tender_Doc_ID;
+    // this.TenderDocID = obj.Tender_Doc_ID;
+    // this.ObjEstimate.Budget_Short_Description = obj.Work_Name;
+    // this.ObjEstimate.Tender_Create_User_ID = obj.Tender_Create_User_ID;
+    // this.GetEditSingleScheme();
+    setTimeout(()=>{
+      const flag = (obj.Status.toUpperCase() !== "AWARDING THE TENDER" && obj.Status.toUpperCase() !== "TENDER SUBMITTED" && obj.Status.toUpperCase() !== "NOT AWARDING THE TENDER");
+      const RediRecObj = {
+        'TenderIDView' : window.btoa(obj.Tender_ID),
+        'TenderID' : window.btoa(obj.Tender_Doc_ID),
+        'Tender_CreUserID' : window.btoa(obj.Tender_Create_User_ID),
+        'Work_Name' : window.btoa(obj.Work_Name),
+        'Created' : flag ? window.btoa('Y') :  window.btoa('N'),
+      }
+      this.ngxService.stop();
+      this.DynamicRedirectToR(RediRecObj,'./BL_CRM_Txn_Enq_Tender_Budget_Multiple')
+    },500)
+   }
   }
 
   onConfirm(){}

@@ -97,6 +97,22 @@ export class TenderMultipleSchBudgetComponent implements OnInit {
     { field: 'Amount', header: 'Purchase Amount' },
     { field: 'zzzz', header: 'Delete' }
 ];
+cols2 = [
+  { field: 'SL_No', header: 'SL No.' },
+  { field: 'Budget_Group_Name', header: 'Group Name' },
+  { field: 'Budget_Sub_Group_Name', header: 'Sub Group Name' },
+  { field: 'Work_Details', header: 'Work Details' },
+  { field: 'Product_Description', header: 'Product' },
+  { field: 'unit', header: 'Unit' },
+  { field: 'Qty', header: 'Qty' },
+  { field: 'Nos', header: 'Nos' },
+  { field: 'TQty', header: 'Total Qty' },
+  { field: 'UOM', header: 'UOM' },
+  { field: 'saleRate', header: 'Sale Rate' },
+  { field: 'Sale_Amount', header: 'Sale Amount' },
+  { field: 'Rate', header: 'Purchase Rate' },
+  { field: 'Amount', header: 'Purchase Amount' },
+];
 ExcelGroupDetails =[];
 
 PDFFlag = false;
@@ -115,6 +131,8 @@ PDFFlag = false;
   MultipleSchemeList = [];
   TenderIDView = undefined;
   EditSiteFlag = false;
+  Created = true;
+  ShowDetailsModalFlag = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -139,6 +157,7 @@ PDFFlag = false;
           'From' : val['From'],
 
         }
+        this.Created = val['Created'] && val['Created'] === 'N' ? false: true;
         this.CreateSingleScheme(obj);
       } else {        
         this.fromQuery = false;
@@ -290,6 +309,8 @@ ngOnInit() {
     this.EditSiteFlag = false;
     this.ShowAddedEstimateProductList = [];
     this.AddedEstimateProductList = [];
+    this.ObjEstimate.Budget_Short_Description = undefined;
+    this.ObjEstimate.site_ID = undefined;
     if(this.TenderDocID && obj.Site_ID) {
       const temp = {
         Tender_Doc_ID: this.TenderDocID ,
@@ -307,11 +328,47 @@ ngOnInit() {
             this.editData = data;
             this.ShowAddedEstimateProductList = data;
             this.AddedEstimateProductList = this.ShowAddedEstimateProductList;
+            this.updateRowGroupMetaData();
             this.ObjEstimate.Budget_Short_Description = data[0].Budget_Short_Description;
             this.getSiteList(obj.Site_ID);
             this.EditSiteFlag = true;
             this.CreateMulitple();
             console.log(data)
+          }
+        });
+    }
+  }
+  ShowSiteDetails(obj) {
+    this.EditSiteFlag = false;
+    this.ShowAddedEstimateProductList = [];
+    this.AddedEstimateProductList = [];
+    this.ObjEstimate.Budget_Short_Description = undefined;
+    this.ObjEstimate.site_ID = undefined;
+    if(this.TenderDocID && obj.Site_ID) {
+      this.ngxService.start();
+      const temp = {
+        Tender_Doc_ID: this.TenderDocID ,
+        Site_ID: obj.Site_ID 
+      }
+      const obj2 = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Get_Data_Tender_Estimate_Multiple_Site",
+        "Json_Param_String": JSON.stringify([temp])
+      }
+      this.GlobalAPI
+        .getData(obj2)
+        .subscribe((data: any) => {
+          if(data.length) {
+            this.editData = data;
+            this.ShowAddedEstimateProductList = data;
+            this.AddedEstimateProductList = this.ShowAddedEstimateProductList;
+            this.updateRowGroupMetaData();
+            this.ObjEstimate.Budget_Short_Description = data[0].Budget_Short_Description;
+            this.getSiteList(obj.Site_ID);
+            setTimeout(()=>{
+              this.ShowDetailsModalFlag = true;
+              this.ngxService.stop();
+            },900)
           }
         });
     }
@@ -341,6 +398,7 @@ ngOnInit() {
     this.GetReferenceSiteMultipleScheme();
     this.GetMultipleSchemeList();
     setTimeout(()=>{
+      this.ShowSingleScheme = this.Created ? true : false;
       if(obj.From && obj.From ==='CreatedBudget') {
         this.CreateMulitple(true);
       } else {
@@ -406,7 +464,9 @@ ngOnInit() {
       }       
       if(TempPushArr.length) { 
         this.ShowAddedEstimateProductList = TempPushArr;
-        this.AddedEstimateProductList = this.ShowAddedEstimateProductList;     
+        this.AddedEstimateProductList = this.ShowAddedEstimateProductList;  
+        this.updateRowGroupMetaData(); 
+          
         console.log('TotalPush --> ', TempPushArr);
       }
       this.ngxService.stop();
@@ -1180,6 +1240,8 @@ exportexcelDummy(): void {
           ctrl.AddedEstimateProductList = ctrl.ShowAddedEstimateProductList;
           ctrl.ObjEstimate.Budget_Short_Description = ctrl.ShowAddedEstimateProductList[0].Budget_Short_Description;
           ctrl.ObjEstimate.No_of_Site = ctrl.ShowAddedEstimateProductList[0].No_of_Site;
+          
+          ctrl.updateRowGroupMetaData();
           console.log(ctrl.SingleSchemeFromFile);
           }
           this.ngxService.stop();

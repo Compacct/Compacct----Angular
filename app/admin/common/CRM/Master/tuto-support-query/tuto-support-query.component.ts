@@ -397,7 +397,7 @@ export class TutoSupportQueryComponent implements OnInit {
             this.ObjTicket.Verified = ReturnObj.Is_Verified === 'Y' ? 'YES' : 'NO';
             this.TicketWithContactID = true;
             if(this.ObjFolowup.Query_Question_ID) {
-              this.TicketWithContactID = false;
+              this.TicketWithContactID = true;
               this.tabIndexToView = 1;
             }
            } else {

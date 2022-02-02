@@ -1,0 +1,841 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="MainTabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="mainItems[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Engineer Name<span class="text-danger">*</span></label>
+                                        <select class="form-control" 
+                                        name="EngName" 
+                                        #EngName="ngModel" 
+                                        [(ngModel)]='EngineerName' 
+                                        [ngClass]="{'clearance': searchFormSubmit && EngName?.errors?.required}" required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                          <option *ngFor="let option of EngineerNameList" [value]="option.User_ID">{{option.Member_Name}}</option>
+                                    </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-primary custombutton1" 
+                                            data-toggle="modal" 
+                                            (click)="GetSearchedList(SearchForm.form.valid)" 
+                                            id="load" 
+                                            [disabled]="seachSpinner">
+                                                <p-progressSpinner
+                                                  *ngIf="seachSpinner"
+                                                  [style]="{ width: '15px', height: '15px' }"
+                                                  strokeWidth="8"
+                                                  animationDuration=".5s"
+                                                ></p-progressSpinner>
+                                                <span
+                                                  *ngIf="!seachSpinner"
+                                                  class="glyphicon glyphicon-search"
+                                                ></span
+                                                >&nbsp;Search
+                                              </button>
+                                        </div>
+                                        <div class="col-sm-4"></div>
+                                        </div>
+                                </form>
+                                <div class="table-responsive no-padding">
+                                    <p-table #dt 
+                                        [value]="GetallData" 
+                                        [globalFilterFields]="['Location_Name','Mfg_Company','Machine','Serial_No','Service_Type','Service_Start_Date','Service_End_Date','Payment_Status','Payment_Date']" 
+                                        [paginator]="GetallData.length ? true:false" [rows]="10"
+                                        [rowHover]="true" 
+                                        [autoLayout]="true" 
+                                        sortMode="multiple" 
+                                        [rowsPerPageOptions]="[100,300,500]" 
+                                        [rowHover]="true">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+    
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Customer Name</th>
+                                                <th>Location</th>
+                                                <th>Ticket Creation Date</th>
+                                                <th>Model</th>
+                                                <th>Setial No</th>
+                                                <th>Ticket Status</th>
+                                                <th>Present Ststus</th>
+                                                <th>Last Update On</th>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+    
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                                    <span class="caret"></span>
+                                                                                </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="TicketDetails(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Show Ticket Details
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="CallSheet(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Create Call Sheet
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Show Contract Details
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Show All Installed Machine
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Show Previous Ticket
+                                                                </a>
+                                                            </li>
+                                                            
+                                                            
+                                                            <!-- <li>
+                                                                <a (click)="Delete(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li> -->
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{col.Sub_Ledger_Name}}</td>
+                                                <td>{{col.Location_Name}}</td>
+                                                <td>{{col.Support_Ticket_Date_Nepali}}</td>
+                                                <td>{{col.model}}</td>
+                                                <td>{{col.Support_Ticket_Status}}</td>
+                                                 <td>{{col.Support_Ticket_Status}}</td>
+                                                <td>{{col.Main_Status}}</td>
+                                                <td>{{col.last_updated_on_Nepali}}</td>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                        </p-tabPanel>
+                        <p-tabPanel *ngIf="callsheettab" headerStyleClass="compacct-tabs" [header]="mainItems[1]" leftIcon="glyphicon glyphicon-list-alt">
+                            <div class="table-responsive no-padding">
+                                <p-table #dt1
+                                    [value]="CallSheetGridDataList" 
+                                    [globalFilterFields]="['Call_Start_Time','Call_End_Time','Main_Status','Call_Status','Service_Type']" 
+                                    [paginator]="CallSheetGridDataList.length ? true:false" [rows]="10"
+                                    [rowHover]="true" 
+                                    [autoLayout]="true" 
+                                    sortMode="multiple" 
+                                    [rowsPerPageOptions]="[100,300,500]" 
+                                    [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            
+                                            <th>Call Start Time</th>
+                                            <th>Call End Time</th>
+                                            <th>Main Status</th>
+                                            <th>Call_Status</th>
+                                            <th></th>
+                                         </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                           <td>{{col.Call_Start_Time}}</td>
+                                            <td>{{col.Call_End_Time}}</td>
+                                            <td>{{col.Main_Status}}</td>
+                                            <td>{{col.Call_Status}}</td>
+                                            <td><button class="btn btn-primary" (click)="GetEdit(col)"
+                                                id="load">
+                                                <span class="glyphicon glyphicon-view"></span>Edit
+                                            </button></td>
+                                             
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                              
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Ticket No</label>
+                <div class="label-t">{{ticketValue.Support_Ticket_No ? ticketValue.Support_Ticket_No : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Ticket Date</label>
+                <div class="label-t">{{ticketValue.Support_Ticket_Date_Nepali ? ticketValue.Support_Ticket_Date_Nepali : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Customer Name</label>
+                <div class="label-t">{{ticketValue.Sub_Ledger_Name ? ticketValue.Sub_Ledger_Name : ''}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Location</label>
+                <div class="label-t">{{ticketValue.Location_Name ? ticketValue.Location_Name : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Machine</label>
+                <div class="label-t">{{ticketValue.Machine ? ticketValue.Machine : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Serial No</label>
+                <div class="label-t">{{ticketValue.Serial_No ? ticketValue.Serial_No : ''}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Call Type</label>
+                <div class="label-t">{{ticketValue.Call_Type ? ticketValue.Call_Type : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Contract Type</label>
+                <div class="label-t">{{ticketValue.Contract_Type ? ticketValue.Contract_Type : ''}}</div>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+        <div class="clearfix"></div>
+       
+        <form name="pendingCallForm" #pendingCallForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <label class="control-label"> Call Start Date <sup class="text-danger">*</sup></label>
+                      <div class="input-group date">
+                       <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                          </div>
+                          <np-datepicker id='BSdateStart' name="BSdateStart" inputClass="form-control" [(ngModel)]="StartDatecall"></np-datepicker>
+                            </div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Call End Date <sup class="text-danger">*</sup></label>
+                       <div class="input-group date">
+                         <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                              </div>
+                             <np-datepicker id='BSdateEnd' name="BSdateEnd" inputClass="form-control" [(ngModel)]="EndDatecall"></np-datepicker>
+                             </div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Associate Engineer<span class="text-danger">*</span></label>
+                       <select class="form-control" 
+                       name="Associate" 
+                       #Associate="ngModel" 
+                       [(ngModel)]='ObjEngineerCall.Associate_Engineer_ID'
+                       [ngClass]="{'clearance': pendingCallFormSubmit && Associate.errors?.required}" required
+                      >
+                      <option  [ngValue]="undefined">Select</option>
+                      <option *ngFor="let option of EngineerNameList" [value]="option.User_ID">{{option.Member_Name}}</option>
+                         </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">Details Of Support<sup class="text-danger">*</sup></label>
+                      <textarea class="form-control" 
+                      style="margin: 0px -16.6719px 0px 0px; width: 100%;height: 69px;" 
+                      name="Support" 
+                      #Support="ngModel" 
+                      [(ngModel)]="ObjEngineerCall.Details_Of_Support"
+                      [ngClass]="{'clearance': pendingCallFormSubmit && Support.errors?.required}" required
+                       ></textarea>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="control-label">Actual Issue Observed<sup class="text-danger"></sup></label>
+                            <input class="form-control"
+                                    name="Actual_Issue_Observed"
+                                    #Actual_Issue_Observed="ngModel"
+                                    [(ngModel)]="ObjEngineerCall.Actual_Issue_Observed"
+                                    placeholder="Actual Issue Observed"
+                                    [ngClass]="{'clearance': pendingCallFormSubmit && Actual_Issue_Observed.errors?.required}" required
+                               >
+                    </div>
+                   
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <label class="control-label">Main Status<span class="text-danger">*</span></label>
+                    <select class="form-control" 
+                    name="Main_Status" 
+                    #Main_Status="ngModel" 
+                    [(ngModel)]='ObjEngineerCall.Main_Status'
+                    (change)="GetCallStatus()"
+                    [ngClass]="{'clearance': pendingCallFormSubmit && Main_Status.errors?.required}" required 
+                   >
+                   <option  [ngValue]="undefined">Select</option>
+                   <option *ngFor="let option of mainStatusData" [value]="option.Main_Status">{{option.Main_Status}}</option>
+                      </select>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Call Status<span class="text-danger">*</span></label>
+                       <select class="form-control" 
+                       name="Call_Status" 
+                       #Call_Status="ngModel" 
+                       [(ngModel)]='ObjEngineerCall.Call_Status'
+                       [ngClass]="{'clearance': pendingCallFormSubmit && Call_Status.errors?.required}" required 
+                      >
+                      <option  [ngValue]="undefined">Select</option>
+                      <option *ngFor="let option of callStutasData" [value]="option.Sub_Status">{{option.Sub_Status}}</option>
+                         </select>
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+                    
+            </div>
+            </form>
+            
+            <div class="cl-sm-12">
+            <div class="panel-group" style="margin-top:5px">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Spare Details</div>
+                    <div class="panel-body">
+                        <form name="SpareDetailshForm" #SpareDetailshForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Spare<span class="text-danger">*</span></label>
+                                    <select class="form-control" 
+                                    name="Spare" 
+                                    #Spare="ngModel" 
+                                    [(ngModel)]='ObjSpareDetails.Spare_Parts_Product_ID'
+                                    [ngClass]="{'clearance': SpareDetailsSubmit && Spare.errors?.required}" required
+                                    >
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  *ngFor="let option of SparePartsList" [value]="option.Spare_Parts_Product_ID">{{option.Spare_Part_Description}}</option>
+                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Serial No.<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                                name="SerialNo"
+                                                #SerialNo="ngModel"
+                                                placeholder="Serial No"
+                                                [(ngModel)]='ObjSpareDetails.serialNo'
+                                                [ngClass]="{'clearance': SpareDetailsSubmit && SerialNo.errors?.required}" required
+                                        >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Quality<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                                name="Quality"
+                                                #Quality="ngModel"
+                                                [(ngModel)]='ObjSpareDetails.Qty'
+                                                placeholder="Quality"
+                                                [ngClass]="{'clearance': SpareDetailsSubmit && Quality.errors?.required}" required
+                                        >
+                                    </div>
+                                    <div class="box-footer" >
+                                        <button class="btn btn-primary pull-right1" style="margin-top : 5px"
+                                        (click)="addSpareDetails(SpareDetailshForm.form.valid)" id="load" [disabled]="Spinner">
+                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-Add"></span>Add
+                                                            </button>
+                                    </div>
+                                    </div>
+
+                            </form>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                            <div class="table-responsive no-padding" style="margin-Top:5px">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;" >
+                                            <th>Spare</th>
+                                            <th>Serial No.</th>
+                                            <th>Quality</th>
+                                             <th>Delete</th>
+                                        </tr>
+                                    </thead>  
+                                    <tbody>
+                                        <tr *ngFor="let obj of SpareDetailsList; let ind = index;" >
+                                            <td>{{obj.spare}}</td>
+                                            <td>{{obj.serialNo}}</td>
+                                            <td>{{obj.Qty}}</td>
+                                            <td ><button (click)="checkDelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-12">
+                            <div class="panel-group">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">Required Spare DEtails</div>
+                                    <div class="panel-body">
+                                        <form name="RequiredSpareDetailshForm" #RequiredSpareDetailshForm="ngForm" novalidate>
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Spare<span class="text-danger">*</span></label>
+                                                    <select class="form-control" 
+                                                    name="SpareRequired" 
+                                                    #SpareRequired="ngModel" 
+                                                    [(ngModel)]='ObjRequiredSpareDetails.Spare_Parts_Product_ID'
+                                                    [ngClass]="{'clearance': RequiredSpareDetailsSubmit && SpareRequired.errors?.required}" required
+                                                    >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of SparePartsList" [value]="option.Spare_Parts_Product_ID">{{option.Spare_Part_Description}}</option>
+                                      </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Serial No.<sup class="text-danger"></sup></label>
+                                                        <input class="form-control"
+                                                                name="SerialNoRequired"
+                                                                #SerialNoRequired="ngModel"
+                                                                placeholder="Serial No"
+                                                                [(ngModel)]='ObjRequiredSpareDetails.serialNo'
+                                                                [ngClass]="{'clearance': RequiredSpareDetailsSubmit && SerialNoRequired.errors?.required}" required
+                                                        >
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary custombutton1" 
+                                                        (click)="addRequiredSpareDetails(RequiredSpareDetailshForm.form.valid)" id="load" [disabled]="Spinner">
+                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-Add"></span>Add
+                                                                            </button>
+                                                        
+                                                    </div>
+                                                    
+                                                    </div>
+                
+                                            </form>
+                                            </div>
+                                            </div>
+                                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                 <div class="table-responsive no-padding">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr style="background-color:#4fa1d1;color:white;" >
+                                                            <th>Spare</th>
+                                                            <th>Serial No.</th>
+                                                             <th>Delete</th>
+                                                        </tr>
+                                                    </thead>  
+                                                    <tbody>
+                                  <tr *ngFor="let obj of RequiredSpareDetailsList; let ind = index;" >
+                                  <td>{{obj.spare}}</td>
+                                 <td>{{obj.serialNo}}</td>
+                                 <td ><button (click)="checkDeleteRequired(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                             </tr>
+                    </tbody>
+                 </table>
+              </div>
+              <div class="box-footer">
+                <button class="btn btn-primary pull-right1" id="load" [disabled]="Spinner">
+                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
+                                    </button>
+            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+<p-dialog header="Show Ticket Details" 
+[appendTo]="'body'" 
+[visible]="showTicket" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true" 
+[style]="{ width: '80%', minWidth: '300px' }" 
+style="text-align: center;" [minY]="80"
+[maximizable]="true" 
+[baseZIndex]="10000">
+<div class="form-horizontal" style="padding:1em;margin-bottom: 12em;">
+<p-tabView [activeIndex]="tabIndexToViewticket" (onChange)="TabClick($event)">
+    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Support Ticket Date</label>
+                <div class="label-t">{{ticketValue.Support_Ticket_Date_Nepali ? ticketValue.Support_Ticket_Date_Nepali : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Call Type</label>
+                <div class="label-t">{{ticketValue.Call_Type ? ticketValue.Call_Type : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Customer Name</label>
+                <div class="label-t">{{ticketValue.Sub_Ledger_Name ? ticketValue.Sub_Ledger_Name : ''}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Location</label>
+                <div class="label-t">{{ticketValue.Location_Name ? ticketValue.Location_Name : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Machine Make</label>
+                <div class="label-t">{{ticketValue.Mfg_Company ? ticketValue.Mfg_Company : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Machine</label>
+                <div class="label-t">{{ticketValue.Machine ? ticketValue.Machine : ''}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Machine Serial No</label>
+                <div class="label-t">{{ticketValue.Serial_No ? ticketValue.Serial_No : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Assigned Engineer</label>
+                <div class="label-t">{{ticketValue.Member_Name ? ticketValue.Member_Name : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Aligned Engineer</label>
+                <div class="label-t">{{ticketValue.Member_Name ? ticketValue.Member_Name : ''}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Contract Status</label>
+                <div class="label-t">{{ticketValue.Contract_Status ? ticketValue.Contract_Status : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Symptom</label>
+                <div class="label-t">{{Symptomvalue}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Remarks</label>
+                <div class="label-t">{{ticketValue.Remarks ? ticketValue.Remarks : ''}}</div>
+            </div>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+        
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Ticket No</label>
+                <div class="label-t">{{ticketValue.Support_Ticket_No ? ticketValue.Support_Ticket_No : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Ticket Date</label>
+                <div class="label-t">{{ticketValue.Support_Ticket_Date_Nepali ? ticketValue.Support_Ticket_Date_Nepali : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Customer Name</label>
+                <div class="label-t">{{ticketValue.Sub_Ledger_Name ? ticketValue.Sub_Ledger_Name : ''}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Location</label>
+                <div class="label-t">{{ticketValue.Location_Name ? ticketValue.Location_Name : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Machine</label>
+                <div class="label-t">{{ticketValue.Machine ? ticketValue.Machine : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Serial No</label>
+                <div class="label-t">{{ticketValue.Serial_No ? ticketValue.Serial_No : ''}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Call Type</label>
+                <div class="label-t">{{ticketValue.Call_Type ? ticketValue.Call_Type : ''}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Contract Type</label>
+                <div class="label-t">{{ticketValue.Contract_Type ? ticketValue.Contract_Type : ''}}</div>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+        <div class="clearfix"></div>
+       
+        <form name="pendingCallForm" #pendingCallForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <label class="control-label"> Call Start Date <sup class="text-danger">*</sup></label>
+                      <div class="input-group date">
+                       <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                          </div>
+                          <np-datepicker id='BSStartdate' name="BSStartdate" inputClass="form-control" [(ngModel)]="StartDate"></np-datepicker>
+                            </div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Call End Date <sup class="text-danger">*</sup></label>
+                       <div class="input-group date">
+                         <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                              </div>
+                             <np-datepicker id='BSEnddate' name="BSEnddate" inputClass="form-control" [(ngModel)]="EndDate"></np-datepicker>
+                             </div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Associate Engineer<span class="text-danger">*</span></label>
+                       <select class="form-control" 
+                       name="Associate" 
+                       #Associate="ngModel" 
+                       [(ngModel)]='ObjEngineerCall.Associate_Engineer_ID'
+                       [ngClass]="{'clearance': pendingCallFormSubmit && Associate.errors?.required}" required
+                      >
+                      <option  [ngValue]="undefined">Select</option>
+                      <option *ngFor="let option of EngineerNameList" [value]="option.User_ID">{{option.Member_Name}}</option>
+                         </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">Details Of Support<sup class="text-danger">*</sup></label>
+                      <textarea class="form-control" 
+                      style="margin: 0px -16.6719px 0px 0px; width: 100%;height: 69px;" 
+                      name="Support" 
+                      #Support="ngModel" 
+                      [(ngModel)]="ObjEngineerCall.Details_Of_Support"
+                      [ngClass]="{'clearance': pendingCallFormSubmit && Support.errors?.required}" required
+                       ></textarea>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="control-label">Actual Issue Observed<sup class="text-danger"></sup></label>
+                            <input class="form-control"
+                                    name="Actual_Issue_Observed"
+                                    #Actual_Issue_Observed="ngModel"
+                                    [(ngModel)]="ObjEngineerCall.Actual_Issue_Observed"
+                                    placeholder="Actual Issue Observed"
+                                    [ngClass]="{'clearance': pendingCallFormSubmit && Actual_Issue_Observed.errors?.required}" required
+                               >
+                    </div>
+                   
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <label class="control-label">Main Status<span class="text-danger">*</span></label>
+                    <select class="form-control" 
+                    name="Main_Status" 
+                    #Main_Status="ngModel" 
+                    [(ngModel)]='ObjEngineerCall.Main_Status'
+                    (change)="GetCallStatus()"
+                    [ngClass]="{'clearance': pendingCallFormSubmit && Main_Status.errors?.required}" required 
+                   >
+                   <option  [ngValue]="undefined">Select</option>
+                   <option *ngFor="let option of mainStatusData" [value]="option.Main_Status">{{option.Main_Status}}</option>
+                      </select>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Call Status<span class="text-danger">*</span></label>
+                       <select class="form-control" 
+                       name="Call_Status" 
+                       #Call_Status="ngModel" 
+                       [(ngModel)]='ObjEngineerCall.Call_Status'
+                       [ngClass]="{'clearance': pendingCallFormSubmit && Call_Status.errors?.required}" required 
+                      >
+                      <option  [ngValue]="undefined">Select</option>
+                      <option *ngFor="let option of callStutasData" [value]="option.Sub_Status">{{option.Sub_Status}}</option>
+                         </select>
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+                    
+            </div>
+            </form>
+            
+            <div class="cl-sm-12">
+            <div class="panel-group" style="margin-top:5px">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Spare Details</div>
+                    <div class="panel-body">
+                        <form name="SpareDetailshForm" #SpareDetailshForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Spare<span class="text-danger">*</span></label>
+                                    <select class="form-control" 
+                                    name="Spare" 
+                                    #Spare="ngModel" 
+                                    [(ngModel)]='ObjSpareDetails.Spare_Parts_Product_ID'
+                                    [ngClass]="{'clearance': SpareDetailsSubmit && Spare.errors?.required}" required
+                                    >
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  *ngFor="let option of SparePartsList" [value]="option.Spare_Parts_Product_ID">{{option.Spare_Part_Description}}</option>
+                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Serial No.<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                                name="SerialNo"
+                                                #SerialNo="ngModel"
+                                                placeholder="Serial No"
+                                                [(ngModel)]='ObjSpareDetails.serialNo'
+                                                [ngClass]="{'clearance': SpareDetailsSubmit && SerialNo.errors?.required}" required
+                                        >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Quality<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                                name="Quality"
+                                                #Quality="ngModel"
+                                                [(ngModel)]='ObjSpareDetails.Qty'
+                                                placeholder="Quality"
+                                                [ngClass]="{'clearance': SpareDetailsSubmit && Quality.errors?.required}" required
+                                        >
+                                    </div>
+                                    <div class="box-footer" >
+                                        <button class="btn btn-primary pull-right1" style="margin-top : 5px"
+                                        (click)="addSpareDetails(SpareDetailshForm.form.valid)" id="load" [disabled]="Spinner">
+                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-Add"></span>Add
+                                                            </button>
+                                    </div>
+                                    </div>
+
+                            </form>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                            <div class="table-responsive no-padding" style="margin-Top:5px">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;" >
+                                            <th>Spare</th>
+                                            <th>Serial No.</th>
+                                            <th>Quality</th>
+                                             <th>Delete</th>
+                                        </tr>
+                                    </thead>  
+                                    <tbody>
+                                        <tr *ngFor="let obj of SpareDetailsList; let ind = index;" >
+                                            <td>{{obj.spare}}</td>
+                                            <td>{{obj.serialNo}}</td>
+                                            <td>{{obj.Qty}}</td>
+                                            <td ><button (click)="checkDelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-12">
+                            <div class="panel-group">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">Required Spare DEtails</div>
+                                    <div class="panel-body">
+                                        <form name="RequiredSpareDetailshForm" #RequiredSpareDetailshForm="ngForm" novalidate>
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Spare<span class="text-danger">*</span></label>
+                                                    <select class="form-control" 
+                                                    name="SpareRequired" 
+                                                    #SpareRequired="ngModel" 
+                                                    [(ngModel)]='ObjRequiredSpareDetails.Spare_Parts_Product_ID'
+                                                    [ngClass]="{'clearance': RequiredSpareDetailsSubmit && SpareRequired.errors?.required}" required
+                                                    >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of SparePartsList" [value]="option.Spare_Parts_Product_ID">{{option.Spare_Part_Description}}</option>
+                                      </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Serial No.<sup class="text-danger"></sup></label>
+                                                        <input class="form-control"
+                                                                name="SerialNoRequired"
+                                                                #SerialNoRequired="ngModel"
+                                                                placeholder="Serial No"
+                                                                [(ngModel)]='ObjRequiredSpareDetails.serialNo'
+                                                                [ngClass]="{'clearance': RequiredSpareDetailsSubmit && SerialNoRequired.errors?.required}" required
+                                                        >
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-primary custombutton1" 
+                                                        (click)="addRequiredSpareDetails(RequiredSpareDetailshForm.form.valid)" id="load" [disabled]="Spinner">
+                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-Add"></span>Add
+                                                                            </button>
+                                                        
+                                                    </div>
+                                                    
+                                                    </div>
+                
+                                            </form>
+                                            </div>
+                                            </div>
+                                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                 <div class="table-responsive no-padding">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr style="background-color:#4fa1d1;color:white;" >
+                                                            <th>Spare</th>
+                                                            <th>Serial No.</th>
+                                                             <th>Delete</th>
+                                                        </tr>
+                                                    </thead>  
+                                                    <tbody>
+                                  <tr *ngFor="let obj of RequiredSpareDetailsList; let ind = index;" >
+                                  <td>{{obj.spare}}</td>
+                                 <td>{{obj.serialNo}}</td>
+                                 <td ><button (click)="checkDeleteRequired(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                             </tr>
+                    </tbody>
+                 </table>
+              </div>
+              <div class="box-footer">
+                <button class="btn btn-primary pull-right1" id="load" [disabled]="Spinner">
+                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
+                                    </button>
+            </div>
+    </p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt"></p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="glyphicon glyphicon-list-alt"></p-tabPanel>
+
+ </p-tabView>
+ </div>
+ <p-footer>
+    <button type="button" pButton icon="pi pi-close" (click)="showTicket=false" label="Close" class="ui-button-secondary"></button>
+    </p-footer>
+ </p-dialog>

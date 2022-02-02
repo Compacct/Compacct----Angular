@@ -60,18 +60,15 @@ export class BulkSmsNepalComponent implements OnInit {
       console.log('start');
       this.DueCustomerList[i]['Mgs_Body'] = '';
       const BodyData = await this.GetEmailBody(this.DueCustomerList[i]);
-      console.log('BodyData',BodyData);
       if(BodyData){
-        
-      } else {
         this.DueCustomerList[i]['Mgs_Body'] = BodyData;
         const EmailPostData = await this.SendEmail(this.DueCustomerList[i]);
         console.log('EmailPostData --> ', EmailPostData);
         if(EmailPostData.messageId){
-          this.EmailCounter = i + 1;
+          this.EmailCounter = this.EmailCounter + 1;
           this.ProgressPercentage = Number(((this.EmailCounter / this.DueCustomerList.length) * 100).toFixed(2));
         } else {
-          const erroMgs = this.DueCustomerList[i].Email +' | error :' + EmailPostData.message
+          const erroMgs = this.DueCustomerList[i].Email +' | error :' + EmailPostData.message;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -81,6 +78,16 @@ export class BulkSmsNepalComponent implements OnInit {
             detail: erroMgs
           });
         }
+      } else {
+        const erroMgs = this.DueCustomerList[i].Email +' | error : For Aging Analysis.';
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error Occured",
+          life : 3500,
+          detail: ''
+        });
       }
       
     }
@@ -98,6 +105,7 @@ export class BulkSmsNepalComponent implements OnInit {
     });
   }
   async GetEmailBody(customer) {
+    console.log('1')
       const headers = new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8').set('responseType', 'text/html');
       const urlParam = '?Sub_Ledger_ID='+customer.Sub_Ledger_ID + '&Member_ID=0';
       const response = await this.$http.get('/Send_Bulk_Email_Nepal/Bulk_Email_Aging_Analysis_To_Customer'+urlParam,{ headers, responseType: 'text'}).toPromise();
