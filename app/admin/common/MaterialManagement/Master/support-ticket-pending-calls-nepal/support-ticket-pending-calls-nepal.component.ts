@@ -8,6 +8,8 @@ import { MessageService } from "primeng/api";
 import { FileUpload } from "primeng/primeng";
 import { AnyTxtRecord } from 'dns';
 import { DateNepalConvertService } from '../../../../shared/compacct.global/dateNepal.service';
+import { ActivatedRoute, Router } from '@angular/router';
+
 declare var NepaliFunctions: any;
 const NepaliDate = require('nepali-date');
 
@@ -24,7 +26,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   Spinner = false;
   seachSpinner = false;
   items = [];
-
+  mainItems = [];
+  callsheettab = false;
   searchFormSubmit = false;
   EngineerName = undefined;
   EngineerNameList = [];
@@ -34,6 +37,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   tabIndexToViewticket = 0;
   StartDate : any = {};
   EndDate : any = {};
+  StartDatecall : any = {};
+  EndDatecall : any = {};
   ObjEngineerCall : EngineerCall = new EngineerCall();
   ObjSpareDetails : SpareDetails = new SpareDetails(); 
   ObjRequiredSpareDetails : RequiredSpareDetails = new RequiredSpareDetails();
@@ -47,7 +52,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   RequiredSpareDetailsSubmit = false;
   SpareDetailsSubmit = false;
   pendingCallFormSubmit = false;
-  
+  CallSheetGridDataList = [];
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -55,13 +60,29 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
     private compacctToast: MessageService,
     public $CompacctAPI: CompacctCommonApi,
     private DateService: DateTimeConvertService,
-    private DateNepalConvertService : DateNepalConvertService) { }
+    private DateNepalConvertService : DateNepalConvertService,
+    private _router: Router,
+    private route: ActivatedRoute,) { 
+      this.route.queryParams.subscribe(params => {
+        console.log(params);
+       if(params['SUP'] != "NA") {
+         this.GetCallSheetGridData(params['SUP']);
+         this.callsheettab = true;
+          const ctrl = this;
+          setTimeout(() => {
+            ctrl.tabIndexToView = 1;
+          }, 200);
+       }
+        
+       })
+    }
 
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Pending Call",
       Link: " Engineering CRM -> Master -> Pending Call"
     });
+    this.mainItems = ["BROWSE", "CALL SHEET"];
     this.GetEngineerName();
   }
   onConfirm(){}
@@ -109,6 +130,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
      this.items = ["Ticket Details", "Engineer call Sheet","Used Spare","Required Spare","Followups"];
      this.StartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.EndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.StartDatecall = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.EndDatecall = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.callStutasData = [];
     this.mainStatusData = [];
     this.GetMainStatus();
@@ -122,6 +145,13 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   TabClick(e) {
     this.tabIndexToViewticket = e.index;
     this.items = ["Ticket Details", "Engineer call Sheet","Used Spare","Required Spare","Followups"];
+  }
+   MainTabClick(e) {
+    this.tabIndexToView = e.index;
+    this.mainItems = ["BROWSE", "CALL SHEET"];
+    if(this.tabIndexToView === 0){
+      this.callsheettab=false;
+    }
   }
   GetTicketDetails(SupportTicketNo){
     const obj = {
@@ -234,6 +264,31 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
     //   year: nyear
     // };
     
+  }
+  CallSheet(col){
+   if(col.Support_Ticket_No){
+     this.callsheettab = true;
+    const ctrl = this;
+    setTimeout(() => {
+      ctrl.tabIndexToView = 1;
+    }, 200);
+    this.GetCallSheetGridData(col.Support_Ticket_No);
+    this.GetTicketDetails(col.Support_Ticket_No);
+   }
+  }
+  GetCallSheetGridData(SupportTicketNo){
+    const obj = {
+      "SP_String": "SP_Support_Ticket_Call_Sheet_Nepal",
+      "Report_Name_String": "Get_Support_ticket_Call_Sheet_Grid",
+      "Json_Param_String": JSON.stringify([{Support_Ticket_No : SupportTicketNo}])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.CallSheetGridDataList = data;
+       console.log("CallSheetGridDataList",this.CallSheetGridDataList);
+     })
+  }
+  GetEdit(col){
+  console.log("Edit Data",col);
   }
 }
 class EngineerCall {
