@@ -32,6 +32,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
   MachineList = [];
   CustomerList = [];
   LoctionList = [];
+  EngineerList = [];
   StatusList = [];
 
   ObjBrowse = new Browse();
@@ -66,6 +67,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
       this.DateOfInstallation = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
       this.GetManufacturer();
       this.GetCustomer();
+      this.GetEngineer();
       this.getStatus();
   }
   // Clear & Tab
@@ -121,7 +123,13 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
       "Report_Name_String": "Get_Customer"
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Sub_Ledger_Name,
+            element['value'] = element.Sub_Ledger_ID
+          });
      this.CustomerList = data;
+    }
     // console.log('CustomerList ==', this.CustomerList)
   
     });
@@ -138,6 +146,21 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.LoctionList = data;
      console.log('LoctionList ==', this.LoctionList)
+  
+    });
+  }
+  GetEngineer(){
+    // const TObj = {
+    //   Product_Mfg_Comp_ID : this.ObjServiceContract.Machine_Manufacturer
+    // }
+    const obj = {
+      "SP_String": "SP_Engg_CRM_Installed_Machine",
+      "Report_Name_String": "Get_Engineer",
+      //"Json_Param_String": JSON.stringify([TObj])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.EngineerList = data;
+    // console.log('SerialNoList ==', this.SerialNoList)
   
     });
   }
@@ -169,6 +192,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
         Sub_Ledger_ID : this.ObjInstalledMachine.Customer_Name,
         Location_ID : this.ObjInstalledMachine.Location,
         Serial_No : this.ObjInstalledMachine.Serial_No,
+        Engg_User_ID : this.ObjInstalledMachine.Engineer_Name,
         Status : this.ObjInstalledMachine.Status,
         Year_Manufacturing : this.ObjInstalledMachine.Year_Manufacturing,
         Installation_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DateOfInstallation)),
@@ -222,6 +246,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
         Sub_Ledger_ID : this.ObjInstalledMachine.Customer_Name,
         Location_ID : this.ObjInstalledMachine.Location,
         Serial_No : this.ObjInstalledMachine.Serial_No,
+        Engg_User_ID : this.ObjInstalledMachine.Engineer_Name,
         Status : this.ObjInstalledMachine.Status,
         Year_Manufacturing : this.ObjInstalledMachine.Year_Manufacturing,
         Installation_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DateOfInstallation)),
@@ -319,6 +344,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
        this.GetLocation();
        this.ObjInstalledMachine.Location = data[0].Location_ID;
        this.ObjInstalledMachine.Serial_No = data[0].Serial_No;
+       this.ObjInstalledMachine.Engineer_Name = data[0].Engg_User_ID;
        this.ObjInstalledMachine.Status = data[0].Status;
        this.ObjInstalledMachine.Year_Manufacturing = data[0].Year_Manufacturing;
        this.DateOfInstallation = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Installation_Date);
@@ -384,6 +410,7 @@ class InstalledMachine{
   Customer_Name:string;
   Location:string;
   Serial_No:any;
+  Engineer_Name:any;
   Status:string;
   Year_Manufacturing:any;
 }

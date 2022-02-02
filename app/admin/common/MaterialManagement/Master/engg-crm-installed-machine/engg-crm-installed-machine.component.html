@@ -29,10 +29,13 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Customer<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="Bcustomer" #Bcustomer="ngModel" [(ngModel)]='ObjBrowse.Customer_Name' [ngClass]="{'clearance': SearchFormSubmit && Bcustomer?.errors?.required}" required>
+                                        <p-dropdown [options]="CustomerList" name="Bcustomer" [(ngModel)]="ObjBrowse.Customer_Name" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Customer'"
+                                            [virtualScroll]="true" itemSize="30" #Bcustomer="ngModel" [required]="true" [ngClass]="{'clearance':SearchFormSubmit && Bcustomer?.errors?.required}" required>
+                                        </p-dropdown>
+                                        <!-- <select class="form-control" name="Bcustomer" #Bcustomer="ngModel" [(ngModel)]='ObjBrowse.Customer_Name' [ngClass]="{'clearance': SearchFormSubmit && Bcustomer?.errors?.required}" required>
                                   <option  [ngValue]="undefined">Select</option>
                                   <option *ngFor="let option of CustomerList" [value]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
-                            </select>
+                            </select> -->
                                     </div>
                                     <!-- <div class="col-sm-4">
                                         <label class="control-label">Status<sup class="text-danger">*</sup></label>
@@ -147,10 +150,13 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Customer<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="customer" #customer="ngModel" [(ngModel)]='ObjInstalledMachine.Customer_Name' (change)="GetLocation()" [ngClass]="{'clearance': InstalledMachineFormSubmit && customer?.errors?.required}" required>
+                                        <p-dropdown [options]="CustomerList" name="customer" [(ngModel)]="ObjInstalledMachine.Customer_Name" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                            [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #customer="ngModel" [required]="true" [ngClass]="{'clearance':InstalledMachineFormSubmit && customer?.errors?.required}" required>
+                                        </p-dropdown>
+                                        <!-- <select class="form-control" name="customer" #customer="ngModel" [(ngModel)]='ObjInstalledMachine.Customer_Name' (change)="GetLocation()" [ngClass]="{'clearance': InstalledMachineFormSubmit && customer?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of CustomerList" [value]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
-                                    </select>
+                                    </select> -->
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -173,6 +179,17 @@
                                             required/>
                                     </div> -->
                                     <div class="col-sm-4">
+                                        <label class="control-label">Engineer Name<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="engineername" #engineername="ngModel" [(ngModel)]="ObjInstalledMachine.Engineer_Name" [ngClass]="{'clearance': InstalledMachineFormSubmit && engineername.errors?.required}" required>
+                                                                <option  [ngValue]="undefined">Select</option>
+                                                            <option *ngFor="let option of EngineerList" [ngValue]="option.User_ID">
+                                                                {{option.Member_Name}}
+                                                                </option>
+                                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
                                         <label class="control-label">Status<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="status" #status="ngModel" [(ngModel)]="ObjInstalledMachine.Status" [ngClass]="{'clearance': InstalledMachineFormSubmit && status.errors?.required}" required>
                                                                 <option  [ngValue]="undefined">Select</option>
@@ -181,8 +198,6 @@
                                                                 </option>
                                                         </select>
                                     </div>
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Year of Manufacturer<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="year" #year="ngModel" CompacctDigitonly="true" [ngClass]="{'clearance': InstalledMachineFormSubmit && year.errors?.required}" [(ngModel)]="ObjInstalledMachine.Year_Manufacturing" placeholder="Year of Manufacturer" minlength="4"

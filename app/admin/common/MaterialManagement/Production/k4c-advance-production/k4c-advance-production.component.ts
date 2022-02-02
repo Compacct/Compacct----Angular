@@ -52,6 +52,52 @@ export class K4cAdvanceProductionComponent implements OnInit {
   docdate: any;
   save_popup = false;
   del_popup = false;
+
+  viewbrowsepopUp = false;
+  viewbrowseList = [];
+  advno = undefined;
+  ordate = undefined;
+  orcostcen = undefined;
+  ordeldate = undefined;
+  ordelTime = undefined;
+  orcustname = undefined;
+  orcustmob = undefined;
+  orprodes = undefined;
+  orpromod = undefined;
+  orpromd1 = undefined;
+  oqpromode2 = undefined;
+  orprom3 = undefined;
+  prom4 = undefined;
+  orflavour = undefined;
+  orfinish = undefined;
+  orshape = undefined;
+  ortier = undefined;
+  orbox = undefined;
+  orbase = undefined;
+  orchangoncake = undefined;
+  ortakenby = undefined;
+  orrate = undefined;
+  orqty = undefined;
+  orwtinpound = undefined;
+  oraccomp = undefined;
+  oramt = undefined;
+  ordisamt = undefined;
+  orgrossamt = undefined;
+  ornetamt = undefined;
+  orroundoff = undefined;
+  oramtpay = undefined;
+  ornetpay = undefined;
+  orttlpaid = undefined;
+  ornetdue = undefined;
+  ordelcostname = undefined;
+  ordeltype = undefined;
+  ordelmob = undefined;
+  ordelaltmob = undefined;
+  ordelname = undefined;
+  ordeladd = undefined;
+  ordelpin = undefined;
+  ordelnearby = undefined;
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -418,6 +464,70 @@ onConfirm2() {
 }
 onReject2() {
   this.compacctToast.clear("c");
+}
+viewbrowsedetails(docno){
+ if(docno.Doc_No){
+  this.viewbrowsepopUp = true;
+
+  this.viewbrowseList = [];
+    const obj = {
+      "SP_String": "SP_Production_Voucher_New",
+      "Report_Name_String": "Get Production Voucher Details For Edit",
+      "Json_Param_String": JSON.stringify([{Doc_No : docno.Doc_No}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Data From Api",data);
+      this.viewbrowseList = data;
+
+      this.advno = data[0].Adv_Order_No ? data[0].Adv_Order_No : '-';
+      this.ordate = data[0].Order_Date ? data[0]. Order_Date : '-';
+      this.orcostcen = data[0].Cost_Cent_Name ? data[0].Cost_Cent_Name : '-';
+      this.ordeldate = data[0].Del_Date ? data[0].Del_Date : '-';
+      this.ordelTime = data[0].Del_Date_Time ? data[0].Del_Date_Time : '-';
+      this.orcustname = data[0].Customer_Name ? data[0].Customer_Name : '-';
+      this.orcustmob = data[0].Customer_Mobile ? data[0].Customer_Mobile : '-';
+      this.orprodes = data[0].Product_Description ? data[0].Product_Description : '-';
+      this.orpromod = data[0].Product_Modifier ? data[0].Product_Modifier : '-';
+      this.orpromd1 = data[0].Product_Modifier_1 ? data[0].Product_Modifier_1 : '-';
+      this.oqpromode2 = data[0].Product_Modifier_2 ? data[0].Product_Modifier_2 : '-';
+      this.orprom3 = data[0].Product_Modifier_3 ? data[0].Product_Modifier_3 : '-';
+      this.prom4 = data[0].Product_Modifier_4 ? data[0].Product_Modifier_4 : '-';
+      this.orflavour = data[0].Flavour ? data[0].Flavour : '-';
+      this.orfinish = data[0].Finishing ? data[0].Finishing : '-';
+      this.orshape = data[0].Shape ? data[0].Shape : '-';
+      this.ortier = data[0].Tier ? data[0].Tier : '-';
+      this.orbox = data[0].Boxes ? data[0].Boxes : '-';
+      this.orbase = data[0].Base ? data[0].Base : '-';
+      this.orchangoncake = data[0].Changes_on_Cake ? data[0].Changes_on_Cake : '-';
+      this.ortakenby = data[0].Order_Taken_By ? data[0].Order_Taken_By : '-';
+      this.orrate = data[0].Rate ? data[0].Rate : '-';
+      this.orqty = data[0].Qty ? data[0].Qty : '-';
+      this.orwtinpound = data[0].Weight_in_Pound ? data[0].Weight_in_Pound : '-';
+      this.oraccomp = data[0].Acompanish ? data[0].Acompanish : '-';
+      this.oramt = data[0].Amount ? data[0].Amount : '-';
+      this.ordisamt = data[0].Discount_Amt ? data[0].Discount_Amt : '-';
+      this.orgrossamt = data[0].Gross_Amt ? data[0].Gross_Amt : '-';
+      this.ornetamt = data[0].Net_Amount ? data[0].Net_Amount : '-';
+      this.orroundoff = data[0].Rounded_Off ? data[0].Rounded_Off : '-';
+      this.oramtpay = data[0].Amount_Payable ? data[0].Amount_Payable : '-';
+      this.ornetpay = data[0].Amount_Payable ? data[0].Amount_Payable : '-';
+      this.orttlpaid = data[0].Total_Paid ? data[0].Total_Paid : '-';
+      this.ornetdue = data[0].Net_Due ? data[0].Net_Due : '-';
+      this.ordelcostname = data[0].Cost_Center_Name ? data[0].Cost_Center_Name : '-';
+      this.ordeltype = data[0].Delivery_Type ? data[0].Delivery_Type : '-';
+      this.ordelmob = data[0].Delivery_Mobile_No ? data[0].Delivery_Mobile_No : '-';
+      this.ordelaltmob = data[0].Delivery_Alt_Mobile_No ? data[0].Delivery_Alt_Mobile_No : '-';
+      this.ordelname = data[0].Delivery_Name ? data[0].Delivery_Name : '-';
+      this.ordeladd = data[0].Delivery_Address ? data[0].Delivery_Address : '-';
+      this.ordelpin = data[0].Delivery_Pin_Code ? data[0].Delivery_Pin_Code : '-';
+      this.ordelnearby = data[0].Delivery_Near_By ? data[0].Delivery_Near_By : '-';
+
+    // console.log("this.editList  ===",data);
+    // console.log("edit From_Process_IDe ===" , this.Objproduction.From_Process_ID)
+
+  })
+ }
 }
 }
 class production {

@@ -1322,8 +1322,10 @@ onReject(){
      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
       this.FranchiseProductList = data;
       console.log("this.FranchiseProductList======",this.FranchiseProductList);
-      this.calculateTotalAmt();
-      this.SaveFranSaleBill();
+      if (this.FranchiseProductList.length) {
+        this.calculateTotalAmt();
+        this.SaveFranSaleBill();
+      }
      })
    
   //  }
