@@ -180,6 +180,8 @@ import { TenderMultipleSchBudgetComponent } from './common/TenderManagement/tend
 import { HarbMasterProductCivilComponent } from './common/Harbauer/harb-master-product-civil/harb-master-product-civil.component';
 import { SemiFinishedProductionVoucherComponent } from './common/MaterialManagement/Production/semi-finished-production-voucher/semi-finished-production-voucher.component';
 import { SupportTicketPendingCallsNepalComponent } from './common/MaterialManagement/Master/support-ticket-pending-calls-nepal/support-ticket-pending-calls-nepal.component';
+import { K4cCreditNoteBrowseComponent } from './common/MaterialManagement/k4c-credit-note-browse/k4c-credit-note-browse.component';
+import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-support-calender-dashboard/tuto-support-calender-dashboard.component";
 
 
 
@@ -1295,7 +1297,19 @@ const layoutRoutes: Routes = [{
       path : 'Semi_Finished_Production_Voucher',
       component:SemiFinishedProductionVoucherComponent,
       data: {title: 'Production_Voucher (Semi Finished)'}
+  },
+  {
+    path : 'Credit_Note',
+    component:K4cCreditNoteBrowseComponent,
+    data: {title: 'Credit Note'}
+},
+{
+  path: 'Tutopia_Support_Calender_Dashboard',
+  component: TutoSupportCalenderDashboardComponent,
+  data: {
+    title: 'Calender Dashboard'
   }
+}
 
 
     /*{
