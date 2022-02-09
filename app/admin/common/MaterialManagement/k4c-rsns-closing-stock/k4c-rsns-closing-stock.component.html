@@ -209,7 +209,7 @@
                                             <td>{{col.UOM}}</td>
                                             <!-- <td>{{col.Current_Stock_In_Dept}}</td> -->
                                             <!-- <td>{{col.Qty}}</td> -->
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Closing_Qty' (ngModelChange)='VarianceqtyChq(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                            <td><input type="text" [name]="col.Product_ID+'1'" [(ngModel)]='col.Closing_Qty' (ngModelChange)='VarianceqtyChq(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
                                                 /></td>
                                             <td>{{col.Varience_Qty}}</td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks	' [disabled]="col.Batch_Qty == col.Closing_Qty" class="form-control" style="width: 150px;" /></td>

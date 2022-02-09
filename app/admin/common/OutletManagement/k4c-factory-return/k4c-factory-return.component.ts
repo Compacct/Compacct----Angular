@@ -104,6 +104,15 @@ export class K4cFactoryReturnComponent implements OnInit {
 
   checkboxdisable = false;
   TimeStatus : any;
+  FProList = [];
+  taxable2: any;
+  cgst2: any;
+  sgst2: any;
+  igst2: any;
+  grossamount2: any;
+  Round_Off2: any;
+  netamount2: any;
+  rtfvoucherno: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -1324,7 +1333,7 @@ onReject(){
       console.log("this.FranchiseProductList======",this.FranchiseProductList);
       if (this.FranchiseProductList.length) {
         this.calculateTotalAmt();
-        this.SaveFranSaleBill();
+        this.SaveCreditNote();
       }
      })
    
@@ -1456,7 +1465,7 @@ onReject(){
 
     }
   }
-  SaveFranSaleBill(){
+  SaveCreditNote(){
     const obj = {
       "SP_String" : "SP_K4C_Accounting_Journal",
       "Report_Name_String" : "Credit_Note_RTF",
@@ -1467,19 +1476,21 @@ onReject(){
     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
       //console.log(data);
       var tempID = data[0].Column1;
+      this.rtfvoucherno = data[0].Column1;
       console.log("After Save",tempID);
      // this.Objproduction.Doc_No = data[0].Column1;
       if(data[0].Column1){
-        this.compacctToast.clear();
-        const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
-        this.compacctToast.add({
-         key: "compacct-toast",
-         severity: "success",
-         summary: "Production Voucher  " + tempID,
-         detail: "Succesfully  " + mgs
-       });
-       this.clearData();
-       this.GetSearchedlist(true);
+        this.getFranchisechallan();
+      //   this.compacctToast.clear();
+      //   const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+      //   this.compacctToast.add({
+      //    key: "compacct-toast",
+      //    severity: "success",
+      //    summary: "Production Voucher  " + tempID,
+      //    detail: "Succesfully  " + mgs
+      //  });
+      //  this.clearData();
+      //  this.GetSearchedlist(true);
       //  this.ProductList =[];
       //  this.franchiseSalebillFormSubmitted = false;
       } else{
@@ -1492,6 +1503,145 @@ onReject(){
         });
       }
     })
+}
+  getFranchisechallan(){
+  // if (this.dispatchchallanno){
+   const Obj = {
+     Doc_No : this.Doc_no,
+     Cost_Cen_ID : this.From_cost_cen_ID ? this.From_cost_cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+     From_Date : this.DateService.dateConvert(new Date(this.myDate)),
+     To_Date :  this.DateService.dateConvert(new Date(this.myDate))
+   }
+      const obj = {
+        "SP_String": "SP_K4C_Accounting_Journal",
+        "Report_Name_String" : "RTF Franchise Bill",
+        "Json_Param_String": JSON.stringify([Obj])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+       this.FProList = data;
+       console.log("this.FranchiseProductList======",this.FranchiseProductList);
+       if (this.FranchiseProductList.length) {
+         this.TotalAmt();
+         this.SaveFranSaleBill();
+       }
+      })
+    
+   //  }
+   }
+   TotalAmt(){
+    this.taxable2 = undefined;
+    this.cgst2 = undefined;
+    this.sgst2 = undefined;
+    this.igst2 = undefined;
+    this.grossamount2 = undefined;
+    let totaltax2 = 0; 
+    let totalcgst2 = 0;
+    let totalsgst2 = 0;
+    let totaligst2 = 0;
+    let grossamt2 = 0;
+    this.FProList.forEach(item => {
+      totaltax2 = totaltax2 + Number(item.Taxable);
+      totalcgst2 = totalcgst2 + Number(item.CGST_AMT);
+      totalsgst2 = totalsgst2 + Number(item.SGST_AMT);
+      totaligst2 = totaligst2 + Number(item.IGST_AMT);
+      grossamt2 = grossamt2 + Number(item.Net_Amount);
+    });
+    this.taxable2 = (totaltax2).toFixed(2);
+    this.cgst2 = (totalcgst2).toFixed(2);
+    this.sgst2 = (totalsgst2).toFixed(2);
+    this.igst2 = (totaligst2).toFixed(2);
+    this.grossamount2 = (grossamt2).toFixed(2);
+    // Round Off
+    this.Round_Off2 = (Number(this.grossamount2) - Math.round(this.grossamount2)).toFixed(2);
+    this.netamount2 = Math.round(this.grossamount2);
+    //console.log(this.Net_Amount);
+  }
+ getdataforSaveFran(){
+    this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
+    if(this.FProList.length) {
+      let ArrTemp =[]
+      this.FProList.forEach(item => {
+       // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+     const TempObj = {
+            Doc_No:  "A",
+            Doc_Date: this.currentDate,
+            Sub_Ledger_ID : Number(this.subledgerid),
+            Cost_Cen_ID	: 2, //this.franchisecostcenid,
+            Product_ID	: item.Product_ID,
+            Product_Name	: item.Product_Description,
+            Qty	: item.Qty,
+            UOM	: item.UOM,
+            MRP : item.Sale_rate,
+            Rate : item.Sale_rate,
+            Amount : Number(item.Qty) * Number(item.Sale_rate),
+            Discount : 0,
+            Taxable_Amount : item.Taxable,
+            CAT_ID : item.Cat_ID,
+            CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
+            CGST_Rate : item.CGST_PER,
+            CGST_Amount : item.CGST_AMT,
+            SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
+            SGST_Rate : item.SGST_PER,
+            SGST_Amount : item.SGST_AMT,
+            IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
+            IGST_Rate : item.IGST_PER,
+            IGST_Amount : item.IGST_AMT,
+            Bill_Gross_Amt : Number(this.taxable2),
+            Rounded_Off : Number(this.Round_Off2),
+            Bill_Net_Amt : this.netamount2,
+            User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+            Remarks : 'Sale bill Against credit note ' + this.rtfvoucherno,
+            Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
+            Total_Taxable : Number(this.taxable2),
+            Total_CGST_Amt : Number(this.cgst2),
+            Total_SGST_Amt : Number(this.sgst2),
+            Total_IGST_Amt : Number(this.igst2),
+            Total_Net_Amt : this.netamount2,
+            HSL_No : item.HSN_NO
+         }
+         ArrTemp.push(TempObj)
+      });
+      console.log("Save Data ===", ArrTemp)
+      return JSON.stringify(ArrTemp);
+
+    }
+  }
+SaveFranSaleBill(){
+  const obj = {
+    "SP_String" : "SP_K4C_Accounting_Journal",
+    "Report_Name_String" : "Save_Franchise_Sale_Bill",
+    "Json_Param_String" : this.getdataforSaveFran(),
+    "Json_1_String" : JSON.stringify([{Order_No : this.RTFchallanno}])
+
+  }
+  this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    var tempID = data[0].Column1;
+    console.log("After Save",tempID);
+   // this.Objproduction.Doc_No = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+      const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: "Production Voucher  " + tempID,
+       detail: "Succesfully  " + mgs
+     });
+     this.clearData();
+     this.GetSearchedlist(true);
+    //  this.ProductList =[];
+    //  this.franchiseSalebillFormSubmitted = false;
+    } else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
 }
 SaleBillPrint(obj) {
  // console.log("CR_No ===", true)

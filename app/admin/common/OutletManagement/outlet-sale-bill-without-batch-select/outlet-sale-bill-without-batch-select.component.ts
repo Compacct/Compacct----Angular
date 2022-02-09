@@ -86,6 +86,7 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
   couponflag = false;
   Del_Cost_Cent_ID : any;
   gststatus: any;
+  FranchiseBill:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -402,8 +403,8 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     this.returnedID = data;
     this.FromCostCentId = data[0].Cost_Cen_ID ? data[0].Cost_Cen_ID : 0;
-    //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+    this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    //this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
     if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
     this.ObjaddbillForm.Browseroutlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     } else {
@@ -415,12 +416,26 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
     this.ObjaddbillForm.Order_Date = this.QueryStringObj.Order_Date;
     this.ObjaddbillForm.Ledger_Name = this.QueryStringObj.Ledger_Name ? this.QueryStringObj.Ledger_Name : '';
     this.getselectitem();
+    this.autoaFranchiseBill();
    //console.log("this.returnedID======",this.returnedID);
  
    console.log('ngonit --2');
  
    });
  }
+
+ // FRANCISE BILL
+autoaFranchiseBill() {
+  //this.ExpiredProductFLag = false;
+ if(this.ObjaddbillForm.selectitem) {
+   const ctrl = this;
+   const autofrnchiseObj = $.grep(ctrl.returnedID,function(item: any) {return item.Cost_Cen_ID == ctrl.ObjaddbillForm.selectitem})[0];
+   console.log(autofrnchiseObj);
+   this.FranchiseBill = autofrnchiseObj.Franchise;
+   console.log("this.FranchiseBill ==", this.FranchiseBill)
+   
+  }
+  }
  
   getselectitem(){
     //if(this.ObjaddbillForm.Cost_Cen_ID){
@@ -1101,6 +1116,10 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
      var tempID = data[0].Column1;
      this.Objcustomerdetail.Bill_No = data[0].Column1;
      if(data[0].Column1){
+      if (this.FranchiseBill != "Y") {
+        this.SaveFranSaleBill();
+        this.SaveNPrintBill();
+      } else {
        this.compacctToast.clear();
        const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
        this.compacctToast.add({
@@ -1115,6 +1134,15 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
       this.SaveNPrintBill();
       this.clearData();
       this.router.navigate(['./POS_BIll_Order']);
+    }
+      this.compacctToast.clear();
+      const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: "Sale_Bill_ID  " + tempID,
+       detail: "Succesfully " + mgs
+     });
  
      } else{
  
@@ -1207,7 +1235,15 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
        Order_Txn_ID : 0,
        Adv_Order_No : this.Adv_Order_No != null ? this.Adv_Order_No : "" ,
        Online_Order_No : this.QueryStringObj.Order_No ? this.QueryStringObj.Order_No : null,
-       Online_Order_Date : this.QueryStringObj.Order_Date ? this.QueryStringObj.Order_Date : null
+       Online_Order_Date : this.QueryStringObj.Order_Date ? this.QueryStringObj.Order_Date : null,
+
+       Total_CGST_Amt : this.CGST_Amount,
+       Total_SGST_Amt : this.SGST_Amount,
+       Total_IGST_Amt : this.GST_Tax_Per_Amt,
+       Bill_Gross_Amt : this.Gross_Amount,
+       Bill_No : this.Objcustomerdetail.Bill_No,
+       Doc_Number : "A",
+       Doc_Date : this.DateService.dateConvert(new Date(this.myDate))
  
      }
      tempArr.push({...obj,...TempObj,...this.Objcustomerdetail,...this.ObjcashForm})
@@ -1217,6 +1253,46 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
    }
  
  }
+ SaveFranSaleBill(){
+  const obj = {
+    "SP_String" : "SP_POS_Sale_Bill",
+    "Report_Name_String" : "Save_POS_Sale_Bill",
+    "Json_Param_String" : this.getDataForSaveEdit()
+
+  }
+  this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    var tempID = data[0].Column1;
+    console.log("After Save",tempID);
+   // this.Objproduction.Doc_No = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+      const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Sale_Bill_ID  " + tempID,
+           detail: "Succesfully " + mgs
+         });
+     this.productSubmit =[];
+     this.clearlistamount();
+     this.cleartotalamount();
+     this.SaveNPrintBill();
+     this.clearData();
+     this.router.navigate(['./POS_BIll_Order']);
+    } else{
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
+}
  
  SaveNPrintBill() {
    if (this.Hold_Bill_Flag == false){
@@ -1484,9 +1560,9 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
            };
            this.productSubmit.push(productObj);
          });
-         // this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID;
-         // this.ObjcashForm.Credit_To_Ac = data[0].Credit_To_Ac;
-         // this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount;
+         this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID;
+         this.ObjcashForm.Credit_To_Ac = data[0].Credit_To_Ac;
+         this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount;
          // this.ObjcashForm.Cash_Amount = data[0].Cash_Amount;
          // this.ObjcashForm.Card_Ac_ID = data[0].Card_Ac_ID;
          // this.ObjcashForm.Card_Ac = data[0].Card_Ac;
@@ -1603,7 +1679,8 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
    this.ObjaddbillForm = new addbillForm();
    this.ObjcashForm = new cashForm();
    this.Objcustomerdetail = new customerdetail();
-   this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+   this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+   //this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
    if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
      this.ObjaddbillForm.Browseroutlet = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
      }

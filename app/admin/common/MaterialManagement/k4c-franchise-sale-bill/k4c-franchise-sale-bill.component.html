@@ -33,6 +33,15 @@
                                         <app-compacct-daterangepicker (DaterangeObj)="getBrowseDateRange($event)">
                                         </app-compacct-daterangepicker>
                                     </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Select Franchise<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Browsefranchise" #Browsefranchise="ngModel" [(ngModel)]="BrowseFranchise" [attr.disabled]="franshisedisable ? true : null" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option  *ngFor="let option of FranchiseList" value="{{option.Sub_Ledger_ID}}">
+                                  {{option.Sub_Ledger_Name}} - {{option.Location}}
+                                </option>
+                          </select>
+                                    </div>
                                     <div class="col-sm-3">
                                         <div class="col-sm-3">
                                             <button class="btn btn-primary" style="margin-top: 28px;margin-left: 85%;" data-toggle="modal" (click)="GetSearchedList()" id="load" [disabled]="seachSpinner">
@@ -63,6 +72,8 @@
                                             <th>Franchise</th>
                                             <th>Gross Amount</th>
                                             <th>Net Amount</th>
+                                            <th>Challan No</th>
+                                            <th>Indent No</th>
                                             <!--<th>Variance</th> 
                                             <th>Material Type</th>-->
                                         </tr>
@@ -100,6 +111,8 @@
                                             <td>{{col.Sub_Ledger_Name}}</td>
                                             <td>{{col.Bill_Gross_Amt}}</td>
                                             <td>{{col.Bill_Net_Amt}}</td>
+                                            <td>{{col.Dispatch_Challan_No ? col.Dispatch_Challan_No : '-'}}</td>
+                                            <td>{{col.Req_No ? col.Req_No : '-'}}</td>
                                             <!--<td>{{col.Varience_Qty}}</td> 
                                             <td>{{col.Material_Type}}</td>-->
                                         </tr>

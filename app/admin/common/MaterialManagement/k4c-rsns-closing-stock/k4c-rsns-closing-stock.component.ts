@@ -34,6 +34,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   Gbrowsedisableflag = false;
   IndentListFormSubmitted = false;
   ProductList = [];
+  BackupProList = [];
   SelectedIndent: any;
   BackupIndentList = [];
   IndentFilter = [];
@@ -73,6 +74,8 @@ export class K4cRsnsClosingStockComponent implements OnInit {
       // console.log(params);
       this.clearData();
       this.Searchedlist = [];
+      this.ProductList = [];
+      this.productListFilter = [];
       this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
      if(this.GodownList.length === 1){
        this.Gbrowsedisableflag = true;
@@ -134,6 +137,8 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
+     this.ProductList = [];
+     this.productListFilter = [];
    }
   GetCostCen(){
     const tempObj = {
@@ -201,13 +206,14 @@ export class K4cRsnsClosingStockComponent implements OnInit {
 
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-   const tempData = data
-   tempData.forEach(element => {
+    this.ProductList = data
+    this.BackupProList = data;
+    this.ProductList.forEach(element => {
     element['Issue_Qty'] = undefined;
  });
-   this.ProductList = tempData;
+   //this.ProductList = data;
    this.ShowSpinner = false;
-   this.BackupIndentList = tempData;
+   this.BackupIndentList = data;
     this.rsnsClosingStockFormSubmitted = false;
     this.GetProductType();
    console.log("this.ProductList======",this.ProductList);
@@ -341,9 +347,13 @@ Save(){
          summary: "Doc_No  " + tempID,
          detail: "Succesfully  "  + mgs
        });
-      //  if (this.buttonname == "Save & Print") {
-      //  this.saveNprintProVoucher();
-      //  }
+       if (this.buttonname != "Save") {
+          this.tabIndexToView = 0;
+          this.items = ["BROWSE", "CREATE"];
+          this.buttonname = "Create";
+          this.clearData();
+          this.GetSearchedList(true);
+       }
        this.clearData();
       // this.IssueStockFormSubmitted = false;
 
@@ -396,7 +406,7 @@ const obj = {
  })
 }
 }
-Edit(DocNo){
+ Edit(DocNo){  // async
   //console.log("View ==",DocNo);
 this.clearData();
 //this.editList = [];
@@ -407,6 +417,8 @@ this.Cost_Cent_ID = undefined;
 this.Godown_ID = undefined;
 this.remarks = undefined;
 if(DocNo.Doc_No){
+  this.ProductList = [];
+  this.BackupProList = [];
 this.Doc_No = DocNo.Doc_No;
 // this.ViewPoppup = true;
  this.tabIndexToView = 1;
@@ -415,7 +427,11 @@ this.Doc_No = DocNo.Doc_No;
  this.datepickerdisable = true;
  this.Gdisableflag = true;
 // console.log("VIew ==", this.Objproduction.Doc_No);
-this.GetdataforEdit(this.Doc_No);
+ this.GetProductList(true); // await
+ const ctrl = this;
+setTimeout(function () {
+  ctrl.GetdataforEdit(this.Doc_No);
+}, 600)
 //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
 }
 }
@@ -435,32 +451,53 @@ GetdataforEdit(Doc_No){
       //  this.maxDate = new Date(data[0].Doc_Date.getDate());
        this.ObjrsnsClosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
        this.ObjrsnsClosingStock.godown_id = data[0].godown_id;
-         data.forEach(element => {
-           const  productObj = {
-            Product_Type_ID : element.Product_Type_ID,
-            Product_Type : element.Product_Type,
-            Product_ID : element.Product_ID,
-            Product_Description : element.Product_Description,
-            Batch_No : element.Batch_No,
-            Batch_Qty : element.Total_Qty,
-            UOM : element.UOM,
-            Closing_Qty : element.Closing_Qty,
-            Varience_Qty : element.Varience_Qty,
-            //Expiry_Date :  element.Expiry_Date,
-            Remarks : element.Remarks
-          };
-           this.ProductList.push(productObj);
+      //    data.forEach(element => {
+      //      const  productObj = {
+      //       Product_Type_ID : element.Product_Type_ID,
+      //       Product_Type : element.Product_Type,
+      //       Product_ID : element.Product_ID,
+      //       Product_Description : element.Product_Description,
+      //       Batch_No : element.Batch_No,
+      //       Batch_Qty : element.Total_Qty,
+      //       UOM : element.UOM,
+      //       Closing_Qty : element.Closing_Qty,
+      //       Varience_Qty : element.Varience_Qty,
+      //       //Expiry_Date :  element.Expiry_Date,
+      //       Remarks : element.Remarks
+      //     };
+      //      this.ProductList.push(productObj);
+      // });
+      console.log("edit ProductList===", this.BackupProList);
+      const ctrl = this;
+      setTimeout(function () {
+        ctrl.BackupProList.forEach(ele => {
+        const ARR = ctrl.Editlist.filter(item => item.Product_ID === ele.Product_ID);
+        if (ARR.length) {
+          ele['Closing_Qty']= ARR[0].Closing_Qty,
+          // el.Product_Type_ID = aRR[0].Product_Type_ID,
+          // el.Product_Type = aRR[0].Product_Type,
+          // el.Product_ID = aRR[0].Product_ID,
+          // el.Product_Description = aRR[0].Product_Description,
+          ele['Batch_No'] = ARR[0].Batch_No,
+          ele['Batch_Qty'] = ARR[0].Total_Qty,
+          // el.UOM = aRR[0].UOM,
+          // el.Closing_Qty = aRR[0].Closing_Qty,
+          ele['Varience_Qty'] = ARR[0].Varience_Qty,
+          ele['Remarks'] = ARR[0].Remarks
+        }
+        ctrl.ProductList = ctrl.BackupProList;
+        console.log("edit ProductList===", ARR);
       });
+    }, 600)
+    //   this.ProductList = [...this.ProductList];
+     
+      
       // FOR VIEW
-          this.Doc_No = data[0].Doc_No;
-          this.Doc_date = new Date(data[0].Doc_Date);
-          this.Cost_Cent_ID = data[0].Location;
-          this.Godown_ID = data[0].godown_name;
-          this.MaterialType = data[0].Brand_Name;
-      // console.log("this.editList  ===",data);
-     // if(this.buttonname != "Update"){
-        //  this.ViewPoppup = true;
-      //}
+      this.Doc_No = data[0].Doc_No;
+      this.Doc_date = new Date(data[0].Doc_Date);
+      this.Cost_Cent_ID = data[0].Location;
+      this.Godown_ID = data[0].godown_name;
+      this.MaterialType = data[0].Brand_Name;
     })
 }
 View(DocNo){
@@ -546,7 +583,7 @@ onConfirm(){
     //  }
     this.ObjrsnsClosingStock.Remarks = [];
     this.ObjrsnsClosingStock.Indent_List = undefined;
-    this.ProductList = [];
+    //this.ProductList = [];
     this.BackupIndentList = [];
     this.TIndentList = [];
     this.SelectedIndent = [];

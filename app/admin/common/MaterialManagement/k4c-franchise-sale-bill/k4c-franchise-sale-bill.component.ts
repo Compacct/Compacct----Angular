@@ -69,6 +69,8 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   Round_Off: any;
   franshisedisable = false;
 
+  BrowseFranchise : any;
+
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -114,6 +116,29 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.FranchiseList = data;
+      const ctrl = this;
+     const Obj = $.grep(ctrl.FranchiseList,function(item) {return item.Cost_Cen_ID == ctrl.$CompacctAPI.CompacctCookies.Cost_Cen_ID})[0];
+        if(this.$CompacctAPI.CompacctCookies.User_Type != 'A' && Obj.Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID){
+          this.ObjfranchiseSalebill.Franchise = Obj.Sub_Ledger_ID;
+          this.BrowseFranchise = Obj.Sub_Ledger_ID;
+        this.franshisedisable = true;
+        this.FranchiseChange();
+        } else {
+         this.ObjfranchiseSalebill.Franchise = undefined;
+         this.BrowseFranchise = undefined;
+         this.franshisedisable = false;
+         this.FranchiseChange();
+        }
+      // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A' && this.ObjfranchiseSalebill.Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID){
+      //   //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
+      //   this.ObjfranchiseSalebill.Franchise = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      //   this.franshisedisable = true;
+      //   this.FranchiseChange();
+      //   } else {
+      //    this.ObjfranchiseSalebill.Franchise = undefined;
+      //    this.franshisedisable = false;
+      //    this.FranchiseChange();
+      //   }
       console.log("this.FranchiseList ===", this.FranchiseList)
       // this.FranchiseList.forEach(item => {
       //   item.Cost_Cen_ID = this.ObjfranchiseSalebill.Cost_Cen_ID
@@ -422,6 +447,7 @@ const end = this.ObjBrowse.end_date
 const tempobj = {
   From_Date : start,
   To_Date : end,
+  Sub_Ledger_ID : this.BrowseFranchise ? this.BrowseFranchise : 0
 }
 const obj = {
   "SP_String": "SP_Franchise_Sale_Bill",
@@ -489,7 +515,20 @@ const obj = {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.franchiseSalebillFormSubmitted = false;
-    this.ObjfranchiseSalebill.Franchise = undefined;
+   // this.ObjfranchiseSalebill.Franchise = undefined;
+   const ctrl = this;
+     const Obj = $.grep(ctrl.FranchiseList,function(item) {return item.Cost_Cen_ID == ctrl.$CompacctAPI.CompacctCookies.Cost_Cen_ID})[0];
+        if(this.$CompacctAPI.CompacctCookies.User_Type != 'A' && Obj.Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID){
+          this.ObjfranchiseSalebill.Franchise = Obj.Sub_Ledger_ID;
+          this.BrowseFranchise = Obj.Sub_Ledger_ID;
+        this.franshisedisable = true;
+        this.FranchiseChange();
+        } else {
+         this.ObjfranchiseSalebill.Franchise = undefined;
+         this.BrowseFranchise = undefined;
+         this.franshisedisable = false;
+         this.FranchiseChange();
+        }
     this.ObjfranchiseSalebill.Remarks = undefined;
     this.ChallanList = [];
     this.BackupChallanList = [];
