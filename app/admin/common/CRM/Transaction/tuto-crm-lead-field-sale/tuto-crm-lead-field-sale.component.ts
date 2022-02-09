@@ -72,6 +72,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   DAppoSlotList = [];
   SchoolNameList = [];
   SchoolPinList = [];
+  DistributorNameList = [];
   
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
@@ -81,6 +82,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   SelectedAppoSlotFilterList = [];
   SelectedSchoolNameFilterList = [];
   SelectedSchoolPinFilterList = [];
+  SelectedDistributorNameList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -260,6 +262,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let SlotFilter = [];
     let SchoolNameFilter = [];
     let SchoolPinFilter = [];
+    let DistributorNameFilter = [];
 
     this.PinList = [];
   this.Appointment_ForList = [];
@@ -268,6 +271,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   this.DAppoSlotList = [];
   this.SchoolNameList = [];
   this.SchoolPinList = [];
+  this.DistributorNameList =[];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -297,6 +301,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         SchoolPinFilter.push(item.School_PIN);
         this.SchoolPinList.push({ label: item.School_PIN, value: item.School_PIN });
       }
+      if (DistributorNameFilter.indexOf(item.Distributor_Name) === -1) {
+        DistributorNameFilter.push(item.Distributor_Name);
+        this.DistributorNameList.push({ label: item.Distributor_Name, value: item.Distributor_Name });
+      }
     });
   }
   NextFollowDateFilterChange(e) {
@@ -318,6 +326,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let SlotFilter = [];
     let SchoolNameFilter = [];
     let SchoolPinFilter = [];
+    let DistributorNameFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -351,6 +360,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       searchFields.push('School_PIN');
       SchoolPinFilter = this.SelectedSchoolPinFilterList;
     }
+    if (this.SelectedDistributorNameList.length) {
+      searchFields.push('Distributor_Name');
+      DistributorNameFilter = this.SelectedDistributorNameList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -364,6 +377,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
           && (SchoolNameFilter.length ? SchoolNameFilter.includes(e['School_Name']) : true)
           && (SchoolPinFilter.length ? SchoolPinFilter.includes(e['School_PIN']) : true)
+          && (DistributorNameFilter.length ? DistributorNameFilter.includes(e['Distributor_Name']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];

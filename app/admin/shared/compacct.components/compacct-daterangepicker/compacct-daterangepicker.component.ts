@@ -27,6 +27,8 @@ export class CompacctDaterangepickerComponent implements OnInit {
     public yearEnd: Date = this.today;
     public TutopiaPendigTickStart = new Date(new Date(2021,3, 1).toDateString());
     public TutopiaPendigTickEnd = this.today;
+    public CurrentMonthStart = new Date(this.today.getFullYear(), this.today.getMonth(), 1);
+    public CurrentMonthEnd = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 0);
     EnabledFlag = true
   @Output() DaterangeObj = new EventEmitter();
   @Input() set DefaultDateOpt(value:any) {
@@ -37,6 +39,10 @@ export class CompacctDaterangepickerComponent implements OnInit {
     }else if (value === 'TutopiaPendigTick') {
       this.StartDate = this.TutopiaPendigTickStart;
        this.EndDate = this.TutopiaPendigTickEnd;
+      this.DaterangeObj.emit([this.StartDate,this.EndDate]);
+    }else if (value === 'MonthStarttoEnd') {
+      this.StartDate = this.CurrentMonthStart;
+       this.EndDate = this.CurrentMonthEnd;
       this.DaterangeObj.emit([this.StartDate,this.EndDate]);
     } else {
       this.StartDate = this.today;
