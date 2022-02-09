@@ -155,6 +155,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
     this.ProductDetailsList = [];
     this.Reject_Date = new Date();
     this.ngxService.stop();
+    this.viewbrowseList = [];
   }
   onConfirm(){
     this.ngxService.start();
@@ -471,9 +472,9 @@ viewbrowsedetails(docno){
 
   this.viewbrowseList = [];
     const obj = {
-      "SP_String": "SP_Production_Voucher_New",
-      "Report_Name_String": "Get Production Voucher Details For Edit",
-      "Json_Param_String": JSON.stringify([{Doc_No : docno.Doc_No}])
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "View Order Details",
+      "Json_Param_String": JSON.stringify([{Doc_No : docno.Adv_Order_No}])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{

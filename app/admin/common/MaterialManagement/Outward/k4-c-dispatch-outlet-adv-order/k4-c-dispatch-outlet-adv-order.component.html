@@ -76,6 +76,7 @@
                                             <th>To Outlet</th>
                                             <th>Total Qty</th>
                                             <th>Total Amount</th>
+                                            <th>Box Charge</th>
                                             <th>Vehicle Details</th>
                                             <th>Transaction Date & Time</th>
                                         </tr>
@@ -95,7 +96,7 @@
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Bill_No != 'NA'">
+                                                        <li *ngIf="col.Bill_NO != 'NA'">
                                                             <a (click)="SaleBillPrint(col.Bill_NO)">
                                                                 <i class="fa fa-print"></i> Sale Bill Print
                                                             </a>
@@ -123,6 +124,7 @@
                                             <td>{{col.Cost_Cen_Name}}</td>
                                             <td>{{col.Total_Qty}}</td>
                                             <td>{{col.Total_Amount}}</td>
+                                            <td>{{col.Box_Charge}}</td>
                                             <td>{{col.Vehicle_Details}}</td>
                                             <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
@@ -229,6 +231,7 @@
                                             <th>Batch No</th>
                                             <th>Qty</th>
                                             <th>Delivery Qty</th>
+                                            <th>Box Charge</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -245,6 +248,7 @@
                                             <td>{{col.Batch_NO}}</td>
                                             <td>{{col.Qty}}</td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                         </tr>
                                     </ng-template>
                                 </p-table>

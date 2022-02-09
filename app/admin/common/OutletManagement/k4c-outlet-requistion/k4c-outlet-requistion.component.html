@@ -75,6 +75,7 @@
                                             <th>Transaction Date & Time</th>
                                             <th>Amount</th>
                                             <th>Challan No</th>
+                                            <th>Sale Bill No</th>
 
 
                                         </tr>
@@ -133,6 +134,7 @@
                                             <td>{{col.Transaction_Date_Time}}</td>
                                             <td>{{col.amount}}</td>
                                             <td>{{col.Challan_No}}</td>
+                                            <td>{{col.Franchise_Sale_Bill_No ? col.Franchise_Sale_Bill_No : '-'}}</td>
 
                                         </tr>
                                     </ng-template>

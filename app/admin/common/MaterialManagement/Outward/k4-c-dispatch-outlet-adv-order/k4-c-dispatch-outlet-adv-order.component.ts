@@ -355,7 +355,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                  Fin_Year_ID: el.Fin_Year_ID,
                  Vehicle_Details : el.Vehicle_Details,
                  Adv_Order_No : el.Adv_Order_No,
-                 Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated"
+                 Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
+                 Box_Charge : el.Box_Charge ? el.Box_Charge : 0
                }
                this.saveData.push(saveObj)
               }
@@ -469,7 +470,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
    }
       const obj = {
         "SP_String": "SP_K4C_Accounting_Journal",
-        "Report_Name_String" : "Get Franchise Bill Ageinst Challan",
+        "Report_Name_String" : "Get Franchise Bill Ageinst Custom Order Challan",
         "Json_Param_String": JSON.stringify([Obj])
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
