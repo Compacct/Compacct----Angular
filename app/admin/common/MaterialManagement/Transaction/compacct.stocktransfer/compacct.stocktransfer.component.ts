@@ -94,6 +94,7 @@ export class StocktransferComponent implements OnInit {
   AcceptStockModal = false;
   AcceptStockDocNo = undefined;
   AcceptProductList = [];
+  tempQty = undefined;
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -306,6 +307,7 @@ export class StocktransferComponent implements OnInit {
     this.GodownLists = [];
     this.Godowndisable = false;
     this.GodownRequire = true;
+    this.tempQty = undefined;
     const List = this.NativeProductList.map(x => Object.assign({}, x));
     if (productID) {
       if (this.ObjCostCenterFROM.F_Cost_Cen_ID) {
@@ -463,6 +465,15 @@ export class StocktransferComponent implements OnInit {
         });
     }
   };
+  ChangeBatch = function(){
+    this.tempQty = undefined;
+    if (this.ObjProductInfo.Batch_Number) {
+      let ctrl = this;
+      var obj = $.grep(ctrl.BatchList, function (value) { return value.Batch_No == ctrl.ObjProductInfo.Batch_Number})[0];
+      this.tempQty = obj.QTY;
+    }
+
+  }
   getSumOfQtyWithSameProduct = function(productID) {
     if (this.ProductInfoList.length) {
       const List = this.ProductInfoList.map(x => Object.assign({}, x));

@@ -628,6 +628,7 @@
                                                 <select class="form-control" name="batchno"
                                                         #batchno="ngModel"
                                                         [(ngModel)]="ObjProductInfo.Batch_Number"
+                                                        (change)="ChangeBatch()"
                                                         [required]="true"
                                                         [disabled]="Batchdisabled">
                                                     <!-- <option  [ngValue]="undefined">Select</option> -->
@@ -646,7 +647,7 @@
                                                         #qty="ngModel"
                                                         [(ngModel)]="ObjProductInfo.Qty"
                                                         (change)="CalculateAmount()"
-                                                        [ngClass]="{'clearance': ProductInfoSubmitted &&  qty?.errors?.required }"
+                                                        [ngClass]="{'clearance': ProductInfoSubmitted && qty?.errors?.required || (ObjProductInfo.Qty > tempQty) }"
                                                         [required]="true"
                                                         CompacctDigitonly="true"
                                                         placeholder="Quantity" />
