@@ -1119,7 +1119,9 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
       Del_Date_Time : this.Objcustomerdetail.Del_Date_Time,
       Rounded_Off : this.Round_Off,
       Amount_Payable : this.Amount_Payable,
-      Hold_Order : this.Hold_Order_Flag ? "Y" : "N"
+      Hold_Order : this.Hold_Order_Flag ? "Y" : "N",
+      Sub_Ledger_ID : this.QueryStringObj.Sub_Ledger_ID ? this.QueryStringObj.Sub_Ledger_ID : 0 ,
+      Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
     }
     tempArr.push({...obj,...TempObj,...this.Objcustomerdetail,...this.ObjcashForm,...this.ObjHomeDelivery})
   });

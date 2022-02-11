@@ -28,6 +28,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
   CustomerDetailsFormSubmitted = false;
   GSTvalidFlag = false;
   CustomerDetailsPopUpFlag = false;
+  CustomerDetailsAdvOrPopUpFlag = false;
   UpperDataList: any = [];
   Todaydate = new Date();
   ObjLead : Lead = new Lead();
@@ -65,6 +66,9 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
   Bill_No: any;
   Total: any;
 
+  SubledgerList = [];
+  subledgerdisable = false;
+
 
   constructor( private Header: CompacctHeader,
     private router : Router,
@@ -80,6 +84,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit() {
+    console.log("cost cent id ==", this.$CompacctAPI.CompacctCookies.Cost_Cen_ID)
     $(".content-header").addClass("collapse-pos");
     $(".content-header").addClass("hide-pos");
     $(".content").addClass("collapse-pos");
@@ -93,6 +98,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     this.GetHoldOrder();
     this.getbilldate();
     this.EODCheck();
+    this.GetSubledger();
 
     this.minTime = this.setHours(new Date(), "10:00am");
     this.maxTime = this.setHours(new Date(), "06:00pm");
@@ -298,15 +304,91 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     // this.CustMob.applyFocus()
     // this.CustMob.click();
   }
+  GetSubledger(){
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get_Sub_Ledger_Details"
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Sub_Ledger_Name,
+            element['value'] = element.Sub_Ledger_ID
+          });
+     this.SubledgerList = data;
+    }
+     console.log('SubledgerList ==', this.SubledgerList)
+  
+    });
+  }
+  GetSubLedgerDetails() {
+    this.NoPhonedisable = false;
+    this.subledgerdisable = false;
+    this.Objcustomerdetail.Foot_Fall_ID = undefined;
+    this.Objcustomerdetail.Contact_Name = undefined;
+    this.Objcustomerdetail.Address = undefined;
+    this.Objcustomerdetail.DOB = undefined;
+    this.Objcustomerdetail.DOA = undefined;
+    this.Objcustomerdetail.Cost_Cen_ID = undefined;
+    this.Objcustomerdetail.GST_No = undefined;
+  if(this.Objcustomerdetail.Sub_Ledger_ID) {
+    this.NoPhonedisable = true;
+    this.subledgerdisable = true;
+    const ctrl = this;
+    const SubLedgerObj = $.grep(ctrl.SubledgerList,function(item) {return item.Sub_Ledger_ID == ctrl.Objcustomerdetail.Sub_Ledger_ID})[0];
+    console.log(SubLedgerObj);
+    this.Objcustomerdetail.Foot_Fall_ID = SubLedgerObj.Foot_Fall_ID;
+    this.Objcustomerdetail.Mobile = SubLedgerObj.Sub_Ledger_Mobile_No;
+    this.Objcustomerdetail.Contact_Name = SubLedgerObj.Sub_Ledger_Name;
+    this.Objcustomerdetail.Address =  SubLedgerObj.Sub_Ledger_Address_1;
+    // this.Objcustomerdetail.DOB =  SubLedgerObj.DOB;
+    // this.Objcustomerdetail.DOA = SubLedgerObj.DOA;
+    this.Objcustomerdetail.GST_No = SubLedgerObj.GST;
+    this.GetFootfallId();
+    // if(SubLedgerObj.Foot_Fall_ID) {
+    //   this.Objcustomerdetail.Foot_Fall_ID = SubLedgerObj.Foot_Fall_ID;
+    //   this.Objcustomerdetail.Cost_Cen_ID = SubLedgerObj.SGST_Output_Ledger_ID;
+    // } else {
+    //   this.Objcustomerdetail.Foot_Fall_ID = '0';
+    //   this.Objcustomerdetail.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    // }
+    console.log('address===',this.Objcustomerdetail.Address)
+  }
+  }
+  GetFootfallId() {
+    this.Objcustomerdetail.Foot_Fall_ID = undefined;
+    if(this.Objcustomerdetail.Mobile && this.Objcustomerdetail.Mobile.length === 10) {
+      const obj = {
+        "SP_String": "SP_Controller_Master",
+        "Report_Name_String": "GET_OUTLET_CUSTOMER_DETAILS",
+        "Json_Param_String" : JSON.stringify([{'Costomer_Mobile' : this.Objcustomerdetail.Mobile}])
+      }
+      this.GlobalAPI
+          .getData(obj)
+          .subscribe((data: any) => {
+           console.log("get customer details" ,data);
+           const ReturnObj = data.length ? data[0] : {};
+           if(ReturnObj.Foot_Fall_ID) {
+            this.Objcustomerdetail.Foot_Fall_ID = ReturnObj.Foot_Fall_ID;
+            this.Objcustomerdetail.Cost_Cen_ID = ReturnObj.Cost_Cen_ID;
+           } else {
+            this.Objcustomerdetail.Foot_Fall_ID = '0';
+            this.Objcustomerdetail.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+          }
+      });
+    }
+  }
   ShowCustomerDetailsadvPopUp (val) {
     this.Objcustomerdetail = new Customerdetail();
     this.Objcustomerdetail.Redirect_To = val;
     this.GSTvalidFlag = false;
     this.ClickedOnlineLedger = {};
     this.CustomerDetailsFormSubmitted = false;
-    this.CustomerDetailsPopUpFlag = true;
+   // this.CustomerDetailsPopUpFlag = true;
+    this.CustomerDetailsAdvOrPopUpFlag = true;
     this.locationInput.nativeElement.value = '';
     this.NoPhonedisable = false;
+    this.subledgerdisable = false;
     this.NoPhoneFlag = false;
     setTimeout(function(){
       const elem  = document.getElementById('Customer');
@@ -541,11 +623,13 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
         console.log("save customer details" ,data);
         if(data[0].Foot_Fall_ID) {
           data[0].Mobile_No = this.Objcustomerdetail.Mobile;
+          data[0].Sub_Ledger_ID = this.Objcustomerdetail.Sub_Ledger_ID;
           data[0].Redirect_To = this.Objcustomerdetail.Redirect_To;
           this.Objcustomerdetail = new Customerdetail();
           this.GSTvalidFlag = false;
           this.ClickedOnlineLedger = {};
           this.CustomerDetailsPopUpFlag = false;
+          this.CustomerDetailsAdvOrPopUpFlag = false;
           this.DynamicRedirectTo(data[0]);
         } else{
           this.compacctToast.clear();
@@ -1073,6 +1157,7 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
   // END
 }
 class Customerdetail{
+  Sub_Ledger_ID : number;
   Mobile : string;
   Contact_Name : string;
   DOB : string;
