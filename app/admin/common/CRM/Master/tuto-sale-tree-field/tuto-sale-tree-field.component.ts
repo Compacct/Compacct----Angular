@@ -4,6 +4,7 @@ import { MessageService, TreeNode } from 'primeng/api';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
+declare var $:any;
 
 @Component({
   selector: 'app-tuto-sale-tree-field',
@@ -30,6 +31,8 @@ export class TutoSaleTreeFieldComponent implements OnInit {
   IntroducerTitle:string;
   EditFlag = false;
   EditDistributorObj:any = {};
+
+  UpdateFieldModal = false;
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -71,7 +74,7 @@ export class TutoSaleTreeFieldComponent implements OnInit {
         });
     }
   }
-  GetIntroducerList(SupDeptName){
+  GetIntroducerList(SupDeptName,falg?){
     this.IntroducerList = [];
     const obj = {
       "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
@@ -88,7 +91,14 @@ export class TutoSaleTreeFieldComponent implements OnInit {
       if(this.EditDistributorObj && this.EditDistributorObj.Intro_Member_ID) {
         this.ObjSaleField.Intro_Member_ID = this.EditDistributorObj.Intro_Member_ID;
       }
-      this.CreateFieldModal = true;
+      if(falg) {
+        this.UpdateFieldModal = true;
+        setTimeout(()=>{
+          $('#locationcatch').val(SupDeptName.toUpperCase() === 'SCHOOL' ? this.ObjSaleField.School_Location : '');
+        },900);
+      } else {        
+        this.CreateFieldModal = true;
+      }
     });
   } 
 
@@ -155,6 +165,34 @@ export class TutoSaleTreeFieldComponent implements OnInit {
         closable : true,
         detail: ""
       });
+    }
+    if(event.node.Sub_Dept === "SCHOOL"){
+      const TempObj  ={...event.node};
+      const obj = {
+        "SP_String": "Tutopia_Sales_Tree_Edit_SP",
+        "Report_Name_String": "Select_School",
+        "Json_Param_String": JSON.stringify([{"Member_ID": TempObj.Member_ID}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("tree",data);
+        this.EditDistributorObj = data[0];
+        this.OpenUpdateSaleFieldModal(TempObj.Sub_Dept,this.EditDistributorObj);
+   
+       })
+    }
+    if(event.node.Sub_Dept === "ASP"){
+      const TempObj  ={...event.node};
+      const obj = {
+        "SP_String": "Tutopia_Sales_Tree_Edit_SP",
+        "Report_Name_String": "Select_ASP",
+        "Json_Param_String": JSON.stringify([{"Member_ID": TempObj.Member_ID}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("tree",data);
+        this.EditDistributorObj = data[0];
+        this.OpenUpdateSaleFieldModal(TempObj.Sub_Dept,this.EditDistributorObj);
+   
+       })
     }
    }
    nodeUnselect(event) {
@@ -328,7 +366,116 @@ export class TutoSaleTreeFieldComponent implements OnInit {
       this.locationInput.nativeElement.value = '';
     }  
   }
+//
+  OpenUpdateSaleFieldModal(type,obj?) {
+    this.ClearData();
+    this.ObjSaleField.Member_ID = '0';
+    this.ObjSaleField.Intro_Member_ID = '0';
+    this.ObjSaleField.Member_ID = '0';
+    this.ObjSaleField.Sales_Type = undefined;
+    this.IntroducerTitle = undefined;
+    this.EditDistributorObj = obj ? obj : {};
+    if(type === 'Zonal Head') {      
+      this.IntroducerTitle = 'Channel Head';
+    }
+    if(type === 'ASP') {      
+      this.IntroducerTitle = 'Distributor';
+    }
+    if(type.toUpperCase() === 'SCHOOL') {      
+      this.IntroducerTitle = 'ASP';
+    }
+    if(type === 'DISTRIBUTOR') {      
+      this.IntroducerTitle = 'Zonal Head';
+    }
+    if(this.EditDistributorObj && this.EditDistributorObj.Intro_Member_ID) {
+      this.EditDistributorObj.Sales_Type = type.toUpperCase() === 'SCHOOL' ? 'School' : type;
+      this.CreateFieldModalTitle =  type.toUpperCase() === 'SCHOOL' ? 'School' : type;
+      this.ObjSaleField = {...this.EditDistributorObj};
+      this.ObjSaleField.Member_ID = this.EditDistributorObj.Member_ID;
+      this.ObjSaleField.Sales_Type = type.toUpperCase() === 'SCHOOL' ? 'School' : type;
+      this.GetIntroducerList(type,true);
+    } 
+  }
+  SaveUpdateField2 (valid) {
+    this.CreateFieldModalFormSubmitted = true;
+    if(valid) {
+      const reportName = this.ObjSaleField.Sales_Type.toUpperCase() === 'SCHOOL' ? 'Edit_School' : 'Edit_ASP';
+      const obj = {
+        "SP_String": "Tutopia_Sales_Tree_Edit_SP",
+        "Report_Name_String": reportName,
+        "Json_1_String": JSON.stringify([this.ObjSaleField])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log(data);
+        if(data[0].Column1) {
+          let Type:String = this.ObjSaleField.Sales_Type;
+          this.EditFlag = false;
+          this.EditDistributorObj = {};
+          this.ClearData();
+          this.loading = true;
+          this.GetTreeData();
+          this.UpdateFieldModal = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: '' + Type,
+            detail:  "Succesfully Created"
+          });
+          this.onReject();
 
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+
+      })
+    }
+  }
+  DeleteSalesTeam(){
+    if(this.ObjSaleField.Member_ID && this.ObjSaleField.Sales_Type){
+      const reportName = this.ObjSaleField.Sales_Type.toUpperCase() === 'SCHOOL' ? 'Delete_School' : 'Delete_ASP';
+      const obj = {
+        "SP_String": "Tutopia_Sales_Tree_Edit_SP",
+        "Report_Name_String": reportName,
+        "Json_Param_String": JSON.stringify([{"Member_ID": this.ObjSaleField.Member_ID}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log(data);
+        let Type:String = this.ObjSaleField.Sales_Type;
+        if(data[0].Column1 === "Deleted") {
+          this.EditFlag = false;
+          this.EditDistributorObj = {};
+          this.ClearData();
+          this.loading = true;
+          this.GetTreeData();
+          this.UpdateFieldModal = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: '' + Type,
+            detail:  "Succesfully "+data[0].Column1
+          });
+
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: '' + Type,
+            detail:  data[0].Column1
+          });
+        }
+
+      })
+    }
+  }
 }
 
 class SalesTreeField {

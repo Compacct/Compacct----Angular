@@ -80,10 +80,12 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
   SelectedTCNAMEListFilterList = [];
   SelectedRMNAMEListFilterList = [];
   SelectedAuditorFilterList = [];
+  SelectedAuditorTypeFilterList = [];
   DemoTypeList = [];
   TCNAMEList = [];
   RMNAMEList = [];
   AuditorFilterList = [];
+  AuditorTypeFilterList = [];
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
   Lead_ID = undefined;
@@ -274,6 +276,7 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     let TCFilter = [];
     let RMFilter = [];
     let AuFilter = [];
+    let AuTypeFilter =[];
 
     this.PinList = [];
     this.Appointment_ForList = [];
@@ -282,6 +285,7 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     this.TCNAMEList = [];
     this.RMNAMEList = [];
     this.AuditorFilterList = [];
+    this.AuditorTypeFilterList = [];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -311,6 +315,10 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
         AuFilter.push(item.Auditor_Name);
         this.AuditorFilterList.push({ label: item.Auditor_Name, value: item.Auditor_Name });
       }
+      if (AuTypeFilter.indexOf(item.Audit_Type) === -1) {
+        AuTypeFilter.push(item.Audit_Type);
+        this.AuditorTypeFilterList.push({ label: item.Audit_Type, value: item.Audit_Type });
+      }
     });
   }
   NextFollowDateFilterChange(e) {
@@ -332,6 +340,7 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
     let TCFilter = [];
     let RMFilter = [];
     let AuFilter = [];
+    let AuTypeFilter =[];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -365,6 +374,11 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
       searchFields.push('Auditor_Name');
       AuFilter = this.SelectedAuditorFilterList;
     }
+    
+    if (this.SelectedAuditorTypeFilterList.length) {
+      searchFields.push('Auditor_Name');
+      AuTypeFilter = this.SelectedAuditorTypeFilterList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -378,6 +392,7 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
           && (TCFilter.length ? TCFilter.includes(e['TC_Name']) : true)
           && (RMFilter.length ? RMFilter.includes(e['RM_Name']) : true)
           && (AuFilter.length ? AuFilter.includes(e['Auditor_Name']) : true)
+          && (AuTypeFilter.length ? AuTypeFilter.includes(e['Audit_Type']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];

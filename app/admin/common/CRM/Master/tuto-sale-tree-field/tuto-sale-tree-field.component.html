@@ -102,24 +102,24 @@
                 <input type="password" placeholder="Password" class="form-control" name="pass" #pass="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass.errors?.required}" maxlength="10" required>
             </div>
             <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "School"'>
-                <label class="control-label">Location<sup class="text-danger">*</sup></label>
-                <input type="text" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Area" class="form-control" required>
+                <label class="control-label">Location<sup class="text-danger"></sup></label>
+                <input type="text" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Area" class="form-control" >
             </div>
             <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "School"'>
-                <label class="control-label">Address<sup class="text-danger">*</sup></label>
-                <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.School_Address" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" required>
+                <label class="control-label">Address<sup class="text-danger"></sup></label>
+                <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.School_Address" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" >
                  </textarea>
             </div>
             <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
-                <label class="control-label">PIN<sup class="text-danger">*</sup></label>
+                <label class="control-label">PIN<sup *ngIf='CreateFieldModalTitle === "School"'  class="text-danger">*</sup></label>
                 <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="ObjSaleField.PIN_Code" placeholder="PIN" (ngModelChange)="stateDistrictChange(ObjSaleField.PIN_Code)" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && Pin?.errors?.required ||
-                      (Pin.errors?.minlength && Pin.touched)}" required>
+                      (Pin.errors?.minlength && Pin.touched)}"  [required]="CreateFieldModalTitle === 'School'">
 
             </div>
             <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
-                <label class="control-label">District<sup class="text-danger">*</sup></label>
+                <label class="control-label">District<sup *ngIf='CreateFieldModalTitle === "School"'  class="text-danger">*</sup></label>
                 <select class="form-control" name="District" #District="ngModel" [(ngModel)]="ObjSaleField.District" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && District?.errors?.required ||
-                      (District.errors?.minlength && District.touched)}" required>
+                      (District.errors?.minlength && District.touched)}"  [required]="CreateFieldModalTitle === 'School'">
 
                        <option  [ngValue]="undefined" > Select</option>
                          <option *ngFor="let option of DistrictList" value={{option.Districtname}} >
@@ -139,6 +139,100 @@
     </button>
         <button type="button" class="btn btn-primary" (click)="SaveUpdateField(CreateSalesUpdate.form.valid)">
       SAVE
+    </button>
+    </p-footer>
+</p-dialog>
+<!-- EDIT POPUP -->
+<p-dialog [header]="'Update '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="UpdateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <form name="CreateSalesUpdate2" #CreateSalesUpdate2="ngForm" novalidate>
+        <div class="form-group" style='padding-bottom: 3em;border-bottom: 2px solid gray;text-align: center;'>
+            <div class="col-sm-12">
+                <button class="btn btn-danger btn-primary" (click)="DeleteSalesTeam()">
+                    <i class="fa fa-fw fa-trash"></i>&nbsp;Delete this {{CreateFieldModalTitle}}
+                </button>
+            </div>
+        </div>
+        <div class="form-group" style='padding-bottom: 12em;'>
+            <div class="col-sm-12">
+                <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger"
+                    >*</span
+                  ></label
+                >
+                <p-dropdown
+                  [options]="IntroducerList"
+                  name="Introducer"
+                  [(ngModel)]="ObjSaleField.Intro_Member_ID"
+                  [showClear]="true"
+                  [emptyFilterMessage]="' No Introducer Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [placeholder]="'Select Introducer'"
+                  [virtualScroll]="true"
+                  itemSize="30"
+                  #Introducer="ngModel"
+                  [styleClass]="
+                  CreateFieldModalFormSubmitted && Introducer.errors?.required
+                      ? 'clearance'
+                      : ''
+                  "
+                >
+                </p-dropdown>
+              </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"|| CreateFieldModalTitle === "School")'>
+                <label class="control-label">{{CreateFieldModalTitle}} Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle + ' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required disabled>
+            </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">User Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="User name" name="User_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required disabled>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Contact Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name.errors?.required}" required [disabled]="CreateFieldModalTitle === 'ASP'">
+            </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">Password<sup class="text-danger">*</sup></label>
+                <input type="password" placeholder="Password" class="form-control" name="pass" #pass="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass.errors?.required}" maxlength="10" required>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
+                <label class="control-label">Location<sup class="text-danger"></sup></label>
+                <input type="text" #location id="locationcatch" Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Area" class="form-control" >
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
+                <label class="control-label">Address<sup class="text-danger"></sup></label>
+                <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.School_Address" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" >
+                 </textarea>
+            </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">PIN<sup *ngIf='CreateFieldModalTitle === "School"' class="text-danger">*</sup></label>
+                <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="ObjSaleField.PIN_Code" placeholder="PIN" (ngModelChange)="stateDistrictChange(ObjSaleField.PIN_Code)" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && Pin?.errors?.required ||
+                      (Pin.errors?.minlength && Pin.touched)}" [required]="CreateFieldModalTitle === 'School'" [disabled]="CreateFieldModalTitle === 'ASP'">
+
+            </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">District<sup *ngIf='CreateFieldModalTitle === "School"' class="text-danger">*</sup></label>
+                <select class="form-control" name="District" #District="ngModel" [(ngModel)]="ObjSaleField.District" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && District?.errors?.required ||
+                      (District.errors?.minlength && District.touched)}" [required]="CreateFieldModalTitle === 'School'" [disabled]="CreateFieldModalTitle === 'ASP'">
+
+                       <option  [ngValue]="undefined" > Select</option>
+                         <option *ngFor="let option of DistrictList" value={{option.Districtname}} >
+                          {{option.Districtname}}
+                        </option>
+                    </select>
+
+            </div>
+
+
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="UpdateFieldModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+        <button type="button" class="btn btn-primary" (click)="SaveUpdateField2(CreateSalesUpdate2.form.valid)">
+      UPDATE
     </button>
     </p-footer>
 </p-dialog>

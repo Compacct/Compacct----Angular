@@ -313,9 +313,17 @@
                                                         <div *ngIf='objFollowUpCreation?.Lead_ID && objSub?.Call_ID  && objSub?.Call_ID.toString() !=="0"' (click)='GetCallDetails(objSub)' class="btn btn-soundcloud btn-social  btn-xs" style="margin-top:0.5em;">
                                                             <i class="fa fa-info-circle"></i>&nbsp;CALL DETAILS
                                                         </div>
-                                                        <a *ngIf="objSub.PDF_File" ng-click="viewPDF(objSub.PDF_File)">
+                                                        <div *ngIf="objSub.PDF_File">
+                                                            <label style='display: block;text-align: left;' class="control-label">Audio File :</label>
+                                                            <audio id="Test_Audio" style="height: 34px;" controls>              
+                                                                <source [src]="objSub.PDF_File"
+                                                                        type="audio/mpeg">
+                                                            </audio><br>
+                                                            <a [href]="objSub.PDF_File" target="_blank" class="btn btn-sm btn-linkedin"><i class="fa fa-fw fa-link"></i> &nbsp;Link</a>
+                                                        </div>
+                                                        <!-- <a *ngIf="objSub.PDF_File" ng-click="viewPDF(objSub.PDF_File)">
                                                             <img src="~/PDF_Logo/PDF-logo.png" class='pdf' style="width:20px; height:20px ">
-                                                        </a>
+                                                        </a> -->
                                                     </div>
                                                 </div>
                                             </li>
@@ -395,7 +403,7 @@
                                                 {{data.Request_Type}}</option>
                                         </select>
                                     </div>*@ -->
-                                    <div class="col-sm-6">
+                                    <!-- <div class="col-sm-6">
                                         <label class="control-label">Status<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="statusFollowUpCreation" #statusFollowUpCreation="ngModel" [ngClass]="{'clearance':folloupFormSubmit && statusFollowUpCreation?.errors?.required}" [(ngModel)]="objFollowUpCreation.Status" (change)="changeStatusForFollowupCreation(objFollowUpCreation.Status)"
                                             required>
@@ -406,13 +414,18 @@
 
                                         </select>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-6" *ngIf="validcheck">
                                         <label class="control-label">Forward Lead<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="forwardleadFollowUpCreation" #forwardleadFollowUpCreation="ngModel" [ngClass]="{'clearance':folloupFormSubmit && forwardleadFollowUpCreation?.errors?.required}" [(ngModel)]="objFollowUpCreation.Sent_To" [disabled]="forwardlead"
                                             [required]="validcheck">
                                             <option *ngFor=" let data of SalesUserList" value="{{data.User_ID}}">
                                                 {{data.Name}}</option>
                                         </select>
+                                    </div> -->
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Audio File <sup class="text-danger">*</sup></label>
+                                        <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept=".mp3,.mkv" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"></p-fileUpload>
+                                        <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
                                     </div>
 
                                 </div>
@@ -428,8 +441,12 @@
         <button type="button" (click)="FollowupModal = false" class="btn btn-default">
             CLOSE
         </button>
-        <button type="button" class="btn btn-primary" (click)="saveFollowup(FollowupModalUpdate.form.valid)">
-            SAVE
+        <button type="button" class="btn btn-primary" (click)="saveFollowup(FollowupModalUpdate.form.valid)" [disabled]="saveSpinner1">
+            <p-progressSpinner *ngIf="saveSpinner1"
+            [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+            animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!saveSpinner1"
+            class="glyphicon glyphicon-save"></span>&nbsp;SAVE
         </button>
     </p-footer>
 </p-dialog>

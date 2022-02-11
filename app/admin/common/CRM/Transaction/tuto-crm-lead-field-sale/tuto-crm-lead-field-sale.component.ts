@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
@@ -6,6 +6,7 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { MessageService } from "primeng/api";
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { FileUpload } from 'primeng/primeng';
 
 import * as moment from "moment";
 import * as XLSX from 'xlsx';
@@ -114,6 +115,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   ASPList = [];
   DistributorList = [];
   AppoSlotList = [];
+
+  
+  PDFFlag = false;
+  PDFViewFlag = false;
+  ProductPDFLink = undefined;
+  ProductPDFFile:any = {};
+  saveSpinner1 = false;
+  @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -569,6 +578,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     this.NxtFollowupDate = new Date();
     this.folloupFormSubmit = false;
     this.CallDetailsObj = {};
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    this.fileInput.clear();
     if (obj.Lead_ID) {
       this.objFollowupDetails = obj;
       this.objFollowUpCreation.Foot_Fall_ID = obj.Foot_Fall_ID;
@@ -579,12 +591,21 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       this.objFollowUpCreation.Current_Action = 'Tele Call';
       this.objFollowUpCreation.Followup_Action = 'Tele Call';
       this.objFollowUpCreation.Status = 'Keep it in My Own Followup';
+      this.objFollowUpCreation.Sent_To = this.$CompacctAPI.CompacctCookies.User_ID;
       this.changeStatusForFollowupCreation(this.objFollowUpCreation.Status);
       this.TutopiaDemoActionFlag = false;
       this.GetFollowupDetails(obj.Lead_ID);
       this.FollowupModal = true;
     }
 
+  }
+  FetchPDFFile(event) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+    }
   }
   GetFollowupDetails(footFallID) {
     const ctrl = this;
@@ -789,6 +810,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   saveFollowup(valid) {
     this.folloupFormSubmit = true;
     if (valid) {
+      this.saveSpinner1 = true;
       this.objFollowUpCreation.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
       this.objFollowUpCreation.Next_Followup = this.DateService.dateTimeConvert(new Date(this.NxtFollowupDate));
       const arrAction = this.ActionList.filter(item=> item.Request_Type == this.objFollowUpCreation.Current_Action);
@@ -805,16 +827,20 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
             "Json_1_String": JSON.stringify([this.objFollowUpCreation])
           }
           this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Followup Save Field Sale').subscribe((data) => {
-              if (data[0].Column1) {
-                this.saveTutopiaViewStatus(this.objFollowUpCreation);
-                this.compacctToast.clear();
-                this.compacctToast.add({
-                  key: "compacct-toast",
-                  severity: "success",
-                  summary: 'Student ID : ' + this.objFollowUpCreation.Foot_Fall_ID,
-                  detail: "Succesfully Saved."
-                });
-                this.GetFollowupDetails(this.objFollowUpCreation.Lead_ID);
+              if (data[0].Column1) {  
+                if(this.ProductPDFFile['name']){
+                  this.upload(this.objFollowUpCreation,data[0].Column1);
+                } else {
+                  this.saveTutopiaViewStatus(this.objFollowUpCreation);
+                  this.compacctToast.clear();
+                  this.compacctToast.add({
+                    key: "compacct-toast",
+                    severity: "success",
+                    summary: 'Student ID : ' + this.objFollowUpCreation.Foot_Fall_ID,
+                    detail: "Succesfully Saved."
+                  });
+                  this.GetFollowupDetails(this.objFollowUpCreation.Lead_ID);
+                }        
             }
             else {
                 this.compacctToast.clear();
@@ -824,6 +850,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
                 summary: "error",
                 detail: "Error Occured"
               });
+              this.saveSpinner1 = false;
             }
             });
     }
@@ -836,11 +863,36 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         }
       this.$http.post('/Tutopia_CRM_Lead/Update_Viewed_Followup', TempObj).subscribe((data: any) => {
         if (data.success) {
+            this.saveSpinner1 = false;
             this.SaerchFollowup(true);
         }
       })
+    } else {      
+      this.saveSpinner1 = false;
     }
   }
+  async upload(obj,id){
+    const formData: FormData = new FormData();
+        formData.append("file", this.ProductPDFFile);
+    let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Filed_Sales_Voice_Upload?code=ksFjT6O7dt0AfyWsVNq80s2ln6W4RZD7xg/gDSN8cODXcEpMaYVuKQ==&ConTyp='+this.ProductPDFFile['type']+'&ext='+this.ProductPDFFile['name'].split('.').pop()+'&followup_id='+id,{ 
+                  method: 'POST',
+                  body: formData // This is your file object
+                });
+    let responseText = await response.text();
+    console.log(responseText)
+    if(responseText === 'Success') {
+      this.saveTutopiaViewStatus(obj);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Student ID : ' + obj.Foot_Fall_ID,
+        detail: "Succesfully Saved."
+      });
+      this.GetFollowupDetails(obj.Lead_ID);
+
+    }
+  };
 
 // 
 GetAppoSlotList() {

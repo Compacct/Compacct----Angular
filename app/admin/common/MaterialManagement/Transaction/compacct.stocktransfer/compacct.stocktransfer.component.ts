@@ -496,7 +496,8 @@ export class StocktransferComponent implements OnInit {
       this.ObjCostCenterFROM.F_Cost_Cen_ID &&
       this.ObjProductInfo.Product_ID
     ) {
-      if (this.SerialShow) {
+      if (this.SerialShow) {        
+        this.tempQty = 1;
         this.GetSerial(this.ObjProductInfo.Product_ID, godwonID);
       } else if (this.BatchShow) {
         this.GetBatch(this.ObjProductInfo.Product_ID, godwonID);
@@ -683,7 +684,7 @@ export class StocktransferComponent implements OnInit {
   async AddProductInfo(valid) {
       this.ProductInfoSubmitted = true;
       this.ProductInfoRequired = true;
-      if (valid) {
+      if (valid && (this.ObjProductInfo.Qty <= this.tempQty)) {
         if (this.ObjCostCenterTO.T_godown_id) {
           const ProdList = this.NativeProductList.map(x => Object.assign({}, x));
           const prodCodeID = this.ObjProductInfo.Product_ID;
