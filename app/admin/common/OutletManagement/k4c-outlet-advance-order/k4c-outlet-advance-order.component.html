@@ -683,7 +683,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="box box-success1 well1 well-sm1 shadow ">
+                                    <div class="box box-success1 well1 well-sm1 shadow " *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                         <div class="form-horizontal">
                                             <div class="box-body1"> <br>
                                                 <div class="form-group">
@@ -724,11 +724,11 @@
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Amount Payable:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Amount_Payable}}
                                                     </div>
-                                                    <div class='col-sm-12'>
+                                                    <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <label class="control-label">Cash Amount:</label>
                                                         <input class="form-control" type="text" style="text-align: center" name="cash" #cash="ngModel" [(ngModel)]="ObjcashForm.Cash_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
                                                     </div>
-                                                    <div class='col-sm-12'>
+                                                    <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <label class="control-label">Other Payment Mode: </label>
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
@@ -743,11 +743,11 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class='col-sm-12'>
+                                                    <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <label class="control-label">Card Amount: </label>
                                                         <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [(ngModel)]="ObjcashForm.Card_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
                                                     </div>
-                                                    <div class='col-sm-12'>
+                                                    <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <div class="form-group">
                                                             <div class='col-sm-12'>
                                                                 <label class="control-label">Credit to Account:</label>
@@ -811,7 +811,7 @@
                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                  </button>
                             </div>
-
+                            <!-- Home Delivery Popup -->
                             <p-dialog header="Customer Details" [appendTo]="'body'" [(visible)]="HomeDeliverypopup" [modal]="true" [responsive]="true" [closeOnEscape]="true" [baseZIndex]="123" [style]="{ width: '36%', minWidth: '200px' }">
 
                                 <form name="CustomerDetailsForm" #CustomerDetailsForm="ngForm" novalidate>
