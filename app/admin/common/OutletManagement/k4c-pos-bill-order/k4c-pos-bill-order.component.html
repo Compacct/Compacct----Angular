@@ -289,9 +289,9 @@
                                 <ng-template pTemplate="body" let-col>
                                     <tr>
                                         <td><a class="btn btn-sm" (click)='RedrectEdit(col,"ordertobill")'>{{col.Adv_Order_No}}</a> <br>
-                                            <button type="button" (click)="EditDelivery(col)" class="btn btn-primary">
+                                            <!-- <button type="button" (click)="EditDelivery(col)" class="btn btn-primary">
                                             <i class="fa fa-pencil-square-o"></i>&nbsp;  Edit Delivery
-                                            </button>
+                                            </button> -->
                                         </td>
                                         <td>{{col.Del_Date | date: "dd/MMM/yyyy"}} - {{col.Del_Date_Time}}</td>
                                         <td>{{col.Customer_Name}}</td>
@@ -427,6 +427,8 @@
         </div>
     </div>
 </div>
+
+<!-- Customer Details For Take Away-->
 <p-dialog header="Customer Details" [appendTo]="'body'" [(visible)]="CustomerDetailsPopUpFlag" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{ width: '36%', minWidth: '200px' }">
 
     <form name="CustomerDetailsForm" #CustomerDetailsForm="ngForm" novalidate>
@@ -512,9 +514,107 @@
         </div>
     </form>
     <p-footer>
-        <!-- <button type="button" (click)="CustomerDetailsPopUpFlag = false" class="btn btn-default">
-      <i class="fa fa-fw fa-close" ></i>&nbsp;  CANCEL
-    </button> -->
+        <button type="button" (click)="CustomerDetailsPopUpFlag = false" class="btn btn-default">
+      <i class="fa fa-fw fa-close" ></i>&nbsp;  Close
+    </button>
+        <button type="button" class="btn btn-primary" (click)="OnCustomerDetailsSubmit(CustomerDetailsForm.form.valid)">
+      <i class="pi pi-check" ></i>&nbsp; OK
+    </button>
+    </p-footer>
+</p-dialog>
+<!-- Customer Details For Custom Order-->
+<p-dialog header="Customer Details" [appendTo]="'body'" [(visible)]="CustomerDetailsAdvOrPopUpFlag" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{ width: '36%', minWidth: '200px' }">
+
+    <form name="CustomerDetailsForm" #CustomerDetailsForm="ngForm" novalidate>
+        <div>
+            <div class="form-group">
+                <div class='col-sm-12' *ngIf="$CompacctAPI.CompacctCookies.Cost_Cen_ID == '89' || $CompacctAPI.CompacctCookies.Cost_Cen_ID == '90'">
+                    <label class="control-label">Customer<span class="text-danger">*</span></label>
+                    <p-dropdown [options]="SubledgerList" name="subledger" [(ngModel)]="Objcustomerdetail.Sub_Ledger_ID" (onChange)='GetSubLedgerDetails()' [showClear]="true" [emptyFilterMessage]="' No Customer Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                        [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #subledger="ngModel" [required]="true" [ngClass]="{
+                            clearance:
+                              (CustomerDetailsFormSubmitted && subledger.errors?.required) ||
+                              (subledger.errors?.minlength && subledger.touched)
+                          }" required>
+                    </p-dropdown>
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Customer Mobile <sup class="text-danger">*</sup></label>
+                    <!-- <div  *ngIf='Objcustomerdetail.Redirect_To == "./K4C_Outlet_Sale_Bill"' class="col-sm-2 pull-right" style="width:170px;">
+              <small>Ph no. Not Disclosed</small>
+              <p-checkbox   (onChange)='NoPhone()' name='phonereq'  [(ngModel)]="NoPhoneFlag"   [binary]="true"></p-checkbox>
+            </div> -->
+                    <input class="form-control" autofocus type="text" name="Costomer_Mobile" #CustMob #Costomer_Mobile="ngModel" [(ngModel)]="Objcustomerdetail.Mobile" (change)='GetCustomerDetails()' maxlength="10" id='Customer' (keydown)="onKeydownMain($event, 'CustomerName')"
+                        CompacctDigitonly="true" [disabled]="NoPhonedisable" [ngClass]="{
+                   clearance:
+                     (CustomerDetailsFormSubmitted && Costomer_Mobile.errors?.required) ||
+                     (Costomer_Mobile.errors?.minlength && Costomer_Mobile.touched)
+                 }" required placeholder="Customer Mobile">
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="NoPhonedisable" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
+                        placeholder="Customer Name" required>
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Address</label>
+                    <input class="form-control" *ngIf="!this.Objcustomerdetail.Address" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Address" />
+                    <input class="form-control" *ngIf="this.Objcustomerdetail.Address" name="Address" id='Address' #Address="ngModel" (keydown)="onKeydownMain($event, 'Customer_DOB')" [(ngModel)]="Objcustomerdetail.Address" [disabled]="subledgerdisable" placeholder="Address">
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Date of Birth</label>
+                    <p-inputMask [(ngModel)]="Objcustomerdetail.DOB" slotChar='__/__/1900' placeholder="01/01/1900" (onBlur)='checkDOB()' [disabled]="subledgerdisable" name='MaskDOB' mask="99/99/9999"></p-inputMask>
+                    <!-- <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+               id='Customer_DOB'
+               name="Customer_DOB"
+               #Customer_DOB = "ngModel"
+               [max]='Todaydate'
+               (keydown)="onKeydownMain($event, 'Customer_Anni')"
+               [(ngModel)] ="Objcustomerdetail.DOB"
+               [ngClass]="{clearance:CustomerDetailsFormSubmitted && Customer_DOB.errors?.required}"
+               placeholder="dd/MMM/yyyy">
+          </ejs-datepicker> -->
+                </div>
+
+                <div class='col-sm-12'>
+                    <label class="control-label">Anniversary</label>
+                    <p-inputMask [(ngModel)]="Objcustomerdetail.DOA" slotChar='__/__/1900' placeholder="01/01/1900" (onBlur)='checkAnniversary()' [disabled]="subledgerdisable" name='MaskAnniversary' mask="99/99/9999"></p-inputMask>
+                    <!-- <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+               id='Customer_Anni'
+               name="Customer_Anni"
+               [max]='Todaydate'
+               #Customer_Anni = "ngModel"
+               (keydown)="onKeydownMain($event, 'Customer_GST')"
+               [(ngModel)] ="Objcustomerdetail.DOA"
+               [ngClass]="{clearance:CustomerDetailsFormSubmitted && Customer_Anni.errors?.required}"
+               placeholder="dd/MMM/yyyy">
+          </ejs-datepicker> -->
+
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Customer GST </label>
+                    <input class="form-control" #Customer_Gst name="Customer_GST" placeholder="Customer GST" #Customer_GST="ngModel" id='Customer_GST' (change)='checkGSTvalid(Objcustomerdetail.GST_No)' [(ngModel)]="Objcustomerdetail.GST_No" [disabled]="subledgerdisable"
+                        minlength="15" maxlength="15" [ngClass]="{
+                   clearance:
+                     (GSTvalidFlag) ||
+                     (Customer_GST.errors?.minlength && Customer_GST.touched)
+                 }">
+
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Remarks</label>
+                    <textarea class="form-control" name="Bill_Remarks" #Bill_Remarks="ngModel" id='Bill_Remarks' [(ngModel)]="Objcustomerdetail.Remarks" [disabled]="subledgerdisable" placeholder="Remarks"></textarea>
+                    <!-- <textarea
+        [rows]="3" [cols]="20" pInputTextarea autoResize="autoResize"
+        ></textarea> -->
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="CustomerDetailsAdvOrPopUpFlag = false" class="btn btn-default">
+      <i class="fa fa-fw fa-close" ></i>&nbsp;  Close
+    </button>
         <button type="button" class="btn btn-primary" (click)="OnCustomerDetailsSubmit(CustomerDetailsForm.form.valid)">
       <i class="pi pi-check" ></i>&nbsp; OK
     </button>

@@ -59,6 +59,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   creditlist: any;
   walletlist: any;
   GST_Tax_Per_Amt: any;
+  TotalTaxable: any;
   //Total_Paid : number;
   //Refund_Amount: number;
   SavePrintFormSubmitted = false;
@@ -86,6 +87,9 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   Del_Cost_Cent_ID : any;
   gststatus: any;
   FranchiseBill:any;
+  CGST_Ledger_Id: any;
+  SGST_Ledger_Id: any;
+  IGST_Ledger_Id: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -596,6 +600,9 @@ if(this.ObjaddbillForm.Product_ID) {
   this.ObjaddbillForm.Sale_rate =  productObj.Sale_rate;
   //this.ObjaddbillForm.Sale_rate_Online = productObj.Sale_rate_Online;
   this.ObjaddbillForm.GST_Tax_Per =  productObj.GST_Tax_Per;
+  this.CGST_Ledger_Id = productObj.CGST_Output_Ledger_ID;
+  this.SGST_Ledger_Id = productObj.SGST_Output_Ledger_ID;
+  this.IGST_Ledger_Id = productObj.IGST_Output_Ledger_ID;
 }
 }
 // GST CHECKING
@@ -661,7 +668,7 @@ add(valid) {
     Net_Price : Number(net).toFixed(2),
     Stock_Qty :  Number(this.ObjaddbillForm.Stock_Qty),
     Batch_No : this.ObjaddbillForm.Batch_No,
-    Amount :Number(net).toFixed(2),
+    Amount : Number(net).toFixed(2),
     Max_Discount : Number(this.ObjaddbillForm.Max_Discount),
     Dis_Amount : Number(Dis_Amount).toFixed(2),
     Gross_Amount : Number(Gross_Amount).toFixed(2),
@@ -671,7 +678,12 @@ add(valid) {
     CGST_Amount : Number(CGST_Amount).toFixed(2),
     GST_Tax_Per : Number(IGST_Per).toFixed(2),
     GST_Tax_Per_Amt :  Number(IGST_Amount).toFixed(2),
-    Net_Amount : Number(Gross_Amount + SGST_Amount + CGST_Amount).toFixed(2)
+    Net_Amount : Number(Gross_Amount + SGST_Amount + CGST_Amount).toFixed(2),
+    Taxable_Amount : Number(net).toFixed(3),
+    CGST_Output_Ledger_ID : this.CGST_Ledger_Id,
+    SGST_Output_Ledger_ID : this.SGST_Ledger_Id,
+    IGST_Output_Ledger_ID : this.IGST_Ledger_Id
+
   };
   this.productSubmit.push(productObj);
 
@@ -806,6 +818,8 @@ listofamount(){
   let count4 = 0;
   this.GST_Tax_Per_Amt = undefined;
   let count5 = 0;
+  this.TotalTaxable = undefined;
+  let count6 = 0;
 
   this.productSubmit.forEach(item => {
     count = count + Number(item.Amount);
@@ -814,6 +828,7 @@ listofamount(){
     count3 = count3 + Number(item.SGST_Amount);
     count4 = count4 + Number(item.CGST_Amount);
     count5 = count5 + Number(item.GST_Tax_Per_Amt);
+    count6 = count6 + Number(item.Taxable_Amount);
   });
   this.Amount = (count).toFixed(2);
   this.Dis_Amount = (count1).toFixed(2);
@@ -821,6 +836,7 @@ listofamount(){
   this.SGST_Amount = (count3).toFixed(2);
   this.CGST_Amount = (count4).toFixed(2);
   this.GST_Tax_Per_Amt = (count5).toFixed(2);
+  this.TotalTaxable = (count6).toFixed(3);
   //console.log(this.Gross_Amount);
 }
 clearlistamount(){
@@ -830,6 +846,7 @@ clearlistamount(){
   this.SGST_Amount = [];
   this.CGST_Amount = [];
   this.GST_Tax_Per_Amt = [];
+  this.TotalTaxable = [];
 }
 
 AmountChange(){
@@ -1188,6 +1205,10 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
           IGST_Per : item.GST_Tax_Per,
           IGST_Amt : item.GST_Tax_Per_Amt,
           Net_Amount : item.Net_Amount,
+          Taxable_Amount : item.Taxable_Amount,
+          CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
+          SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
+          IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
       }
 
     const TempObj = {
@@ -1212,9 +1233,12 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
       Total_SGST_Amt : this.SGST_Amount,
       Total_IGST_Amt : this.GST_Tax_Per_Amt,
       Bill_Gross_Amt : this.Gross_Amount,
+      Total_Taxable : this.TotalTaxable,
       Bill_No : this.Objcustomerdetail.Bill_No,
       Doc_Number : "A",
-      Doc_Date : this.DateService.dateConvert(new Date(this.myDate))
+      Doc_Date : this.DateService.dateConvert(new Date(this.myDate)),
+      User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+      Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
 
 
     }
@@ -1226,9 +1250,16 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
 
 }
 SaveFranSaleBill(){
+  let reportname = "";
+  if (this.QueryStringObj.Ledger_Name) {
+    reportname = "Save_Swiggy_Zomato_POS_Sale_Bill"
+  } 
+  else {
+    reportname = "Save_POS_Sale_Bill"
+  }
   const obj = {
     "SP_String" : "SP_POS_Sale_Bill",
-    "Report_Name_String" : "Save_POS_Sale_Bill",
+    "Report_Name_String" : reportname,
     "Json_Param_String" : this.getDataForSaveEdit()
 
   }
@@ -1238,6 +1269,7 @@ SaveFranSaleBill(){
     console.log("After Save",tempID);
    // this.Objproduction.Doc_No = data[0].Column1;
     if(data[0].Column1){
+     // this.ngxService.stop();
       this.compacctToast.clear();
       const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
       this.compacctToast.add({
@@ -1527,6 +1559,10 @@ getadvorderdetails(Adv_Order_No){
             GST_Tax_Per : Number(element.IGST_Per),
             GST_Tax_Per_Amt : element.IGST_Amt,
             Net_Amount : Number(element.Net_Amount).toFixed(2),
+            Taxable_Amount : Number(element.Amount),
+            CGST_Output_Ledger_ID : Number(element.CGST_Output_Ledger_ID),
+            SGST_Output_Ledger_ID : Number(element.SGST_Output_Ledger_ID),
+            IGST_Output_Ledger_ID : Number(element.IGST_Output_Ledger_ID),
             deleteflag : true
 
           };
