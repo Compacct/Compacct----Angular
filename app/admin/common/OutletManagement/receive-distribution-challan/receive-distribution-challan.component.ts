@@ -581,8 +581,12 @@ export class ReceiveDistributionChallanComponent implements OnInit {
      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
       this.FranchiseProductList = data;
       console.log("this.FranchiseProductList======",this.FranchiseProductList);
-      this.calculateTotalAmt();
-      this.SaveFranSaleBill();
+      if (this.FranchiseProductList.length) {
+        this.calculateTotalAmt();
+        this.SaveFranSaleBill();
+      } else {
+        this.searchData(true);
+      }
      })
    
   //  }
@@ -734,7 +738,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     })
 }
 SaleBillPrint(obj) {
- // console.log("billno ===", true)
+  //console.log("billno ===", obj.Bill_No)
   if (obj.Bill_No) {
     window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 

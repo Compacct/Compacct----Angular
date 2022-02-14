@@ -102,7 +102,7 @@
                                                         </a>
                                                     </li>
                                                     <li *ngIf="col.Bill_No != 'NA'">
-                                                        <a (click)="SaleBillPrint(col.Bill_No)">
+                                                        <a (click)="SaleBillPrint(col)">
                                                             <i class="fa fa-print"></i> Sale Bill Print
                                                         </a>
                                                     </li>
@@ -245,6 +245,9 @@
                     <th>Batch No</th>
                     <th>Issue Qty</th>
                     <th>Accepted Qty</th>
+                    <th>Sale Rate</th>
+                    <th>Franchise Rate</th>
+                    <th>Total Franchise Rate</th>
                     <th>Reason</th>
                 </tr>
             </ng-template>
@@ -261,6 +264,9 @@
                     <td>{{col.Batch_No}}</td>
                     <td>{{col.Qty}}</td>
                     <td>{{col.Accepted_Qty}}</td>
+                    <td>{{col.Rate ? col.Rate : '-'}}</td>
+                    <td>{{col.Franchise_Rate ? col.Franchise_Rate : '-'}}</td>
+                    <td>{{col.Total_Franchise_Rate ? col.Total_Franchise_Rate : '-'}}</td>
                     <td>{{col.Accept_Reason}}</td>
 
                 </tr>
