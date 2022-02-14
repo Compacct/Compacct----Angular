@@ -20,6 +20,8 @@ export class OutletStockMovementComponent implements OnInit {
   tabIndexToView = 0;
   public QueryStringObj : any;
   ObjBrowseStockView : BrowseStockView = new BrowseStockView ();
+  BrandList = [];
+  BrandDisable = false;
   Outletid = [];
   GodownId = [];
   outletdisableflag = false;
@@ -71,18 +73,52 @@ export class OutletStockMovementComponent implements OnInit {
         Header: this.Param_Flag,
         Link: " Outlet -> Pos Bill -> Outlet Report"
       });
-
+      this.GetBrand();
       this.getOutlet();
       this.getChooseReport();
   }
 
+  GetBrand(){
+    this.BrandList = [];
+    if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
+      const obj = {
+        "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
+        "Report_Name_String": "GET_Brand_For_Outlet",
+        "Json_Param_String": JSON.stringify([{Cost_Cent_ID:this.$CompacctAPI.CompacctCookies.Cost_Cen_ID}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.BrandList = data;
+        this.ObjBrowseStockView.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
+        //this.ObjBrowse.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
+        //this.ObjIssueStockAd.Brand_ID = data[0].Brand_INI;
+        this.BrandDisable = true;
+        this.getOutlet();
+         console.log("Brand List ===",this.BrandList);
+      })
+    } else {
+    const obj = {
+      "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
+      "Report_Name_String": "Get - Brand"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.BrandList = data;
+      this.getOutlet();
+      //this.Objproduction.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
+      this.BrandDisable = false;
+       console.log("Brand List ===",this.BrandList);
+    })
+  }
+  }
   getOutlet(){
     this.DynamicHeader = [];
     this.Searchlist = [];
     const obj = {
       "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Cost Center Name All",
-      "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+      "Report_Name_String": "Get - Outlet For Distribution",
+      "Json_Param_String": JSON.stringify([{Brand_ID : this.ObjBrowseStockView.Brand_ID}])
+      // "SP_String": "SP_Controller_Master",
+      // "Report_Name_String": "Get - Cost Center Name All",
+      // "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
       //"Json_Param_String": JSON.stringify([{User_ID : 61}])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -93,7 +129,7 @@ export class OutletStockMovementComponent implements OnInit {
      this.outletdisableflag = true;
      this.getGodown();
      } else {
-      this.ObjBrowseStockView.Outlet = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.ObjBrowseStockView.Outlet = undefined;
       this.outletdisableflag = false;
       this.getGodown();
      }
@@ -258,6 +294,7 @@ class BrowseStockView {
   Choose_Report : string;
   start_date : Date ;
   end_date : Date;
+  Brand_ID : any;
   Outlet : number;
   Godown_Id : number;
   Report_Description :string;

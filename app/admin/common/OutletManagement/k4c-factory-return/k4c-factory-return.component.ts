@@ -493,7 +493,7 @@ export class K4cFactoryReturnComponent implements OnInit {
        if (this.TimeStatus === "false") {
         //this.getReturnReason("N");
         var ReturnReasonid2 = this.ReturnReasonid.filter(function(value, index, arr){
-        return value.Return_Reason_ID != 5;
+        return value.Return_Reason_ID != 5 && value.Return_Reason_ID != 4;
       });
         this.ReturnReasonid = ReturnReasonid2;
         console.log("this.ReturnReasonid2", this.ReturnReasonid);
@@ -1334,6 +1334,8 @@ onReject(){
       if (this.FranchiseProductList.length) {
         this.calculateTotalAmt();
         this.SaveCreditNote();
+      } else {
+        this.GetSearchedlist(true);
       }
      })
    
@@ -1519,10 +1521,12 @@ onReject(){
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
        this.FProList = data;
-       console.log("this.FranchiseProductList======",this.FranchiseProductList);
-       if (this.FranchiseProductList.length) {
+       //console.log("this.FProList======",this.FProList);
+       if (this.FProList.length) {
          this.TotalAmt();
          this.SaveFranSaleBill();
+       } else {
+         this.GetSearchedlist(true);
        }
       })
     
@@ -1644,7 +1648,7 @@ SaveFranSaleBill(){
   })
 }
 SaleBillPrint(obj) {
- // console.log("CR_No ===", true)
+  //console.log("CR_No ===", obj.CR_No)
   if (obj.CR_No) {
     window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.CR_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 

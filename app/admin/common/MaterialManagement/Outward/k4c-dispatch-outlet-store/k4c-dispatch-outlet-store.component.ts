@@ -116,6 +116,12 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   Round_Off: any;
   editdocno: any;
   totalacpt:any;
+
+  viewproductDetails = [];
+  viewDocNO = undefined;
+  viewFromStokePoint = undefined;
+  viewdate = undefined;
+  tabView = false;
   
   constructor(
     private $http: HttpClient,
@@ -667,8 +673,12 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
       this.FranchiseProductList = data;
    console.log("this.FranchiseProductList======",this.FranchiseProductList);
-   this.calculateTotalAmt();
-   this.SaveFranSaleBill();
+   if (this.FranchiseProductList.length) {
+      this.calculateTotalAmt();
+      this.SaveFranSaleBill();
+   } else {
+     this.searchData(true);
+   }
      })
    
   //  }
@@ -1144,6 +1154,30 @@ searchData(valid){
     })
   }
 
+
+}
+// VIEW
+view(masterProduct){
+  this.clearData();
+ if(masterProduct.Doc_No){
+   this.viewproductDetails = [];
+  const obj = {
+    "SP_String": "SP_Production_Voucher",
+    "Report_Name_String": "Get Data For Accepted Receive Distribution Challan",
+    "Json_Param_String": JSON.stringify([{Doc_No : masterProduct.Doc_No}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Api view",data);
+    this.viewproductDetails = data;
+    this.viewDocNO = data[0].Doc_No,
+    this.viewFromStokePoint = data[0].From_godown_name,
+    this.viewdate = new Date(data[0].Doc_Date)
+
+    //console.log("this.EditList",this.productDetails);
+
+  this.tabView = true;
+  })
+ }
 
 }
 editmaster(masterProduct){
