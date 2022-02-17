@@ -118,6 +118,9 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
   EditLeadFormSubmitted = false;
   LeadEditObj = new Lead();
   ClassList = [];
+
+  DisApproveObj:any = {};
+  DisapproveFormSubmit = false;
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -706,12 +709,13 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
       });
     }
   }
-  ApproveAudit (status ,col) {
+  ApproveAudit (status ,col,comment?) {
     if(status && col.Appo_ID) {
       const TempObj = {
         Appo_ID : col.Appo_ID,
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-        Status : status
+        Status : status,
+        Auditor_Pre_Sale_Comment : comment ? comment : 'Appointment Approved'
       }
       const obj = {
         "SP_String": "Tutopia_Create_Common_SP",
@@ -740,6 +744,31 @@ export class TutoAuditLeadFollowupComponent implements OnInit {
         }
         });
     }
+  }
+  DisApprove(col){
+    this.DisApproveObj = {};
+    this.DisapproveFormSubmit = false;
+    if(col.Appo_ID){
+      this.DisApproveObj.Auditor_Pre_Sale_Comment = undefined;
+      this.DisApproveObj = col;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirm(valid) {
+    this.DisapproveFormSubmit = true;
+    if(valid) {
+      this.ApproveAudit('AUDITOR DISAPPROVED',this.DisApproveObj,this.DisApproveObj.Auditor_Pre_Sale_Comment)
+    }
+  }
+  onReject() {
+    this.compacctToast.clear("c");
   }
    //  DETAILS
   TabClick(e){

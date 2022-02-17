@@ -90,6 +90,14 @@
                                         <p-multiSelect [options]="DistributorNameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDistributorNameList" [styleClass]="'compacct-multiselect'" name="Distributor"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
+                                        <label class="control-label">ASP Confirm<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="ASPConfirmList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedASPConfirmList" [styleClass]="'compacct-multiselect'" name="ASPConfirm"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">ASP Journey Started<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="ASPJourneyStartedList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedASPJourneyStartedList" [styleClass]="'compacct-multiselect'" name="ASPJourneyStarted"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
                                         <button *ngIf="leadFollowUpListBackup.length" (click)="exportexcel(leadFollowUpList,'Lead_Field_Sales')" class="btn btn-primary custombutton">
                                             <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
                                           </button>
@@ -145,8 +153,8 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Action</th>
-                                    <th>Status</th>
-                                    <th>Regsiter</th>
+                                    <th>Status / Regsiter</th>
+                                    <th>ASP Confirm / ASP Journey Started </th>
                                     <th>Appo Date</th>
                                     <th>Days</th>
                                     <th>Appo Slot</th>
@@ -162,6 +170,9 @@
                                     <th>Appointment For</th>
                                     <th>Zonal Sales Head</th>
                                     <th>Distributor Name</th>
+                                    <th>ASP Journey Time</th>
+                                    <th>ASP Confirm On</th>
+                                    <th>ASP Journey Confirm On</th>
                                     <!-- <th>Viewed </th> 
                                     <th>City </th>
                                     <th>Created On</th>
@@ -205,6 +216,16 @@
                                                         <i class="fa fa-forward" aria-hidden="true"></i> Forward
                                                     </a>
                                                 </li>
+                                                <li *ngIf="col.ASP_Confirm === 'N'">
+                                                    <a (click)="OpenConfirmAppo(col)">
+                                                        <i class="fa fa-upload" aria-hidden="true"></i> Confirm Appo
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="(col.ASP_Confirm === 'Y'  && col.ASP_Journey_Started === 'N')">
+                                                    <a (click)="StartJourney(col)">
+                                                        <i class="fa fa-briefcase" aria-hidden="true"></i> Start Journey
+                                                    </a>
+                                                </li>
                                                 <!-- <li><a (click)="RedirectPendingSubscriptionTutopia(col.Foot_Fall_ID)"><i
                                                             class="fa fa-fw fa fa-exchange"></i>Pending Subscription</a></li> -->
 
@@ -222,10 +243,18 @@
                                     <!-- <td class="text-center">
                                         <p-checkbox [(ngModel)]="col.Selected" (onChange)='LeadTransferCheckBoxChanged()' [binary]="true"></p-checkbox>
                                     </td> -->
-                                    <td><span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span></td>
                                     <td>
+                                        <span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span>                                    
                                         <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
                                         <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
+                                    </td>
+                                    <td>
+                                                   
+                                        <span class="badge bg-red-active" *ngIf="col.ASP_Confirm === 'N'">NOT CONFIRMED</span>
+                                        <span class="badge bg-blue-gradient" *ngIf="col.ASP_Confirm === 'Y'"> CONFIRMED</span>
+                                                   
+                                        <span class="badge bg-red-active" *ngIf="col.ASP_Journey_Started === 'N'"> Journey Not Started</span>
+                                        <span class="badge bg-blue-gradient" *ngIf="col.ASP_Journey_Started === 'Y'"> Journey Started</span>
                                     </td>
                                     <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
                                     <td>{{col.Days}}</td>
@@ -242,6 +271,9 @@
                                     <td>{{col.Appointment_For ? col.Appointment_For : '-'}}</td>
                                     <td>{{col.Zonal_Sales_Head ? col.Zonal_Sales_Head : '-'}}</td>
                                     <td>{{col.Distributor_Name ? col.Distributor_Name : '-'}}</td>
+                                    <td>{{col.ASP_Journey_Time ? col.ASP_Journey_Time : '-'}}</td>
+                                    <td>{{col.ASP_Confirm_On ? (col.ASP_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                    <td>{{col.ASP_Journey_Confirm_On ? (col.ASP_Journey_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
                                     <!-- <td>{{col.City ? col.City : '-'}}</td>
                                     <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
@@ -264,6 +296,44 @@
         </div>
     </div>
 </div>
+
+
+<p-dialog header="Confirm APPO" [appendTo]="'body'" [visible]="OverlayCreateModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '35%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="OrgForm" #OrgForm="ngForm" novalidate>
+            <div class="form-group" style="margin-bottom: 1em;">
+                <div class="col-sm-12">
+                    <label class="control-label">Journey Time<sup class="text-danger">*</sup ></label>
+                    <div class="input-group date">
+                        <input type="text" CompacctDigitonly="true" class="form-control" name="Journey_Time" #Journey_Time="ngModel" [(ngModel)]="ObjAppoConfm.Journey_Time" placeholder="Journey Time" [ngClass]="{clearance: CreateLightBoxSubmitted && Journey_Time?.errors?.required}" required />
+                        <div class="input-group-addon">
+                            Minutes
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="OverlayCreateModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button (click)="ConfirmAppo(OrgForm.form.valid)"  class="btn btn-sm btn-success pull-right"  [disabled]="saveSpinner2">
+            <p-progressSpinner
+              *ngIf="saveSpinner2"
+              [style]="{ width: '15px', height: '15px' }"
+              strokeWidth="8"
+              animationDuration=".5s"
+            ></p-progressSpinner>
+             <i class="fa fa-fw  fa-upload"></i>&nbsp;UPDATE</button>
+    </p-footer>
+</p-dialog>
+
 <!-- FOLLOW UP -->
 <p-dialog header="Followup Details" [appendTo]="'body'" [visible]="FollowupModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '75%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">

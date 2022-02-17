@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
@@ -6,7 +6,7 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { MessageService } from "primeng/api";
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { FileUpload } from 'primeng/primeng';
+import { FileUpload, OverlayPanel } from 'primeng/primeng';
 
 import * as moment from "moment";
 import * as XLSX from 'xlsx';
@@ -74,6 +74,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   SchoolNameList = [];
   SchoolPinList = [];
   DistributorNameList = [];
+  ASPConfirmList = [{ label: 'Confirmed', value: 'Y' }, { label: 'Not Confirmed', value: 'N' }]
+  ASPJourneyStartedList = [{ label: 'Yes ', value: 'Y' }, { label: 'No', value: 'N' }]
   
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
@@ -84,6 +86,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   SelectedSchoolNameFilterList = [];
   SelectedSchoolPinFilterList = [];
   SelectedDistributorNameList = [];
+  SelectedASPConfirmList = [];
+  SelectedASPJourneyStartedList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -123,6 +127,13 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   ProductPDFFile:any = {};
   saveSpinner1 = false;
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
+  @ViewChild('panel',{static:true}) panel: OverlayPanel;
+  @ViewChild('JourneyTimeOverlay', { static: false }) JourneyTime: ElementRef;
+  
+OverlayCreateModal = false;
+CreateLightBoxSubmitted = false;
+saveSpinner2 = false;
+ObjAppoConfm = new AppoConfm ();
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -336,6 +347,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let SchoolNameFilter = [];
     let SchoolPinFilter = [];
     let DistributorNameFilter = [];
+    let ASPConfirmFilter = [];
+    let ASPJourneyStartedFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -373,6 +386,14 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       searchFields.push('Distributor_Name');
       DistributorNameFilter = this.SelectedDistributorNameList;
     }
+    if (this.SelectedASPConfirmList.length) {
+      searchFields.push('ASP_Confirm');
+      ASPConfirmFilter = this.SelectedASPConfirmList;
+    }
+    if (this.SelectedASPJourneyStartedList.length) {
+      searchFields.push('ASP_Journey_Started');
+      ASPJourneyStartedFilter = this.SelectedASPJourneyStartedList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -387,6 +408,8 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           && (SchoolNameFilter.length ? SchoolNameFilter.includes(e['School_Name']) : true)
           && (SchoolPinFilter.length ? SchoolPinFilter.includes(e['School_PIN']) : true)
           && (DistributorNameFilter.length ? DistributorNameFilter.includes(e['Distributor_Name']) : true)
+          && (ASPConfirmFilter.length ? ASPConfirmFilter.includes(e['ASP_Confirm']) : true)
+          && (ASPJourneyStartedFilter.length ? ASPJourneyStartedFilter.includes(e['ASP_Journey_Started']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];
@@ -507,6 +530,74 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     }
   }
 
+  OpenConfirmAppo(obj){
+    this.OnOverlayOpenConfirmAppo();
+    if(obj.Appo_ID){
+      this.ObjAppoConfm.Appo_ID = obj.Appo_ID;
+      this.OverlayCreateModal = true;
+    }
+  }
+  OnOverlayOpenConfirmAppo(){
+    this.CreateLightBoxSubmitted = false;
+    this.saveSpinner2 = false;
+    this.ObjAppoConfm = new AppoConfm ();
+  }
+  ConfirmAppo(valid) {
+    this.CreateLightBoxSubmitted = true;
+    if(valid && this.ObjAppoConfm.Journey_Time) {
+      this.saveSpinner2 = true;
+      const TempObj = {
+        Appo_ID: this.ObjAppoConfm.Appo_ID,
+        Journey_Time: this.ObjAppoConfm.Journey_Time + ' Minutes'
+    }
+    const obja = {
+      "SP_String":"SP_Appointment",
+      "Report_Name_String": "Update_Appo_Confirm_ASP",
+      "Json_Param_String" : JSON.stringify([TempObj])
+    }
+    this.GlobalAPI
+        .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+    if (data[0].Column1 === 'Success') {
+        this.saveSpinner2 = false;
+        this.SaerchFollowup(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ObjAppoConfm.Appo_ID,
+          detail: "Succesfully Updated."
+        });
+        this.OnOverlayOpenConfirmAppo();
+    }
+  })
+    }
+  }
+  StartJourney(obj) {
+    if(obj.Appo_ID) {
+      const TempObj = {
+        Appo_ID: obj.Appo_ID,
+    }
+  
+    const obja = {
+      "SP_String":"SP_Appointment",
+      "Report_Name_String": "Update_Appo_Journey_ASP",
+      "Json_Param_String" : JSON.stringify([TempObj])
+    }
+    this.GlobalAPI
+        .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+    if (data[0].Column1 === 'Success') {
+        this.SaerchFollowup(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ObjAppoConfm.Appo_ID,
+          detail: "Succesfully Updated."
+        });
+    }
+  })
+    }
+  }
   // CHANGE
   LeadTransferCheckBoxChanged() {
     this.LeadTransferModalBtn = false;
@@ -1102,4 +1193,8 @@ class ForwardFieldSales{
   Appo_ID:String;
   Appo_Date:String;
   Appo_To_User_ID:String;
+}
+class AppoConfm{
+  Appo_ID:any;
+  Journey_Time:any;
 }
