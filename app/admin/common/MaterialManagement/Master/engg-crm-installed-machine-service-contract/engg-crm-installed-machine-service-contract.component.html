@@ -147,7 +147,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Location<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjServiceContract.Location" [ngClass]="{'clearance': ServiceContractFormSubmit && location.errors?.required}" required>
+                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjServiceContract.Location" (change)="GetManufacturer()" [ngClass]="{'clearance': ServiceContractFormSubmit && location.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of LoctionList" [ngValue]="option.Location_ID">
                                                               {{option.Location_Name}}
@@ -169,7 +169,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Machine<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="machine" #machine="ngModel" [(ngModel)]='ObjServiceContract.Machine' (change)="Getpreviouscontract()" [ngClass]="{'clearance': ServiceContractFormSubmit && machine?.errors?.required}" required>
+                                        <select class="form-control" name="machine" #machine="ngModel" [(ngModel)]='ObjServiceContract.Machine' (change)="GetSerialNo()" [ngClass]="{'clearance': ServiceContractFormSubmit && machine?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of MachineList" [value]="option.Product_ID">{{option.Machine}}</option>
                                     </select>

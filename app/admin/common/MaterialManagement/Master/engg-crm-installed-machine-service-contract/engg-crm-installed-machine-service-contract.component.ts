@@ -117,8 +117,8 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     this.ServiceEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.PaymentDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.GetCustomer();
-    this.GetManufacturer();
-    this.GetSerialNo();
+    //this.GetManufacturer();
+    //this.GetSerialNo();
     this.gettypeofservice();
     this.getStatus();
   }
@@ -133,8 +133,10 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     this.Spinner = false;
     this.ObjServiceContract = new ServiceContract();
     this.ServiceContractFormSubmit = false;
+    this.MfList = [];
     this.MachineList = [];
     this.LoctionList = [];
+    this.SerialNoList = [];
     this.ServiceStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.ServiceEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.PaymentDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
@@ -174,9 +176,14 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     });
   }
   GetManufacturer() {
+    const Obj = {
+      Sub_Ledger_ID: this.ObjServiceContract.Customer_Name,
+      Location_ID: this.ObjServiceContract.Location
+    }
     const obj = {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
-      "Report_Name_String": "Get_Manufacturer"
+      "Report_Name_String": "Get_Manufacturer",
+      "Json_Param_String": JSON.stringify([Obj])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.MfList = data;
@@ -186,7 +193,9 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   }
   GetMachine() {
     const TObj = {
-      Product_Mfg_Comp_ID: this.ObjServiceContract.Machine_Manufacturer
+      Product_Mfg_Comp_ID: this.ObjServiceContract.Machine_Manufacturer,
+      Sub_Ledger_ID: this.ObjServiceContract.Customer_Name,
+      Location_ID: this.ObjServiceContract.Location
     }
     const obj = {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
@@ -199,17 +208,20 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     });
   }
   GetSerialNo() {
-    // const TObj = {
-    //   Product_Mfg_Comp_ID : this.ObjServiceContract.Machine_Manufacturer
-    // }
+    const TObj = {
+      Sub_Ledger_ID: this.ObjServiceContract.Customer_Name,
+      Location_ID: this.ObjServiceContract.Location,
+      Product_ID: this.ObjServiceContract.Machine
+    }
     const obj = {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
       "Report_Name_String": "Get_Serial_NOs",
-      //"Json_Param_String": JSON.stringify([TObj])
+      "Json_Param_String": JSON.stringify([TObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.SerialNoList = data;
       // console.log('SerialNoList ==', this.SerialNoList)
+      this.Getpreviouscontract();
 
     });
   }
@@ -542,9 +554,11 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
         this.ObjServiceContract.Customer_Name = data[0].Sub_Ledger_ID;
         this.GetLocation();
         this.ObjServiceContract.Location = data[0].Location_ID;
+        this.GetManufacturer();
         this.ObjServiceContract.Machine_Manufacturer = data[0].Product_Mfg_Comp_ID;
         this.GetMachine();
         this.ObjServiceContract.Machine = data[0].Product_ID;
+        this.GetSerialNo();
         this.ObjServiceContract.Serial_No = data[0].Serial_No;
         this.ObjServiceContract.Type_of_Service = data[0].Service_Type;
         this.ServiceStartDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(data[0].Service_Start_Date);
