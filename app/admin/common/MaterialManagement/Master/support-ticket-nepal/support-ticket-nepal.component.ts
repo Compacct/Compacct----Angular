@@ -94,8 +94,8 @@ export class SupportTicketNepalComponent implements OnInit {
     this.BrowseEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
        this.GetCallType();
        this.GetCustomer();
-       this.GetManufacturer();
-       this.GetSerialNo();
+      // this.GetManufacturer();
+      // this.GetSerialNo();
        this.GetEngineer();
        this.GetContractStatus();
        this.GetSymptom();
@@ -115,8 +115,10 @@ export class SupportTicketNepalComponent implements OnInit {
     this.SupportStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.SupportEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.SupportTicketFormSubmit = false;
+    this.MfList = [];
     this.MachineList = [];
     this.LoctionList = [];
+    this.SerialNoList = [];
     // this.GetBrowseList();
      this.EditList = [];
      this.Contract_ID = undefined;
@@ -160,9 +162,14 @@ export class SupportTicketNepalComponent implements OnInit {
       });
   }
   GetManufacturer(){
+    const Obj = {
+      Sub_Ledger_ID: this.ObjSupportTicket.Customer_Name,
+      Location_ID: this.ObjSupportTicket.Location
+    }
       const obj = {
-        "SP_String": "SP_Support_Ticket_Nepal",
-        "Report_Name_String": "Get_Manufacturer"
+        "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
+        "Report_Name_String": "Get_Manufacturer",
+        "Json_Param_String": JSON.stringify([Obj])
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.MfList = data;
@@ -172,10 +179,12 @@ export class SupportTicketNepalComponent implements OnInit {
   }
   GetMachine(){
       const TObj = {
-        Product_Mfg_Comp_ID : this.ObjSupportTicket.Machine_Manufacturer
+        Product_Mfg_Comp_ID : this.ObjSupportTicket.Machine_Manufacturer,
+        Sub_Ledger_ID: this.ObjSupportTicket.Customer_Name,
+        Location_ID: this.ObjSupportTicket.Location
       }
       const obj = {
-        "SP_String": "SP_Support_Ticket_Nepal",
+        "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
         "Report_Name_String": "Get_Machine",
         "Json_Param_String": JSON.stringify([TObj])
        }
@@ -185,17 +194,20 @@ export class SupportTicketNepalComponent implements OnInit {
       });
   }
   GetSerialNo(){
-      // const TObj = {
-      //   Product_Mfg_Comp_ID : this.ObjServiceContract.Machine_Manufacturer
-      // }
+      const TObj = {
+        Sub_Ledger_ID: this.ObjSupportTicket.Customer_Name,
+        Location_ID: this.ObjSupportTicket.Location,
+        Product_ID: this.ObjSupportTicket.Machine
+      }
       const obj = {
-        "SP_String": "SP_Support_Ticket_Nepal",
+        "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
         "Report_Name_String": "Get_Serial_NOs",
-        //"Json_Param_String": JSON.stringify([TObj])
+        "Json_Param_String": JSON.stringify([TObj])
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.SerialNoList = data;
       // console.log('SerialNoList ==', this.SerialNoList)
+      this.GetAlignedEngineer();
     
       });
   }
@@ -218,7 +230,9 @@ export class SupportTicketNepalComponent implements OnInit {
     this.alignedenggid = undefined;
     this.alignedengineer = undefined;
     const TObj = {
-      Location_ID : this.ObjSupportTicket.Location
+      Sub_Ledger_ID : this.ObjSupportTicket.Customer_Name,
+      Location_ID : this.ObjSupportTicket.Location,
+      Product_ID : this.ObjSupportTicket.Machine
     }
     const obj = {
       "SP_String": "SP_Support_Ticket_Nepal",

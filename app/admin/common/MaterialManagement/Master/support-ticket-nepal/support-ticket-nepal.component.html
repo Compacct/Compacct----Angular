@@ -179,7 +179,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Location<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjSupportTicket.Location" (change)="GetAlignedEngineer()" [ngClass]="{'clearance': SupportTicketFormSubmit && location.errors?.required}" required>
+                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjSupportTicket.Location" (change)="GetManufacturer()" [ngClass]="{'clearance': SupportTicketFormSubmit && location.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of LoctionList" [ngValue]="option.Location_ID">
                                                               {{option.Location_Name}}
@@ -199,7 +199,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Machine<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="machine" #machine="ngModel" [(ngModel)]='ObjSupportTicket.Machine' [ngClass]="{'clearance': SupportTicketFormSubmit && machine?.errors?.required}" required>
+                                        <select class="form-control" name="machine" #machine="ngModel" [(ngModel)]='ObjSupportTicket.Machine' (change)="GetSerialNo()" [ngClass]="{'clearance': SupportTicketFormSubmit && machine?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of MachineList" [value]="option.Product_ID">{{option.Machine}}</option>
                                     </select>
@@ -211,7 +211,7 @@
                                         <select class="form-control" name="serialno" #serialno="ngModel" [(ngModel)]="ObjSupportTicket.Serial_No" (change)="GetPreContractStatus()" [ngClass]="{'clearance': SupportTicketFormSubmit && serialno?.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of SerialNoList" value="{{option.Serial_No}}">
-                                            {{option.Serial_No_Show}}
+                                            {{option.Serial_No}}
                                             </option>
                                     </select>
                                     </div>
@@ -279,8 +279,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
-                                        <textarea class="form-control" style="margin: 0px -16.6719px 0px 0px; width: 334px;height: 69px;" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjSupportTicket.Remarks" [ngClass]="{'clearance': SupportTicketFormSubmit && contractstatus.errors?.required}"
-                                            required></textarea>
+                                        <textarea class="form-control" style="margin: 0px -16.6719px 0px 0px; width: 334px;height: 69px;" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjSupportTicket.Remarks" [ngClass]="{'clearance': SupportTicketFormSubmit && Remarks.errors?.required}" required></textarea>
                                     </div>
                                 </div>
                             </form>
