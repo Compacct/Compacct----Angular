@@ -212,7 +212,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
    this.CRAmt_Total = CR_Amt_Total;
   }
 
-  SaveACOpeningBalc(valid){
+  SaveACOpeningBalc(){
     this.ACOpeningBalcFormSubmitted = true;
     if(this.ACOpeningBalcList.length && this.DRAmt_Total === this.CRAmt_Total){
         const obj = {

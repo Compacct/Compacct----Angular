@@ -53,7 +53,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   pendingCallFormSubmit = false;
   CallSheetGridDataList = [];
   supportTicketNo = undefined;
-  getViewData = {};
+  getViewData:any = {};
   ViewSpareData = [];
   ViewSpareRequired = [];
   ViewModel = false;
