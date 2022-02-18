@@ -289,9 +289,9 @@
                                 <ng-template pTemplate="body" let-col>
                                     <tr>
                                         <td><a class="btn btn-sm" (click)='RedrectEdit(col,"ordertobill")'>{{col.Adv_Order_No}}</a> <br>
-                                            <!-- <button type="button" (click)="EditDelivery(col)" class="btn btn-primary">
+                                            <button type="button" (click)="EditDelivery(col)" class="btn btn-primary">
                                             <i class="fa fa-pencil-square-o"></i>&nbsp;  Edit Delivery
-                                            </button> -->
+                                            </button>
                                         </td>
                                         <td>{{col.Del_Date | date: "dd/MMM/yyyy"}} - {{col.Del_Date_Time}}</td>
                                         <td>{{col.Customer_Name}}</td>

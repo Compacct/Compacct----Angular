@@ -280,7 +280,7 @@ export class K4cDayEndProcessComponent implements OnInit {
    // const sameValArr = this.paymentList.filter(item=> item.Total_Amount !== Number(item.Amount) );
     if(this.paymentList.length && this.closeingstatus){
       if( this.closeingUpdate === this.closeingstatus && this.closeingUpdate === "YES"){
-        this.saveCheck();
+        this.CheckAdvOrDel();
       } else{
        // const msg = this.closeingUpdate !== this.closeingstatus ? "CLOSEING STOCK UPDATED MISMATCHED" : "AMOUNT MISMATCHED"
         this.compacctToast.clear();
@@ -305,6 +305,33 @@ export class K4cDayEndProcessComponent implements OnInit {
 
   }
 
+  CheckAdvOrDel(){
+    const tempObj = {
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Date : this.DateService.dateConvert(new Date(this.Datevalue))
+    }
+    const obj = {
+      "SP_String": "SP_K4C_Day_End_Process",
+      "Report_Name_String": "Check_Advance_Order_Delivery",
+      "Json_Param_String" :  JSON.stringify([tempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Save Check",data);
+      var msg = data[0].Status;
+      if(data[0].Status === "YES"){
+        this.saveCheck()
+      }
+      else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: msg
+        });
+      }
+    })
+  }
   saveCheck(){
    const tempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,

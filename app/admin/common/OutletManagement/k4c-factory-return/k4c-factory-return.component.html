@@ -195,6 +195,8 @@
                                             <th>Return Reason</th>
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
+                                            <th>Sale Rate</th>
+                                            <th>Franchise Rate</th>
                                             <th>Remarks</th>
                                             <th>Outlet Remarks</th>
                                         </tr>
@@ -207,6 +209,8 @@
                                             <td>{{col.Return_Reason}}</td>
                                             <td>{{col.Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
+                                            <td>{{col.Actual_MRP ? col.Actual_MRP : '-'}}</td>
+                                            <td>{{col.Franchise_Rate ? col.Franchise_Rate : '-'}}</td>
                                             <td>{{col.Remarks}}</td>
                                             <td>{{col.Outlet_Remarks}}</td>
 

@@ -322,6 +322,7 @@
                                                     <th>Qty</th>
                                                     <th>Batch No</th>
                                                     <th>Rate</th>
+                                                    <th>Taxable</th>
                                                     <th>Dis %</th>
                                                     <th>Dis Amt</th>
                                                     <th>SGST % / <br> SGST Amt</th>
@@ -376,6 +377,7 @@
                                                     <td>{{obj.Stock_Qty}}</td>
                                                     <td>{{obj.Batch_No}}</td>
                                                     <td>{{obj.Net_Price}}</td>
+                                                    <td>{{obj.Taxable}}</td>
                                                     <td>{{obj.Max_Discount}}</td>
                                                     <td>{{obj.Dis_Amount}}</td>
                                                     <td>{{obj.SGST_Per}} <br> {{obj.SGST_Amount}}
@@ -467,26 +469,26 @@
                                             <div class="box-body1">
                                                 <div class="form-group">
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Amount}}
+                                                        <label class="control-label">Taxable Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Amount}}
                                                     </div>
 
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">Discount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Dis_Amount}}
+                                                        <label class="control-label">Discount Amount:</label> &nbsp;&nbsp;&nbsp; {{Dis_Amount}}
                                                     </div>
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">Gross Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Gross_Amount}}
+                                                        <label class="control-label">Gross Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Gross_Amount}}
                                                     </div>
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">SGST Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{SGST_Amount}}
+                                                        <label class="control-label">SGST Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{SGST_Amount}}
                                                     </div>
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">CGST Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{CGST_Amount}}
+                                                        <label class="control-label">CGST Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{CGST_Amount}}
                                                     </div>
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">IGST Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{GST_Tax_Per_Amt}}
+                                                        <label class="control-label">IGST Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{GST_Tax_Per_Amt}}
                                                     </div>
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">Net Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Total}}
+                                                        <label class="control-label">Net Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Total}}
                                                     </div>
 
                                                 </div>
@@ -589,7 +591,7 @@
                                                                       </option>
                                                                   </select>
                                                                     </div>
-                                                                    <input type="text" size="5" class="form-control" id="exampleInputAmount1" name="credit" #credit="ngModel" [(ngModel)]="ObjcashForm.Credit_To_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                                                                    <input type="text" size="5" class="form-control" id="exampleInputAmount1" name="credit" #credit="ngModel" [(ngModel)]="ObjcashForm.Credit_To_Amount" (ngModelChange)="CalculateDiscount()" CompacctDigitonly="true">
                                                                 </div>
                                                             </div>
                                                             <div class='col-sm-1'>

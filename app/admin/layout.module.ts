@@ -266,7 +266,9 @@ import { SemiFinishedProductionVoucherComponent } from './common/MaterialManagem
 import { SupportTicketPendingCallsNepalComponent } from './common/MaterialManagement/Master/support-ticket-pending-calls-nepal/support-ticket-pending-calls-nepal.component';
 import { K4cCreditNoteBrowseComponent } from './common/MaterialManagement/k4c-credit-note-browse/k4c-credit-note-browse.component';
 import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-support-calender-dashboard/tuto-support-calender-dashboard.component";
+import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-saleable-closing-stock/non-saleable-closing-stock.component';
 import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component';
+
 
 
 
@@ -465,6 +467,7 @@ import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc
     SupportTicketPendingCallsNepalComponent,
     K4cCreditNoteBrowseComponent,
     TutoSupportCalenderDashboardComponent,
+    NonSaleableClosingStockComponent,
     AccOpeningBalcManagementComponent,
   ],
   imports: [

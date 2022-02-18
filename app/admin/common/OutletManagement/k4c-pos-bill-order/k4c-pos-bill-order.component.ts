@@ -1084,7 +1084,7 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
   let H = +ts.substr(0, 2);
   let h:any = (H % 12) || 12;
   h = (h < 10)?("0"+h):h;  // leading 0 at the left for 1 digit hours
-  let ampm = H < 12 ? "am" : "pm";
+  let ampm = H <= 12 ? "am" : "pm";
   ts = h + ts.substr(2, 3) + ampm;
   return ts;
   }
@@ -1092,6 +1092,7 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
     this.getdellocation();
     // this.delivery_Date = new Date();
     // this.Del_Date_Time = "";
+    this.Del_Date_Time = undefined;
     if (advorno.Adv_Order_No) {
       this.Adv_Order_No = advorno.Adv_Order_No;
        this.EditDeliverypopup = true;
