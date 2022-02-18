@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
@@ -6,6 +6,7 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { MessageService } from "primeng/api";
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { FileUpload, OverlayPanel } from 'primeng/primeng';
 
 import * as moment from "moment";
 import * as XLSX from 'xlsx';
@@ -72,6 +73,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   DAppoSlotList = [];
   SchoolNameList = [];
   SchoolPinList = [];
+  DistributorNameList = [];
+  ASPConfirmList = [{ label: 'Confirmed', value: 'Y' }, { label: 'Not Confirmed', value: 'N' }]
+  ASPJourneyStartedList = [{ label: 'Yes ', value: 'Y' }, { label: 'No', value: 'N' }]
   
   SelectedPinFilterList = [];
   SelectedAppointmentForFilterList = [];
@@ -81,6 +85,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   SelectedAppoSlotFilterList = [];
   SelectedSchoolNameFilterList = [];
   SelectedSchoolPinFilterList = [];
+  SelectedDistributorNameList = [];
+  SelectedASPConfirmList = [];
+  SelectedASPJourneyStartedList = [];
 
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
@@ -112,6 +119,21 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   ASPList = [];
   DistributorList = [];
   AppoSlotList = [];
+
+  
+  PDFFlag = false;
+  PDFViewFlag = false;
+  ProductPDFLink = undefined;
+  ProductPDFFile:any = {};
+  saveSpinner1 = false;
+  @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
+  @ViewChild('panel',{static:true}) panel: OverlayPanel;
+  @ViewChild('JourneyTimeOverlay', { static: false }) JourneyTime: ElementRef;
+  
+OverlayCreateModal = false;
+CreateLightBoxSubmitted = false;
+saveSpinner2 = false;
+ObjAppoConfm = new AppoConfm ();
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -260,6 +282,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let SlotFilter = [];
     let SchoolNameFilter = [];
     let SchoolPinFilter = [];
+    let DistributorNameFilter = [];
 
     this.PinList = [];
   this.Appointment_ForList = [];
@@ -268,6 +291,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   this.DAppoSlotList = [];
   this.SchoolNameList = [];
   this.SchoolPinList = [];
+  this.DistributorNameList =[];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -297,6 +321,10 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         SchoolPinFilter.push(item.School_PIN);
         this.SchoolPinList.push({ label: item.School_PIN, value: item.School_PIN });
       }
+      if (DistributorNameFilter.indexOf(item.Distributor_Name) === -1) {
+        DistributorNameFilter.push(item.Distributor_Name);
+        this.DistributorNameList.push({ label: item.Distributor_Name, value: item.Distributor_Name });
+      }
     });
   }
   NextFollowDateFilterChange(e) {
@@ -318,6 +346,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     let SlotFilter = [];
     let SchoolNameFilter = [];
     let SchoolPinFilter = [];
+    let DistributorNameFilter = [];
+    let ASPConfirmFilter = [];
+    let ASPJourneyStartedFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -351,6 +382,18 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       searchFields.push('School_PIN');
       SchoolPinFilter = this.SelectedSchoolPinFilterList;
     }
+    if (this.SelectedDistributorNameList.length) {
+      searchFields.push('Distributor_Name');
+      DistributorNameFilter = this.SelectedDistributorNameList;
+    }
+    if (this.SelectedASPConfirmList.length) {
+      searchFields.push('ASP_Confirm');
+      ASPConfirmFilter = this.SelectedASPConfirmList;
+    }
+    if (this.SelectedASPJourneyStartedList.length) {
+      searchFields.push('ASP_Journey_Started');
+      ASPJourneyStartedFilter = this.SelectedASPJourneyStartedList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -364,6 +407,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
           && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
           && (SchoolNameFilter.length ? SchoolNameFilter.includes(e['School_Name']) : true)
           && (SchoolPinFilter.length ? SchoolPinFilter.includes(e['School_PIN']) : true)
+          && (DistributorNameFilter.length ? DistributorNameFilter.includes(e['Distributor_Name']) : true)
+          && (ASPConfirmFilter.length ? ASPConfirmFilter.includes(e['ASP_Confirm']) : true)
+          && (ASPJourneyStartedFilter.length ? ASPJourneyStartedFilter.includes(e['ASP_Journey_Started']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];
@@ -484,6 +530,74 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     }
   }
 
+  OpenConfirmAppo(obj){
+    this.OnOverlayOpenConfirmAppo();
+    if(obj.Appo_ID){
+      this.ObjAppoConfm.Appo_ID = obj.Appo_ID;
+      this.OverlayCreateModal = true;
+    }
+  }
+  OnOverlayOpenConfirmAppo(){
+    this.CreateLightBoxSubmitted = false;
+    this.saveSpinner2 = false;
+    this.ObjAppoConfm = new AppoConfm ();
+  }
+  ConfirmAppo(valid) {
+    this.CreateLightBoxSubmitted = true;
+    if(valid && this.ObjAppoConfm.Journey_Time) {
+      this.saveSpinner2 = true;
+      const TempObj = {
+        Appo_ID: this.ObjAppoConfm.Appo_ID,
+        Journey_Time: this.ObjAppoConfm.Journey_Time + ' Minutes'
+    }
+    const obja = {
+      "SP_String":"SP_Appointment",
+      "Report_Name_String": "Update_Appo_Confirm_ASP",
+      "Json_Param_String" : JSON.stringify([TempObj])
+    }
+    this.GlobalAPI
+        .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+    if (data[0].Column1 === 'Success') {
+        this.saveSpinner2 = false;
+        this.SaerchFollowup(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ObjAppoConfm.Appo_ID,
+          detail: "Succesfully Updated."
+        });
+        this.OnOverlayOpenConfirmAppo();
+    }
+  })
+    }
+  }
+  StartJourney(obj) {
+    if(obj.Appo_ID) {
+      const TempObj = {
+        Appo_ID: obj.Appo_ID,
+    }
+  
+    const obja = {
+      "SP_String":"SP_Appointment",
+      "Report_Name_String": "Update_Appo_Journey_ASP",
+      "Json_Param_String" : JSON.stringify([TempObj])
+    }
+    this.GlobalAPI
+        .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+    if (data[0].Column1 === 'Success') {
+        this.SaerchFollowup(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ObjAppoConfm.Appo_ID,
+          detail: "Succesfully Updated."
+        });
+    }
+  })
+    }
+  }
   // CHANGE
   LeadTransferCheckBoxChanged() {
     this.LeadTransferModalBtn = false;
@@ -555,6 +669,9 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
     this.NxtFollowupDate = new Date();
     this.folloupFormSubmit = false;
     this.CallDetailsObj = {};
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    this.fileInput.clear();
     if (obj.Lead_ID) {
       this.objFollowupDetails = obj;
       this.objFollowUpCreation.Foot_Fall_ID = obj.Foot_Fall_ID;
@@ -565,12 +682,21 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
       this.objFollowUpCreation.Current_Action = 'Tele Call';
       this.objFollowUpCreation.Followup_Action = 'Tele Call';
       this.objFollowUpCreation.Status = 'Keep it in My Own Followup';
+      this.objFollowUpCreation.Sent_To = this.$CompacctAPI.CompacctCookies.User_ID;
       this.changeStatusForFollowupCreation(this.objFollowUpCreation.Status);
       this.TutopiaDemoActionFlag = false;
       this.GetFollowupDetails(obj.Lead_ID);
       this.FollowupModal = true;
     }
 
+  }
+  FetchPDFFile(event) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+    }
   }
   GetFollowupDetails(footFallID) {
     const ctrl = this;
@@ -775,6 +901,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   saveFollowup(valid) {
     this.folloupFormSubmit = true;
     if (valid) {
+      this.saveSpinner1 = true;
       this.objFollowUpCreation.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
       this.objFollowUpCreation.Next_Followup = this.DateService.dateTimeConvert(new Date(this.NxtFollowupDate));
       const arrAction = this.ActionList.filter(item=> item.Request_Type == this.objFollowUpCreation.Current_Action);
@@ -791,16 +918,20 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
             "Json_1_String": JSON.stringify([this.objFollowUpCreation])
           }
           this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Followup Save Field Sale').subscribe((data) => {
-              if (data[0].Column1) {
-                this.saveTutopiaViewStatus(this.objFollowUpCreation);
-                this.compacctToast.clear();
-                this.compacctToast.add({
-                  key: "compacct-toast",
-                  severity: "success",
-                  summary: 'Student ID : ' + this.objFollowUpCreation.Foot_Fall_ID,
-                  detail: "Succesfully Saved."
-                });
-                this.GetFollowupDetails(this.objFollowUpCreation.Lead_ID);
+              if (data[0].Column1) {  
+                if(this.ProductPDFFile['name']){
+                  this.upload(this.objFollowUpCreation,data[0].Column1);
+                } else {
+                  this.saveTutopiaViewStatus(this.objFollowUpCreation);
+                  this.compacctToast.clear();
+                  this.compacctToast.add({
+                    key: "compacct-toast",
+                    severity: "success",
+                    summary: 'Student ID : ' + this.objFollowUpCreation.Foot_Fall_ID,
+                    detail: "Succesfully Saved."
+                  });
+                  this.GetFollowupDetails(this.objFollowUpCreation.Lead_ID);
+                }        
             }
             else {
                 this.compacctToast.clear();
@@ -810,6 +941,7 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
                 summary: "error",
                 detail: "Error Occured"
               });
+              this.saveSpinner1 = false;
             }
             });
     }
@@ -822,11 +954,36 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
         }
       this.$http.post('/Tutopia_CRM_Lead/Update_Viewed_Followup', TempObj).subscribe((data: any) => {
         if (data.success) {
+            this.saveSpinner1 = false;
             this.SaerchFollowup(true);
         }
       })
+    } else {      
+      this.saveSpinner1 = false;
     }
   }
+  async upload(obj,id){
+    const formData: FormData = new FormData();
+        formData.append("file", this.ProductPDFFile);
+    let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Filed_Sales_Voice_Upload?code=ksFjT6O7dt0AfyWsVNq80s2ln6W4RZD7xg/gDSN8cODXcEpMaYVuKQ==&ConTyp='+this.ProductPDFFile['type']+'&ext='+this.ProductPDFFile['name'].split('.').pop()+'&followup_id='+id,{ 
+                  method: 'POST',
+                  body: formData // This is your file object
+                });
+    let responseText = await response.text();
+    console.log(responseText)
+    if(responseText === 'Success') {
+      this.saveTutopiaViewStatus(obj);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Student ID : ' + obj.Foot_Fall_ID,
+        detail: "Succesfully Saved."
+      });
+      this.GetFollowupDetails(obj.Lead_ID);
+
+    }
+  };
 
 // 
 GetAppoSlotList() {
@@ -1036,4 +1193,8 @@ class ForwardFieldSales{
   Appo_ID:String;
   Appo_Date:String;
   Appo_To_User_ID:String;
+}
+class AppoConfm{
+  Appo_ID:any;
+  Journey_Time:any;
 }

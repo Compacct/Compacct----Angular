@@ -1,4 +1,30 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <form name="disappvmdl" style="margin: 1em 0;" #disappvmdl="ngForm" novalidate>
+        <div >        
+            <label class="control-label">Reason of Disapprove<sup class="text-danger">*</sup></label>
+            <textarea class="form-control" rows="3" name="Disapprove" #Disapprove="ngModel"
+             [ngClass]="{'clearance':DisapproveFormSubmit && Disapprove?.errors?.required}" 
+             [(ngModel)]="DisApproveObj.Auditor_Pre_Sale_Comment" placeholder="Reason of Disapprove"
+                required></textarea>
+        </div>
+    </form>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm(disappvmdl.form.valid)" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -17,7 +43,7 @@
                             <div class="col-sm-4">
                                 <label class="control-label">Booking Date Period</label>
 
-                                <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                <app-compacct-daterangepicker  [DefaultDateOpt]="'MonthStarttoEnd'" (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
                             </div>
                             <div class="col-sm-4">
                                 <label class="control-label">User&nbsp;<span class="text-danger"></span></label>
@@ -86,6 +112,10 @@
                                     <div class="col-sm-3">
                                         <label class="control-label">Auditor Name <span class="text-danger"></span></label>
                                         <p-multiSelect [options]="AuditorFilterList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAuditorFilterList" [styleClass]="'compacct-multiselect'" name="status"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Audit Type <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="AuditorTypeFilterList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAuditorTypeFilterList" [styleClass]="'compacct-multiselect'" name="Type"></p-multiSelect>
                                     </div>
                                     <!-- <div class="col-sm-3">
                                         <label class="control-label">City <span class="text-danger"></span></label>
@@ -157,6 +187,8 @@
                                     <th>TC Name</th>
                                     <th>RM Name</th>
                                     <th>Auditor Name</th>
+                                    <th>Audit Type</th>
+                                    <th>Pre Sale Auditor Comment</th>
                                     <!-- <th>Viewed </th> 
                                     <th>City </th>
                                     <th>Created On</th>
@@ -219,7 +251,7 @@
                                     </td> -->
                                     <td class='text-center'>
                                         <button class="btn btn-xs btn-success" style='margin-right:0.3em' (click)="ApproveAudit('PENDING',col)"><i class="fa fa-fw fa-check"></i></button>
-                                        <button class="btn btn-xs btn-pinterest" (click)="ApproveAudit('AUDITOR DISAPPROVED',col)"><i class="fa fa-fw fa-close"></i></button>
+                                        <button class="btn btn-xs btn-pinterest" (click)="DisApprove(col)"><i class="fa fa-fw fa-close"></i></button>
                                     </td>
                                     <td><span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span></td>
                                     <td>
@@ -247,8 +279,9 @@
                                     <td>{{col.TC_Name ? col.TC_Name : '-'}}</td>
                                     <td>{{col.RM_Name ? col.RM_Name : '-'}}</td>
                                     <td>{{col.Auditor_Name ? col.Auditor_Name : '-'}}</td>
-                                    <!-- <td>{{col.City ? col.City : '-'}}</td>
-                                    <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
+                                    <td>{{col.Audit_Type ? col.Audit_Type : '-'}}</td>
+                                    <td>{{col.Auditor_Pre_Sale_Comment ? col.Auditor_Pre_Sale_Comment : '-'}}</td>
+                                    <!-- <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Last_Followup_Date | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Current_Action}}</td>

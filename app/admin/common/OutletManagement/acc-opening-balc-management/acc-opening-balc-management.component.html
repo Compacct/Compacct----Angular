@@ -1,0 +1,271 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Anndroid_Id" >
+                <button type="button"  pButton (click)="onConfirmAnndroid()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="FMCID">
+                <button type="button"  pButton (click)="onConfirmFMC()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Category_ID">
+                <button type="button"  pButton (click)="onConfirmCategory()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="fa fa-list-alt" aria-hidden="true">
+                            <form name="searchAcBalc"  #searchAcBalc="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">                                            
+                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="CostCenterList"
+                                        name="costcenter1"
+                                        [(ngModel)]="SearchCost_Cen_ID"
+                                        [showClear]="true"
+                                        [emptyFilterMessage]="' No Cost Center Found'"
+                                        [filter]="true"
+                                        filterBy="label,value.name"
+                                        [placeholder]="'Select Cost Center'"
+                                        [virtualScroll]="true"
+                                        itemSize="30"
+                                        #costcenter1="ngModel"
+                                        [styleClass]="ACOpeningBalcSearhFormSubmitted &&  costcenter1.errors?.required ? 'clearance' :''"
+                                        [required]="true">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button
+                                          class="btn btn-primary custombutton"
+                                          data-toggle="modal"
+                                          (click)="GetAllAcOpeningBalc(searchAcBalc.form.valid)"
+                                          id="load"
+                                          [disabled]="seachSpinner"
+                                        >
+                                          <p-progressSpinner
+                                            *ngIf="seachSpinner"
+                                            [style]="{ width: '15px', height: '15px' }"
+                                            strokeWidth="8"
+                                            animationDuration=".5s"
+                                          ></p-progressSpinner>
+                                          <span
+                                            *ngIf="!seachSpinner"
+                                            class="glyphicon glyphicon-search"
+                                          ></span
+                                          >&nbsp;Search
+                                        </button>
+                                      </div>
+                                    </div>
+                                    </form>
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="AllAcOpeningBalc"
+                                             [paginator]="AllAcOpeningBalc.length ? true : false" [rows]="10" [rowHover]="true"
+                                             [autoLayout]="true" sortMode="multiple"
+                                             [rowsPerPageOptions]="[10,20,30]"
+                                             [globalFilterFields]="['Support_Category_Name']"
+                                             [rowHover]="true"
+                                             #dt>
+                                               <ng-template pTemplate="caption">
+                                                   <div class="row">
+                                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                            </div>
+                                                   </div>
+                
+                                                </ng-template>
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                       <th>Ledger Name</th>
+                                                    <th>Sub Ledger Name</th>
+                                                    <th>Cost Head Name</th>
+                                                    <th>DR Amt</th>
+                                                    <th>CR Amt</th>
+                                                      </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-col>
+                                                    <tr>
+                                                   
+                                                        <td>{{col.Ledger_Name}} </td>
+                                                    <td>{{col.Sub_Ledger_Name}}</td>
+                                                    <td>{{col.Cost_Head_Name}} </td>
+                                                    <td>{{col.DR_Amt}}</td>
+                                                    <td>{{col.CR_Amt}}</td>
+                                                   </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="paginatorright" let-state>
+                                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                                </ng-template>
+                                        </p-table>
+                                    </div>                           
+                            
+                          </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-fw fa-plus" aria-hidden="true" >
+                            <div class="form-horizontal">
+                                <form name="SupportAnndroidForm"  #SupportAnndroidForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">                                            
+                                            <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="CostCenterList"
+                                            name="costcenter"
+                                            [(ngModel)]="ObjACbalc.Cost_Cen_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="' No Cost Center Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            [placeholder]="'Select Cost Center'"
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            #costcenter="ngModel"
+                                            [styleClass]="ACOpeningBalcFormSubmitted &&  costcenter.errors?.required ? 'clearance' :''"
+                                            [required]="true">
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">                                            
+                                            <label class="control-label">Ledger<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="LedgerList"
+                                            name="Ledger"
+                                            [(ngModel)]="ObjACbalc.Ledger_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="' No Ledger Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            [placeholder]="'Select Ledger'"
+                                            [virtualScroll]="true"
+                                            (onChange)="GetSubLedgerList()"
+                                            itemSize="30"
+                                            #Ledger="ngModel"
+                                            [styleClass]="ACOpeningBalcFormSubmitted &&  Ledger.errors?.required ? 'clearance' :''"
+                                            [required]="true">
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">                                            
+                                            <label class="control-label">Sub Ledger<sup *ngIf="ObjACbalc.Ledger_ID && (ObjACbalc.Ledger_ID.toString() == '586' || ObjACbalc.Ledger_ID.toString() == '568')" class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="SubLedgerList"
+                                            name="Sub"
+                                            [(ngModel)]="ObjACbalc.Sub_Ledger_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="' No Sub Ledger Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            (onChange)="GetSubLedgerName()"
+                                            [placeholder]="'Select Sub Ledger'"
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            #Sub="ngModel"
+                                            [styleClass]="ACOpeningBalcFormSubmitted &&  Sub.errors?.required ? 'clearance' :''"
+                                            [required]="(ObjACbalc.Ledger_ID && (ObjACbalc.Ledger_ID.toString() == '586' || ObjACbalc.Ledger_ID.toString() == '568'))">
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">                                            
+                                            <label class="control-label">Cost Head<sup class="text-danger"></sup></label>
+                                            <p-dropdown [options]="CostHeadList"
+                                            name="Head"
+                                            [(ngModel)]="ObjACbalc.Cost_Head_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="' No Cost Head Found'"
+                                            [filter]="true"
+                                            (onChange)="GetCostHeadName()"
+                                            filterBy="label,value.name"
+                                            [placeholder]="'Select Cost Head'"
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            #Head="ngModel"
+                                            [styleClass]="ACOpeningBalcFormSubmitted &&  Head.errors?.required ? 'clearance' :''"
+                                            >
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4"> 
+                                        <label class="control-label">DR Amount
+                                            <sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                             name="DR"
+                                              [(ngModel)]="ObjACbalc.DR_Amt"
+                                              #DR="ngModel"
+                                              CompacctDigitonly="true"
+                                               placeholder="DR Amount"
+                                               (change)="ChangeDr()"
+                                               [ngClass]="{'clearance': ACOpeningBalcFormSubmitted && DR?.errors?.required}"
+                                               required>
+                                        </div>
+                                        <div class="col-sm-4"> 
+                                            <label class="control-label">CR Amount
+                                                <sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                                name="CR"
+                                                [(ngModel)]="ObjACbalc.CR_Amt"
+                                                placeholder="CR Amount"
+                                                #CR="ngModel"
+                                                (change)="ChangeCr()"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': ACOpeningBalcFormSubmitted && CR?.errors?.required}"
+                                                required>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-primary custombutton pull-right" (click)="AddACBal(SupportAnndroidForm.form.valid)">
+                                               
+                                            <span  class="fa fa-fw fa-plus"></span> ADD</button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive no-padding" style="margin-top: 1em;">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr style="background-color:#3c8dbc;color:white;">
+                                                    <th>Ledger Name</th>
+                                                    <th>Sub Ledger Name</th>
+                                                    <th>Cost Head Name</th>
+                                                    <th>DR Amt</th>
+                                                    <th>CR Amt</th>
+                                                    <th>Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- ngRepeat: obj in ctrl.ProductCategoryGST -->
+                                                <tr *ngFor="let obj of ACOpeningBalcList ;let ind = index;">
+                                                    <td>{{obj.Ledger_Name}} </td>
+                                                    <td>{{obj.Sub_Ledger_Name}}</td>
+                                                    <td>{{obj.Cost_Head_Name}} </td>
+                                                    <td>{{obj.DR_Amt}}</td>
+                                                    <td>{{obj.CR_Amt}}</td>
+                                                    <td><button (click)="Delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div><div class="form-group">
+                                        <div class="col-sm-12 text-right">
+                                            <b>DR Amount : {{DRAmt_Total}}</b>&nbsp;&nbsp;
+                                            <b>CR Amount : {{CRAmt_Total}}</b>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer">
+                                        <button class="btn btn-primary pull-right custombutton"
+                                                (click)="SaveACOpeningBalc()"
+                                                id="load"
+                                                [disabled]="Spinner">
+                                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                        </button>
+                                    </div>
+                                    </form>  
+                            </div>                       
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
