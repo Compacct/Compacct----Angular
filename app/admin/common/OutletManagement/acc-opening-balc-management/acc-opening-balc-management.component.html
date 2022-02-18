@@ -32,6 +32,28 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="fa fa-list-alt" aria-hidden="true">
                             <form name="searchAcBalc"  #searchAcBalc="ngForm" novalidate>
                                 <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label"
+                                          >Fin year &nbsp;<span class="text-danger">*</span></label
+                                        >
+                                        <select
+                                          class="form-control"
+                                          name="finy"
+                                          #finy="ngModel"
+                                          [(ngModel)]="SearchFinyearID"
+                                          [ngClass]="{
+                                            clearance: ACOpeningBalcSearhFormSubmitted && finy.errors?.required
+                                          }"
+                                          required
+                                        >
+                                          <option [ngValue]="undefined">Select</option>
+                                          <option
+                                            *ngFor="let option of FinyearList"
+                                            [ngValue]="option.Fin_Year_ID"
+                                            >{{ option.Fin_Year_Name}}</option
+                                          >
+                                        </select>
+                                      </div>
                                     <div class="col-sm-4">                                            
                                         <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="CostCenterList"
@@ -118,6 +140,28 @@
                             <div class="form-horizontal">
                                 <form name="SupportAnndroidForm"  #SupportAnndroidForm="ngForm" novalidate>
                                     <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label"
+                                              >Fin year &nbsp;<span class="text-danger">*</span></label
+                                            >
+                                            <select
+                                              class="form-control"
+                                              name="Fin_Year_ID"
+                                              #Fin_Year_ID="ngModel"
+                                              [(ngModel)]="ObjACbalc.Fin_Year_ID"
+                                              [ngClass]="{
+                                                clearance: ACOpeningBalcFormSubmitted && Fin_Year_ID.errors?.required
+                                              }"
+                                              required
+                                            >
+                                              <option [ngValue]="undefined">Select</option>
+                                              <option
+                                                *ngFor="let option of FinyearList"
+                                                [ngValue]="option.Fin_Year_ID"
+                                                >{{ option.Fin_Year_Name}}</option
+                                              >
+                                            </select>
+                                        </div>
                                         <div class="col-sm-4">                                            
                                             <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
                                             <p-dropdown [options]="CostCenterList"
@@ -202,6 +246,8 @@
                                                [ngClass]="{'clearance': ACOpeningBalcFormSubmitted && DR?.errors?.required}"
                                                required>
                                         </div>
+                                    </div>
+                                    <div class="form-group">
                                         <div class="col-sm-4"> 
                                             <label class="control-label">CR Amount
                                                 <sup class="text-danger">*</sup></label>
@@ -215,8 +261,8 @@
                                                 [ngClass]="{'clearance': ACOpeningBalcFormSubmitted && CR?.errors?.required}"
                                                 required>
                                         </div>
-                                        <div class="col-sm-12">
-                                            <button class="btn btn-primary custombutton pull-right" (click)="AddACBal(SupportAnndroidForm.form.valid)">
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-primary custombutton" (click)="AddACBal(SupportAnndroidForm.form.valid)">
                                                
                                             <span  class="fa fa-fw fa-plus"></span> ADD</button>
                                         </div>

@@ -25,8 +25,10 @@ export class AccOpeningBalcManagementComponent implements OnInit {
 
   ACOpeningBalcSearhFormSubmitted = false;
   SearchCost_Cen_ID = undefined;
+  SearchFinyearID = undefined;
   ACOpeningBalcFormSubmitted = false;
   ObjACbalc = new ACbalc();
+  FinyearList =[];
   CostCenterList = [];
   LedgerList = [];
   SubLedgerList = [];
@@ -56,6 +58,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
     this.GetCostCenter();
     this.GetLedgerList();
     this.GetCostHeadList();
+    this.GetFinyearList();
   }
  
   GetAllAcOpeningBalc(valid){
@@ -64,7 +67,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
       this.seachSpinner = true;
       const tempObj = {
         Cost_Cen_ID : this.SearchCost_Cen_ID,
-        Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+        Fin_Year_ID : this.SearchFinyearID,
       }
       const obj = {
         "SP_String": "SP_Opening_Journal",
@@ -77,6 +80,15 @@ export class AccOpeningBalcManagementComponent implements OnInit {
        })
     }
     
+  }
+
+  GetFinyearList() {
+    this.$http.get('/Common/Get_Fin_Year').subscribe((data: any) => {
+      this.FinyearList =  data ? JSON.parse(data) : [];
+      this.FinyearList.forEach(v => v.Fin_Year_ID += '');
+      this.SearchFinyearID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID.toString();
+      console.log(this.SearchFinyearID)
+    });
   }
   GetCostCenter(){
     const obj = {
@@ -167,14 +179,16 @@ export class AccOpeningBalcManagementComponent implements OnInit {
   clearData(){
     this.ACOpeningBalcFormSubmitted = false;
     this.ObjACbalc = new ACbalc();
+    this.ObjACbalc.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.ObjACbalc.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID.toString();
     this.ACOpeningBalcList = []; 
     this.getCRDR();
   }
   AddACBal(valid) {
     this.ACOpeningBalcFormSubmitted = true;
     if(valid){
+      if(this.ACOpeningBalcList.length === 0) {
         this.ACOpeningBalcFormSubmitted = false;
-        this.ObjACbalc.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID;
         this.ObjACbalc.DR_Amt = Number(this.ObjACbalc.DR_Amt ? this.ObjACbalc.DR_Amt : '0');
         this.ObjACbalc.CR_Amt = Number(this.ObjACbalc.CR_Amt ? this.ObjACbalc.CR_Amt : '0');
         this.ACOpeningBalcList.push(this.ObjACbalc);
@@ -182,9 +196,42 @@ export class AccOpeningBalcManagementComponent implements OnInit {
         const obj = {...this.ObjACbalc};
         this.ObjACbalc = new ACbalc();
         this.ObjACbalc.Cost_Cen_ID = obj.Cost_Cen_ID;
-        this.ObjACbalc.Ledger_ID = obj.Ledger_ID;      
+        this.ObjACbalc.Ledger_ID = obj.Ledger_ID;
+        this.ObjACbalc.Fin_Year_ID = obj.Fin_Year_ID;      
         const arr = $.grep(this.LedgerList,(ob:any) => Number(ob.Ledger_ID) === Number(this.ObjACbalc.Ledger_ID));
         this.ObjACbalc.Ledger_Name = arr.length ? arr[0].Ledger_Name : undefined;
+      }else {
+        const arr = $.grep(this.ACOpeningBalcList,(ob:any) =>{
+          return (Number(ob.Cost_Cen_ID) === Number(this.ObjACbalc.Cost_Cen_ID) 
+                && Number(ob.Ledger_ID) === Number(this.ObjACbalc.Ledger_ID)  
+                && Number(ob.Fin_Year_ID) === Number(this.ObjACbalc.Fin_Year_ID) 
+                && Number(ob.Sub_Ledger_ID) === Number(this.ObjACbalc.Sub_Ledger_ID))
+          });
+          if(arr.length) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "warn",
+            summary: "Validation",
+            detail: "Openig Balc Already Exits."
+          });
+          } else {
+            this.ACOpeningBalcFormSubmitted = false;
+            this.ObjACbalc.DR_Amt = Number(this.ObjACbalc.DR_Amt ? this.ObjACbalc.DR_Amt : '0');
+            this.ObjACbalc.CR_Amt = Number(this.ObjACbalc.CR_Amt ? this.ObjACbalc.CR_Amt : '0');
+            this.ACOpeningBalcList.push(this.ObjACbalc);
+            this.getCRDR();
+            const obj = {...this.ObjACbalc};
+            this.ObjACbalc = new ACbalc();
+            this.ObjACbalc.Cost_Cen_ID = obj.Cost_Cen_ID;
+            this.ObjACbalc.Ledger_ID = obj.Ledger_ID;
+            this.ObjACbalc.Fin_Year_ID = obj.Fin_Year_ID;      
+            const arr = $.grep(this.LedgerList,(ob:any) => Number(ob.Ledger_ID) === Number(this.ObjACbalc.Ledger_ID));
+            this.ObjACbalc.Ledger_Name = arr.length ? arr[0].Ledger_Name : undefined;
+          }
+
+      }
+        
       }
       
   }
@@ -213,7 +260,6 @@ export class AccOpeningBalcManagementComponent implements OnInit {
   }
 
   SaveACOpeningBalc(){
-    this.ACOpeningBalcFormSubmitted = true;
     if(this.ACOpeningBalcList.length && this.DRAmt_Total === this.CRAmt_Total){
         const obj = {
           "SP_String": "SP_Opening_Journal",
@@ -231,6 +277,8 @@ export class AccOpeningBalcManagementComponent implements OnInit {
            detail: "Succesfully Created"
          });
          this.clearData();
+         this.SearchCost_Cen_ID = this.SearchCost_Cen_ID ? this.SearchCost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+         this.SearchFinyearID = this.SearchFinyearID ? this.SearchFinyearID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID.toString();
          this.GetAllAcOpeningBalc(true);
         }
         })
