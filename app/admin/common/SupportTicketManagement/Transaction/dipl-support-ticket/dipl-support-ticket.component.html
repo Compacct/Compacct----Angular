@@ -722,7 +722,7 @@
               </div>
               <div class="col-sm-12"  style="margin-bottom: 1em;">
                 <label class="control-label"
-                >Remarks<sup class="text-danger">*</sup></label
+                >Remarks<sup class="text-danger"></sup></label
               >
               <textarea
               class="form-control"
@@ -735,8 +735,7 @@
                 clearance:
                 (UpdateStatusFormSubmit && Followup_Remarks1.errors?.required) ||
                 (Followup_Remarks1.errors?.minlength && Followup_Remarks1.touched)
-              }"
-              required></textarea>
+              }"></textarea>
 
               </div>
             </div>

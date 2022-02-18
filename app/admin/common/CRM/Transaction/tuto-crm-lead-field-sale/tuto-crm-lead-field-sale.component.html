@@ -16,8 +16,7 @@
                             </div> -->
                             <div class="col-sm-4">
                                 <label class="control-label">Period</label>
-
-                                <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
+                                <app-compacct-daterangepicker [DefaultDateOpt]="'MonthStarttoEnd'" (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
                             </div>
                             <div class="col-sm-4">
                                 <label class="control-label">User&nbsp;<span class="text-danger"></span></label>
@@ -76,15 +75,27 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Appo Slot <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DAppoSlotList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAppoSlotFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                        <p-multiSelect [options]="DAppoSlotList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedAppoSlotFilterList" [styleClass]="'compacct-multiselect'" name="appo"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">School Pin <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="SchoolPinList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedSchoolPinFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                        <p-multiSelect [options]="SchoolPinList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedSchoolPinFilterList" [styleClass]="'compacct-multiselect'" name="schoolpin"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">School Name<span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="SchoolNameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedSchoolNameFilterList" [styleClass]="'compacct-multiselect'" name="Days"></p-multiSelect>
+                                        <p-multiSelect [options]="SchoolNameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedSchoolNameFilterList" [styleClass]="'compacct-multiselect'" name="Schoolname"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Distributor Name<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistributorNameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDistributorNameList" [styleClass]="'compacct-multiselect'" name="Distributor"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">ASP Confirm<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="ASPConfirmList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedASPConfirmList" [styleClass]="'compacct-multiselect'" name="ASPConfirm"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">ASP Journey Started<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="ASPJourneyStartedList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedASPJourneyStartedList" [styleClass]="'compacct-multiselect'" name="ASPJourneyStarted"></p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
                                         <button *ngIf="leadFollowUpListBackup.length" (click)="exportexcel(leadFollowUpList,'Lead_Field_Sales')" class="btn btn-primary custombutton">
@@ -142,8 +153,8 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Action</th>
-                                    <th>Status</th>
-                                    <th>Regsiter</th>
+                                    <th>Status / Regsiter</th>
+                                    <th>ASP Confirm / ASP Journey Started </th>
                                     <th>Appo Date</th>
                                     <th>Days</th>
                                     <th>Appo Slot</th>
@@ -158,6 +169,10 @@
                                     <th>Appointment Type</th>
                                     <th>Appointment For</th>
                                     <th>Zonal Sales Head</th>
+                                    <th>Distributor Name</th>
+                                    <th>ASP Journey Time</th>
+                                    <th>ASP Confirm On</th>
+                                    <th>ASP Journey Confirm On</th>
                                     <!-- <th>Viewed </th> 
                                     <th>City </th>
                                     <th>Created On</th>
@@ -201,6 +216,16 @@
                                                         <i class="fa fa-forward" aria-hidden="true"></i> Forward
                                                     </a>
                                                 </li>
+                                                <li *ngIf="col.ASP_Confirm === 'N'">
+                                                    <a (click)="OpenConfirmAppo(col)">
+                                                        <i class="fa fa-upload" aria-hidden="true"></i> Confirm Appo
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="(col.ASP_Confirm === 'Y'  && col.ASP_Journey_Started === 'N')">
+                                                    <a (click)="StartJourney(col)">
+                                                        <i class="fa fa-briefcase" aria-hidden="true"></i> Start Journey
+                                                    </a>
+                                                </li>
                                                 <!-- <li><a (click)="RedirectPendingSubscriptionTutopia(col.Foot_Fall_ID)"><i
                                                             class="fa fa-fw fa fa-exchange"></i>Pending Subscription</a></li> -->
 
@@ -218,10 +243,18 @@
                                     <!-- <td class="text-center">
                                         <p-checkbox [(ngModel)]="col.Selected" (onChange)='LeadTransferCheckBoxChanged()' [binary]="true"></p-checkbox>
                                     </td> -->
-                                    <td><span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span></td>
                                     <td>
+                                        <span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span>                                    
                                         <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
                                         <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
+                                    </td>
+                                    <td>
+                                                   
+                                        <span class="badge bg-red-active" *ngIf="col.ASP_Confirm === 'N'">NOT CONFIRMED</span>
+                                        <span class="badge bg-blue-gradient" *ngIf="col.ASP_Confirm === 'Y'"> CONFIRMED</span>
+                                                   
+                                        <span class="badge bg-red-active" *ngIf="col.ASP_Journey_Started === 'N'"> Journey Not Started</span>
+                                        <span class="badge bg-blue-gradient" *ngIf="col.ASP_Journey_Started === 'Y'"> Journey Started</span>
                                     </td>
                                     <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
                                     <td>{{col.Days}}</td>
@@ -237,6 +270,10 @@
                                     <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
                                     <td>{{col.Appointment_For ? col.Appointment_For : '-'}}</td>
                                     <td>{{col.Zonal_Sales_Head ? col.Zonal_Sales_Head : '-'}}</td>
+                                    <td>{{col.Distributor_Name ? col.Distributor_Name : '-'}}</td>
+                                    <td>{{col.ASP_Journey_Time ? col.ASP_Journey_Time : '-'}}</td>
+                                    <td>{{col.ASP_Confirm_On ? (col.ASP_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                    <td>{{col.ASP_Journey_Confirm_On ? (col.ASP_Journey_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
                                     <!-- <td>{{col.City ? col.City : '-'}}</td>
                                     <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                     <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
@@ -259,6 +296,44 @@
         </div>
     </div>
 </div>
+
+
+<p-dialog header="Confirm APPO" [appendTo]="'body'" [visible]="OverlayCreateModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '35%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="OrgForm" #OrgForm="ngForm" novalidate>
+            <div class="form-group" style="margin-bottom: 1em;">
+                <div class="col-sm-12">
+                    <label class="control-label">Journey Time<sup class="text-danger">*</sup ></label>
+                    <div class="input-group date">
+                        <input type="text" CompacctDigitonly="true" class="form-control" name="Journey_Time" #Journey_Time="ngModel" [(ngModel)]="ObjAppoConfm.Journey_Time" placeholder="Journey Time" [ngClass]="{clearance: CreateLightBoxSubmitted && Journey_Time?.errors?.required}" required />
+                        <div class="input-group-addon">
+                            Minutes
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="OverlayCreateModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button (click)="ConfirmAppo(OrgForm.form.valid)"  class="btn btn-sm btn-success pull-right"  [disabled]="saveSpinner2">
+            <p-progressSpinner
+              *ngIf="saveSpinner2"
+              [style]="{ width: '15px', height: '15px' }"
+              strokeWidth="8"
+              animationDuration=".5s"
+            ></p-progressSpinner>
+             <i class="fa fa-fw  fa-upload"></i>&nbsp;UPDATE</button>
+    </p-footer>
+</p-dialog>
+
 <!-- FOLLOW UP -->
 <p-dialog header="Followup Details" [appendTo]="'body'" [visible]="FollowupModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '75%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
@@ -308,9 +383,17 @@
                                                         <div *ngIf='objFollowUpCreation?.Lead_ID && objSub?.Call_ID  && objSub?.Call_ID.toString() !=="0"' (click)='GetCallDetails(objSub)' class="btn btn-soundcloud btn-social  btn-xs" style="margin-top:0.5em;">
                                                             <i class="fa fa-info-circle"></i>&nbsp;CALL DETAILS
                                                         </div>
-                                                        <a *ngIf="objSub.PDF_File" ng-click="viewPDF(objSub.PDF_File)">
+                                                        <div *ngIf="objSub.PDF_File">
+                                                            <label style='display: block;text-align: left;' class="control-label">Audio File :</label>
+                                                            <audio id="Test_Audio" style="height: 34px;" controls>              
+                                                                <source [src]="objSub.PDF_File"
+                                                                        type="audio/mpeg">
+                                                            </audio><br>
+                                                            <a [href]="objSub.PDF_File" target="_blank" class="btn btn-sm btn-linkedin"><i class="fa fa-fw fa-link"></i> &nbsp;Link</a>
+                                                        </div>
+                                                        <!-- <a *ngIf="objSub.PDF_File" ng-click="viewPDF(objSub.PDF_File)">
                                                             <img src="~/PDF_Logo/PDF-logo.png" class='pdf' style="width:20px; height:20px ">
-                                                        </a>
+                                                        </a> -->
                                                     </div>
                                                 </div>
                                             </li>
@@ -390,7 +473,7 @@
                                                 {{data.Request_Type}}</option>
                                         </select>
                                     </div>*@ -->
-                                    <div class="col-sm-6">
+                                    <!-- <div class="col-sm-6">
                                         <label class="control-label">Status<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="statusFollowUpCreation" #statusFollowUpCreation="ngModel" [ngClass]="{'clearance':folloupFormSubmit && statusFollowUpCreation?.errors?.required}" [(ngModel)]="objFollowUpCreation.Status" (change)="changeStatusForFollowupCreation(objFollowUpCreation.Status)"
                                             required>
@@ -401,13 +484,18 @@
 
                                         </select>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-6" *ngIf="validcheck">
                                         <label class="control-label">Forward Lead<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="forwardleadFollowUpCreation" #forwardleadFollowUpCreation="ngModel" [ngClass]="{'clearance':folloupFormSubmit && forwardleadFollowUpCreation?.errors?.required}" [(ngModel)]="objFollowUpCreation.Sent_To" [disabled]="forwardlead"
                                             [required]="validcheck">
                                             <option *ngFor=" let data of SalesUserList" value="{{data.User_ID}}">
                                                 {{data.Name}}</option>
                                         </select>
+                                    </div> -->
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Audio File <sup class="text-danger">*</sup></label>
+                                        <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept=".mp3,.mkv" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"></p-fileUpload>
+                                        <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
                                     </div>
 
                                 </div>
@@ -423,8 +511,12 @@
         <button type="button" (click)="FollowupModal = false" class="btn btn-default">
             CLOSE
         </button>
-        <button type="button" class="btn btn-primary" (click)="saveFollowup(FollowupModalUpdate.form.valid)">
-            SAVE
+        <button type="button" class="btn btn-primary" (click)="saveFollowup(FollowupModalUpdate.form.valid)" [disabled]="saveSpinner1">
+            <p-progressSpinner *ngIf="saveSpinner1"
+            [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+            animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!saveSpinner1"
+            class="glyphicon glyphicon-save"></span>&nbsp;SAVE
         </button>
     </p-footer>
 </p-dialog>

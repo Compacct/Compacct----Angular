@@ -183,6 +183,8 @@ import { SupportTicketPendingCallsNepalComponent } from './common/MaterialManage
 import { K4cCreditNoteBrowseComponent } from './common/MaterialManagement/k4c-credit-note-browse/k4c-credit-note-browse.component';
 import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-support-calender-dashboard/tuto-support-calender-dashboard.component";
 import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-saleable-closing-stock/non-saleable-closing-stock.component';
+import { AccOpeningBalcManagementComponent } from "./common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component";
+
 
 
 
@@ -1316,6 +1318,12 @@ const layoutRoutes: Routes = [{
   component: NonSaleableClosingStockComponent,
   data: {
     title: 'Non Saleable Closing Stock'
+  }
+},
+  path: 'Acc_Txn_Op_Balance_NEW',
+  component: AccOpeningBalcManagementComponent,
+  data: {
+    title: 'Account Opening Balance Mangement'
   }
 }
 
