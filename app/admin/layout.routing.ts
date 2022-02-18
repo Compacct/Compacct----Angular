@@ -1320,6 +1320,7 @@ const layoutRoutes: Routes = [{
     title: 'Non Saleable Closing Stock'
   }
 },
+{
   path: 'Acc_Txn_Op_Balance_NEW',
   component: AccOpeningBalcManagementComponent,
   data: {
