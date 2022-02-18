@@ -182,6 +182,7 @@ import { SemiFinishedProductionVoucherComponent } from './common/MaterialManagem
 import { SupportTicketPendingCallsNepalComponent } from './common/MaterialManagement/Master/support-ticket-pending-calls-nepal/support-ticket-pending-calls-nepal.component';
 import { K4cCreditNoteBrowseComponent } from './common/MaterialManagement/k4c-credit-note-browse/k4c-credit-note-browse.component';
 import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-support-calender-dashboard/tuto-support-calender-dashboard.component";
+import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-saleable-closing-stock/non-saleable-closing-stock.component';
 
 
 
@@ -1308,6 +1309,13 @@ const layoutRoutes: Routes = [{
   component: TutoSupportCalenderDashboardComponent,
   data: {
     title: 'Calender Dashboard'
+  }
+},
+{
+  path: 'Non_Saleable_Closing_Stock_Outlet',
+  component: NonSaleableClosingStockComponent,
+  data: {
+    title: 'Non Saleable Closing Stock'
   }
 }
 

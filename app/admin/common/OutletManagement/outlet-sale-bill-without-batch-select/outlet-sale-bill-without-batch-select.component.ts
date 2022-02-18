@@ -91,6 +91,8 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
   CGST_Ledger_Id: any;
   SGST_Ledger_Id: any;
   IGST_Ledger_Id: any;
+  ProductType = undefined;
+  isservice = undefined;
 
   constructor(
     private Header: CompacctHeader,
@@ -601,6 +603,8 @@ autoaFranchiseBill() {
    this.CGST_Ledger_Id = productObj.CGST_Output_Ledger_ID;
    this.SGST_Ledger_Id = productObj.SGST_Output_Ledger_ID;
    this.IGST_Ledger_Id = productObj.IGST_Output_Ledger_ID;
+   this.ProductType = productObj.Product_Type;
+   this.isservice = productObj.Is_Service;
  }
  }
  // GST CHECKING
@@ -675,8 +679,9 @@ autoaFranchiseBill() {
    else {
    var Amount = Number(BQ * this.ObjaddbillForm.Sale_rate);
    var net =(Number(Amount * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100);
+   var tax = Number(net * this.ObjaddbillForm.Stock_Qty);
    var Dis_Amount = Number(net * Number(this.ObjaddbillForm.Max_Discount) / 100);
-   var Gross_Amount = Number(net - Dis_Amount) ;
+   //var Gross_Amount = Number(net - Dis_Amount) ;
    var SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
    var SGST_Amount = Number((Amount - net) / 2) ;
    var CGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
@@ -693,6 +698,8 @@ autoaFranchiseBill() {
      Product_ID : this.ObjaddbillForm.Product_ID,
      Product_Description : this.ObjaddbillForm.Product_Description,
      Modifier : this.ObjaddbillForm.Modifier,
+     product_type : this.ProductType,
+     is_service : this.isservice,
      // Modifier1 : this.ObjaddbillForm.Modifier1,
      // Modifier2 : this.ObjaddbillForm.Modifier2,
      // Modifier3 : this.ObjaddbillForm.Modifier3,
@@ -703,17 +710,18 @@ autoaFranchiseBill() {
      Stock_Qty : el.Qty,
      Batch_No : el.Batch_NO,
      //Batch_No : usedbatch, // this.ObjaddbillForm.Batch_No,
-     Amount :Number(net).toFixed(2),
+     Amount :Number(tax).toFixed(2),
+     Taxable : Number(tax).toFixed(2),
      Max_Discount : Number(this.ObjaddbillForm.Max_Discount),
      Dis_Amount : Number(Dis_Amount).toFixed(2),
-     Gross_Amount : Number(Gross_Amount).toFixed(2),
+     Gross_Amount : Number(tax - Dis_Amount).toFixed(2),
      SGST_Per : Number(SGST_Per).toFixed(2),
      SGST_Amount : Number(SGST_Amount).toFixed(2),
      CGST_Per : Number(CGST_Per).toFixed(2),
      CGST_Amount : Number(CGST_Amount).toFixed(2),
      GST_Tax_Per : Number(IGST_Per).toFixed(2),
      GST_Tax_Per_Amt : Number(IGST_Amount).toFixed(2),
-     Net_Amount : Number(Gross_Amount + SGST_Amount + CGST_Amount).toFixed(2),
+     Net_Amount : Number(tax + SGST_Amount + CGST_Amount).toFixed(2),
      Taxable_Amount : Number(net).toFixed(3),
      CGST_Output_Ledger_ID : this.CGST_Ledger_Id,
      SGST_Output_Ledger_ID : this.SGST_Ledger_Id,
@@ -761,6 +769,13 @@ autoaFranchiseBill() {
    this.addbillFormSubmitted = false;
    this.CalculateTotalAmt();
    this.listofamount();
+   if(this.ProductType != "PACKAGING") {
+    if (this.isservice != true) {
+     this.CalculateDiscount();
+    }
+  }
+  this.ProductType = undefined;
+  this.isservice = undefined;
    //this.clearData();
  
    // this.Product2.applyFocus()
@@ -853,6 +868,11 @@ autoaFranchiseBill() {
    //this.productSubmit.splice(index,1)
    this.CalculateTotalAmt();
    this.listofamount();
+   if(this.ProductType != "PACKAGING") {
+    if (this.isservice != true) {
+     this.CalculateDiscount();
+    }
+  }
    this.ObjcashForm.Coupon_Per = 0;
  
  }
@@ -907,11 +927,15 @@ autoaFranchiseBill() {
    this.productSubmit.forEach(item => {
      count = count + Number(item.Amount);
      count1 = count1 + Number(item.Dis_Amount);
-     count2 = count2 + Number(item.Gross_Amount);
+     count2 = count2 + Number(item.Amount - item.Dis_Amount);
      count3 = count3 + Number(item.SGST_Amount);
      count4 = count4 + Number(item.CGST_Amount);
      count5 = count5 + Number(item.GST_Tax_Per_Amt);
-     count6 = count6 + Number(item.Taxable_Amount);
+     if (item.product_type != "PACKAGING") {
+      if (item.is_service != true) {
+         count6 = count6 + Number(item.Taxable);
+      }
+    }
    });
    this.Amount = (count).toFixed(2);
    this.Dis_Amount = (count1).toFixed(2);
@@ -941,9 +965,9 @@ autoaFranchiseBill() {
   var cash_amount = this.ObjcashForm.Cash_Amount ? Number(this.ObjcashForm.Cash_Amount) : 0 ;
   var card_amount = this.ObjcashForm.Card_Amount ? Number(this.ObjcashForm.Card_Amount) : 0;
 
-    this.ObjcashForm.Total_Paid = (Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+    this.ObjcashForm.Total_Paid = (Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
   
-  var lefttotal = credit_amount + wallet_amount + card_amount;
+  var lefttotal = wallet_amount + card_amount;
   
 
   if((Number(this.Net_Payable) > lefttotal) && cash_amount) {
@@ -975,15 +999,63 @@ autoaFranchiseBill() {
    var cash_amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0 ;
    var card_amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
    if (this.ObjcashForm.Coupon_Per ) { 
-     credit_amount = Number(this.Net_Payable) * Number(this.ObjcashForm.Coupon_Per ) / 100;
+     credit_amount = Number(this.TotalTaxable) * Number(this.ObjcashForm.Coupon_Per ) / 100;
      this.ObjcashForm.Credit_To_Amount = (credit_amount).toFixed(2);
-     this.ObjcashForm.Total_Paid = (Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
-   } else if (!this.ObjcashForm.Coupon_Per) {
+     this.ObjcashForm.Total_Paid = (Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+     this.CalculateDiscount();
+   } 
+   else if (!this.ObjcashForm.Coupon_Per) {
      this.ObjcashForm.Credit_To_Amount = 0;
      //this.ObjcashForm.Total_Paid = null;
-     this.ObjcashForm.Total_Paid = (Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+     this.ObjcashForm.Total_Paid = (Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+     this.CalculateDiscount();
     }
  }
+ CalculateDiscount(){
+  if (this.ObjcashForm.Credit_To_Amount){
+    console.log("discount amt",this.ObjcashForm.Credit_To_Amount)
+    var damt;
+    var netamount;
+    let countnum = 0;
+    this.productSubmit.forEach(el=>{ 
+      if(el.product_type != "PACKAGING") {
+      if (el.is_service != true) {
+      damt = Number((el.Taxable / this.TotalTaxable) * this.ObjcashForm.Credit_To_Amount);
+      el.Dis_Amount = Number(damt).toFixed(2);
+      var da = el.Dis_Amount;
+      var grossamt = Number(el.Taxable - el.Dis_Amount);
+      var sgstperamt = Number(((el.Taxable - da) * el.SGST_Per) / 100);
+      var cgstperamt = Number(((el.Taxable - da) * el.CGST_Per) / 100);
+      //var sub = Number((el.Taxable - el.Dis_Amount)).toFixed(2);
+      netamount = Number((el.Taxable - da) + sgstperamt + cgstperamt);
+      //this.Dis_Amount = undefined;
+
+     el.Gross_Amount = Number(grossamt).toFixed(2);
+     el.SGST_Amount = Number(sgstperamt).toFixed(2);
+     el.CGST_Amount = Number(cgstperamt).toFixed(2);
+     el.Net_Amount = Number(netamount).toFixed(2);
+     countnum = countnum + Number(el.Dis_Amount);
+    }
+    }
+    })
+    this.Dis_Amount = (countnum).toFixed(2);
+    this.CalculateTotalAmt();
+    this.listofamount();
+   } else {
+    this.productSubmit.forEach(el=>{
+      //var netamount2 = el.Taxable + el.SGST_Amount + el.CGST_Amount;
+
+      el.Dis_Amount = 0 ;
+      el.Gross_Amount = Number(el.Taxable - el.Dis_Amount).toFixed(2);
+      el.SGST_Amount = Number((el.Taxable * el.SGST_Per) / 100).toFixed(2); 
+      el.CGST_Amount = Number((el.Taxable * el.CGST_Per) / 100).toFixed(2);
+      el.Net_Amount = (Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
+     })
+     console.log("this.discount productSubmit",this.productSubmit);
+     this.CalculateTotalAmt();
+     this.listofamount();
+   }
+}
  // DAY END CHECK
  saveCheck(){
    if(this.FromCostCentId && this.godown_id){
@@ -1222,6 +1294,7 @@ autoaFranchiseBill() {
            Rate : item.Net_Price,
            Batch_No : item.Batch_No,
            Qty : item.Stock_Qty,
+           Taxable : item.Taxable,
            Amount : item.Amount,
            Discount_Per : item.Max_Discount,
            Discount_Amt : item.Dis_Amount,
@@ -1575,6 +1648,7 @@ autoaFranchiseBill() {
              Net_Price : Number(element.Adv_Rate),
              Batch_No : element.Batch_No,
              Stock_Qty :  Number(element.Qty),
+             Taxable : Number(element.Taxable),
              Amount : Number(element.Amount).toFixed(2),
              Max_Discount : Number(element.Discount_Per),
              Dis_Amount : Number(element.Discount_Amt).toFixed(2),
@@ -1595,9 +1669,9 @@ autoaFranchiseBill() {
            };
            this.productSubmit.push(productObj);
          });
-         this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID;
+         this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID ? data[0].Credit_To_Ac_ID : undefined;
          this.ObjcashForm.Credit_To_Ac = data[0].Credit_To_Ac;
-         this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount;
+         this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount ? data[0].Credit_To_Amount : undefined;
          // this.ObjcashForm.Cash_Amount = data[0].Cash_Amount;
          // this.ObjcashForm.Card_Ac_ID = data[0].Card_Ac_ID;
          // this.ObjcashForm.Card_Ac = data[0].Card_Ac;
