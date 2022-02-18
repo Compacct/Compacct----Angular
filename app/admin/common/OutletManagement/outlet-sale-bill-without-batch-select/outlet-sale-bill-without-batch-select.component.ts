@@ -666,9 +666,9 @@ autoaFranchiseBill() {
    if (this.gststatus == "NO GST") {
      //var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
      var Amount = Number(BQ * this.ObjaddbillForm.Sale_rate);
-     var net =(Number(Amount * 100)) / (0 + 100);
-     var Dis_Amount = Number(net * Number(this.ObjaddbillForm.Max_Discount) / 100);
-     var Gross_Amount = Number(net - Dis_Amount) ;
+     var rate =(Number(this.ObjaddbillForm.Sale_rate * 100)) / (0 + 100);
+     var Dis_Amount = Number(rate * Number(this.ObjaddbillForm.Max_Discount) / 100);
+     var Gross_Amount = Number(rate - Dis_Amount) ;
      var SGST_Per = 0 ;
      var SGST_Amount = 0 ;
      var CGST_Per = 0 ;
@@ -678,14 +678,16 @@ autoaFranchiseBill() {
    } 
    else {
    var Amount = Number(BQ * this.ObjaddbillForm.Sale_rate);
-   var net =(Number(Amount * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100);
-   var tax = Number(net * this.ObjaddbillForm.Stock_Qty);
-   var Dis_Amount = Number(net * Number(this.ObjaddbillForm.Max_Discount) / 100);
-   //var Gross_Amount = Number(net - Dis_Amount) ;
+   var rate =(Number(this.ObjaddbillForm.Sale_rate * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100);
+   var tax = Number(rate * this.ObjaddbillForm.Stock_Qty);
+   var Dis_Amount = Number(rate * Number(this.ObjaddbillForm.Max_Discount) / 100);
+   //var Gross_Amount = Number(rate - Dis_Amount) ;
    var SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
-   var SGST_Amount = Number((Amount - net) / 2) ;
+   //var SGST_Amount = Number((Amount - rate) / 2) ;
+   var SGST_Amount = Number(tax * SGST_Per) / 100; 
    var CGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
-   var CGST_Amount = Number((Amount - net) / 2) ;
+   //var CGST_Amount = Number((Amount - rate) / 2) ;
+   var CGST_Amount = Number(tax * CGST_Per) / 100;
    var IGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per);
    var IGST_Amount = this.ObjaddbillForm.GST_Tax_Per_Amt ;
    }
@@ -705,7 +707,7 @@ autoaFranchiseBill() {
      // Modifier3 : this.ObjaddbillForm.Modifier3,
      // Modifier4 : this.ObjaddbillForm.Modifier4,
      // Modifier5 : this.ObjaddbillForm.Modifier5,
-     Net_Price : Number(net).toFixed(2),
+     Net_Price : Number(rate).toFixed(2),
      //Stock_Qty :  Number(this.ObjaddbillForm.Stock_Qty),
      Stock_Qty : el.Qty,
      Batch_No : el.Batch_NO,
@@ -722,7 +724,7 @@ autoaFranchiseBill() {
      GST_Tax_Per : Number(IGST_Per).toFixed(2),
      GST_Tax_Per_Amt : Number(IGST_Amount).toFixed(2),
      Net_Amount : Number(tax + SGST_Amount + CGST_Amount).toFixed(2),
-     Taxable_Amount : Number(net).toFixed(3),
+     Taxable_Amount : Number(rate).toFixed(3),
      CGST_Output_Ledger_ID : this.CGST_Ledger_Id,
      SGST_Output_Ledger_ID : this.SGST_Ledger_Id,
      IGST_Output_Ledger_ID : this.IGST_Ledger_Id
