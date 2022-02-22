@@ -636,9 +636,10 @@ add(valid) {
     if (this.gststatus == "NO GST") {
       //var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
       var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
-      var rate =(Number(Amount * 100)) / (0 + 100);
+      var rate =(Number(this.ObjaddbillForm.Sale_rate * 100)) / (0 + 100);
+      var tax = Number(rate * this.ObjaddbillForm.Stock_Qty);
       var Dis_Amount = Number(rate * Number(this.ObjaddbillForm.Max_Discount) / 100);
-      var Gross_Amount = Number(rate - Dis_Amount) ;
+      //var Gross_Amount = Number(rate - Dis_Amount) ;
       var SGST_Per = 0 ;
       var SGST_Amount = 0 ;
       var CGST_Per = 0 ;
@@ -1014,7 +1015,7 @@ CalculateDiscount(){
       el.CGST_Amount = Number((el.Taxable * el.CGST_Per) / 100).toFixed(2);
       el.Net_Amount = (Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
      })
-     console.log("this.discount productSubmit",this.productSubmit);
+     //console.log("this.discount productSubmit",this.productSubmit);
      this.CalculateTotalAmt();
      this.listofamount();
    }
