@@ -12,6 +12,7 @@ import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { valHooks } from 'jquery';
 import { compareElementParent } from '@syncfusion/ej2-base';
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import { FileUpload } from "primeng/primeng";
 declare var $:any;
 @Component({
   selector: 'app-k4c-outlet-advance-order',
@@ -101,6 +102,17 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Can_Remarks = false;
   BackupproductSubmit = [];
   ProductType = undefined;
+
+  PDFViewFlag = false;
+  PDFFlag = false;
+  ProductPDFFile:any = {};
+  ProductPDFLink = undefined;
+  @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
+  PhotoUploadPopup = false;
+  photoforproductList = [];
+  adornumber = undefined;
+  Uploadbutton = "Upload"
+  uploadbuttondisabled = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -928,7 +940,7 @@ CalculateDiscount(){
       el.Net_Amount = el.Delivery_Charge ? (Number(el.Delivery_Charge) + Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2) : 
                       (Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
      })
-     console.log("this.discount productSubmit",this.productSubmit);
+     //console.log("this.discount productSubmit",this.productSubmit);
      this.CalculateTotalAmt();
      this.listofamount();
    }
@@ -1052,7 +1064,10 @@ saveprintandUpdate(){
       //console.log(data);
       var tempID = data[0].Column1;
       this.Objcustomerdetail.Adv_Order_No = data[0].Column1;
+      this.adornumber = data[0].Column1;
       if(data[0].Column1){
+      //this.geteditlist(data[0].Column1);
+       this.getPhotoprolist(true);
         this.compacctToast.clear();
         const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "Updated";
         this.compacctToast.add({
@@ -1061,27 +1076,30 @@ saveprintandUpdate(){
          summary: "Advance_Order_ID  " + tempID,
          detail: "Succesfully " + mgs
        });
-       this.Spinner = false;
-      this.ngxService.stop();
-      if(this.buttonname !== "Update"){
-       this.SaveNPrintBill();
-       this.clearData();
-       this.productSubmit =[];
-       this.clearlistamount();
-       this.cleartotalamount();
-       this.router.navigate(['./POS_BIll_Order']);
-      } else {
-       this.SaveNPrintBill();
-       this.clearData();
-       this.productSubmit =[];
-       this.clearlistamount();
-       this.cleartotalamount();
-       this.tabIndexToView = 0;
-       this.router.navigate(['./K4C_Outlet_Advance_Order']);
-       this.getcostcenid();
-       this.Showdata();
-       this.Showdatabymobile(true);
-      }
+       //this.Spinner = false;
+       //this.ngxService.stop();
+      //this.PhotoUploadPopup = true;
+    //  if(this.buttonname !== "Update"){
+    //    this.getPhotoprolist();
+    //    this.SaveNPrintBill();
+    //    this.clearData();
+    //    this.productSubmit =[];
+    //    this.clearlistamount();
+    //    this.cleartotalamount();
+    //    this.router.navigate(['./POS_BIll_Order']);
+    //   } else {
+    //    this.SaveNPrintBill();
+    //    this.clearData();
+    //    this.productSubmit =[];
+    //    this.clearlistamount();
+    //    this.cleartotalamount();
+    //    this.tabIndexToView = 0;
+    //    this.router.navigate(['./K4C_Outlet_Advance_Order']);
+    //    this.getcostcenid();
+    //    this.Showdata();
+    //    this.Showdatabymobile(true);
+    //   }
+      
       } else{
         this.Spinner = false;
         this.ngxService.stop();
@@ -1098,7 +1116,37 @@ saveprintandUpdate(){
     })
 
   }
-
+  getPhotoprolist(orderno){
+    this.photoforproductList = [];
+    //this.DocNO = Adv_Order_No;
+      const Tempobj = {
+        Doc_No : this.adornumber ? this.adornumber : orderno.Adv_Order_No
+      }
+      const obj = {
+        "SP_String": "SP_Controller_Master",
+        "Report_Name_String": "Get Advance Order Data For Edit",
+        "Json_Param_String": JSON.stringify([Tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log(data);
+       data.forEach((a,i)=>{
+        data[i].PDFViewFlag = data[i].Order_Image ? true : false;
+        data[i].ProductPDFLink = data[i].Order_Image ? data[i].Order_Image : undefined;
+         data[i].PDFFile= {};
+         data[i].uploadbuttondisabled= false;
+         data[i].uploadSpinner = false;
+       })
+       this.photoforproductList = data;
+       this.PhotoUploadPopup = true;
+      //  this.clearData();
+      //  this.productSubmit =[];
+      //  this.clearlistamount();
+      //  this.cleartotalamount();
+      //  this.router.navigate(['./POS_BIll_Order']);
+       
+})
+}
+  
 getDataForSaveEdit(){
   if(this.ObjcashForm.Wallet_Ac_ID){
       this.walletlist.forEach(el => {
@@ -1177,7 +1225,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
           CGST_Amt : item.CGST_Amount,
           IGST_Per : item.GST_Tax_Per,
           IGST_Amt : item.GST_Tax_Per_Amt,
-          Net_Amount : item.Net_Amount,
+          Net_Amount : item.Net_Amount
       }
 
     const TempObj = {
@@ -1509,6 +1557,7 @@ const TempObj = {
   // Card_Amount : this.ObjcashForm.Card_Amount,
   // Total_Paid : this.ObjcashForm.Total_Paid,
   // Net_Due : this.ObjcashForm.Net_Due,
+  Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
 }
  temparr.push({...TempObj,...this.ObjcashForm})
  //console.log(temparr)
@@ -1575,6 +1624,70 @@ PrintBill(obj) {
   }
 }
 
+// PHOTO UPLOAD
+FetchPDFFile(event,i) {
+  this.photoforproductList[i].PDFViewFlag = true;
+  this.photoforproductList[i].PDFFile={};
+  if (event) {
+    this.photoforproductList[i].PDFViewFlag = false;
+    this.photoforproductList[i].PDFFile= event.files[0];
+  }
+}
+async upload(i){
+  if (this.photoforproductList[i].Txn_ID && this.photoforproductList[i].Adv_Order_No && this.photoforproductList[i].PDFFile['size']) {
+    this.photoforproductList[i].uploadbuttondisabled= true;
+    this.photoforproductList[i].uploadSpinner = true;
+  const formData: FormData = new FormData();
+      formData.append("aFile", this.photoforproductList[i].PDFFile)
+      formData.append("Txn_ID", this.photoforproductList[i].Txn_ID);
+      formData.append("Adv_Order_NO", this.photoforproductList[i].Adv_Order_No);
+  let response = await fetch('/K4C_Outlet_Advance_Order/Upload_Doc',{ 
+                method: 'POST',
+                body: formData // This is your file object
+              });
+  let responseText = await response.text();
+  //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "Updated";
+    this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         summary: "  " ,
+         detail: "Succesfully Uploaded " 
+    });
+    //this.Uploadbutton = "Uploaded";
+    this.photoforproductList[i].uploadbuttondisabled= true;
+    this.photoforproductList[i].uploadSpinner = false;
+    //this.uploadbuttondisabled = true;
+  }
+  else 
+    if(!this.ProductPDFFile['size']) {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Validation",
+        detail: "No Docs Selected"
+      });
+      //this.Uploadbutton = "Upload";
+      this.uploadbuttondisabled = false;
+  }
+     
+};
+ClosePicuploadpopup(){
+  this.PhotoUploadPopup = false;
+  this.photoforproductList = [];
+  this.Spinner = false;
+  this.ngxService.stop();
+  this.SaveNPrintBill();
+  this.clearData();
+  this.productSubmit =[];
+  this.clearlistamount();
+  this.cleartotalamount();
+  this.router.navigate(['./POS_BIll_Order']);
+}
+
 clearData(){
   this.ObjaddbillForm = new addbillForm();
   this.ObjcashForm = new cashForm();
@@ -1623,7 +1736,8 @@ const TempObj = {
   Doc_No : this.Adv_Order_No,
   Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
   //Created_On : this.Objcustomerdetail.Del_Date_Time,
-  Created_By : this.$CompacctAPI.CompacctCookies.User_ID
+  Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
+  Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
 }
  temparr.push({...TempObj,...this.ObjRefundcashForm})
  //console.log(temparr)
