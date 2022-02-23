@@ -183,6 +183,11 @@
                                                                 <i class="fa fa-money" aria-hidden="true"></i> Refund
                                                             </a>
                                                         </li>
+                                                        <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y" && !col.Bill_No'>
+                                                            <a (click)="getPhotoprolist(col)">
+                                                                <i class="fa fa-picture-o"></i> Show Image
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -933,5 +938,55 @@
         <button type="button" class="btn btn-primary" (click)="RefundSave()">
                                         <i class="fa fa-money" ></i>&nbsp; Refund
                                     </button>
+    </p-footer>
+</p-dialog>
+
+<!-- PHOTO UPLOAD -->
+<p-dialog header="Photo Upload" [appendTo]="'body'" [visible]="PhotoUploadPopup" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '300px' }" style="text-align: center;" [minY]="80" [maximizable]="true"
+    [baseZIndex]="10000">
+    <!-- <div class="clearfix"></div> -->
+    <div class="table-responsive no-padding table-id">
+        <table class="table table-bordered">
+            <thead>
+                <tr style="background-color:#3c8dbc;color:white;">
+
+                    <th>Adv Order No.</th>
+                    <th>Product Description</th>
+                    <th>Qty</th>
+                    <th>Image</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody *ngFor="let col of photoforproductList;let i =index">
+                <tr>
+                    <td>{{col.Adv_Order_No}}</td>
+                    <td>{{col.Product_Description}}</td>
+                    <td>{{col.Qty}}</td>
+                    <td>
+                        <p-fileUpload #fileInput *ngIf="!col.PDFViewFlag" name="{{i+'name'}}" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event,i)" url="/K4C_Outlet_Advance_Order/Upload_Doc">
+                        </p-fileUpload>
+                        <a [href]="col.ProductPDFLink" *ngIf="col.PDFViewFlag" style="display: block;">
+                            <img [src]="col.ProductPDFLink" class='img-rounded pdf' style="width:100px; height:100px " alt="image">
+                        </a>
+                    </td>
+                    <td><button type="button" (click)="upload(i)" [id]="col.Product_ID" [disabled]="col.uploadbuttondisabled" class="btn btn-primary">
+                        <p-progressSpinner *ngIf="col.uploadSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span class="'fa fa-fw fa fa-upload" *ngIf="!col.uploadSpinner" ></span>
+                                         Upload
+                      </button></td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p-footer>
+        <button *ngIf="this.adornumber" type="button" (click)="ClosePicuploadpopup()" class="btn btn-success">
+            <span class="'fa fa-fw fa fa-check"></span>
+                                  Done
+        </button>
+        <button *ngIf="!this.adornumber" type="button" (click)="PhotoUploadPopup=false" class="btn btn-default">
+            <span class="'fa fa-fw fa fa-times"></span>
+            CLOSE
+       </button>
     </p-footer>
 </p-dialog>
