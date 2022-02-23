@@ -125,9 +125,10 @@ export class TutoBdaReportComponent implements OnInit {
   }
 // EXPORT TO EXCEL
 exportexcel(Arr,fileName): void {
+  const name = fileName.replace(/\s/g, '_');
   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
   const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-  XLSX.writeFile(workbook, fileName+'.xlsx');
+  XLSX.writeFile(workbook, name+'.xlsx');
 }
 
 

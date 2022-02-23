@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
@@ -7,7 +7,8 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
-import { flatMap } from 'rxjs/operators';
+import { flatMap, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-acc-opening-balc-management',
@@ -16,7 +17,9 @@ import { flatMap } from 'rxjs/operators';
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class AccOpeningBalcManagementComponent implements OnInit {
+export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
+  
+  destroy$: Subject<boolean> = new Subject<boolean>();
   tabIndexToView = 0;
   items = []; 
   Spinner = false;
@@ -60,7 +63,10 @@ export class AccOpeningBalcManagementComponent implements OnInit {
     this.GetCostHeadList();
     this.GetFinyearList();
   }
- 
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
   GetAllAcOpeningBalc(valid){
     this.ACOpeningBalcSearhFormSubmitted = true;
     if(valid) {
@@ -74,7 +80,8 @@ export class AccOpeningBalcManagementComponent implements OnInit {
         "Report_Name_String": "Get_Opening_Journal_Data",
         "Json_Param_String": JSON.stringify([tempObj])
        }
-       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.GlobalAPI.getData(obj)
+       .pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
          this.AllAcOpeningBalc = data;
          this.seachSpinner = false;
        })
@@ -83,7 +90,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
   }
 
   GetFinyearList() {
-    this.$http.get('/Common/Get_Fin_Year').subscribe((data: any) => {
+    this.$http.get('/Common/Get_Fin_Year').pipe(takeUntil(this.destroy$)).subscribe((data: any) => {
       this.FinyearList =  data ? JSON.parse(data) : [];
       this.FinyearList.forEach(v => v.Fin_Year_ID += '');
       this.SearchFinyearID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID.toString();
@@ -95,7 +102,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
       "SP_String": "SP_Opening_Journal",
       "Report_Name_String": "GET_Cost_Cent_Name",
      }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
       data.forEach((val, index)=>{
         data[index].label = val.Location;
         data[index].value = val.Cost_Cen_ID;
@@ -110,7 +117,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
       "SP_String": "SP_Opening_Journal",
       "Report_Name_String": "GET_Ledger",
      }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
       data.forEach((val, index)=>{
         data[index].label = val.Ledger_Name;
         data[index].value = val.Ledger_ID;
@@ -130,7 +137,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
           "Report_Name_String": "GET_Sub_Ledger",
           "Json_Param_String": JSON.stringify([{'Ledger_ID' : this.ObjACbalc.Ledger_ID}])
         }
-        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
           data.forEach((val, index)=>{
             data[index].label = val.Sub_Ledger_Name;
             data[index].value = val.Sub_Ledger_ID;
@@ -151,7 +158,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
       "SP_String": "SP_Opening_Journal",
       "Report_Name_String": "GET_Cost_Head",
      }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
       data.forEach((val, index)=>{
         data[index].label = val.Cost_Head_Name;
         data[index].value = val.Cost_Head_ID;
@@ -266,7 +273,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
           "Report_Name_String": "Save_Opening_Journal",
           "Json_Param_String": JSON.stringify(this.ACOpeningBalcList)
         }
-        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
           if(data[0].Column1){
             this.buttonname = "Save";
           this.compacctToast.clear();

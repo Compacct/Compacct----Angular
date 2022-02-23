@@ -134,6 +134,13 @@ OverlayCreateModal = false;
 CreateLightBoxSubmitted = false;
 saveSpinner2 = false;
 ObjAppoConfm = new AppoConfm ();
+
+ConductionAppo_ID = undefined;
+
+EnrolledModalflag = false;
+EnrollededFormSubmiited = false;
+ObjEnrolled = new enroll();
+ProductList =[];
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -168,6 +175,23 @@ ObjAppoConfm = new AppoConfm ();
     this.GetDistributor();
     this.GetASPName();
     this.GetAppoSlotList();
+    this.GetProductList();
+  }
+  GetProductList() {
+    const obj = {
+      "SP_String": "Tutopia_Call_Appointment_Works_SP",
+      "Report_Name_String": "Get_product_For_Enroled"
+    }
+    this.GlobalAPI.CommonPostData(obj,'/Tutopia_Call_Common_SP_For_All')
+      .subscribe((data: any) => {
+        const tempActionTaken= data;
+        // const tempActionTaken = $.grep(data, function (value) { return value.Request_Type !== "Visit Customer" && value.Request_Type !== "Direct Appointment"; });
+        tempActionTaken.forEach(item => {
+          item.label = item.Product_Description;
+          item.value = item.Product_ID;
+        })
+        this.ProductList = tempActionTaken;
+      });
   }
   GetUserList() {
      this.$http
@@ -529,7 +553,7 @@ ObjAppoConfm = new AppoConfm ();
         }
     }
   }
-
+  // CONFIRM APPO
   OpenConfirmAppo(obj){
     this.OnOverlayOpenConfirmAppo();
     if(obj.Appo_ID){
@@ -572,6 +596,7 @@ ObjAppoConfm = new AppoConfm ();
   })
     }
   }
+  // JOURNEY START
   StartJourney(obj) {
     if(obj.Appo_ID) {
       const TempObj = {
@@ -597,6 +622,87 @@ ObjAppoConfm = new AppoConfm ();
     }
   })
     }
+  }
+  // CONDUCTION
+  StartConduction(obj){
+    this.ConductionAppo_ID = undefined;
+  if(obj.Appo_ID) {
+    this.ConductionAppo_ID = obj.Appo_ID; 
+    this.compacctToast.clear();
+    this.compacctToast.add({key: 'c', sticky: true, severity: 'warn', summary: 'Are you sure?', detail: 'Confirm to proceed'}); 
+  }
+    
+  }
+  onConfirmConduction(){
+    if(this.ConductionAppo_ID) {
+      const TempObj = {
+        Appo_ID: this.ConductionAppo_ID,
+    }
+  
+    const obja = {
+      "SP_String":"Tutopia_Call_Appointment_Works_SP",
+      "Report_Name_String": "Update_Conduction_Done",
+      "Json_1_String" : JSON.stringify([TempObj])
+    }
+    this.GlobalAPI
+        .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+    if (data[0].Column1 === 'Done') {
+        this.SaerchFollowup(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ObjAppoConfm.Appo_ID,
+          detail: "Succesfully Updated."
+        });
+    }
+  })
+     }
+  }
+  onRejectConduction(){
+    this.compacctToast.clear('c'); 
+    this.ConductionAppo_ID = undefined;
+  }
+  // ENROLLED
+
+  StartEnrolled(obj){
+    this.ClearEnrolled()
+    if(obj.Appo_ID) {
+      this.ObjEnrolled.Appo_ID = obj.Appo_ID; 
+      this.ObjEnrolled.Lead_ID = obj.Lead_ID; 
+      this.ObjEnrolled.Foot_Fall_ID = obj.Foot_Fall_ID; 
+      this.ObjEnrolled.User_ID = this.$CompacctAPI.CompacctCookies.User_ID; 
+      this.EnrolledModalflag = true;
+    }
+  }
+  ClearEnrolled(){
+    this.EnrolledModalflag = false;
+    this.EnrollededFormSubmiited = false;
+    this.ObjEnrolled = new enroll();
+  }
+  SaveEnrolled(valid) {
+     this.EnrollededFormSubmiited = true;
+      if (valid) {
+        const obja = {
+          "SP_String":"Tutopia_Call_Appointment_Works_SP",
+          "Report_Name_String": "Update_Enroled",
+          "Json_1_String" : JSON.stringify([this.ObjEnrolled])
+        }
+        this.GlobalAPI
+            .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+            if (data.Column1) {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'success',
+                detail: "Succesfully Forwarded."
+              });
+              this.SaerchFollowup(true);
+              this.ClearEnrolled();
+            }
+          })
+      }
   }
   // CHANGE
   LeadTransferCheckBoxChanged() {
@@ -1197,4 +1303,13 @@ class ForwardFieldSales{
 class AppoConfm{
   Appo_ID:any;
   Journey_Time:any;
+}
+class enroll{
+  Product_ID:string;
+  Registered_No:string;
+  Coupon_Code:string;
+  Appo_ID:string;
+  Lead_ID:String;
+  Foot_Fall_ID :String;
+  User_ID:string;
 }

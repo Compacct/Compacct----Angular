@@ -1,4 +1,22 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onRejectConduction()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmConduction()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onRejectConduction()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -212,7 +230,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a (click)="ShowForwardFieldSales(col)">
+                                                    <a *ngIf="col.Status !== 'Enroled'" (click)="ShowForwardFieldSales(col)">
                                                         <i class="fa fa-forward" aria-hidden="true"></i> Forward
                                                     </a>
                                                 </li>
@@ -224,6 +242,16 @@
                                                 <li *ngIf="(col.ASP_Confirm === 'Y'  && col.ASP_Journey_Started === 'N')">
                                                     <a (click)="StartJourney(col)">
                                                         <i class="fa fa-briefcase" aria-hidden="true"></i> Start Journey
+                                                    </a>
+                                                </li>
+                                                 <li *ngIf="(col.ASP_Confirm === 'Y'  && col.ASP_Journey_Started === 'Y' && col.Conduction_Done === 'N')">
+                                                    <a (click)="StartConduction(col)">
+                                                        <i class="fa fa-angle-double-right" aria-hidden="true"></i> Conduction Done
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="col.Conduction_Done === 'Y' && col.Status !== 'Enroled'">
+                                                    <a (click)="StartEnrolled(col)">
+                                                        <i class="fa fa-clock-o" aria-hidden="true"></i> Enrolled
                                                     </a>
                                                 </li>
                                                 <!-- <li><a (click)="RedirectPendingSubscriptionTutopia(col.Foot_Fall_ID)"><i
@@ -1057,6 +1085,75 @@
             CLOSE
         </button>
         <button type="button" class="btn btn-primary" (click)="SaveForwardFieldSales(ResceduleForwardLeadModalUpdate.form.valid)">
+            SAVE
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- ENROLLED -->
+<p-dialog header="ENROLLED" [appendTo]="'body'" [visible]="EnrolledModalflag" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="EnrolledModalflagUpdate" style="margin-top:2em" #EnrolledModalflagUpdate="ngForm" novalidate>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label"
+                  >Product <sup class="text-danger">*</sup> &nbsp;
+                </label>
+
+                <p-dropdown [options]="ProductList" name="Product" #Product2 [(ngModel)]="ObjEnrolled.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'"  [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                    [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #Product="ngModel" [required]="true" [ngClass]="{'clearance':EnrollededFormSubmiited && Product.errors?.required}" required>
+                </p-dropdown>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Registered No<sup class="text-danger">*</sup></label>
+                <input
+               class="form-control"
+               name="mobile1"
+               #mobile1="ngModel"
+               CompacctDigitonly="true"
+               [ngClass]="{
+                 clearance:
+                   (EnrollededFormSubmiited && mobile1.errors?.required) ||
+                   (mobile1.errors?.minlength && mobile1.touched)
+               }"
+               [(ngModel)]="ObjEnrolled.Registered_No"
+               placeholder="Mobile Number"
+               minlength="10"
+               maxlength="10"
+               required
+             />
+
+
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Coupon Code<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control"
+                name="Coupon"
+                  #Coupon="ngModel"
+                  [(ngModel)]="ObjEnrolled.Coupon_Code"
+                  [ngClass]="{
+                    clearance:
+                    EnrollededFormSubmiited && Coupon.errors?.required
+                  }"
+                  placeholder="Coupon Code"
+                  required>
+              </div>
+           
+
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="EnrolledModalflag = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button type="button" class="btn btn-primary" (click)="SaveEnrolled(EnrolledModalflagUpdate.form.valid)">
             SAVE
         </button>
     </p-footer>
