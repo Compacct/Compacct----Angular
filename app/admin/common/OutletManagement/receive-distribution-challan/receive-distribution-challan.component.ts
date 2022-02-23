@@ -739,10 +739,12 @@ export class ReceiveDistributionChallanComponent implements OnInit {
 }
 SaleBillPrint(obj) {
   //console.log("billno ===", obj.Bill_No)
+  if (this.$CompacctAPI.CompacctCookies.User_Type != 'U'){
   if (obj.Bill_No) {
     window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
     );
+  }
   }
 }
   updateexpirydate(){

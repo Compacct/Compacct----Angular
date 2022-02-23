@@ -1649,10 +1649,12 @@ SaveFranSaleBill(){
 }
 SaleBillPrint(obj) {
   //console.log("CR_No ===", obj.CR_No)
+  if (this.$CompacctAPI.CompacctCookies.User_Type != 'U'){
   if (obj.CR_No) {
     window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.CR_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
     );
+  }
   }
 }
 
