@@ -268,6 +268,7 @@ import { K4cCreditNoteBrowseComponent } from './common/MaterialManagement/k4c-cr
 import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-support-calender-dashboard/tuto-support-calender-dashboard.component";
 import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-saleable-closing-stock/non-saleable-closing-stock.component';
 import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component';
+import { EngineeringQuotationNepalComponent } from './common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component';
 
 
 
@@ -469,6 +470,7 @@ import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc
     TutoSupportCalenderDashboardComponent,
     NonSaleableClosingStockComponent,
     AccOpeningBalcManagementComponent,
+    EngineeringQuotationNepalComponent,
   ],
   imports: [
     CommonModule,

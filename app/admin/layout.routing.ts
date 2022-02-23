@@ -184,6 +184,7 @@ import { K4cCreditNoteBrowseComponent } from './common/MaterialManagement/k4c-cr
 import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-support-calender-dashboard/tuto-support-calender-dashboard.component";
 import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-saleable-closing-stock/non-saleable-closing-stock.component';
 import { AccOpeningBalcManagementComponent } from "./common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component";
+import { EngineeringQuotationNepalComponent } from "./common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component";
 
 
 
@@ -1325,6 +1326,13 @@ const layoutRoutes: Routes = [{
   component: AccOpeningBalcManagementComponent,
   data: {
     title: 'Account Opening Balance Mangement'
+  }
+},
+{
+  path: 'BL_CRM_Engineering_Quotation_Nepal',
+  component: EngineeringQuotationNepalComponent,
+  data: {
+    title: 'Engineering Quotation'
   }
 }
 

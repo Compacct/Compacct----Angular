@@ -21,16 +21,22 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   url = window["config"];
   leadFollowUpList = [];
   leadFollowUpListBackup = [];
+  leadFollowUpList2 = [];
+  leadFollowUpListBackup2 = [];
   seachSpinner = false;
+  seachSpinner2 = false;
   SearchFormSubmitted = false;
+  SearchFormSubmitted2 = false;
   LeadTransferModalBtn = false;
   SelectAllLead = false;
 
   ObjSearch = new Search();
+  ObjSearch2 = new Search();
   PaginationObj = {
     first: 0,
     rows: 100
   }
+
 
   UserList = [];
   ActionList = [];
@@ -89,6 +95,32 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   SelectedASPConfirmList = [];
   SelectedASPJourneyStartedList = [];
 
+  
+  PinList2 = [];
+  Appointment_ForList2 = [];
+  DaysList2 = [];
+  RegisterList2 = [{ label: 'REGISTERED', value: '1' }, { label: 'UN REGSITERED', value: '0' }]
+  ZonalSalesHeadList2 = [];
+  DAppoSlotList2 = [];
+  SchoolNameList2 = [];
+  SchoolPinList2 = [];
+  DistributorNameList2 = [];
+  ASPConfirmList2 = [{ label: 'Confirmed', value: 'Y' }, { label: 'Not Confirmed', value: 'N' }]
+  ASPJourneyStartedList2 = [{ label: 'Yes ', value: 'Y' }, { label: 'No', value: 'N' }]
+  
+  SelectedPinFilterList2 = [];
+  SelectedAppointmentForFilterList2 = [];
+  SelectedDaysFilterList2 = [];
+  SelectedRegisterFilterList2 = [];
+  SelectedZonalSalesFilterList2 = [];
+  SelectedAppoSlotFilterList2 = [];
+  SelectedSchoolNameFilterList2 = [];
+  SelectedSchoolPinFilterList2 = [];
+  SelectedDistributorNameList2 = [];
+  SelectedASPConfirmList2 = [];
+  SelectedASPJourneyStartedList2 = [];
+
+
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
   Lead_ID = undefined;
@@ -99,18 +131,24 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   ObjStudetail = new Studetail();
   items = [];
   tabIndexToView = 0;
+  tabIndexToViewMain = 0;
   SupportTicketDumplist = [];
   SupportQuestionDumplist = [];
 
   
   NextFollowupFilter: any;
   NextFollowupFilterSelected: any;
+  
+  NextFollowupFilter2: any;
+  NextFollowupFilterSelected2: any;
 
   CallDetailsModalFlag = false;
   CallDetailsObj: any = {};
   
   from_date:any;
   to_date:any;
+  from_date2:any;
+  to_date2:any;
 
   ForwardFieldSalesObj = new ForwardFieldSales();
   ForwardFieldSalesDate = new Date().setDate(new Date().getDate() + 1);
@@ -141,6 +179,7 @@ EnrolledModalflag = false;
 EnrollededFormSubmiited = false;
 ObjEnrolled = new enroll();
 ProductList =[];
+itemsMain = ['PENDING','ENROLLED']
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -154,6 +193,8 @@ ProductList =[];
         if(params.User && params.Action) {
           this.ObjSearch.Current_Action = window.atob(params.Action);
           this.ObjSearch.User_ID = Number(window.atob(params.User));
+          this.ObjSearch2.Current_Action = window.atob(params.Action);
+          this.ObjSearch2.User_ID = Number(window.atob(params.User));
           console.log(window.atob(params.User))
           this.SaerchFollowup(true);
         }
@@ -177,6 +218,8 @@ ProductList =[];
     this.GetAppoSlotList();
     this.GetProductList();
   }
+  TabClickMain(e) {
+  }
   GetProductList() {
     const obj = {
       "SP_String": "Tutopia_Call_Appointment_Works_SP",
@@ -199,6 +242,7 @@ ProductList =[];
         .subscribe((data: any) => {
             this.UserList = data.length ? data : [];
          this.ObjSearch.User_ID =  this.ObjSearch.User_ID ? this.ObjSearch.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
+         this.ObjSearch2.User_ID =  this.ObjSearch2.User_ID ? this.ObjSearch2.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
         });
   }
   GetActionList() {
@@ -267,6 +311,7 @@ ProductList =[];
           this.SalesUserList = data.length ? data : [];
           this.UserList = data.length ? data : [];
           this.ObjSearch.User_ID =  this.ObjSearch.User_ID ? this.ObjSearch.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
+          this.ObjSearch2.User_ID =  this.ObjSearch.User_ID ? this.ObjSearch2.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
         });
     // this.$http
     //     .get(this.url.apiGetUserListAll)
@@ -461,7 +506,7 @@ ProductList =[];
     return returnBol;
   }
   }
-  // FOR SEARCH
+  // FOR SEARCH PENDING TAB -1
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.from_date = dateRangeObj[0];
@@ -552,6 +597,222 @@ ProductList =[];
             default:
         }
     }
+  }
+  // FOR SEARCH ENROLLED TAB -2 
+  getDateRange2(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.from_date2 = dateRangeObj[0];
+      this.to_date2 = dateRangeObj[1];
+    }
+  }
+  SaerchFollowup2(valid) {
+    this.SearchFormSubmitted2 = true;
+    this.leadFollowUpList2 = [];
+    this.leadFollowUpListBackup2 = [];
+    this.LeadTransferCheckBoxChanged();
+    if (valid) {
+      this.seachSpinner2 = true;
+      this.ObjSearch2.User_ID = this.ObjSearch2.User_ID ? this.ObjSearch2.User_ID : '0';
+      this.ObjSearch2.Current_Action = this.ObjSearch2.Current_Action ? this.ObjSearch2.Current_Action : '';
+      const tempObj = {
+        'Start_Date': this.from_date2 ? this.DateService.dateConvert(new Date(this.from_date2))
+        : this.DateService.dateConvert(new Date()),
+        'End_Date' : this.to_date2  ? this.DateService.dateConvert(new Date(this.to_date2))
+        : this.DateService.dateConvert(new Date()),
+        'User_ID' : this.ObjSearch2.User_ID
+      }
+      const obj = {
+        "Json_Param_String" : JSON.stringify([tempObj])
+      }
+     // this.GetFilteredItems();
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.$http
+          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Channel sale Student Follow-up v4 Enroled",obj)
+          .subscribe((data: any) => {
+            const SortData = data ? JSON.parse(data) : [];
+            SortData.sort(function(a:any,b:any){
+              return new Date(b.Next_Followup).valueOf() - new Date(a.Next_Followup).valueOf();
+            });
+            this.leadFollowUpList2 = [...SortData];
+            this.leadFollowUpListBackup2 = [...SortData];
+            this.leadFollowUpList2.forEach(function (element) {
+              element.Selected = false;
+            });
+            this.GetDistinct2();
+            this.GlobalFilterChange2();
+            this.seachSpinner2 = false;
+      });
+      // this.$http
+      //     .post("/Common/Create_Common_task?Report_Name=Browse Student Follow-up v2",obj)
+      //     .subscribe((data: any) => {
+            
+      // });
+    }
+
+  }
+  
+  GetDistinct2() {
+    let PinFilter = [];
+    let AppointmentForFilter = [];
+    let DaysFilter = [];
+    let ZonalSalesFilter = [];
+    let SlotFilter = [];
+    let SchoolNameFilter = [];
+    let SchoolPinFilter = [];
+    let DistributorNameFilter = [];
+
+    this.PinList2 = [];
+  this.Appointment_ForList2 = [];
+  this.DaysList2 = [];
+  this.ZonalSalesHeadList2 = [];
+  this.DAppoSlotList2 = [];
+  this.SchoolNameList2 = [];
+  this.SchoolPinList2 = [];
+  this.DistributorNameList2 =[];
+    this.leadFollowUpListBackup2.forEach((item) => {
+      if (PinFilter.indexOf(item.Pin) === -1) {
+        PinFilter.push(item.Pin);
+        this.PinList2.push({ label: item.Pin, value: item.Pin });
+      }
+      if (AppointmentForFilter.indexOf(item.Appointment_For) === -1) {
+        AppointmentForFilter.push(item.Appointment_For);
+        this.Appointment_ForList2.push({ label: item.Appointment_For, value: item.Appointment_For });
+      }
+      if (DaysFilter.indexOf(item.Days) === -1) {
+        DaysFilter.push(item.Days);
+        this.DaysList2.push({ label: item.Days, value: item.Days });
+      }
+      if (SlotFilter.indexOf(item.Appo_Time_Slot) === -1) {
+        SlotFilter.push(item.Appo_Time_Slot);
+        this.DAppoSlotList2.push({ label: item.Appo_Time_Slot, value: item.Appo_Time_Slot });
+      }
+      if (ZonalSalesFilter.indexOf(item.Zonal_Sales_Head) === -1) {
+        ZonalSalesFilter.push(item.Zonal_Sales_Head);
+        this.ZonalSalesHeadList2.push({ label: item.Zonal_Sales_Head, value: item.Zonal_Sales_Head });
+      }
+      if (SchoolNameFilter.indexOf(item.School_Name) === -1) {
+        SchoolNameFilter.push(item.School_Name);
+        this.SchoolNameList2.push({ label: item.School_Name, value: item.School_Name });
+      }
+      if (SchoolPinFilter.indexOf(item.School_PIN) === -1) {
+        SchoolPinFilter.push(item.School_PIN);
+        this.SchoolPinList2.push({ label: item.School_PIN, value: item.School_PIN });
+      }
+      if (DistributorNameFilter.indexOf(item.Distributor_Name) === -1) {
+        DistributorNameFilter.push(item.Distributor_Name);
+        this.DistributorNameList2.push({ label: item.Distributor_Name, value: item.Distributor_Name });
+      }
+    });
+  }
+  NextFollowDateFilterChange2(e) {
+    this.NextFollowupFilterSelected2 = undefined
+    if (e) {
+      this.NextFollowupFilterSelected2 =  moment(e, "YYYY-MM-DD")["_d"];
+      console.log(this.NextFollowupFilterSelected2)
+      this.GlobalFilterChange();
+    }
+  }
+  GlobalFilterChange2 () {
+    let searchFields = [];
+
+    let PinFilter = [];
+    let AppointmentForFilter = [];
+    let DaysFilter = [];
+    let RegisterFilter = [];
+    let ZonalSalesFilter = [];
+    let SlotFilter = [];
+    let SchoolNameFilter = [];
+    let SchoolPinFilter = [];
+    let DistributorNameFilter = [];
+    let ASPConfirmFilter = [];
+    let ASPJourneyStartedFilter = [];
+
+    if (this.SelectedPinFilterList2.length) {
+      searchFields.push('Pin');
+      PinFilter = this.SelectedPinFilterList2;
+    }
+    if (this.SelectedAppointmentForFilterList2.length) {
+      searchFields.push('Appointment_For');
+      AppointmentForFilter = this.SelectedAppointmentForFilterList2;
+    }
+    if (this.SelectedDaysFilterList2.length) {
+      searchFields.push('Days');
+      DaysFilter = this.SelectedDaysFilterList2;
+    }
+    if(this.SelectedRegisterFilterList2.length) {
+      searchFields.push('Foot_Fall_ID');
+      RegisterFilter = this.SelectedRegisterFilterList2;
+    }
+    if (this.SelectedZonalSalesFilterList2.length) {
+      searchFields.push('Zonal_Sales_Head');
+      ZonalSalesFilter = this.SelectedZonalSalesFilterList2;
+    }
+    if (this.SelectedAppoSlotFilterList2.length) {
+      searchFields.push('Appo_Time_Slot');
+      SlotFilter = this.SelectedAppoSlotFilterList2;
+    }
+    if (this.SelectedSchoolNameFilterList2.length) {
+      searchFields.push('School_Name');
+      SchoolNameFilter = this.SelectedSchoolNameFilterList2;
+    }
+    if (this.SelectedSchoolPinFilterList2.length) {
+      searchFields.push('School_PIN');
+      SchoolPinFilter = this.SelectedSchoolPinFilterList2;
+    }
+    if (this.SelectedDistributorNameList2.length) {
+      searchFields.push('Distributor_Name');
+      DistributorNameFilter = this.SelectedDistributorNameList2;
+    }
+    if (this.SelectedASPConfirmList2.length) {
+      searchFields.push('ASP_Confirm');
+      ASPConfirmFilter = this.SelectedASPConfirmList2;
+    }
+    if (this.SelectedASPJourneyStartedList2.length) {
+      searchFields.push('ASP_Journey_Started');
+      ASPJourneyStartedFilter = this.SelectedASPJourneyStartedList2;
+    }
+    const ctrl = this;
+    this.leadFollowUpList2 = [];
+    if (searchFields.length) {
+      const ctrl = this;
+      const LeadArr = this.leadFollowUpListBackup2.filter(function (e) {
+        return ((PinFilter.length ? PinFilter.includes(e['Pin']) : true)
+          && (AppointmentForFilter.length ? AppointmentForFilter.includes(e['Appointment_For']) : true)
+          && (DaysFilter.length ? DaysFilter.includes(e['Days']) : true)
+          && (SlotFilter.length ? SlotFilter.includes(e['Appo_Time_Slot']) : true)
+          && (ZonalSalesFilter.length ? ZonalSalesFilter.includes(e['Zonal_Sales_Head']) : true)
+          && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
+          && (SchoolNameFilter.length ? SchoolNameFilter.includes(e['School_Name']) : true)
+          && (SchoolPinFilter.length ? SchoolPinFilter.includes(e['School_PIN']) : true)
+          && (DistributorNameFilter.length ? DistributorNameFilter.includes(e['Distributor_Name']) : true)
+          && (ASPConfirmFilter.length ? ASPConfirmFilter.includes(e['ASP_Confirm']) : true)
+          && (ASPJourneyStartedFilter.length ? ASPJourneyStartedFilter.includes(e['ASP_Journey_Started']) : true)
+          );
+      });
+      this.leadFollowUpList2 = LeadArr.length ? LeadArr : [];
+    } else {
+      this.leadFollowUpList2 = this.leadFollowUpListBackup2;
+    }
+  }
+  RegisterFilterFunc2 (foot , arr){
+    const footFallID = foot.toString();
+  if(footFallID) {
+    let returnBol = false;
+    for (let index = 0; index < arr.length; index++) {
+      const e= arr[index];
+      if(e === '0' && footFallID === '0') {
+        returnBol = true;
+        break;
+      } else if(e !== '0' && footFallID !== '0') { 
+        returnBol = true;
+        break;
+      } else {
+        returnBol = false;
+        break;
+      }
+    }
+    return returnBol;
+  }
   }
   // CONFIRM APPO
   OpenConfirmAppo(obj){

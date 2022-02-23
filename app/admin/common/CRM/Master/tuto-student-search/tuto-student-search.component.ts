@@ -42,6 +42,8 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
   SupportTicketDumplist = [];
   SupportQuestionDumplist = [];
   SupportFeedbackDetailsFollowupList = [];
+  AppointmentList = [];
+  AppointmentColList = [];
 
   ShowOrderModal = false;
   Orderdetaillist2 = [];
@@ -93,7 +95,7 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["Student Detail","Followup Details", "Billing Details","Order Details","Support Question Dump","Support Ticket Dump" ,"Support Followup Feedback Details"];
+    this.items = ["Student Detail","Followup Details", "Billing Details","Order Details","Support Question Dump","Support Ticket Dump" ,"Support Followup Feedback Details","Appointments Details"];
     this.Header.pushHeader({
       Header: "Student Search",
       Link: " CRM -> Student Search"
@@ -111,7 +113,7 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
    }
   TabClick(e){
     this.tabIndexToView = e.index;
-    this.items = ["Student Detail","Followup Details", "Billing Details","Order Details","Support Question Dump","Support Ticket Dump","Support Followup Feedback Details"];
+    this.items = ["Student Detail","Followup Details", "Billing Details","Order Details","Support Question Dump","Support Ticket Dump","Support Followup Feedback Details","Appointments Details"];
 
   }
   getDateRange(dateRangeObj) {
@@ -278,6 +280,32 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
 
      })
   }
+  
+  GetAppointmentList() {
+    this.AppointmentList = [];
+    if(this.ObjStusearchForm.Lead_ID) {
+      const Objtemp = {
+        Lead_ID : this.ObjStusearchForm.Lead_ID
+      };
+      const objj = {
+        "SP_String": "Tutopia_Create_Common_SP",
+        "Report_Name_String" : "Get_Students_Appointment",
+        "Json_Param_String" : JSON.stringify([Objtemp])
+      }
+      this.GlobalAPI.CommonPostData(objj,'Create_Common_task_Tutopia_Call?Report_Name=Get_Students_Appointment').subscribe((data:any)=>{
+        this.AppointmentList = data.length ? data : [];
+        const keyslist = this.AppointmentList.length ? Object.keys(this.AppointmentList[0]) : [];
+        this.AppointmentColList = [];
+        keyslist.forEach(item =>{
+          const hobj = { field: item, header: item.replace(/_/g,' ') };
+          this.AppointmentColList.push(hobj);
+        })
+        console.log(this.AppointmentList)
+  
+       })
+    }
+    
+  }
   GetAllUserList() {
     const obj = {
       "Report_Name": "Get_Direct_Sale_Users ",
@@ -311,11 +339,13 @@ export class TutoStudentSearchComponent implements OnInit,AfterViewInit {
     this.FollowupList = [];
     this.Billingdetaillist = [];
     this.SupportFeedbackDetailsFollowupList = [];
+    this.AppointmentList = [];
     if(obj.Lead_ID){
       this.ObjStusearchForm.Foot_Fall_ID = obj.Foot_Fall_ID;
       this.ObjStusearchForm.Lead_ID = obj.Lead_ID;
       this.GetStudentdetails();
       this.GetFollowupList();
+      this.GetAppointmentList();
       if(obj.Foot_Fall_ID.toString() !== '0') {
         this.GetBillingdetaillist();
         this.GetOrderdetaillist();
