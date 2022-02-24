@@ -577,6 +577,29 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       })
     }
   }
+  DownloadFile(file){
+    if (file.Contract_ID) {
+      const ObjT = {
+        Contract_ID: file.Contract_ID
+      }
+      const obj = {
+        "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
+        "Report_Name_String": "Get_Engg_CRM_Installed_Machine_Service_Contract",
+        "Json_Param_String": JSON.stringify([ObjT])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        //this.EditList = data;
+        this.PDFViewFlag = data[0].Document_Upload ? true : false;
+        this.ProductPDFLink = data[0].Document_Upload
+         ? data[0].Document_Upload
+         : undefined;
+         window.open(
+          this.ProductPDFLink,
+          'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+        );
+      })
+    }
+  }
   onConfirm() {}
   onReject() {}
 
