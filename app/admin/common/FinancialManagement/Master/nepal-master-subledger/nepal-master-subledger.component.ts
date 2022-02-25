@@ -640,6 +640,11 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.ObjLocation = new Location();
     this.LocationEditFlag = false;
   }
+
+  // DOCUMENTS
+  GetFlagFromDocument
+
+
   // 
   printPDF(subledgerid) {
     if (subledgerid) {

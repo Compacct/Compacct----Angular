@@ -112,27 +112,37 @@
                                                 </ng-template>
                                                 <ng-template pTemplate="header">
                                                     <tr>
-                                                       <th>Ledger Name</th>
-                                                    <th>Sub Ledger Name</th>
-                                                    <th>Cost Head Name</th>
-                                                    <th>DR Amt</th>
-                                                    <th>CR Amt</th>
+                                                        <th>Action</th>
+                                                        <th>Fin Year Name</th>
+                                                        <th>Cost Center</th>
+                                                        <th>DR Amt</th>
+                                                        <th>CR Amt</th>
                                                       </tr>
                                                 </ng-template>
                                                 <ng-template pTemplate="body" let-col>
                                                     <tr>
-                                                   
-                                                        <td>{{col.Ledger_Name}} </td>
-                                                    <td>{{col.Sub_Ledger_Name}}</td>
-                                                    <td>{{col.Cost_Head_Name}} </td>
-                                                    <td>{{col.DR_Amt}}</td>
-                                                    <td>{{col.CR_Amt}}</td>
+                                                        <td>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-default tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:33px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li><a  (click)="EditACOpeningBal(col)"><i class="fa fa-fw fa-pencil"></i>Edit</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{col.Fin_Year_Name}} </td>
+                                                        <td>{{col.Location}}</td>
+                                                        <td>{{col.DR_Amt}}</td>
+                                                        <td>{{col.CR_Amt}}</td>
                                                    </tr>
                                                 </ng-template>
                                                 <ng-template pTemplate="paginatorright" let-state>
                                                         Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
                                                 </ng-template>
                                         </p-table>
+                                   
                                     </div>                           
                             
                           </p-tabPanel>
@@ -153,6 +163,7 @@
                                                 clearance: ACOpeningBalcFormSubmitted && Fin_Year_ID.errors?.required
                                               }"
                                               required
+                                              [disabled]="buttonname === 'Update'"
                                             >
                                               <option [ngValue]="undefined">Select</option>
                                               <option
@@ -176,7 +187,8 @@
                                             itemSize="30"
                                             #costcenter="ngModel"
                                             [styleClass]="ACOpeningBalcFormSubmitted &&  costcenter.errors?.required ? 'clearance' :''"
-                                            [required]="true">
+                                            [required]="true"
+                                            [disabled]="buttonname === 'Update'">
                                             </p-dropdown>
                                         </div>
                                         <div class="col-sm-4">                                            

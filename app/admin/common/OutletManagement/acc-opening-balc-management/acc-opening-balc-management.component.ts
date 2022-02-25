@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
 import { flatMap, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-acc-opening-balc-management',
@@ -48,7 +49,8 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private compacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
-    private DateService: DateTimeConvertService
+    private DateService: DateTimeConvertService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -190,6 +192,7 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
     this.ObjACbalc.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID.toString();
     this.ACOpeningBalcList = []; 
     this.getCRDR();
+    this.buttonname = 'Create';
   }
   AddACBal(valid) {
     this.ACOpeningBalcFormSubmitted = true;
@@ -281,7 +284,7 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
            key: "compacct-toast",
            severity: "success",
            summary: "A/c Opening Balance",
-           detail: "Succesfully Created"
+           detail: this.buttonname = 'Create' ? "Succesfully Created" : "Succesfully Updated"
          });
          this.clearData();
          this.SearchCost_Cen_ID = this.SearchCost_Cen_ID ? this.SearchCost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
@@ -302,7 +305,39 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
        }
       }
   }
+  EditACOpeningBal(obj) {
+    console.log(obj)
+    this.buttonname = 'Create';
+    if(obj){
+      
+      this.ngxService.start();
+      const obj1 = {
+        "SP_String": "SP_Opening_Journal",
+        "Report_Name_String": "Get_Opening_Journal_Data_For_Edit",
+        "Json_Param_String": JSON.stringify([{'Cost_Cen_ID' : obj.Cost_Cen_ID, 'Fin_Year_ID': obj.Fin_Year_ID}])
+      }
+      this.GlobalAPI.getData(obj1).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
+        console.log(data)
+        const temp = data ? data : [];
+        this.ACOpeningBalcList = [...temp];
+        this.getCRDR();
+        const obj = {...this.ACOpeningBalcList[0]};
+        this.ObjACbalc = new ACbalc();
+        this.ObjACbalc.Cost_Cen_ID = obj.Cost_Cen_ID;
+        this.ObjACbalc.Ledger_ID = obj.Ledger_ID;
+        this.ObjACbalc.Fin_Year_ID = obj.Fin_Year_ID.toString();      
+        const arr = $.grep(this.LedgerList,(ob:any) => Number(ob.Ledger_ID) === Number(this.ObjACbalc.Ledger_ID));
+        this.ObjACbalc.Ledger_Name = arr.length ? arr[0].Ledger_Name : undefined;
+        this.buttonname = 'Update';
+        setTimeout(() => {        
+          this.items = ["Browse", "Update"];  
+          this.tabIndexToView = 1;
+          this.ngxService.stop();
+        }, 800);
 
+      })
+    }
+  }
 
 }
 class ACbalc {
