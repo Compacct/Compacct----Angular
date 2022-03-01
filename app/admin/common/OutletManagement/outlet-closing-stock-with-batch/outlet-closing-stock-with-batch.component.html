@@ -35,7 +35,7 @@
                                         </app-compacct-daterangepicker>
 
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="Brand" #Brand="ngModel" [(ngModel)]="ObjBrowse.Brand_ID" [attr.disabled]="BrandDisable ? true : null" [ngClass]="{'clearance': SearchFormSubmitted && Brand?.errors?.required}">
                               <option  [ngValue]="undefined">Select</option>
@@ -58,7 +58,7 @@
                             </select>
                                     </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="GetSearchedList(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                 <p-progressSpinner
                                   *ngIf="seachSpinner"
@@ -72,7 +72,13 @@
                                 ></span
                                 >&nbsp;Search
                               </button>
+                                        <button type="button" (click)="exportoexcel3(Searchedlist,'Outlet Closing stock with batch')" [disabled]='!Searchedlist.length' class="btn btn-success custombutton1">
+                                <i class="glyphicon glyphicon-save"></i>&nbsp;  export to excel
+                            </button>
                                     </div>
+
+
+
                                 </div>
 
                             </form>
