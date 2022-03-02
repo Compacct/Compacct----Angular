@@ -317,45 +317,64 @@ export class TutoSaleTreeFieldComponent implements OnInit {
       this.GetIntroducerList(type);
     }
   }
-  SaveUpdateField (valid) {
+ async SaveUpdateField (valid) {
     this.CreateFieldModalFormSubmitted = true;
     if(valid) {
-      const reportName = this.EditFlag ? 'Edit_Distributor_Introducer' : 'Create_Sales_Tree'
-      const obj = {
-        "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
-        "Report_Name_String": reportName,
-        "Json_1_String": JSON.stringify([this.ObjSaleField])
+      const reportName = this.EditFlag ? 'Edit_Distributor_Introducer' : 'Create_Sales_Tree';
+      let UserNameCheck = true;
+      if(this.CreateFieldModalTitle === 'ASP') {
+       let responseData = await this.CheckASPname(); 
+       console.log(responseData)
+       if(responseData[0].Column1.toString() === 'YES') { 
+        UserNameCheck = false;
+       }
       }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log(data);
-        if(data[0].Column1) {
-          let Type:String = this.ObjSaleField.Sales_Type;
-          this.EditFlag = false;
-          this.EditDistributorObj = {};
-          this.ClearData();
-          this.loading = true;
-          this.GetTreeData();
-          this.CreateFieldModal = false;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: '' + Type,
-            detail:  "Succesfully Created"
-          });
-          this.onReject();
-
-        } else {
-          this.compacctToast.clear();
+      if(UserNameCheck) {
+        const obj = {
+          "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
+          "Report_Name_String": reportName,
+          "Json_1_String": JSON.stringify([this.ObjSaleField])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          console.log(data);
+          if(data[0].Column1) {
+            let Type:String = this.ObjSaleField.Sales_Type;
+            this.EditFlag = false;
+            this.EditDistributorObj = {};
+            this.ClearData();
+            this.loading = true;
+            this.GetTreeData();
+            this.CreateFieldModal = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: '' + Type,
+              detail:  "Succesfully Created"
+            });
+            this.onReject();
+  
+          } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+          }
+  
+        })
+      }else {
+        this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
-            summary: "Warn Message",
-            detail: "Error Occured "
+            summary: "Validation Message",
+            detail: "This User Name Already Exits."
           });
-        }
-
-      })
+      }
+      
     }
   }
   ClearData() {  
@@ -476,12 +495,40 @@ export class TutoSaleTreeFieldComponent implements OnInit {
       })
     }
   }
+
+  // Check if ASP Username Exist
+  async AspNameExist(){
+    if(this.ObjSaleField.User_Name) {
+       let responseData = await this.CheckASPname(); 
+       console.log(responseData)
+       if(responseData[0].Column1.toString() === 'YES') {         
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Validation Message",
+            detail: "This User Name Already Exits."
+          });
+       } 
+       
+    }
+  }
+  CheckASPname () {
+    const obj1 = {
+      "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
+      "Report_Name_String": "Check_User_Name_Exist",
+      "Json_1_String": JSON.stringify([{'User_Name' : this.ObjSaleField.User_Name}])
+    }
+    
+    return this.GlobalAPI.getData(obj1).toPromise();
+ }
 }
 
 class SalesTreeField {
   Member_ID:String;   
   Member_Name:String;
   Contact_Name:String;
+  Contact_No:String;
   School_Location:String;
   School_Address:String;
   District :String;

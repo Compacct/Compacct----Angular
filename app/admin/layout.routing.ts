@@ -185,7 +185,7 @@ import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-
 import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-saleable-closing-stock/non-saleable-closing-stock.component';
 import { AccOpeningBalcManagementComponent } from "./common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component";
 import { EngineeringQuotationNepalComponent } from "./common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component";
-
+import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
 
 
 
@@ -1333,6 +1333,13 @@ const layoutRoutes: Routes = [{
   component: EngineeringQuotationNepalComponent,
   data: {
     title: 'Engineering Quotation'
+  }
+},
+{
+  path: 'BL_Txn_GRN_View_With_Purchase_Bill',
+  component: GrnViewPurchaseBillComponent,
+  data: {
+    title: 'GRN View with Purchase Bill'
   }
 }
 

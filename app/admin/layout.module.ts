@@ -270,6 +270,7 @@ import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-
 import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component';
 import { EngineeringQuotationNepalComponent } from './common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component';
 import { CompacctDocumentVaultComponent } from "./shared/compacct.components/compacct.document.vault/compacct.document.vault.component";
+import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
 
 
 
@@ -472,7 +473,8 @@ import { CompacctDocumentVaultComponent } from "./shared/compacct.components/com
     NonSaleableClosingStockComponent,
     AccOpeningBalcManagementComponent,
     EngineeringQuotationNepalComponent,
-    CompacctDocumentVaultComponent
+    CompacctDocumentVaultComponent,
+    GrnViewPurchaseBillComponent
     
   ],
   imports: [

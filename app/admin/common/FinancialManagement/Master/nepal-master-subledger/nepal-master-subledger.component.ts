@@ -409,7 +409,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
     }
   }
   getLocationName(ID){
-    return ID ? this.LocationList.filter(obj => Number(obj.Location_ID) === Number(obj.Location_ID))[0].Location_Name : '-';
+   const tempArr =  this.LocationList.filter(obj => Number(obj.Location_ID) === Number(obj.Location_ID));
+    return (ID && tempArr.length) ? tempArr[0].Location_Name : '-';
   }
 
   //VISTING CARD
@@ -642,7 +643,6 @@ export class NepalMasterSubledgerComponent implements OnInit {
   }
 
   // DOCUMENTS
-  GetFlagFromDocument
 
 
   // 

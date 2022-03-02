@@ -9,15 +9,12 @@ import { environment } from './../../../../../environments/environment';
 
 
 @Component({
-  selector: 'app-compacct.document.vault',
+  selector: 'app-compacct-document-vault',
   templateUrl: './compacct.document.vault.component.html',
   styleUrls: ['./compacct.document.vault.component.css']
 })
 export class CompacctDocumentVaultComponent implements OnInit {
-  ProductPDFFile: any[] =[];
-  PDFFlag = false;
-  PDFViewFlag = false;
-  ProductPDFLink = undefined;
+ 
   Spinner = false;
 
   DocumentFormSubmitted = false;
@@ -37,12 +34,24 @@ export class CompacctDocumentVaultComponent implements OnInit {
   DocumentType = {};
 
   SubLedgerID = undefined;
+  
+  PDFFlag = false;
+  PDFViewFlag = false;
+  ProductPDFLink = undefined;
+  ProductPDFFile:any = {};
   @Input() set documentType(value:any) {
     console.log(value);
-    this.DocumentType = value.DocumentType;
-    this.SubLedgerID = value.SubLedgerID;
+    this.DocumentType = undefined
+    this.SubLedgerID = undefined
+    this.objDocumentVault = {};
+    if(value) {      
+    this.DocumentType = 'SUB_LEDGER';
+    this.SubLedgerID = value;
+    this.objDocumentVault.Indv_Type = this.DocumentType;
+    this.objDocumentVault.Indv_ID = this.SubLedgerID;
     this.GetDocumentTypeList(this.DocumentType);
     this.GetAllDocumentList();
+    }
 
  }
  documentTypeVault = [];
@@ -57,6 +66,7 @@ export class CompacctDocumentVaultComponent implements OnInit {
     private compacctToast: MessageService) { }
 
   ngOnInit() {
+
   }
 
   GetDocumentTypeList(field) {
@@ -82,262 +92,94 @@ export class CompacctDocumentVaultComponent implements OnInit {
 
     }
   }
-
-
-
-
-
-// File Upload
-  FetchPDFFile(event) {
-    this.PDFFlag = false;
-    this.tempDocumentObj ={
-      'file': {},
-      'Remarks' :'',
-      'Doc_Name' : ''
-    }
-    if (event.files.length) {
-      for(let k=0;k < event.files.length;k++){
-        this.tempDocumentObj ={
-          'file': {},
-          'Remarks' :'',
-          'Doc_Name' : ''
-          }
-        this.ProductPDFFile.push(event.files[k]);
-        this.tempDocumentObj.file = event.files[k];
-        this.tempDocumentArr.push(this.tempDocumentObj);
-        this.PDFFlag = true;
-      }
-    }
+  getDocumentName(id) {
+    const tempArr = this.documentTypeVault.filter(obj=> Number(obj.Document_Type_ID) === Number(id));
+    return id && tempArr.length ? tempArr[0].Document_Type_Name : '-';
   }
-  onClear(e,file){
-    for(let k=0;k < this.ProductPDFFile.length;k++){
-      if(this.ProductPDFFile[k].name === file.name){
-        this.ProductPDFFile.splice(k,1);
-        this.tempDocumentArr.splice(k,1);
-        this.fileInput.remove(e,k);
-      }
-    }
-  }
-  DocumentUploader(fileData) {
-  const endpoint = "/Master_Product_V2/Upload_Doc";
-  const formData: FormData = new FormData();
-  formData.append("aFile", fileData);
-  this.$http.post(endpoint, formData).subscribe(data => {
-    console.log(data);
-  });
-  }
-  // GET DOCUMENT
-  GetDocument(foofFall) {
-    this.DocumentList = [];
-    if(foofFall) {
-      const type = this.DocumentType["name"] === "Document" ? 'Normal':'Awarding';
-      const params = new HttpParams().set("Foot_Fall_ID", foofFall)
-      .set("DType", type);
-      this.$http
-        .get("/BL_CRM_Txn_Enq_Tender/Get_Tender_Document_Json", { params })
-        .subscribe((data: any) => {
-          this.DocumentList = data ? JSON.parse(data) : [];
-        });
+// 
 
-    }
+FetchPDFFile(event) {
+  this.PDFFlag = false;
+  this.ProductPDFFile = {};
+  if (event) {
+    this.ProductPDFFile = event.files[0];
+    this.PDFFlag = true;
   }
-  mergeData(k){
-    this.ObjDocument.Doc_Name = undefined;
-    this.ObjDocument.Remarks = undefined;
-    this.ObjDocument.Foot_Fall_ID = this.FootFall;
-    this.ObjDocument.DType= this.DocumentType["name"] === "Document" ? 'Normal':'Awarding';
-    this.ObjDocument.User_ID = this.commonApi.CompacctCookies.User_ID;
-    this.ObjDocument.Posted_On= this.DateService.dateConvert(new Date());
-    this.ObjDocument.Doc_Name = this.tempDocumentArr[k].Doc_Name;
-    this.ObjDocument.Remarks = this.tempDocumentArr[k].Remarks;
-    return JSON.stringify([this.ObjDocument])
-  }
-  // SAVE
-  async  SaveDocument(valid){
+}
+
+SaveDocDetails(valid) {
+  this.DocumentFormSubmitted = false;
+  if (valid && this.ProductPDFFile['size']) {
     this.DocumentFormSubmitted = true;
-    if(valid && this.PDFFlag ) {
-      this.Spinner = true;
-      const endpoint = "/BL_CRM_Txn_Enq_Tender/Upload_Tender_Document";
-      for(let k=0;k < this.ProductPDFFile.length;k++){
-        const formData: FormData = new FormData();
-      formData.append("anint",   this.FootFall );
-      formData.append("aFile",   this.ProductPDFFile[k] );
-      formData.append("Enq_Tender_String", this.mergeData(k));
-      console.log(this.ProductPDFFile[k]);
-        const mgs = await this.SaveDoc(k);
-        console.log('Done' + k);
-        const totalLength = this.ProductPDFFile.length -1;
-        if(k ===totalLength) {
-            this.compacctToast.clear();
-              this.compacctToast.add({
-                key: "compacct-toast",
-                severity: "success",
-                summary: "Lead ID  :" + this.FootFall,
-                detail: "Document uploaded successfully"
-              });
-              this.GetDocument(this.FootFall);
-              this.Spinner = false;
-              this.PDFFlag = false;
-              this.ProductPDFFile = [];
-              this.fileInput.clear();
-              this.tempDocumentArr = [];
-              this.tempDocumentObj ={
-                'file': {},
-                'Remarks' :'',
-                'Doc_Name' : ''
-              }
-              this.DocumentFormSubmitted = false;
-              this.ObjDocument = new Document();
-            console.group("Compacct V2");
-            console.log("%c  Document Sucess:", "color:green;");
-            console.log(endpoint);
-        }
-      // this.$http.post(endpoint, formData).subscribe((data: any) => {
-      //   if (data.success === true) {
-      //     const totalLength = this.ProductPDFFile.length -1;
-      //     if(k ===totalLength) {
-      //         this.compacctToast.clear();
-      //          this.compacctToast.add({
-      //             key: "compacct-toast",
-      //             severity: "success",
-      //             summary: "Lead ID  :" + this.FootFall,
-      //             detail: "Document uploaded successfully"
-      //           });
-      //           this.GetDocument(this.FootFall);
-      //           this.Spinner = false;
-      //           this.PDFFlag = false;
-      //           this.ProductPDFFile = [];
-      //           this.fileInput.clear();
-      //           this.tempDocumentArr = [];
-      //           this.tempDocumentObj ={
-      //             'file': {},
-      //             'Remarks' :'',
-      //             'Doc_Name' : ''
-      //           }
-      //           this.DocumentFormSubmitted = false;
-      //           this.ObjDocument = new Document();
-      //         console.group("Compacct V2");
-      //         console.log("%c  Document Sucess:", "color:green;");
-      //         console.log(endpoint);
-      //     }
-
-      //   } else {
-      //     this.compacctToast.clear();
-      //     this.compacctToast.add({
-      //       key: "compacct-toast",
-      //       severity: "error",
-      //       summary: "Warn Message",
-      //       detail: "Error Occured "
-      //     });
-      //   }
-      // });
-      }
-
-    } else {
-      if(!this.PDFFlag ){
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-          detail: "No File Found, Please Choose a File "
-        });
-      }
+    this.Spinner = true;
+    const SendObj = {
+      Document_Type_ID : this.objDocumentVault.Document_Type_ID,
+      Indv_Type :  this.objDocumentVault.Indv_Type,
+      Indv_ID : this.objDocumentVault.Indv_ID
     }
-  }
-  Update(obj,i) {
-    if (obj.Doc_Name) {
-      const SendObj = {
-        'Doc_ID': obj.Doc_ID ,
-        'Doc_Name': obj.Doc_Name,
-        'Remarks' : obj.Remarks
-      }
-      this.$http
-    .post("/BL_CRM_Txn_Enq_Tender/Update_Document_Name_Remarks",SendObj)
-    .subscribe((data: any) => {
-      if (data.success === true) {
-        this.EditModeFlag=  undefined;
-        this.GetDocument(this.FootFall);
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Document ID : " +obj.Doc_ID ,
-          detail: "Updated Successfully"
-        });
-         // this.clearData();
-        console.group("Compacct V2");
-        console.log("%c  Document Edit Sucess:", "color:green;");
-        console.log("/BL_CRM_Txn_Enq_Task/Update_Document_Name_Remarks");
-      } else {
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-          detail: "Error Occured "
-        });
-      }
-    });
+    this.$http
+  .post("/Document_Vault/Insert_Document",SendObj)
+  .subscribe((data: any) => {
+    console.log(data)
+    if (data.Document_Type_Txn_ID) {
+      this.upload(data.Document_Type_Txn_ID);
+      // this.compacctToast.clear();
+      // this.compacctToast.add({
+      //   key: "compacct-toast",
+      //   severity: "success",
+      //   summary: "Document ID : " +obj.Doc_ID ,
+      //   detail: "Updated Successfully"
+      // });
+      // this.clearData();
     } else {
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
         severity: "error",
         summary: "Warn Message",
-        detail: "Document Name Required ! "
+        detail: "Error Occured "
       });
     }
-  }
-  SendEmail(){
-    if (this.FootFall ) {
-      const obj = {
-        'Foot_Fall_ID' : this.FootFall
-      }
-      this.$http
-    .post("/BL_CRM_Txn_Enq_Tender/Email_Tender", obj)
-    .subscribe((data: any) => {
-      if (data.success === true) {
-        console.log('Email Send');
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "",
-          detail: "Succesfully Email Sent"
-        });
-        this.ClearOutput();
-      }
+  });
+  } else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Document Name Required ! "
     });
-    }
+  }
+}
+async upload(id){
+  const formData: FormData = new FormData();
+  formData.append("anint", id);
+  formData.append("aFile", this.ProductPDFFile);
+  let response = await fetch('/Document_Vault/Upload_PDF',{ 
+                method: 'POST',
+                body: formData // This is your file object
+              });
+  let responseoBJ = await response.json();
+  console.log(responseoBJ)
+  if(responseoBJ && responseoBJ.success) {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      summary: 'Document ID : ' + id,
+      detail: "Document Succesfully Saved."
+    });
+    this.Spinner = false;
+    this.GetAllDocumentList();
+    this.objDocumentVault.Indv_Type = this.DocumentType;
+    this.objDocumentVault.Indv_ID = this.SubLedgerID;
 
   }
+};
+OpenInNewTab(File_URL){
+  window.open(File_URL,'_blank');
+}
 
-  async SaveDoc (ind) {
-    const obj ={"Enq_Tender_String": this.mergeData(ind) }
-    const data = await this.$http.post('/BL_CRM_Txn_Enq_Tender/Insert_BL_CRM_Txn_Enq_Tender_Document',obj).toPromise();
-    console.log(data['Doc_Id']);
-     const UploadDoc = await this.UploadDoc(ind , data['Doc_Id']);
-     console.log(UploadDoc[0].ImageURL);
-     const UpdateDocObj = {
-      'Doc_Id' :  data['Doc_Id'],
-      'File_URL' : UploadDoc[0].ImageURL
-    }
-    const UpdatedDOC = await this.$http.post('/BL_CRM_Txn_Enq_Tender/Update_Document_URL',UpdateDocObj).toPromise();
-    console.log(UpdatedDOC['success'])
-  }
-  UploadDoc(ind,docId) {
-    const formData: FormData = new FormData();
-    formData.append("file",this.ProductPDFFile[ind]);
-    const ConTyp = this.ProductPDFFile[ind].type;
-    const ext =  this.ProductPDFFile[ind].name.slice((this.ProductPDFFile[ind].name.lastIndexOf(".") - 1 >>> 0) + 2);
-    const endpoint = "https://onlineexamstudent.azurewebsites.net/api/Upload_Tender_Document?code=26GEc0CZNCQAr5vipV99JYVq61m76KzvL2uepn22liB4k9Ys5re9jg==&BlCont=ocpl&ConTyp="+ConTyp+"&FootFall="+this.FootFall+"&DId="+docId+"&ext="+ext;
-    return  this.$http.post(endpoint, formData).toPromise()
-  }
-
-  Edit (obj , index) {
-    this.EditModeFlag = index;
-  }
 
   ClearOutput (){
     this.tempDocumentArr = [];
@@ -349,22 +191,24 @@ export class CompacctDocumentVaultComponent implements OnInit {
     this.clear.emit('clear');
   }
   // DELETE
-  Detete(obj) {
-    if (obj.Doc_ID) {
+  deleteDocumentVault(DocumentTypeTxnID) {
+    if (DocumentTypeTxnID) {
+      if (confirm("Are you sure to Delete?") == true) {
       this.$http
-        .post("/BL_CRM_Txn_Enq_Tender/Delete_Document", { Doc_ID: obj.Doc_ID })
+        .post("/Document_Vault/Delete", { Document_Type_Txn_ID: DocumentTypeTxnID })
         .subscribe((data: any) => {
           if (data.success === true) {
-            this.GetDocument(this.FootFall);
+            this.GetAllDocumentList();
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
               severity: "success",
-              summary: "Document ID: " + obj.Doc_ID,
+              summary: "Document ID: " + DocumentTypeTxnID,
               detail: "Succesfully Deleted"
             });
           }
         });
+      }
     }
   }
 

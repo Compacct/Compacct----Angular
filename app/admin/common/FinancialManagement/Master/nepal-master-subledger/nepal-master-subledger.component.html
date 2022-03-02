@@ -1038,7 +1038,7 @@
                                     </form>
                                 </p-tabPanel>
                                 <p-tabPanel headerStyleClass="compacct-tabs" header="DOCUMENTS" leftIcon= "fa fa-upload" aria-hidden="true" >
-                                    <!-- <app-compacct-document [foofFall]="SubLedgerID" (clear)="GetFlagFromDocument($event)" *ngIf="SubLedgerID"></app-compacct-document> -->
+                                    <app-compacct-document-vault [documentType]="ObjSubledger.Sub_Ledger_ID"  *ngIf="ObjSubledger?.Sub_Ledger_ID"></app-compacct-document-vault>
                                 </p-tabPanel>
                             </p-tabView>
                         </div>

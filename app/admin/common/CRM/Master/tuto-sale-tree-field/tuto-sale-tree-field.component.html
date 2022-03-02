@@ -91,15 +91,38 @@
             </div>
             <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">User Name<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control" placeholder="User name" name="User_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required>
+                 <button *ngIf="ObjSaleField.User_Name  && CreateFieldModalTitle === 'ASP'" (click)="AspNameExist()" class="btn btn-xs btn-primary pull-right"><i class='fa fa-fw fa-refresh'></i>&nbsp;Verify</button>
+               
+                <input type="text" class="form-control" placeholder="User name" autocomplete="off" name="User_Name001" #User_Name001="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name001.errors?.required}" required>
             </div>
             <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "ASP"'>
-                <label class="control-label">Contact Name<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name.errors?.required}" required>
+                <label class="control-label">Contact Name<sup class="text-danger">*</sup>
+                </label>
+                <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #Contact_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name?.errors?.required}" required>
             </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Contact No<sup class="text-danger">*</sup> </label>
+                <input class="form-control"
+                name="Contact_No"
+                #Contact_No="ngModel"
+                CompacctDigitonly="true"
+                [ngClass]="{
+                  clearance:
+                    (CreateFieldModalFormSubmitted && Contact_No.errors?.required) ||
+                    (Contact_No.errors?.minlength && Contact_No.touched)
+                }"
+                [(ngModel)]="ObjSaleField.Contact_No"
+                placeholder="Contact No"
+                minlength="10"
+                maxlength="10"
+                required>
+             </div>
+
+                <!-- <input type="text" class="form-control"  [(ngModel)]="ObjSaleField.Contact_No" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_No?.errors?.required}" required> -->
+          
             <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">Password<sup class="text-danger">*</sup></label>
-                <input type="password" placeholder="Password" class="form-control" name="pass" #pass="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass.errors?.required}" maxlength="10" required>
+                <input type="password" placeholder="Password" autocomplete="off" class="form-control" name="pass001" #pass001="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass001.errors?.required}" maxlength="10" required>
             </div>
             <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "School"'>
                 <label class="control-label">Location<sup class="text-danger"></sup></label>
@@ -185,15 +208,33 @@
             </div>
             <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">User Name<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control" placeholder="User name" name="User_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name.errors?.required}" required disabled>
+                <input type="text" class="form-control" placeholder="User name" name="User_Name002" autocomplete="off" #User_Name002="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name002.errors?.required}" required disabled>
             </div>
             <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "ASP"'>
                 <label class="control-label">Contact Name<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #User_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name.errors?.required}" required [disabled]="CreateFieldModalTitle === 'ASP'">
+                <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #Contact_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name.errors?.required}" required >
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Contact No<sup class="text-danger">*</sup> </label>
+                <input class="form-control"
+                name="Contact_No"
+                #Contact_No="ngModel"
+                CompacctDigitonly="true"
+                [ngClass]="{
+                  clearance:
+                    (CreateFieldModalFormSubmitted && Contact_No.errors?.required) ||
+                    (Contact_No.errors?.minlength && Contact_No.touched)
+                }"
+                [(ngModel)]="ObjSaleField.Contact_No"
+                placeholder="Contact No"
+                minlength="10"
+                maxlength="10"
+                required>
+                <!-- <input type="text" class="form-control" placeholder="Contact No" name="Contact_No" #Contact_No="ngModel" [(ngModel)]="ObjSaleField.Contact_No" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_No?.errors?.required}" required> -->
             </div>
             <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">Password<sup class="text-danger">*</sup></label>
-                <input type="password" placeholder="Password" class="form-control" name="pass" #pass="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass.errors?.required}" maxlength="10" required>
+                <input type="password" placeholder="Password" class="form-control" name="pass002" #pass002="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass002.errors?.required}" maxlength="10" autocomplete="off" required>
             </div>
             <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
                 <label class="control-label">Location<sup class="text-danger"></sup></label>
