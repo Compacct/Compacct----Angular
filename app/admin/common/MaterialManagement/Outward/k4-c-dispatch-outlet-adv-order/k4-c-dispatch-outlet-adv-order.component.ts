@@ -751,6 +751,14 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
+  //Order Print
+PrintOrder(obj) {
+  if (obj.Adv_Order_No) {
+    window.open("/Report/Crystal_Files/K4C/K4C_Advance_Order_Print.aspx?DocNo=" + obj.Adv_Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
+}
   //editmaster(col){}
   deleteAdvDispatch(masterProduct){
     console.log("deleteCol",masterProduct)
