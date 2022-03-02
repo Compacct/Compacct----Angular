@@ -581,6 +581,25 @@ const obj = {
     this.editList = [];
     this.getbilldate();
   }
+  exportoexcel3(Arr,fileName): void {
+    let temp = [];
+     Arr.forEach(element => {
+       const obj = {
+        Doc_No : element.Doc_No,
+        Doc_Date : this.DateService.dateConvert(new Date(element.Doc_Date)),
+        From_Outlet : element.Location,
+        From_Stock_Point : element.godown_name,
+        Closing_Qty : element.Closing_Qty,
+        Total_Amount : element.Total_Amount,
+        Transaction_Date_Time : element.Transaction_Date_Time,
+        Created_By : element.Name
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
 
 }
 class OTclosingwithbatch {
