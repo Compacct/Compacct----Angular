@@ -476,8 +476,10 @@ autoaFranchiseBill() {
          this.selectitem = data;
          this.selectitemView = data;
  
-         this.Product2.applyFocus()
-         this.Product2.containerViewChild.nativeElement.click();
+         if (!this.productSubmit.length) {
+          this.Product2.applyFocus()
+          this.Product2.containerViewChild.nativeElement.click();
+          }
       //  } else {
       //    this.selectitem = [];
       //    this.selectitemView = [];
