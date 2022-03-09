@@ -114,6 +114,29 @@ export class K4cFactoryReturnComponent implements OnInit {
   netamount2: any;
   rtfvoucherno: any;
 
+  Regeneratelist = [];
+  contactname = undefined;
+  taxableRegenerate: any;
+  cgstRegenerate: any;
+  sgstRegenerate: any;
+  igstRegenerate: any;
+  grossamountRegenerate: any;
+  Round_OffRegenerate: any;
+  netamountRegenerate: any;
+  costcenforregenerate = undefined;
+  subledgeridforregenerate: any;
+  RegenerateDocNo = undefined;
+  RegenerateDocDate = undefined;
+  RegenerateCrNo = undefined;
+  RegenerateFProList: any;
+  Regeneratetaxable2: any;
+  Regeneratecgst2: any;
+  Regeneratesgst2: any;
+  Regenerateigst2: any;
+  Regenerategrossamount2: any;
+  RegenerateRound_Off2: string;
+  Regeneratenetamount2: number;
+
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -1595,6 +1618,7 @@ onReject(){
             Bill_Net_Amt : this.netamount2,
             User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
             Remarks : 'Sale bill Against credit note ' + this.rtfvoucherno,
+            Credit_Note_No : this.rtfvoucherno,
             Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
             Total_Taxable : Number(this.taxable2),
             Total_CGST_Amt : Number(this.cgst2),
@@ -1656,6 +1680,327 @@ SaleBillPrint(obj) {
     );
   }
   }
+}
+
+// REGENERATE BILL FROM ADMIN
+dataforregeneratingcrnote(DocNo){
+  this.Regeneratelist = [];
+  this.costcenforregenerate = DocNo.F_Cost_Cen_ID;
+  this.RegenerateDocNo = DocNo.Doc_No;
+  this.RegenerateCrNo = DocNo.CR_No;
+  this.RegenerateDocDate = DocNo.Doc_Date;
+
+  const obj = {
+    "SP_String": "SP_K4C_Accounting_Journal",
+    "Report_Name_String" : "Product Rate Update In RTF Table",
+    "Json_Param_String": JSON.stringify([{Doc_No : DocNo.Doc_No}])
+  }
+this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  console.log("From Api",data);
+  this.Regeneratelist = data;
+  // var Challan_No = data[0].Column1;
+  console.log("this.Regeneratelist",this.Regeneratelist);
+  if (this.Regeneratelist.length) {
+    this.getsubledgeridforRegeneratebill();
+    this.calculateTotalAmtforregeneratebill();
+    this.RegenerateBill();
+  }
+  else {
+    this.costcenforregenerate = undefined;
+    this.RegenerateDocNo = undefined;
+    this.RegenerateCrNo = undefined;
+    this.RegenerateDocDate = undefined;
+    this.GetSearchedlist(true);
+  this.compacctToast.clear();
+     this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "No data found "
+    });
+  }
+   //console.log("this.Objdispatch",this.productDetails);
+
+ })
+}
+calculateTotalAmtforregeneratebill(){
+  this.taxableRegenerate = undefined;
+  this.cgstRegenerate = undefined;
+  this.sgstRegenerate = undefined;
+  this.igstRegenerate = undefined;
+  this.grossamountRegenerate = undefined;
+  let totaltaxRegenerate = 0; 
+  let totalcgstRegenerate = 0;
+  let totalsgstRegenerate = 0;
+  let totaligstRegenerate = 0;
+  let grossamtRegenerate = 0;
+  this.Regeneratelist.forEach(item => {
+    totaltaxRegenerate = totaltaxRegenerate + Number(item.Taxable);
+    totalcgstRegenerate = totalcgstRegenerate + Number(item.CGST_AMT);
+    totalsgstRegenerate = totalsgstRegenerate + Number(item.SGST_AMT);
+    totaligstRegenerate = totaligstRegenerate + Number(item.IGST_AMT);
+    grossamtRegenerate = grossamtRegenerate + Number(item.Net_Amount);
+  });
+  this.taxableRegenerate = (totaltaxRegenerate).toFixed(2);
+  this.cgstRegenerate = (totalcgstRegenerate).toFixed(2);
+  this.sgstRegenerate = (totalsgstRegenerate).toFixed(2);
+  this.igstRegenerate = (totaligstRegenerate).toFixed(2);
+  this.grossamountRegenerate = (grossamtRegenerate).toFixed(2);
+  // Round Off
+  this.Round_OffRegenerate = (Number(this.grossamountRegenerate) - Math.round(this.grossamountRegenerate)).toFixed(2);
+  this.netamountRegenerate = Math.round(this.grossamountRegenerate);
+  //console.log(this.Net_Amount);
+}
+getsubledgeridforRegeneratebill(){
+  //this.ExpiredProductFLag = false;
+ if(this.costcenforregenerate) {
+  const ctrl = this;
+  const regeneratesubledgeridObj = $.grep(ctrl.FranchiseList,function(item: any) {return item.Cost_Cen_ID == ctrl.costcenforregenerate})[0];
+  console.log(regeneratesubledgeridObj);
+  this.subledgeridforregenerate = regeneratesubledgeridObj.Sub_Ledger_ID;
+  //this.franchisecostcenid = subledgeridObj.Cost_Cen_ID;
+  console.log("this.subledgeridforregenerate ==", this.subledgeridforregenerate)
+  
+ }
+}
+RegenerateBill(){
+      this.Regeneratelist.forEach(item => {
+        item['Product_Name'] = item.Product_Description,
+        item['Sub_Ledger_ID'] = Number(this.subledgeridforregenerate),
+        item['Cost_Cen_ID'] = Number(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID),
+        item['Rate'] = Number(item.Sale_rate),
+        item['MRP'] = Number(item.Sale_rate),
+        item['Amount'] = Number(item.Sale_rate) * Number(item.Qty),
+        item['Bill_Gross_Amt'] = Number(this.taxableRegenerate),
+        item['Bill_Net_Amt'] = Number(this.netamountRegenerate),
+        item['User_ID'] = Number(this.$CompacctAPI.CompacctCookies.User_ID),
+        item['Fin_Year_ID'] = Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
+        item['Rounded_Off'] = Number(this.Round_OffRegenerate),
+        item['Taxable_Amount'] = Number(item.Taxable),
+        item['Total_Taxable'] = Number(this.taxableRegenerate),
+        item['CGST_OUTPUT_LEDGER_ID'] = Number(item.CGST_Output_Ledger_ID),
+        item['CGST_Rate'] = Number(item.CGST_PER),
+        item['CGST_Amount'] = Number(item.CGST_AMT),
+        item['SGST_OUTPUT_LEDGER_ID'] = Number(item.SGST_Output_Ledger_ID),
+        item['SGST_Rate'] = Number(item.SGST_PER),
+        item['SGST_Amount'] = Number(item.SGST_AMT),
+        item['IGST_OUTPUT_LEDGER_ID'] = Number(item.IGST_Output_Ledger_ID),
+        item['IGST_Rate'] = Number(item.IGST_PER),
+        item['IGST_Amount'] = Number(item.IGST_AMT),
+        item['Total_CGST_Amt'] = Number(this.cgstRegenerate),
+        item['Total_SGST_Amt'] = Number(this.sgstRegenerate),
+        item['Total_IGST_Amt'] = Number(this.igstRegenerate),
+        item['Total_Net_Amt'] = Number(this.netamountRegenerate),
+        item['Credit_Note_No'] = this.RegenerateCrNo,
+        item['Doc_Date'] = this.RegenerateDocDate,
+        item['Discount'] = 0,
+        item['Remarks'] = "NA",
+        item['HSL_No'] = item.HSN_NO
+      })
+     const obj = {
+      "SP_String" : "SP_K4C_Accounting_Journal_Regenerate",
+      "Report_Name_String" : "Regenerate_Credit_Note_RTF",
+      "Json_Param_String": JSON.stringify(this.Regeneratelist),
+      "Json_1_String" : JSON.stringify([{Order_No : this.RegenerateDocNo}])
+     }
+     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      //this.FranchiseProductList = data;
+     // console.log("this.FranchiseProductList======",this.FranchiseProductList);
+      //var bill_No = data[0].Column1;
+      if(data[0].Column1){
+        this.dataforregeneratingbill();
+      } else{
+        this.costcenforregenerate = undefined;
+        this.RegenerateDocNo = undefined;
+        this.RegenerateCrNo = undefined;
+        this.RegenerateDocDate = undefined;
+        this.subledgeridforregenerate = undefined;
+        this.taxableRegenerate = undefined;
+        this.cgstRegenerate = undefined;
+        this.sgstRegenerate = undefined;
+        this.igstRegenerate = undefined;
+        this.grossamountRegenerate = undefined;
+        this.Round_OffRegenerate = undefined;
+        this.netamountRegenerate = undefined;
+        this.GetSearchedlist(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+     })
+}
+
+dataforregeneratingbill(){
+      const obj = {
+        "SP_String": "SP_K4C_Accounting_Journal",
+        "Report_Name_String" : "RTF Franchise Bill",
+        "Json_Param_String": JSON.stringify([{Doc_No : this.RegenerateDocNo}])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+       this.RegenerateFProList = data;
+       //console.log("this.FProList======",this.FProList);
+       if (this.RegenerateFProList.length) {
+         this.TotalAmtforregeneratebill();
+         this.SaveFranRegenerateSaleBill();
+       } else {
+        this.costcenforregenerate = undefined;
+        this.RegenerateDocNo = undefined;
+        this.RegenerateCrNo = undefined;
+        this.RegenerateDocDate = undefined;
+        this.GetSearchedlist(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         summary: "",
+         detail: "Regenerate Credit Note "
+       });
+       }
+      })
+    
+   //  }
+}
+TotalAmtforregeneratebill(){
+    this.Regeneratetaxable2 = undefined;
+    this.Regeneratecgst2 = undefined;
+    this.Regeneratesgst2 = undefined;
+    this.Regenerateigst2 = undefined;
+    this.Regenerategrossamount2 = undefined;
+    let Regeneratetotaltax2 = 0; 
+    let Regeneratetotalcgst2 = 0;
+    let Regeneratetotalsgst2 = 0;
+    let Regeneratetotaligst2 = 0;
+    let Regenerategrossamt2 = 0;
+    this.RegenerateFProList.forEach(item => {
+      Regeneratetotaltax2 = Regeneratetotaltax2 + Number(item.Taxable);
+      Regeneratetotalcgst2 = Regeneratetotalcgst2 + Number(item.CGST_AMT);
+      Regeneratetotalsgst2 = Regeneratetotalsgst2 + Number(item.SGST_AMT);
+      Regeneratetotaligst2 = Regeneratetotaligst2 + Number(item.IGST_AMT);
+      Regenerategrossamt2 = Regenerategrossamt2 + Number(item.Net_Amount);
+    });
+    this.Regeneratetaxable2 = (Regeneratetotaltax2).toFixed(2);
+    this.Regeneratecgst2 = (Regeneratetotalcgst2).toFixed(2);
+    this.Regeneratesgst2 = (Regeneratetotalsgst2).toFixed(2);
+    this.Regenerateigst2 = (Regeneratetotaligst2).toFixed(2);
+    this.Regenerategrossamount2 = (Regenerategrossamt2).toFixed(2);
+    // Round Off
+    this.RegenerateRound_Off2 = (Number(this.Regenerategrossamount2) - Math.round(this.Regenerategrossamount2)).toFixed(2);
+    this.Regeneratenetamount2 = Math.round(this.Regenerategrossamount2);
+    //console.log(this.Net_Amount);
+}
+getdataforSaveFranregenerate(){
+    //this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
+    if(this.RegenerateFProList.length) {
+      let ArrTempRegenerate =[]
+      this.RegenerateFProList.forEach(item => {
+       // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+     const TempObjRegenerate = {
+            Doc_No:  "A",
+            Doc_Date: this.RegenerateDocDate,
+            Sub_Ledger_ID : Number(this.subledgeridforregenerate),
+            Cost_Cen_ID	: 2, //this.franchisecostcenid,
+            Product_ID	: item.Product_ID,
+            Product_Name	: item.Product_Description,
+            Qty	: item.Qty,
+            UOM	: item.UOM,
+            MRP : item.Sale_rate,
+            Rate : item.Sale_rate,
+            Amount : Number(item.Qty) * Number(item.Sale_rate),
+            Discount : 0,
+            Taxable_Amount : item.Taxable,
+            CAT_ID : item.Cat_ID,
+            CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
+            CGST_Rate : item.CGST_PER,
+            CGST_Amount : item.CGST_AMT,
+            SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
+            SGST_Rate : item.SGST_PER,
+            SGST_Amount : item.SGST_AMT,
+            IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
+            IGST_Rate : item.IGST_PER,
+            IGST_Amount : item.IGST_AMT,
+            Bill_Gross_Amt : Number(this.Regeneratetaxable2),
+            Rounded_Off : Number(this.RegenerateRound_Off2),
+            Bill_Net_Amt : this.Regeneratenetamount2,
+            User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+            Remarks : 'Sale bill Against credit note ' + this.RegenerateCrNo,
+            Credit_Note_No : this.RegenerateCrNo,
+            Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
+            Total_Taxable : Number(this.Regeneratetaxable2),
+            Total_CGST_Amt : Number(this.Regeneratecgst2),
+            Total_SGST_Amt : Number(this.Regeneratesgst2),
+            Total_IGST_Amt : Number(this.Regenerateigst2),
+            Total_Net_Amt : this.Regeneratenetamount2,
+            HSL_No : item.HSN_NO
+         }
+         ArrTempRegenerate.push(TempObjRegenerate)
+      });
+      console.log("franchise Data ===", ArrTempRegenerate)
+      return JSON.stringify(ArrTempRegenerate);
+
+    }
+}
+SaveFranRegenerateSaleBill(){
+  const obj = {
+    "SP_String" : "SP_K4C_Accounting_Journal_Regenerate",
+    "Report_Name_String" : "Regenerate_Cr_Note_Franchise_Sale_Bill",
+    "Json_Param_String" : this.getdataforSaveFranregenerate(),
+    "Json_1_String" : JSON.stringify([{Order_No : this.RegenerateDocNo}])
+
+  }
+  this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    var bill_No = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+       this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Bill No. " + bill_No,
+        detail: "Regenerate Bill Succesfully "
+       });
+     this.costcenforregenerate = undefined;
+     this.RegenerateDocNo = undefined;
+     this.RegenerateCrNo = undefined;
+     this.RegenerateDocDate = undefined;
+     this.subledgeridforregenerate = undefined;
+     this.taxableRegenerate = undefined;
+     this.cgstRegenerate = undefined;
+     this.sgstRegenerate = undefined;
+     this.igstRegenerate = undefined;
+     this.grossamountRegenerate = undefined;
+     this.Round_OffRegenerate = undefined;
+     this.netamountRegenerate = undefined;
+
+     this.Regeneratetaxable2 = undefined;
+     this.Regeneratecgst2 = undefined;
+     this.Regeneratesgst2 = undefined;
+     this.Regenerateigst2 = undefined;
+     this.Regenerategrossamount2 = undefined;
+     this.RegenerateRound_Off2 = undefined;
+     this.Regeneratenetamount2 = undefined;
+     this.GetSearchedlist(true);
+    } else{
+      this.Regeneratetaxable2 = undefined;
+      this.Regeneratecgst2 = undefined;
+      this.Regeneratesgst2 = undefined;
+      this.Regenerateigst2 = undefined;
+      this.Regenerategrossamount2 = undefined;
+      this.RegenerateRound_Off2 = undefined;
+      this.Regeneratenetamount2 = undefined;
+      this.GetSearchedlist(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
 }
 
 

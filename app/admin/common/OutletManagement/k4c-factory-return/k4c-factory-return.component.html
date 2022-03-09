@@ -121,14 +121,19 @@
                                                                 <i class="fa fa-print" aria-hidden="true"></i> Print
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.CR_No != 'NA'">
-                                                            <a (click)="SaleBillPrint(col)">
-                                                                <i class="fa fa-print"></i> Voucher Print
-                                                            </a>
-                                                        </li>
                                                         <li *ngIf="col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf='col.CR_No != "NA" && $CompacctAPI.CompacctCookies.User_Type != "U"'>
+                                                            <a (click)="dataforregeneratingcrnote(col)">
+                                                                <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.CR_No != 'NA'">
+                                                            <a (click)="SaleBillPrint(col)">
+                                                                <i class="fa fa-print"></i> Voucher Print
                                                             </a>
                                                         </li>
                                                     </ul>

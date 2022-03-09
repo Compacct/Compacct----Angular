@@ -915,6 +915,7 @@ class masterProduct {
   Product_Description : string;
   Product_SH_Descr : string = " ";
   Cat_ID : any;
+  Cess_Percentage : any;
   Product_Mfg_Comp_ID : string ;
   ESN : false ;
   UOM : any ="";

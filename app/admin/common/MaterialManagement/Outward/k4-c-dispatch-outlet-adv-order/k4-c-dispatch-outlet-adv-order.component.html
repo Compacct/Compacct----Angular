@@ -116,6 +116,11 @@
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.Bill_NO != 'NA'">
+                                                            <a (click)="dataforregeneratingbill(col)">
+                                                                <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>

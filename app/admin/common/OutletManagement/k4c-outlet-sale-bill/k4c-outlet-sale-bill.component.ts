@@ -92,6 +92,8 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   IGST_Ledger_Id: any;
   ProductType = undefined;
   isservice = undefined;
+  Regeneratelist = [];
+  contactname = undefined;
 
   constructor(
     private Header: CompacctHeader,
@@ -681,6 +683,7 @@ add(valid) {
     // Modifier4 : this.ObjaddbillForm.Modifier4,
     // Modifier5 : this.ObjaddbillForm.Modifier5,
     Net_Price : Number(rate).toFixed(2),
+    Delivery_Charge : 0,
     Stock_Qty :  Number(this.ObjaddbillForm.Stock_Qty),
     Batch_No : this.ObjaddbillForm.Batch_No,
     Amount : Number(tax).toFixed(2),
@@ -999,7 +1002,7 @@ CalculateDiscount(){
      el.Gross_Amount = Number(grossamt).toFixed(2);
      el.SGST_Amount = Number(sgstperamt).toFixed(2);
      el.CGST_Amount = Number(cgstperamt).toFixed(2);
-     el.Net_Amount = Number(netamount).toFixed(2);
+     el.Net_Amount = el.Delivery_Charge ? (Number(netamount) + Number(el.Delivery_Charge)).toFixed(2) : Number(netamount).toFixed(2);
      countnum = countnum + Number(el.Dis_Amount);
     }
     }
@@ -1015,7 +1018,8 @@ CalculateDiscount(){
       el.Gross_Amount = Number(el.Taxable - el.Dis_Amount).toFixed(2);
       el.SGST_Amount = Number((el.Taxable * el.SGST_Per) / 100).toFixed(2); 
       el.CGST_Amount = Number((el.Taxable * el.CGST_Per) / 100).toFixed(2);
-      el.Net_Amount = (Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
+      el.Net_Amount = el.Delivery_Charge ? (Number(el.Delivery_Charge) + Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2) :
+                      (Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
      })
      //console.log("this.discount productSubmit",this.productSubmit);
      this.CalculateTotalAmt();
@@ -1275,7 +1279,10 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
           Product_ID : item.Product_ID,
           Product_Description : item.Product_Description,
           Product_Modifier : item.Modifier,
+          Product_Type : item.product_type,
+          Is_Service : item.is_service,
           Rate : item.Net_Price,
+          Delivery_Charge : item.Delivery_Charge,
           Batch_No : item.Batch_No,
           Qty : item.Stock_Qty,
           Taxable : item.Taxable,
@@ -1381,6 +1388,14 @@ SaveFranSaleBill(){
       });
     }
   })
+}
+SaleBillPrint(obj) {
+  //console.log("billno ===", true)
+  if (obj.Bill_No) {
+    window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
 }
 
 SaveNPrintBill() {
@@ -1631,6 +1646,7 @@ getadvorderdetails(Adv_Order_No){
             Order_Taken_By : element.Order_Taken_By,
             Weight_in_Pound : element.Weight_in_Pound,
             Net_Price : Number(element.Adv_Rate),
+            Delivery_Charge : Number(element.Delivery_Charge),
             Taxable : Number(element.Taxable),
             Batch_No : element.Batch_No,
             Stock_Qty :  Number(element.Qty),
@@ -1785,6 +1801,79 @@ clearData(){
   this.ngxService.stop();
   this.getbilldate();
   this.Hold_Bill_Flag = false;
+}
+
+// REGENERATE BILL FROM ADMIN
+dataforregeneratingbill(DocNo){
+  this.Regeneratelist = [];
+  this.contactname = DocNo.Customer_Name;
+  const obj = {
+    "SP_String": "SP_POS_Sale_Bill",
+    "Report_Name_String": "Refresh POS Bill Data",
+    "Json_Param_String": JSON.stringify([{Bill_No : DocNo.Bill_No}])
+  }
+this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  console.log("From Api",data);
+  this.Regeneratelist = data;
+  // var Challan_No = data[0].Column1;
+  console.log("this.Regeneratelist",this.Regeneratelist);
+  if (this.Regeneratelist.length) {
+    this.RegenerateBill()
+  }
+  else {
+  // if(data[0].Column1){
+  this.compacctToast.clear();
+     this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "No data found "
+    });
+  }
+   //console.log("this.Objdispatch",this.productDetails);
+
+ })
+}
+RegenerateBill(){
+      this.Regeneratelist.forEach(item => {
+        item['Fin_Year_ID'] = Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      })
+      let reportn = "";
+      if (this.contactname === "SWIGGY" || this.contactname === "ZOMATO") {
+        reportn = "Save_Swiggy_Zomato_POS_Sale_Bill"
+      } 
+      else {
+        reportn = "Save_POS_Sale_Bill"
+      }
+     const obj = {
+       "SP_String": "SP_POS_Sale_Bill",
+       "Report_Name_String" : reportn,
+       "Json_Param_String": JSON.stringify(this.Regeneratelist)
+     }
+     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      //this.FranchiseProductList = data;
+     // console.log("this.FranchiseProductList======",this.FranchiseProductList);
+      var bill_No = data[0].Column1;
+      if(data[0].Column1){
+        this.compacctToast.clear();
+           this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Bill No. " + bill_No,
+            detail: "Regenerate Bill Succesfully "
+          });
+          this.contactname = undefined;
+          this.GetSearchedlist();
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+     })
 }
 
 }

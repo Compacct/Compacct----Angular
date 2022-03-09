@@ -144,6 +144,11 @@
                                                   <option *ngFor="let option of categoryList"  value={{option.Cat_ID}}>{{option.Cat_Name}}</option>
                                           </select>
                                     </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cess Percentage<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Cess_Percentage" #Cess_Percentage="ngModel" [(ngModel)]="ObjmasterProduct.Cess_Percentage" placeholder="Cess Percentage" CompacctDigitonly="true" [ngClass]="{'clearance': masterProductFormSubmitted && Cess_Percentage?.errors?.required}"
+                                            required>
+                                    </div>
                                     <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'">
                                         <label class="control-label">Manufacturer<sup class="text-danger">*</sup>
                                             </label>
