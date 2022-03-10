@@ -36,7 +36,7 @@
                                       #user="ngModel" 
                                       [(ngModel)]="userId" 
                                       placeholder="Caller Id" 
-                                      [ngClass]="{'clearance':AbsentFormSubmitted && schoolname?.errors?.required}" required> 
+                                      [ngClass]="{'clearance':AbsentFormSubmitted && user?.errors?.required}" required> 
                                 </div>
                                 <div class="col-sm-2">
                                     <button style="margin-right: 30px;"  (click)="GetName()"
