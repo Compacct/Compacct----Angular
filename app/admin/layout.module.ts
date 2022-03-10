@@ -241,6 +241,7 @@ import { NepalMasterSubledgerComponent } from './common/FinancialManagement/Mast
 import { HarbauerMasterProductMechanicalComponent } from './common/Harbauer/harbauer-master-product-mechanical/harbauer-master-product-mechanical.component';
 import { OutletGroupReportComponent } from './common/OutletManagement/outlet-group-report/outlet-group-report.component';
 import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
+import { UserAbsentComponent } from './common/CRM/Master/user-absent/user-absent.component';
 
 
 
@@ -419,6 +420,7 @@ import { TenderHarbauerActualViewComponent } from './common/TenderManagement/ten
     HarbauerMasterProductMechanicalComponent,
     OutletGroupReportComponent,
     TenderHarbauerActualViewComponent,
+    UserAbsentComponent,
   ],
   imports: [
     CommonModule,

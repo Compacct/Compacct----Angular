@@ -151,7 +151,7 @@ import { NepalMasterSubledgerComponent } from "./common/FinancialManagement/Mast
 import { HarbauerMasterProductMechanicalComponent } from './common/Harbauer/harbauer-master-product-mechanical/harbauer-master-product-mechanical.component';
 import { OutletGroupReportComponent } from './common/OutletManagement/outlet-group-report/outlet-group-report.component';
 import { TenderHarbauerActualViewComponent } from './common/TenderManagement/tender-harbauer-actual-view/tender-harbauer-actual-view.component';
-
+import { UserAbsentComponent } from './common/CRM/Master/user-absent/user-absent.component';
 
 
 
@@ -877,6 +877,11 @@ data: {title: 'K4C_Outlet_Requisition'}
                                                                   path:'BL_CRM_Txn_Enq_Tender_Harbauer_View_Actual',
                                                                   component: TenderHarbauerActualViewComponent,
                                                                   data: {title: 'Tender View (GOVT.)'}
+                                                                },
+                                                                {
+                                                                  path:'User_Absent',
+                                                                  component: UserAbsentComponent,
+                                                                  data: {title: 'User Absent'}
                                                                 },
 
         /*{
