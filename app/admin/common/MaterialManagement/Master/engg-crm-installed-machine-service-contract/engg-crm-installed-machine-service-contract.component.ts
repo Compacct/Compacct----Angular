@@ -154,7 +154,11 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
       "Report_Name_String": "Get_Customer"
     }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    this.GlobalAPI.getData(obj).subscribe((data: any) => { 
+      data.forEach(el => {
+      el['label'] = el.Sub_Ledger_Name;
+      el['value'] = el.Sub_Ledger_ID;
+    });
       this.CustomerList = data;
       //console.log('CustomerList ==', this.CustomerList)
 

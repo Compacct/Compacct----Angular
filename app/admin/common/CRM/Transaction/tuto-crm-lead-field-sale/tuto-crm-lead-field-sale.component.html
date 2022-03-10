@@ -17,13 +17,168 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="c2" (onClose)="onRejectAppo()" [modal]="true" [autoZIndex]="true" [styleClass]="'Custom-Popup'">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div style="margin: 2.8em;">
+            
+        <div>
+            <label class="control-label">Reason Of Reject</label>
+            <p-dropdown [options]="RejectList"
+             name="reasontxt"
+              [(ngModel)]="Reject_Reason" 
+              [showClear]="true" [emptyFilterMessage]="' No Reason Found'"
+               [filter]="true"
+               filterBy="label,value.name"
+                [placeholder]="'Select Reason'"
+                 [virtualScroll]="true" 
+                 itemSize="30" 
+                 #reasontxt="ngModel"
+           >
+        </p-dropdown>
+            <!-- <textarea class="form-control" name="" rows="3" [(ngModel)]=""></textarea> -->
+        </div>
+        <div>
+            <label class="control-label">Audio Files<sup class="text-danger"></sup></label>
+            <p-fileUpload #fileInput  name="aFile1" accept="audio/mp3,audio/*,video/mp4;capture=microphone" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchRejectFile($event)"></p-fileUpload>
+       </div>
+        </div>
+        <div class="ui-g ui-fluid" style="margin-bottom: 2.5em;">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmRejectAppo()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onRejectAppo()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="c3" (onClose)="onCloseCANCELAppo()" [modal]="true" [autoZIndex]="true"  [styleClass]="'Custom-Popup'">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div style="margin: 2.8em;">
+        <div >
+            <label class="control-label">Reason Of Reject</label>
+            <p-dropdown [options]="RejectList"
+             name="reasontxt"
+              [(ngModel)]="Reject_Reason" 
+              [showClear]="true" [emptyFilterMessage]="' No Reason Found'"
+               [filter]="true"
+               filterBy="label,value.name"
+                [placeholder]="'Select Reason'"
+                 [virtualScroll]="true" 
+                 itemSize="30" 
+                 #reasontxt="ngModel"
+           >
+        </p-dropdown>
+            <!-- <textarea class="form-control" name="" rows="3" [(ngModel)]=""></textarea> -->
+        </div>
+        <div>
+            <label class="control-label">Audio Files<sup class="text-danger"></sup></label>
+            <p-fileUpload #fileInput  name="aFile2" accept="audio/mp3,audio/*,video/mp4;capture=microphone" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchCANCELFile($event)"></p-fileUpload>
+        </div>
+        </div>
+        <div class="ui-g ui-fluid" style="margin-bottom: 2.5em;">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onCANCELAppo()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onCloseCANCELAppo()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="c4" (onClose)="onCloseJourneyStarted()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onJourneyStarted()" label="Start" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onCloseJourneyStarted()" label="Cancel" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="c5" (onClose)="onCloseIntrBillAppo()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onCONDUCTION(true,'bill')" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onCloseIntrBillAppo()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="c6" (onClose)="onCloseCANCELAppo2()" [modal]="true" [autoZIndex]="true"  [styleClass]="'Custom-Popup'">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div style="margin: 2.8em;">
+        <div>
+            <label class="control-label">Reason Of Reject</label>
+            <p-dropdown [options]="RejectList"
+             name="reasontxt"
+              [(ngModel)]="Reject_Reason" 
+              [showClear]="true" [emptyFilterMessage]="' No Reason Found'"
+               [filter]="true"
+               filterBy="label,value.name"
+                [placeholder]="'Select Reason'"
+                 [virtualScroll]="true" 
+                 itemSize="30" 
+                 #reasontxt="ngModel"
+           >
+        </p-dropdown>
+            <!-- <textarea class="form-control" name="" rows="3" [(ngModel)]=""></textarea> -->
+        </div>
+        
+        <div>
+            <label class="control-label">Audio Files<sup class="text-danger"></sup></label>
+            <p-fileUpload #fileInput  name="aFile3" accept="audio/mp3,audio/*,video/mp4;capture=microphone" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchCANCELFile($event)"></p-fileUpload>
+        </div>
+        </div>
+        <div class="ui-g ui-fluid" style="margin-bottom: 2.5em;">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onCONDUCTION(true,'CANCEL')" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onCloseCANCELAppo2()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
             <div class="form-horizontal">
                 <div>
                     <p-tabView [activeIndex]="tabIndexToViewMain" (onChange)="TabClickMain($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs"  [header]="itemsMain[0]" leftIcon="fa fa-unlock" aria-hidden="true">
+                    <p-tabPanel headerStyleClass="compacct-tabs"  [header]="itemsMain[0]" leftIcon="fa fa-unlock" aria-hidden="true">
                          
                     <form name="SearchForm" #SearchForm="ngForm" novalidate>
                         <div class="form-group">
@@ -39,12 +194,32 @@
                                 <label class="control-label">Period</label>
                                 <app-compacct-daterangepicker [DefaultDateOpt]="'MonthStarttoEnd'" (DaterangeObj)="getDateRange($event)"></app-compacct-daterangepicker>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 <label class="control-label">User&nbsp;<span class="text-danger"></span></label>
                                 <p-dropdown [options]="UserList" name="User_ID" [(ngModel)]="ObjSearch.User_ID" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select User'" [virtualScroll]="true" itemSize="30" #User_ID="ngModel"
                                     [styleClass]="
                                 SearchFormSubmitted && User_ID.errors?.required ? 'clearance': ''" [required]="$CompacctAPI.CompacctCookies.User_Type !== 'A'">
                                 </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <button class="btn btn-primary" style="margin-top: 2em;" (click)="SaerchFollowup(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                    <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                        animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                </button>
+                                <button *ngIf="leadFollowUpListBackup.length" (click)="exportexcel(leadFollowUpList,'Lead_Field_Sales_Pending')" class="btn btn-primary custombutton">
+                                    <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                  </button>
+                                <!-- <button class="btn btn-primary custombutton pull-right" *ngIf='LeadTransferModalBtn && leadFollowUpList.length' (click)='OpenForwardModal()'>
+                                    <i class="fa fa-fw fa-forward"></i> Forward Lead
+                                </button> -->
+                                <!-- <div *ngIf='leadFollowUpList.length' style="position: absolute;top: 50%;right: 25px;">
+                                    <p-checkbox (onChange)='SelectAllLeadChanged()' [(ngModel)]="SelectAllLead" name='selectAll' label="Select All" [binary]="true"></p-checkbox>
+                                </div> -->
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Current Status Filter&nbsp;<span class="text-danger"></span></label>
+                                <p-multiSelect [options]="CurrentStatusList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedStatusListFilterList" [styleClass]="'compacct-multiselect'" name="StatusList"></p-multiSelect>
                             </div>
                             <!-- <div class="col-sm-3">
                                 <label class="control-label">User<sup class="text-danger">*</sup></label>
@@ -54,21 +229,9 @@
                                 </select>
 
                             </div> -->
-                            <div class="col-sm-6">
-                                <button class="btn btn-primary custombutton" (click)="SaerchFollowup(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
-                                    <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
-                                        animationDuration=".5s"></p-progressSpinner>
-                                    <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
-                                </button>
-                                <button class="btn btn-primary custombutton" *ngIf='LeadTransferModalBtn && leadFollowUpList.length' (click)='OpenForwardModal()'>
-                                    <i class="fa fa-fw fa-forward"></i> Forward Lead
-                                </button>
-                                <!-- <div *ngIf='leadFollowUpList.length' style="position: absolute;top: 50%;right: 25px;">
-                                    <p-checkbox (onChange)='SelectAllLeadChanged()' [(ngModel)]="SelectAllLead" name='selectAll' label="Select All" [binary]="true"></p-checkbox>
-                                </div> -->
-                            </div>
+                          
                         </div>
-                        <div *ngIf="leadFollowUpListBackup.length" class="form-group" style="padding:15px">
+                        <div *ngIf="leadFollowUpListBackup.length && FilterFlag" class="form-group" style="padding:15px">
 
                             <fieldset class="col-md-12">
                                 <legend>Filter</legend>
@@ -160,7 +323,7 @@
                     </form>
 
                     <!-- <button (click)="SaerchFollowup()" class="btn btn-primary">Tuto</button> -->
-                    <div class="table-responsive table-id">
+                    <div class="table-responsive table-id" style="margin-top:1.5em">
                         <p-table #dt [value]="leadFollowUpList" [paginator]="leadFollowUpList.length ? true : false" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" (onPage)="getMyPagination($event)" [rowsPerPageOptions]="[10,25,50 ,100]"
                             [rowHover]="true" [globalFilterFields]='["Mobile","Contact_Name","Class_Name" , "Pin","City","Current_Action","Owner","Enq_Source_Name","Address","School","Dealer","Next_Followup"]'>
                             <ng-template pTemplate="caption">
@@ -174,8 +337,9 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Action</th>
-                                    <th>Status / Regsiter</th>
-                                    <th>ASP Confirm / ASP Journey Started </th>
+                                    <!-- <th>Status / Regsiter</th>
+                                    <th>ASP Confirm / ASP Journey Started </th> -->
+                                    <th>Current Status</th>
                                     <th>Appo Date</th>
                                     <th>Days</th>
                                     <th>Appo Slot</th>
@@ -207,7 +371,7 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-col>
                                 <tr>
-                                    <td>
+                                    <!-- <td>
                                         <div class="dropdown">
                                             <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                 <i class="fa fa-fw fa-bars"></i>
@@ -257,12 +421,9 @@
                                                         <i class="fa fa-clock-o" aria-hidden="true"></i> Enrolled
                                                     </a>
                                                 </li>
-                                                <!-- <li><a (click)="RedirectPendingSubscriptionTutopia(col.Foot_Fall_ID)"><i
-                                                            class="fa fa-fw fa fa-exchange"></i>Pending Subscription</a></li> -->
-
                                             </ul>
                                         </div>
-                                    </td>
+                                    </td> -->
                                     <!-- <td>
                                         <span class="badge bg-red-active" *ngIf="col.Viewed == 'Y'"> VIEWED</span>
                                         <span class="badge bg-blue-gradient" *ngIf="col.Viewed == 'N'"> NEW</span>
@@ -274,262 +435,119 @@
                                     <!-- <td class="text-center">
                                         <p-checkbox [(ngModel)]="col.Selected" (onChange)='LeadTransferCheckBoxChanged()' [binary]="true"></p-checkbox>
                                     </td> -->
-                                    <td>
-                                        <span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span>                                    
-                                        <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
-                                        <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
-                                    </td>
-                                    <td>
-                                                   
-                                        <span class="badge bg-red-active" *ngIf="col.ASP_Confirm === 'N'">NOT CONFIRMED</span>
-                                        <span class="badge bg-blue-gradient" *ngIf="col.ASP_Confirm === 'Y'"> CONFIRMED</span>
-                                                   
-                                        <span class="badge bg-red-active" *ngIf="col.ASP_Journey_Started === 'N'"> Journey Not Started</span>
-                                        <span class="badge bg-blue-gradient" *ngIf="col.ASP_Journey_Started === 'Y'"> Journey Started</span>
-                                    </td>
-                                    <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
-                                    <td>{{col.Days}}</td>
-                                    <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
-                                    <td>{{col.Contact_Name ? col.Contact_Name :'-'}}</td>
-                                    <td><a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a></td>
-                                    <td>{{col.ALT_Mobile ? col.ALT_Mobile : '-'}}</td>
-                                    <td>{{col.Pin ? col.Pin : '-' }}</td>
-                                    <td>{{col.School_PIN ? col.School_PIN : '-' }}</td>
-                                    <td>{{col.School_Name ? col.School_Name : '-' }}</td>
-                                    <td>{{col.Address ? col.Address : '-'}}</td>
-                                    <td>{{col.Landmark ? col.Landmark : '-'}}</td>
-                                    <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
-                                    <td>{{col.Appointment_For ? col.Appointment_For : '-'}}</td>
-                                    <td>{{col.Zonal_Sales_Head ? col.Zonal_Sales_Head : '-'}}</td>
-                                    <td>{{col.Distributor_Name ? col.Distributor_Name : '-'}}</td>
-                                    <td>{{col.ASP_Journey_Time ? col.ASP_Journey_Time : '-'}}</td>
-                                    <td>{{col.ASP_Confirm_On ? (col.ASP_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
-                                    <td>{{col.ASP_Journey_Confirm_On ? (col.ASP_Journey_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
-                                    <!-- <td>{{col.City ? col.City : '-'}}</td>
-                                    <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
-                                    <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
-                                    <td>{{col.Last_Followup_Date | date:"dd/MMM/yyyy h:mma"}}</td>
-                                    <td>{{col.Current_Action}}</td>
-                                    <td>{{col.Last_Action}}</td>
-                                    <td>{{col.Owner}}</td>
-                                    <td>{{col.Enq_Source_Name ? col.Enq_Source_Name : '-'}}</td> -->
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="paginatorleft" let-state>
-                                Showing {{ state.first + 1 }} of {{ state.first + 1 + state.rows }} of {{ state.totalRecords }}
-                            </ng-template>
-                        </p-table>
-
-                    </div>
-                </p-tabPanel>
-                <p-tabPanel headerStyleClass="compacct-tabs" [header]="itemsMain[1]" leftIcon= "fa fa-lock" aria-hidden="true" >
-                    <form name="SearchForm2" #SearchForm2="ngForm" novalidate>
-                        <div class="form-group">
-                            <!-- <div class="col-sm-3">
-                                <label class="control-label">Current Action<sup class="text-danger"></sup></label>
-                                <select class="form-control" name="action" #action="ngModel" [(ngModel)]='ObjSearch.Current_Action' [ngClass]="{'clearance': SearchFormSubmitted && action?.errors?.required}">
-                                    <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of ActionList2" [ngValue]="option.Request_Type">{{ option.Request_Type }}</option>
-                                </select>
-
-                            </div> -->
-                            <div class="col-sm-4">
-                                <label class="control-label">Period</label>
-                                <app-compacct-daterangepicker [DefaultDateOpt]="'MonthStarttoEnd'" (DaterangeObj)="getDateRange2($event)"></app-compacct-daterangepicker>
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">User&nbsp;<span class="text-danger"></span></label>
-                                <p-dropdown [options]="UserList" name="User_ID2" [(ngModel)]="ObjSearch2.User_ID" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select User'" [virtualScroll]="true" itemSize="30" #User_ID2="ngModel"
-                                    [styleClass]="
-                                SearchFormSubmitted2 && User_ID2.errors?.required ? 'clearance': ''" [required]="$CompacctAPI.CompacctCookies.User_Type !== 'A'">
-                                </p-dropdown>
-                            </div>
-                            <!-- <div class="col-sm-3">
-                                <label class="control-label">User<sup class="text-danger">*</sup></label>
-                                <select class="form-control" name="User_ID" #User_ID="ngModel" [(ngModel)]='ObjSearch.User_ID' [ngClass]="{'clearance': SearchFormSubmitted && User_ID?.errors?.required}">
-                                    <option *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of UserList" [ngValue]="option.User_ID">{{ option.Name }}</option>
-                                </select>
-
-                            </div> -->
-                            <div class="col-sm-6">
-                                <button class="btn btn-primary custombutton" (click)="SaerchFollowup2(SearchForm2.form.valid)" id="load" [disabled]="seachSpinner2">
-                                    <p-progressSpinner *ngIf="seachSpinner2" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
-                                        animationDuration=".5s"></p-progressSpinner>
-                                    <span *ngIf="!seachSpinner2" class="glyphicon glyphicon-search"></span>&nbsp;Search
-                                </button>
-                      
-                                <!-- <div *ngIf='leadFollowUpList.length' style="position: absolute;top: 50%;right: 25px;">
-                                    <p-checkbox (onChange)='SelectAllLeadChanged()' [(ngModel)]="SelectAllLead" name='selectAll' label="Select All" [binary]="true"></p-checkbox>
-                                </div> -->
-                            </div>
-                        </div>
-                        <div *ngIf="leadFollowUpListBackup2.length" class="form-group" style="padding:15px">
-
-                            <fieldset class="col-md-12">
-                                <legend>Filter</legend>
-
-                                <div class="form-group">
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Pin <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="PinList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedPinFilterList2" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Appointment For <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="Appointment_ForList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedAppointmentForFilterList2" [styleClass]="'compacct-multiselect'" name="Appointment2"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Days <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DaysList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedDaysFilterList2" [styleClass]="'compacct-multiselect'" name="Days2"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Register <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="RegisterList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedRegisterFilterList2" [styleClass]="'compacct-multiselect'" name="RegisterL2"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Zonal Sales Head <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="ZonalSalesHeadList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedZonalSalesFilterList2" [styleClass]="'compacct-multiselect'" name="zonal2"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Appo Slot <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DAppoSlotList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedAppoSlotFilterList2" [styleClass]="'compacct-multiselect'" name="appo2"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">School Pin <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="SchoolPinList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedSchoolPinFilterList2" [styleClass]="'compacct-multiselect'" name="schoolpin2"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">School Name<span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="SchoolNameList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedSchoolNameFilterList2" [styleClass]="'compacct-multiselect'" name="Schoolname2"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Distributor Name<span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DistributorNameList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedDistributorNameList2" [styleClass]="'compacct-multiselect'" name="Distributor"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">ASP Confirm<span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="ASPConfirmList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedASPConfirmList2" [styleClass]="'compacct-multiselect'" name="ASPConfirm"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">ASP Journey Started<span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="ASPJourneyStartedList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedASPJourneyStartedList2" [styleClass]="'compacct-multiselect'" name="ASPJourneyStarted"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <button *ngIf="leadFollowUpListBackup2.length" (click)="exportexcel(leadFollowUpList2,'Lead_Field_Sales_ENROLLED')" class="btn btn-primary custombutton">
-                                            <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
-                                          </button>
-                                    </div>
-                                    
-                                    <!-- <div class="col-sm-3">
-                                        <label class="control-label">City <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="CityList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCityFilterList" [styleClass]="'compacct-multiselect'" name="CityList"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Class <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="Class_NameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedClassFilterList" [styleClass]="'compacct-multiselect'" name="Class"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Viewed <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="ViewedList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedViewdFilterList" [styleClass]="'compacct-multiselect'" name="Viewed"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Dealer <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DealerList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDealerFilterList" [styleClass]="'compacct-multiselect'" name="DealerList"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Current Action <span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="ActionList2" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCurrentActFilterList" [styleClass]="'compacct-multiselect'" name="ActionListList"></p-multiSelect>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Next Followup Date <span class="text-danger"></span></label>
-                                        <div class="input-group date">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <input type="date" name="NextFollowDate" #NextFollowDate="ngModel" [ngModel]="NextFollowupFilter | date: 'yyyy-MM-dd'" (ngModelChange)="NextFollowDateFilterChange($event)" class="form-control" />
-                                        </div>
-                                    </div> -->
-                                </div>
-
-                            </fieldset>
-                        </div>
-                    </form>
-                    <div class="table-responsive table-id">
-                        <p-table #dt2 [value]="leadFollowUpList2" [paginator]="leadFollowUpList2.length ? true : false" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" (onPage)="getMyPagination($event)" [rowsPerPageOptions]="[10,25,50 ,100]"
-                            [rowHover]="true" [globalFilterFields]='["Mobile","Contact_Name","Class_Name" , "Pin","City","Current_Action","Owner","Enq_Source_Name","Address","School","Dealer","Next_Followup"]'>
-                            <ng-template pTemplate="caption">
-                                <div class="row">
-                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                    </div>
-                                </div>
-
-                            </ng-template>
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th>Action</th>
-                                    <th>Status / Regsiter</th>
-                                    <th>ASP Confirm / ASP Journey Started </th>
-                                    <th>Appo Date</th>
-                                    <th>Days</th>
-                                    <th>Appo Slot</th>
-                                    <th>Name</th>
-                                    <th>Mobile</th>
-                                    <th>Alternative Mobile No.</th>
-                                    <th>Resi Pin </th>
-                                    <th>School Pin </th>
-                                    <th>School Name </th>
-                                    <th>Address</th>
-                                    <th>Landmark</th>
-                                    <th>Appointment Type</th>
-                                    <th>Appointment For</th>
-                                    <th>Zonal Sales Head</th>
-                                    <th>Distributor Name</th>
-                                    <th>ASP Journey Time</th>
-                                    <th>ASP Confirm On</th>
-                                    <th>ASP Journey Confirm On</th>
-                                    <!-- <th>Viewed </th> 
-                                    <th>City </th>
-                                    <th>Created On</th>
-                                    <th>Next Followup</th>
-                                    <th>Last Followup</th>
-                                    <th>Current Action</th>
-                                    <th>Last Action</th>
-                                    <th>Owner</th>
-                                    <th>Enq Source </th> -->
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-col>
-                                <tr>
+                                    <!-- <td>
+                                         <button class="btn btn-primary" (click)="ShowOption(col)">Details</button>
+                                    </td> -->
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                 <i class="fa fa-fw fa-bars"></i>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu">
-                                                
+                                            <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                                           
+                                             
+                                            
                                                 <li>
                                                     <a (click)="Showdetails(col)">
                                                         <i class="fa fa-file-text-o" aria-hidden="true"></i> Show Details
                                                     </a>
                                                 </li>
-                                                
+                                             
+                                                <li *ngIf="col.Sub_Status === 'PENDING'">
+                                                    <a (click)="AcceptAppo(col)">
+                                                        <i class="fa fa-check-circle" aria-hidden="true"></i> ACCEPT
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'PENDING'">
+                                                    <a (click)="OpenRejectAppo(col)">
+                                                        <i class="fa fa-ban" aria-hidden="true"></i> REJECT
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'ACCEPT'">
+                                                    <a (click)="OpenJourneyStartedAppo(col)">
+                                                        <i class="fa fa-upload" aria-hidden="true"></i> JOURNEY STARTED
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'ACCEPT'" >
+                                                    <a (click)="OpenRescedAppo(col)">
+                                                        <i class="fa fa-repeat" aria-hidden="true"></i> RESCHEDULE
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'ACCEPT'">
+                                                    <a (click)="OpenCANCELAppo(col)">
+                                                        <i class="fa fa-remove" aria-hidden="true"></i> CANCEL
+                                                    </a>
+                                                </li>
+                                                <li class="divider" *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
+                                                <li class="dropdown-submenu" *ngIf="col.Sub_Status === 'JOURNEY STARTED'">
+                                                    <a>CONDUCTION DONE</a>
+                                                    <ul class="dropdown-menu">
+                                                        <li> <a (click)="OpenENROLLEDAppo(col)">
+                                                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
+                                                        </li>
+                                                        <li> <a (click)="OpenIntrBillAppo(col)">
+                                                            <i class="fa fa-book" aria-hidden="true"></i>INTRESTED TO BILL</a>
+                                                        </li>
+                                                        <li> <a (click)="OpenCANCELAppo2(col)">
+                                                            <i class="fa fa-remove" aria-hidden="true"></i>CANCEL</a>
+                                                        </li>
+                                                        <li > <a (click)="OpenFollowAppo(col)">
+                                                            <i class="fa fa-random" aria-hidden="true"></i>FOLLOW UP</a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'INTERESTED TO BILL'">
+                                                    <a (click)="OpenENROLLEDAppo(col)">
+                                                        <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'INTERESTED TO BILL'">
+                                                    <a (click)="OpenCANCELAppo2(col)">
+                                                        <i class="fa fa-remove" aria-hidden="true"></i>CANCEL</a>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'FOLLOWUP'">
+                                                    <a (click)="OpenENROLLEDAppo(col)">
+                                                        <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'FOLLOWUP'">
+                                                    <a (click)="OpenCANCELAppo2(col)">
+                                                        <i class="fa fa-remove" aria-hidden="true"></i>CANCEL</a>
+                                                </li>
+                                                <li>
+                                                    <a (click)="ShowForwardFieldSales(col)">
+                                                        <i class="fa fa-forward" aria-hidden="true"></i> Forward
+                                                    </a>
+                                                </li>
+                                                <!-- <li *ngIf="col.Sub_Status === 'ACCEPT'">
+                                                    <a (click)="OpenCANCELAppo(col)">
+                                                        <i class="fa fa-upload" aria-hidden="true"></i> CANCEL
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="col.Sub_Status === 'ACCEPT'">
+                                                    <a (click)="OpenCANCELAppo(col)">
+                                                        <i class="fa fa-upload" aria-hidden="true"></i> CANCEL
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="(col.ASP_Confirm === 'Y'  && col.ASP_Journey_Started === 'N')">
+                                                    <a (click)="StartJourney(col)">
+                                                        <i class="fa fa-briefcase" aria-hidden="true"></i> Start Journey
+                                                    </a>
+                                                </li>
+                                                 <li *ngIf="(col.ASP_Confirm === 'Y'  && col.ASP_Journey_Started === 'Y' && col.Conduction_Done === 'N')">
+                                                    <a (click)="StartConduction(col)">
+                                                        <i class="fa fa-angle-double-right" aria-hidden="true"></i> Conduction Done
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="col.Conduction_Done === 'Y' && col.Status !== 'Enroled'">
+                                                    <a (click)="StartEnrolled(col)">
+                                                        <i class="fa fa-clock-o" aria-hidden="true"></i> Enrolled
+                                                    </a>
+                                                </li> -->
                                             </ul>
                                         </div>
                                     </td>
+
                                     <!-- <td>
-                                        <span class="badge bg-red-active" *ngIf="col.Viewed == 'Y'"> VIEWED</span>
-                                        <span class="badge bg-blue-gradient" *ngIf="col.Viewed == 'N'"> NEW</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
-                                        <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
-                                    </td> -->
-                                    <!-- <td class="text-center">
-                                        <p-checkbox [(ngModel)]="col.Selected" (onChange)='LeadTransferCheckBoxChanged()' [binary]="true"></p-checkbox>
-                                    </td> -->
-                                    <td>
                                         <span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span>                                    
                                         <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
                                         <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
@@ -541,7 +559,8 @@
                                                    
                                         <span class="badge bg-red-active" *ngIf="col.ASP_Journey_Started === 'N'"> Journey Not Started</span>
                                         <span class="badge bg-blue-gradient" *ngIf="col.ASP_Journey_Started === 'Y'"> Journey Started</span>
-                                    </td>
+                                    </td> -->
+                                    <td>{{col.Sub_Status}}</td>
                                     <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
                                     <td>{{col.Days}}</td>
                                     <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
@@ -576,7 +595,490 @@
                         </p-table>
 
                     </div>
-                </p-tabPanel>
+                    </p-tabPanel>
+                    <p-tabPanel  headerStyleClass="compacct-tabs" [header]="itemsMain[1]" leftIcon= "fa fa-lock" aria-hidden="true" >
+                        <form name="SearchForm2" #SearchForm2="ngForm" novalidate>
+                            <div class="form-group">
+                                <!-- <div class="col-sm-3">
+                                    <label class="control-label">Current Action<sup class="text-danger"></sup></label>
+                                    <select class="form-control" name="action" #action="ngModel" [(ngModel)]='ObjSearch.Current_Action' [ngClass]="{'clearance': SearchFormSubmitted && action?.errors?.required}">
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of ActionList2" [ngValue]="option.Request_Type">{{ option.Request_Type }}</option>
+                                    </select>
+
+                                </div> -->
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+                                    <app-compacct-daterangepicker [DefaultDateOpt]="'MonthStarttoEnd'" (DaterangeObj)="getDateRange2($event)"></app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">User&nbsp;<span class="text-danger"></span></label>
+                                    <p-dropdown [options]="UserList" name="User_ID2" [(ngModel)]="ObjSearch2.User_ID" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select User'" [virtualScroll]="true" itemSize="30" #User_ID2="ngModel"
+                                        [styleClass]="
+                                    SearchFormSubmitted2 && User_ID2.errors?.required ? 'clearance': ''" [required]="$CompacctAPI.CompacctCookies.User_Type !== 'A'">
+                                    </p-dropdown>
+                                </div>
+                                <!-- <div class="col-sm-3">
+                                    <label class="control-label">User<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="User_ID" #User_ID="ngModel" [(ngModel)]='ObjSearch.User_ID' [ngClass]="{'clearance': SearchFormSubmitted && User_ID?.errors?.required}">
+                                        <option *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of UserList" [ngValue]="option.User_ID">{{ option.Name }}</option>
+                                    </select>
+
+                                </div> -->
+                                <div class="col-sm-6">
+                                    <button class="btn btn-primary custombutton" (click)="SaerchFollowup2(SearchForm2.form.valid)" id="load" [disabled]="seachSpinner2">
+                                        <p-progressSpinner *ngIf="seachSpinner2" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                            animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner2" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                    <button *ngIf="leadFollowUpListBackup2.length" (click)="exportexcel(leadFollowUpList2,'Lead_Field_Sales_Enrolled')" class="btn btn-primary custombutton">
+                                        <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                      </button>
+                                    <!-- <div *ngIf='leadFollowUpList.length' style="position: absolute;top: 50%;right: 25px;">
+                                        <p-checkbox (onChange)='SelectAllLeadChanged()' [(ngModel)]="SelectAllLead" name='selectAll' label="Select All" [binary]="true"></p-checkbox>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div *ngIf="leadFollowUpListBackup2.length  && FilterFlag" class="form-group" style="padding:15px">
+
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Pin <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="PinList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedPinFilterList2" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Appointment For <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="Appointment_ForList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedAppointmentForFilterList2" [styleClass]="'compacct-multiselect'" name="Appointment2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Days <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DaysList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedDaysFilterList2" [styleClass]="'compacct-multiselect'" name="Days2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Register <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="RegisterList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedRegisterFilterList2" [styleClass]="'compacct-multiselect'" name="RegisterL2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Zonal Sales Head <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ZonalSalesHeadList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedZonalSalesFilterList2" [styleClass]="'compacct-multiselect'" name="zonal2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Appo Slot <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DAppoSlotList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedAppoSlotFilterList2" [styleClass]="'compacct-multiselect'" name="appo2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">School Pin <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="SchoolPinList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedSchoolPinFilterList2" [styleClass]="'compacct-multiselect'" name="schoolpin2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">School Name<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="SchoolNameList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedSchoolNameFilterList2" [styleClass]="'compacct-multiselect'" name="Schoolname2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Distributor Name<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistributorNameList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedDistributorNameList2" [styleClass]="'compacct-multiselect'" name="Distributor"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">ASP Confirm<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ASPConfirmList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedASPConfirmList2" [styleClass]="'compacct-multiselect'" name="ASPConfirm"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">ASP Journey Started<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ASPJourneyStartedList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedASPJourneyStartedList2" [styleClass]="'compacct-multiselect'" name="ASPJourneyStarted"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button *ngIf="leadFollowUpListBackup2.length" (click)="exportexcel(leadFollowUpList2,'Lead_Field_Sales_ENROLLED')" class="btn btn-primary custombutton">
+                                                <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- <div class="col-sm-3">
+                                            <label class="control-label">City <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="CityList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCityFilterList" [styleClass]="'compacct-multiselect'" name="CityList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Class <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="Class_NameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedClassFilterList" [styleClass]="'compacct-multiselect'" name="Class"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Viewed <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ViewedList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedViewdFilterList" [styleClass]="'compacct-multiselect'" name="Viewed"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Dealer <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DealerList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDealerFilterList" [styleClass]="'compacct-multiselect'" name="DealerList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Current Action <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ActionList2" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCurrentActFilterList" [styleClass]="'compacct-multiselect'" name="ActionListList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Next Followup Date <span class="text-danger"></span></label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="date" name="NextFollowDate" #NextFollowDate="ngModel" [ngModel]="NextFollowupFilter | date: 'yyyy-MM-dd'" (ngModelChange)="NextFollowDateFilterChange($event)" class="form-control" />
+                                            </div>
+                                        </div> -->
+                                    </div>
+
+                                </fieldset>
+                            </div>
+                        </form>
+                        <div class="table-responsive table-id">
+                            <p-table #dt2 [value]="leadFollowUpList2" [paginator]="leadFollowUpList2.length ? true : false" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" (onPage)="getMyPagination($event)" [rowsPerPageOptions]="[10,25,50 ,100]"
+                                [rowHover]="true" [globalFilterFields]='["Mobile","Contact_Name","Class_Name" , "Pin","City","Current_Action","Owner","Enq_Source_Name","Address","School","Dealer","Next_Followup"]'>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Action</th>
+                                    
+                                        <th>Current Status</th>
+                                        <th>Appo Date</th>
+                                        <th>Days</th>
+                                        <th>Appo Slot</th>
+                                        <th>Name</th>
+                                        <th>Mobile</th>
+                                        <th>Alternative Mobile No.</th>
+                                        <th>Resi Pin </th>
+                                        <th>School Pin </th>
+                                        <th>School Name </th>
+                                        <th>Address</th>
+                                        <th>Landmark</th>
+                                        <th>Appointment Type</th>
+                                        <th>Appointment For</th>
+                                        <th>Zonal Sales Head</th>
+                                        <th>Distributor Name</th>
+                                        <th>ASP Journey Time</th>
+                                        <th>ASP Confirm On</th>
+                                        <th>ASP Journey Confirm On</th>
+                                        <!-- <th>Viewed </th> 
+                                        <th>City </th>
+                                        <th>Created On</th>
+                                        <th>Next Followup</th>
+                                        <th>Last Followup</th>
+                                        <th>Current Action</th>
+                                        <th>Last Action</th>
+                                        <th>Owner</th>
+                                        <th>Enq Source </th> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                    <i class="fa fa-fw fa-bars"></i>
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    
+                                                    <li>
+                                                        <a (click)="Showdetails(col)">
+                                                            <i class="fa fa-file-text-o" aria-hidden="true"></i> Show Details
+                                                        </a>
+                                                    </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        
+                                        <td>{{col.Sub_Status}}</td>
+                                        <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
+                                        <td>{{col.Days}}</td>
+                                        <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
+                                        <td>{{col.Contact_Name ? col.Contact_Name :'-'}}</td>
+                                        <td><a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a></td>
+                                        <td>{{col.ALT_Mobile ? col.ALT_Mobile : '-'}}</td>
+                                        <td>{{col.Pin ? col.Pin : '-' }}</td>
+                                        <td>{{col.School_PIN ? col.School_PIN : '-' }}</td>
+                                        <td>{{col.School_Name ? col.School_Name : '-' }}</td>
+                                        <td>{{col.Address ? col.Address : '-'}}</td>
+                                        <td>{{col.Landmark ? col.Landmark : '-'}}</td>
+                                        <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
+                                        <td>{{col.Appointment_For ? col.Appointment_For : '-'}}</td>
+                                        <td>{{col.Zonal_Sales_Head ? col.Zonal_Sales_Head : '-'}}</td>
+                                        <td>{{col.Distributor_Name ? col.Distributor_Name : '-'}}</td>
+                                        <td>{{col.ASP_Journey_Time ? col.ASP_Journey_Time : '-'}}</td>
+                                        <td>{{col.ASP_Confirm_On ? (col.ASP_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                        <td>{{col.ASP_Journey_Confirm_On ? (col.ASP_Journey_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                        <!-- <td>{{col.City ? col.City : '-'}}</td>
+                                        <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
+                                        <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
+                                        <td>{{col.Last_Followup_Date | date:"dd/MMM/yyyy h:mma"}}</td>
+                                        <td>{{col.Current_Action}}</td>
+                                        <td>{{col.Last_Action}}</td>
+                                        <td>{{col.Owner}}</td>
+                                        <td>{{col.Enq_Source_Name ? col.Enq_Source_Name : '-'}}</td> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorleft" let-state>
+                                    Showing {{ state.first + 1 }} of {{ state.first + 1 + state.rows }} of {{ state.totalRecords }}
+                                </ng-template>
+                            </p-table>
+
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel  headerStyleClass="compacct-tabs" [header]="itemsMain[2]" leftIcon= "fa fa-remove" aria-hidden="true" >
+                        <form name="SearchForm3" #SearchForm3="ngForm" novalidate>
+                            <div class="form-group">
+                                <!-- <div class="col-sm-3">
+                                    <label class="control-label">Current Action<sup class="text-danger"></sup></label>
+                                    <select class="form-control" name="action" #action="ngModel" [(ngModel)]='ObjSearch.Current_Action' [ngClass]="{'clearance': SearchFormSubmitted && action?.errors?.required}">
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of ActionList2" [ngValue]="option.Request_Type">{{ option.Request_Type }}</option>
+                                    </select>
+
+                                </div> -->
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+                                    <app-compacct-daterangepicker [DefaultDateOpt]="'MonthStarttoEnd'" (DaterangeObj)="getDateRange2($event)"></app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">User&nbsp;<span class="text-danger"></span></label>
+                                    <p-dropdown [options]="UserList" name="User_ID3" [(ngModel)]="ObjSearch3.User_ID" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true" filterBy="label,value.name" [placeholder]="'Select User'" [virtualScroll]="true" itemSize="30" #User_ID3="ngModel"
+                                        [styleClass]="
+                                    SearchFormSubmitted3 && User_ID3.errors?.required ? 'clearance': ''" [required]="$CompacctAPI.CompacctCookies.User_Type !== 'A'">
+                                    </p-dropdown>
+                                </div>
+                                <!-- <div class="col-sm-3">
+                                    <label class="control-label">User<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="User_ID" #User_ID="ngModel" [(ngModel)]='ObjSearch.User_ID' [ngClass]="{'clearance': SearchFormSubmitted && User_ID?.errors?.required}">
+                                        <option *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of UserList" [ngValue]="option.User_ID">{{ option.Name }}</option>
+                                    </select>
+
+                                </div> -->
+                                <div class="col-sm-6">
+                                    <button class="btn btn-primary custombutton" (click)="SaerchFollowup3(SearchForm3.form.valid)" id="load" [disabled]="seachSpinner3">
+                                        <p-progressSpinner *ngIf="seachSpinner3" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                            animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner3" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                    <button *ngIf="leadFollowUpListBackup3.length" (click)="exportexcel(leadFollowUpList3,'Lead_Field_Sales_Canceled')" class="btn btn-primary custombutton">
+                                        <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                      </button>
+                                    <!-- <div *ngIf='leadFollowUpList.length' style="position: absolute;top: 50%;right: 25px;">
+                                        <p-checkbox (onChange)='SelectAllLeadChanged()' [(ngModel)]="SelectAllLead" name='selectAll' label="Select All" [binary]="true"></p-checkbox>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div *ngIf="leadFollowUpListBackup3.length  && FilterFlag" class="form-group" style="padding:15px">
+
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Pin <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="PinList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedPinFilterList2" [styleClass]="'compacct-multiselect'" name="PinList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Appointment For <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="Appointment_ForList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedAppointmentForFilterList2" [styleClass]="'compacct-multiselect'" name="Appointment2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Days <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DaysList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedDaysFilterList2" [styleClass]="'compacct-multiselect'" name="Days2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Register <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="RegisterList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedRegisterFilterList2" [styleClass]="'compacct-multiselect'" name="RegisterL2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Zonal Sales Head <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ZonalSalesHeadList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedZonalSalesFilterList2" [styleClass]="'compacct-multiselect'" name="zonal2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Appo Slot <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DAppoSlotList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedAppoSlotFilterList2" [styleClass]="'compacct-multiselect'" name="appo2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">School Pin <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="SchoolPinList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedSchoolPinFilterList2" [styleClass]="'compacct-multiselect'" name="schoolpin2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">School Name<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="SchoolNameList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedSchoolNameFilterList2" [styleClass]="'compacct-multiselect'" name="Schoolname2"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Distributor Name<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistributorNameList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedDistributorNameList2" [styleClass]="'compacct-multiselect'" name="Distributor"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">ASP Confirm<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ASPConfirmList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedASPConfirmList2" [styleClass]="'compacct-multiselect'" name="ASPConfirm"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">ASP Journey Started<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ASPJourneyStartedList2" (onChange)='GlobalFilterChange2()' [(ngModel)]="SelectedASPJourneyStartedList2" [styleClass]="'compacct-multiselect'" name="ASPJourneyStarted"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button *ngIf="leadFollowUpListBackup2.length" (click)="exportexcel(leadFollowUpList2,'Lead_Field_Sales_ENROLLED')" class="btn btn-primary custombutton">
+                                                <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- <div class="col-sm-3">
+                                            <label class="control-label">City <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="CityList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCityFilterList" [styleClass]="'compacct-multiselect'" name="CityList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Class <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="Class_NameList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedClassFilterList" [styleClass]="'compacct-multiselect'" name="Class"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Viewed <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ViewedList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedViewdFilterList" [styleClass]="'compacct-multiselect'" name="Viewed"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Dealer <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DealerList" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedDealerFilterList" [styleClass]="'compacct-multiselect'" name="DealerList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Current Action <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="ActionList2" (onChange)='GlobalFilterChange()' [(ngModel)]="SelectedCurrentActFilterList" [styleClass]="'compacct-multiselect'" name="ActionListList"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Next Followup Date <span class="text-danger"></span></label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="date" name="NextFollowDate" #NextFollowDate="ngModel" [ngModel]="NextFollowupFilter | date: 'yyyy-MM-dd'" (ngModelChange)="NextFollowDateFilterChange($event)" class="form-control" />
+                                            </div>
+                                        </div> -->
+                                    </div>
+
+                                </fieldset>
+                            </div>
+                        </form>
+                        <div class="table-responsive table-id">
+                            <p-table #dt3 [value]="leadFollowUpList3" [paginator]="leadFollowUpList3.length ? true : false" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" (onPage)="getMyPagination($event)" [rowsPerPageOptions]="[10,25,50 ,100]"
+                                [rowHover]="true" [globalFilterFields]='["Mobile","Contact_Name","Class_Name" , "Pin","City","Current_Action","Owner","Enq_Source_Name","Address","School","Dealer","Next_Followup"]'>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Action</th>
+                                    
+                                        <th>Current Status</th>
+                                        <th>Appo Date</th>
+                                        <th>Days</th>
+                                        <th>Appo Slot</th>
+                                        <th>Name</th>
+                                        <th>Mobile</th>
+                                        <th>Alternative Mobile No.</th>
+                                        <th>Resi Pin </th>
+                                        <th>School Pin </th>
+                                        <th>School Name </th>
+                                        <th>Address</th>
+                                        <th>Landmark</th>
+                                        <th>Appointment Type</th>
+                                        <th>Appointment For</th>
+                                        <th>Zonal Sales Head</th>
+                                        <th>Distributor Name</th>
+                                        <th>ASP Journey Time</th>
+                                        <th>ASP Confirm On</th>
+                                        <th>ASP Journey Confirm On</th>
+                                        <!-- <th>Viewed </th> 
+                                        <th>City </th>
+                                        <th>Created On</th>
+                                        <th>Next Followup</th>
+                                        <th>Last Followup</th>
+                                        <th>Current Action</th>
+                                        <th>Last Action</th>
+                                        <th>Owner</th>
+                                        <th>Enq Source </th> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                    <i class="fa fa-fw fa-bars"></i>
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    
+                                                    <li>
+                                                        <a (click)="Showdetails(col)">
+                                                            <i class="fa fa-file-text-o" aria-hidden="true"></i> Show Details
+                                                        </a>
+                                                    </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        
+                                        <td>{{col.Sub_Status}}</td>
+                                        <!-- <td>
+                                            <span [class]="'badge bg-'+ getStatusWiseColor(col)">{{col.Status }}</span>                                    
+                                            <span class="badge bg-red-active" *ngIf="col.Foot_Fall_ID.toString() === '0'"> UN REGSITERED</span>
+                                            <span class="badge bg-blue-gradient" *ngIf="col.Foot_Fall_ID.toString() !== '0'"> REGISTERED</span>
+                                        </td>
+                                        <td>
+                                                    
+                                            <span class="badge bg-red-active" *ngIf="col.ASP_Confirm === 'N'">NOT CONFIRMED</span>
+                                            <span class="badge bg-blue-gradient" *ngIf="col.ASP_Confirm === 'Y'"> CONFIRMED</span>
+                                                    
+                                            <span class="badge bg-red-active" *ngIf="col.ASP_Journey_Started === 'N'"> Journey Not Started</span>
+                                            <span class="badge bg-blue-gradient" *ngIf="col.ASP_Journey_Started === 'Y'"> Journey Started</span>
+                                        </td> -->
+                                        <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
+                                        <td>{{col.Days}}</td>
+                                        <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
+                                        <td>{{col.Contact_Name ? col.Contact_Name :'-'}}</td>
+                                        <td><a [href]="'tel:+91'+col.Mobile"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a></td>
+                                        <td>{{col.ALT_Mobile ? col.ALT_Mobile : '-'}}</td>
+                                        <td>{{col.Pin ? col.Pin : '-' }}</td>
+                                        <td>{{col.School_PIN ? col.School_PIN : '-' }}</td>
+                                        <td>{{col.School_Name ? col.School_Name : '-' }}</td>
+                                        <td>{{col.Address ? col.Address : '-'}}</td>
+                                        <td>{{col.Landmark ? col.Landmark : '-'}}</td>
+                                        <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
+                                        <td>{{col.Appointment_For ? col.Appointment_For : '-'}}</td>
+                                        <td>{{col.Zonal_Sales_Head ? col.Zonal_Sales_Head : '-'}}</td>
+                                        <td>{{col.Distributor_Name ? col.Distributor_Name : '-'}}</td>
+                                        <td>{{col.ASP_Journey_Time ? col.ASP_Journey_Time : '-'}}</td>
+                                        <td>{{col.ASP_Confirm_On ? (col.ASP_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                        <td>{{col.ASP_Journey_Confirm_On ? (col.ASP_Journey_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                        <!-- <td>{{col.City ? col.City : '-'}}</td>
+                                        <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
+                                        <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
+                                        <td>{{col.Last_Followup_Date | date:"dd/MMM/yyyy h:mma"}}</td>
+                                        <td>{{col.Current_Action}}</td>
+                                        <td>{{col.Last_Action}}</td>
+                                        <td>{{col.Owner}}</td>
+                                        <td>{{col.Enq_Source_Name ? col.Enq_Source_Name : '-'}}</td> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorleft" let-state>
+                                    Showing {{ state.first + 1 }} of {{ state.first + 1 + state.rows }} of {{ state.totalRecords }}
+                                </ng-template>
+                            </p-table>
+
+                        </div>
+                    </p-tabPanel>
                 </p-tabView>
                 </div>
             </div>
@@ -610,7 +1112,7 @@
         <button type="button" (click)="OverlayCreateModal = false" class="btn btn-default">
             CLOSE
         </button>
-        <button (click)="ConfirmAppo(OrgForm.form.valid)"  class="btn btn-sm btn-success pull-right"  [disabled]="saveSpinner2">
+        <button (click)="SaveAcceptAppo(OrgForm.form.valid)"  class="btn btn-sm btn-success pull-right"  [disabled]="saveSpinner2">
             <p-progressSpinner
               *ngIf="saveSpinner2"
               [style]="{ width: '15px', height: '15px' }"
@@ -854,7 +1356,7 @@
     </p-footer>
 </p-dialog>
 <!-- DETAILS  -->
-<p-dialog header="DETAILS" [appendTo]="'body'" [visible]="ShowDetailsModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog header="DETAILS" [appendTo]="'body'" [visible]="ShowDetailsModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '60%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div id="invoice">
         <div class="invoice overflow-auto" *ngIf='Studentdetails?.Lead_ID'>
@@ -871,8 +1373,57 @@
                     <div class="classname">Class Name: {{Studentdetails['Class_Name']}}</div>
                 </div>
             </div>
+            <div class="form-horizontal">
+                <div class="box-body ">
+                    <div class="timelinescroll style-3">
+                        <ul class="timeline ">
+                            <li class="time-label" style="margin-bottom: -20px" *ngFor="let objMain of distinctDateArray">
+                                <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
+                                <ul class="timeline" style="width:50%;margin: 7px 0 30px 0">
+                                    <li *ngFor="let objSub of getFollowupByDate1(objMain)">
+                                        <i class="fa fa-user bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <!-- <span class="time" *ngIf="false"><i class="fa fa-clock-o"></i> 12:05</span> -->
+                                            <h3 class="timeline-header"><a href="#">{{objSub.CreatedBy}}</a>
+                                                <!-- <font size="2"> <strong>{{objSub.Current_Action}}</strong></font> -->
+                                            </h3>
+                                            <div class="timeline-body">
+                                                {{objSub.Last_Remarks}}
+                                            </div>
+                                            <div class="timeline-footer" style="padding-bottom: 10px">
+                                                <a class="btn btn-primary btn-social  btn-xs" *ngIf="objSub.CreatedBy != objSub.SentTo_Name">
+                                                    <i class="fa fa-user"></i>&nbsp;{{objSub.SentTo_Name}}
+                                                </a>
+                                                <div class="btn btn-reddit btn-social  btn-xs" style="white-space: pre-line;width: 82%;">
+                                                    <i class="fa fa-comments"></i> Remarks : <span style="font-weight: 600;">{{objSub.Followup_Details}}</span>
+                                                    <hr style="margin:1px"> Follow up Date&Time :<b>&nbsp;{{objSub.Posted_On | date:"dd/MMM/yyyy h:mma"}}</b>
 
-            <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                                                </div>
+                                                <!-- <a class="btn btn-reddit btn-social  btn-xs">
+                                                  Remarks :
+                                                    <i class="fa fa-comments"></i>&nbsp;
+                                                </a> -->
+                                                <a class="btn btn-danger btn-social  btn-xs">
+                                                    Action Taken :
+                                                    <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Current_Action}}
+                                                </a>
+                                                <br>
+                                                <div *ngIf='Lead_ID && objSub?.Call_ID && objSub?.Call_ID.toString() !=="0"' (click)='GetCallDetails(objSub)' class="btn btn-soundcloud btn-social  btn-xs" style="margin-top:0.5em;">
+                                                    <i class="fa fa-info-circle"></i>&nbsp;CALL DETAILS
+                                                </div>
+                                                <a *ngIf="objSub.PDF_File" ng-click="viewPDF(objSub.PDF_File)">
+                                                    <img src="~/PDF_Logo/PDF-logo.png" class='pdf' style="width:20px; height:20px ">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
 
                 <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="fa fa-user" aria-hidden="true">
 
@@ -950,37 +1501,6 @@
                             <div class="label-t">{{Studentdetails['Foot_Fall_ID'] == 0 ? 'UN REGSITERED' : 'REGISTERED'}}</div>
                         </div>
                     </div>
-
-                    <!-- <div class="label-t">
-        <p-table [value]="Studentdetaillist" #dt
-             [paginator]="Studentdetaillist.length ? true : false"  [rows]="10" [rowHover]="true"
-             [autoLayout]="true" sortMode="multiple"
-             [rowHover]="true">
-
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Name</th>
-                        <th>Class Name</th>
-                        <th>Mobile No</th>
-                        <th>PIN</th>
-                        <th>City</th>
-
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-Stulist>
-                      <tr>
-
-                        <td>{{Stulist.Contact_Name}}</td>
-                        <td>{{Stulist.Class_Name}}</td>
-                        <td>{{Stulist.Mobile}}</td>
-                        <td>{{Stulist.Pin}}</td>
-                        <td>{{Stulist.City}}</td>
-
-                    </tr>
-                </ng-template>
-
-         </p-table>
-  </div>  -->
 
                 </p-tabPanel>
                 <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-credit-card" aria-hidden="true">
@@ -1237,7 +1757,7 @@
                         </p-table>
                     </div>
                 </p-tabPanel>
-            </p-tabView>
+            </p-tabView> -->
         </div>
     </div>
     <p-footer>
@@ -1349,6 +1869,10 @@
     </p-footer>
 </p-dialog>
 
+
+<!-- NEW  -->
+
+
 <!-- ENROLLED -->
 <p-dialog header="ENROLLED" [appendTo]="'body'" [visible]="EnrolledModalflag" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
@@ -1412,8 +1936,107 @@
         <button type="button" (click)="EnrolledModalflag = false" class="btn btn-default">
             CLOSE
         </button>
-        <button type="button" class="btn btn-primary" (click)="SaveEnrolled(EnrolledModalflagUpdate.form.valid)">
+        <button type="button" class="btn btn-primary" (click)="onCONDUCTION(EnrolledModalflagUpdate.form.valid,'Enrolled')">
             SAVE
         </button>
     </p-footer>
 </p-dialog>
+
+<!-- RESCEDULE -->
+<p-dialog header="RESCEDULE" [appendTo]="'body'" [visible]="ResceduleModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="ResceduleModalUpdate" style="margin-top:2em" #ResceduleModalUpdate="ngForm" novalidate>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">DATE<sup class="text-danger">*</sup></label>
+                <input type="date" class="form-control" id="ResdFollowup" #ResdFollowup="ngModel" name="ResdFollowup" [ngModel]="ResceduleDate | date:'yyyy-MM-dd'" (ngModelChange)="ResceduleDate = $event" [ngClass]="{'clearance':ResceduleFormSubmit && ResdFollowup?.errors?.required}"
+                    [min]="(TodayDate  | date:'yyyy-MM-dd')" [max]="(Tomorrow  | date:'yyyy-MM-dd')" required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label"
+                  >Time Slot <sup class="text-danger">*</sup> &nbsp;
+                </label>
+
+                <p-dropdown [options]="TimeSlotList" name="Appo_Time_Slot_ID"  [(ngModel)]="ResceduleObj.Appo_Time_Slot_ID" [showClear]="true" [emptyFilterMessage]="' No Time Slot Found'"  [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                    [placeholder]="'Select Time Slot'" [virtualScroll]="true" itemSize="30" #Appo_Time_Slot_ID="ngModel" [required]="true" [ngClass]="{'clearance':ResceduleFormSubmit && Appo_Time_Slot_ID.errors?.required}" [required]="true">
+                </p-dropdown>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Rescedule Reason<sup class="text-danger">*</sup></label>
+                <p-dropdown [options]="RejectList"
+             name="ASP_Reschedule_Reason"
+              [(ngModel)]="ResceduleObj.ASP_Reschedule_Reason" 
+              [showClear]="true" [emptyFilterMessage]="' No Reason Found'"
+               [filter]="true"
+               filterBy="label,value.name"
+                [placeholder]="'Select Reason'"
+                 [virtualScroll]="true" 
+                 itemSize="30" 
+                 #ASP_Reschedule_Reason="ngModel"
+                 [ngClass]="{'clearance':ResceduleFormSubmit && ASP_Reschedule_Reason.errors?.required}"
+                 [required]="true"
+           >
+        </p-dropdown>
+
+
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Audio Files<sup class="text-danger"></sup></label>
+                <p-fileUpload #fileInput  name="aFile1" accept="audio/mp3,audio/*,video/mp4;capture=microphone" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchResceduleFile($event)"></p-fileUpload>
+           </div>
+            <div class="col-sm-12">
+                <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+                <textarea class="form-control" #Remarks="ngModel" name="Remarks" [(ngModel)]="ResceduleObj.Followup_Details" 
+                rows="3"
+                 [ngClass]="{'clearance':ResceduleFormSubmit && Remarks?.errors?.required}"
+                 required> </textarea>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="ResceduleModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button type="button" class="btn btn-primary" (click)="SaveRescedAppo(ResceduleModalUpdate.form.valid)">
+            SAVE
+        </button>
+    </p-footer>
+</p-dialog>
+<!-- FORWARD -->
+<p-dialog header="FORWARD APPO" [appendTo]="'body'" [visible]="FollowAppoModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="FollowAppoModalUpdate" style="margin-top:2em" #FollowAppoModalUpdate="ngForm" novalidate>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
+                <input type="date" class="form-control" id="FollowAppoNextDate1" name="FollowAppoNextDate1" #FollowAppoNextDate1='ngModel' [ngModel]="FollowAppoNextDate | date:'yyyy-MM-dd'" (ngModelChange)="FollowAppoNextDate = $event" [min]="(TodayDate | date:'yyyy-MM-dd')" [ngClass]="{'clearance': FollowAppoNextSubmitted &&  FollowAppoNextDate1?.errors?.required}"
+                    required>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="box-footer">
+                <h5></h5>
+            </div>
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="FollowAppoModal = false" class="btn btn-default">
+            CLOSE
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onCONDUCTION(FollowAppoModalUpdate.form.valid,'followup')">
+            SAVE
+        </button>
+    </p-footer>
+</p-dialog>
+

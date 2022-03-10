@@ -141,6 +141,10 @@ export class SupportTicketNepalComponent implements OnInit {
         "Report_Name_String": "Get_Customer"
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        data.forEach(el => {
+          el['label'] = el.Sub_Ledger_Name;
+          el['value'] = el.Sub_Ledger_ID;
+        });
        this.CustomerList = data;
        //console.log('CustomerList ==', this.CustomerList)
     

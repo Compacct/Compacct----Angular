@@ -170,10 +170,17 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Customer Name<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="customer" #customer="ngModel" [(ngModel)]='ObjSupportTicket.Customer_Name' (change)="GetLocation()" [ngClass]="{'clearance': SupportTicketFormSubmit && customer?.errors?.required}" required>
+                                        <p-dropdown [options]="CustomerList" name="Bcustomer" [(ngModel)]="ObjSupportTicket.Customer_Name"
+                                        [showClear]="true" [emptyFilterMessage]="' No Customer Found'"
+                                        [filter]="true" filterBy="label,value.name" (onChange)="GetLocation()"
+                                        [placeholder]="'Select Customer Name'" [virtualScroll]="true" itemSize="30" #Bcustomer="ngModel"
+                                        [styleClass]="
+                                        SupportTicketFormSubmit && Bcustomer.errors?.required? 'clearance': ''" [required]="true">
+                                      </p-dropdown>
+                                        <!-- <select class="form-control" name="customer" #customer="ngModel" [(ngModel)]='ObjSupportTicket.Customer_Name' (change)="GetLocation()" [ngClass]="{'clearance': SupportTicketFormSubmit && customer?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of CustomerList" [value]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
-                                    </select>
+                                    </select> -->
                                     </div>
                                 </div>
                                 <div class="form-group">

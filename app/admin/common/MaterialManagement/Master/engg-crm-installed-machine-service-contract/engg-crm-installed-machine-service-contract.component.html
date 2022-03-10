@@ -29,10 +29,17 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Customer<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="Bcustomer" #Bcustomer="ngModel" [(ngModel)]='ObjBrowse.Customer_Name' [ngClass]="{'clearance': SearchFormSubmit && Bcustomer?.errors?.required}" required>
+                                        <p-dropdown [options]="CustomerList" name="Bcustomer" [(ngModel)]="ObjBrowse.Customer_Name"
+                                        [showClear]="true" [emptyFilterMessage]="' No Customer Found'"
+                                        [filter]="true" filterBy="label,value.name"
+                                        [placeholder]="'Select Customer Name'" [virtualScroll]="true" itemSize="30" #Bcustomer="ngModel"
+                                        [styleClass]="
+                                        SearchFormSubmit && Bcustomer.errors?.required? 'clearance': ''" [required]="true">
+                                      </p-dropdown>
+                                        <!-- <select class="form-control" name="Bcustomer" #Bcustomer="ngModel" [(ngModel)]='ObjBrowse.Customer_Name' [ngClass]="{'clearance': SearchFormSubmit && Bcustomer?.errors?.required}" required>
                                   <option  [ngValue]="undefined">Select</option>
                                   <option *ngFor="let option of CustomerList" [value]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
-                            </select>
+                            </select> -->
                                     </div>
                                     <!-- <div class="col-sm-4">
                                         <label class="control-label">Status<sup class="text-danger">*</sup></label>
@@ -145,10 +152,17 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Customer<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="customer" #customer="ngModel" [(ngModel)]='ObjServiceContract.Customer_Name' (change)="GetLocation()" [ngClass]="{'clearance': ServiceContractFormSubmit && customer?.errors?.required}" required>
+                                        <p-dropdown [options]="CustomerList" name="Customer" [(ngModel)]="ObjServiceContract.Customer_Name"
+                                        [showClear]="true" [emptyFilterMessage]="' No Customer Found'"
+                                        (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name"
+                                        [placeholder]="'Select Customer Name'" [virtualScroll]="true" itemSize="30" #Customer="ngModel"
+                                        [styleClass]="
+                                        ServiceContractFormSubmit && Customer.errors?.required? 'clearance': ''" [required]="true">
+                                      </p-dropdown>
+                                        <!-- <select class="form-control" name="customer" #customer="ngModel" [(ngModel)]='ObjServiceContract.Customer_Name' (change)="GetLocation()" [ngClass]="{'clearance': ServiceContractFormSubmit && customer?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of CustomerList" [value]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
-                                    </select>
+                                    </select> -->
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Location<sup class="text-danger">*</sup></label>

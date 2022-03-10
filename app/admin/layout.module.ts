@@ -271,7 +271,9 @@ import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc
 import { EngineeringQuotationNepalComponent } from './common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component';
 import { CompacctDocumentVaultComponent } from "./shared/compacct.components/compacct.document.vault/compacct.document.vault.component";
 import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
-
+import {SplitButtonModule} from 'primeng/splitbutton';
+import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
+import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
 
 
 
@@ -474,7 +476,9 @@ import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward
     AccOpeningBalcManagementComponent,
     EngineeringQuotationNepalComponent,
     CompacctDocumentVaultComponent,
-    GrnViewPurchaseBillComponent
+    GrnViewPurchaseBillComponent,
+    ProductsPlaningComponent,
+    CompacctTxnTaskGanttComponent
     
   ],
   imports: [
@@ -520,7 +524,8 @@ import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward
     OverlayPanelModule,
     GanttAllModule,
     ChipsModule,
-    NpDatepickerModule
+    NpDatepickerModule,
+    SplitButtonModule
   ],
   exports: [],
   providers: [

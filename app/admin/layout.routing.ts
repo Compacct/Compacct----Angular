@@ -186,6 +186,10 @@ import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-
 import { AccOpeningBalcManagementComponent } from "./common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component";
 import { EngineeringQuotationNepalComponent } from "./common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component";
 import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
+import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
+import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
+
+
 
 
 
@@ -1340,6 +1344,20 @@ const layoutRoutes: Routes = [{
   component: GrnViewPurchaseBillComponent,
   data: {
     title: 'GRN View with Purchase Bill'
+  }
+},
+{
+  path: 'BL_CRM_Txn_Enq_Harbaur_Product_Planning',
+  component: ProductsPlaningComponent,
+  data: {
+    title: 'Bill Of Materials'
+  }
+},
+{
+  path: 'BL_CRM_TXN_TASK_GNATT',
+  component: CompacctTxnTaskGanttComponent,
+  data: {
+    title: 'Project Task'
   }
 }
 
