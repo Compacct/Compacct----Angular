@@ -232,7 +232,7 @@
                                             <input class="form-control" name="ALT_UOM_Qty" #ALT_UOM_Qty="ngModel" [(ngModel)]="ObjmasterProduct.ALT_UOM_Qty" [ngClass]="{'clearance': masterProductFormSubmitted && ALT_UOM_Qty?.errors?.required}" [disabled]="disablesIndut" required>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
                                         <label class="control-label">Purchasable Product<sup class="text-danger"></sup></label>
 
                                         <div class="checkBox">
@@ -243,7 +243,7 @@
                                         </div>
                                     </div>
                                     <div class="clearfix" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'"></div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable' && Param_Flag != 'Raw Material'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Raw Material'">
                                         <label class="control-label">Saleable Product<sup class="text-danger"></sup></label>
                                         <div class="checkBox">
                                             <label>
@@ -254,10 +254,10 @@
                                     </div>
 
                                     <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable'">
-                                        <label class="control-label">Reorder Lavel</label>
-                                        <input type="number" class="form-control" placeholder="Reorder Lavel" name="Reorder_Level" #Reorder_Level="ngModel" [(ngModel)]="ObjmasterProduct.Reorder_Level" CompacctDigitonly="true">
+                                        <label class="control-label">Reorder Level</label>
+                                        <input type="number" class="form-control" placeholder="Reorder Level" name="Reorder_Level" #Reorder_Level="ngModel" [(ngModel)]="ObjmasterProduct.Reorder_Level" CompacctDigitonly="true">
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
                                         <label class="control-label">Product Expiry<sup class="text-danger"></sup></label>
 
                                         <div class="checkBox">
