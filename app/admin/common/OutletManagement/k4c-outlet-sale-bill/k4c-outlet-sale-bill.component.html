@@ -131,6 +131,16 @@
                                                                 <i class="fa fa-times" aria-hidden="true"></i> Cancle
                                                             </a>
                                                         </li>
+                                                        <li *ngIf='col.Cancel_Bill === "N" && col.Can_Cancel == "Y" && $CompacctAPI.CompacctCookies.User_Type != "U"'>
+                                                            <a (click)="dataforregeneratingbill(col)">
+                                                                <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Bill_No != 'NA' && $CompacctAPI.CompacctCookies.User_Type != 'U'">
+                                                            <a (click)="SaleBillPrint(col)">
+                                                                <i class="fa fa-print"></i> Sale Bill Print
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -323,6 +333,7 @@
                                                     <th>Qty</th>
                                                     <th>Batch No</th>
                                                     <th>Rate</th>
+                                                    <th *ngIf="AdvOderDetailList">Delivery Charge</th>
                                                     <th>Taxable</th>
                                                     <th>Dis %</th>
                                                     <th>Dis Amt</th>
@@ -378,6 +389,7 @@
                                                     <td>{{obj.Stock_Qty}}</td>
                                                     <td>{{obj.Batch_No}}</td>
                                                     <td>{{obj.Net_Price}}</td>
+                                                    <td *ngIf='AdvOderDetailList'>{{obj.Delivery_Charge}}</td>
                                                     <td>{{obj.Taxable}}</td>
                                                     <td>{{obj.Max_Discount}}</td>
                                                     <td>{{obj.Dis_Amount}}</td>

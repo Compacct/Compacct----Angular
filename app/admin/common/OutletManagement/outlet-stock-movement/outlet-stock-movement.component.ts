@@ -177,6 +177,7 @@ export class OutletStockMovementComponent implements OnInit {
     const tempobj = {
       From_date : start,
       To_Date : end,
+      Brand_ID : this.ObjBrowseStockView.Brand_ID ? this.ObjBrowseStockView.Brand_ID : 0,
       Cost_Cen_ID : this.ObjBrowseStockView.Outlet ? this.ObjBrowseStockView.Outlet : 0,
       Godown_id : this.ObjBrowseStockView.Godown_Id ? this.ObjBrowseStockView.Godown_Id : 0,
       Choose_report : this.ObjBrowseStockView.Choose_Report
