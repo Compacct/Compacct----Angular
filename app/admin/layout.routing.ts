@@ -188,6 +188,7 @@ import { EngineeringQuotationNepalComponent } from "./common/Engineering&CRM/Tra
 import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
 import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
 import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
+import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
 
 
 
@@ -1358,6 +1359,13 @@ const layoutRoutes: Routes = [{
   component: CompacctTxnTaskGanttComponent,
   data: {
     title: 'Project Task'
+  }
+},
+{
+  path: 'User_Absent',
+  component: UserAbsentComponent,
+  data: {
+    title: 'User Absent'
   }
 }
 
