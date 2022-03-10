@@ -95,6 +95,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   RegenerateDocNo = undefined;
   RegenerateDocDate = undefined;
   RegenerateBillNo = undefined;
+  salebillno: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -778,9 +779,11 @@ PrintOrder(obj) {
   deleteAdvDispatch(masterProduct){
     console.log("deleteCol",masterProduct)
     this.doc_no = undefined;
+    this.salebillno = undefined;
     if (masterProduct.Doc_No) {
      this.doc_no = masterProduct.Doc_No;
      this.doc_date = masterProduct.Doc_Date;
+     this.salebillno = masterProduct.Bill_NO;
      this.compacctToast.clear();
      this.compacctToast.add({
        key: "c",
@@ -796,11 +799,12 @@ PrintOrder(obj) {
       const TempObj = {
         Doc_No : this.doc_no,
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-        Doc_Date : this.doc_date
+        Doc_Date : this.doc_date,
+        Sale_Bill_No : this.salebillno
       }
       const obj = {
         "SP_String": "SP_Production_Voucher",
-        "Report_Name_String": "Delete Distribution Challan",
+        "Report_Name_String": "Delete Custom Distribution Challan",
         "Json_Param_String": JSON.stringify([TempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
