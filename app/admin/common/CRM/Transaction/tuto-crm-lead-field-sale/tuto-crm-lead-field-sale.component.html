@@ -1951,7 +1951,7 @@
             <div class="col-sm-12">
                 <label class="control-label">DATE<sup class="text-danger">*</sup></label>
                 <input type="date" class="form-control" id="ResdFollowup" #ResdFollowup="ngModel" name="ResdFollowup" [ngModel]="ResceduleDate | date:'yyyy-MM-dd'" (ngModelChange)="ResceduleDate = $event" [ngClass]="{'clearance':ResceduleFormSubmit && ResdFollowup?.errors?.required}"
-                    [min]="(TodayDate  | date:'yyyy-MM-dd')" [max]="(Tomorrow  | date:'yyyy-MM-dd')" required>
+                    [min]="(TodayDate  | date:'yyyy-MM-dd')" required>
             </div>
             <div class="col-sm-12">
                 <label class="control-label"
