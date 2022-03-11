@@ -1291,6 +1291,7 @@ autoaFranchiseBill() {
    if(this.productSubmit.length) {
      let tempArr =[]
      this.productSubmit.forEach(item => {
+      if (Number(item.Taxable) && Number(item.Taxable) != 0) {
        const obj = {
            Product_ID : item.Product_ID,
            Product_Description : item.Product_Description,
@@ -1347,6 +1348,19 @@ autoaFranchiseBill() {
  
      }
      tempArr.push({...obj,...TempObj,...this.Objcustomerdetail,...this.ObjcashForm})
+    } else {
+      setTimeout(()=>{
+      this.Spinner = false;
+      this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+       key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error in Taxable amount"
+    });
+    },600)
+  }
    });
   // console.log("save bill =" , tempArr)
    return JSON.stringify(tempArr);

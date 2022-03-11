@@ -1445,7 +1445,7 @@ onReject(){
     if(this.FranchiseProductList.length) {
       let tempArr =[]
       this.FranchiseProductList.forEach(item => {
-       // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+        if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const TempObj = {
             Doc_No:  "A",
             Doc_Date: this.currentDate,
@@ -1484,6 +1484,7 @@ onReject(){
             HSL_No : item.HSN_NO
          }
       tempArr.push(TempObj)
+        }
       });
       console.log("Save Data ===", tempArr)
       return JSON.stringify(tempArr);

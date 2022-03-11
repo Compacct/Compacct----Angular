@@ -195,11 +195,11 @@
                                         <div class="col-sm-3">
                                             <!-- <label class="control-label">{{ QueryStringObj?.Txn_ID ? QueryStringObj?.Ledger_Name +' Order No' : 'Advance'}}</label> -->
                                             <label class="control-label">Advance</label>
-                                            <select class="form-control" name="Advance" id='advance' #Advance="ngModel" *ngIf='QueryStringObj?.Foot_Fall_ID' [disabled]='QueryStringObj?.Foot_Fall_ID' [(ngModel)]="ObjaddbillForm.Advance" (keydown)="onKeydownMain($event,'Qty')">
+                                            <!-- <select class="form-control" name="Advance" id='advance' #Advance="ngModel" *ngIf='QueryStringObj?.Foot_Fall_ID' [disabled]='QueryStringObj?.Foot_Fall_ID' [(ngModel)]="ObjaddbillForm.Advance" (keydown)="onKeydownMain($event,'Qty')">
                                 <option [ngValue]="undefined">Select</option>
-                                <option></option>
-                            </select>
-                                            <input class="form-control" name="Advance" [disabled]="true" #Advance="ngModel" id="Advance" *ngIf='QueryStringObj?.Txn_ID' [(ngModel)]="ObjaddbillForm.Advance" (keydown)="onKeydownMain($event,'Qty')">
+                                <option></option>  *ngIf='QueryStringObj?.Txn_ID'
+                            </select> -->
+                                            <input class="form-control" name="Advance" [disabled]="true" #Advance="ngModel" id="Advance" [(ngModel)]="ObjaddbillForm.Advance" (keydown)="onKeydownMain($event,'Qty')">
                                         </div>
                                     </div>
                                     <div class="form-group" *ngIf='ProductTypeFilterList.length' style="padding: 0 15px;margin-top: 10px;">
@@ -221,7 +221,7 @@
                                         </div>
                                         <div class="col-sm-1">
                                             <label class="control-label">Rate <sup class="text-danger">*</sup></label>
-                                            <input class="form-control" name="Net_Price" #Net_Price="ngModel" [disabled]="true" [(ngModel)]="ObjaddbillForm.Sale_rate" [disabled]="true" CompacctDigitonly="true" [ngClass]="{'clearance':addbillFormSubmitted && Net_Price?.errors?.required}" required>
+                                            <input class="form-control" name="Net_Price" #Net_Price="ngModel" [(ngModel)]="ObjaddbillForm.Sale_rate" CompacctDigitonly="true" [ngClass]="{'clearance':addbillFormSubmitted && Net_Price?.errors?.required}" required>
 
                                         </div>
                                         <div class="col-sm-3">
