@@ -98,6 +98,7 @@ export class BillEditFromAdminComponent implements OnInit {
   CustumerName = undefined;
   walletdisabled = false;
   creditdisabled = false;
+  FranchiseBill: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -193,6 +194,18 @@ export class BillEditFromAdminComponent implements OnInit {
   
     });
   }
+  // FRANCISE BILL
+autoaFranchiseBill() {
+  //this.ExpiredProductFLag = false;
+ if(this.ObjaddbillForm.selectitem) {
+   const ctrl = this;
+   const autofrnchiseObj = $.grep(ctrl.returnedID,function(item: any) {return item.Cost_Cen_ID == ctrl.ObjaddbillForm.selectitem})[0];
+   console.log(autofrnchiseObj);
+   this.FranchiseBill = autofrnchiseObj.Franchise;
+   console.log("this.FranchiseBill ==", this.FranchiseBill)
+   
+  }
+  }
   // BROWSE START
   getConfirmDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -238,12 +251,13 @@ export class BillEditFromAdminComponent implements OnInit {
     //console.log("editmaster",eROW);
       this.clearData();
       if(eROW.Bill_No){
+        this.ngxService.start();
       this.Objcustomerdetail.Bill_No = eROW.Bill_No;
       this.rowCostcenter = eROW.Cost_Cent_ID;
       this.ObjaddbillForm.selectitem = this.rowCostcenter;
+      this.autoaFranchiseBill();
       this.CustumerName = eROW.Customer_Name;
       //this.Browsetab = false;
-      this.tabIndexToView = 1;
       this.items = ["BROWSE","UPDATE"];
       this.buttonname = "Update";
        //console.log("this.EditDoc_No ", this.Objcustomerdetail.Bill_No );
@@ -361,10 +375,15 @@ export class BillEditFromAdminComponent implements OnInit {
         this.myDate = data[0].Bill_Date;
         this.Total = data[0].Net_Amount;
         this.Amount_Payable = data[0].Amount_Payable;
+        this.Adv = data[0].Advance;
         this.Round_Off = data[0].Rounded_Off;
     
         this.CalculateTotalAmt();
         this.listofamount();
+        setTimeout(()=>{
+        this.tabIndexToView = 1;
+        this.ngxService.stop();
+        },800)
       //console.log("this.editList  ===",data);
      //this.myDate =  new Date(data[0].Column1);
       // on save use this
@@ -810,7 +829,8 @@ GetSelectedBatchqty () {
     this.Round_Off = (Number(this.Total) - Math.round(this.Total)).toFixed(2)
     //this.Round_Off = (Math.round(this.Total) - Number(this.Total)).toFixed(2);
     this.Amount_Payable = Math.round(this.Total);
-    this.Adv = this.IsAdvance ? this.Adv : 0;
+    //this.Adv = this.IsAdvance ? this.Adv : 0;
+    this.Adv = this.Adv ? this.Adv : 0;
     this.Net_Payable = Number((this.Amount_Payable) - Number(this.Adv)).toFixed(2);
     //var creditamt = 0;
     //if(this.QueryStringObj && this.QueryStringObj.Txn_ID){
@@ -930,13 +950,18 @@ GetSelectedBatchqty () {
   }
   CalculateDiscount(){
     if (this.ObjcashForm.Credit_To_Amount){
+      this.ObjcashForm.Credit_To_Amount = Number(this.ObjcashForm.Credit_To_Amount);
       console.log("discount amt",this.ObjcashForm.Credit_To_Amount)
       var damt;
       var netamount;
       let countnum = 0;
       this.productSubmit.forEach(el=>{ 
+        var taxableamt = el.Net_Price * el.Stock_Qty;
+        el.Taxable = Number(taxableamt);
+        this.listofamount();
         if(el.product_type != "PACKAGING") {
         if (el.is_service != true) {
+        //damt = Number((el.Taxable / this.TotalTaxable) * this.ObjcashForm.Credit_To_Amount);
         damt = Number((el.Taxable / this.TotalTaxable) * this.ObjcashForm.Credit_To_Amount);
         el.Dis_Amount = Number(damt).toFixed(2);
         var da = el.Dis_Amount;
@@ -962,7 +987,8 @@ GetSelectedBatchqty () {
      } else {
       this.productSubmit.forEach(el=>{
         //var netamount2 = el.Taxable + el.SGST_Amount + el.CGST_Amount;
-  
+        // var taxableamt = el.Net_Price * el.Stock_Qty;
+        // el.Taxable = Number(taxableamt);
         el.Dis_Amount = 0 ;
         el.Gross_Amount = Number(el.Taxable - el.Dis_Amount).toFixed(2);
         el.SGST_Amount = Number((el.Taxable * el.SGST_Per) / 100).toFixed(2); 
@@ -1135,8 +1161,10 @@ GetSelectedBatchqty () {
       return false;
     }
   }
-  // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){
   
+  // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){
+    this.productSubmit.forEach(item => {
+      if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String" : "Add Outlet Transaction Sale Bill",
@@ -1148,30 +1176,37 @@ GetSelectedBatchqty () {
       var tempID = data[0].Column1;
       this.Objcustomerdetail.Bill_No = data[0].Column1;
       if(data[0].Column1){
-        this.compacctToast.clear();
-        //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "Updated";
+        if (this.FranchiseBill != "Y") {
+          this.SaveFranSaleBill();
+          //this.SaveNPrintBill();
+        } else {
+          this.compacctToast.clear();
+        const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
         this.compacctToast.add({
          key: "compacct-toast",
          severity: "success",
          summary: "Sale_Bill_ID  " + tempID,
-         detail: "Succesfully updated "
+         detail: "Succesfully " + mgs
        });
        this.productSubmit =[];
        this.clearlistamount();
        this.cleartotalamount();
-       //this.SaveNPrintBill();
+      // this.SaveNPrintBill();
        this.clearData();
-       this.editList = [];
-       this.selectitem = [];
-       this.selectitemView = [];
-       //this.Browsetab = true;
-      // if(this.Browsetab){
        this.tabIndexToView = 0;
-      //  this.GetSearchedlist();
-      //  }
-       //this.router.navigate(['./Bill_Edit_From_Admin']);
-       //this.items = ["BROWSE"];
        this.GetSearchedlist();
+      // this.router.navigate(['./POS_BIll_Order']);
+        }
+      //   this.compacctToast.clear();
+      //   const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      //   this.compacctToast.add({
+      //    key: "compacct-toast",
+      //    severity: "success",
+      //    summary: "Sale_Bill_ID  " + tempID,
+      //    detail: "Succesfully " + mgs
+      //  });
+      //  this.tabIndexToView = 0;
+      //  this.GetSearchedlist();
   
       } else{
   
@@ -1186,6 +1221,18 @@ GetSelectedBatchqty () {
         });
       }
     })
+  } else{
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error in Taxable amount "
+    });
+  }
+}) 
   // } else{
   //   this.compacctToast.clear();
   //   this.compacctToast.add({
@@ -1201,6 +1248,80 @@ GetSelectedBatchqty () {
     // this.cleartotalamount();
   
   }
+  SaveFranSaleBill(){
+    let reportname = "";
+    if (this.CustumerName == "SWIGGY" || this.CustumerName == "ZOMATO") {
+      reportname = "Save_Swiggy_Zomato_POS_Sale_Bill"
+    } 
+    else {
+      reportname = "Save_POS_Sale_Bill"
+    }
+    this.productSubmit.forEach(item => {
+      if (Number(item.Taxable) && Number(item.Taxable) != 0) {
+        
+    const obj = {
+      "SP_String" : "SP_POS_Sale_Bill",
+      "Report_Name_String" : reportname,
+      "Json_Param_String" : this.getDataForSaveEdit()
+  
+    }
+    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      //console.log(data);
+      var tempID = data[0].Column1;
+      console.log("After Save",tempID);
+     // this.Objproduction.Doc_No = data[0].Column1;
+      if(data[0].Column1){
+       // this.ngxService.stop();
+        this.compacctToast.clear();
+        const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+        this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Sale_Bill_ID  " + tempID,
+             detail: "Succesfully " + mgs
+           });
+       this.tabIndexToView = 0;
+       this.GetSearchedlist();
+       this.productSubmit =[];
+       this.clearlistamount();
+       this.cleartotalamount();
+       //this.saveprintAndUpdate();
+       this.clearData();
+       //this.router.navigate(['./POS_BIll_Order']);
+      } else{
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+  } else{
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error in Taxable amount "
+    });
+  }
+  })
+  }
+  SaleBillPrint(obj) {
+    //console.log("billno ===", true)
+    if (obj.Bill_No) {
+      window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  
+      );
+    }
+  }
+  
   clearData(){
     this.ObjaddbillForm = new addbillForm();
     this.ObjcashForm = new cashForm();
