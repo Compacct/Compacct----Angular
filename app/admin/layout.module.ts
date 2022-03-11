@@ -274,7 +274,8 @@ import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward
 import {SplitButtonModule} from 'primeng/splitbutton';
 import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
 import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
-import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
+import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component';
+import { TutoBdaJoiningComponent } from './common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component'
 
 
 
@@ -479,7 +480,8 @@ import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.c
     GrnViewPurchaseBillComponent,
     ProductsPlaningComponent,
     CompacctTxnTaskGanttComponent,
-    UserAbsentComponent
+    UserAbsentComponent,
+    TutoBdaJoiningComponent
     
   ],
   imports: [

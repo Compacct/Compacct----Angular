@@ -33,7 +33,7 @@
                 <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
 
                 <p-dropdown [options]="SiteList" name="siteName" [(ngModel)]="ObjProjectTask.Site_ID" [showClear]="true"
-                  [emptyFilterMessage]="' No Site Found'" (onChange)="GetTask()" [filter]="true"
+                  [emptyFilterMessage]="' No Site Found'" (onChange)="OnProjectChange()" [filter]="true"
                   filterBy="label,value.name" [placeholder]="'Select Site Name'" [virtualScroll]="true" itemSize="30"
                   #siteName="ngModel" [styleClass]="
                               ProjectTaskSubmitted && siteName.errors?.required? 'clearance': ''" [required]="true">
@@ -53,7 +53,12 @@
                       class="btn btn-xs btn-flat btn-reddit"><i class="fa fa-fw fa-pencil"></i></button>
                   </ng-template>
                 </e-column>
+                <e-column field='Work_Type_Name' headerText='Type of Work'></e-column>
+                <e-column field='No_Of_Days' headerText='No Of Days'></e-column>
+                <e-column field='Budget_Group_Name' headerText='Tender Group Name'></e-column>
+                <e-column field='Summary_Task' headerText='Summary Name'></e-column>
                 <e-column field='Task_Name' headerText='Task Name'></e-column>
+                <e-column field='Job_Name' headerText='Job Name'></e-column>
                 <e-column field='Task_Start_Date' headerText='Start Date'></e-column>
                 <e-column field='Duration' headerText='Duration'></e-column>
                 <e-column field='Remarks' headerText='Remarks'></e-column>
@@ -71,32 +76,77 @@
 </div>
 <p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'"
   (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Task_Create_Overlay>
-  <div class="form-horizontal">
-    <form name="Task_CreateForm" #Task_CreateForm="ngForm" novalidate>
-      <div class="form-group">
-        <div class="col-sm-12">
-          <label class="control-label">Task Name<sup class="text-danger">*</sup></label>
-          <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="TaskNameModel"
-            placeholder="Task Name" allow-pattern="([a-z ]|\.)"
-            [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}" required>
-        </div>
-        <div class="col-sm-12">
-          <label class="control-label">Waitage Persentage<sup class="text-danger">*</sup></label>
-          <input class="form-control" type="text" name="Waitage_Persentage" #Waitage_Persentage="ngModel"
-            placeholder="Waitage Persentage"
-            [ngClass]="{'clearance':CreateLightBoxSubmitted && Waitage_Persentage?.errors?.required}"
-            [(ngModel)]="TaskWaitageModel" CompacctDigitonly="true" required>
-        </div>
-        <button (click)='LightBoxSave("Task_Create_Overlay")' class="btn btn-sm btn-success pull-right"
-          style="margin-right: 15px;margin-top: 10px;" [disabled]="LightBoxSpinner">
-          <p-progressSpinner *ngIf="LightBoxSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
-            animationDuration=".5s"></p-progressSpinner>
-          <i class="fa fa-fw  fa-plus"></i> Create
-        </button>
-      </div>
+  <p-tabView [activeIndex]="1">
+    <p-tabPanel headerStyleClass="compacct-tabs" header="BROWSE" leftIcon="fa fa-pencil-square-o" >
+      <div class="table-responsive table-id">
+        <p-table [value]="TaskList"
+        [paginator]="TaskList.length ? true : false" [rows]="100" [rowHover]="true"
+       [autoLayout]="true" sortMode="multiple"
+         [rowsPerPageOptions]="[100,200,300]"
+         [globalFilterFields] = '["Task_Name"]'
+          [rowHover]="true"
+          [autoLayout]="true"
+                #CREATE1>
+                <ng-template pTemplate="caption">
+                  <div class="row">
+                       <div class="col-sm-3 pull-right" style="text-align: right">
+                               <input type="text" pInputText size="50" placeholder="Search" (input)="CREATE1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                           </div>
+                  </div>
 
-    </form>
-  </div>
+               </ng-template>
+                   <ng-template pTemplate="header">
+                        <tr>
+                            <th>TASK NAME</th>
+                            <th>DELETE</th>
+                         </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-col>
+                        <tr>
+                            <td>{{col.Task_Name}}</td>
+                            <td>
+                              <button (click)='LightBoxDelete(col,"Task_Create_Overlay")' class="btn btn-pintrest btn-xs">
+                                <span class="fa fa-trash"></span>
+                             </button>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="paginatorright" let-state>
+                      Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+              </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel headerStyleClass="compacct-tabs" header="CREATE" leftIcon="fa fa-check-square-o">
+      <div class="form-horizontal">
+        <form name="Task_CreateForm" #Task_CreateForm="ngForm" novalidate>
+          <div class="form-group">
+            <div class="col-sm-12">
+              <label class="control-label">TASK NAME<sup class="text-danger">*</sup></label>
+              <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="TaskNameModel"
+                placeholder="Task Name" allow-pattern="([a-z ]|\.)"
+                [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}" required>
+            </div>
+            <!-- <div class="col-sm-12">
+              <label class="control-label">Waitage Persentage<sup class="text-danger">*</sup></label>
+              <input class="form-control" type="text" name="Waitage_Persentage" #Waitage_Persentage="ngModel"
+                placeholder="Waitage Persentage"
+                [ngClass]="{'clearance':CreateLightBoxSubmitted && Waitage_Persentage?.errors?.required}"
+                [(ngModel)]="TaskWaitageModel" CompacctDigitonly="true" required>
+            </div> -->
+            <button (click)='LightBoxSave("Task_Create_Overlay")' class="btn btn-sm btn-success pull-right"
+              style="margin-right: 15px;margin-top: 10px;" [disabled]="LightBoxSpinner">
+              <p-progressSpinner *ngIf="LightBoxSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                animationDuration=".5s"></p-progressSpinner>
+              <i class="fa fa-fw  fa-plus"></i> Create
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
 </p-overlayPanel>
 <p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'"
   (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Sub_Task_Create_Overlay1>
@@ -130,13 +180,56 @@
 </p-overlayPanel>
 <p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'"
   (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Sub_Task_Create_Overlay>
+  <p-tabView [activeIndex]="1">
+    <p-tabPanel headerStyleClass="compacct-tabs" header="BROWSE" leftIcon="fa fa-pencil-square-o" >
+      <div class="table-responsive table-id">
+        <p-table [value]="SubTaskList"
+        [paginator]="SubTaskList.length ? true : false" [rows]="100" [rowHover]="true"
+       [autoLayout]="true" sortMode="multiple"
+         [rowsPerPageOptions]="[100,200,300]"
+         [globalFilterFields] = '["Job_Name"]'
+          [rowHover]="true"
+          [autoLayout]="true"
+                #CREATE2>
+                <ng-template pTemplate="caption">
+                  <div class="row">
+                       <div class="col-sm-3 pull-right" style="text-align: right">
+                               <input type="text" pInputText size="50" placeholder="Search" (input)="CREATE2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                           </div>
+                  </div>
+
+               </ng-template>
+                   <ng-template pTemplate="header">
+                        <tr>
+                            <th>JOB NAME</th>
+                            <th>DELETE</th>
+                         </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-col>
+                        <tr>
+                            <td>{{col.Job_Name}}</td>
+                            <td>
+                              <button  (click)='LightBoxDelete(col,"Sub_Task_Create_Overlay")' class="btn btn-pintrest btn-xs">
+                                <span class="fa fa-trash"></span>
+                             </button>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="paginatorright" let-state>
+                      Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+              </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" header="CREATE" leftIcon="fa fa-check-square-o">
   <div class="form-horizontal">
     <form name="Task_CreateForm" #Task_CreateForm="ngForm" novalidate>
       <div class="form-group">
         <div class="col-sm-12">
-          <label class="control-label">Sub Task Name<sup class="text-danger">*</sup></label>
+          <label class="control-label">JOB NAME<sup class="text-danger">*</sup></label>
           <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="SubTaskNameModel"
-            placeholder="Sub Task Name" allow-pattern="([a-z ]|\.)"
+            placeholder="JOB NAME" allow-pattern="([a-z ]|\.)"
             [ngClass]="{clearance: CreateLightBoxSubmitted && name?.errors?.required}" required>
         </div>
         <button (click)='LightBoxSave("Sub_Task_Create_Overlay")' class="btn btn-sm btn-success pull-right"
@@ -149,51 +242,144 @@
 
     </form>
   </div>
+</p-tabPanel>
+</p-tabView>
 </p-overlayPanel>
 
 <p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'"
   (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Type_Of_Work>
-  <div class="form-horizontal">
-    <form name="TypeOfWorkForm" #TypeOfWorkForm="ngForm" novalidate>
-      <div class="form-group">
-        <div class="col-sm-12">
-          <label class="control-label">Type of Work<sup class="text-danger">*</sup></label>
-          <input type="text" class="form-control" name="TypeOfWork" #TypeOfWork="ngModel" [(ngModel)]="TypeOfWorkModel"
-            placeholder="Type of Work" allow-pattern="([a-z ]|\.)"
-            [ngClass]="{clearance: CreateLightBoxSubmitted && TypeOfWork?.errors?.required}" required>
-        </div>
-        <button (click)='LightBoxSave("Type_Of_Work")' class="btn btn-sm btn-success pull-right"
-          style="margin-right: 15px;margin-top: 10px;" [disabled]="LightBoxSpinner">
-          <p-progressSpinner *ngIf="LightBoxSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
-            animationDuration=".5s"></p-progressSpinner>
-          <i class="fa fa-fw  fa-plus"></i> Create
-        </button>
-      </div>
+  <p-tabView [activeIndex]="1">
+    <p-tabPanel headerStyleClass="compacct-tabs" header="BROWSE" leftIcon="fa fa-pencil-square-o" >
+      <div class="table-responsive table-id">
+        <p-table [value]="TypeofWorkList"
+        [paginator]="TypeofWorkList.length ? true : false" [rows]="100" [rowHover]="true"
+       [autoLayout]="true" sortMode="multiple"
+         [rowsPerPageOptions]="[100,200,300]"
+         [globalFilterFields] = '["Work_Type_Name"]'
+          [rowHover]="true"
+          [autoLayout]="true"
+                #CREATE3>
+                <ng-template pTemplate="caption">
+                  <div class="row">
+                       <div class="col-sm-3 pull-right" style="text-align: right">
+                               <input type="text" pInputText size="50" placeholder="Search" (input)="CREATE3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                           </div>
+                  </div>
 
-    </form>
-  </div>
+               </ng-template>
+                   <ng-template pTemplate="header">
+                        <tr>
+                            <th>TYPE OF WORK</th>
+                            <th>DELETE</th>
+                         </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-col>
+                        <tr>
+                            <td>{{col.Work_Type_Name}}</td>
+                            <td>
+                              <button (click)='LightBoxDelete(col,"Type_Of_Work")' class="btn btn-pintrest btn-xs">
+                                <span class="fa fa-trash"></span>
+                             </button>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="paginatorright" let-state>
+                      Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+              </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" header="CREATE" leftIcon="fa fa-check-square-o">
+        <div class="form-horizontal">
+          <form name="TypeOfWorkForm" #TypeOfWorkForm="ngForm" novalidate>
+            <div class="form-group">
+              <div class="col-sm-12">
+                <label class="control-label">TYPE OF WORK<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" name="TypeOfWork" #TypeOfWork="ngModel" [(ngModel)]="TypeOfWorkModel"
+                  placeholder="Type of Work" allow-pattern="([a-z ]|\.)"
+                  [ngClass]="{clearance: CreateLightBoxSubmitted && TypeOfWork?.errors?.required}" required>
+              </div>
+              <button (click)='LightBoxSave("Type_Of_Work")' class="btn btn-sm btn-success pull-right"
+                style="margin-right: 15px;margin-top: 10px;" [disabled]="LightBoxSpinner">
+                <p-progressSpinner *ngIf="LightBoxSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                  animationDuration=".5s"></p-progressSpinner>
+                <i class="fa fa-fw  fa-plus"></i> Create
+              </button>
+            </div>
+      
+          </form>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+ 
 </p-overlayPanel>
 <p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'"
   (onShow)='CreateLightBoxSubmitted = false;' [baseZIndex]="9999999" #Summary_Task>
-  <div class="form-horizontal">
-    <form name="SummaryTaskForm" #SummaryTaskForm="ngForm" novalidate>
-      <div class="form-group">
-        <div class="col-sm-12">
-          <label class="control-label">Summary Task<sup class="text-danger">*</sup></label>
-          <input type="text" class="form-control" name="SummaryTask" #SummaryTask="ngModel"
-            [(ngModel)]="SummaryTaskModel" placeholder="Summary Task" allow-pattern="([a-z ]|\.)"
-            [ngClass]="{clearance: CreateLightBoxSubmitted && SummaryTask?.errors?.required}" required>
-        </div>
-        <button (click)='LightBoxSave("Summary_Task")' class="btn btn-sm btn-success pull-right"
-          style="margin-right: 15px;margin-top: 10px;" [disabled]="LightBoxSpinner">
-          <p-progressSpinner *ngIf="LightBoxSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
-            animationDuration=".5s"></p-progressSpinner>
-          <i class="fa fa-fw  fa-plus"></i> Create
-        </button>
-      </div>
+  <p-tabView [activeIndex]="1">
+    <p-tabPanel headerStyleClass="compacct-tabs" header="BROWSE" leftIcon="fa fa-pencil-square-o" >
+      <div class="table-responsive table-id">
+        <p-table [value]="SummaryList"
+        [paginator]="SummaryList.length ? true : false" [rows]="100" [rowHover]="true"
+       [autoLayout]="true" sortMode="multiple"
+         [rowsPerPageOptions]="[100,200,300]"
+         [globalFilterFields] = '["Summary_Task"]'
+          [rowHover]="true"
+          [autoLayout]="true"
+                #CREATE4>
+                <ng-template pTemplate="caption">
+                  <div class="row">
+                       <div class="col-sm-3 pull-right" style="text-align: right">
+                               <input type="text" pInputText size="50" placeholder="Search" (input)="CREATE4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                           </div>
+                  </div>
 
-    </form>
-  </div>
+               </ng-template>
+                   <ng-template pTemplate="header">
+                        <tr>
+                            <th>SUMMARY TASK</th>
+                            <th>DELETE</th>
+                         </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-col>
+                        <tr>
+                            <td>{{col.Summary_Task}}</td>
+                            <td>
+                              <button  (click)='LightBoxDelete(col,"Summary_Task")' class="btn btn-pintrest btn-xs">
+                                <span class="fa fa-trash"></span>
+                             </button>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="paginatorright" let-state>
+                      Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+              </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" header="CREATE" leftIcon="fa fa-check-square-o">
+        <div class="form-horizontal">
+          <form name="SummaryTaskForm" #SummaryTaskForm="ngForm" novalidate>
+            <div class="form-group">
+              <div class="col-sm-12">
+                <label class="control-label">Summary Task<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" name="SummaryTask" #SummaryTask="ngModel"
+                  [(ngModel)]="SummaryTaskModel" placeholder="Summary Task" allow-pattern="([a-z ]|\.)"
+                  [ngClass]="{clearance: CreateLightBoxSubmitted && SummaryTask?.errors?.required}" required>
+              </div>
+              <button (click)='LightBoxSave("Summary_Task")' class="btn btn-sm btn-success pull-right"
+                style="margin-right: 15px;margin-top: 10px;" [disabled]="LightBoxSpinner">
+                <p-progressSpinner *ngIf="LightBoxSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                  animationDuration=".5s"></p-progressSpinner>
+                <i class="fa fa-fw  fa-plus"></i> Create
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </p-tabPanel>
+      </p-tabView>
 </p-overlayPanel>
 <!-- TASK CREATE -->
 <p-dialog header="Task Details" [appendTo]="'body'" [visible]="TaskModalFlag" [closeOnEscape]="true" [closable]="false"
@@ -219,7 +405,7 @@
                     <span (click)="Type_Of_Work.toggle($event)" class="btn-vk  pull-right createPatient"><i
                         class="fa fa-fw  fa-plus"></i> Create</span>
 
-                    <p-dropdown [options]="GroupNameList" name="TypWork" [(ngModel)]="ObjTask.Work_Type_ID"
+                    <p-dropdown [options]="TypeofWorkList" name="TypWork" [(ngModel)]="ObjTask.Work_Type_ID"
                       [showClear]="true" [emptyFilterMessage]="' No Work Found'" [filter]="true"
                       filterBy="label,value.name" (onChange)="ChangeGroupName()" [placeholder]="'Select Work Name'"
                       [virtualScroll]="true" itemSize="30" #TypWork="ngModel" [styleClass]="
@@ -255,7 +441,7 @@
                     <span (click)="Task_Create_Overlay.toggle($event)" class="btn-vk  pull-right createPatient"><i
                         class="fa fa-fw  fa-plus"></i> Create</span>
                     <p-dropdown [options]="TaskList" name="Taskname" [(ngModel)]="ObjTask.Task_ID" [showClear]="true"
-                      [emptyFilterMessage]="' No Task Found'" (onChange)="GetSubTask()" [filter]="true"
+                      [emptyFilterMessage]="' No Task Found'"  [filter]="true"
                       filterBy="label,value.name" [placeholder]="'Select Task Name'" [virtualScroll]="true"
                       itemSize="30" #Taskname="ngModel" [styleClass]="
                                             TaskSubmitted && Taskname.errors?.required? 'clearance': ''"
@@ -271,7 +457,7 @@
                   </div>
                   <div class="col-sm-6">
                     <label class="control-label">Job Name &nbsp;<span class="text-danger">*</span></label>
-                    <span *ngIf='ObjTask.Task_ID' (click)="Sub_Task_Create_Overlay.toggle($event)"
+                    <span (click)="Sub_Task_Create_Overlay.toggle($event)"
                       class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                     <p-dropdown [options]="SubTaskList" name="SubTask" [(ngModel)]="ObjTask.Job_ID" [showClear]="true"
                       [emptyFilterMessage]="' No Job Found'" [filter]="true" filterBy="label,value.name"
@@ -290,32 +476,19 @@
                                         </div> -->
 
                   <div class="col-sm-6">
-                    <label class="control-label">Start Date<sup class="text-danger">*</sup></label>
+                    <label class="control-label">Accepted Start Date<sup class="text-danger">*</sup></label>
                     <input type="date" class="form-control" id="taskstartdate1" #taskstartdate1="ngModel"
                       name="taskstartdate1" [ngModel]="TaskStartDate | date:'yyyy-MM-dd'"
                       (ngModelChange)="TaskStartDate = $event"
                       [ngClass]="{'clearance':TaskSubmitted && taskstartdate1?.errors?.required}" required>
                   </div>
-                  <div class="col-sm-12">
-                    <div style="
-                                            margin-top: 2em;
-                                            background: #8080806b;
-                                            height: 1px;
-                                        "></div>
-                  </div>
-                  <div class="col-sm-12">
+                 
+                  <div class="col-sm-3">
                     <label class="control-label">Expect Bill<sup class="text-danger">*</sup></label><br>
                     <p-selectButton [options]="ExpectBillType" name="Expect_Billing" (onChange)="ExpectBillTypeChange()"
                       [(ngModel)]="ObjTask.Expect_Billing"></p-selectButton>
                   </div>
-                  <div class="col-sm-12">
-                    <div style="
-                                            margin-top: 1em;
-                                            margin-bottom: 1.5em;
-                                            background: #8080806b;
-                                            height: 1px;
-                                        "></div>
-                  </div>
+                 
                   <!-- <div class="col-sm-6">
                                             <label class="control-label">Target Date<sup class="text-danger">*</sup></label>
                                             <input type="date" class="form-control"
@@ -349,14 +522,14 @@
                       <span class="input-group-addon">%</span>
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="col-sm-3">
                     <label class="control-label">
                       No Of Days <sup class="text-danger">*</sup></label>
                     <input class="form-control" name="No_Of_Days" #No_Of_Days="ngModel" [(ngModel)]="ObjTask.No_Of_Days"
                       CompacctDigitonly="true" [ngClass]="{'clearance': TaskSubmitted && No_Of_Days?.errors?.required}"
                       placeholder="No Of Days" [required]="true" />
                   </div>
-                  <div class="col-sm-2">
+                  <div class="col-sm-3">
                     <label class="control-label">
                       Assign To <sup class="text-danger">*</sup></label>
                     <select class="form-control" name='Assign' #Assign='ngModel'
@@ -376,9 +549,9 @@
                       <option value="Completed">Completed</option>
                     </select>
                   </div>
-                  <div class="col-sm-6">
+                  <div class="col-sm-5">
                     <label class="control-label">Dependency&nbsp;<span class="text-danger">*</span></label>
-                    <p-dropdown [options]="DependencyList" name="Dependency" [(ngModel)]="ObjTask.Dependency_Job_ID"
+                    <p-dropdown [options]="SubTaskList" name="Dependency" [(ngModel)]="ObjTask.Dependency_Job_ID"
                       [showClear]="true" [emptyFilterMessage]="' No Dependency Found'" [filter]="true"
                       filterBy="label,value.name" [placeholder]="'Select Dependency Name'" [virtualScroll]="true"
                       itemSize="30" #Dependency="ngModel" [styleClass]="
@@ -387,7 +560,7 @@
                     </p-dropdown>
                   </div>
                   <div class="col-sm-2">
-                    <button class="btn btn-primary custombutton" [disabled]='!ObjTask.Task_ID'
+                    <button class="btn btn-primary custombutton" 
                       (click)="AddTask(TaskModalUpdate.form.valid)">
                       <i class="fa fa-fw fa-plus"></i>&nbsp;ADD</button>
                   </div>
@@ -397,27 +570,23 @@
                     <thead>
                       <tr style="background-color:#3c8dbc;color:white;">
                         <th>Sl.</th>
-                        <th>Sub Task </th>
-                        <th>Subject</th>
-                        <th>Remarks</th>
-                        <th>Start Date</th>
-                        <th>Target Date</th>
-                        <th>Waitage Persentage</th>
-                        <th>Assign To</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th>JOB NAME </th>
+                        <th>REMARKS</th>
+                        <th>ACCEPECTED START DATE</th>
+                        <th>ACCEPECTED END DATE</th>
+                        <th>ASSIGN TO </th>
+                        <th>STATUS </th>
+                        <th>ACTION </th>
 
                       </tr>
                     </thead>
                     <tbody>
                       <tr *ngFor="let d of TaskCreateList;let odd = odd;let index = index" [class.even]="odd">
                         <td>{{ index + 1 }}</td>
-                        <td>{{d.Sub_Task_Name}}</td>
-                        <td>{{d.Task_Subject}}</td>
+                        <td>{{d.Job_Name}}</td>
                         <td>{{d.Remarks}}</td>
-                        <td>{{d.Task_Start_Date}}</td>
-                        <td>{{d.Task_Target_Date}}</td>
-                        <td>{{d.Waitage_Persentage_Against_Sub_Task}}</td>
+                        <td>{{d.Planned_Start_Date}}</td>
+                        <td>{{d.Planned_End_Date}}</td>
                         <td>{{d.Assign_To_Name}}</td>
                         <td>{{d.Task_Status}}</td>
                         <td>
@@ -715,7 +884,7 @@
                   </div>
                   <div class="col-sm-6">
                     <label class="control-label">Dependency&nbsp;<span class="text-danger">*</span></label>
-                    <p-dropdown [options]="DependencyList" name="Dependency" [(ngModel)]="ObjTask.Dependency_Job_ID"
+                    <p-dropdown [options]="SubTaskList" name="Dependency" [(ngModel)]="ObjTask.Dependency_Job_ID"
                       [showClear]="true" [emptyFilterMessage]="' No Dependency Found'" [filter]="true"
                       filterBy="label,value.name" [placeholder]="'Select Dependency Name'" [virtualScroll]="true"
                       itemSize="30" #Dependency="ngModel" [styleClass]="

@@ -40,6 +40,9 @@
   border: 1px solid rgb(31, 109, 255);
 
 }
+div.table-responsive.table-id>p-table>div>div {
+  width: auto !important;
+}
 /* .e-altrow, tr.e-chart-row:nth-child(even)  {
   background-color: #f2f2f2;
   } */
