@@ -2186,7 +2186,7 @@ onCONDUCTION(valid ,Flag){
   this.GlobalAPI
       .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
         console.log(data)
-  if (data[0].Column1) {
+  if (data[0].Followup_ID) {
       if(Flag && Flag === 'Enrolled') {
         this.SaveEnrolled(valid);
       }
