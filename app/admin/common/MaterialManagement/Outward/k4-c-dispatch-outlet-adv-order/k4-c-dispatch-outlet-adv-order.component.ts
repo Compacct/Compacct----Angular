@@ -565,7 +565,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
      if(this.FranchiseProductList.length) {
        let tempArr =[]
        this.FranchiseProductList.forEach(item => {
-        // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+        if (Number(item.Taxable) && Number(item.Taxable) != 0) {
       const TempObj = {
              Doc_No:  "A",
              Doc_Date: this.currentDate,
@@ -604,6 +604,19 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
              HSL_No : item.HSN_NO
           }
        tempArr.push(TempObj)
+        } else {
+          setTimeout(()=>{
+          this.Spinner = false;
+          this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+           key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error in Taxable amount"
+        });
+        },600)
+      }
        });
        console.log("Save Data ===", tempArr)
        return JSON.stringify(tempArr);

@@ -226,7 +226,8 @@ autoaFranchiseBill() {
       To_Date : end,
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
       Menu_Ref_Id : this.$CompacctAPI.CompacctCookies.Menu_Ref_ID,
-      Cost_Cen_ID : this.Browseroutlet
+      //Cost_Cen_ID : this.Browseroutlet
+      Cost_Cen_ID : this.Browseroutlet ? this.Browseroutlet : 0
     }
     const obj = {
       "SP_String": "SP_Controller_Master",
@@ -282,6 +283,7 @@ autoaFranchiseBill() {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.editList = data;
+        this.ObjaddbillForm.Advance = data[0].Adv_Order_No ? data[0].Adv_Order_No : undefined;
         this.Objcustomerdetail.Costomer_Mobile = data[0].Costomer_Mobile;
         this.Objcustomerdetail.Customer_Name= data[0].Customer_Name;
         // this.Objcustomerdetail.Customer_DOB = data[0].Customer_DOB;
@@ -1029,6 +1031,7 @@ GetSelectedBatchqty () {
     if(this.productSubmit.length) {
       let tempArr =[]
       this.productSubmit.forEach(item => {
+        if (Number(item.Taxable) && Number(item.Taxable) != 0) {
         const obj = {
             Product_ID : item.Product_ID,
             Product_Description : item.Product_Description,
@@ -1071,7 +1074,7 @@ GetSelectedBatchqty () {
         Net_Payable : this.Net_Payable,
         Hold_Bill  : this.Hold_Bill_Flag ? "Y" : "N",
         Order_Txn_ID : 0,
-        Adv_Order_No : this.Adv_Order_No != null ? this.Adv_Order_No : "" ,
+        Adv_Order_No : this.ObjaddbillForm.Advance ? this.ObjaddbillForm.Advance : "" ,
         Online_Order_No : null,
         Online_Order_Date : null,
 
@@ -1088,14 +1091,44 @@ GetSelectedBatchqty () {
   
       }
       tempArr.push({...obj,...TempObj,...this.Objcustomerdetail,...this.ObjcashForm})
+    } else {
+            this.Spinner = false;
+          this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+           key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error in Taxable amount"
+        });
+    }
     });
    // console.log("save bill =" , tempArr)
     return JSON.stringify(tempArr);
     }
   
   }
+  // save(){
+  //   this.productSubmit.forEach(item => {
+  //     if (Number(item.Taxable) && Number(item.Taxable) != 0) {
+  //       this.saveprintAndUpdate();
+  //     } else {
+  //       this.Spinner = false;
+  //     this.ngxService.stop();
+  //   this.compacctToast.clear();
+  //   this.compacctToast.add({
+  //      key: "compacct-toast",
+  //     severity: "error",
+  //     summary: "Warn Message",
+  //     detail: "Error in Taxable amount"
+  //   });
+  //     }
+      
+  //   })
+  // }
   saveprintAndUpdate(){
     this.SavePrintFormSubmitted = true;
+    this.ngxService.start();
     if(this.GSTvalidFlag){
       this.Spinner = false;
       this.ngxService.stop();
@@ -1160,11 +1193,25 @@ GetSelectedBatchqty () {
       });
       return false;
     }
+//     this.productSubmit.forEach(item => {
+//       if (Number(!item.Taxable) && Number(item.Taxable) == 0) {
+//       this.Spinner = false;
+//       this.ngxService.stop();
+//     this.compacctToast.clear();
+//     this.compacctToast.add({
+//       key: "compacct-toast",
+//       severity: "error",
+//       summary: "Warn Message",
+//       detail: "Error in Taxable amount"
+//     });
+//     return false;
+//   }
+// })
   }
   
   // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){
-    this.productSubmit.forEach(item => {
-      if (Number(item.Taxable) && Number(item.Taxable) != 0) {
+    // this.productSubmit.forEach(item => {
+    //   if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String" : "Add Outlet Transaction Sale Bill",
@@ -1220,18 +1267,18 @@ GetSelectedBatchqty () {
           detail: "Error Occured "
         });
       }
-    })
-  } else{
-    this.Spinner = false;
-    this.ngxService.stop();
-    this.compacctToast.clear();
-    this.compacctToast.add({
-      key: "compacct-toast",
-      severity: "error",
-      summary: "Warn Message",
-      detail: "Error in Taxable amount "
-    });
-  }
+  //   })
+  // } else{
+  //   this.Spinner = false;
+  //   this.ngxService.stop();
+  //   this.compacctToast.clear();
+  //   this.compacctToast.add({
+  //     key: "compacct-toast",
+  //     severity: "error",
+  //     summary: "Warn Message",
+  //     detail: "Error in Taxable amount "
+  //   });
+  // }
 }) 
   // } else{
   //   this.compacctToast.clear();
@@ -1256,8 +1303,8 @@ GetSelectedBatchqty () {
     else {
       reportname = "Save_POS_Sale_Bill"
     }
-    this.productSubmit.forEach(item => {
-      if (Number(item.Taxable) && Number(item.Taxable) != 0) {
+    // this.productSubmit.forEach(item => {
+    //   if (Number(item.Taxable) && Number(item.Taxable) != 0) {
         
     const obj = {
       "SP_String" : "SP_POS_Sale_Bill",
@@ -1299,18 +1346,18 @@ GetSelectedBatchqty () {
           detail: "Error Occured "
         });
       }
-    })
-  } else{
-    this.Spinner = false;
-    this.ngxService.stop();
-    this.compacctToast.clear();
-    this.compacctToast.add({
-      key: "compacct-toast",
-      severity: "error",
-      summary: "Warn Message",
-      detail: "Error in Taxable amount "
-    });
-  }
+  //   })
+  // } else{
+  //   this.Spinner = false;
+  //   this.ngxService.stop();
+  //   this.compacctToast.clear();
+  //   this.compacctToast.add({
+  //     key: "compacct-toast",
+  //     severity: "error",
+  //     summary: "Warn Message",
+  //     detail: "Error in Taxable amount "
+  //   });
+  // }
   })
   }
   SaleBillPrint(obj) {
@@ -1391,7 +1438,7 @@ class search{
  }
 
  class addbillForm{
-  Advance = "NA" ;
+  Advance : any ;
   selectitem : string;
   Product_ID : string;
   Browseroutlet : any;
