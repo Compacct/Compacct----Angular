@@ -657,6 +657,9 @@ async GetRejectList(val) {
             this.leadFollowUpList = [...SortData];
             this.leadFollowUpListBackup = [...SortData];
             this.leadFollowUpList.forEach(function (element) {
+              if(!element.Lead_ID) {
+                console.log(element)
+              }
               element.Selected = false;
             });
             this.GetDistinct();
@@ -2076,7 +2079,7 @@ async OpenRescedAppo(obj){
   this.ResceduleMP3File = {};
   if(obj.Appo_ID){
     
-    this.RejectList = await this.GetRejectList('REJECT');
+    this.RejectList = await this.GetRejectList('RECHEDULE');
     
     this.RejectList.forEach(obj=>{
       obj['label'] = obj.Reason_Details;

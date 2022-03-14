@@ -190,6 +190,7 @@ import { ProductsPlaningComponent } from './common/TenderManagement/products-pla
 import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
 import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
 import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
+import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
 
 
 
@@ -1374,6 +1375,13 @@ const layoutRoutes: Routes = [{
   component: TutoBdaJoiningComponent,
   data: {
     title: 'BDA Joining'
+  }
+},
+{
+  path: 'Tutopia_ASP_Unavailability',
+  component: TutoAspUnavaliblityComponent,
+  data: {
+    title: 'ASP Unavailability'
   }
 }
 

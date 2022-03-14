@@ -464,17 +464,17 @@
                                                         <i class="fa fa-ban" aria-hidden="true"></i> REJECT
                                                     </a>
                                                 </li>
-                                                <li *ngIf="col.Sub_Status === 'ACCEPT'">
+                                                <li *ngIf="(col.Sub_Status === 'ACCEPT' || col.Sub_Status === 'RECHEDULE')">
                                                     <a (click)="OpenJourneyStartedAppo(col)">
                                                         <i class="fa fa-upload" aria-hidden="true"></i> JOURNEY STARTED
                                                     </a>
                                                 </li>
-                                                <li *ngIf="col.Sub_Status === 'ACCEPT'" >
+                                                <li *ngIf="(col.Sub_Status === 'ACCEPT' || col.Sub_Status === 'RECHEDULE')" >
                                                     <a (click)="OpenRescedAppo(col)">
                                                         <i class="fa fa-repeat" aria-hidden="true"></i> RESCHEDULE
                                                     </a>
                                                 </li>
-                                                <li *ngIf="col.Sub_Status === 'ACCEPT'">
+                                                <li *ngIf="(col.Sub_Status === 'ACCEPT' || col.Sub_Status === 'RECHEDULE')">
                                                     <a (click)="OpenCANCELAppo(col)">
                                                         <i class="fa fa-remove" aria-hidden="true"></i> CANCEL
                                                     </a>
@@ -1379,7 +1379,7 @@
                         <ul class="timeline ">
                             <li class="time-label" style="margin-bottom: -20px" *ngFor="let objMain of distinctDateArray">
                                 <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
-                                <ul class="timeline" style="width:50%;margin: 7px 0 30px 0">
+                                <ul class="timeline timeline-responsive" >
                                     <li *ngFor="let objSub of getFollowupByDate1(objMain)">
                                         <i class="fa fa-user bg-blue"></i>
                                         <div class="timeline-item">
