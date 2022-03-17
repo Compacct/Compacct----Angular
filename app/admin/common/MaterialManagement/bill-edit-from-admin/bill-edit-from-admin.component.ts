@@ -354,7 +354,11 @@ autoaFranchiseBill() {
           this.ObjcashForm.Wallet_Ac_ID = data[0].Wallet_Ac_ID;
           this.ObjcashForm.Wallet_Ac = data[0].Wallet_Ac;
           this.ObjcashForm.Wallet_Amount = data[0].Wallet_Amount;
-          this.walletdisabled = true;
+          if (this.CustumerName == "SWIGGY" || this.CustumerName == "ZOMATO") {
+          this.walletdisabled = false;
+          } else {
+            this.walletdisabled = true;
+          }
         } else {
           this.ObjcashForm.Wallet_Ac_ID = undefined;
           this.ObjcashForm.Wallet_Ac = undefined;
@@ -505,7 +509,7 @@ autoaFranchiseBill() {
      const TempObj = {
       User_ID:this.$CompacctAPI.CompacctCookies.User_ID,
       Cost_Cen_ID :  this.rowCostcenter,
-      Doc_Type : "ORDER",
+      Doc_Type : "ORDER Edit From Admin",
       //Doc_Date : this.Objcustomerdetail.Doc_Date,
       Product_Type_ID : 0
      }
@@ -553,7 +557,11 @@ if(this.ObjaddbillForm.Product_ID) {
   //this.rate = productObj.Sale_rate;
   this.ObjaddbillForm.Product_Description = productObj.Product_Description;
   //this.ObjaddbillForm.Stock_Qty = productObj.Stock_Qty;
+  if (this.CustumerName == "SWIGGY" || this.CustumerName == "ZOMATO") {
+    this.ObjaddbillForm.Sale_rate =  productObj.Sale_rate_Online;
+  } else {
   this.ObjaddbillForm.Sale_rate =  productObj.Sale_rate;
+  }
   //this.ObjaddbillForm.Sale_rate_Online = productObj.Sale_rate_Online;
   this.ObjaddbillForm.GST_Tax_Per =  productObj.GST_Tax_Per;
   this.CGST_Ledger_Id = productObj.CGST_Output_Ledger_ID;

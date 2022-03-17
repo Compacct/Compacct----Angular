@@ -73,6 +73,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       // console.log(params);
       this.clearData();
+      this.Gdisableflag = false;
       this.Searchedlist = [];
       this.ProductList = [];
       this.productListFilter = [];
@@ -139,6 +140,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.SelectedIndent = [];
      this.ProductList = [];
      this.productListFilter = [];
+     this.Gdisableflag = false;
    }
   GetCostCen(){
     const tempObj = {
@@ -216,6 +218,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
    this.BackupIndentList = data;
     this.rsnsClosingStockFormSubmitted = false;
     this.GetProductType();
+    this.Gdisableflag = true;
    console.log("this.ProductList======",this.ProductList);
    })
   }
@@ -354,7 +357,7 @@ Save(){
           this.clearData();
           this.GetSearchedList(true);
        }
-       this.clearData();
+       //this.clearData();
       // this.IssueStockFormSubmitted = false;
 
       } else{
