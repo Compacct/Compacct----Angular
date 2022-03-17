@@ -112,6 +112,10 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
       "Json_Param_String": JSON.stringify([TObj])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      data.forEach(element => {
+        element['label'] = element.Machine,
+        element['value'] = element.Product_ID
+      });
      this.MachineList = data;
     // console.log('MachineList ==', this.MachineList)
   

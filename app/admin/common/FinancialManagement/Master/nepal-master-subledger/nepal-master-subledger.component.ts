@@ -561,9 +561,34 @@ export class NepalMasterSubledgerComponent implements OnInit {
 
   SaveLocationForm(valid) {
     this.SubledgerLocationSubmitted = true;
-    if(valid && this.ObjSubledger.Sub_Ledger_ID) {
-      this.ObjLocation.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
-      this.SaveLocation(this.ObjLocation);
+    if(valid && this.ObjSubledger.Sub_Ledger_ID && this.CheckLocationNameExist()) {
+      if(this.LocationEditFlag){
+        this.ObjLocation.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
+        this.SaveLocation(this.ObjLocation);
+      }
+      if (!this.LocationEditFlag && this.CheckLocationNameExist()){
+        this.ObjLocation.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
+        this.SaveLocation(this.ObjLocation);
+      }
+    }
+  }
+  CheckLocationNameExist() {
+    if(this.LocationList.length && this.ObjLocation.Location_Name) {
+      const dup = this.LocationList.filter(obj=> obj.Location_Name === this.ObjLocation.Location_Name);
+      if(dup.length) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Validation",
+          detail: "Location Name Already Exits."
+        });
+        this.ObjLocation.Location_Name = undefined;
+        return false;
+      }
+      return true;
+    } else{
+      return true;
     }
   }
   SaveContactForm(valid) {
