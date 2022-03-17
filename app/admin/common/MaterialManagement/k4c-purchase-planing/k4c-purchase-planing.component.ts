@@ -102,6 +102,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
      this.tabIndexToView = e.index;
      this.items = ["BROWSE", "CREATE", "ORDER-STOCK REPORT"];
      this.buttonname = "Save";
+     this.Spinner = false;
     //  this.clearData();
     //  this.getproduct();
     //  this.producttypelist = [];
@@ -696,6 +697,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
        //this.ObjSaveForm = new SaveForm();
 
       } else{
+        this.Spinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",

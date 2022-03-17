@@ -232,7 +232,7 @@
                                             <input class="form-control" name="ALT_UOM_Qty" #ALT_UOM_Qty="ngModel" [(ngModel)]="ObjmasterProduct.ALT_UOM_Qty" [ngClass]="{'clearance': masterProductFormSubmitted && ALT_UOM_Qty?.errors?.required}" [disabled]="disablesIndut" required>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Store Item - Saleable'">
                                         <label class="control-label">Purchasable Product<sup class="text-danger"></sup></label>
 
                                         <div class="checkBox">
@@ -242,6 +242,18 @@
                                    </label>
                                         </div>
                                     </div>
+                                    <!-- FOR NON SALEABLE -->
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
+                                        <label class="control-label">Purchasable Product<sup class="text-danger"></sup></label>
+
+                                        <div class="checkBox">
+                                            <label>
+                                       <p-checkbox  [(ngModel)]="ObjmasterProduct.Can_Purchase" #Can_Purchase="ngModel" name="Can_Purchase"  binary="true"
+                                       ></p-checkbox> Check to Make it Purchaseable
+                                   </label>
+                                        </div>
+                                    </div>
+                                    <!--  -->
                                     <div class="clearfix" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'"></div>
                                     <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Raw Material'">
                                         <label class="control-label">Saleable Product<sup class="text-danger"></sup></label>
@@ -305,14 +317,14 @@
                                     </div>
 
 
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Store Item - N/Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished'">
 
                                         <label class="control-label">Sale Fanchise Rate (OLD)</label>
                                         <input class="form-control" placeholder="Sale Fanchise Rate (OLD)" name="Sale_rate_Franchise_Old" #Sale_rate_Franchise_Old="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjmasterProduct.Sale_rate_Franchise_Old">
 
 
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Store Item - N/Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished'">
 
                                         <label class="control-label">Sale Fanchise Rate (NEW)</label>
                                         <input class="form-control" placeholder="Sale Fanchise Rate (NEW)" name="Sale_rate_Franchise_New" #Sale_rate_Franchise_New="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjmasterProduct.Sale_rate_Franchise_New">

@@ -650,14 +650,15 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     //console.log(this.Net_Amount);
   }
  getdataforSaveFranchise(){
-    this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
+    //this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
     if(this.FranchiseProductList.length) {
       let tempArr =[]
       this.FranchiseProductList.forEach(item => {
         if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const TempObj = {
             Doc_No:  "A",
-            Doc_Date: this.currentDate,
+            //Doc_Date: this.currentDate,
+            Doc_Date: this.DateService.dateConvert(new Date(this.date)),
             Sub_Ledger_ID : Number(this.subledgerid),
             Cost_Cen_ID	: 2,//this.fromCostId,
             Product_ID	: item.Product_ID,

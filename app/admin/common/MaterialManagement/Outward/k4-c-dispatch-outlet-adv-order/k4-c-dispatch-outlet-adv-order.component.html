@@ -71,11 +71,11 @@
                                             <th>Date</th>
                                             <th>Sale Bill No</th>
                                             <th>Customer Name / Mobile No</th>
-                                            <th>Total Amount</th>
+                                            <th>Customer Amount</th>
                                             <th>From Godown</th>
                                             <th>To Outlet</th>
                                             <th>Total Qty</th>
-                                            <th>Total Amount</th>
+                                            <th>Franchise Amount</th>
                                             <th>Box Charge</th>
                                             <th>Vehicle Details</th>
                                             <th>Transaction Date & Time</th>
@@ -242,6 +242,7 @@
                                             <th>Qty</th>
                                             <th>Delivery Qty</th>
                                             <th>Box Charge</th>
+                                            <th>Box Charge Remarks</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -259,6 +260,7 @@
                                             <td>{{col.Qty}}</td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" /></td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
