@@ -278,6 +278,7 @@ import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.c
 import { TutoBdaJoiningComponent } from './common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component';
 import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component'
 
+import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-angular-gantt';
 
 
 
@@ -545,6 +546,9 @@ import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unava
     DateNepalConvertService,
     SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
+    SortService,
+    FilterService,
+    ColumnMenuService
   ]
 })
 export class LayoutModule {}

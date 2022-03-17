@@ -62,7 +62,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     endDate: 'Task_Target_Date',
     duration: 'Duration',
     progress: 'Progress',
-    dependency: 'Predecessor',
+    dependency: 'dependency',
     child: 'subtasks'
   };
   public selectionSettings2: SelectionSettingsModel;
@@ -186,6 +186,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         align: 'Right'
       }
     ];
+    this.ganttObj.timelineSettings.bottomTier.format = 'dd';
     this.GetProject();
     this.GetUserList();
 
@@ -288,27 +289,35 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
 
   EditTask(obj) {
     if (obj.Doc_ID) {
-      const TaskArr = this.BackupBrowseTask.filter(e => e.Doc_ID === obj.Doc_ID);
-      const taskID = this.ObjTask.Task_ID;
-      const dOCID = this.ObjTask.Doc_ID;
+      const TaskArr = this.BackupBrowseTask.filter(e => e.U_id === obj.U_id);
+      const dOCID = TaskArr[0].Doc_ID;
       this.ObjTask = new Task();
-      this.ObjTask.Task_ID = taskID;
       this.ObjTask.Doc_ID = dOCID;
       this.TaskSubmitted = false;
-
       this.ObjTask = {
         ...TaskArr[0]
       };
-      this.TaskStartDate = new Date(TaskArr[0].Task_Start_Date);
-      this.TaskEndtDate = new Date(TaskArr[0].Task_Target_Date);
+      console.log(this.ObjTask)
+      if(TaskArr[0].Dependency_Job_ID && TaskArr[0].Dependency_Relationship){
+        this.ObjTask.Dependency_Required = 'Y';
+        this.ObjTask.Dependency_Job_ID = TaskArr[0].Dependency_Job_ID.toString();
+      }
+      if(TaskArr[0].Waitage_Field && TaskArr[0].Waitage_Value){
+        this.ObjTask.Expect_Billing = 'Y';
+      }
+    //  this.ObjTask.Work_Type_ID = TaskArr[0].Work_Type_ID.toString();
+      this.TaskStartDate = new Date(this.ObjTask.Planned_Start_Date);
+      this.ObjTask.Assign_To_Name = this.AssignToList.filter(e => Number(e.User_ID) === Number(this.ObjTask.User_ID))[0].Name;
+      this.ObjTask.Job_Name = this.SubTaskList.filter(e => Number(e.Job_ID) === Number(this.ObjTask.Job_ID))[0].label;
+     
+      console.log(this.ObjTask)
       this.TaskEditModalFlag = true;
     }
   }
   CloseTaskEditModal() {
-    const taskID = this.ObjTask.Task_ID;
+    
     const dOCID = this.ObjTask.Doc_ID;
     this.ObjTask = new Task();
-    this.ObjTask.Task_ID = taskID;
     this.ObjTask.Doc_ID = dOCID;
     this.TaskStartDate = new Date();
     this.TaskEndtDate = new Date();
@@ -331,14 +340,13 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         "Json_Param_String": JSON.stringify([JSONobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log(data)
+        console.log('Full Raw',data)
         this.BackupBrowseTask = data;
         const tree = this.ListToTree(data);
         this.data = tree;
         if (id) {
           this.OpenTaskModalForEdit(id);
         }
-        console.log(tree)
       })
     }
   }
@@ -346,13 +354,26 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     var dup = [],
       childroot = [],
       roots = [],
-      i;
+      i,
+      slno = 0;
+      this.DependencyList = [];
     for (i = 0; i < list.length; i += 1) {
       list[i]['U_id'] = this.broofa();
+      this.DependencyList.push({
+        value : list[i].SL_ID,
+        label : `${list[i].Work_Type_Name} - 
+        ${list[i].Budget_Group_Name} -
+        ${list[i].Summary_Task} -
+        ${list[i].Task_Name} -
+        ${list[i].Job_Name}`,
+      })
       if (dup.indexOf(list[i].Doc_ID) === -1) {
+        slno = slno + 1;
         dup.push(list[i].Doc_ID);
         const obj = {
-          Task_ID: list[i].Doc_ID,
+          Sl_No : slno,
+          Task_ID: list[i]['U_id'],
+          Doc_ID: list[i].Doc_ID,
           Task_Name: list[i].Task_Name,
           Work_Type_Name: list[i].Work_Type_Name,
           No_Of_Days: list[i].No_Of_Days,
@@ -371,14 +392,14 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       }
 
     }
-
     const options = list.map(function (row) {
       return {
         isSubTask: true,
         Remarks: row.Remarks,
         Task_Name: row.Task_Name,
         U_id: row.U_id,
-        Task_ID: row.Doc_ID,
+        Task_ID: row.SL_ID,
+        Doc_ID: row.Doc_ID,
         Task_Start_Date: row.Planned_Start_Date,
         Task_Target_Date: row.Planned_End_Date,
         Work_Type_Name: row.Work_Type_Name,
@@ -386,14 +407,27 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         Budget_Group_Name: row.Budget_Group_Name,
         Summary_Task: row.Summary_Task,
         Job_Name: row.Job_Name,
+        Sl_No: undefined,
+        SL_ID: row.SL_ID,
+        Dependency_Job_ID:row.Dependency_Job_ID,
+        Dependency_Relationship: row.Dependency_Relationship,
       }
     })
     for (i = 0; i < roots.length; i += 1) {
-      const taskId = roots[i]['Task_ID'];
+      const taskId = roots[i]['Doc_ID'];
       if (taskId) {
-        roots[i]['subtasks'] = options.filter(e => Number(e.Task_ID) === Number(taskId));
+        const subtask = options.filter(e => Number(e.Doc_ID) === Number(taskId));
+        subtask.forEach((obj,i2)=>{
+          obj.Sl_No = undefined;
+          if(obj.Dependency_Job_ID && obj.Dependency_Relationship){
+            obj['dependency'] = obj.Dependency_Job_ID.toString()+obj.Dependency_Relationship;
+          }
+          obj.Sl_No = roots[i].Sl_No.toString() +'.'+ (i2+1).toString();
+        })
+        roots[i]['subtasks'] = subtask;
       }
     }
+    console.log('tree',roots)
     return roots;
   }
   broofa() {
@@ -441,7 +475,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       });
     }
   }
-  OpenTaskModalForEdit(DocID) {
+  OpenTaskModalForEdit(U_id) {
     this.TaskSubmitSpinner = false;
     this.ObjTask = new Task();
     this.TaskStartDate = new Date();
@@ -453,15 +487,20 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.TaskRemarksSubmitSpinner = false;
     this.TaskRemarksList = [];
     this.TaskCreateList = [];
-    if (DocID) {
-      const TaskArr = this.BackupBrowseTask.filter(e => e.Doc_ID === DocID);
+    if (U_id) {
+      const task = this.BackupBrowseTask.filter(e => e.U_id === U_id);
+      const TaskArr = this.BackupBrowseTask.filter(e => e.Doc_ID === task[0].Doc_ID);
       TaskArr.forEach(e => {
-        e.Task_Start_Date = this.DateService.dateConvert(new Date(e.Task_Start_Date));
-        e.Task_Target_Date = this.DateService.dateConvert(new Date(e.Task_Target_Date));
+        // e.Task_Start_Date = this.DateService.dateConvert(new Date(e.Task_Start_Date));
+        // e.Task_Target_Date = this.DateService.dateConvert(new Date(e.Task_Target_Date));
         e.Posted_ON = this.DateService.dateConvert(new Date(e.Posted_ON));
+        e.Assign_To_Name = this.AssignToList.filter(o => Number(o.User_ID) === Number(e.User_ID))[0].Name;
+        e.Job_Name = this.SubTaskList.filter(o => Number(o.Job_ID) === Number(e.Job_ID))[0].label;
+        e.Task_Name = this.TaskList.filter(o => Number(o.Task_ID) === Number(e.Task_ID))[0].label;
+        e.Planned_Start_Date = this.DateService.dateConvert(new Date(e.Planned_Start_Date));
+        e.Planned_End_Date = this.DateService.dateConvert(new Date(e.Planned_End_Date));
       });
       this.ObjTask.Doc_ID = TaskArr[0].Doc_ID;
-      this.ObjTask.Task_ID = TaskArr[0].Task_ID;
      // this.GetSubTask();
       this.TaskCreateList = [...TaskArr];
       this.TaskModalFlag = true;
@@ -579,6 +618,10 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   ExpectBillTypeChange(){
     this.ObjTask.Waitage_Field = undefined;
     this.ObjTask.Waitage_Value = undefined;
+  }
+  DependencyRequiredChange(){
+    this.ObjTask.Dependency_Job_ID = undefined;
+    this.ObjTask.Dependency_Relationship = undefined;
   }
 
   LightBoxSave(field) {
@@ -783,8 +826,11 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       this.ObjTask.Posted_ON = this.DateService.dateConvert(new Date());
       this.ObjTask.Posted_By = this.commonApi.CompacctCookies.User_ID;
       this.ObjTask.Assign_To_Name = this.AssignToList.filter(e => Number(e.User_ID) === Number(this.ObjTask.User_ID))[0].Name;
+      this.ObjTask.Work_Type_Name = this.TypeofWorkList.filter(e => Number(e.Work_Type_ID) === Number(this.ObjTask.Work_Type_ID))[0].label;
+      this.ObjTask.Summary_Task = this.SummaryList.filter(e => Number(e.Summary_Task_ID) === Number(this.ObjTask.Summary_Task_ID))[0].label;
+      this.ObjTask.Task_Name = this.TaskList.filter(e => Number(e.Task_ID) === Number(this.ObjTask.Task_ID))[0].label;
       this.ObjTask.Job_Name = this.SubTaskList.filter(e => Number(e.Job_ID) === Number(this.ObjTask.Job_ID))[0].label;
-      const taskID = this.ObjTask.Task_ID;
+     
       const dOCID = this.ObjTask.Doc_ID;
       const JSONobj = {
         ...this.ObjTask,
@@ -792,7 +838,6 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       };
       this.TaskCreateList.push(JSONobj);
       this.ObjTask = new Task();
-      this.ObjTask.Task_ID = taskID;
       this.ObjTask.Doc_ID = dOCID;
       this.TaskSubmitted = false;
       this.TaskStartDate = new Date();
@@ -811,7 +856,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
           key: "compacct-toast",
           severity: "warn",
           summary: "Validation",
-          detail: "Sub Task already Assigned."
+          detail: "Job already Assigned."
         });
         flag = false;
         break;
@@ -869,16 +914,15 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       this.ObjTask.Posted_ON = this.DateService.dateConvert(new Date());
       this.ObjTask.Posted_By = this.commonApi.CompacctCookies.User_ID;
       const obj = {
-        "SP_String": "SP_Task_Management_Tender",
-        "Report_Name_String": "Edit_Task",
+        "SP_String": "SP_Task_GNATT",
+        "Report_Name_String": "Edit_Task_GNATT",
         "Json_Param_String": JSON.stringify([this.ObjTask])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data[0].message) {
-          const taskID = this.ObjTask.Task_ID;
+          
           const dOCID = this.ObjTask.Doc_ID;
           this.ObjTask = new Task();
-          this.ObjTask.Task_ID = taskID;
           this.ObjTask.Doc_ID = dOCID;
           this.TaskCreateList = [];
           this.TaskStartDate = new Date();
@@ -966,7 +1010,10 @@ class Task {
   Assign_To_Name: string;
   Job_Name: string;
 
-  Budget_Group_Name: string;
+  Budget_Group_Name:string;
+  Work_Type_Name: string;
+  Summary_Task: string;
+  Task_Name: string;
 
   Task_Txn_ID: string;
   Tender_Doc_ID: string;
@@ -986,6 +1033,8 @@ class Task {
   Waitage_Value: string;
   Task_Status: string;
   Actual_Complete_Date: string;
+  Dependency_Required = 'N';
+  Dependency_Relationship:string;
 }
 class TaskRemarks {
   Task_Txn_ID: string;

@@ -479,24 +479,31 @@
                                                         <i class="fa fa-remove" aria-hidden="true"></i> CANCEL
                                                     </a>
                                                 </li>
-                                                <li class="divider" *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
-                                                <li class="dropdown-submenu" *ngIf="col.Sub_Status === 'JOURNEY STARTED'">
-                                                    <a>CONDUCTION DONE</a>
-                                                    <ul class="dropdown-menu">
-                                                        <li> <a (click)="OpenENROLLEDAppo(col)">
-                                                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
-                                                        </li>
-                                                        <li> <a (click)="OpenIntrBillAppo(col)">
-                                                            <i class="fa fa-book" aria-hidden="true"></i>INTRESTED TO BILL</a>
-                                                        </li>
-                                                        <li> <a (click)="OpenCANCELAppo2(col)">
-                                                            <i class="fa fa-remove" aria-hidden="true"></i>CANCEL</a>
-                                                        </li>
-                                                        <li > <a (click)="OpenFollowAppo(col)">
-                                                            <i class="fa fa-random" aria-hidden="true"></i>FOLLOW UP</a>
-                                                        </li>
-                                                    </ul>
+                                                <li class="divider"  *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
+                                                <li *ngIf="col.Sub_Status === 'JOURNEY STARTED'">
+                                                  <a tabindex="-1">CONDUCTION DONE</a>
                                                 </li>
+                                                <li class="divider"  *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
+                                                <li> <a (click)="OpenENROLLEDAppo(col)">
+                                                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
+                                                </li>
+                                                <li> <a (click)="OpenIntrBillAppo(col)">
+                                                    <i class="fa fa-book" aria-hidden="true"></i>INTRESTED TO BILL</a>
+                                                </li>
+                                                <li> <a (click)="OpenCANCELAppo2(col)">
+                                                    <i class="fa fa-remove" aria-hidden="true"></i>CANCEL</a>
+                                                </li>
+                                                <li > <a (click)="OpenFollowAppo(col)">
+                                                    <i class="fa fa-random" aria-hidden="true"></i>FOLLOW UP</a>
+                                                </li>
+                                                <li class="divider"  *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
+                                                <!-- <li class="divider"></li>
+                                                <li class="dropdown-submenu" >
+                                                    <a></a>
+                                                    <ul class="dropdown-menu">
+                                                      
+                                                    </ul>
+                                                </li> -->
                                                 <li *ngIf="col.Sub_Status === 'INTERESTED TO BILL'">
                                                     <a (click)="OpenENROLLEDAppo(col)">
                                                         <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
