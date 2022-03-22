@@ -25,6 +25,9 @@ export class SupportTicketNepalComponent implements OnInit {
   buttonname = "Save";
   Spinner = false;
   seachSpinner = false;
+  
+  EngineerName = undefined;
+  EngineerNameList = [];
   items = [];
 
   ObjSupportTicket = new SupportTicket();
@@ -92,6 +95,7 @@ export class SupportTicketNepalComponent implements OnInit {
     this.SupportEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.BrowseStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
     this.BrowseEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.GetEngineerName();
        this.GetCallType();
        this.GetCustomer();
       // this.GetManufacturer();
@@ -127,11 +131,24 @@ export class SupportTicketNepalComponent implements OnInit {
      this.alignedenggid = undefined;
      this.alignedengineer = undefined;
   }
+  
+  GetEngineerName(){
+    const obj = {
+      "SP_String": "SP_Support_Ticket_Nepal",
+      "Report_Name_String": "Get_Engineer_Dropdown",
+      "Json_Param_String": JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("EngineerName");
+     this.EngineerNameList = data;
+    })
+  }
   GetCallType(){
     //  console.log("StatusList ===", this.StatusList)
         this.CallTypeList =[
           {Name : "Installation"},
           {Name : "PM"},
+          {Name : "Sales & Training"},
           {Name : "Breakdown"}
         ];
   }
@@ -540,7 +557,7 @@ export class SupportTicketNepalComponent implements OnInit {
     if (valid) {
       this.seachSpinner = true;
       const tempobj = {
-        // Sub_Ledger_ID: this.ObjBrowse.Customer_Name
+        Engineer_User_ID: this.EngineerName ? this.EngineerName : 0 ,
         From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
         To_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
       }

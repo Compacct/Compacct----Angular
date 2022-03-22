@@ -280,6 +280,20 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   checkDeleteRequired(index){
     this.RequiredSpareDetailsList.splice(index,1);
   }
+  ReturnNepaliDate (engDate) {
+    if (engDate) {
+        const EngDateObj = {
+            'year': new Date(engDate).getFullYear(),
+            'month': new Date(engDate).getMonth() + 1,
+            'day': new Date(engDate).getDate()
+        }
+        const NepaliDateObj = NepaliFunctions.AD2BS(EngDateObj);
+        const FormattedNepaliDate = NepaliFunctions.ConvertDateFormat(NepaliDateObj, "DD/MM/YYYY");
+        return FormattedNepaliDate;
+    } else {
+        return '-';
+    }
+}
   convertToNepaliDateObj = function (_Date) {
     const EnglishDate = new Date(_Date);
     var month = EnglishDate.getUTCMonth() + 1;

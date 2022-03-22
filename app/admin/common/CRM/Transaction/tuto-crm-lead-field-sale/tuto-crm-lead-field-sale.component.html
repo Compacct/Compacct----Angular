@@ -340,6 +340,7 @@
                                     <!-- <th>Status / Regsiter</th>
                                     <th>ASP Confirm / ASP Journey Started </th> -->
                                     <th>Current Status</th>
+                                    <th>Rescedule Count</th>
                                     <th>Appo Date</th>
                                     <th>Days</th>
                                     <th>Appo Slot</th>
@@ -568,6 +569,7 @@
                                         <span class="badge bg-blue-gradient" *ngIf="col.ASP_Journey_Started === 'Y'"> Journey Started</span>
                                     </td> -->
                                     <td>{{col.Sub_Status}}</td>
+                                    <td>{{col.ASP_Reschedule_Count}}</td>
                                     <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
                                     <td>{{col.Days}}</td>
                                     <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
@@ -1957,7 +1959,7 @@
         <div class="form-group">
             <div class="col-sm-12">
                 <label class="control-label">DATE<sup class="text-danger">*</sup></label>
-                <input type="date" class="form-control" id="ResdFollowup" #ResdFollowup="ngModel" name="ResdFollowup" [ngModel]="ResceduleDate | date:'yyyy-MM-dd'" (ngModelChange)="ResceduleDate = $event" [ngClass]="{'clearance':ResceduleFormSubmit && ResdFollowup?.errors?.required}"
+                <input type="date" class="form-control" id="ResdFollowup" #ResdFollowup="ngModel" name="ResdFollowup" [ngModel]="ResceduleDate | date:'yyyy-MM-dd'" (ngModelChange)="GetAvailMessage($event)" [ngClass]="{'clearance':ResceduleFormSubmit && ResdFollowup?.errors?.required}"
                     [min]="(TodayDate  | date:'yyyy-MM-dd')" required>
             </div>
             <div class="col-sm-12">
@@ -1965,7 +1967,8 @@
                   >Time Slot <sup class="text-danger">*</sup> &nbsp;
                 </label>
 
-                <p-dropdown [options]="TimeSlotList" name="Appo_Time_Slot_ID"  [(ngModel)]="ResceduleObj.Appo_Time_Slot_ID" [showClear]="true" [emptyFilterMessage]="' No Time Slot Found'"  [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                <p-dropdown [options]="TimeSlotList" name="Appo_Time_Slot_ID"
+                (onChange)="GetAvailMessage()"  [(ngModel)]="ResceduleObj.Appo_Time_Slot_ID" [showClear]="true" [emptyFilterMessage]="' No Time Slot Found'"  [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                     [placeholder]="'Select Time Slot'" [virtualScroll]="true" itemSize="30" #Appo_Time_Slot_ID="ngModel" [required]="true" [ngClass]="{'clearance':ResceduleFormSubmit && Appo_Time_Slot_ID.errors?.required}" [required]="true">
                 </p-dropdown>
             </div>

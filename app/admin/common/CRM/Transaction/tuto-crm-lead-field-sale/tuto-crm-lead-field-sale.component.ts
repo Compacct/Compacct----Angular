@@ -2090,6 +2090,42 @@ async OpenRescedAppo(obj){
 
   }
 }
+GetAvailMessage(e?){
+  if(e) {
+    this.ResceduleDate = e;
+  }
+  if(this.ResceduleObj.Appo_Time_Slot_ID && this.ResceduleDate) {
+    this.ngxService.start();
+    const TempObj = {
+      User_ID: this.ObjSearch.User_ID,
+      Slot_ID : this.ResceduleObj.Appo_Time_Slot_ID,
+      App_Date :this.DateService.dateConvert(new Date(this.ResceduleDate))
+  }
+
+  const obja = {
+    "SP_String":"SP_Appointment",
+    "Report_Name_String": "Check_Available_Slot",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+        console.log(data);
+      if (data[0].remarks !== 'Available') {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "warn",
+            summary: 'UnAvailable',
+            detail: data[0].remarks
+          });
+          this.ResceduleObj.Appo_Time_Slot_ID = undefined;
+          this.ResceduleDate = new Date();
+      }
+      this.ngxService.stop();
+})
+   }
+  console.log(this.ResceduleDate)
+}
 SaveRescedAppo(valid){
   this.ResceduleFormSubmit = true;
   if(valid) {  
