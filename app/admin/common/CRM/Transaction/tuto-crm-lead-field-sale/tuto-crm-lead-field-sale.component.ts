@@ -1261,7 +1261,7 @@ async GetRejectList(val) {
     if(obj.Lead_ID){
       this.Foot_Fall_ID = obj.Foot_Fall_ID;
       this.Lead_ID = obj.Lead_ID;
-      this.GetStudentdetails();
+      this.GetStudentdetails(obj);
      // this.GetFollowupList();
         this.GetFollowupDetails1(obj.Lead_ID);
       if(obj.Foot_Fall_ID.toString() !== '0') {
@@ -1326,7 +1326,7 @@ async GetRejectList(val) {
     this.items = ["Student Detail","Followup Details", "Billing Details","Order Details ","Support Question Dump","Support Ticket Dump"];
 
   }
-  GetStudentdetails(){
+  GetStudentdetails(tempData?){
     this.Studentdetails = undefined;
     const tempObj = {
       Lead_ID: this.Lead_ID
@@ -1337,6 +1337,11 @@ async GetRejectList(val) {
     }
     this.GlobalAPI.CommonPostData(obj,'Create_Common_task_Tutopia_Call?Report_Name=Get_Student_Details').subscribe((data:any)=>{
       this.Studentdetails = data ? data[0] : [];
+      if(tempData && tempData.Lead_ID) {
+        this.Studentdetails['Contact_Name'] = tempData.Contact_Name || this.Studentdetails['Contact_Name'];
+        this.Studentdetails['Mobile'] = tempData.Mobile || this.Studentdetails['Mobile'];
+        this.Studentdetails['Address'] = tempData.Address || this.Studentdetails['Address'] ;
+      }
 
      })
   }
