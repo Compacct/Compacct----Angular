@@ -337,7 +337,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         //console.log(data);
         var tempID = data[0].Column1;
        // this.Objproduction.Doc_No = data[0].Column1;
-        if(data[0].Column1){
+        if(data[0].Column1 != "Something Wrong"){
           this.ngxService.stop();
           this.compacctToast.clear();
           const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
