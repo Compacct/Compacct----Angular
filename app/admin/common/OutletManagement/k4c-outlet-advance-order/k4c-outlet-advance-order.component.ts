@@ -713,7 +713,7 @@ add(valid) {
     aftertaxable = (Number(aftertaxable) + Number(0.01)).toFixed(2)
  //   console.log("aftertaxable",aftertaxable)
   } else {
-    aftertaxable = aftertaxable
+    aftertaxable = Number(aftertaxable)
   //  console.log("aftertaxable",aftertaxable)
   }
   //this.ObjaddbillForm.Gross_Amt = Gross_Amount;

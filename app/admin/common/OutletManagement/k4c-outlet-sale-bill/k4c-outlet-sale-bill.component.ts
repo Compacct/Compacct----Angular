@@ -670,18 +670,19 @@ add(valid) {
 
   //console.log('taxable',tax)
   var aftertaxable:any = Number(tax).toFixed(2);
- // console.log('aftertaxable',aftertaxable)
+  //console.log('aftertaxable',aftertaxable)
   let afterdecval = aftertaxable.toString().split('.')[1]
- // console.log('afterdecval',afterdecval)
+  //console.log('afterdecval',afterdecval)
   const oddOrEven = Number(afterdecval) % 2 === 0 ? 'even' : 'odd'
- // console.log('oddOrEven',oddOrEven)
+  //console.log('oddOrEven',oddOrEven)
   if (oddOrEven == 'odd') {
     aftertaxable = (Number(aftertaxable) + Number(0.01)).toFixed(2)
-  //  console.log("aftertaxable",aftertaxable)
+    //console.log("aftertaxable",aftertaxable)
   } else {
-    aftertaxable = aftertaxable
-  //  console.log("aftertaxable",aftertaxable)
+    aftertaxable = Number(aftertaxable)
+    //console.log("aftertaxable",aftertaxable)
   }
+  //var ntamt = Number(aftertaxable) + Number(SGST_Amount) + Number(CGST_Amount);
     }
   //this.ObjaddbillForm.Gross_Amt = Gross_Amount;
   //var GST_Tax_Per_Amt = 0;
@@ -748,7 +749,7 @@ add(valid) {
   //  this.productSubmit.push(productObj);
   // }
 
- // console.log("this.productSubmit",this.productSubmit);
+  //console.log("this.productSubmit",this.productSubmit);
  
   this.Batch_NO = [];
   const selectedCostCenter = this.ObjaddbillForm.selectitem;
