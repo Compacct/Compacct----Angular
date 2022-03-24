@@ -134,7 +134,7 @@
                                         <td>{{col.Unavailable_Date ? (col.Unavailable_Date | date : "dd/MMM/yyyy") : '-'}}</td>
                                         <td>{{col.Time_Slot_Name ? col.Time_Slot_Name : '-'}}</td>
                                         <td class="text-center">
-                                            <button *ngIf="compareTime(col.Unavailable_Date)" (click)="DeleteAspUnavailability(col)" class="btn btn-xs btn-pinterest"><i class="fa fa-trash"></i></button>
+                                            <button *ngIf="($CompacctAPI.CompacctCookies.User_Type === 'A' || compareTime(col.Unavailable_Date))" (click)="DeleteAspUnavailability(col)" class="btn btn-xs btn-pinterest"><i class="fa fa-trash"></i></button>
                                             <span  *ngIf="!compareTime(col.Unavailable_Date)">-</span>
                                         </td>
                                      
