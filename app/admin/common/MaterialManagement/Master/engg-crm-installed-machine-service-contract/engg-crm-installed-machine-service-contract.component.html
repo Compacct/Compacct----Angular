@@ -222,7 +222,11 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='sdate' name='sdate' inputClass="form-control" [(ngModel)]="ServiceStartDate"></np-datepicker>
+                                            
+                                            <input  CompacctNepaliDatepicker id="sdate" name="sdate"
+                                             Class="form-control" (ngModelChange)="ServiceStartDate= $event"
+                                             [(ngModel)]="ServiceStartDate"/>
+                                            <!-- <np-datepicker language="en"  id='sdate' name='sdate' inputClass="form-control" [(ngModel)]="ServiceStartDate"></np-datepicker> -->
                                             <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ServiceStartDate'></ejs-datepicker> -->
                                             <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
                                                     required /> -->
@@ -234,7 +238,10 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='edate' name="edate" inputClass="form-control" [(ngModel)]="ServiceEndDate"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="edate" name="edate"
+                                            Class="form-control" (ngModelChange)="ServiceEndDate= $event"
+                                            [(ngModel)]="ServiceEndDate"/>
+                                            <!-- <np-datepicker language="en"  id='edate' name="edate" inputClass="form-control" [(ngModel)]="ServiceEndDate"></np-datepicker> -->
                                             <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ServiceEndDate'></ejs-datepicker> -->
                                             <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
                                                     required /> -->
@@ -257,7 +264,10 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='pdate' name="pdate" inputClass="form-control" [(ngModel)]="PaymentDate"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="pdate" name="pdate"
+                                            Class="form-control" (ngModelChange)="PaymentDate= $event"
+                                            [(ngModel)]="PaymentDate"/>
+                                            <!-- <np-datepicker language="en"  id='pdate' name="pdate" inputClass="form-control" [(ngModel)]="PaymentDate"></np-datepicker> -->
                                             <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PaymentDate'></ejs-datepicker> -->
                                             <!-- <input type="date" name="EMDissuedate1" #EMDissuedate1="ngModel" [ngModel]="InformedDate | date: 'yyyy-MM-dd'" (ngModelChange)="InformedDate = $event" class="form-control" [ngClass]="{'clearance': TenderFormSubmitted && EMDissuedate1.errors?.required}"
                                                 required /> -->

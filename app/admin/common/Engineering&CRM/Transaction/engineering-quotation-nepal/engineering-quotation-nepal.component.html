@@ -145,9 +145,14 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='Quoation' 
+                                            
+                                            <input  CompacctNepaliDatepicker id="Quoation" name="Quoation"
+                                             Class="form-control" (ngModelChange)="QuoationDate= $event"
+                                             [disabled]="EngQuoationProductList.length"
+                                             [(ngModel)]="QuoationDate"/>
+                                            <!-- <np-datepicker language="en"  id='Quoation' 
                                             [disabled]="EngQuoationProductList.length"
-                                            name="Quoation" inputClass="form-control" [(ngModel)]="QuoationDate"></np-datepicker>
+                                            name="Quoation" inputClass="form-control" [(ngModel)]="QuoationDate"></np-datepicker> -->
                                         </div>
                                     </div>
                                 </div>

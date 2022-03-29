@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { CompacctCommonApi } from "../../../../shared/compacct.services/common.api.service";
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
@@ -10,6 +10,8 @@ import { AnyTxtRecord } from 'dns';
 import { DateNepalConvertService } from '../../../../shared/compacct.global/dateNepal.service';
 declare var NepaliFunctions: any;
 const NepaliDate = require('nepali-date');
+declare var nepaliDatePicker: any;
+declare var $: any;
 
 @Component({
   selector: 'app-support-ticket-nepal',
@@ -68,7 +70,7 @@ export class SupportTicketNepalComponent implements OnInit {
   alignedenggid = undefined;
   alignedengineer = undefined;
   AlEngineerList = [];
-
+  NewBrowseEndDate:any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -79,7 +81,9 @@ export class SupportTicketNepalComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private DateNepalConvertService : DateNepalConvertService
   ) {
-    this.CurrentDateNepal = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+   // console.log(nepaliDatePicker())
+    this.CurrentDateNepal = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+    this.NewBrowseEndDate = this.CurrentDateNepal;
     console.log(this.DateNepalConvertService.convertNepaliDateToEngDate(this.CurrentDateNepal))
    }
 
@@ -89,12 +93,12 @@ export class SupportTicketNepalComponent implements OnInit {
       Header: "Support Ticket",
       Link: " Engineering CRM -> Master -> Support Ticket"
     });
-    this.SupportTicketDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.ExpectedcompletionDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.SupportStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.SupportEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.BrowseStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.BrowseEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.SupportTicketDate = this.CurrentDateNepal;
+    this.ExpectedcompletionDate = this.CurrentDateNepal;
+    this.SupportStartDate = this.CurrentDateNepal;
+    this.SupportEndDate = this.CurrentDateNepal;
+    this.BrowseStartDate = this.CurrentDateNepal;
+    this.BrowseEndDate = this.CurrentDateNepal;
     this.GetEngineerName();
        this.GetCallType();
        this.GetCustomer();
@@ -104,6 +108,8 @@ export class SupportTicketNepalComponent implements OnInit {
        this.GetContractStatus();
        this.GetSymptom();
   }
+ 
+  
   // Clear & Tab
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -114,10 +120,10 @@ export class SupportTicketNepalComponent implements OnInit {
   clearData() {
     this.Spinner = false;
     this.ObjSupportTicket = new SupportTicket();
-    this.SupportTicketDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.ExpectedcompletionDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.SupportStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.SupportEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.SupportTicketDate = this.CurrentDateNepal;
+    this.ExpectedcompletionDate = this.CurrentDateNepal;
+    this.SupportStartDate = this.CurrentDateNepal;
+    this.SupportEndDate = this.CurrentDateNepal;
     this.SupportTicketFormSubmit = false;
     this.MfList = [];
     this.MachineList = [];
@@ -385,12 +391,7 @@ export class SupportTicketNepalComponent implements OnInit {
     //   year: nyear
     // };
   }
-  ValidatedNepaliDate(dateObj) {
-    const year = dateObj.year.toString().length == 1 ? "0" + dateObj.year : dateObj.year;
-    const month = dateObj.month.toString().length == 1 ? "0" + dateObj.month : dateObj.month;
-    const day = dateObj.day.toString().length == 1 ? "0" + dateObj.day : dateObj.day;
-    return day + '/' + month + '/' + year
-  }
+ 
   SaveSupportTicket(valid) {
     // this.SupportTicketFormSubmit = true;
     // this.Spinner = true;
@@ -476,7 +477,7 @@ export class SupportTicketNepalComponent implements OnInit {
          // Support_Ticket_Date: this.DateService.dateConvert(d1.getEnglishDate()),
         //  Support_Ticket_Date_Nepali: d1.format('dd-mm-yyyy'),
           Support_Ticket_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportTicketDate)),
-          Support_Ticket_Date_Nepali: this.ValidatedNepaliDate(this.SupportTicketDate),
+          Support_Ticket_Date_Nepali: this.SupportTicketDate,
           Expected_Completion_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ExpectedcompletionDate)),
           Support_Start_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportStartDate)),
           Support_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportEndDate)),
@@ -568,13 +569,13 @@ export class SupportTicketNepalComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         this.BrowseList = data;
-        // console.log('Search list=====',this.BrowseList)
+      
         this.seachSpinner = false;
         this.SearchFormSubmit = false;
-        for(let i = 0; i < this.BrowseList.length ; i++){
-           this.BrowseList[i]['Support_Ticket_Date'] = this.convertToNepaliDateObj(this.BrowseList[i]['Support_Ticket_Date']);
+       // for(let i = 0; i < this.BrowseList.length ; i++){
+          // this.BrowseList[i]['Support_Ticket_Date'] = this.convertToNepaliDateObj(this.BrowseList[i]['Support_Ticket_Date']);
           // console.log('Service_Start_Date==', this.BrowseList[i]['Service_Start_Date'])
-        }  
+       // }  
       })
     }
   }

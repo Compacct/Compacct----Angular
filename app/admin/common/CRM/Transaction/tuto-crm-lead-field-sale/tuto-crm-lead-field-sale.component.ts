@@ -2362,7 +2362,7 @@ SaveFollowAppo(valid) {
       }
       this.GlobalAPI
           .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
-          if (data[0].Column1) {
+          if (data[0].Followup_ID) {
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",

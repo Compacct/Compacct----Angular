@@ -33,7 +33,10 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='BSdate' name="BSdate" inputClass="form-control" [(ngModel)]="BrowseStartDate"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="BSdate" name="BSdate"
+                                            Class="form-control" (ngModelChange)="BrowseStartDate= $event"
+                                            [(ngModel)]="BrowseStartDate"/>
+                                            <!-- <np-datepicker language="en"  id='BSdate' name="BSdate" inputClass="form-control" [(ngModel)]="BrowseStartDate"></np-datepicker> -->
                                         </div>
                                     </div>
                                     <div class="col-sm-2">
@@ -42,9 +45,23 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='BEdate' name="BEdate" inputClass="form-control" [(ngModel)]="BrowseEndDate"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="BEdate" name="BEdate"
+                                             Class="form-control" (ngModelChange)="BrowseEndDate= $event"
+                                             [(ngModel)]="BrowseEndDate"/>
+                                            <!-- <np-datepicker language="en"  id='BEdate' name="BEdate" inputClass="form-control" [(ngModel)]="BrowseEndDate"></np-datepicker> -->
                                         </div>
                                     </div>
+                                    <!-- <div class="col-sm-2">
+                                        <label class="control-label">newNepal1 <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="newNepal" name="newNepal"
+                                             Class="form-control" (ngModelChange)="NewBrowseEndDate= $event"
+                                             [(ngModel)]="NewBrowseEndDate"/>
+                                        </div>
+                                    </div> -->
                                     <div class="col-sm-3">
                                         <label class="control-label">Engineer Name<span
                                             class="text-danger"></span></label>
@@ -160,7 +177,10 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='STdate' name="STdate" inputClass="form-control" [(ngModel)]="SupportTicketDate"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="STdate" name="STdate"
+                                             Class="form-control" (ngModelChange)="SupportTicketDate= $event"
+                                             [(ngModel)]="SupportTicketDate"/>
+                                            <!-- <np-datepicker language="en"  id='STdate' name="STdate" inputClass="form-control" [(ngModel)]="SupportTicketDate"></np-datepicker> -->
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -265,7 +285,10 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='ExComdate' name="ExComdate" inputClass="form-control" [(ngModel)]="ExpectedcompletionDate"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="ExComdate" name="ExComdate"
+                                             Class="form-control" (ngModelChange)="ExpectedcompletionDate= $event"
+                                             [(ngModel)]="ExpectedcompletionDate"/>
+                                            <!-- <np-datepicker language="en"  id='ExComdate' name="ExComdate" inputClass="form-control" [(ngModel)]="ExpectedcompletionDate"></np-datepicker> -->
                                         </div>
                                     </div>
                                 </div>
@@ -276,7 +299,10 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='SupStartdate' name="SupStartdate" inputClass="form-control" [(ngModel)]="SupportStartDate"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="SupStartdate" name="SupStartdate"
+                                             Class="form-control" (ngModelChange)="SupportStartDate= $event"
+                                             [(ngModel)]="SupportStartDate"/>
+                                            <!-- <np-datepicker language="en"  id='SupStartdate' name="SupStartdate" inputClass="form-control" [(ngModel)]="SupportStartDate"></np-datepicker> -->
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -285,7 +311,10 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='SupEnddate' name="SupEnddate" inputClass="form-control" [(ngModel)]="SupportEndDate"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="SupEnddate" name="SupEnddate"
+                                             Class="form-control" (ngModelChange)="SupportEndDate= $event"
+                                             [(ngModel)]="SupportEndDate"/>
+                                            <!-- <np-datepicker language="en"  id='SupEnddate' name="SupEnddate" inputClass="form-control" [(ngModel)]="SupportEndDate"></np-datepicker> -->
                                         </div>
                                     </div>
                                     <div class="col-sm-4">

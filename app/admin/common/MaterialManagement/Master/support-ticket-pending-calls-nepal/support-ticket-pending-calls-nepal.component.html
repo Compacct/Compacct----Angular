@@ -519,10 +519,10 @@
     </div>
 </div>
 <p-dialog header="Show Ticket Details" [appendTo]="'body'" [visible]="showTicket" [closeOnEscape]="true"
-[contentStyle]="{'max-height':'500px'}"
+[contentStyle]="{'max-height':'500px'}" id="workingID"
     [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '300px' }"
     style="text-align: center;" [minY]="80" [maximizable]="true" [baseZIndex]="10000">
-    <div class="form-horizontal" style="padding:1em;margin-bottom: 12em;">
+    <div class="form-horizontal" id="modalBody" style="padding:1em;margin-bottom: 12em;">
         <p-tabView [activeIndex]="tabIndexToViewticket" (onChange)="TabClick($event)">
             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                 <div class="form-group">
@@ -684,8 +684,12 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
-                                <np-datepicker language="en"  id='BSStartdate' name="BSStartdate" inputClass="form-control"
-                                    [(ngModel)]="StartDate"></np-datepicker>
+                                <input  CompacctNepaliDatepicker id="BSStartdate" name="BSStartdate"
+                                            Class="form-control" (ngModelChange)="StartDate= $event"
+                                            [containerId]="'modalBody'"
+                                            [(ngModel)]="StartDate"/>
+                                <!-- <np-datepicker language="en"  id='BSStartdate' name="BSStartdate" inputClass="form-control"
+                                    [(ngModel)]="StartDate"></np-datepicker> -->
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -698,8 +702,12 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
-                                <np-datepicker language="en"  id='BSEnddate' name="BSEnddate" inputClass="form-control"
-                                    [(ngModel)]="EndDate"></np-datepicker>
+                                <input  CompacctNepaliDatepicker id="BSEnddate" name="BSEnddate"
+                                Class="form-control" (ngModelChange)="EndDate= $event"
+                                [containerId]="'modalBody'"
+                                [(ngModel)]="EndDate"/>
+                                <!-- <np-datepicker language="en"  id='BSEnddate' name="BSEnddate" inputClass="form-control"
+                                    [(ngModel)]="EndDate"></np-datepicker> -->
                             </div>
                         </div>
                         <div class="col-sm-3">

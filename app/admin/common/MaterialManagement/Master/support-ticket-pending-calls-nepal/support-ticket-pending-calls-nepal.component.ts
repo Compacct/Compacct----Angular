@@ -61,6 +61,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   callStartTime = new Date();
   BScallEndTime = new Date();
   BScallStartTime = new Date();
+  CurrentDateNepal:any;
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -71,6 +72,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
     private DateNepalConvertService : DateNepalConvertService,
     private _router: Router,
     private route: ActivatedRoute,) { 
+      this.CurrentDateNepal = this.DateNepalConvertService.GetNepaliCurrentDateNew();
       this.route.queryParams.subscribe(params => {
         console.log(params);
        if(params['SUP'] != "NA") {
@@ -93,8 +95,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
           this.getSpareParts(params['SUP']);
           this.BScallEndTime = new Date();
           this.BScallStartTime = new Date();
-          this.StartDatecall = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-          this.EndDatecall = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+          this.StartDatecall = this.CurrentDateNepal;
+          this.EndDatecall = this.CurrentDateNepal;
           this.SpareDetailsSubmit = false;
           this.RequiredSpareDetailsSubmit = false;
           this.pendingCallFormSubmit = false;
@@ -137,11 +139,6 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         console.log("GetallData",data);
         this.GetallData = data;
-        for(let i = 0; i < this.GetallData.length ; i++){
-          this.GetallData[i]['last_updated_on'] = this.convertToNepaliDateObj(this.GetallData[i]['last_updated_on']);
-         // this.GetallData[i]['Support_Ticket_Date_Nepali'] = this.convertToNepaliDateObj(this.GetallData[i]['Support_Ticket_Date_Nepali']);
-         
-       }
      })
    }
   }
@@ -159,8 +156,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
       this.items = ["Ticket Details", "Engineer call Sheet","Used Spare","Required Spare","Followups"];
       this.callEndTime = new Date();
       this.callStartTime = new Date();
-      this.StartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-      this.EndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+      this.StartDate = this.CurrentDateNepal;
+      this.EndDate = this.CurrentDateNepal;
       this.ObjEngineerCall = new EngineerCall();
       this.ObjSpareDetails = new SpareDetails();
       this.ObjRequiredSpareDetails = new RequiredSpareDetails();
@@ -347,8 +344,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
     this.SpareDetailsList = [];
     this.RequiredSpareDetailsList = [];
     this.ObjRequiredSpareDetails = new RequiredSpareDetails();
-    this.StartDatecall = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.EndDatecall = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.StartDatecall = this.CurrentDateNepal;
+    this.EndDatecall = this.CurrentDateNepal;
     this.SpareDetailsSubmit = false;
     this.RequiredSpareDetailsSubmit = false;
     this.pendingCallFormSubmit = false;
@@ -455,10 +452,10 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
            this.ObjEngineerCall = new EngineerCall();
            this.SpareDetailsList = [];
            this.RequiredSpareDetailsList = [];
-           this.StartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-           this.EndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-           this.StartDatecall = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-           this.EndDatecall = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+           this.StartDate = this.CurrentDateNepal;
+           this.EndDate = this.CurrentDateNepal;
+           this.StartDatecall = this.CurrentDateNepal;
+           this.EndDatecall = this.CurrentDateNepal;
            this.callEndTime = new Date();
            this.callStartTime = new Date();
            this.BScallEndTime = new Date();

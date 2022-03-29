@@ -88,7 +88,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private DateNepalConvertService : DateNepalConvertService
   ) {
-    this.CurrentDateNepal = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.CurrentDateNepal = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     console.log(this.DateNepalConvertService.convertNepaliDateToEngDate(this.CurrentDateNepal))
    }
 
@@ -98,12 +98,12 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       Header: "Engineering Quotation",
       Link: " Engineering CRM -> Transaction -> Engineering Quotation"
     });
-    this.SupportTicketDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.ExpectedcompletionDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.SupportStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.SupportEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.BrowseStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.BrowseEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.SupportTicketDate = this.CurrentDateNepal;
+    this.ExpectedcompletionDate = this.CurrentDateNepal;
+    this.SupportStartDate = this.CurrentDateNepal;
+    this.SupportEndDate = this.CurrentDateNepal;
+    this.BrowseStartDate = this.CurrentDateNepal;
+    this.BrowseEndDate = this.CurrentDateNepal;
        this.GetCallType();
        this.GetCustomer();
       // this.GetManufacturer();
@@ -114,7 +114,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
        //
        
        this.GetCustomer();
-    this.QuoationDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.QuoationDate = this.CurrentDateNepal;
   }
 
   GetCustomer(){
@@ -339,10 +339,10 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   clearData() {
     this.Spinner = false;
     this.ObjSupportTicket = new SupportTicket();
-    this.SupportTicketDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.ExpectedcompletionDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.SupportStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.SupportEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.SupportTicketDate = this.CurrentDateNepal;
+    this.ExpectedcompletionDate = this.CurrentDateNepal;
+    this.SupportStartDate = this.CurrentDateNepal;
+    this.SupportEndDate = this.CurrentDateNepal;
     this.SupportTicketFormSubmit = false;
     this.MfList = [];
     this.MachineList = [];
@@ -357,7 +357,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
      this.alignedengineer = undefined;
      //
      
-    this.QuoationDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.QuoationDate = this.CurrentDateNepal;
   }
   GetCallType(){
     //  console.log("StatusList ===", this.StatusList)
@@ -570,12 +570,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     //   year: nyear
     // };
   }
-  ValidatedNepaliDate(dateObj) {
-    const year = dateObj.year.toString().length == 1 ? "0" + dateObj.year : dateObj.year;
-    const month = dateObj.month.toString().length == 1 ? "0" + dateObj.month : dateObj.month;
-    const day = dateObj.day.toString().length == 1 ? "0" + dateObj.day : dateObj.day;
-    return day + '/' + month + '/' + year
-  }
+  
   SaveSupportTicket(valid) {
     // this.SupportTicketFormSubmit = true;
     // this.Spinner = true;
@@ -661,7 +656,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
          // Support_Ticket_Date: this.DateService.dateConvert(d1.getEnglishDate()),
         //  Support_Ticket_Date_Nepali: d1.format('dd-mm-yyyy'),
           Support_Ticket_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportTicketDate)),
-          Support_Ticket_Date_Nepali: this.ValidatedNepaliDate(this.SupportTicketDate),
+          Support_Ticket_Date_Nepali: this.SupportTicketDate,
           Expected_Completion_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ExpectedcompletionDate)),
           Support_Start_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportStartDate)),
           Support_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportEndDate)),

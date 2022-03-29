@@ -55,7 +55,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private DateNepalConvertService : DateNepalConvertService
   ) {
-    this.CurrentDateNepal = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.CurrentDateNepal = this.DateNepalConvertService.GetNepaliCurrentDateNew();
    }
 
   ngOnInit() {
@@ -64,7 +64,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
       Header: "Installed Machine",
       Link: " Engineering CRM -> Master -> Installed Machine"
     });
-      this.DateOfInstallation = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+      this.DateOfInstallation = this.CurrentDateNepal;
       this.GetManufacturer();
       this.GetCustomer();
       this.GetEngineer();
@@ -89,7 +89,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
     // this.memberid = undefined;
     // this.deluserid = undefined;
     // this.delmemberid = undefined;
-    this.DateOfInstallation = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.DateOfInstallation = this.CurrentDateNepal;
   }
   GetManufacturer(){
     const obj = {
@@ -180,12 +180,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
       ];
 
   }
-  ValidatedNepaliDate(dateObj) {
-    const year = dateObj.year.toString().length == 1 ? "0" + dateObj.year : dateObj.year;
-    const month = dateObj.month.toString().length == 1 ? "0" + dateObj.month : dateObj.month;
-    const day = dateObj.day.toString().length == 1 ? "0" + dateObj.day : dateObj.day;
-    return day + '/' + month + '/' + year
-  }
+ 
   SaveInstalledMachine(valid){
     this.InstalledMachineFormSubmit = true;
     this.Spinner = true;
@@ -200,7 +195,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
         Status : this.ObjInstalledMachine.Status,
         Year_Manufacturing : this.ObjInstalledMachine.Year_Manufacturing,
         Installation_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DateOfInstallation)),
-        Installation_Date_Nepali : this.ValidatedNepaliDate(this.DateOfInstallation),
+        Installation_Date_Nepali : this.DateOfInstallation,
       }
          const obj = {
            "SP_String": "SP_Engg_CRM_Installed_Machine",
@@ -254,7 +249,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
         Status : this.ObjInstalledMachine.Status,
         Year_Manufacturing : this.ObjInstalledMachine.Year_Manufacturing,
         Installation_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DateOfInstallation)),
-        Installation_Date_Nepali : this.ValidatedNepaliDate(this.DateOfInstallation)
+        Installation_Date_Nepali : this.DateOfInstallation
       }
       const obj = {
         "SP_String": "SP_Engg_CRM_Installed_Machine",
@@ -274,7 +269,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
           this.InstalledMachineFormSubmit = false;
           this.Spinner = false;
           this.ObjInstalledMachine = new InstalledMachine();
-          this.DateOfInstallation = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+          this.DateOfInstallation = this.CurrentDateNepal;
           this.MachineList = [];
           this.LoctionList = [];
 

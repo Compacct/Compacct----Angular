@@ -6,7 +6,9 @@
 #ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
     width: auto !important;
 }
-
+#ndp-nepali-box{
+    z-index: 99999999 !important;
+}
 .custombutton {
     margin-top: 25px;
 }
