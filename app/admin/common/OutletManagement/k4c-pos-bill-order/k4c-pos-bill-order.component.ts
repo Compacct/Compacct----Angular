@@ -344,6 +344,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     // this.Objcustomerdetail.DOB =  SubLedgerObj.DOB;
     // this.Objcustomerdetail.DOA = SubLedgerObj.DOA;
     this.Objcustomerdetail.GST_No = SubLedgerObj.GST;
+    this.Objcustomerdetail.Sub_Ledger_State = SubLedgerObj.Sub_Ledger_State;
     this.GetFootfallId();
     // if(SubLedgerObj.Foot_Fall_ID) {
     //   this.Objcustomerdetail.Foot_Fall_ID = SubLedgerObj.Foot_Fall_ID;
@@ -625,6 +626,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
           data[0].Mobile_No = this.Objcustomerdetail.Mobile;
           data[0].Sub_Ledger_ID = this.Objcustomerdetail.Sub_Ledger_ID;
           data[0].Redirect_To = this.Objcustomerdetail.Redirect_To;
+          data[0].Sub_Ledger_State = this.Objcustomerdetail.Sub_Ledger_State;
           this.Objcustomerdetail = new Customerdetail();
           this.GSTvalidFlag = false;
           this.ClickedOnlineLedger = {};
@@ -1171,6 +1173,7 @@ class Customerdetail{
   Posted_On : string;
   Address : string;
   Redirect_To : string;
+  Sub_Ledger_State : string;
 
 }
 class Lead{

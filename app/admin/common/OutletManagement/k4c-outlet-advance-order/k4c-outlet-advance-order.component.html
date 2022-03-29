@@ -756,7 +756,7 @@
                                                     </div>
                                                     <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <div class="form-group">
-                                                            <div class='col-sm-12'>
+                                                            <div class='col-sm-9'>
                                                                 <label class="control-label">Credit to Account:</label>
                                                                 <div class="input-group">
                                                                     <div class="input-group-addon">
@@ -770,13 +770,13 @@
                                                                     <input type="text" class="form-control" id="exampleInputAmount1" name="credit" #credit="ngModel" [(ngModel)]="ObjcashForm.Credit_To_Amount" (ngModelChange)="CalculateDiscount()" CompacctDigitonly="true">
                                                                 </div>
                                                             </div>
-                                                            <!-- <div class='col-sm-1'>
+                                                            <div class='col-sm-1'>
                                                                 <div class="pull-right5" style="width:100px;">
                                                                     <small>Coupon %</small> <br>
-                                                                    <input type="text" size="1" style="text-align: center" name="couponper" #couponper="ngModel" [(ngModel)]="ObjcashForm.Coupon_Per" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                                                                    <input type="text" size="1" style="text-align: center" name="couponper" #couponper="ngModel" [(ngModel)]="ObjcashForm.Coupon_Per" (ngModelChange)="couponperchange()" CompacctDigitonly="true">
 
                                                                 </div>
-                                                            </div> -->
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class='col-sm-12'>

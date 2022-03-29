@@ -114,6 +114,8 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Uploadbutton = "Upload"
   uploadbuttondisabled = false;
 
+  CostcentState : any;
+
   constructor(
     private Header: CompacctHeader,
     private $http : HttpClient,
@@ -460,6 +462,8 @@ getcostcenid(){
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.returnedID = data;
    this.FromCostCentId = data[0].Cost_Cen_ID ? data[0].Cost_Cen_ID : 0;
+   this.CostcentState = data[0].State;
+   console.log('this.CostcentState',this.CostcentState)
    //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
    this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
    if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
@@ -695,12 +699,13 @@ add(valid) {
   //var Amt = Number((rate * qtyweightAmt) + Number(this.ObjaddbillForm.Acompanish));
   var Amount = Number((rate * qtyweightAmt) + Number(Accoplish_Amt));
   var Dis_Amount = Number(totalAmt * Number(this.ObjaddbillForm.Max_Discount) / 100);
-  var SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
-  //var Gross_Amount = Number(Amount - Dis_Amount) ;
-  var SGST_Amount = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt) / 2) ;
-  var CGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
-  var CGST_Amount = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt) / 2) ;
+  // var SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
+  // //var Gross_Amount = Number(Amount - Dis_Amount) ;
+  // var SGST_Amount = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt) / 2) ;
+  // var CGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
+  // var CGST_Amount = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt) / 2) ;
   var taxable = this.ObjaddbillForm.Weight_in_Pound != 0 ? Number((rate * this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Weight_in_Pound) + Accoplish_Amt) : Number((rate * this.ObjaddbillForm.Stock_Qty) + Accoplish_Amt) ;
+  
 
  // console.log('taxable',taxable)
   var aftertaxable:any = Number(taxable).toFixed(2);
@@ -715,6 +720,44 @@ add(valid) {
   } else {
     aftertaxable = Number(aftertaxable)
   //  console.log("aftertaxable",aftertaxable)
+  }
+
+  var SGST_Per;
+  var SGST_Amount;
+  var CGST_Per;
+  var CGST_Amount;
+  var GST_Tax_Per;
+  var GST_Tax_Per_Amt;
+  var Net_Amount;
+  if ( this.$CompacctAPI.CompacctCookies.Cost_Cen_ID =='89' || this.$CompacctAPI.CompacctCookies.Cost_Cen_ID =='90' ) {
+  if (this.QueryStringObj.Sub_Ledger_State == this.CostcentState) {
+     SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
+     SGST_Amount = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt) / 2) ;
+     CGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
+     CGST_Amount = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt) / 2) ;
+     GST_Tax_Per = 0;
+     GST_Tax_Per_Amt = 0 ;
+     Net_Amount = Number((aftertaxable - Dis_Amount) + SGST_Amount + CGST_Amount);
+  } 
+  else {
+     SGST_Per = 0 ;
+     SGST_Amount = 0 ;
+     CGST_Per = 0 ;
+     CGST_Amount = 0 ;
+     GST_Tax_Per = Number(this.ObjaddbillForm.GST_Tax_Per);
+     GST_Tax_Per_Amt = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt)) ;
+     Net_Amount = (Number(Number(aftertaxable) - Dis_Amount) + Number(GST_Tax_Per_Amt));
+  
+  }
+  }
+  else {
+    SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
+    SGST_Amount = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt) / 2) ;
+    CGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
+    CGST_Amount = Number((totalAmt - (rate * qtyweightAmt) - Accoplish_Amt) / 2) ;
+    GST_Tax_Per = 0;
+    GST_Tax_Per_Amt = 0 ;
+    Net_Amount = Number((aftertaxable - Dis_Amount) + SGST_Amount + CGST_Amount);
   }
   //this.ObjaddbillForm.Gross_Amt = Gross_Amount;
   //var GST_Tax_Per_Amt = 0;
@@ -761,9 +804,9 @@ add(valid) {
     SGST_Amount : Number(SGST_Amount).toFixed(2),
     CGST_Per : Number(CGST_Per).toFixed(2),
     CGST_Amount : Number(CGST_Amount).toFixed(2),
-    GST_Tax_Per : Number(this.ObjaddbillForm.GST_Tax_Per),
-    GST_Tax_Per_Amt : this.ObjaddbillForm.GST_Tax_Per_Amt,
-    Net_Amount : this.ObjaddbillForm.Delivery_Charge ? (Number(totalAmt) + Number(this.ObjaddbillForm.Delivery_Charge)).toFixed(2) : Number(totalAmt).toFixed(2)
+    GST_Tax_Per : Number(GST_Tax_Per).toFixed(2),
+    GST_Tax_Per_Amt : Number(GST_Tax_Per_Amt).toFixed(2),
+    Net_Amount : this.ObjaddbillForm.Delivery_Charge ? (Number(Net_Amount) + Number(this.ObjaddbillForm.Delivery_Charge)).toFixed(2) : Number(Net_Amount).toFixed(2)
   };
     this.productSubmit.push(productObj);
     //this.BackupproductSubmit.push(productObj);
@@ -809,6 +852,9 @@ add(valid) {
   this.listofamount();
   if(this.ProductType != "PACKAGING") {
      this.CalculateDiscount();
+     if (this.ObjcashForm.Coupon_Per ) { 
+       this.couponperchange();
+     }
   }
   this.Product2.applyFocus()
   this.Product2.containerViewChild.nativeElement.click();
@@ -821,6 +867,9 @@ delete(index) {
   this.listofamount();
   if(this.ProductType != "PACKAGING") {
      this.CalculateDiscount();
+     if (this.ObjcashForm.Coupon_Per ) { 
+      this.couponperchange();
+    }
   }
  }
 
@@ -869,18 +918,19 @@ listofamount(){
     }
     count1 = count1 + Number(item.Dis_Amount);
     //count2 = count2 + Number(item.Gross_Amount);
-    count2 = count2 + Number(item.Taxable - item.Dis_Amount);
+    //count2 = count2 + Number(item.Taxable - item.Dis_Amount);
     count3 = count3 + Number(item.SGST_Amount);
     count4 = count4 + Number(item.CGST_Amount);
     count5 = count5 + Number(item.GST_Tax_Per_Amt);
   });
   this.Amount = (count).toFixed(2);
+  this.Totaltaxable = (count6).toFixed(2);
   this.Dis_Amount = (count1).toFixed(2);
-  this.Gross_Amount = (count2).toFixed(2);
+  //this.Gross_Amount = (count2).toFixed(2);
+  this.Gross_Amount = (Number(this.Totaltaxable) - Number(this.Dis_Amount)).toFixed(2);
   this.SGST_Amount = (count3).toFixed(2);
   this.CGST_Amount = (count4).toFixed(2);
   this.GST_Tax_Per_Amt = (count5).toFixed(2);
-  this.Totaltaxable = (count6).toFixed(2);
   //console.log(this.Gross_Amount);
 }
 clearlistamount(){
@@ -913,8 +963,47 @@ AmountChange(){
   // } else {
   //this.ObjcashForm.Total_Paid = Number(credit_amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount);
   //}
+  var lefttotal = Number(wallet_amount) + Number(card_amount);
+  // if((Number(this.Amount_Payable) > lefttotal) && cash_amount) {
+  //   const d = (Number(this.Amount_Payable) - Number(lefttotal)).toFixed(2);
+  //   if(cash_amount > Number(d)) {
+  //     this.ObjcashForm.Refund_Amount = (Number(cash_amount) - Number(d)).toFixed(2);
+  //   }
+  // }
    this.ObjcashForm.Net_Due = (Number(this.Amount_Payable) - Number(this.ObjcashForm.Total_Paid)).toFixed(2);
 
+   if(Number(lefttotal) > Number(this.Amount_Payable)) {
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Collected Amount is more than amount payable "
+  });
+  return false;
+  }
+
+}
+couponperchange(){
+  var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
+  var wallet_amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashForm.Wallet_Amount : 0;
+  var cash_amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0 ;
+  var card_amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
+  if (this.ObjcashForm.Coupon_Per ) { 
+    credit_amount = Number(this.Totaltaxable) * Number(this.ObjcashForm.Coupon_Per ) / 100;
+    this.ObjcashForm.Credit_To_Amount = (credit_amount).toFixed(2);
+    console.log('this.ObjcashForm.Credit_To_Amount ==', this.ObjcashForm.Credit_To_Amount)
+    this.ObjcashForm.Total_Paid = (Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+    this.CalculateDiscount();
+  } 
+  else if (!this.ObjcashForm.Coupon_Per) {
+    this.ObjcashForm.Credit_To_Amount = 0;
+    //this.ObjcashForm.Total_Paid = null;
+    this.ObjcashForm.Total_Paid = (Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+    //this.ObjcashForm.Total_Paid = (Number(this.ObjcashForm.Credit_To_Amount) + Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
+   this.CalculateDiscount();
+   }
 }
 CalculateDiscount(){
   if (this.ObjcashForm.Credit_To_Amount){
@@ -947,14 +1036,18 @@ CalculateDiscount(){
     this.checkdiscountamt();
    } else {
     this.productSubmit.forEach(el=>{
-      //var netamount2 = el.Taxable + el.SGST_Amount + el.CGST_Amount;
-
       el.Dis_Amount = 0 ;
       el.Gross_Amount = Number(el.Amount - el.Dis_Amount).toFixed(2);
       el.SGST_Amount = Number((el.Taxable * el.SGST_Per) / 100).toFixed(2); 
       el.CGST_Amount = Number((el.Taxable * el.CGST_Per) / 100).toFixed(2);
-      el.Net_Amount = el.Delivery_Charge ? (Number(el.Delivery_Charge) + Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2) : 
-                      (Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
+      
+      if (Number(el.GST_Tax_Per_Amt)) {
+        var netamount2 = Number(el.Taxable) + Number(el.GST_Tax_Per_Amt)
+      }
+      else {
+      var netamount2 = Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)
+      }
+      el.Net_Amount = el.Delivery_Charge ? (Number(netamount2) + Number(el.Delivery_Charge)).toFixed(2) : (Number(netamount2)).toFixed(2);
      })
      //console.log("this.discount productSubmit",this.productSubmit);
      this.CalculateTotalAmt();
@@ -964,6 +1057,7 @@ CalculateDiscount(){
 }
 // Check Discount Amount equal to total discount
 checkdiscountamt(){
+  if(this.ProductType != "PACKAGING") {
   if (Number(this.ObjcashForm.Credit_To_Amount) != Number(this.Dis_Amount) && Number(this.ObjcashForm.Credit_To_Amount) > Number(this.Dis_Amount)) {
     var leftval = (Number(this.ObjcashForm.Credit_To_Amount) - Number(this.Dis_Amount)).toFixed(2);
     this.productSubmit[0].Dis_Amount = (Number(this.productSubmit[0].Dis_Amount) + Number(leftval)).toFixed(2);
@@ -995,6 +1089,7 @@ checkdiscountamt(){
     console.log('leftval',leftval)
     console.log('this.productSubmit[0].Dis_Amount',this.productSubmit[0].Dis_Amount)
     this.listofamount();
+  }
   }
 }
 
@@ -1103,6 +1198,18 @@ saveprintandUpdate(){
   });
   return false;
   }
+   if( this.ObjcashForm.Credit_To_Amount && Number(this.Dis_Amount) == 0 ){
+     this.Spinner = false;
+     this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Discount amount is zero"
+    });
+   return false;
+   }
   }
   // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){
 
@@ -1900,13 +2007,13 @@ class cashForm{
   Coupon_Per : number;
   Credit_To_Ac_ID : any;
   Credit_To_Ac : string;
-  Credit_To_Amount: number;
+  Credit_To_Amount: any;
   Wallet_Ac_ID : any;
   Wallet_Ac : string;
   Wallet_Amount : number;
   Cash_Amount: number;
   Card_Amount: number;
-  Total_Paid : number;
+  Total_Paid : any;
   Net_Due : any;
   // Refund_Amount : number = 0;
 }
