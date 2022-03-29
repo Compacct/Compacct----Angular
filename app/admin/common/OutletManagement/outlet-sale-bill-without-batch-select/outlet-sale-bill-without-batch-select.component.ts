@@ -892,7 +892,7 @@ autoaFranchiseBill() {
      this.CalculateDiscount();
     }
   }
-   this.ObjcashForm.Coupon_Per = 0;
+   //this.ObjcashForm.Coupon_Per = 0;
  
  }
  CalculateTotalAmt() {
@@ -957,12 +957,13 @@ autoaFranchiseBill() {
     count5 = count5 + Number(item.GST_Tax_Per_Amt);
    });
    this.Amount = (count).toFixed(2);
+   this.TotalTaxable = (count6).toFixed(3);
    this.Dis_Amount = (count1).toFixed(2);
-   this.Gross_Amount = (count2).toFixed(2);
+   //this.Gross_Amount = (count2).toFixed(2);
+   this.Gross_Amount = (Number(this.TotalTaxable) - Number(this.Dis_Amount)).toFixed(2);
    this.SGST_Amount = (count3).toFixed(2);
    this.CGST_Amount = (count4).toFixed(2);
    this.GST_Tax_Per_Amt = (count5).toFixed(2);
-   this.TotalTaxable = (count6).toFixed(3);
    //console.log(this.Gross_Amount);
  }
  clearlistamount(){
@@ -986,7 +987,7 @@ autoaFranchiseBill() {
 
     this.ObjcashForm.Total_Paid = (Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
   
-  var lefttotal = wallet_amount + card_amount;
+  var lefttotal = Number(wallet_amount) + Number(card_amount);
   
 
   if((Number(this.Net_Payable) > lefttotal) && cash_amount) {
@@ -1079,6 +1080,8 @@ autoaFranchiseBill() {
 }
 // Check Discount Amount equal to total discount
 checkdiscountamt(){
+  if(this.productSubmit[0].product_type != "PACKAGING") {
+    if (this.productSubmit[0].is_service != true) {
   if (Number(this.ObjcashForm.Credit_To_Amount) != Number(this.Dis_Amount) && Number(this.ObjcashForm.Credit_To_Amount) > Number(this.Dis_Amount)) {
     var leftval = (Number(this.ObjcashForm.Credit_To_Amount) - Number(this.Dis_Amount)).toFixed(2);
     this.productSubmit[0].Dis_Amount = (Number(this.productSubmit[0].Dis_Amount) + Number(leftval)).toFixed(2);
@@ -1110,6 +1113,8 @@ checkdiscountamt(){
     console.log('leftval',leftval)
     console.log('this.productSubmit[0].Dis_Amount',this.productSubmit[0].Dis_Amount)
     this.listofamount();
+  }
+  }
   }
 }
  // DAY END CHECK
@@ -1245,6 +1250,18 @@ checkdiscountamt(){
        detail: "Enter Remarks"
      });
      return false;
+   }
+   if( this.ObjcashForm.Credit_To_Amount && Number(this.Dis_Amount) == 0 ){
+      this.Spinner = false;
+      this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Discount amount is zero"
+   });
+   return false;
    }
  }
  // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){

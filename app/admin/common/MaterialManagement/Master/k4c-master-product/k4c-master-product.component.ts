@@ -236,6 +236,7 @@ export class K4cMasterProductComponent implements OnInit {
       console.log(valid)
        if(valid){
         this.ObjmasterProduct.Brand_ID = this.ObjmasterProduct.Brand_ID ? this.ObjmasterProduct.Brand_ID : 0;
+        this.ObjmasterProduct.Cess_Percentage = this.ObjmasterProduct.Cess_Percentage ? this.ObjmasterProduct.Cess_Percentage : 0;
         this.Spinner = true;
         if(this.ObjmasterProduct.Product_ID){
           

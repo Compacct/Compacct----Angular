@@ -682,7 +682,7 @@ add(valid) {
     aftertaxable = Number(aftertaxable)
     //console.log("aftertaxable",aftertaxable)
   }
-  //var ntamt = Number(aftertaxable) + Number(SGST_Amount) + Number(CGST_Amount);
+  var ntamt = Number(aftertaxable) + Number(SGST_Amount) + Number(CGST_Amount);
     }
   //this.ObjaddbillForm.Gross_Amt = Gross_Amount;
   //var GST_Tax_Per_Amt = 0;
@@ -714,7 +714,7 @@ add(valid) {
     GST_Tax_Per : Number(IGST_Per).toFixed(2),
     GST_Tax_Per_Amt :  Number(IGST_Amount).toFixed(2),
    // Net_Amount : Number(Gross_Amount + SGST_Amount + CGST_Amount).toFixed(2),
-    Net_Amount : Number(aftertaxable + SGST_Amount + CGST_Amount).toFixed(2),
+    Net_Amount : Number(ntamt).toFixed(2),
     Taxable_Amount : Number(rate).toFixed(3),
     CGST_Output_Ledger_ID : this.CGST_Ledger_Id,
     SGST_Output_Ledger_ID : this.SGST_Ledger_Id,
@@ -766,6 +766,9 @@ add(valid) {
   if(this.ProductType != "PACKAGING") {
     if (this.isservice != true) {
      this.CalculateDiscount();
+     if (this.ObjcashForm.Coupon_Per ) { 
+      this.couponperchange();
+    }
     }
   }
   this.ProductType = undefined;
@@ -815,9 +818,14 @@ delete(index) {
   if(this.ProductType != "PACKAGING") {
     if (this.isservice != true) {
      this.CalculateDiscount();
+     if (this.ObjcashForm.Coupon_Per ) { 
+      this.couponperchange();
+    }
     }
   }
-  this.ObjcashForm.Coupon_Per = 0;
+  // if (!this.productSubmit){
+  // this.ObjcashForm.Coupon_Per = 0;
+  // }
 
 }
 CalculateTotalAmt() {
@@ -886,7 +894,8 @@ listofamount(){
   this.Amount = (count).toFixed(2);
   this.TotalTaxable = (count6).toFixed(3);
   this.Dis_Amount = (count1).toFixed(2);
-  this.Gross_Amount = (count2).toFixed(2);
+  //this.Gross_Amount = (count2).toFixed(2);
+  this.Gross_Amount = (Number(this.TotalTaxable) - Number(this.Dis_Amount)).toFixed(2);
   this.SGST_Amount = (count3).toFixed(2);
   this.CGST_Amount = (count4).toFixed(2);
   this.GST_Tax_Per_Amt = (count5).toFixed(2);
@@ -934,7 +943,7 @@ AmountChange(){
   // else {
   //  this.ObjcashForm.Due_Amount = (Number(this.ObjcashForm.Total_Paid) - Number(this.ObjcashForm.Refund_Amount) - Number(this.Net_Payable)).toFixed(2);
   //}
-  var lefttotal = wallet_amount + card_amount;
+  var lefttotal = Number(wallet_amount) + Number(card_amount);
   // if(this.Net_Payable > this.ObjcashForm.Wallet_Amount) {
   //   lefttotal = this.Net_Payable - wallet_amount;
   // }
@@ -1046,6 +1055,8 @@ CalculateDiscount(){
 }
 // Check Discount Amount equal to total discount
 checkdiscountamt(){
+  if(this.productSubmit[0].product_type != "PACKAGING") {
+    if (this.productSubmit[0].is_service != true) {
   if (Number(this.ObjcashForm.Credit_To_Amount) != Number(this.Dis_Amount) && Number(this.ObjcashForm.Credit_To_Amount) > Number(this.Dis_Amount)) {
     var leftval = (Number(this.ObjcashForm.Credit_To_Amount) - Number(this.Dis_Amount)).toFixed(2);
     this.productSubmit[0].Dis_Amount = (Number(this.productSubmit[0].Dis_Amount) + Number(leftval)).toFixed(2);
@@ -1077,6 +1088,8 @@ checkdiscountamt(){
     console.log('leftval',leftval)
     console.log('this.productSubmit[0].Dis_Amount',this.productSubmit[0].Dis_Amount)
     this.listofamount();
+  }
+  }
   }
 }
 // DAY END CHECK
@@ -1213,18 +1226,18 @@ saveprintAndUpdate(){
     });
     return false;
   }
-//   if(this.ObjcashForm.Credit_To_Ac_ID && !this.Objcustomerdetail.Bill_Remarks){
-//     this.Spinner = false;
-//     this.ngxService.stop();
-//   this.compacctToast.clear();
-//   this.compacctToast.add({
-//     key: "compacct-toast",
-//     severity: "error",
-//     summary: "Warn Message",
-//     detail: "Enter Remarks"
-//   });
-//   return false;
-// }
+  if( this.ObjcashForm.Credit_To_Amount && Number(this.Dis_Amount) == 0 ){
+    this.Spinner = false;
+    this.ngxService.stop();
+  this.compacctToast.clear();
+  this.compacctToast.add({
+    key: "compacct-toast",
+    severity: "error",
+    summary: "Warn Message",
+    detail: "Discount amount is zero"
+  });
+  return false;
+}
 }
 // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){
 
