@@ -49,7 +49,12 @@
               [header]="items[0]"
               leftIcon="glyphicon glyphicon-list-alt"
             >
-
+            <div class="row">
+              <button style="margin-right: 30px;"  (click)="exportexcel(LedgerLists,'Master_Ac_Ledger')"
+              class="btn btn-primary pull-right">
+              <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+            </button>
+            </div>
               <div class="table-responsive no-padding LedgerTable">
                 <p-table
                   #dt

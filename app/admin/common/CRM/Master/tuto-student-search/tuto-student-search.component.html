@@ -580,7 +580,42 @@
                     </div>
 
                 </p-tabPanel>
+                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[7]" leftIcon="fa fa-calculator" aria-hidden="true">
 
+                    <div class="table-responsive table-id no-padding">
+                        <p-table [value]="AppointmentList" [columns]="AppointmentColList" #dttt [paginator]="SupportFeedbackDetailsFollowupList.length ? true : false"
+                         [rows]="10" [rowHover]="true"  [rowsPerPageOptions]="[10,20,30]"
+                         [autoLayout]="true" [rowHover]="true"
+                         [globalFilterFields]='AppointmentColList'>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dttt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                                        {{ col.header }}
+                                        <p-sortIcon *ngIf="AppointmentColList.length" [field]="col.field"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-list let-columns="columns">
+                                <tr>
+                                    <td *ngFor="let col of columns">
+                                        {{ list[col.field] ? list[col.field] : "-" }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="paginatorright" *ngIf="AppointmentList.length" let-state>
+                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                </p-tabPanel>
             </p-tabView>
         </div>
     </div>

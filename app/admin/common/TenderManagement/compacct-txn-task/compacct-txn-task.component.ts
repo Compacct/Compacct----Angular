@@ -136,11 +136,12 @@ public ganttObj: GanttComponent;
     this.ObjProjectTask.Site_ID = undefined;
     this.ObjProjectTask.Project_Name = undefined;
     if (this.ObjProjectTask.Project_ID) {
-      this.ObjProjectTask.Project_Name = this.ProjectList.filter(i=> Number(i.Project_ID) === Number(this.ObjProjectTask.Project_ID))[0].label;
+      const tempArr = this.ProjectList.filter(i=> Number(i.Project_ID) === Number(this.ObjProjectTask.Project_ID))
+      this.ObjProjectTask.Project_Name = tempArr.length ? tempArr[0].label : undefined;
       const obj = {
         "SP_String": "SP_Tender_Management_All",
-        "Report_Name_String": "Get Site",
-        "Json_Param_String": JSON.stringify([{ 'Project_ID': this.ObjProjectTask.Project_ID }])
+        "Report_Name_String": "Get_Site_For_Project_Planning",
+        "Json_Param_String": JSON.stringify([{ 'Project_ID': this.ObjProjectTask.Project_ID, 'Tender_Doc_ID' : tempArr[0].Tender_Doc_ID }])
       }
       this.GlobalAPI
         .getData(obj)

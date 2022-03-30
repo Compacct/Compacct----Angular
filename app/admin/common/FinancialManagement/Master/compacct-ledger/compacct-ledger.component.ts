@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { MessageService } from 'primeng/api';
 
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-compacct-ledger',
   templateUrl: './compacct-ledger.component.html',
@@ -197,6 +198,13 @@ ClearData() {
   this.saveSpinner = false;
   this.LedgerFormSubmitted = false;
   this.ValidGroupFlag = false;
+}
+
+// EXPORT TO EXCEL
+exportexcel(Arr,fileName): void { 
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
 }
 
 // DELETE

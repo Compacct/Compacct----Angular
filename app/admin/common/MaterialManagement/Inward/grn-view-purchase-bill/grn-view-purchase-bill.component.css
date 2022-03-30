@@ -1,0 +1,22 @@
+div.table-responsive.table-id > p-table > div > div {
+    width: auto !important;
+  }
+  div.table-responsive.productTable > p-table > div > div {
+    width: auto !important;
+  }
+  
+  .custombutton{
+    margin-top:25px !important;
+  }
+  .box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+  }
+  .Completed {
+    background: #00a65a !important;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #00a65a), color-stop(1, #00ca6d)) !important;
+    color: #fff;
+  }
+  .Pending{
+    background-color: #dd4b39 !important;
+  }

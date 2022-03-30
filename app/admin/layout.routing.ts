@@ -184,6 +184,14 @@ import { K4cCreditNoteBrowseComponent } from './common/MaterialManagement/k4c-cr
 import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-support-calender-dashboard/tuto-support-calender-dashboard.component";
 import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-saleable-closing-stock/non-saleable-closing-stock.component';
 import { AccOpeningBalcManagementComponent } from "./common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component";
+import { EngineeringQuotationNepalComponent } from "./common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component";
+import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
+import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
+import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
+import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
+import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
+import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
+
 
 
 
@@ -1325,6 +1333,55 @@ const layoutRoutes: Routes = [{
   component: AccOpeningBalcManagementComponent,
   data: {
     title: 'Account Opening Balance Mangement'
+  }
+},
+{
+  path: 'BL_CRM_Engineering_Quotation_Nepal',
+  component: EngineeringQuotationNepalComponent,
+  data: {
+    title: 'Engineering Quotation'
+  }
+},
+{
+  path: 'BL_Txn_GRN_View_With_Purchase_Bill',
+  component: GrnViewPurchaseBillComponent,
+  data: {
+    title: 'GRN View with Purchase Bill'
+  }
+},
+{
+  path: 'BL_CRM_Txn_Enq_Harbaur_Product_Planning',
+  component: ProductsPlaningComponent,
+  data: {
+    title: 'Bill Of Materials'
+  }
+},
+{
+  path: 'BL_CRM_TXN_TASK_GNATT',
+  component: CompacctTxnTaskGanttComponent,
+  data: {
+    title: 'Project Task'
+  }
+},
+{
+  path: 'User_Absent',
+  component: UserAbsentComponent,
+  data: {
+    title: 'User Absent'
+  }
+},
+{
+  path: 'Tutopia_BDA_Joining',
+  component: TutoBdaJoiningComponent,
+  data: {
+    title: 'BDA Joining'
+  }
+},
+{
+  path: 'Tutopia_ASP_Unavailability',
+  component: TutoAspUnavaliblityComponent,
+  data: {
+    title: 'ASP Unavailability'
   }
 }
 

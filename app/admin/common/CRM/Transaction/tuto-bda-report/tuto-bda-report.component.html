@@ -33,7 +33,7 @@
                                         animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                 </button>
-                                    <button *ngIf="leadFollowUpListBackup.length" style="margin-right: 30px;" (click)="exportexcel(leadFollowUpList,'BDA_Report_')" class="btn btn-primary custombutton">
+                                    <button *ngIf="leadFollowUpListBackup.length" style="margin-right: 30px;" (click)="exportexcel(leadFollowUpList,ObjSearch.Report_Name)" class="btn btn-primary custombutton">
                                       <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
                                     </button>
                                 <!-- <button class="btn btn-primary custombutton" *ngIf='LeadTransferModalBtn && leadFollowUpList.length' (click)='OpenForwardModal()'>

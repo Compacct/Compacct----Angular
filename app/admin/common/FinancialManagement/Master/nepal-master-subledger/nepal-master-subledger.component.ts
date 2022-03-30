@@ -409,7 +409,8 @@ export class NepalMasterSubledgerComponent implements OnInit {
     }
   }
   getLocationName(ID){
-    return ID ? this.LocationList.filter(obj => Number(obj.Location_ID) === Number(obj.Location_ID))[0].Location_Name : '-';
+   const tempArr =  this.LocationList.filter(obj => Number(obj.Location_ID) === Number(obj.Location_ID));
+    return (ID && tempArr.length) ? tempArr[0].Location_Name : '-';
   }
 
   //VISTING CARD
@@ -504,7 +505,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
   SaveLocation(DynObj){
     const obj = {
       "SP_String": "SP_Create_Subledger_New",
-      "Report_Name_String":  this.ContactEditFlag ? "Edit_Subledger_Location":"Create_Subledger_Location",
+      "Report_Name_String":  this.LocationEditFlag ? "Edit_Subledger_Location":"Create_Subledger_Location",
       "Json_Param_String": JSON.stringify([DynObj])
     }
     this.GlobalAPI.postData(obj).subscribe((data) => {
@@ -514,7 +515,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
             key: "compacct-toast",
             severity: "success",
             summary: 'Subledger ID : ' + data[0].Column1,
-            detail: "Location Succesfully "+ (this.ContactEditFlag ? "Updated." : "Created.")
+            detail: "Location Succesfully "+ (this.LocationEditFlag ? "Updated." : "Created.")
           });
           this.ClearData2();
           this.GetLocationList();
@@ -561,8 +562,33 @@ export class NepalMasterSubledgerComponent implements OnInit {
   SaveLocationForm(valid) {
     this.SubledgerLocationSubmitted = true;
     if(valid && this.ObjSubledger.Sub_Ledger_ID) {
-      this.ObjLocation.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
-      this.SaveLocation(this.ObjLocation);
+      if(this.LocationEditFlag){
+        this.ObjLocation.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
+        this.SaveLocation(this.ObjLocation);
+      }
+      if (!this.LocationEditFlag && this.CheckLocationNameExist()){
+        this.ObjLocation.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
+        this.SaveLocation(this.ObjLocation);
+      }
+    }
+  }
+  CheckLocationNameExist() {
+    if(this.LocationList.length && this.ObjLocation.Location_Name) {
+      const dup = this.LocationList.filter(obj=> obj.Location_Name.toUpperCase() === this.ObjLocation.Location_Name.toUpperCase());
+      if(dup.length) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Validation",
+          detail: "Location Name Already Exits."
+        });
+        this.ObjLocation.Location_Name = undefined;
+        return false;
+      }
+      return true;
+    } else{
+      return true;
     }
   }
   SaveContactForm(valid) {
@@ -621,7 +647,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
         }
     })
   }
-  // EDIT LOCATION
+  // EDIT CONTACT
   EditContactList(i){
     this.ObjContact = new Contact();
     this.ObjContact = {...this.ContactList[i]};
@@ -631,6 +657,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.ObjContact = new Contact();
     this.ContactEditFlag = false;
   }
+  // EDIT LOCATION
   EditLocationList(i){
     this.ObjLocation = new Location();
     this.ObjLocation = {...this.LocationList[i]};
@@ -640,6 +667,52 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.ObjLocation = new Location();
     this.LocationEditFlag = false;
   }
+  // DELETE  LOCATION
+  DeleteLocation(col){
+    if(col.Location_ID && confirm('Are you Sure ?')) {
+      const obj = {
+        "SP_String": "SP_Create_Subledger_New",
+        "Report_Name_String": "Delete_Subledger_Location",
+        "Json_Param_String": JSON.stringify([{ 'Location_ID' : col.Location_ID}])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data) => {
+          if (data[0].Column1 === 'Deleted Successfully'  ) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'Subledger ID : ' + this.ObjSubledger.Sub_Ledger_ID,
+              detail: "Location Succesfully  Deleted"
+            });
+            this.ClearData2();
+            this.GetLocationList();
+        } else if(data[0].Column1 === 'Sorry, This Location has been used already'){
+          this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "warn",
+              summary: 'Subledger ID : ' + this.ObjSubledger.Sub_Ledger_ID,
+              detail: data[0].Column1
+            });
+            this.ClearData2();
+            this.GetLocationList();
+
+        } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "error",
+              detail: "Error Occured"
+            });
+        }
+        });
+    }
+  }
+
+  // DOCUMENTS
+
+
   // 
   printPDF(subledgerid) {
     if (subledgerid) {

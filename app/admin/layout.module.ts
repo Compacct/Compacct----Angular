@@ -268,9 +268,17 @@ import { K4cCreditNoteBrowseComponent } from './common/MaterialManagement/k4c-cr
 import { TutoSupportCalenderDashboardComponent } from "./common/CRM/Master/tuto-support-calender-dashboard/tuto-support-calender-dashboard.component";
 import { NonSaleableClosingStockComponent } from './common/OutletManagement/non-saleable-closing-stock/non-saleable-closing-stock.component';
 import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc-opening-balc-management/acc-opening-balc-management.component';
+import { EngineeringQuotationNepalComponent } from './common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component';
+import { CompacctDocumentVaultComponent } from "./shared/compacct.components/compacct.document.vault/compacct.document.vault.component";
+import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
+import {SplitButtonModule} from 'primeng/splitbutton';
+import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
+import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
+import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component';
+import { TutoBdaJoiningComponent } from './common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component';
+import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component'
 
-
-
+import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-angular-gantt';
 
 
 
@@ -469,6 +477,15 @@ import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc
     TutoSupportCalenderDashboardComponent,
     NonSaleableClosingStockComponent,
     AccOpeningBalcManagementComponent,
+    EngineeringQuotationNepalComponent,
+    CompacctDocumentVaultComponent,
+    GrnViewPurchaseBillComponent,
+    ProductsPlaningComponent,
+    CompacctTxnTaskGanttComponent,
+    UserAbsentComponent,
+    TutoBdaJoiningComponent,
+    TutoAspUnavaliblityComponent
+    
   ],
   imports: [
     CommonModule,
@@ -513,7 +530,8 @@ import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc
     OverlayPanelModule,
     GanttAllModule,
     ChipsModule,
-    NpDatepickerModule
+    NpDatepickerModule,
+    SplitButtonModule
   ],
   exports: [],
   providers: [
@@ -528,6 +546,9 @@ import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc
     DateNepalConvertService,
     SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
+    SortService,
+    FilterService,
+    ColumnMenuService
   ]
 })
 export class LayoutModule {}

@@ -477,6 +477,7 @@ export class TutoMastereQNAComponent implements OnInit {
     if(obj.Tutorial_Question_ID) {
       this.Question = obj.Question;
       this.ObjAnswer.Tutorial_Question_ID = obj.Tutorial_Question_ID;
+      this.ObjAnswer.is_public = 'Y';
       this.AnswerUpdateModal = true;
     }
   }

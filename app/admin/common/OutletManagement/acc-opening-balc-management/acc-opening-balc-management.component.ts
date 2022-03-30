@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
@@ -7,7 +7,9 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
-import { flatMap } from 'rxjs/operators';
+import { flatMap, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-acc-opening-balc-management',
@@ -16,7 +18,9 @@ import { flatMap } from 'rxjs/operators';
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class AccOpeningBalcManagementComponent implements OnInit {
+export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
+  
+  destroy$: Subject<boolean> = new Subject<boolean>();
   tabIndexToView = 0;
   items = []; 
   Spinner = false;
@@ -25,8 +29,10 @@ export class AccOpeningBalcManagementComponent implements OnInit {
 
   ACOpeningBalcSearhFormSubmitted = false;
   SearchCost_Cen_ID = undefined;
+  SearchFinyearID = undefined;
   ACOpeningBalcFormSubmitted = false;
   ObjACbalc = new ACbalc();
+  FinyearList =[];
   CostCenterList = [];
   LedgerList = [];
   SubLedgerList = [];
@@ -43,7 +49,8 @@ export class AccOpeningBalcManagementComponent implements OnInit {
     private route: ActivatedRoute,
     private compacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
-    private DateService: DateTimeConvertService
+    private DateService: DateTimeConvertService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -56,34 +63,48 @@ export class AccOpeningBalcManagementComponent implements OnInit {
     this.GetCostCenter();
     this.GetLedgerList();
     this.GetCostHeadList();
+    this.GetFinyearList();
   }
- 
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
   GetAllAcOpeningBalc(valid){
     this.ACOpeningBalcSearhFormSubmitted = true;
     if(valid) {
       this.seachSpinner = true;
       const tempObj = {
         Cost_Cen_ID : this.SearchCost_Cen_ID,
-        Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+        Fin_Year_ID : this.SearchFinyearID,
       }
       const obj = {
         "SP_String": "SP_Opening_Journal",
         "Report_Name_String": "Get_Opening_Journal_Data",
         "Json_Param_String": JSON.stringify([tempObj])
        }
-       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.GlobalAPI.getData(obj)
+       .pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
          this.AllAcOpeningBalc = data;
          this.seachSpinner = false;
        })
     }
     
   }
+
+  GetFinyearList() {
+    this.$http.get('/Common/Get_Fin_Year').pipe(takeUntil(this.destroy$)).subscribe((data: any) => {
+      this.FinyearList =  data ? JSON.parse(data) : [];
+      this.FinyearList.forEach(v => v.Fin_Year_ID += '');
+      this.SearchFinyearID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID.toString();
+      console.log(this.SearchFinyearID)
+    });
+  }
   GetCostCenter(){
     const obj = {
       "SP_String": "SP_Opening_Journal",
       "Report_Name_String": "GET_Cost_Cent_Name",
      }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
       data.forEach((val, index)=>{
         data[index].label = val.Location;
         data[index].value = val.Cost_Cen_ID;
@@ -98,7 +119,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
       "SP_String": "SP_Opening_Journal",
       "Report_Name_String": "GET_Ledger",
      }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
       data.forEach((val, index)=>{
         data[index].label = val.Ledger_Name;
         data[index].value = val.Ledger_ID;
@@ -118,7 +139,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
           "Report_Name_String": "GET_Sub_Ledger",
           "Json_Param_String": JSON.stringify([{'Ledger_ID' : this.ObjACbalc.Ledger_ID}])
         }
-        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
           data.forEach((val, index)=>{
             data[index].label = val.Sub_Ledger_Name;
             data[index].value = val.Sub_Ledger_ID;
@@ -139,7 +160,7 @@ export class AccOpeningBalcManagementComponent implements OnInit {
       "SP_String": "SP_Opening_Journal",
       "Report_Name_String": "GET_Cost_Head",
      }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
       data.forEach((val, index)=>{
         data[index].label = val.Cost_Head_Name;
         data[index].value = val.Cost_Head_ID;
@@ -167,14 +188,17 @@ export class AccOpeningBalcManagementComponent implements OnInit {
   clearData(){
     this.ACOpeningBalcFormSubmitted = false;
     this.ObjACbalc = new ACbalc();
+    this.ObjACbalc.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.ObjACbalc.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID.toString();
     this.ACOpeningBalcList = []; 
     this.getCRDR();
+    this.buttonname = 'Create';
   }
   AddACBal(valid) {
     this.ACOpeningBalcFormSubmitted = true;
     if(valid){
+      if(this.ACOpeningBalcList.length === 0) {
         this.ACOpeningBalcFormSubmitted = false;
-        this.ObjACbalc.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID;
         this.ObjACbalc.DR_Amt = Number(this.ObjACbalc.DR_Amt ? this.ObjACbalc.DR_Amt : '0');
         this.ObjACbalc.CR_Amt = Number(this.ObjACbalc.CR_Amt ? this.ObjACbalc.CR_Amt : '0');
         this.ACOpeningBalcList.push(this.ObjACbalc);
@@ -182,9 +206,42 @@ export class AccOpeningBalcManagementComponent implements OnInit {
         const obj = {...this.ObjACbalc};
         this.ObjACbalc = new ACbalc();
         this.ObjACbalc.Cost_Cen_ID = obj.Cost_Cen_ID;
-        this.ObjACbalc.Ledger_ID = obj.Ledger_ID;      
+        this.ObjACbalc.Ledger_ID = obj.Ledger_ID;
+        this.ObjACbalc.Fin_Year_ID = obj.Fin_Year_ID;      
         const arr = $.grep(this.LedgerList,(ob:any) => Number(ob.Ledger_ID) === Number(this.ObjACbalc.Ledger_ID));
         this.ObjACbalc.Ledger_Name = arr.length ? arr[0].Ledger_Name : undefined;
+      }else {
+        const arr = $.grep(this.ACOpeningBalcList,(ob:any) =>{
+          return (Number(ob.Cost_Cen_ID) === Number(this.ObjACbalc.Cost_Cen_ID) 
+                && Number(ob.Ledger_ID) === Number(this.ObjACbalc.Ledger_ID)  
+                && Number(ob.Fin_Year_ID) === Number(this.ObjACbalc.Fin_Year_ID) 
+                && Number(ob.Sub_Ledger_ID) === Number(this.ObjACbalc.Sub_Ledger_ID))
+          });
+          if(arr.length) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "warn",
+            summary: "Validation",
+            detail: "Openig Balc Already Exits."
+          });
+          } else {
+            this.ACOpeningBalcFormSubmitted = false;
+            this.ObjACbalc.DR_Amt = Number(this.ObjACbalc.DR_Amt ? this.ObjACbalc.DR_Amt : '0');
+            this.ObjACbalc.CR_Amt = Number(this.ObjACbalc.CR_Amt ? this.ObjACbalc.CR_Amt : '0');
+            this.ACOpeningBalcList.push(this.ObjACbalc);
+            this.getCRDR();
+            const obj = {...this.ObjACbalc};
+            this.ObjACbalc = new ACbalc();
+            this.ObjACbalc.Cost_Cen_ID = obj.Cost_Cen_ID;
+            this.ObjACbalc.Ledger_ID = obj.Ledger_ID;
+            this.ObjACbalc.Fin_Year_ID = obj.Fin_Year_ID;      
+            const arr = $.grep(this.LedgerList,(ob:any) => Number(ob.Ledger_ID) === Number(this.ObjACbalc.Ledger_ID));
+            this.ObjACbalc.Ledger_Name = arr.length ? arr[0].Ledger_Name : undefined;
+          }
+
+      }
+        
       }
       
   }
@@ -213,14 +270,13 @@ export class AccOpeningBalcManagementComponent implements OnInit {
   }
 
   SaveACOpeningBalc(){
-    this.ACOpeningBalcFormSubmitted = true;
     if(this.ACOpeningBalcList.length && this.DRAmt_Total === this.CRAmt_Total){
         const obj = {
           "SP_String": "SP_Opening_Journal",
           "Report_Name_String": "Save_Opening_Journal",
           "Json_Param_String": JSON.stringify(this.ACOpeningBalcList)
         }
-        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.GlobalAPI.getData(obj).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
           if(data[0].Column1){
             this.buttonname = "Save";
           this.compacctToast.clear();
@@ -228,9 +284,11 @@ export class AccOpeningBalcManagementComponent implements OnInit {
            key: "compacct-toast",
            severity: "success",
            summary: "A/c Opening Balance",
-           detail: "Succesfully Created"
+           detail: this.buttonname = 'Create' ? "Succesfully Created" : "Succesfully Updated"
          });
          this.clearData();
+         this.SearchCost_Cen_ID = this.SearchCost_Cen_ID ? this.SearchCost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+         this.SearchFinyearID = this.SearchFinyearID ? this.SearchFinyearID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID.toString();
          this.GetAllAcOpeningBalc(true);
         }
         })
@@ -247,7 +305,39 @@ export class AccOpeningBalcManagementComponent implements OnInit {
        }
       }
   }
+  EditACOpeningBal(obj) {
+    console.log(obj)
+    this.buttonname = 'Create';
+    if(obj){
+      
+      this.ngxService.start();
+      const obj1 = {
+        "SP_String": "SP_Opening_Journal",
+        "Report_Name_String": "Get_Opening_Journal_Data_For_Edit",
+        "Json_Param_String": JSON.stringify([{'Cost_Cen_ID' : obj.Cost_Cen_ID, 'Fin_Year_ID': obj.Fin_Year_ID}])
+      }
+      this.GlobalAPI.getData(obj1).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
+        console.log(data)
+        const temp = data ? data : [];
+        this.ACOpeningBalcList = [...temp];
+        this.getCRDR();
+        const obj = {...this.ACOpeningBalcList[0]};
+        this.ObjACbalc = new ACbalc();
+        this.ObjACbalc.Cost_Cen_ID = obj.Cost_Cen_ID;
+        this.ObjACbalc.Ledger_ID = obj.Ledger_ID;
+        this.ObjACbalc.Fin_Year_ID = obj.Fin_Year_ID.toString();      
+        const arr = $.grep(this.LedgerList,(ob:any) => Number(ob.Ledger_ID) === Number(this.ObjACbalc.Ledger_ID));
+        this.ObjACbalc.Ledger_Name = arr.length ? arr[0].Ledger_Name : undefined;
+        this.buttonname = 'Update';
+        setTimeout(() => {        
+          this.items = ["Browse", "Update"];  
+          this.tabIndexToView = 1;
+          this.ngxService.stop();
+        }, 800);
 
+      })
+    }
+  }
 
 }
 class ACbalc {

@@ -1,0 +1,74 @@
+<div class="form-group">
+  <div class="col-sm-8">   
+    <div class="form-group" style="padding: 10px;">
+      <div class="table-responsive no-padding" >
+        <table class="table table-bordered">
+          <thead>
+            <tr style="background-color:#3c8dbc;color:white;">
+              <th>SL No.</th>
+              <th>Date</th>
+              <th>Created By</th>
+              <th>Document Type</th>
+              <th>View PDF</th>
+              <th>Delete</th>
+  
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of AllDocumentList;let odd = odd;let index = index" [class.even]="odd">
+              <td>{{ index + 1 }}</td>
+              <td>{{d.Upload_Date | date :'dd/MM/yyyy'}}</td>
+              <td>{{d.Name}}</td>
+              <td>{{getDocumentName(d.Document_Type_ID)}}</td>
+              <td class="text-center"> 
+                <a (click)="OpenInNewTab(d.File_Name)" ><div><i class="fa fa-fw fa-file-pdf-o"> </i></div></a>
+              </td>
+              <td class="text-center"> 
+                  <a (click)="deleteDocumentVault(d.Document_Type_Txn_ID)" ><div><i class="fa fa-fw fa-trash"> </i></div></a>
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <form name="DocumentForm" #DocumentForm="ngForm" novalidate>
+      <div class="form-group">
+        
+        <div class="col-sm-12" style="margin-bottom:5px">
+          <label class="control-label">Document Name<sup class="text-danger">*</sup></label>
+          <select class="form-control" 
+          name="DocTypeVault" 
+          #DocTypeVault="ngModel" 
+          [(ngModel)]="objDocumentVault.Document_Type_ID" 
+          [ngClass]="{clearance: DocumentFormSubmitted && DocTypeVault.errors?.required}"
+          required>
+              <option [ngValue]="undefined">Select</option>
+              <option *ngFor="let option of documentTypeVault" value="{{ option.Document_Type_ID  }}">
+              {{ option.Document_Type_Name}}
+              </option>
+          </select>
+
+        </div>
+        <div class="col-sm-12"  style="margin-bottom:15px">
+          <label class="control-label">Document<sup class="text-danger"></sup></label>
+          <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"></p-fileUpload>
+          <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+          <!-- <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;" ><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a> -->
+        </div>
+  
+      </div>
+      <div class="form-group">
+        <div class="col-sm-12">
+             <button class="btn btn-primary pull-right"
+          (click)="SaveDocDetails(DocumentForm.form.valid)"
+          id="load"
+          [disabled]="Spinner">
+          <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> &nbsp;UPLOAD 
+      </button>   </div>
+      </div>
+    </form>
+  </div>
+</div>

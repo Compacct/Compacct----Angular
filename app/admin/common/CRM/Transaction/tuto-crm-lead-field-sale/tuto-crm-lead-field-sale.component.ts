@@ -10,6 +10,8 @@ import { FileUpload, OverlayPanel } from 'primeng/primeng';
 
 import * as moment from "moment";
 import * as XLSX from 'xlsx';
+import { Console } from 'console';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Component({
   selector: 'app-tuto-crm-lead-field-sale',
   templateUrl: './tuto-crm-lead-field-sale.component.html',
@@ -21,16 +23,27 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   url = window["config"];
   leadFollowUpList = [];
   leadFollowUpListBackup = [];
+  leadFollowUpList2 = [];
+  leadFollowUpListBackup2 = [];
+  leadFollowUpList3 = [];
+  leadFollowUpListBackup3 = [];
   seachSpinner = false;
+  seachSpinner2 = false;
+  seachSpinner3 = false;
   SearchFormSubmitted = false;
+  SearchFormSubmitted2 = false;
+  SearchFormSubmitted3 = false;
   LeadTransferModalBtn = false;
   SelectAllLead = false;
 
   ObjSearch = new Search();
+  ObjSearch2 = new Search();
+  ObjSearch3 = new Search();
   PaginationObj = {
     first: 0,
     rows: 100
   }
+
 
   UserList = [];
   ActionList = [];
@@ -89,6 +102,32 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   SelectedASPConfirmList = [];
   SelectedASPJourneyStartedList = [];
 
+  
+  PinList2 = [];
+  Appointment_ForList2 = [];
+  DaysList2 = [];
+  RegisterList2 = [{ label: 'REGISTERED', value: '1' }, { label: 'UN REGSITERED', value: '0' }]
+  ZonalSalesHeadList2 = [];
+  DAppoSlotList2 = [];
+  SchoolNameList2 = [];
+  SchoolPinList2 = [];
+  DistributorNameList2 = [];
+  ASPConfirmList2 = [{ label: 'Confirmed', value: 'Y' }, { label: 'Not Confirmed', value: 'N' }]
+  ASPJourneyStartedList2 = [{ label: 'Yes ', value: 'Y' }, { label: 'No', value: 'N' }]
+  
+  SelectedPinFilterList2 = [];
+  SelectedAppointmentForFilterList2 = [];
+  SelectedDaysFilterList2 = [];
+  SelectedRegisterFilterList2 = [];
+  SelectedZonalSalesFilterList2 = [];
+  SelectedAppoSlotFilterList2 = [];
+  SelectedSchoolNameFilterList2 = [];
+  SelectedSchoolPinFilterList2 = [];
+  SelectedDistributorNameList2 = [];
+  SelectedASPConfirmList2 = [];
+  SelectedASPJourneyStartedList2 = [];
+
+
   ShowDetailsModal = false;
   Foot_Fall_ID = undefined;
   Lead_ID = undefined;
@@ -99,18 +138,26 @@ export class TutoCrmLeadFieldSaleComponent implements OnInit {
   ObjStudetail = new Studetail();
   items = [];
   tabIndexToView = 0;
+  tabIndexToViewMain = 0;
   SupportTicketDumplist = [];
   SupportQuestionDumplist = [];
 
   
   NextFollowupFilter: any;
   NextFollowupFilterSelected: any;
+  
+  NextFollowupFilter2: any;
+  NextFollowupFilterSelected2: any;
 
   CallDetailsModalFlag = false;
   CallDetailsObj: any = {};
   
   from_date:any;
   to_date:any;
+  from_date2:any;
+  to_date2:any;
+  from_date3:any;
+  to_date3:any;
 
   ForwardFieldSalesObj = new ForwardFieldSales();
   ForwardFieldSalesDate = new Date().setDate(new Date().getDate() + 1);
@@ -134,6 +181,44 @@ OverlayCreateModal = false;
 CreateLightBoxSubmitted = false;
 saveSpinner2 = false;
 ObjAppoConfm = new AppoConfm ();
+
+ConductionAppo_ID = undefined;
+
+EnrolledModalflag = false;
+EnrollededFormSubmiited = false;
+ObjEnrolled = new enroll();
+ProductList =[];
+itemsMain = ['PENDING','ENROLLED','CANCELED'];
+
+ShowDetailsOptionModal = false;
+CurrentStudentDetails:any = {};
+JourneyItems = [];
+Appo_ID = undefined;
+Reject_Reason = undefined;
+RejectList = [];
+
+ResceduleObj:any = {};
+ResceduleModal = false;
+ResceduleFormSubmit = false;
+ResceduleDate = new Date();
+Tomorrow = new Date();
+TimeSlotList:any = [];
+saveSpinner3 = true;
+
+FollowAppoModal = false;
+FollowAppoNextDate = new Date();
+FollowAppoNextSubmitted = false;
+
+FilterFlag = false;
+SelectedStatusListFilterList = [];
+CurrentStatusList  = [];
+
+RescedulePDFFlag = false;
+ResceduleMP3File:any = {};
+CanceledPDFFlag = false;
+CanceledMP3File:any = {};
+RejectPDFFlag = false;
+RejectMP3File:any = {};
   constructor(  private Header: CompacctHeader,
     private $http : HttpClient,
     private router : Router,
@@ -141,16 +226,23 @@ ObjAppoConfm = new AppoConfm ();
     private GlobalAPI: CompacctGlobalApiService,
     public $CompacctAPI: CompacctCommonApi,
     private DateService: DateTimeConvertService,
-    private compacctToast: MessageService) { 
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService,) { 
       this.route.queryParams.subscribe(params => {
         console.log(params);
         if(params.User && params.Action) {
           this.ObjSearch.Current_Action = window.atob(params.Action);
           this.ObjSearch.User_ID = Number(window.atob(params.User));
+          this.ObjSearch2.Current_Action = window.atob(params.Action);
+          this.ObjSearch2.User_ID = Number(window.atob(params.User));
           console.log(window.atob(params.User))
           this.SaerchFollowup(true);
         }
        })
+       const today = new Date()
+       const tomorrow = new Date(today)
+       tomorrow.setDate(tomorrow.getDate() + 1)
+       this.Tomorrow = new Date(tomorrow)
     }
 
   ngOnInit() {
@@ -168,6 +260,79 @@ ObjAppoConfm = new AppoConfm ();
     this.GetDistributor();
     this.GetASPName();
     this.GetAppoSlotList();
+    this.GetProductList();
+    this.GetTimeSlotList();
+  }
+// SHOW OPTION DETAILS
+ShowOption(obj) {
+  this.ObjStudetail = new Studetail();
+    this.ShowDetailsOptionModal = false;
+    this.Foot_Fall_ID = undefined;
+    this.Lead_ID = undefined;
+    this.Studentdetails = undefined;
+    this.Orderdetaillist = [];
+    this.FollowupList = [];
+    this.Billingdetaillist = [];
+    this.CurrentStudentDetails = {};
+    if(obj.Lead_ID){
+      this.CurrentStudentDetails = {...obj};
+      this.Foot_Fall_ID = obj.Foot_Fall_ID;
+      this.Lead_ID = obj.Lead_ID;
+      this.GetStudentdetails();
+      this.GetFollowupList();
+      setTimeout(()=>{
+        this.ShowDetailsOptionModal = true;
+      },900);
+}
+}
+
+GetTimeSlotList() {
+  this.$http.get('https://tutopiacallaz.azurewebsites.net/api/Mobile_Func_Adv?code=CLSiAdJbe7iil5hQ9n8aVAOmiFt3KPjk2AnARj3vaY7mjKSsHBxSmg==&Report_Name=Get_Appointment_Slot&Sp_Name=SP_Controller').subscribe((data:any)=>{
+    
+    this.TimeSlotList = data.message ? JSON.parse(data.message) : [];
+    this.TimeSlotList.forEach((data)=>{
+      data['label'] = data.Time_Slot_Name;
+      data['value'] = data.Time_Slot_ID;
+    })
+  });
+  
+}
+async GetRejectList(val) {
+  const obj = {
+    "SP_String": "Tutopia_Followup_SP",
+    "Report_Name_String": "Reject_Reason",
+    "Json_Param_String": JSON.stringify([{ 'Reason_Type' : val }])
+  }
+  return this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Reject_Reason').toPromise();
+    // .subscribe((data: any) => {
+    //   const tempActionTaken= data;
+
+      // const tempActionTaken = $.grep(data, function (value) { return value.Request_Type !== "Visit Customer" && value.Request_Type !== "Direct Appointment"; });
+      // tempActionTaken.forEach(item => {
+      //   item.label = item.Product_Description;
+      //   item.value = item.Product_ID;
+      // })
+      // this.RejectList = tempActionTaken;
+    // });
+}
+
+  TabClickMain(e) { 
+  }
+  GetProductList() {
+    const obj = {
+      "SP_String": "Tutopia_Call_Appointment_Works_SP",
+      "Report_Name_String": "Get_product_For_Enroled"
+    }
+    this.GlobalAPI.CommonPostData(obj,'/Tutopia_Call_Common_SP_For_All')
+      .subscribe((data: any) => {
+        const tempActionTaken= data;
+        // const tempActionTaken = $.grep(data, function (value) { return value.Request_Type !== "Visit Customer" && value.Request_Type !== "Direct Appointment"; });
+        tempActionTaken.forEach(item => {
+          item.label = item.Product_Description;
+          item.value = item.Product_ID;
+        })
+        this.ProductList = tempActionTaken;
+      });
   }
   GetUserList() {
      this.$http
@@ -175,6 +340,8 @@ ObjAppoConfm = new AppoConfm ();
         .subscribe((data: any) => {
             this.UserList = data.length ? data : [];
          this.ObjSearch.User_ID =  this.ObjSearch.User_ID ? this.ObjSearch.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
+         this.ObjSearch2.User_ID =  this.ObjSearch2.User_ID ? this.ObjSearch2.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
+         this.ObjSearch3.User_ID =  this.ObjSearch3.User_ID ? this.ObjSearch3.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
         });
   }
   GetActionList() {
@@ -243,6 +410,8 @@ ObjAppoConfm = new AppoConfm ();
           this.SalesUserList = data.length ? data : [];
           this.UserList = data.length ? data : [];
           this.ObjSearch.User_ID =  this.ObjSearch.User_ID ? this.ObjSearch.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
+          this.ObjSearch2.User_ID =  this.ObjSearch.User_ID ? this.ObjSearch2.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
+          this.ObjSearch3.User_ID =  this.ObjSearch3.User_ID ? this.ObjSearch3.User_ID : this.$CompacctAPI.CompacctCookies.User_ID;
         });
     // this.$http
     //     .get(this.url.apiGetUserListAll)
@@ -283,6 +452,7 @@ ObjAppoConfm = new AppoConfm ();
     let SchoolNameFilter = [];
     let SchoolPinFilter = [];
     let DistributorNameFilter = [];
+    let CurrentStatusFilter = [];
 
     this.PinList = [];
   this.Appointment_ForList = [];
@@ -292,6 +462,7 @@ ObjAppoConfm = new AppoConfm ();
   this.SchoolNameList = [];
   this.SchoolPinList = [];
   this.DistributorNameList =[];
+  this.CurrentStatusList  = [];
     this.leadFollowUpListBackup.forEach((item) => {
       if (PinFilter.indexOf(item.Pin) === -1) {
         PinFilter.push(item.Pin);
@@ -325,6 +496,10 @@ ObjAppoConfm = new AppoConfm ();
         DistributorNameFilter.push(item.Distributor_Name);
         this.DistributorNameList.push({ label: item.Distributor_Name, value: item.Distributor_Name });
       }
+      if (CurrentStatusFilter.indexOf(item.Sub_Status) === -1) {
+        CurrentStatusFilter.push(item.Sub_Status);
+        this.CurrentStatusList.push({ label: item.Sub_Status, value: item.Sub_Status });
+      }
     });
   }
   NextFollowDateFilterChange(e) {
@@ -349,6 +524,7 @@ ObjAppoConfm = new AppoConfm ();
     let DistributorNameFilter = [];
     let ASPConfirmFilter = [];
     let ASPJourneyStartedFilter = [];
+    let CurrentStatusFilter = [];
 
     if (this.SelectedPinFilterList.length) {
       searchFields.push('Pin');
@@ -394,6 +570,11 @@ ObjAppoConfm = new AppoConfm ();
       searchFields.push('ASP_Journey_Started');
       ASPJourneyStartedFilter = this.SelectedASPJourneyStartedList;
     }
+    
+    if (this.SelectedStatusListFilterList.length) {
+      searchFields.push('Sub_Status');
+      CurrentStatusFilter = this.SelectedStatusListFilterList;
+    }
     const ctrl = this;
     this.leadFollowUpList = [];
     if (searchFields.length) {
@@ -410,6 +591,7 @@ ObjAppoConfm = new AppoConfm ();
           && (DistributorNameFilter.length ? DistributorNameFilter.includes(e['Distributor_Name']) : true)
           && (ASPConfirmFilter.length ? ASPConfirmFilter.includes(e['ASP_Confirm']) : true)
           && (ASPJourneyStartedFilter.length ? ASPJourneyStartedFilter.includes(e['ASP_Journey_Started']) : true)
+          && (CurrentStatusFilter.length ? CurrentStatusFilter.includes(e['Sub_Status']) : true)
           );
       });
       this.leadFollowUpList = LeadArr.length ? LeadArr : [];
@@ -437,7 +619,7 @@ ObjAppoConfm = new AppoConfm ();
     return returnBol;
   }
   }
-  // FOR SEARCH
+  // FOR SEARCH PENDING TAB -1
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.from_date = dateRangeObj[0];
@@ -475,6 +657,9 @@ ObjAppoConfm = new AppoConfm ();
             this.leadFollowUpList = [...SortData];
             this.leadFollowUpListBackup = [...SortData];
             this.leadFollowUpList.forEach(function (element) {
+              if(!element.Lead_ID) {
+                console.log(element)
+              }
               element.Selected = false;
             });
             this.GetDistinct();
@@ -529,7 +714,276 @@ ObjAppoConfm = new AppoConfm ();
         }
     }
   }
+  // FOR SEARCH ENROLLED TAB -2 
+  getDateRange2(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.from_date2 = dateRangeObj[0];
+      this.to_date2 = dateRangeObj[1];
+    }
+  }
+  SaerchFollowup2(valid) {
+    this.SearchFormSubmitted2 = true;
+    this.leadFollowUpList2 = [];
+    this.leadFollowUpListBackup2 = [];
+    this.LeadTransferCheckBoxChanged();
+    if (valid) {
+      this.seachSpinner2 = true;
+      this.ObjSearch2.User_ID = this.ObjSearch2.User_ID ? this.ObjSearch2.User_ID : '0';
+      this.ObjSearch2.Current_Action = this.ObjSearch2.Current_Action ? this.ObjSearch2.Current_Action : '';
+      const tempObj = {
+        'Start_Date': this.from_date2 ? this.DateService.dateConvert(new Date(this.from_date2))
+        : this.DateService.dateConvert(new Date()),
+        'End_Date' : this.to_date2  ? this.DateService.dateConvert(new Date(this.to_date2))
+        : this.DateService.dateConvert(new Date()),
+        'User_ID' : this.ObjSearch2.User_ID
+      }
+      const obj = {
+        "Json_Param_String" : JSON.stringify([tempObj])
+      }
+     // this.GetFilteredItems();
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.$http
+          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Channel sale Student Follow-up v4 Enroled",obj)
+          .subscribe((data: any) => {
+            const SortData = data ? JSON.parse(data) : [];
+            SortData.sort(function(a:any,b:any){
+              return new Date(b.Next_Followup).valueOf() - new Date(a.Next_Followup).valueOf();
+            });
+            this.leadFollowUpList2 = [...SortData];
+            this.leadFollowUpListBackup2 = [...SortData];
+            this.leadFollowUpList2.forEach(function (element) {
+              element.Selected = false;
+            });
+            this.GetDistinct2();
+            this.GlobalFilterChange2();
+            this.seachSpinner2 = false;
+      });
+      // this.$http
+      //     .post("/Common/Create_Common_task?Report_Name=Browse Student Follow-up v2",obj)
+      //     .subscribe((data: any) => {
+            
+      // });
+    }
 
+  }
+  
+  GetDistinct2() {
+    let PinFilter = [];
+    let AppointmentForFilter = [];
+    let DaysFilter = [];
+    let ZonalSalesFilter = [];
+    let SlotFilter = [];
+    let SchoolNameFilter = [];
+    let SchoolPinFilter = [];
+    let DistributorNameFilter = [];
+
+    this.PinList2 = [];
+  this.Appointment_ForList2 = [];
+  this.DaysList2 = [];
+  this.ZonalSalesHeadList2 = [];
+  this.DAppoSlotList2 = [];
+  this.SchoolNameList2 = [];
+  this.SchoolPinList2 = [];
+  this.DistributorNameList2 =[];
+    this.leadFollowUpListBackup2.forEach((item) => {
+      if (PinFilter.indexOf(item.Pin) === -1) {
+        PinFilter.push(item.Pin);
+        this.PinList2.push({ label: item.Pin, value: item.Pin });
+      }
+      if (AppointmentForFilter.indexOf(item.Appointment_For) === -1) {
+        AppointmentForFilter.push(item.Appointment_For);
+        this.Appointment_ForList2.push({ label: item.Appointment_For, value: item.Appointment_For });
+      }
+      if (DaysFilter.indexOf(item.Days) === -1) {
+        DaysFilter.push(item.Days);
+        this.DaysList2.push({ label: item.Days, value: item.Days });
+      }
+      if (SlotFilter.indexOf(item.Appo_Time_Slot) === -1) {
+        SlotFilter.push(item.Appo_Time_Slot);
+        this.DAppoSlotList2.push({ label: item.Appo_Time_Slot, value: item.Appo_Time_Slot });
+      }
+      if (ZonalSalesFilter.indexOf(item.Zonal_Sales_Head) === -1) {
+        ZonalSalesFilter.push(item.Zonal_Sales_Head);
+        this.ZonalSalesHeadList2.push({ label: item.Zonal_Sales_Head, value: item.Zonal_Sales_Head });
+      }
+      if (SchoolNameFilter.indexOf(item.School_Name) === -1) {
+        SchoolNameFilter.push(item.School_Name);
+        this.SchoolNameList2.push({ label: item.School_Name, value: item.School_Name });
+      }
+      if (SchoolPinFilter.indexOf(item.School_PIN) === -1) {
+        SchoolPinFilter.push(item.School_PIN);
+        this.SchoolPinList2.push({ label: item.School_PIN, value: item.School_PIN });
+      }
+      if (DistributorNameFilter.indexOf(item.Distributor_Name) === -1) {
+        DistributorNameFilter.push(item.Distributor_Name);
+        this.DistributorNameList2.push({ label: item.Distributor_Name, value: item.Distributor_Name });
+      }
+    });
+  }
+  NextFollowDateFilterChange2(e) {
+    this.NextFollowupFilterSelected2 = undefined
+    if (e) {
+      this.NextFollowupFilterSelected2 =  moment(e, "YYYY-MM-DD")["_d"];
+      console.log(this.NextFollowupFilterSelected2)
+      this.GlobalFilterChange();
+    }
+  }
+  GlobalFilterChange2 () {
+    let searchFields = [];
+
+    let PinFilter = [];
+    let AppointmentForFilter = [];
+    let DaysFilter = [];
+    let RegisterFilter = [];
+    let ZonalSalesFilter = [];
+    let SlotFilter = [];
+    let SchoolNameFilter = [];
+    let SchoolPinFilter = [];
+    let DistributorNameFilter = [];
+    let ASPConfirmFilter = [];
+    let ASPJourneyStartedFilter = [];
+
+    if (this.SelectedPinFilterList2.length) {
+      searchFields.push('Pin');
+      PinFilter = this.SelectedPinFilterList2;
+    }
+    if (this.SelectedAppointmentForFilterList2.length) {
+      searchFields.push('Appointment_For');
+      AppointmentForFilter = this.SelectedAppointmentForFilterList2;
+    }
+    if (this.SelectedDaysFilterList2.length) {
+      searchFields.push('Days');
+      DaysFilter = this.SelectedDaysFilterList2;
+    }
+    if(this.SelectedRegisterFilterList2.length) {
+      searchFields.push('Foot_Fall_ID');
+      RegisterFilter = this.SelectedRegisterFilterList2;
+    }
+    if (this.SelectedZonalSalesFilterList2.length) {
+      searchFields.push('Zonal_Sales_Head');
+      ZonalSalesFilter = this.SelectedZonalSalesFilterList2;
+    }
+    if (this.SelectedAppoSlotFilterList2.length) {
+      searchFields.push('Appo_Time_Slot');
+      SlotFilter = this.SelectedAppoSlotFilterList2;
+    }
+    if (this.SelectedSchoolNameFilterList2.length) {
+      searchFields.push('School_Name');
+      SchoolNameFilter = this.SelectedSchoolNameFilterList2;
+    }
+    if (this.SelectedSchoolPinFilterList2.length) {
+      searchFields.push('School_PIN');
+      SchoolPinFilter = this.SelectedSchoolPinFilterList2;
+    }
+    if (this.SelectedDistributorNameList2.length) {
+      searchFields.push('Distributor_Name');
+      DistributorNameFilter = this.SelectedDistributorNameList2;
+    }
+    if (this.SelectedASPConfirmList2.length) {
+      searchFields.push('ASP_Confirm');
+      ASPConfirmFilter = this.SelectedASPConfirmList2;
+    }
+    if (this.SelectedASPJourneyStartedList2.length) {
+      searchFields.push('ASP_Journey_Started');
+      ASPJourneyStartedFilter = this.SelectedASPJourneyStartedList2;
+    }
+    const ctrl = this;
+    this.leadFollowUpList2 = [];
+    if (searchFields.length) {
+      const ctrl = this;
+      const LeadArr = this.leadFollowUpListBackup2.filter(function (e) {
+        return ((PinFilter.length ? PinFilter.includes(e['Pin']) : true)
+          && (AppointmentForFilter.length ? AppointmentForFilter.includes(e['Appointment_For']) : true)
+          && (DaysFilter.length ? DaysFilter.includes(e['Days']) : true)
+          && (SlotFilter.length ? SlotFilter.includes(e['Appo_Time_Slot']) : true)
+          && (ZonalSalesFilter.length ? ZonalSalesFilter.includes(e['Zonal_Sales_Head']) : true)
+          && (RegisterFilter.length ? ctrl.RegisterFilterFunc(e['Foot_Fall_ID'],RegisterFilter) : true)
+          && (SchoolNameFilter.length ? SchoolNameFilter.includes(e['School_Name']) : true)
+          && (SchoolPinFilter.length ? SchoolPinFilter.includes(e['School_PIN']) : true)
+          && (DistributorNameFilter.length ? DistributorNameFilter.includes(e['Distributor_Name']) : true)
+          && (ASPConfirmFilter.length ? ASPConfirmFilter.includes(e['ASP_Confirm']) : true)
+          && (ASPJourneyStartedFilter.length ? ASPJourneyStartedFilter.includes(e['ASP_Journey_Started']) : true)
+          );
+      });
+      this.leadFollowUpList2 = LeadArr.length ? LeadArr : [];
+    } else {
+      this.leadFollowUpList2 = this.leadFollowUpListBackup2;
+    }
+  }
+  RegisterFilterFunc2 (foot , arr){
+    const footFallID = foot.toString();
+  if(footFallID) {
+    let returnBol = false;
+    for (let index = 0; index < arr.length; index++) {
+      const e= arr[index];
+      if(e === '0' && footFallID === '0') {
+        returnBol = true;
+        break;
+      } else if(e !== '0' && footFallID !== '0') { 
+        returnBol = true;
+        break;
+      } else {
+        returnBol = false;
+        break;
+      }
+    }
+    return returnBol;
+  }
+  }
+  
+  // FOR SEARCH ENROLLED TAB -2 
+  getDateRange3(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.from_date3 = dateRangeObj[0];
+      this.to_date3 = dateRangeObj[1];
+    }
+  }
+  SaerchFollowup3(valid) {
+    this.SearchFormSubmitted3 = true;
+    this.leadFollowUpList3 = [];
+    this.leadFollowUpListBackup3 = [];
+    this.LeadTransferCheckBoxChanged();
+    if (valid) {
+      this.seachSpinner3 = true;
+      this.ObjSearch3.User_ID = this.ObjSearch3.User_ID ? this.ObjSearch3.User_ID : '0';
+      this.ObjSearch3.Current_Action = this.ObjSearch3.Current_Action ? this.ObjSearch3.Current_Action : '';
+      const tempObj = {
+        'Start_Date': this.from_date3 ? this.DateService.dateConvert(new Date(this.from_date3))
+        : this.DateService.dateConvert(new Date()),
+        'End_Date' : this.to_date3  ? this.DateService.dateConvert(new Date(this.to_date3))
+        : this.DateService.dateConvert(new Date()),
+        'User_ID' : this.ObjSearch3.User_ID
+      }
+      const obj = {
+        "Json_Param_String" : JSON.stringify([tempObj])
+      }
+     // this.GetFilteredItems();
+      const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+      this.$http
+          .post("/Common/Create_Common_task_Tutopia_Call?Report_Name=Browse Channel sale Student Follow-up v4 Cancled",obj)
+          .subscribe((data: any) => {
+            const SortData = data ? JSON.parse(data) : [];
+            SortData.sort(function(a:any,b:any){
+              return new Date(b.Next_Followup).valueOf() - new Date(a.Next_Followup).valueOf();
+            });
+            this.leadFollowUpList3 = [...SortData];
+            this.leadFollowUpListBackup3 = [...SortData];
+            this.leadFollowUpList3.forEach(function (element) {
+              element.Selected = false;
+            });
+           // this.GetDistinct2();
+           // this.GlobalFilterChange2();
+            this.seachSpinner3 = false;
+      });
+      // this.$http
+      //     .post("/Common/Create_Common_task?Report_Name=Browse Student Follow-up v2",obj)
+      //     .subscribe((data: any) => {
+            
+      // });
+    }
+
+  }
+  // CONFIRM APPO
   OpenConfirmAppo(obj){
     this.OnOverlayOpenConfirmAppo();
     if(obj.Appo_ID){
@@ -572,6 +1026,7 @@ ObjAppoConfm = new AppoConfm ();
   })
     }
   }
+  // JOURNEY START
   StartJourney(obj) {
     if(obj.Appo_ID) {
       const TempObj = {
@@ -596,6 +1051,58 @@ ObjAppoConfm = new AppoConfm ();
         });
     }
   })
+    }
+  }
+  // CONDUCTION
+  StartConduction(obj){
+    this.ConductionAppo_ID = undefined;
+  if(obj.Appo_ID) {
+    this.ConductionAppo_ID = obj.Appo_ID; 
+    this.compacctToast.clear();
+    this.compacctToast.add({key: 'c', sticky: true, severity: 'warn', summary: 'Are you sure?', detail: 'Confirm to proceed'}); 
+  }
+    
+  }
+  onConfirmConduction(){
+    if(this.ConductionAppo_ID) {
+      const TempObj = {
+        Appo_ID: this.ConductionAppo_ID,
+    }
+  
+    const obja = {
+      "SP_String":"Tutopia_Call_Appointment_Works_SP",
+      "Report_Name_String": "Update_Conduction_Done",
+      "Json_1_String" : JSON.stringify([TempObj])
+    }
+    this.GlobalAPI
+        .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+    if (data[0].Column1) {
+        this.SaerchFollowup(true);
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Appo ID : ' + this.ObjAppoConfm.Appo_ID,
+          detail: "Succesfully Updated."
+        });
+    }
+  })
+     }
+  }
+  onRejectConduction(){
+    this.compacctToast.clear('c'); 
+    this.ConductionAppo_ID = undefined;
+  }
+  // ENROLLED
+
+  StartEnrolled(obj){
+    this.ClearEnrolled()
+    if(obj.Appo_ID) {
+      this.ObjEnrolled.Appo_ID = obj.Appo_ID; 
+      this.ObjEnrolled.Lead_ID = obj.Lead_ID; 
+      this.ObjEnrolled.Foot_Fall_ID = obj.Foot_Fall_ID; 
+      this.ObjEnrolled.User_ID = this.$CompacctAPI.CompacctCookies.User_ID; 
+      this.EnrolledModalflag = true;
     }
   }
   // CHANGE
@@ -750,11 +1257,13 @@ ObjAppoConfm = new AppoConfm ();
     this.Orderdetaillist = [];
     this.FollowupList = [];
     this.Billingdetaillist = [];
+    this.distinctDateArray = [];
     if(obj.Lead_ID){
       this.Foot_Fall_ID = obj.Foot_Fall_ID;
       this.Lead_ID = obj.Lead_ID;
-      this.GetStudentdetails();
-      this.GetFollowupList();
+      this.GetStudentdetails(obj);
+     // this.GetFollowupList();
+        this.GetFollowupDetails1(obj.Lead_ID);
       if(obj.Foot_Fall_ID.toString() !== '0') {
       this.GetBillingdetaillist();
       this.GetOrderdetaillist();
@@ -765,6 +1274,29 @@ ObjAppoConfm = new AppoConfm ();
         this.ShowDetailsModal = true;
       },900);
     }
+  }
+  
+  GetFollowupDetails1(footFallID) {
+    const ctrl = this;
+          const distinctDateArrayTemp = [];
+          const obj = {
+            "SP_String": "Tutopia_Followup_SP",
+            "Report_Name_String": "Browse Followup Tutopia",
+            "Json_1_String": '[{"Lead_ID":' + footFallID+'}]'
+          }
+          this.GlobalAPI.CommonPostData(obj,'Tutopia_Call_Common_SP_For_All?Report_Name=Browse Followup Tutopia').subscribe(function (data) {
+                ctrl.followUpLists = data.length ? data:[];
+                for (let i = 0; i < ctrl.followUpLists.length; i++) {
+                    distinctDateArrayTemp.push(ctrl.followUpLists[i].Posted_On_C);
+                }
+                const unique = distinctDateArrayTemp.filter(function(value, index, self){
+                                return self.indexOf(value) === index;
+                                })
+            ctrl.distinctDateArray = unique;
+            });
+  }
+  getFollowupByDate1(dateStr) {
+    return this.followUpLists.filter((item) => item.Posted_On_C === dateStr);
   }
   // GET CALL DETAILS 
   GetCallDetails (objSub) {
@@ -794,7 +1326,7 @@ ObjAppoConfm = new AppoConfm ();
     this.items = ["Student Detail","Followup Details", "Billing Details","Order Details ","Support Question Dump","Support Ticket Dump"];
 
   }
-  GetStudentdetails(){
+  GetStudentdetails(tempData?){
     this.Studentdetails = undefined;
     const tempObj = {
       Lead_ID: this.Lead_ID
@@ -805,6 +1337,11 @@ ObjAppoConfm = new AppoConfm ();
     }
     this.GlobalAPI.CommonPostData(obj,'Create_Common_task_Tutopia_Call?Report_Name=Get_Student_Details').subscribe((data:any)=>{
       this.Studentdetails = data ? data[0] : [];
+      if(tempData && tempData.Lead_ID) {
+        this.Studentdetails['Contact_Name'] = tempData.Contact_Name || this.Studentdetails['Contact_Name'];
+        this.Studentdetails['Mobile'] = tempData.Mobile || this.Studentdetails['Mobile'];
+        this.Studentdetails['Address'] = tempData.Address || this.Studentdetails['Address'] ;
+      }
 
      })
   }
@@ -1152,6 +1689,699 @@ exportexcel(Arr,fileName): void {
   const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
   XLSX.writeFile(workbook, fileName+'.xlsx');
 }
+
+// DETAIL OPTIONS 
+// ACCEPT
+AcceptAppo(obj){
+  if(obj.Appo_ID){
+    this.ObjAppoConfm.Appo_ID = obj.Appo_ID;
+    this.OverlayCreateModal = true;
+  }
+}
+SaveAcceptAppo(valid) {
+  this.CreateLightBoxSubmitted = true;
+  if(valid && this.ObjAppoConfm.Journey_Time) {
+    this.saveSpinner2 = true;
+    const TempObj = {
+      Appo_ID: this.ObjAppoConfm.Appo_ID,
+      Sub_Status : 'ACCEPT',
+      ASP_Journey_Time: this.ObjAppoConfm.Journey_Time 
+  }
+  const obja = {
+    "SP_String":"Tutopia_Followup_SP",
+    "Report_Name_String": "ASP New Followup",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All?Report_Name=ASP New Followup').subscribe((data: any) => {
+  if (data[0].Followup_ID) {
+      this.saveSpinner2 = false;
+      this.SaerchFollowup(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Appo ID : ' + this.ObjAppoConfm.Appo_ID,
+        detail: "Succesfully Updated."
+      });      
+    this.OverlayCreateModal = false;
+  }
+})
+  }
+}
+// REJECT
+async OpenRejectAppo(obj) {
+  this.Appo_ID = undefined;
+  this.Reject_Reason = undefined;
+  this.RejectList = [];
+  
+  this.RejectPDFFlag = false;
+  this.RejectMP3File = {};
+  if(obj.Appo_ID) {
+    this.Appo_ID = obj.Appo_ID; 
+
+    this.RejectList = await this.GetRejectList('REJECT');
+    this.RejectList.forEach(obj=>{
+      obj['label'] = obj.Reason_Details;
+      obj['value'] = obj.Reason_Details;
+    })
+    
+    this.compacctToast.clear();
+    this.compacctToast.add({key: 'c2', sticky: true, severity: 'warn', summary: 'Are you sure to reject ?', detail: 'Confirm to proceed'}); 
+  }
+}
+onConfirmRejectAppo(){
+  if(this.Appo_ID && this.Reject_Reason) {    
+    this.ngxService.start();
+    const TempObj = {
+      Appo_ID: this.Appo_ID,
+      Sub_Status : 'REJECT',
+      ASP_Reject_Reason : this.Reject_Reason
+  }
+
+  const obja = {
+    "SP_String":"Tutopia_Followup_SP",
+    "Report_Name_String": "ASP New Followup",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+  if (data[0].Followup_ID) {       
+    if(this.RejectMP3File && this.RejectMP3File['size']) {
+      this.uploadRejectMP3(data[0].Followup_ID);    
+    } else {
+      this.SaerchFollowup(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Appo ID : ' + this.Appo_ID,
+        detail: "Succesfully Updated."
+      });
+      this.Appo_ID = undefined;
+      this.Reject_Reason = undefined;
+      this.RejectPDFFlag = false;
+      this.ResceduleMP3File = {};
+      this.ngxService.stop();
+    }  
+  }
+})
+   } else {
+     if(!this.Reject_Reason) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "No Reason Choosed. "
+      });
+     }
+   }
+}
+onRejectAppo(){
+  this.compacctToast.clear('c2'); 
+  this.Appo_ID = undefined;
+  this.Reject_Reason = undefined;
+  this.RejectPDFFlag = false;
+  this.RejectMP3File = {};
+}
+FetchRejectFile(event) {
+  this.RejectPDFFlag = false;
+  this.RejectMP3File = {};
+  if (event) {
+    this.RejectMP3File = event.files[0];
+    this.RejectPDFFlag = true;
+  }
+}
+async uploadRejectMP3(id){
+  const formData: FormData = new FormData();
+      formData.append("file", this.RejectMP3File);
+      let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Filed_Sales_Voice_Upload?code=ksFjT6O7dt0AfyWsVNq80s2ln6W4RZD7xg/gDSN8cODXcEpMaYVuKQ==&ConTyp='+this.RejectMP3File['type']+'&ext='+this.RejectMP3File['name'].split('.').pop()+'&followup_id='+id,{ 
+                method: 'POST',
+                body: formData // This is your file object
+              });
+  let responseText = await response.text();
+  console.log(responseText)
+  if(responseText === 'Success') {
+      this.SaerchFollowup(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Appo ID : ' + this.Appo_ID,
+        detail: "Succesfully Updated."
+      });
+      this.Appo_ID = undefined;
+      this.Reject_Reason = undefined;
+      this.RejectPDFFlag = false;
+      this.ResceduleMP3File = {};
+      this.ngxService.stop();
+
+  }
+};
+
+// CANCEL
+async OpenCANCELAppo(obj) {
+  this.Appo_ID = undefined;
+  this.Reject_Reason = undefined;
+  this.RejectList = [];
+  
+  this.CanceledPDFFlag = false;
+  this.CanceledMP3File = {};
+  if(obj.Appo_ID) {
+    this.Appo_ID = obj.Appo_ID; 
+    this.RejectList = await this.GetRejectList('CANCLED');
+    this.RejectList.forEach(obj=>{
+      obj['label'] = obj.Reason_Details;
+      obj['value'] = obj.Reason_Details;
+    })
+    this.compacctToast.clear();
+    this.compacctToast.add({key: 'c3', sticky: true, severity: 'warn', summary: 'Are you sure to cancel ?', detail: 'Confirm to proceed'}); 
+  }
+}
+onCANCELAppo(){
+  if(this.Appo_ID && this.Reject_Reason) {  
+    this.ngxService.start();
+    const TempObj = {
+      Appo_ID: this.Appo_ID,
+      Sub_Status : 'CANCLED',
+      ASP_Cancel_Reason : this.Reject_Reason
+  }
+
+  const obja = {
+    "SP_String":"Tutopia_Followup_SP",
+    "Report_Name_String": "ASP New Followup",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+  if (data[0].Followup_ID) {
+    
+    if(this.CanceledMP3File && this.CanceledMP3File['size']) {
+      this.uploadCANCELMP3(data[0].Followup_ID);  
+    } else {
+      this.SaerchFollowup(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Appo ID : ' + this.Appo_ID,
+        detail: "Succesfully Updated."
+      });
+      this.Appo_ID = undefined;
+      this.Reject_Reason = undefined;
+      this.CanceledPDFFlag = false;
+      this.CanceledMP3File = {};
+      this.ngxService.stop();
+      this.ngxService.stop();
+    }       
+  }
+})
+   } else {
+    if(!this.Reject_Reason) {
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "No Reason Choosed. "
+     });
+    }
+  }
+}
+onCloseCANCELAppo(){
+  this.compacctToast.clear('c3'); 
+  this.Appo_ID = undefined;
+  this.Reject_Reason = undefined;
+  this.CanceledPDFFlag = false;
+  this.CanceledMP3File = {};
+}
+FetchCANCELFile(event) {
+  this.CanceledPDFFlag = false;
+  this.CanceledMP3File = {};
+  if (event) {
+    this.CanceledMP3File = event.files[0];
+    this.CanceledPDFFlag = true;
+  }
+}
+async uploadCANCELMP3(id){
+  const formData: FormData = new FormData();
+      formData.append("file", this.CanceledMP3File);
+      let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Filed_Sales_Voice_Upload?code=ksFjT6O7dt0AfyWsVNq80s2ln6W4RZD7xg/gDSN8cODXcEpMaYVuKQ==&ConTyp='+this.CanceledMP3File['type']+'&ext='+this.CanceledMP3File['name'].split('.').pop()+'&followup_id='+id,{ 
+                method: 'POST',
+                body: formData // This is your file object
+              });
+  let responseText = await response.text();
+  console.log(responseText)
+  if(responseText === 'Success') {
+    this.SaerchFollowup(true);
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      summary: 'Appo ID : ' + this.Appo_ID,
+      detail: "Succesfully Updated."
+    });
+    this.Appo_ID = undefined;
+    this.Reject_Reason = undefined;
+      this.CanceledPDFFlag = false;
+      this.CanceledMP3File = {};
+      this.ngxService.stop();
+
+  }
+};
+
+// CANCEL cond
+async OpenCANCELAppo2(obj) {
+  this.Appo_ID = undefined;
+  this.Reject_Reason = undefined;
+  this.RejectList = [];
+
+  this.CanceledPDFFlag = false;
+  this.CanceledMP3File = {};
+  if(obj.Appo_ID) {
+    this.Appo_ID = obj.Appo_ID; 
+    this.RejectList = await this.GetRejectList('CANCLED');
+    this.RejectList.forEach(obj=>{
+      obj['label'] = obj.Reason_Details;
+      obj['value'] = obj.Reason_Details;
+    })
+    this.compacctToast.clear();
+    this.compacctToast.add({key: 'c6', sticky: true, severity: 'warn', summary: 'Are you sure to cancel ?', detail: 'Confirm to proceed'}); 
+  }
+}
+onCANCELAppo2(){
+  if(this.Appo_ID && this.Reject_Reason) { 
+    this.ngxService.start();
+    const TempObj = {
+      Appo_ID: this.Appo_ID,
+      Sub_Status : 'CANCLED',
+      ASP_Cancel_Reason : this.Reject_Reason
+  }
+
+  const obja = {
+    "SP_String":"Tutopia_Followup_SP",
+    "Report_Name_String": "ASP New Followup",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+  if (data[0].Followup_ID) {
+    
+    if(this.CanceledMP3File && this.CanceledMP3File['size']) {
+      this.uploadCANCELMP3(data[0].Followup_ID); 
+    } else {
+      this.SaerchFollowup(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Appo ID : ' + this.Appo_ID,
+        detail: "Succesfully Updated."
+      });
+      this.Appo_ID = undefined;
+      this.Reject_Reason = undefined;
+      this.CanceledPDFFlag = false;
+      this.CanceledMP3File = {};
+      this.ngxService.stop();
+    } 
+  }
+})
+   } else {
+    if(!this.Reject_Reason) {
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "No Reason Choosed. "
+     });
+    }
+  }
+}
+onCloseCANCELAppo2(){
+  this.compacctToast.clear('c6'); 
+  this.Appo_ID = undefined;
+  this.Reject_Reason = undefined;
+  this.CanceledPDFFlag = false;
+  this.CanceledMP3File = {};
+}
+
+// JOURNEY 
+OpenJourneyStartedAppo(obj) {
+  this.Appo_ID = undefined;
+  if(obj.Appo_ID) {
+    this.Appo_ID = obj.Appo_ID; 
+    this.compacctToast.clear();
+    this.compacctToast.add({key: 'c4', sticky: true, severity: 'warn', summary: 'Are you sure?', detail: 'Confirm to proceed'}); 
+  }
+}
+onJourneyStarted(){
+  if(this.Appo_ID) {
+    const TempObj = {
+      Appo_ID: this.Appo_ID,
+      Sub_Status : 'JOURNEY STARTED',
+      ASP_Reject_Reason : this.Reject_Reason
+  }
+
+  const obja = {
+    "SP_String":"Tutopia_Followup_SP",
+    "Report_Name_String": "ASP New Followup",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+  if (data[0].Followup_ID) {
+      this.SaerchFollowup(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Appo ID : ' + this.Appo_ID,
+        detail: "Succesfully Updated."
+      });
+      this.Appo_ID = undefined;
+      this.Reject_Reason = undefined;
+  }
+})
+   }
+}
+onCloseJourneyStarted(){
+  this.compacctToast.clear('c4'); 
+  this.Appo_ID = undefined;
+  this.Reject_Reason = undefined;
+}
+// RESCEDULE
+async OpenRescedAppo(obj){
+  this.ResceduleObj = {};
+  this.ResceduleModal = false;
+  this.ResceduleDate = new Date();
+  this.ResceduleFormSubmit = false;
+  this.RejectList = [];
+
+  
+  this.RescedulePDFFlag = false;
+  this.ResceduleMP3File = {};
+  if(obj.Appo_ID){
+    
+    this.RejectList = await this.GetRejectList('RECHEDULE');
+    
+    this.RejectList.forEach(obj=>{
+      obj['label'] = obj.Reason_Details;
+      obj['value'] = obj.Reason_Details;
+    })
+    this.ResceduleObj.Appo_ID = obj.Appo_ID;
+    this.ResceduleModal = true;
+
+  }
+}
+GetAvailMessage(e?){
+  if(e) {
+    this.ResceduleDate = e;
+  }
+  if(this.ResceduleObj.Appo_Time_Slot_ID && this.ResceduleDate) {
+    this.ngxService.start();
+    const TempObj = {
+      User_ID: this.ObjSearch.User_ID,
+      Slot_ID : this.ResceduleObj.Appo_Time_Slot_ID,
+      App_Date :this.DateService.dateConvert(new Date(this.ResceduleDate))
+  }
+
+  const obja = {
+    "SP_String":"SP_Appointment",
+    "Report_Name_String": "Check_Available_Slot",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+        console.log(data);
+      if (data[0].remarks !== 'Available') {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "warn",
+            summary: 'UnAvailable',
+            detail: data[0].remarks
+          });
+          this.ResceduleObj.Appo_Time_Slot_ID = undefined;
+          this.ResceduleDate = new Date();
+      }
+      this.ngxService.stop();
+})
+   }
+  console.log(this.ResceduleDate)
+}
+SaveRescedAppo(valid){
+  this.ResceduleFormSubmit = true;
+  if(valid) {  
+    this.ngxService.start();
+    this.saveSpinner3 = true;
+    this.ResceduleObj.Appo_Date = this.DateService.dateConvert(new Date(this.ResceduleDate));
+      this.ResceduleObj.Sub_Status = 'RECHEDULE';
+      const temparr = $.grep(this.TimeSlotList, (value:any) => value.Time_Slot_ID !== this.ResceduleObj.Appo_Time_Slot_ID );
+      this.ResceduleObj.Appo_Time_Slot = temparr.length ? temparr[0].Time_Slot_Name : undefined;
+  const obja = {
+    "SP_String":"Tutopia_Followup_SP",
+    "Report_Name_String": "ASP New Followup",
+    "Json_Param_String" : JSON.stringify([this.ResceduleObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All?Report_Name=ASP New Followup').subscribe((data: any) => {
+        if (data[0].Followup_ID ) {
+          if(this.ResceduleMP3File && this.ResceduleMP3File['size']) {
+            this.uploadResceduleMP3(data[0].Followup_ID);
+          } else {
+            this.saveSpinner2 = false;
+            this.SaerchFollowup(true);
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'Appo ID : ' + this.ResceduleObj.Appo_ID,
+              detail: "Succesfully Updated."
+            });      
+            this.ResceduleObj = {};
+            this.ResceduleDate = new Date();
+            this.ResceduleFormSubmit = false;
+            this.ResceduleModal = false;
+            this.RescedulePDFFlag = false;
+            this.ResceduleMP3File = {};
+            this.ngxService.stop();
+          }
+        }
+      })
+  }
+}
+FetchResceduleFile(event) {
+  this.RescedulePDFFlag = false;
+  this.ResceduleMP3File = {};
+  if (event) {
+    this.ResceduleMP3File = event.files[0];
+    this.RescedulePDFFlag = true;
+  }
+}
+async uploadResceduleMP3(id){
+  const formData: FormData = new FormData();
+      formData.append("file", this.ResceduleMP3File);
+      let response = await fetch('https://tutopiafilestorage.azurewebsites.net/api/Filed_Sales_Voice_Upload?code=ksFjT6O7dt0AfyWsVNq80s2ln6W4RZD7xg/gDSN8cODXcEpMaYVuKQ==&ConTyp='+this.ResceduleMP3File['type']+'&ext='+this.ResceduleMP3File['name'].split('.').pop()+'&followup_id='+id,{ 
+                method: 'POST',
+                body: formData // This is your file object
+              });
+  let responseText = await response.text();
+  console.log(responseText)
+  if(responseText === 'Success') {
+    this.saveSpinner2 = false;
+      this.SaerchFollowup(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Appo ID : ' + this.ResceduleObj.Appo_ID,
+        detail: "Succesfully Updated."
+      });      
+      this.ResceduleObj = {};
+      this.ResceduleDate = new Date();
+      this.ResceduleFormSubmit = false;
+      this.ResceduleModal = false;
+      this.RescedulePDFFlag = false;
+      this.ResceduleMP3File = {};
+      this.ngxService.stop();
+  }
+};
+// CONDUCTION 
+onCONDUCTION(valid ,Flag){
+  if(Flag && Flag === 'Enrolled') {
+    this.EnrollededFormSubmiited = true;
+  }
+  if(Flag && Flag === 'followup') {
+    this.FollowAppoNextSubmitted = true;
+  }
+  if(valid && this.Appo_ID) {
+    const TempObj = {
+      Appo_ID: this.Appo_ID,
+      Sub_Status : 'CONDUCTION DONE',
+  }
+
+  const obja = {    
+    "SP_String":"Tutopia_Followup_SP",
+    "Report_Name_String": "ASP New Followup",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+        console.log(data)
+  if (data[0].Followup_ID) {
+      if(Flag && Flag === 'Enrolled') {
+        this.SaveEnrolled(valid);
+      }
+      if(Flag && Flag === 'bill'){
+        this.onIntrBillAppo();
+      }
+      if(Flag && Flag === 'CANCEL') {
+        this.onCANCELAppo2()
+      }
+      if(Flag && Flag === 'followup'){
+        this.SaveFollowAppo(valid);
+      }
+  }
+})
+   }
+}
+// ENROLLED
+
+OpenENROLLEDAppo(obj){
+  this.ClearEnrolled()
+  if(obj.Appo_ID) {
+    this.Appo_ID = obj.Appo_ID;
+    this.ObjEnrolled.Appo_ID = obj.Appo_ID; 
+    this.ObjEnrolled.Lead_ID = obj.Lead_ID; 
+    this.ObjEnrolled.Foot_Fall_ID = obj.Foot_Fall_ID; 
+    this.ObjEnrolled.User_ID = this.$CompacctAPI.CompacctCookies.User_ID; 
+    this.ObjEnrolled.Sub_Status = 'ENROLLED'; 
+    this.EnrolledModalflag = true;
+  }
+}
+ClearEnrolled(){
+  this.EnrolledModalflag = false;
+  this.EnrollededFormSubmiited = false;
+  this.ObjEnrolled = new enroll();
+}
+SaveEnrolled(valid) {
+    if (valid) {
+      const obja = {
+        "SP_String":"Tutopia_Followup_SP",
+        "Report_Name_String": "ASP New Followup",
+        "Json_Param_String" : JSON.stringify([this.ObjEnrolled])
+      }
+      this.GlobalAPI
+          .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+          if (data[0].Followup_ID) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'success',
+              detail: "Succesfully Enrolled."
+            });
+            this.SaerchFollowup(true);
+            this.ClearEnrolled();
+          }
+        })
+    }
+}
+
+// INTREST TO BILL 
+async OpenIntrBillAppo(obj) {
+  this.Appo_ID = undefined;
+  if(obj.Appo_ID) {
+    this.Appo_ID = obj.Appo_ID; 
+    this.compacctToast.clear();
+    this.compacctToast.add({key: 'c5', sticky: true, severity: 'warn', summary: 'Are you sure ?', detail: 'Confirm to proceed'}); 
+  }
+}
+onIntrBillAppo(){
+  if(this.Appo_ID) {
+    const TempObj = {
+      Appo_ID: this.Appo_ID,
+      Sub_Status : 'INTERESTED TO BILL',
+  }
+
+  const obja = {
+    "SP_String":"Tutopia_Followup_SP",
+    "Report_Name_String": "ASP New Followup",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+  if (data[0].Followup_ID) {
+      this.SaerchFollowup(true);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: 'Appo ID : ' + this.Appo_ID,
+        detail: "Succesfully Updated."
+      });
+      this.Appo_ID = undefined;
+      this.Reject_Reason = undefined;
+  }
+})
+   }
+}
+onCloseIntrBillAppo(){
+  this.compacctToast.clear('c5'); 
+  this.Appo_ID = undefined;
+}
+
+// followup
+OpenFollowAppo(obj) {
+  this.Appo_ID = undefined;
+  this.FollowAppoModal = false;
+  this.FollowAppoNextDate = new Date();
+  this.FollowAppoNextSubmitted = false;
+  if(obj.Appo_ID){
+    this.Appo_ID = obj.Appo_ID;
+    this.FollowAppoModal = true;
+
+  }
+
+}
+SaveFollowAppo(valid) {
+   this.FollowAppoNextSubmitted = true;
+    if (valid) {
+      const Appo_Date = this.DateService.dateConvert(new Date(this.FollowAppoNextDate));
+      const TempObj = {
+      Appo_ID: this.Appo_ID,
+      Sub_Status : 'FOLLOWUP',
+      ASP_Follwup_Next_Date  : Appo_Date
+  }
+      const obja = {
+        "SP_String":"Tutopia_Followup_SP",
+        "Report_Name_String": "ASP New Followup",
+        "Json_Param_String" : JSON.stringify([TempObj])
+      }
+      this.GlobalAPI
+          .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+          if (data[0].Followup_ID) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'success',
+              detail: "Succesfully Forwarded."
+            });
+            this.SaerchFollowup(true);
+            this.Appo_ID = undefined;
+            this.FollowAppoModal = false;
+            this.FollowAppoNextDate = new Date();
+            this.FollowAppoNextSubmitted = false;
+          }
+        })
+    }
+}
+
+
+
 }
 class Search {
   User_ID: any;
@@ -1197,4 +2427,14 @@ class ForwardFieldSales{
 class AppoConfm{
   Appo_ID:any;
   Journey_Time:any;
+}
+class enroll{
+  Product_ID:string;
+  Registered_No:string;
+  Coupon_Code:string;
+  Appo_ID:string;
+  Lead_ID:String;
+  Foot_Fall_ID :String;
+  User_ID:string;
+  Sub_Status:String;
 }
