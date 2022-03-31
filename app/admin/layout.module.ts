@@ -485,7 +485,6 @@ import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-
     UserAbsentComponent,
     TutoBdaJoiningComponent,
     TutoAspUnavaliblityComponent
-    
   ],
   imports: [
     CommonModule,
