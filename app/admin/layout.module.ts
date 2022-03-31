@@ -484,7 +484,8 @@ import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-
     CompacctTxnTaskGanttComponent,
     UserAbsentComponent,
     TutoBdaJoiningComponent,
-    TutoAspUnavaliblityComponent
+    TutoAspUnavaliblityComponent,
+    ggggggg
     
   ],
   imports: [
