@@ -389,6 +389,10 @@ export class StocktransferComponent implements OnInit {
           this.Godowndisable = true;
           this.Batchdisabled = true;
         }
+        
+        if(this.$CompacctAPI.CompacctCookies['CompanyShortName'] === 'BSHPL'){
+          this.ObjProductInfo.Rate = obj.MRP;
+        }
       } else {
         this.SelectedProduct = "";
         this.compacctToast.add({
