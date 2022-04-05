@@ -637,41 +637,43 @@ add(valid) {
   //console.log(this.ObjaddbillForm.Product_ID)
   this.addbillFormSubmitted = true;
   if(valid && this.GetSelectedBatchqty()) {
+    var SGST_Amount : any;
+    var CGST_Amount : any;
     if (this.gststatus == "NO GST") {
       //var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
-      var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
-      var rate =(Number(this.ObjaddbillForm.Sale_rate * 100)) / (0 + 100);
-      var tax = Number(rate * this.ObjaddbillForm.Stock_Qty);
-      var Dis_Amount = Number(rate * Number(this.ObjaddbillForm.Max_Discount) / 100);
+      var Amount = Number(Number(this.ObjaddbillForm.Stock_Qty) * Number(this.ObjaddbillForm.Sale_rate));
+      var rate =((Number(Number(this.ObjaddbillForm.Sale_rate) * 100)) / (0 + 100)).toFixed(2);
+      var tax = Number(Number(rate) * Number(this.ObjaddbillForm.Stock_Qty));
+      var Dis_Amount = Number(Number(rate) * Number(this.ObjaddbillForm.Max_Discount) / 100);
       //var Gross_Amount = Number(rate - Dis_Amount) ;
       var SGST_Per = 0 ;
-      var SGST_Amount = 0 ;
+      SGST_Amount = 0 ;
       var CGST_Per = 0 ;
-      var CGST_Amount = 0 ;
+      CGST_Amount = 0 ;
       var IGST_Per = 0;
       var IGST_Amount = 0 ;
     } 
     else {
    //console.log("call");
   //console.log("this.ObjaddbillForm===",this.ObjaddbillForm)
-  var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
-  var rate =(Number(this.ObjaddbillForm.Sale_rate * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100);
-  var tax = Number(rate * this.ObjaddbillForm.Stock_Qty);
-  var Dis_Amount = Number(rate * Number(this.ObjaddbillForm.Max_Discount) / 100);
-  var SGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
+  var Amount = Number(Number(this.ObjaddbillForm.Stock_Qty) * Number(this.ObjaddbillForm.Sale_rate));
+  var rate =((Number(this.ObjaddbillForm.Sale_rate * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100)).toFixed(2);
+  var tax = Number(Number(rate) * Number(this.ObjaddbillForm.Stock_Qty));
+  var Dis_Amount = Number(Number(rate) * Number(this.ObjaddbillForm.Max_Discount) / 100);
+  var SGST_Per = Number(Number(this.ObjaddbillForm.GST_Tax_Per) / 2);
   //var Gross_Amount = Number(rate - Dis_Amount) ;
   //var SGST_Amount = Number((Amount - rate) / 2) ;
-  var SGST_Amount = Number(tax * SGST_Per) / 100; 
-  var CGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per / 2);
+   SGST_Amount = ((Number(Number(tax) * Number(SGST_Per)) / 100)).toFixed(2); 
+  var CGST_Per = Number(Number(this.ObjaddbillForm.GST_Tax_Per) / 2);
   //var CGST_Amount = Number((Amount - rate) / 2) ;
-  var CGST_Amount = Number(tax * CGST_Per) / 100;
+  CGST_Amount = (Number(Number(tax) * Number(CGST_Per)) / 100).toFixed(2);
   var IGST_Per = Number(this.ObjaddbillForm.GST_Tax_Per);
-  var IGST_Amount = this.ObjaddbillForm.GST_Tax_Per_Amt ;
+  var IGST_Amount = Number(this.ObjaddbillForm.GST_Tax_Per_Amt) ;
 
   //console.log('taxable',tax)
   var aftertaxable:any = Number(tax).toFixed(2);
   //console.log('aftertaxable',aftertaxable)
-  let afterdecval = aftertaxable.toString().split('.')[1]
+  let afterdecval = Number(aftertaxable).toString().split('.')[1]
   //console.log('afterdecval',afterdecval)
   const oddOrEven = Number(afterdecval) % 2 === 0 ? 'even' : 'odd'
   //console.log('oddOrEven',oddOrEven)
@@ -706,7 +708,7 @@ add(valid) {
     Taxable : Number(aftertaxable).toFixed(2),
     Max_Discount : Number(this.ObjaddbillForm.Max_Discount),
     Dis_Amount : Number(Dis_Amount).toFixed(2),
-    Gross_Amount : Number(tax - Dis_Amount).toFixed(2),
+    Gross_Amount : Number(Number(tax) - Number(Dis_Amount)).toFixed(2),
     SGST_Per : Number(SGST_Per).toFixed(2),
     SGST_Amount : Number(SGST_Amount).toFixed(2),
     CGST_Per : Number(CGST_Per).toFixed(2),
@@ -839,8 +841,8 @@ CalculateTotalAmt() {
   this.Round_Off = (Number(this.Total) - Math.round(this.Total)).toFixed(2)
   //this.Round_Off = (Math.round(this.Total) - Number(this.Total)).toFixed(2);
   this.Amount_Payable = Math.round(this.Total);
-  this.Adv = this.IsAdvance ? this.Adv : 0;
-  this.Net_Payable = Number((this.Amount_Payable) - Number(this.Adv)).toFixed(2);
+  this.Adv = this.IsAdvance ? Number(this.Adv) : 0;
+  this.Net_Payable = Number(Number(this.Amount_Payable) - Number(this.Adv)).toFixed(2);
   //var creditamt = 0;
   if(this.QueryStringObj && this.QueryStringObj.Txn_ID){
     //this.ObjcashForm.Credit_To_Amount = creditamt;
@@ -954,9 +956,9 @@ AmountChange(){
   //   lefttotal = this.Net_Payable - credit_amount;
   // }
 
-  if((Number(this.Net_Payable) > lefttotal) && cash_amount) {
+  if((Number(this.Net_Payable) > Number(lefttotal)) && Number(cash_amount)) {
     const d = (Number(this.Net_Payable) - Number(lefttotal)).toFixed(2);
-    if(cash_amount > Number(d)) {
+    if(Number(cash_amount) > Number(d)) {
       this.ObjcashForm.Refund_Amount = (Number(cash_amount) - Number(d)).toFixed(2);
     }
   //}
@@ -992,7 +994,7 @@ couponperchange(){
   var card_amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
   if (this.ObjcashForm.Coupon_Per ) { 
     credit_amount = Number(this.TotalTaxable) * Number(this.ObjcashForm.Coupon_Per ) / 100;
-    this.ObjcashForm.Credit_To_Amount = (credit_amount).toFixed(2);
+    this.ObjcashForm.Credit_To_Amount = Number(credit_amount).toFixed(2);
     console.log('this.ObjcashForm.Credit_To_Amount ==', this.ObjcashForm.Credit_To_Amount)
     this.ObjcashForm.Total_Paid = (Number(wallet_amount) + Number(cash_amount) + Number(card_amount)).toFixed(2);
     this.CalculateDiscount();
@@ -1014,20 +1016,20 @@ CalculateDiscount(){
     this.productSubmit.forEach(el=>{ 
       if(el.product_type != "PACKAGING") {
       if (el.is_service != true) {
-      damt = Number((el.Taxable / this.TotalTaxable) * this.ObjcashForm.Credit_To_Amount);
+      damt = Number((Number(el.Taxable) / Number(this.TotalTaxable)) * Number(this.ObjcashForm.Credit_To_Amount));
       el.Dis_Amount = Number(damt).toFixed(2);
-      var da = el.Dis_Amount;
-      var grossamt = Number(el.Taxable - el.Dis_Amount);
-      var sgstperamt = Number(((el.Taxable - da) * el.SGST_Per) / 100);
-      var cgstperamt = Number(((el.Taxable - da) * el.CGST_Per) / 100);
+      var da = Number(el.Dis_Amount);
+      var grossamt = Number(Number(el.Taxable) - Number(el.Dis_Amount));
+      var sgstperamt = (Number(((Number(el.Taxable) - Number(da)) * Number(el.SGST_Per)) / 100)).toFixed(2);
+      var cgstperamt = (Number(((Number(el.Taxable) - Number(da)) * Number(el.CGST_Per)) / 100)).toFixed(2);
       //var sub = Number((el.Taxable - el.Dis_Amount)).toFixed(2);
-      netamount = Number((el.Taxable - da) + sgstperamt + cgstperamt);
+      netamount = Number((Number(el.Taxable) - Number(da)) + Number(sgstperamt) + Number(cgstperamt));
       //this.Dis_Amount = undefined;
 
      el.Gross_Amount = Number(grossamt).toFixed(2);
      el.SGST_Amount = Number(sgstperamt).toFixed(2);
      el.CGST_Amount = Number(cgstperamt).toFixed(2);
-     el.Net_Amount = el.Delivery_Charge ? (Number(netamount) + Number(el.Delivery_Charge)).toFixed(2) : Number(netamount).toFixed(2);
+     el.Net_Amount = Number(el.Delivery_Charge) ? (Number(netamount) + Number(el.Delivery_Charge)).toFixed(2) : Number(netamount).toFixed(2);
      countnum = countnum + Number(el.Dis_Amount);
     }
     }
@@ -1041,10 +1043,10 @@ CalculateDiscount(){
       //var netamount2 = el.Taxable + el.SGST_Amount + el.CGST_Amount;
 
       el.Dis_Amount = 0 ;
-      el.Gross_Amount = Number(el.Taxable - el.Dis_Amount).toFixed(2);
-      el.SGST_Amount = Number((el.Taxable * el.SGST_Per) / 100).toFixed(2); 
-      el.CGST_Amount = Number((el.Taxable * el.CGST_Per) / 100).toFixed(2);
-      el.Net_Amount = el.Delivery_Charge ? (Number(el.Delivery_Charge) + Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2) :
+      el.Gross_Amount = Number(Number(el.Taxable) - Number(el.Dis_Amount)).toFixed(2);
+      el.SGST_Amount = Number((Number(el.Taxable) * Number(el.SGST_Per)) / 100).toFixed(2); 
+      el.CGST_Amount = Number((Number(el.Taxable) * Number(el.CGST_Per)) / 100).toFixed(2);
+      el.Net_Amount = Number(el.Delivery_Charge) ? (Number(el.Delivery_Charge) + Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2) :
                       (Number(el.Taxable) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
      })
      //console.log("this.discount productSubmit",this.productSubmit);
@@ -1055,42 +1057,44 @@ CalculateDiscount(){
 }
 // Check Discount Amount equal to total discount
 checkdiscountamt(){
-  if(this.productSubmit[0].product_type != "PACKAGING") {
-    if (this.productSubmit[0].is_service != true) {
-  if (Number(this.ObjcashForm.Credit_To_Amount) != Number(this.Dis_Amount) && Number(this.ObjcashForm.Credit_To_Amount) > Number(this.Dis_Amount)) {
-    var leftval = (Number(this.ObjcashForm.Credit_To_Amount) - Number(this.Dis_Amount)).toFixed(2);
-    this.productSubmit[0].Dis_Amount = (Number(this.productSubmit[0].Dis_Amount) + Number(leftval)).toFixed(2);
-
-    var sgstamt = Number(((this.productSubmit[0].Taxable - this.productSubmit[0].Dis_Amount) * this.productSubmit[0].SGST_Per) / 100);
-    this.productSubmit[0].SGST_Amount = Number(sgstamt).toFixed(2);
-
-    var cgstamt = Number(((this.productSubmit[0].Taxable - this.productSubmit[0].Dis_Amount) * this.productSubmit[0].CGST_Per) / 100);
-    this.productSubmit[0].CGST_Amount = Number(cgstamt).toFixed(2);
-
-    var netamt = Number((this.productSubmit[0].Taxable - this.productSubmit[0].Dis_Amount) + sgstamt + cgstamt).toFixed(2);
-    this.productSubmit[0].Net_Amount = this.productSubmit[0].Delivery_Charge ? (Number(netamt) + Number(this.productSubmit[0].Delivery_Charge)).toFixed(2) : Number(netamt).toFixed(2);
-    console.log('leftval',leftval)
-    console.log('this.productSubmit[0].Dis_Amount',this.productSubmit[0].Dis_Amount)
-    this.listofamount();
-  }
-  if (Number(this.ObjcashForm.Credit_To_Amount) != Number(this.Dis_Amount) && Number(this.ObjcashForm.Credit_To_Amount) < Number(this.Dis_Amount)) {
-    var leftval = (Number(this.Dis_Amount) - Number(this.ObjcashForm.Credit_To_Amount)).toFixed(2);
-    this.productSubmit[0].Dis_Amount = (Number(this.productSubmit[0].Dis_Amount) - Number(leftval)).toFixed(2);
-
-    var sgstamt = Number(((this.productSubmit[0].Taxable - this.productSubmit[0].Dis_Amount) * this.productSubmit[0].SGST_Per) / 100);
-    this.productSubmit[0].SGST_Amount = Number(sgstamt).toFixed(2);;
-
-    var cgstamt = Number(((this.productSubmit[0].Taxable - this.productSubmit[0].Dis_Amount) * this.productSubmit[0].CGST_Per) / 100);
-    this.productSubmit[0].CGST_Amount = Number(cgstamt).toFixed(2);
-
-    var netamt = Number((this.productSubmit[0].Taxable - this.productSubmit[0].Dis_Amount) + sgstamt + cgstamt).toFixed(2);
-    this.productSubmit[0].Net_Amount = this.productSubmit[0].Delivery_Charge ? (Number(netamt) + Number(this.productSubmit[0].Delivery_Charge)).toFixed(2) : Number(netamt).toFixed(2);
-    console.log('leftval',leftval)
-    console.log('this.productSubmit[0].Dis_Amount',this.productSubmit[0].Dis_Amount)
-    this.listofamount();
-  }
-  }
-  }
+  this.productSubmit.forEach(el => {
+    if(el.product_type != "PACKAGING") {
+      if (el.is_service != true) {
+        if (Number(this.ObjcashForm.Credit_To_Amount) != Number(this.Dis_Amount) && Number(this.ObjcashForm.Credit_To_Amount) > Number(this.Dis_Amount)) {
+          var leftval = (Number(this.ObjcashForm.Credit_To_Amount) - Number(this.Dis_Amount)).toFixed(2);
+          el.Dis_Amount = (Number(el.Dis_Amount) + Number(leftval)).toFixed(2);
+      
+          var sgstamt = Number(((Number(el.Taxable) - Number(el.Dis_Amount)) * Number(el.SGST_Per)) / 100);
+          el.SGST_Amount = Number(sgstamt).toFixed(2);
+      
+          var cgstamt = Number(((Number(el.Taxable) - Number(el.Dis_Amount)) * Number(el.CGST_Per)) / 100);
+          el.CGST_Amount = Number(cgstamt).toFixed(2);
+      
+          var netamt = Number((Number(el.Taxable) - Number(el.Dis_Amount)) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
+          el.Net_Amount = Number(el.Delivery_Charge) ? (Number(netamt) + Number(el.Delivery_Charge)).toFixed(2) : Number(netamt).toFixed(2);
+          console.log('leftval',leftval)
+          console.log('Dis_Amount',el.Dis_Amount)
+          this.listofamount();
+        }
+        if (Number(this.ObjcashForm.Credit_To_Amount) != Number(this.Dis_Amount) && Number(this.ObjcashForm.Credit_To_Amount) < Number(this.Dis_Amount)) {
+          var leftval = (Number(this.Dis_Amount) - Number(this.ObjcashForm.Credit_To_Amount)).toFixed(2);
+          el.Dis_Amount = (Number(el.Dis_Amount) - Number(leftval)).toFixed(2);
+      
+          var sgstamt = Number(((Number(el.Taxable) - Number(el.Dis_Amount)) * Number(el.SGST_Per)) / 100);
+          el.SGST_Amount = Number(sgstamt).toFixed(2);;
+      
+          var cgstamt = Number(((Number(el.Taxable) - Number(el.Dis_Amount)) * Number(el.CGST_Per)) / 100);
+          el.CGST_Amount = Number(cgstamt).toFixed(2);
+      
+          var netamt = Number((Number(el.Taxable) - Number(el.Dis_Amount)) + Number(el.SGST_Amount) + Number(el.CGST_Amount)).toFixed(2);
+          el.Net_Amount = Number(el.Delivery_Charge) ? (Number(netamt) + Number(el.Delivery_Charge)).toFixed(2) : Number(netamt).toFixed(2);
+          console.log('leftval',leftval)
+          console.log('Dis_Amount',el.Dis_Amount)
+          this.listofamount();
+        }
+      }
+    }
+  })
 }
 // DAY END CHECK
 saveCheck(){
