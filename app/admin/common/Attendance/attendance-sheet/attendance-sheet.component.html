@@ -1,0 +1,67 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="table-responsive no-padding">
+    <p-table [value]="employeelist" styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+        <ng-template pTemplate="caption"> Header </ng-template>
+        <!-- <ng-template pTemplate="header">
+            <tr>
+                <th width='20%'>Month</th>
+                <th> </th>
+            </tr>
+        </ng-template> -->
+        <ng-template pTemplate="header">
+            <tr>
+                <!-- <th>Code</th> -->
+                <th width='30%' style="background-color:rgb(44, 67, 109) !important">Month</th>
+                <th *ngFor="let Data of MonthdayDatelist" style="background-color:rgb(71, 103, 163) !important ; width:8%">
+                    <tr>{{Data.WeekDay}} </tr>
+                </th>
+            </tr>
+            <tr>
+                <!-- <th>Code</th> -->
+                <th width='30%'>Name</th>
+                <th *ngFor="let Data of dateNumber" style="background-color:rgb(129, 162, 224) !important ; width:%">
+                    <tr>{{Data.date}} </tr>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+            <tr>
+                <!-- <td>{{product.code}}</td> -->
+                <td>{{ row.Emp_Name }}</td>
+                <td *ngFor="let Data of MonthdayDatelist" (click)="test(row)">
+                    <!-- <p-button (click)="op.toggle($event)"></p-button> -->
+                </td>
+                <!-- <td>{{product.category}}</td>
+            <td>{{product.quantity}}</td> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary"> Footer </ng-template>
+    </p-table>
+</div>
+
+
+
+<p-overlayPanel #op [showCloseIcon]="true" onShow="panelvisible" [style]="{width: '450px'}">
+    <!-- <div class="form-group"> -->
+    <form name="attendanceForm" #attendanceForm="ngForm" novalidate>
+        <div class="col-sm-3">
+            <label class="control-label">Employee Name</label>
+            <div class="label-t">{{employeename}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Date</label>
+            <div class="label-t">{{Doc_date | date :"dd/MMM/yyyy"}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Status <sup class="text-danger">*</sup></label>
+            <select class="form-control" name="atten" #atten="ngModel" [(ngModel)]="Attendance_Status" [ngClass]="{'clearance': attendanceFormSubmitted && atten?.errors?.required}" required>
+           <option  [ngValue]="undefined">Select</option>
+           <!-- <option *ngFor = "let option of Cost_Center" value="{{option.Cost_Cen_ID}}">
+             {{option.Cost_Cen_Name}}
+            </option> -->
+           </select>
+        </div>
+    </form>
+</p-overlayPanel>

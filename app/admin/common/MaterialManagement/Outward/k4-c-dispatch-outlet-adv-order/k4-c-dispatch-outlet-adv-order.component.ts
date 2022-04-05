@@ -96,6 +96,13 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   RegenerateDocDate = undefined;
   RegenerateBillNo = undefined;
   salebillno: any;
+
+  ViewPoppup = false;
+  viewList = [];
+  view_Doc_No = undefined;
+  view_Doc_date = undefined;
+  view_Order_No = undefined;
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -726,6 +733,36 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       })
 
   }
+  View(row){
+    //console.log("View ==",DocNo);
+  this.clearData();
+  if(row.Doc_No){
+  this.view_Doc_No = row.Doc_No;
+  //this.ViewPoppup = true;
+  this.GetViewData(this.view_Doc_No);
+  }
+  }
+  GetViewData(Doc_No){
+    this.viewList = [];
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "View Custom Order Dispatch Details",
+      "Json_Param_String": JSON.stringify([{Doc_No : this.view_Doc_No}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Data From Api",data);
+      this.viewList = data;
+       this.view_Doc_No = data[0].Doc_No;
+       this.view_Doc_date = new Date(data[0].Doc_Date);
+       this.view_Order_No = data[0].Adv_Order_No;
+    
+    this.ViewPoppup = true;
+
+    // console.log("this.viewList  ===",this.viewList);
+
+  })
+  }
   GetDist1() {
     let DOrderBy = [];
     this.OutletFilter = [];
@@ -770,13 +807,15 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
         Doc_No   :    element.Doc_No,
         Adv_Order_No   :  element.Adv_Order_No,
         Doc_Date    :  this.DateService.dateConvert(new Date(element.Doc_Date)),
+        Sale_Bill_No : element.Bill_NO,
         Customer_Name   :  element.Customer_Name,
         Costomer_Mobile   :  element.Costomer_Mobile,
         amount_payable   :  element.amount_payable,
         godown_name  :  element.godown_name,
         Cost_Cen_Name   :  element.Cost_Cen_Name,
         Total_Qty  :  element.Total_Qty,
-        Total_Amount   :  element.Total_Amount,
+        Franchise_Amount   :  element.Total_Amount,
+        Box_Charge : element.Box_Charge,
         Vehicle_Details   :  element.Vehicle_Details,
         Transaction_Date_Time   :  element.Transaction_Date_Time
        }
