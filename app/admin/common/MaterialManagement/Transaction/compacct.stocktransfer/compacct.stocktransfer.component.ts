@@ -159,7 +159,6 @@ export class StocktransferComponent implements OnInit {
 
     this.ProductInfoListProto = [];
     this.ProductInfoListView = [];
-
     this.stockDocNo = undefined;
     this.SelectedProduct = undefined;
     this.GodownToList = [];
@@ -390,7 +389,7 @@ export class StocktransferComponent implements OnInit {
           this.Batchdisabled = true;
         }
         
-        if(this.$CompacctAPI.CompacctCookies['CompanyShortName'] === 'BSHPL'){
+        if(this.databaseName === 'BHSPL'){
           this.ObjProductInfo.Rate = obj.MRP;
         }
       } else {
