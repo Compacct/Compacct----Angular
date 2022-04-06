@@ -389,7 +389,7 @@ export class StocktransferComponent implements OnInit {
           this.Batchdisabled = true;
         }
         
-        if(this.databaseName === 'BHSPL'){
+        if(this.databaseName === 'BSHPL'){
           this.ObjProductInfo.Rate = obj.MRP;
         }
       } else {
