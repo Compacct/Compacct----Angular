@@ -191,6 +191,7 @@ import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacc
 import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
 import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
 import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
+import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 
 
 
@@ -1383,6 +1384,13 @@ const layoutRoutes: Routes = [{
   data: {
     title: 'ASP Unavailability'
   }
+  },
+  {
+    path: 'Attendance_Sheet',
+    component: AttendanceSheetComponent,
+    data: {
+      title: 'AttendanceSheetComponent'
+    }
 }
 
 

@@ -279,6 +279,7 @@ import { TutoBdaJoiningComponent } from './common/CRM/Transaction/tuto-bda-joini
 import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component'
 
 import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-angular-gantt';
+import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 
 
 
@@ -484,7 +485,9 @@ import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-
     CompacctTxnTaskGanttComponent,
     UserAbsentComponent,
     TutoBdaJoiningComponent,
-    TutoAspUnavaliblityComponent
+    TutoAspUnavaliblityComponent,
+    AttendanceSheetComponent
+    
   ],
   imports: [
     CommonModule,
