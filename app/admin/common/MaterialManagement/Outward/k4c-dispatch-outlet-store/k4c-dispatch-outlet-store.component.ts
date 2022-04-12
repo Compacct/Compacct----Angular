@@ -495,8 +495,8 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
       })
       console.log("this.saveData",this.saveData);
      const obj = {
-      "SP_String": "SP_Production_Voucher",
-      "Report_Name_String": "Add K4C Txn Distribution",
+      "SP_String": "SP_Store_Item_Indent",
+      "Report_Name_String": "Add Store Item Dispatch",
       "Json_Param_String": JSON.stringify(this.saveData),
       "Json_1_String" : this.getReqNo()
     }
