@@ -1,67 +1,106 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<div class="table-responsive no-padding">
-    <p-table [value]="employeelist" styleClass="p-datatable-gridlines" responsiveLayout="scroll">
-        <ng-template pTemplate="caption"> Header </ng-template>
-        <!-- <ng-template pTemplate="header">
-            <tr>
-                <th width='20%'>Month</th>
-                <th> </th>
-            </tr>
-        </ng-template> -->
-        <ng-template pTemplate="header">
-            <tr>
-                <!-- <th>Code</th> -->
-                <th width='30%' style="background-color:rgb(44, 67, 109) !important">Month</th>
-                <th *ngFor="let Data of MonthdayDatelist" style="background-color:rgb(71, 103, 163) !important ; width:8%">
-                    <tr>{{Data.WeekDay}} </tr>
-                </th>
-            </tr>
-            <tr>
-                <!-- <th>Code</th> -->
-                <th width='30%'>Name</th>
-                <th *ngFor="let Data of dateNumber" style="background-color:rgb(129, 162, 224) !important ; width:%">
-                    <tr>{{Data.date}} </tr>
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-row>
-            <tr>
-                <!-- <td>{{product.code}}</td> -->
-                <td>{{ row.Emp_Name }}</td>
-                <td *ngFor="let Data of MonthdayDatelist" (click)="test(row)">
-                    <!-- <p-button (click)="op.toggle($event)"></p-button> -->
-                </td>
-                <!-- <td>{{product.category}}</td>
-            <td>{{product.quantity}}</td> -->
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="summary"> Footer </ng-template>
-    </p-table>
+<div class="col-lg-12">
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <div class="table-responsive no-padding" style="height:70vh">
+                    <table class="table table-bordered">
+                        <thead style="position: sticky;top: 0">
+                            <tr>
+                                <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
+                                    <div class="col-sm-12">
+                                        <!-- <label for="monthpicker">Month Picker</label> -->
+                                        <input type="month" name="month" [(ngModel)]="Month_Name" (change)="getmonthdaydate()" style="background-color: rgb(70, 93, 136);
+                                        color: #ffff;">
+                                    </div>
+                                </th>
+                                <th *ngFor="let col of MonthdayDatelist" style="background-color:rgb(96, 129, 190) !important ; color:white">
+                                    <tr>{{col.WeekDay}} </tr>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="background-color:#7f7d7d !important ; color:white">Employee Name</th>
+                                <th *ngFor="let Data of dateNumber" style="background-color:rgb(111, 119, 136) !important ; color:white">
+                                    <tr>{{Data.date}} </tr>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-spy="scroll">
+                            <tr *ngFor="let row of employeelist;let i = index;">
+                                <td>{{ row.Emp_Name }}</td>
+                                <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" [class]="col">
+                                    {{col}}
+                                </td>
+                                <!-- [class]='getClass()' -->
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="col-lg-8">
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-body" style="background-color: gainsboro;">
+                <div class="form-group">
+                    <div class="col-sm-2">
+                        <label>Legend</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="label-t" style="background: rgb(67 162 47);">P</div>&nbsp;
+                        <label>Present</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="label-t" style="background-color: #ff4141;">A</div>&nbsp;
+                        <label>Absent</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="label-t" style="background-color: rgb(244 121 38);">LP</div>&nbsp;
+                        <label>Late Present</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+<div class="box-footer">
+    <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+        </button>
 </div>
 
 
 
-<p-overlayPanel #op [showCloseIcon]="true" onShow="panelvisible" [style]="{width: '450px'}">
-    <!-- <div class="form-group"> -->
-    <form name="attendanceForm" #attendanceForm="ngForm" novalidate>
-        <div class="col-sm-3">
-            <label class="control-label">Employee Name</label>
-            <div class="label-t">{{employeename}}</div>
+
+<p-dialog header="Update Attendance" [appendTo]="'body'" [(visible)]="display" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
+    <form name="attendancestatusForm" #attendancestatusForm="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label>Employee Name:</label>&nbsp; {{employeename}}
+        </div>
+        <div class="col-sm-12">
+            <label>Date:</label>&nbsp; {{Doc_date | date :"dd/MMM/yyyy"}}
 
         </div>
-        <div class="col-sm-3">
-            <label class="control-label">Date</label>
-            <div class="label-t">{{Doc_date | date :"dd/MMM/yyyy"}}</div>
-
-        </div>
-        <div class="col-sm-4">
-            <label class="control-label">Status <sup class="text-danger">*</sup></label>
-            <select class="form-control" name="atten" #atten="ngModel" [(ngModel)]="Attendance_Status" [ngClass]="{'clearance': attendanceFormSubmitted && atten?.errors?.required}" required>
+        <div class="col-sm-12">
+            <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+            <select name="atten" #atten="ngModel" [(ngModel)]="Attendance_Status" [ngClass]="{'clearance': attendancestatusFormSubmitted && atten?.errors?.required}">
            <option  [ngValue]="undefined">Select</option>
-           <!-- <option *ngFor = "let option of Cost_Center" value="{{option.Cost_Cen_ID}}">
-             {{option.Cost_Cen_Name}}
-            </option> -->
+           <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
+             {{option.Atten_Type}}
+            </option>
            </select>
         </div>
+        <hr>
+        <p-footer>
+            <div class="text-right">
+                <button type="button" (click)="display = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
+                <button type="button" (click)="SaveAttendanceType()" class="btn btn-success">
+           <i class="fa fa-check"></i>&nbsp;  Done
+         </button>
+            </div>
+        </p-footer>
     </form>
-</p-overlayPanel>
+</p-dialog>

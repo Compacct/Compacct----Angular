@@ -17,16 +17,29 @@ declare var $:any;
   encapsulation: ViewEncapsulation.None
 })
 export class AttendanceSheetComponent implements OnInit {
-  employeelist = [];
+  employeelist:any = [];
   MonthdayDatelist = [];
+  AttenTypelist = [];
   currentdate = new Date();
   Attendance_Status = undefined;
-  attendanceFormSubmitted = false;
+  attendancestatusFormSubmitted = false;
   employeename = undefined;
   Doc_date = undefined;
   panelvisible = false;
   gtdate : any;
   dateNumber:any = [];
+  display = false;
+  Spinner = false;
+  AttendancSheetList = [];
+  Atten_Type : any;
+  index = undefined;
+  index2 = undefined;
+  Month_Name = undefined;
+  startdate = undefined;
+  color = undefined;
+  buttonname = "Save"
+  AllAttendanceData = [];
+  attendanceIdMap = new Map();
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -42,34 +55,39 @@ export class AttendanceSheetComponent implements OnInit {
       Header: "Attendance Sheet",
       // Link: " Outlet -> Pos Bill -> Outlet Report"
     });
-    this.getemployeename();
+    this.getAttendanceType();
+    const d = new Date();
+    let month = d.getMonth() + 1;
+    console.log('month',month)
+    let year = d.getFullYear();
+    this.Month_Name = month < 10 ? year+'-'+0+month : year+'-'+month
+    //this.startdate = this.Month_Name+'-'+'01'
+    console.log('Month_Name',this.Month_Name)
+   // this.Month_Name = new Date();
     this.getmonthdaydate();
   }
   getemployeename(){
-    // this.employeelist = [
-    //   {value:"employee 1", Name:"employee 1"},
-    //   {value:"employee 2", Name:"employee 2"},
-    //   {value:"employee 3", Name:"employee 3"},
-    //   {value:"employee 4", Name:"employee 4"}
-    // ]
     const obj = {
       "SP_String": "HR_Txn_Attn_Sheet",
       "Report_Name_String": "Get_EMP_Data"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      data.forEach(obj=> {
+        obj.monthData = [...new Array(this.MonthdayDatelist.length)];
+      })
       this.employeelist = data;
-      //this.getOutlet();
-      //this.Objproduction.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
-      //this.BrandDisable = false;
-       console.log("employeelist ===",this.employeelist);
+       console.log("employeelist ===", this.employeelist);
     })
   }
   getmonthdaydate(){
-    var firstDay = new Date(this.currentdate.getFullYear(), this.currentdate.getMonth(), 1);
-    var lastDay = new Date(this.currentdate.getFullYear(), this.currentdate.getMonth() + 1, 0);
+    this.dateNumber = [];
+    // var firstDay = new Date(this.currentdate.getFullYear(), this.currentdate.getMonth(), 1);
+    //var lastDay = new Date(this.currentdate.getFullYear(), this.currentdate.getMonth() + 1, 0);
+    var firstDay = this.Month_Name+'-'+'01'
+    console.log('firstDay',firstDay)
     const TObj = {
       Start_Date : this.DateService.dateConvert(new Date(firstDay)),
-      End_Date : this.DateService.dateConvert(new Date(lastDay))
+      //End_Date : this.DateService.dateConvert(new Date(lastDay))
     }
     const obj = {
       "SP_String": "HR_Txn_Attn_Sheet",
@@ -86,36 +104,162 @@ export class AttendanceSheetComponent implements OnInit {
         date :spdata[0]
       })
     });
+    this.getemployeename();
+    this.getAttendanceData();
       console.log("tempArr",this.dateNumber)
   
-      // console.log("MonthdayDatelist ===",this.MonthdayDatelist);
+       console.log("MonthdayDatelist ===",this.MonthdayDatelist);
     })
   }
-  getpanel(row){
-    if (row.Emp_ID) {
-      this.employeename = row.Emp_Name
-      //this.Doc_date = col.
-    this.panelvisible = true;
+  getAttendanceType(){
+    const obj = {
+      "SP_String": "HR_Txn_Attn_Sheet",
+      "Report_Name_String": "Get_Attn_Data_Type"
     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.AttenTypelist = data;
+       console.log("AttenTypelist ===",this.AttenTypelist);
+       this.AttenTypelist.forEach((val) => {
+         if(val.Sht_Desc) {
+          this.attendanceIdMap.set(val.Sht_Desc.trim(),val);
+         }
+       })
+    })
   }
-  toggle($event,row) {
-    if (row.Emp_ID) {
-      console.log(row.Emp_ID)
-      this.employeename = row.Emp_Name
-      //this.Doc_date = col.
-    this.panelvisible = true;
+  getdialog(i,row,i2){
+    this.attendancestatusFormSubmitted = false;
+    this.Attendance_Status = undefined;
+    console.log("i2",i2)
+    console.log("row",row)
+   //this.employeelist[i].monthData[i2] = 'deba'
+   this.employeename = row.Emp_Name;
+   this.index = i;
+   this.index2 = i2;
+   this.MonthdayDatelist.forEach((ele,inx) => {
+    if(inx === i2){
+      //console.log("ele",ele);
+      this.Doc_date = ele.Date;
     }
+    });
+    this.display = true;
+    // var Attent = this.AttenTypelist.filter( items => items.Sht_Desc === this.employeelist[this.index].monthData[this.index2]);
+    // this.Attendance_Status = Attent ? Attent[0].Atten_Type_ID : undefined;
+     // this.Doc_date = col.Date;
+    console.log("this.employeename",this.employeename)
+    console.log("this.Doc_date",this.Doc_date)
+    
   }
-  test(col:any){
-    console.log("col",col)
+  SaveAttendanceType(){
+   // this.attendancestatusFormSubmitted = true;
+    //if(valid){
+      var AttenType = this.AttenTypelist.filter( items => Number(items.Atten_Type_ID) === Number(this.Attendance_Status));
+      this.Atten_Type = AttenType != null && AttenType.length > 0 ? AttenType[0].Sht_Desc : undefined;
+      this.color = AttenType != null && AttenType.length > 0 ? AttenType[0].Colour_Code : undefined;
+      this.employeelist[this.index].monthData[this.index2] = this.Atten_Type;
+      this.display = false;
+    //}
   }
-  // getdays(){
-  //   this.Datelist = [
-  //     {date:"1" , day:"Mon"},
-  //     {date:"2" , day:"Tue"},
-  //     {date:"3" , day:"Wed"},
-  //     {date:"4" , day:"Thrus"}
-  //   ]
-  // }
+  getAttendanceData(){
+    this.AllAttendanceData = [];
+    var firstDate = this.Month_Name+'-'+'01'
+    console.log('firstDate',firstDate)
+    const AtObj = {
+      Date : this.DateService.dateConvert(new Date(firstDate)),
+    }
+    const obj = {
+      "SP_String": "HR_Txn_Attn_Sheet",
+      "Report_Name_String": "Get_Attn_Data",
+      "Json_Param_String": JSON.stringify([AtObj])
 
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Data From Api",data);
+      this.AllAttendanceData = data;
+       data.forEach(element => {
+         var empid = this.employeelist.findIndex(el=> el.Emp_ID === element.Emp_ID);
+         var date = new Date(element.Date);
+         const ctrl = this;
+         setTimeout(function () {
+         if(empid != null && date != null) {
+          ctrl.employeelist[empid].monthData[date.getDate() - 1] = element.Sht_Desc;
+         }
+        }, 100)
+          console.log('this.AllAttendanceData',this.AllAttendanceData)
+     });
+
+  })
+  }
+  getdataforattendance(){
+    if(this.employeelist.length) {
+      let tempArr =[]
+      var firstDateofmonth = this.Month_Name+'-'+'01'
+
+      this.employeelist.forEach((item,index) => {
+     const TempObj = {
+            Start_Date : this.DateService.dateConvert(new Date(firstDateofmonth)),
+            Emp_ID:  item.Emp_ID,
+            // Date: this.DateService.dateConvert(new Date(empdate[0].Date)),//empdate,//item.monthData[length],
+            // Atten_Type_ID : attendanceid[0].Atten_Type_ID
+         }
+      //tempArr.push(TempObj)
+      item.monthData.forEach((el,x) => {
+        var empdate = this.MonthdayDatelist[x];//filter((dateitem,ind) => ind === el.indexOf(el[x]));
+        console.log('empdate',empdate != null ? empdate.Date : null);
+        var attendanceid = this.attendanceIdMap.get(el);//this.AttenTypelist.filter( ele => ele.Sht_Desc === el);
+        console.log('attendanceid',attendanceid ? attendanceid.Atten_Type_ID : null);
+        const dateattenidobj = {
+          Date: empdate.Date ? this.DateService.dateConvert(new Date(empdate.Date)) : null,//empdate,//item.monthData[length],
+          Atten_Type_ID : attendanceid ?  attendanceid.Atten_Type_ID : null
+        }
+        
+      tempArr.push({...TempObj,...dateattenidobj})
+      })
+      });
+      console.log("Save Data ===", tempArr)
+      return JSON.stringify(tempArr);
+
+    }
+  }
+  saveAttendance(){
+   console.log(this.Month_Name)
+    const obj = {
+      "SP_String" : "HR_Txn_Attn_Sheet",
+      "Report_Name_String" : "Insert_Attn_Data",
+      "Json_Param_String" : this.getdataforattendance()
+
+    }
+    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      //console.log(data);
+      var tempID = data[0].Column1;
+      console.log("After Save",tempID);
+     // this.Objproduction.Doc_No = data[0].Column1;
+      if(data[0].Column1){
+        this.compacctToast.clear();
+        const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         detail: "Succesfully  " + mgs
+       });
+       this.getmonthdaydate();
+      //  const ctrl = this;
+      //  setTimeout(function () {
+      //   ctrl.getAttendanceData();
+      //  }, 200)
+      //  this.clearData();
+      //  this.franchisechallandate = undefined;
+      //  this.searchData(true);
+      //  this.ProductList =[];
+      //  this.franchiseSalebillFormSubmitted = false;
+      } else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+  }
 }

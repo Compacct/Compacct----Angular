@@ -1277,6 +1277,18 @@ checkdiscountamt(){
    });
    return false;
    }
+   if( Number(this.Total) < 0 ){
+     this.Spinner = false;
+     this.ngxService.stop();
+   this.compacctToast.clear();
+   this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Net Amount is less than zero"
+   });
+   return false;
+   }
  }
  // if(this.ObjcashForm.Total_Paid - this.ObjcashForm.Refund_Amount == this.Net_Payable){
  
