@@ -21,7 +21,12 @@
     margin-top: 1em;
     margin-bottom: 1em;
   }
-
+  .e-gantt .e-gantt-chart .e-gantt-parent-progressbar-inner-div{
+    width: auto !important;
+  }
+  .e-gantt .e-gantt-chart .e-gantt-child-progressbar-inner-div{
+    width: auto !important;
+  }
   #createTask {
     background: cornflowerblue;
     border: 1px solid cornflowerblue;

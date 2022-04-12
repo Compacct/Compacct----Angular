@@ -61,7 +61,6 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     startDate: 'Task_Start_Date',
     endDate: 'Task_Target_Date',
     duration: 'Duration',
-    progress: 'Progress',
     dependency: 'dependency',
     child: 'subtasks'
   };
@@ -113,7 +112,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   TypeOfWorkModel = undefined;
   SummaryTaskModel = undefined;
   TaskModaLStyleObj = {
-    width: '68%',
+    width: '72%',
     minWidth: '200px'
   };
 
@@ -121,6 +120,20 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   TaskCreateList = [];
   TaskEditModalFlag = false;
 
+  ObjProdPlan = new ProdPlan();
+  PlanedProductList = [];
+
+  AddedPlanedProductList = [];
+  PlanedProductFormSubmit = true;
+  PlanedProductSpinner = false;
+  ProductList = [];
+
+  
+  siteSubmitted = false;
+  siteCreate = undefined;
+  siteModal = false;
+  Spinnersite = false;
+  labelSettings:any;
   @ViewChild('gantt', {
     static: true
   })
@@ -186,6 +199,9 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         align: 'Right'
       }
     ];
+    this.labelSettings = {
+      taskLabel: 'Job_Name',
+  };
     this.ganttObj.timelineSettings.bottomTier.format = 'dd';
     this.GetProject();
     this.GetUserList();
@@ -195,6 +211,24 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.GetTypeofWorkList();
     this.GetSummaryList();
   }
+  public queryTaskbarInfo(args: any) { 
+    console.log(args)
+    const color = this.GetClassName(args.data.taskData.Task_Status);
+    args.taskbarBgColor = color; 
+    args.progressBarBgColor = color;
+  } 
+  GetClassName(status) {
+    if(status === 'Not Started'){
+      return 'Orange';
+    }
+    if(status === 'In Progress'){
+      return 'blueviolet';
+    }
+    if(status === 'Completed'){
+      return 'yellowgreen';
+    }
+  }
+  
   GetUserList() {
     this.$http.get('/Master_User/Get_All_Data').subscribe((data: any) => {
       this.AssignToList = JSON.parse(data);
@@ -219,6 +253,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   OnProjectChange() {
     this.ObjProjectTask.Site_Name = undefined;
     if (this.ObjProjectTask.Site_ID) {
+      this.GetBOM();
       this.GetGanttTaskList();
       this.ObjProjectTask.Site_Name = this.SiteList.filter(i => Number(i.Site_ID) === Number(this.ObjProjectTask.Site_ID))[0].label;
      
@@ -326,6 +361,61 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   sss(e) {
     console.log(e);
   }
+
+
+  // SITE CREATE 
+  ToggleSite() {
+    this.siteSubmitted = false;
+    this.siteCreate = undefined;
+    this.siteModal = true;
+    this.Spinnersite = false;
+  }
+  CreateSite(valid) {
+    this.siteSubmitted = true;
+    if (valid && this.ObjProjectTask.Project_Name) {
+      this.Spinnersite = true;
+      const temp = {
+        Tender_Doc_ID: this.ObjProjectTask.Tender_Doc_ID,
+        Site_Description: this.siteCreate,
+        Budget_Short_Description: this.ObjProjectTask.Project_Name
+      }
+      console.log("Site Save Data", temp);
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Add Site",
+        "Json_Param_String": JSON.stringify([temp])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log(data)
+          if (data[0].Site_ID) {
+            this.GetSiteList();
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "",
+              detail: "Succesfully Site Created"
+            });
+            this.siteSubmitted = false;
+            this.siteCreate = undefined;
+            this.siteModal = false;
+            this.Spinnersite = false;
+          } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+            this.Spinnersite = false;
+          }
+        });
+    }
+  }
+
   // GANTT 
   GetGanttTaskList(id ? ) {
     if (this.ObjProjectTask.Project_ID && this.ObjProjectTask.Site_ID) {
@@ -385,6 +475,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
           Task_Txn_ID: list[i].Task_Txn_ID,
           U_id: list[i].U_id,
           Remarks: list[i].Remarks,
+          Task_Status: list[i].Task_Status,
           isSubTask: false,
           subtasks: []
         }
@@ -409,6 +500,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         Job_Name: row.Job_Name,
         Sl_No: undefined,
         SL_ID: row.SL_ID,
+        Task_Status: row.Task_Status,
         Dependency_Job_ID:row.Dependency_Job_ID,
         Dependency_Relationship: row.Dependency_Relationship,
       }
@@ -458,6 +550,9 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     if (this.ObjProjectTask.Project_ID && this.ObjProjectTask.Site_ID) {
       this.TaskSubmitSpinner = false;
       this.ObjTask = new Task();
+      this.ObjProdPlan = new ProdPlan();
+      this.ObjProdPlan.Project_ID = this.ObjProjectTask.Project_ID;
+      this.ObjProdPlan.Site_ID = this.ObjProjectTask.Site_ID;
       this.TaskStartDate = new Date();
       this.TaskEndtDate = new Date();
       this.TaskRemarksDisabledFlag = true;
@@ -478,6 +573,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   OpenTaskModalForEdit(U_id) {
     this.TaskSubmitSpinner = false;
     this.ObjTask = new Task();
+    this.ObjProdPlan = new ProdPlan();
     this.TaskStartDate = new Date();
     this.TaskEndtDate = new Date();
     this.TaskSubmitted = false;
@@ -501,6 +597,8 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         e.Planned_End_Date = this.DateService.dateConvert(new Date(e.Planned_End_Date));
       });
       this.ObjTask.Doc_ID = TaskArr[0].Doc_ID;
+      this.ObjProdPlan.Project_ID = this.ObjProjectTask.Project_ID;
+      this.ObjProdPlan.Site_ID = this.ObjProjectTask.Site_ID;
      // this.GetSubTask();
       this.TaskCreateList = [...TaskArr];
       this.TaskModalFlag = true;
@@ -610,9 +708,13 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   }
   ChangeGroupName() {
     this.ObjTask.Budget_Group_Name = undefined;
+    this.ObjProdPlan.Budget_Group_ID = undefined;
+    this.ObjProdPlan.Budget_Group_Name = undefined;
     if (this.ObjTask.Budget_Group_ID) {
       const arr = this.GroupNameList.filter(o => o.Budget_Group_ID == this.ObjTask.Budget_Group_ID);
       this.ObjTask.Budget_Group_Name = arr.length ? arr[0].Budget_Group_Name : undefined;
+      this.ObjProdPlan.Budget_Group_Name = arr.length ? arr[0].Budget_Group_Name : undefined;
+      this.ObjProdPlan.Budget_Group_ID = this.ObjTask.Budget_Group_ID;
     }
   }
   ExpectBillTypeChange(){
@@ -820,6 +922,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   AddTask(valid) {
     this.TaskSubmitted = true;
     if (valid && this.CheckTaskValid()) {
+      this.TaskSubmitSpinner = true;
       this.ObjTask.Planned_Start_Date = this.DateService.dateConvert(new Date(this.TaskStartDate));
       const endDate = this.AddDaysToDate(this.TaskStartDate, this.ObjTask.No_Of_Days)
       this.ObjTask.Planned_End_Date = this.DateService.dateConvert(new Date(endDate));
@@ -837,11 +940,13 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         ...this.ObjProjectTask
       };
       this.TaskCreateList.push(JSONobj);
-      this.ObjTask = new Task();
-      this.ObjTask.Doc_ID = dOCID;
-      this.TaskSubmitted = false;
-      this.TaskStartDate = new Date();
-      this.TaskEndtDate = new Date();
+      // this.ObjTask = new Task();
+      // this.ObjTask.Doc_ID = dOCID;
+      // this.TaskSubmitted = false;
+      // this.TaskStartDate = new Date();
+      // this.TaskEndtDate = new Date();
+      this.SaveTask(JSONobj);
+      
     }
   }
   DeleteTask(k) {
@@ -865,22 +970,23 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     return flag;
   }
   // SAVE TASK
-  SaveTask() {
-    if (this.TaskCreateList.length) {
-      this.TaskSubmitSpinner = true;
+  SaveTask(SaveObj) {
+    if (SaveObj && SaveObj.Job_Name) {
       const obj = {
         "SP_String": "SP_Task_GNATT",
         "Report_Name_String": "New_Task_GNATT_Create",
-        "Json_Param_String": JSON.stringify(this.TaskCreateList)
+        "Json_Param_String": JSON.stringify([SaveObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data[0].Column1) {
           this.ObjTask = new Task();
-          this.TaskCreateList = [];
+          this.ObjTask.Doc_ID = data[0].Column1;
+         // this.TaskCreateList = [];
           this.TaskStartDate = new Date();
           this.TaskEndtDate = new Date();
           this.TaskSubmitted = false;
-          this.TaskModalFlag = false;
+        //  this.TaskModalFlag = false;
+           this.TaskSubmitted = false;
           this.TaskSubmitSpinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -988,6 +1094,93 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       });
     }
   }
+  // BOM
+  
+  GetBOM() {
+    this.AddedPlanedProductList = [];
+    if (this.ObjProjectTask.Tender_Doc_ID && this.ObjProjectTask.Site_ID) {
+      const tempObj = {
+        'Tender_Doc_ID': this.ObjProjectTask.Tender_Doc_ID,
+        'Site_ID': this.ObjProjectTask.Site_ID,
+      }
+      const obj1 = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
+        "Report_Name_String": "Project_Planning_Retrieve",
+        "Json_Param_String": JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.getData(obj1).subscribe((data: any) => {
+        console.log(data)
+        if(data.length) {
+          this.AddedPlanedProductList = [...data];
+        }
+      })
+    }
+  }
+  GetProductList() {
+    this.ProductList = [];
+    this.ObjProdPlan.Product_ID = undefined;
+    this.ObjProdPlan.Product_Description = undefined;
+    this.ObjProdPlan.Qty = undefined;
+    if (this.ObjProdPlan.Type_Of_Product) {
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
+        "Report_Name_String": "Get_Product_With_Material_Type",
+        "Json_Param_String": JSON.stringify([this.ObjProdPlan])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          data.forEach(el => {
+            el['label'] = el.Product_Description;
+            el['value'] = el.Product_ID;
+          });
+          this.ProductList = data;
+
+        });
+    }
+  }
+  ChangeProduct() {
+    this.ObjProdPlan.Product_Description = undefined;
+    this.ObjProdPlan.Qty = undefined;
+    if (this.ObjProdPlan.Product_ID) {
+      const arr = this.ProductList.filter(o => o.Product_ID == this.ObjProdPlan.Product_ID);
+      this.ObjProdPlan.Product_Description = arr.length ? arr[0].Product_Description : undefined;
+    }
+  }
+  SaveProductPlanForm(valid) {
+    this.PlanedProductFormSubmit = true;
+    if (this.ObjProdPlan.Product_ID && this.ObjProdPlan.Qty && this.ObjProdPlan.Type_Of_Product) {
+      this.PlanedProductSpinner = true;
+      const obj2 = {
+        ...this.ObjProdPlan
+      };
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
+        "Report_Name_String":  "Project_Planning_Insert_BOM",
+        "Json_Param_String": JSON.stringify(this.AddedPlanedProductList)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.GetBOM();
+          this.ObjProdPlan = new ProdPlan();
+          this.ObjProdPlan.Project_ID = obj2.Project_ID;
+          this.ObjProdPlan.work_name = obj2.work_name;
+          this.ObjProdPlan.Site_ID = obj2.Site_ID;
+          this.ObjProdPlan.Site_Description = obj2.Site_Description;
+          this.ObjProdPlan.Budget_Group_ID = obj2.Budget_Group_ID;
+          this.ObjProdPlan.Budget_Group_Name = obj2.Budget_Group_Name;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Tender Doc ID:" + this.ObjProdPlan.Project_ID.toString(),
+            detail: "Succesfully Created"
+          });
+        }
+        this.PlanedProductSpinner = false;
+      })
+    }
+  }
 
 }
 class ProjectTask {
@@ -1035,10 +1228,24 @@ class Task {
   Actual_Complete_Date: string;
   Dependency_Required = 'N';
   Dependency_Relationship:string;
+  BOM = 'N';
 }
 class TaskRemarks {
   Task_Txn_ID: string;
   User_ID: string;
   Status: string;
   Remarks: string;
+}
+
+class ProdPlan {
+  Project_ID: String;
+  work_name: string;
+  Site_ID: string;
+  Site_Description: string;
+  Budget_Group_ID: string;
+  Budget_Group_Name: string;
+  Type_Of_Product: string;
+  Product_ID: String;
+  Product_Description: string;
+  Qty: string;
 }
