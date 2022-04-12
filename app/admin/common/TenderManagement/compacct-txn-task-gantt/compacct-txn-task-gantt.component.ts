@@ -212,7 +212,6 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.GetSummaryList();
   }
   public queryTaskbarInfo(args: any) { 
-    console.log(args)
     const color = this.GetClassName(args.data.taskData.Task_Status);
     args.taskbarBgColor = color; 
     args.progressBarBgColor = color;
@@ -1098,14 +1097,15 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   
   GetBOM() {
     this.AddedPlanedProductList = [];
-    if (this.ObjProjectTask.Tender_Doc_ID && this.ObjProjectTask.Site_ID) {
+    if (this.ObjProjectTask.Project_ID && this.ObjProjectTask.Site_ID && this.ObjTask.Job_ID) {
       const tempObj = {
-        'Tender_Doc_ID': this.ObjProjectTask.Tender_Doc_ID,
+        'Project_ID': this.ObjProjectTask.Project_ID,
         'Site_ID': this.ObjProjectTask.Site_ID,
+        'Job_ID': this.ObjTask.Job_ID
       }
       const obj1 = {
         "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
-        "Report_Name_String": "Project_Planning_Retrieve",
+        "Report_Name_String": "Project_Planning_Retrieve_BOM",
         "Json_Param_String": JSON.stringify([tempObj])
       }
       this.GlobalAPI.getData(obj1).subscribe((data: any) => {
@@ -1147,17 +1147,18 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       this.ObjProdPlan.Product_Description = arr.length ? arr[0].Product_Description : undefined;
     }
   }
-  SaveProductPlanForm(valid) {
+  SaveProductPlanForm() {
     this.PlanedProductFormSubmit = true;
-    if (this.ObjProdPlan.Product_ID && this.ObjProdPlan.Qty && this.ObjProdPlan.Type_Of_Product) {
+    if (this.ObjTask.Job_ID && this.ObjProdPlan.Product_ID && this.ObjProdPlan.Qty && this.ObjProdPlan.Type_Of_Product) {
       this.PlanedProductSpinner = true;
+      this.ObjProdPlan.Job_ID = this.ObjTask.Job_ID;
       const obj2 = {
         ...this.ObjProdPlan
       };
       const obj = {
         "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
         "Report_Name_String":  "Project_Planning_Insert_BOM",
-        "Json_Param_String": JSON.stringify(this.AddedPlanedProductList)
+        "Json_Param_String": JSON.stringify(this.ObjProdPlan)
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data[0].Column1) {
@@ -1248,4 +1249,5 @@ class ProdPlan {
   Product_ID: String;
   Product_Description: string;
   Qty: string;
+  Job_ID: string;
 }
