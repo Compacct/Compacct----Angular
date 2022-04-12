@@ -106,7 +106,7 @@
               </e-columns>
               <ng-template #tooltipSettingsTaskbar let-data>
                 <div> <ng-container>
-                  Task Name : <b>{{data.Task_Name}}</b>
+                  Job Name : <b>{{data.Task_Name}}</b>
                   <div>Expected start date: <b>{{data.Task_Start_Date | date :'dd/MMM/yyyy'}}</b> </div>
                   <div>Remarks : <b>{{data.Remarks}}</b> </div>
                   <div>No Of Days : <b>{{data.No_Of_Days}}</b> </div>
@@ -511,8 +511,8 @@
                     <p-dropdown [options]="SubTaskList" name="SubTask" [(ngModel)]="ObjTask.Job_ID" [showClear]="true"
                       [emptyFilterMessage]="' No Job Found'" [filter]="true" filterBy="label,value.name"
                       [placeholder]="'Select Job Name'" [virtualScroll]="true" itemSize="30" #SubTask="ngModel"
-                      [styleClass]="
-                                        TaskSubmitted && SubTask.errors?.required? 'clearance': ''" [required]="true">
+                      (onChange)="GetBOM()"
+                      [styleClass]="TaskSubmitted && SubTask.errors?.required? 'clearance': ''" [required]="true">
                     </p-dropdown>
                   </div>
                   <!-- <div class="col-sm-12">
@@ -644,7 +644,7 @@
                 </div>
                 <div class="form-group" 
                   style="margin-top: 2em; background: rgba(128, 128, 128, 0.13);"
-                  *ngIf="ObjTask.BOM === 'Y' && ObjProdPlan.Budget_Group_ID">
+                  *ngIf="ObjTask.BOM === 'Y' && ObjProdPlan.Budget_Group_ID && ObjTask.Job_ID">
                   <h5 style="padding: 0.5em 1em;
                   background: #c1c1c185;
                   border-top: 5px solid #3c8dbc;
