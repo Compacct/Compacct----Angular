@@ -1,3 +1,6 @@
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
 
 .custombutton {
     margin-top: 25px;
