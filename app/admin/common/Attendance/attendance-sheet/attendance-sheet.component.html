@@ -20,18 +20,18 @@
                             </tr>
                             <tr>
                                 <th style="background-color:#7f7d7d !important ; color:white">Employee Name</th>
-                                <th *ngFor="let Data of dateNumber" style="background-color:rgb(111, 119, 136) !important ; color:white">
-                                    <tr>{{Data.date}} </tr>
+                                <th *ngFor="let Data of dateNumber ;let ind = index;" style="background-color:rgb(111, 119, 136) !important ; color:white">
+                                    <tr><a class="btn btn-sm" style="color:white" (click)='ChangeAllRow(ind)'>{{Data.date}}</a></tr>
                                 </th>
                             </tr>
                         </thead>
                         <tbody data-spy="scroll">
                             <tr *ngFor="let row of employeelist;let i = index;">
                                 <td>{{ row.Emp_Name }}</td>
-                                <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" [class]="col">
+                                <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" (contextmenu)="onrightclick(i,row,i2)" [class]="col">
                                     {{col}}
                                 </td>
-                                <!-- [class]='getClass()' -->
+                                <!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
                             </tr>
                         </tbody>
                     </table>
@@ -74,7 +74,7 @@
 
 
 
-
+<!-- FOR ONE EMPLOYEE (ONE CELL) -->
 <p-dialog header="Update Attendance" [appendTo]="'body'" [(visible)]="display" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
     <form name="attendancestatusForm" #attendancestatusForm="ngForm" novalidate>
         <div class="col-sm-12">
@@ -103,4 +103,30 @@
             </div>
         </p-footer>
     </form>
+</p-dialog>
+
+<!-- FOR ALL EMPLOYEE (ONE COLUMN)-->
+<p-dialog header={{DayName}} [appendTo]="'body'" [(visible)]="displayALLEmployee" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '300px' }">
+    <div class="col-sm-12">
+        <label>Date:</label>&nbsp; {{Doc_date_AllEmp | date :"dd/MMM/yyyy"}}
+
+    </div>
+    <div class="col-sm-12">
+        <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+        <select name="atten" #atten="ngModel" [(ngModel)]="Attendance_Status_ALlEmployee" [ngClass]="{'clearance': attendancestatusFormSubmitted && atten?.errors?.required}">
+           <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
+             {{option.Atten_Type}}
+            </option>
+           </select>
+    </div>
+    <hr>
+    <p-footer>
+        <div class="text-right">
+            <button type="button" (click)="displayALLEmployee = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
+            <button type="button" (click)="SaveForALLEmployee()" class="btn btn-success">
+           <i class="fa fa-check"></i>&nbsp;  Done
+         </button>
+        </div>
+    </p-footer>
 </p-dialog>
