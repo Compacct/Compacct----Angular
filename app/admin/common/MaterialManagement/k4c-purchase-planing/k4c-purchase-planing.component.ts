@@ -73,6 +73,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
 
   Vendor_ID : any;
   Credit_Days : number;
+  PPdoc_no : any;
+  EditList = [];
   
 
   constructor(
@@ -102,6 +104,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
      this.tabIndexToView = e.index;
      this.items = ["BROWSE", "CREATE", "ORDER-STOCK REPORT"];
      this.buttonname = "Save";
+     this.Spinner = false;
     //  this.clearData();
     //  this.getproduct();
     //  this.producttypelist = [];
@@ -119,6 +122,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       this.uomdisabeld = this.tabIndexToView ? this.uomdisabeld : false;
      // this.data = "(Show Requisition Products)"
      //this.Productlist = [];
+      this.PPdoc_no = undefined;
    }
    getmaterialtype(){
       this.producttypelist = [];
@@ -646,7 +650,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
 
         const TempObj = {
          // UOM : "PCS",
-          Doc_No : "A",
+          Doc_No : this.PPdoc_no ? this.PPdoc_no : "A",
           Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
           User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
           Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -672,6 +676,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
       console.log(data);
       var tempID = data[0].Column1;
+      this.PPdoc_no = data[0].Column1;
       if(data[0].Column1){
         this.compacctToast.clear();
         //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
@@ -694,8 +699,10 @@ export class K4cPurchasePlaningComponent implements OnInit {
        this.productaddSubmit =[];
        this.Spinner = false;
        //this.ObjSaveForm = new SaveForm();
+       this.GetDataforUpdate();
 
       } else{
+        this.Spinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -706,6 +713,65 @@ export class K4cPurchasePlaningComponent implements OnInit {
       }
     })
 
+   }
+   GetDataforUpdate(){
+     this.EditList = [];
+    //console.log(this.ObjBrowse.Doc_No);
+    const obj = {
+      "SP_String": "SP_Purchase_Planning",
+      "Report_Name_String": "Get Data For Approved",
+      "Json_Param_String": JSON.stringify([{Doc_No : this.PPdoc_no}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.EditList = data;
+       this.PPdoc_no = data[0].Doc_No;
+       this.todayDate = new Date(data[0].Doc_Date);
+       this.ObjMPtype.Material_Type = data[0].Material_Type;
+       this.getproducttype(data[0].Product_Type_ID);
+       this.ObjMPtype.Product_Type = data[0].Product_Type_ID;
+       this.LastPurDate = new Date(data[0].Last_Puchase_Date);
+       this.Vendor_ID = data[0].Sub_Ledger_ID;
+       this.Credit_Days = data[0].Credit_days;
+      console.log("this.EditList  ===",this.EditList);
+      this.EditList.forEach(ele => {
+        const  productObj = {
+          Material_Type : ele.Material_Type,
+          //Product_Type_ID : ele.Product_Type_ID,
+          Product_Type : ele.Product_Type ? ele.Product_Type : '-',
+          Product_ID : ele.Product_ID,
+          Product_Description : ele.Product_Description,
+          Weekly_Avg_Cons : ele.Weekly_Avg_Cons,
+          UOM : ele.Order_UOM,
+          Weekly_Cons_Value : ele.Weekly_Cons_Value,
+          Last_Puchase_Date : this.DateService.dateConvert(new Date(ele.Last_Puchase_Date)),
+          Last_Puchase_Qty : ele.Last_Puchase_Qty,
+          AL_UOM : ele.Order_Stock_UOM,
+          Last_Purchase_Rate : ele.Last_Purchase_Rate,
+          //Last_Purchase_With_GST : Number(lastpurchaseGST),
+          Current_Stock : ele.Current_Stock,
+          Pcs_UOM : ele.Order_Stock_UOM,
+          Due_Payment : ele.Due_Payment,
+          Order_Qty : ele.Order_Qty,
+          Alt_UOM : ele.Order_UOM,
+          Sale_rate : ele.Rate,
+          // Order_Qty :  this.ObjPurchasePlan.Stock_Qty,
+          // Current_Rate : this.ObjPurchasePlan.Sale_rate,
+          Order_Value : Number(ele.Order_Qty) * ele.Rate,
+          Stock_Qty : ele.Order_Stock_Qty,
+          Stock_UOM : ele.Order_Stock_UOM,
+          Estimated_Time_Of_Delivery : ele.Estimated_Time_Of_Delivery,
+          //Total_Amount_With_GST : Number(AmtWithGST),
+         // Indent_Qty : this.ObjPurchasePlan.Indent_Qty ? this.ObjPurchasePlan.Indent_Qty : '-',
+          Remarks : ele.Remarks ? ele.Remarks : '-',
+         // Vendor :  VV.Sub_Ledger_Name ? VV.Sub_Ledger_Name : this.ObjPurchasePlan.Vendor,
+          Vendor_ID :  ele.Sub_Ledger_ID,
+          Vendor : ele.Vendor_Name,
+          Credit_days : ele.Credit_days
+       };
+        this.productaddSubmit.push(productObj);
+   });
+    })
    }
 
    // CREATE TAB END

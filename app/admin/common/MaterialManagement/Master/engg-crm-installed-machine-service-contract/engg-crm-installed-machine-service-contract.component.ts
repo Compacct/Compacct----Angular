@@ -103,7 +103,7 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     private DateNepalConvertService : DateNepalConvertService
   ) {
    
-    this.CurrentDateNepal = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.CurrentDateNepal = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     console.log(this.DateNepalConvertService.convertNepaliDateToEngDate(this.CurrentDateNepal))
   }
 
@@ -113,9 +113,9 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       Header: "Service Contract",
       Link: " Engineering CRM -> Master -> Service Contract"
     });
-    this.ServiceStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.ServiceEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.PaymentDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.ServiceStartDate = this.CurrentDateNepal;
+    this.ServiceEndDate = this.CurrentDateNepal;
+    this.PaymentDate = this.CurrentDateNepal;
     this.GetCustomer();
     //this.GetManufacturer();
     //this.GetSerialNo();
@@ -137,9 +137,9 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     this.MachineList = [];
     this.LoctionList = [];
     this.SerialNoList = [];
-    this.ServiceStartDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.ServiceEndDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
-    this.PaymentDate = {...this.DateNepalConvertService.GetCurrentNepaliDate()};
+    this.ServiceStartDate = this.CurrentDateNepal;
+    this.ServiceEndDate = this.CurrentDateNepal;
+    this.PaymentDate = this.CurrentDateNepal;
     // this.GetBrowseList();
     this.EditList = [];
     this.Contract_ID = undefined;
@@ -303,12 +303,7 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     //   year: nyear
     // };
   }
-  ValidatedNepaliDate(dateObj) {
-    const year = dateObj.year.toString().length == 1 ? "0" + dateObj.year : dateObj.year;
-    const month = dateObj.month.toString().length == 1 ? "0" + dateObj.month : dateObj.month;
-    const day = dateObj.day.toString().length == 1 ? "0" + dateObj.day : dateObj.day;
-    return day + '/' + month + '/' + year
-  }
+ 
   FetchPDFFile(event) {
     this.PDFFlag = false;
     this.ProductPDFFile = {};
@@ -319,20 +314,8 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   }
   SaveServiceContract(valid) {
     this.ServiceContractFormSubmit = true;
-    this.Spinner = true;
-    console.log(
-      {
-        Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
-        Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
-        Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
-        Service_Start_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceStartDate),
-        Service_End_Date_nepali : this.DateNepalConvertService.GetNepaliDateStr(this.ServiceEndDate),
-        Payment_Date_nepali	 : this.DateNepalConvertService.GetNepaliDateStr(this.PaymentDate),
-      }
-    )
+    this.Spinner = true; 
     if (valid && this.Contract_ID) {
-
-    
       const Obj = {
         Contract_ID: this.Contract_ID,
         Sub_Ledger_ID: this.ObjServiceContract.Customer_Name,
@@ -345,9 +328,9 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
         Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
         Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
         Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
-        Service_Start_Date_nepali : this.ValidatedNepaliDate(this.ServiceStartDate),
-        Service_End_Date_nepali : this.ValidatedNepaliDate(this.ServiceEndDate),
-        Payment_Date_nepali	 : this.ValidatedNepaliDate(this.PaymentDate),
+        Service_Start_Date_nepali : this.ServiceStartDate,
+        Service_End_Date_nepali : this.ServiceEndDate,
+        Payment_Date_nepali	 : this.PaymentDate,
       }
       const obj = {
         "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
@@ -357,25 +340,13 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
         console.log(data);
-        //var tempID = data[0].Column1;
         this.upload(data[0].Column1);
         if (data[0].Column1) {
-          // this.compacctToast.clear();
-          // //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-          // this.compacctToast.add({
-          //   key: "compacct-toast",
-          //   severity: "success",
-          //   summary: "Installed Machine",
-          //   detail: "Succesfully Updated" //+ mgs
-          // });
           this.clearData();
           this.GetSearchedList(true);
           this.Contract_ID = undefined;
           this.tabIndexToView = 0;
           this.items = ["BROWSE", "CREATE"];
-          //  this.buttonname = "Save";
-          // this.testchips =[];
-
         } else {
           // this.ngxService.stop();
           this.Spinner = false;
@@ -403,9 +374,9 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
           Service_Start_Date:this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceStartDate)),
           Service_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ServiceEndDate)),
           Payment_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.PaymentDate)),
-          Service_Start_Date_nepali : this.ValidatedNepaliDate(this.ServiceStartDate),
-          Service_End_Date_nepali : this.ValidatedNepaliDate(this.ServiceEndDate),
-          Payment_Date_nepali	 : this.ValidatedNepaliDate(this.PaymentDate),
+          Service_Start_Date_nepali : this.ServiceStartDate,
+          Service_End_Date_nepali : this.ServiceEndDate,
+          Payment_Date_nepali	 : this.PaymentDate,
         }
         const obj = {
           "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
@@ -428,22 +399,9 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
                detail: "Already Exists "
             });
             }
-            // this.compacctToast.clear();
-            // this.compacctToast.add({
-            //   key: "compacct-toast",
-            //   severity: "success",
-            //   summary: "Installed Machine",
-            //   detail: msg != "Already Exists" ? "Succesfully Saved" : "Already Exists"
-            // });
-            // if (msg != "Already Exists") {
-            //   this.clearData();
-            // }
-            // this.ServiceContractFormSubmit = false;
+            
             this.Spinner = false;
-            // this.ObjServiceContract = new ServiceContract();
-            // this.MachineList = [];
-            // this.LoctionList = [];
-
+            
           } else {
             this.Spinner = false;
             this.compacctToast.clear();
@@ -497,7 +455,7 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
           this.tabIndexToView = 0;
           this.items = ["BROWSE", "CREATE"];
       }
-  };
+  }
   GetSearchedList(valid) {
     this.SearchFormSubmit = true;
     if (valid) {
@@ -526,17 +484,7 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   }
   textcolor(col) {
     this.browsestartdate = new Date(col.Service_Start_Date);
-    // this.getdate = this.DateService.dateConvert(new Date(this.currentdate));
-    // console.log('browsestartdate==',this.browsestartdate.getDate())
-    // console.log('currentdate===',this.currentdate.getDate())
-    // console.log('browsestartdate==',this.browsestartdate.getMonth() + 1)
-    // console.log('currentdate===',this.currentdate.getMonth() + 1)
-    // console.log('browsestartdate==',this.browsestartdate.getFullYear())
-    // console.log('currentdate===',this.currentdate.getFullYear())
     return this.browsestartdate < this.currentdate ? "text-red-active" : "";
-    //  if (this.browsestartdate.getTime() < this.currentdate.getTime()) {
-    //     return "text-red-active";
-    //  }
   }
   Edit(edit) {
     this.clearData();

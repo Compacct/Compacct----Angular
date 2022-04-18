@@ -42,10 +42,10 @@
         </p-dropdown>
             <!-- <textarea class="form-control" name="" rows="3" [(ngModel)]=""></textarea> -->
         </div>
-        <div>
+        <!-- <div>
             <label class="control-label">Audio Files<sup class="text-danger"></sup></label>
             <p-fileUpload #fileInput  name="aFile1" accept="audio/mp3,audio/*,video/mp4;capture=microphone" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchRejectFile($event)"></p-fileUpload>
-       </div>
+       </div> -->
         </div>
         <div class="ui-g ui-fluid" style="margin-bottom: 2.5em;">
             <div class="ui-g-6">
@@ -81,10 +81,10 @@
         </p-dropdown>
             <!-- <textarea class="form-control" name="" rows="3" [(ngModel)]=""></textarea> -->
         </div>
-        <div>
+        <!-- <div>
             <label class="control-label">Audio Files<sup class="text-danger"></sup></label>
             <p-fileUpload #fileInput  name="aFile2" accept="audio/mp3,audio/*,video/mp4;capture=microphone" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchCANCELFile($event)"></p-fileUpload>
-        </div>
+        </div> -->
         </div>
         <div class="ui-g ui-fluid" style="margin-bottom: 2.5em;">
             <div class="ui-g-6">
@@ -157,10 +157,10 @@
             <!-- <textarea class="form-control" name="" rows="3" [(ngModel)]=""></textarea> -->
         </div>
         
-        <div>
+        <!-- <div>
             <label class="control-label">Audio Files<sup class="text-danger"></sup></label>
             <p-fileUpload #fileInput  name="aFile3" accept="audio/mp3,audio/*,video/mp4;capture=microphone" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchCANCELFile($event)"></p-fileUpload>
-        </div>
+        </div> -->
         </div>
         <div class="ui-g ui-fluid" style="margin-bottom: 2.5em;">
             <div class="ui-g-6">
@@ -340,6 +340,7 @@
                                     <!-- <th>Status / Regsiter</th>
                                     <th>ASP Confirm / ASP Journey Started </th> -->
                                     <th>Current Status</th>
+                                    <th>Rescedule Count</th>
                                     <th>Appo Date</th>
                                     <th>Days</th>
                                     <th>Appo Slot</th>
@@ -464,39 +465,46 @@
                                                         <i class="fa fa-ban" aria-hidden="true"></i> REJECT
                                                     </a>
                                                 </li>
-                                                <li *ngIf="col.Sub_Status === 'ACCEPT'">
+                                                <li *ngIf="(col.Sub_Status === 'ACCEPT' || col.Sub_Status === 'RECHEDULE')">
                                                     <a (click)="OpenJourneyStartedAppo(col)">
                                                         <i class="fa fa-upload" aria-hidden="true"></i> JOURNEY STARTED
                                                     </a>
                                                 </li>
-                                                <li *ngIf="col.Sub_Status === 'ACCEPT'" >
+                                                <li *ngIf="(col.Sub_Status === 'ACCEPT' || col.Sub_Status === 'RECHEDULE')" >
                                                     <a (click)="OpenRescedAppo(col)">
                                                         <i class="fa fa-repeat" aria-hidden="true"></i> RESCHEDULE
                                                     </a>
                                                 </li>
-                                                <li *ngIf="col.Sub_Status === 'ACCEPT'">
+                                                <li *ngIf="(col.Sub_Status === 'ACCEPT' || col.Sub_Status === 'RECHEDULE')">
                                                     <a (click)="OpenCANCELAppo(col)">
                                                         <i class="fa fa-remove" aria-hidden="true"></i> CANCEL
                                                     </a>
                                                 </li>
-                                                <li class="divider" *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
-                                                <li class="dropdown-submenu" *ngIf="col.Sub_Status === 'JOURNEY STARTED'">
-                                                    <a>CONDUCTION DONE</a>
-                                                    <ul class="dropdown-menu">
-                                                        <li> <a (click)="OpenENROLLEDAppo(col)">
-                                                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
-                                                        </li>
-                                                        <li> <a (click)="OpenIntrBillAppo(col)">
-                                                            <i class="fa fa-book" aria-hidden="true"></i>INTRESTED TO BILL</a>
-                                                        </li>
-                                                        <li> <a (click)="OpenCANCELAppo2(col)">
-                                                            <i class="fa fa-remove" aria-hidden="true"></i>CANCEL</a>
-                                                        </li>
-                                                        <li > <a (click)="OpenFollowAppo(col)">
-                                                            <i class="fa fa-random" aria-hidden="true"></i>FOLLOW UP</a>
-                                                        </li>
-                                                    </ul>
+                                                <li class="divider"  *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
+                                                <li *ngIf="col.Sub_Status === 'JOURNEY STARTED'">
+                                                  <a tabindex="-1">CONDUCTION DONE</a>
                                                 </li>
+                                                <li class="divider"  *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
+                                                <li> <a (click)="OpenENROLLEDAppo(col)">
+                                                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
+                                                </li>
+                                                <li> <a (click)="OpenIntrBillAppo(col)">
+                                                    <i class="fa fa-book" aria-hidden="true"></i>INTRESTED TO BILL</a>
+                                                </li>
+                                                <li> <a (click)="OpenCANCELAppo2(col)">
+                                                    <i class="fa fa-remove" aria-hidden="true"></i>CANCEL</a>
+                                                </li>
+                                                <li > <a (click)="OpenFollowAppo(col)">
+                                                    <i class="fa fa-random" aria-hidden="true"></i>FOLLOW UP</a>
+                                                </li>
+                                                <li class="divider"  *ngIf="col.Sub_Status === 'JOURNEY STARTED'"></li>
+                                                <!-- <li class="divider"></li>
+                                                <li class="dropdown-submenu" >
+                                                    <a></a>
+                                                    <ul class="dropdown-menu">
+                                                      
+                                                    </ul>
+                                                </li> -->
                                                 <li *ngIf="col.Sub_Status === 'INTERESTED TO BILL'">
                                                     <a (click)="OpenENROLLEDAppo(col)">
                                                         <i class="fa fa-thumbs-up" aria-hidden="true"></i>ENROLLED</a>
@@ -561,6 +569,7 @@
                                         <span class="badge bg-blue-gradient" *ngIf="col.ASP_Journey_Started === 'Y'"> Journey Started</span>
                                     </td> -->
                                     <td>{{col.Sub_Status}}</td>
+                                    <td>{{col.ASP_Reschedule_Count}}</td>
                                     <td>{{col.Appo_Date | date : "dd/MMM/yyyy"}}</td>
                                     <td>{{col.Days}}</td>
                                     <td>{{col.Appo_Time_Slot ? col.Appo_Time_Slot : '-'}}</td>
@@ -1281,11 +1290,11 @@
                                                 {{data.Name}}</option>
                                         </select>
                                     </div> -->
-                                    <div class="col-sm-12">
+                                    <!-- <div class="col-sm-12">
                                         <label class="control-label">Audio File <sup class="text-danger">*</sup></label>
                                         <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept=".mp3,.mkv" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"></p-fileUpload>
                                         <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
-                                    </div>
+                                    </div> -->
 
                                 </div>
                             </form>
@@ -1358,7 +1367,7 @@
 <!-- DETAILS  -->
 <p-dialog header="DETAILS" [appendTo]="'body'" [visible]="ShowDetailsModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '60%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
-    <div id="invoice">
+    <div id="invoice"> 
         <div class="invoice overflow-auto" *ngIf='Studentdetails?.Lead_ID'>
             <div class="contacts">
                 <div class="col invoice-to">
@@ -1379,7 +1388,7 @@
                         <ul class="timeline ">
                             <li class="time-label" style="margin-bottom: -20px" *ngFor="let objMain of distinctDateArray">
                                 <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
-                                <ul class="timeline" style="width:50%;margin: 7px 0 30px 0">
+                                <ul class="timeline timeline-responsive" >
                                     <li *ngFor="let objSub of getFollowupByDate1(objMain)">
                                         <i class="fa fa-user bg-blue"></i>
                                         <div class="timeline-item">
@@ -1950,15 +1959,16 @@
         <div class="form-group">
             <div class="col-sm-12">
                 <label class="control-label">DATE<sup class="text-danger">*</sup></label>
-                <input type="date" class="form-control" id="ResdFollowup" #ResdFollowup="ngModel" name="ResdFollowup" [ngModel]="ResceduleDate | date:'yyyy-MM-dd'" (ngModelChange)="ResceduleDate = $event" [ngClass]="{'clearance':ResceduleFormSubmit && ResdFollowup?.errors?.required}"
-                    [min]="(TodayDate  | date:'yyyy-MM-dd')" [max]="(Tomorrow  | date:'yyyy-MM-dd')" required>
+                <input type="date" class="form-control" id="ResdFollowup" #ResdFollowup="ngModel" name="ResdFollowup" [ngModel]="ResceduleDate | date:'yyyy-MM-dd'" (ngModelChange)="GetAvailMessage($event)" [ngClass]="{'clearance':ResceduleFormSubmit && ResdFollowup?.errors?.required}"
+                    [min]="(TodayDate  | date:'yyyy-MM-dd')" required>
             </div>
             <div class="col-sm-12">
                 <label class="control-label"
                   >Time Slot <sup class="text-danger">*</sup> &nbsp;
                 </label>
 
-                <p-dropdown [options]="TimeSlotList" name="Appo_Time_Slot_ID"  [(ngModel)]="ResceduleObj.Appo_Time_Slot_ID" [showClear]="true" [emptyFilterMessage]="' No Time Slot Found'"  [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                <p-dropdown [options]="TimeSlotList" name="Appo_Time_Slot_ID"
+                (onChange)="GetAvailMessage()"  [(ngModel)]="ResceduleObj.Appo_Time_Slot_ID" [showClear]="true" [emptyFilterMessage]="' No Time Slot Found'"  [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                     [placeholder]="'Select Time Slot'" [virtualScroll]="true" itemSize="30" #Appo_Time_Slot_ID="ngModel" [required]="true" [ngClass]="{'clearance':ResceduleFormSubmit && Appo_Time_Slot_ID.errors?.required}" [required]="true">
                 </p-dropdown>
             </div>

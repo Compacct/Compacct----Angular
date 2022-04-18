@@ -53,7 +53,7 @@
                                 </div>
                             </form>
                             <div class="table-responsive no-padding">
-                                <p-table [value]="GetAllDataList" [paginator]="GetAllDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_No','Doc_Date','Bill_NO','godown_name','Cost_Cen_Name','Total_Qty','Total_Amount','Vehicle_Details']"
+                                <p-table [value]="GetAllDataList" [paginator]="GetAllDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_No','Adv_Order_No','Doc_Date','Bill_NO','godown_name','Cost_Cen_Name','Total_Qty','Total_Amount','Vehicle_Details']"
                                     [rowHover]="true" #dt2>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -71,11 +71,11 @@
                                             <th>Date</th>
                                             <th>Sale Bill No</th>
                                             <th>Customer Name / Mobile No</th>
-                                            <th>Total Amount</th>
+                                            <th>Customer Amount</th>
                                             <th>From Godown</th>
                                             <th>To Outlet</th>
                                             <th>Total Qty</th>
-                                            <th>Total Amount</th>
+                                            <th>Franchise Amount</th>
                                             <th>Box Charge</th>
                                             <th>Vehicle Details</th>
                                             <th>Transaction Date & Time</th>
@@ -96,6 +96,11 @@
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
+                                                        <li>
+                                                            <a (click)="View(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> View
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.Bill_NO != 'NA'">
                                                             <a (click)="SaleBillPrint(col)">
                                                                 <i class="fa fa-print"></i> Sale Bill Print
@@ -110,13 +115,13 @@
                                                             <a (click)="editmaster(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
-                                                        </li> -->
+                                                        </li> *ngIf="col.Bill_NO != 'NA'" -->
                                                         <li>
                                                             <a (click)="deleteAdvDispatch(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Bill_NO != 'NA'">
+                                                        <li *ngIf="col.Franchise != 'N'">
                                                             <a (click)="dataforregeneratingbill(col)">
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
                                                             </a>
@@ -133,7 +138,7 @@
                                             <td>{{col.godown_name}}</td>
                                             <td>{{col.Cost_Cen_Name}}</td>
                                             <td>{{col.Total_Qty}}</td>
-                                            <td>{{col.Total_Amount}}</td>
+                                            <td>{{col.Total_Amount ? col.Total_Amount : '-'}}</td>
                                             <td>{{col.Box_Charge}}</td>
                                             <td>{{col.Vehicle_Details}}</td>
                                             <td>{{col.Transaction_Date_Time}}</td>
@@ -242,6 +247,7 @@
                                             <th>Qty</th>
                                             <th>Delivery Qty</th>
                                             <th>Box Charge</th>
+                                            <th>Box Charge Remarks</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -259,6 +265,7 @@
                                             <td>{{col.Qty}}</td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" /></td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
@@ -276,3 +283,85 @@
         </div>
     </div>
 </div>
+
+<!-- VIEW POPUP -->
+<p-dialog header="Custom Order View" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{width: '80%', minWidth: '500px'}" [maximizable]="true">
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Dispatch Challan Date</label>
+            <div class="label-t">{{view_Doc_date | date :"dd/MMM/yyyy"}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Dispatch Challan No</label>
+            <div class="label-t">{{view_Doc_No}}</div>
+        </div>
+        <!-- <div class="col-sm-4">
+            <label class="control-label">Order No</label>
+            <div class="label-t">{{view_Order_No}}</div>
+
+        </div> -->
+
+    </div>
+    <!-- <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">From Stock Point</label>
+            <div class="label-t">{{FstockPoint}}</div>
+
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">To Stock Point</label>
+            <div class="label-t">{{TostockPoint}}</div>
+
+        </div>
+    </div> -->
+    <div class="clearfix"></div>
+    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="viewList" [globalFilterFields]='["Adv_Order_No","Order_Cost_Center","Product_Description","Customer_Name",
+        "Customer_Mobile","Delivery_Qty","Batch_NO","Net_Amount","Amount_Payable","Total_Paid","Net_Due"]' [rowHover]="true" [autoLayout]="true" #dt5>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Order No</th>
+                    <th>Cost Centre</th>
+                    <th>Product Description</th>
+                    <th>Customer Name / Mobile No</th>
+                    <th>Delivery Qty</th>
+                    <th>Batch No</th>
+                    <th>Net Amount</th>
+                    <th>Amount Payable</th>
+                    <th>Total Paid</th>
+                    <th>Net Due</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{col.Adv_Order_No}}</td>
+                    <td>{{col.Order_Cost_Center}}</td>
+                    <td>{{col.Product_Description}}</td>
+                    <td>{{col.Customer_Name}} ({{col.Customer_Mobile}})</td>
+                    <td>{{col.Delivery_Qty}}</td>
+                    <td>{{col.Batch_NO ? col.Batch_NO : '-'}}</td>
+                    <td>{{col.Net_Amount}}</td>
+                    <td>{{col.Amount_Payable}}</td>
+                    <td>{{col.Total_Paid}}</td>
+                    <td>{{col.Net_Due}}</td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-footer>
+        <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
+    <i class="fa fa-close"></i>&nbsp;  Close
+  </button>
+    </p-footer>
+</p-dialog>

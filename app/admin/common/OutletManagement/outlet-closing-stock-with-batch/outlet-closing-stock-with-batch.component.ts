@@ -31,7 +31,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   godowndisableflag = false;
   productlist = [];
   flag = false;
-  BillDate : Date;
+  BillDate : any = Date;
   dateList: any;
   OTclosingstockwithbatchFormSubmitted = false;
   ObjBrowse : Browse  = new Browse();
@@ -52,6 +52,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   minDate:Date;
   maxDate:Date;
   EODstatus: any;
+  datedisable = true;
 
   constructor(
     private Header: CompacctHeader,
@@ -74,6 +75,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     this.getbilldate();
     this.GetBrand();
     this.getCostCenter();
+    this.editList = [];
   }
   TabClick(e){
     //console.log(e)
@@ -81,6 +83,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+    this.getbilldate();
   }
   getbilldate(){
     const obj = {
@@ -334,7 +337,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         //console.log(data);
         var tempID = data[0].Column1;
        // this.Objproduction.Doc_No = data[0].Column1;
-        if(data[0].Column1){
+        if(data[0].Column1 != "Something Wrong"){
           this.ngxService.stop();
           this.compacctToast.clear();
           const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
@@ -347,7 +350,17 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         //  if (this.buttonname == "Save & Print") {
         //  this.saveNprintProVoucher();
         //  }
+        if (this.buttonname != "Save") {
+          this.tabIndexToView = 0
+          this.items = ["BROWSE", "CREATE"];
+          this.buttonname = "Save";
+          this.clearData();
+          this.getbilldate();
+          this.GetSearchedList(true);
+        } else {
          this.clearData();
+         this.getbilldate();
+        }
         // this.IssueStockFormSubmitted = false;
 
         } else{
@@ -419,6 +432,7 @@ const obj = {
    }
    GetdataforEdit(Doc_No){
      this.OTclosingstockwithbatchFormSubmitted = false;
+     this.datedisable = false;
        const obj = {
          "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
          "Report_Name_String": "Get_Edit_Data_Outlet_Closing_Stock_With_Batch",
@@ -431,7 +445,13 @@ const obj = {
           this.ObjOTclosingwithbatch.Brand_ID = data[0].Brand_ID;
             this.ObjOTclosingwithbatch.Cost_Cen_ID = data[0].Cost_Cen_ID;
             this.ObjOTclosingwithbatch.godown_id = data[0].godown_id;
-            this.BillDate = data[0].Doc_Date;
+            this.BillDate = new Date(data[0].Doc_Date);
+            let Datetemp:Date =  new Date(data[0].Doc_Date)
+            const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 1);
+            this.minDate = new Date(Timetemp);
+            console.log("minDate==", this.minDate)
+            let tempDate:Date =  new Date(data[0].Doc_Date)
+            this.maxDate = new Date(tempDate);
             data.forEach(element => {
               const  productObj = {
                Product_Type_ID : element.Product_Type_ID,
@@ -579,7 +599,8 @@ const obj = {
     this.ObjOTclosingwithbatch.Remarks = [];
     this.productlist = [];
     this.editList = [];
-    this.getbilldate();
+    //this.getbilldate();
+    this.datedisable = true;
   }
   exportoexcel3(Arr,fileName): void {
     let temp = [];
@@ -600,6 +621,28 @@ const obj = {
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
+  exportoexcel4(Arr,fileName): void {
+    let temp = [];
+    Arr.forEach(element => {
+      const obj = {
+       Product_Type : element.Product_Type,
+       Product_ID : element.Product_ID,
+       Product_Description : element.Product_Description,
+       UOM : element.UOM,
+       Batch_No : element.Batch_No,
+       Expiry_Date : element.Expiry_Date,
+       batch_Qty : element.batch_Qty,
+       Closing_Qty : element.Closing_Qty,
+       Remarks : element.Remarks,
+       Total_Amount : element.Total_Amount
+      }
+      temp.push(obj)
+    });
+
+   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+   const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+   XLSX.writeFile(workbook, fileName+'.xlsx');
+ }
 
 }
 class OTclosingwithbatch {

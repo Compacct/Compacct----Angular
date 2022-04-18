@@ -159,7 +159,6 @@ export class StocktransferComponent implements OnInit {
 
     this.ProductInfoListProto = [];
     this.ProductInfoListView = [];
-
     this.stockDocNo = undefined;
     this.SelectedProduct = undefined;
     this.GodownToList = [];
@@ -388,6 +387,10 @@ export class StocktransferComponent implements OnInit {
           this.GodownRequire = false;
           this.Godowndisable = true;
           this.Batchdisabled = true;
+        }
+        
+        if(this.databaseName === 'BSHPL'){
+          this.ObjProductInfo.Rate = obj.MRP;
         }
       } else {
         this.SelectedProduct = "";

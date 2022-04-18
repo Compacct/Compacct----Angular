@@ -57,7 +57,7 @@
                                 <p-table #dtm [value]="GetallData"
                                     [globalFilterFields]="['Engineer','Location_Name','Main_Status','Serial_No','Sub_Ledger_Name','Support_Ticket_Date','Support_Ticket_Date_Nepali','Support_Ticket_No','Support_Ticket_Status','last_updated_on','model']"
                                     [paginator]="GetallData.length ? true:false" [rows]="10" [rowHover]="true"
-                                    [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
+                                    [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50]"
                                     [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -134,7 +134,7 @@
                                             <td>{{col.Sub_Ledger_Name}}</td>
                                             <td>{{col.Engineer}}</td>
                                             <td>{{col.Location_Name}}</td>
-                                            <td>{{convertToNepaliDateObj(col.Support_Ticket_Date)}}</td>
+                                            <td>{{ReturnNepaliDate(col.Support_Ticket_Date)}}</td>
                                             <td>{{col.model}}</td>
                                             <td>{{col.Serial_No}}</td>
                                             <td>{{col.Support_Ticket_Status}}</td>
@@ -186,9 +186,9 @@
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
-                                            <td>{{convertToNepaliDateObj(col.Call_Sheet_Date)}}</td>
-                                            <td>{{convertToNepaliDateObj(col.Call_Start_Time)}}</td>
-                                            <td>{{convertToNepaliDateObj(col.Call_End_Time)}}</td>
+                                            <td>{{ReturnNepaliDate(col.Call_Sheet_Date)}}</td>
+                                            <td>{{ReturnNepaliDate(col.Call_Start_Time)}}</td>
+                                            <td>{{ReturnNepaliDate(col.Call_End_Time)}}</td>
                                             <td>{{col.Call_Status}}</td>
                                             <td><button class="btn btn-primary" (click)="GetView(col)" id="load">
                                                     <span class="glyphicon glyphicon-view"></span>View
@@ -258,7 +258,7 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker id='Startdatecallid' name="Startdatecallid"
+                                            <np-datepicker language="en"  id='Startdatecallid' name="Startdatecallid"
                                                 inputClass="form-control" [(ngModel)]="StartDatecall"></np-datepicker>
                                         </div>
                                     </div>
@@ -275,7 +275,7 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker id='Enddatecallid' name="Enddatecallid"
+                                            <np-datepicker language="en"  id='Enddatecallid' name="Enddatecallid"
                                                 inputClass="form-control" [(ngModel)]="EndDatecall"></np-datepicker>
                                         </div>
                                     </div>
@@ -519,9 +519,10 @@
     </div>
 </div>
 <p-dialog header="Show Ticket Details" [appendTo]="'body'" [visible]="showTicket" [closeOnEscape]="true"
+[contentStyle]="{'max-height':'500px'}" id="workingID"
     [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '300px' }"
     style="text-align: center;" [minY]="80" [maximizable]="true" [baseZIndex]="10000">
-    <div class="form-horizontal" style="padding:1em;margin-bottom: 12em;">
+    <div class="form-horizontal" id="modalBody" style="padding:1em;margin-bottom: 12em;">
         <p-tabView [activeIndex]="tabIndexToViewticket" (onChange)="TabClick($event)">
             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                 <div class="form-group">
@@ -617,9 +618,9 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-col>
                             <tr>
-                                <td>{{convertToNepaliDateObj(col.Call_Sheet_Date)}}</td>
-                                <td>{{convertToNepaliDateObj(col.Call_Start_Time)}}</td>
-                                <td>{{convertToNepaliDateObj(col.Call_End_Time)}}</td>
+                                <td>{{ReturnNepaliDate(col.Call_Sheet_Date)}}</td>
+                                <td>{{ReturnNepaliDate(col.Call_Start_Time)}}</td>
+                                <td>{{ReturnNepaliDate(col.Call_End_Time)}}</td>
                                 <td>{{col.Call_Status}}</td>
                                 <td><button class="btn btn-primary" (click)="GetView(col)" id="load">
                                         <span class="glyphicon glyphicon-view"></span>View
@@ -683,8 +684,12 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
-                                <np-datepicker id='BSStartdate' name="BSStartdate" inputClass="form-control"
-                                    [(ngModel)]="StartDate"></np-datepicker>
+                                <input  CompacctNepaliDatepicker id="BSStartdate" name="BSStartdate"
+                                            Class="form-control" (ngModelChange)="StartDate= $event"
+                                            [containerId]="'modalBody'"
+                                            [(ngModel)]="StartDate"/>
+                                <!-- <np-datepicker language="en"  id='BSStartdate' name="BSStartdate" inputClass="form-control"
+                                    [(ngModel)]="StartDate"></np-datepicker> -->
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -697,8 +702,12 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
-                                <np-datepicker id='BSEnddate' name="BSEnddate" inputClass="form-control"
-                                    [(ngModel)]="EndDate"></np-datepicker>
+                                <input  CompacctNepaliDatepicker id="BSEnddate" name="BSEnddate"
+                                Class="form-control" (ngModelChange)="EndDate= $event"
+                                [containerId]="'modalBody'"
+                                [(ngModel)]="EndDate"/>
+                                <!-- <np-datepicker language="en"  id='BSEnddate' name="BSEnddate" inputClass="form-control"
+                                    [(ngModel)]="EndDate"></np-datepicker> -->
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -929,7 +938,7 @@
     <div class="form-group">
         <div class="col-sm-3">
             <label class="control-label">Call Start Date</label>
-            <div class="label-t">{{getViewData.Call_Start_Time ? convertToNepaliDateObj(getViewData.Call_Start_Time) :
+            <div class="label-t">{{getViewData.Call_Start_Time ? ReturnNepaliDate(getViewData.Call_Start_Time) :
                 ''}}</div>
         </div>
         <div class="col-sm-3">
@@ -938,7 +947,7 @@
         </div>
         <div class="col-sm-3">
             <label class="control-label">Call End Date</label>
-            <div class="label-t">{{getViewData.Call_End_Time ? convertToNepaliDateObj(getViewData.Call_End_Time) : ''}}
+            <div class="label-t">{{getViewData.Call_End_Time ? ReturnNepaliDate(getViewData.Call_End_Time) : ''}}
             </div>
         </div>
         <div class="col-sm-3">

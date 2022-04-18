@@ -21,7 +21,12 @@
     margin-top: 1em;
     margin-bottom: 1em;
   }
-
+  .e-gantt .e-gantt-chart .e-gantt-parent-progressbar-inner-div{
+    width: auto !important;
+  }
+  .e-gantt .e-gantt-chart .e-gantt-child-progressbar-inner-div{
+    width: auto !important;
+  }
   #createTask {
     background: cornflowerblue;
     border: 1px solid cornflowerblue;
@@ -39,6 +44,9 @@
   background: rgb(31, 109, 255);
   border: 1px solid rgb(31, 109, 255);
 
+}
+div.table-responsive.table-id>p-table>div>div {
+  width: auto !important;
 }
 /* .e-altrow, tr.e-chart-row:nth-child(even)  {
   background-color: #f2f2f2;

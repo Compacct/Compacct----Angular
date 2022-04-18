@@ -27,7 +27,7 @@
                             <div class="form-group">
                                 <div class="col-sm-2">
                                     <label class="control-label">Date</label>
-                                    <ejs-datepicker name="date" [(value)]="cu_Date" [format]="'dd-MMM-yyyy'" (change)="GetBrowse()" [ngClass]="{'clearance': AbsentFormSubmitted && cu_Date?.errors?.required}"  required></ejs-datepicker>
+                                    <ejs-datepicker name="datecc" [(ngModel)]="cu_Date" #datecc="ngModel"  [format]="'dd-MMM-yyyy'" (change)="GetBrowse()" [ngClass]="{'clearance': AbsentFormSubmitted && datecc?.errors?.required}"  required></ejs-datepicker>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Caller Id<sup class="text-danger">*</sup></label>

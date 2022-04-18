@@ -657,6 +657,9 @@ async GetRejectList(val) {
             this.leadFollowUpList = [...SortData];
             this.leadFollowUpListBackup = [...SortData];
             this.leadFollowUpList.forEach(function (element) {
+              if(!element.Lead_ID) {
+                console.log(element)
+              }
               element.Selected = false;
             });
             this.GetDistinct();
@@ -1258,7 +1261,7 @@ async GetRejectList(val) {
     if(obj.Lead_ID){
       this.Foot_Fall_ID = obj.Foot_Fall_ID;
       this.Lead_ID = obj.Lead_ID;
-      this.GetStudentdetails();
+      this.GetStudentdetails(obj);
      // this.GetFollowupList();
         this.GetFollowupDetails1(obj.Lead_ID);
       if(obj.Foot_Fall_ID.toString() !== '0') {
@@ -1323,7 +1326,7 @@ async GetRejectList(val) {
     this.items = ["Student Detail","Followup Details", "Billing Details","Order Details ","Support Question Dump","Support Ticket Dump"];
 
   }
-  GetStudentdetails(){
+  GetStudentdetails(tempData?){
     this.Studentdetails = undefined;
     const tempObj = {
       Lead_ID: this.Lead_ID
@@ -1334,6 +1337,11 @@ async GetRejectList(val) {
     }
     this.GlobalAPI.CommonPostData(obj,'Create_Common_task_Tutopia_Call?Report_Name=Get_Student_Details').subscribe((data:any)=>{
       this.Studentdetails = data ? data[0] : [];
+      if(tempData && tempData.Lead_ID) {
+        this.Studentdetails['Contact_Name'] = tempData.Contact_Name || this.Studentdetails['Contact_Name'];
+        this.Studentdetails['Mobile'] = tempData.Mobile || this.Studentdetails['Mobile'];
+        this.Studentdetails['Address'] = tempData.Address || this.Studentdetails['Address'] ;
+      }
 
      })
   }
@@ -2076,7 +2084,7 @@ async OpenRescedAppo(obj){
   this.ResceduleMP3File = {};
   if(obj.Appo_ID){
     
-    this.RejectList = await this.GetRejectList('REJECT');
+    this.RejectList = await this.GetRejectList('RECHEDULE');
     
     this.RejectList.forEach(obj=>{
       obj['label'] = obj.Reason_Details;
@@ -2086,6 +2094,42 @@ async OpenRescedAppo(obj){
     this.ResceduleModal = true;
 
   }
+}
+GetAvailMessage(e?){
+  if(e) {
+    this.ResceduleDate = e;
+  }
+  if(this.ResceduleObj.Appo_Time_Slot_ID && this.ResceduleDate) {
+    this.ngxService.start();
+    const TempObj = {
+      User_ID: this.ObjSearch.User_ID,
+      Slot_ID : this.ResceduleObj.Appo_Time_Slot_ID,
+      App_Date :this.DateService.dateConvert(new Date(this.ResceduleDate))
+  }
+
+  const obja = {
+    "SP_String":"SP_Appointment",
+    "Report_Name_String": "Check_Available_Slot",
+    "Json_Param_String" : JSON.stringify([TempObj])
+  }
+  this.GlobalAPI
+      .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
+        console.log(data);
+      if (data[0].remarks !== 'Available') {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "warn",
+            summary: 'UnAvailable',
+            detail: data[0].remarks
+          });
+          this.ResceduleObj.Appo_Time_Slot_ID = undefined;
+          this.ResceduleDate = new Date();
+      }
+      this.ngxService.stop();
+})
+   }
+  console.log(this.ResceduleDate)
 }
 SaveRescedAppo(valid){
   this.ResceduleFormSubmit = true;
@@ -2186,7 +2230,7 @@ onCONDUCTION(valid ,Flag){
   this.GlobalAPI
       .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
         console.log(data)
-  if (data[0].Column1) {
+  if (data[0].Followup_ID) {
       if(Flag && Flag === 'Enrolled') {
         this.SaveEnrolled(valid);
       }
@@ -2318,7 +2362,7 @@ SaveFollowAppo(valid) {
       }
       this.GlobalAPI
           .CommonPostData(obja,'Tutopia_Call_Common_SP_For_All').subscribe((data: any) => {
-          if (data[0].Column1) {
+          if (data[0].Followup_ID) {
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",

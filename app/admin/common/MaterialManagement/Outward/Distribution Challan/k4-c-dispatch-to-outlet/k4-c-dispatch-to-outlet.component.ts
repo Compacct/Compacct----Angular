@@ -139,6 +139,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   RegenerateDocNo = undefined;
   RegenerateDocDate = undefined;
   RegenerateBillNo = undefined;
+  franchisechallandate: any = Date;
 
   constructor(
     private $http: HttpClient,
@@ -555,7 +556,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.buttonname = "Create";
      // this.clearData()
       this.todayDate = new Date();
-      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+      //this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
       this.ObjBrowseData.Cost_Cen_ID = this.Objdispatch.Cost_Cen_ID;
       this.ObjBrowseData.Brand_ID = this.Objdispatch.Brand_ID;
       this.searchData(true);
@@ -569,7 +570,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
       this.BackUpproductDetails = [];
       this.clearData();
       this.todayDate = new Date();
-      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+     // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
      }else{
       this.ngxService.stop();
       this.compacctToast.clear();
@@ -781,14 +782,15 @@ export class K4CDispatchToOutletComponent implements OnInit {
     //console.log(this.Net_Amount);
   }
  getdataforSaveFranchise(){
-    this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
+    //this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
     if(this.FranchiseProductList.length) {
       let tempArr =[]
       this.FranchiseProductList.forEach(item => {
-       // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+        if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const TempObj = {
             Doc_No:  "A",
-            Doc_Date: this.currentDate,
+            //Doc_Date: this.currentDate,
+            Doc_Date: this.DateService.dateTimeConvert(new Date(this.franchisechallandate)),
             Sub_Ledger_ID : Number(this.subledgerid),
             Cost_Cen_ID	: 2, //this.franchisecostcenid,
             Product_ID	: item.Product_ID,
@@ -824,6 +826,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
             HSL_No : item.HSN_NO
          }
       tempArr.push(TempObj)
+        }
       });
       console.log("Save Data ===", tempArr)
       return JSON.stringify(tempArr);
@@ -853,6 +856,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
          detail: "Succesfully  " + mgs
        });
        this.clearData();
+       this.franchisechallandate = undefined;
        this.searchData(true);
       //  this.ProductList =[];
       //  this.franchiseSalebillFormSubmitted = false;
@@ -1183,6 +1187,7 @@ geteditmaster(masterProduct){
     console.log("this.EditList",this.EditList);
    this.doc_no = data[0].Doc_No;
    this.ChallanDate =  new Date(data[0].Doc_Date);
+   this.franchisechallandate = new Date(data[0].Doc_Date);
    this.Objdispatch.Brand_ID = data[0].Brand_ID;
    this.getCostcenter();
    this.Objdispatch.Cost_Cen_ID = data[0].To_Cost_Cen_ID;

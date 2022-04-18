@@ -714,12 +714,14 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
            //this.Objproduction.Doc_Date = data[0].Doc_Date;
            //this.Datevalue = data[0].Doc_Date;
            this.ProDate = this.DateService.dateConvert(new Date(data[0].Production_Date));
-           this.Datevalue = this.DateService.dateConvert(new Date(data[0].Doc_Date));
-          //  this.minDate =  new Date(data[0].Doc_Date);
-          //  let tempDate:Date =  new Date(data[0].Doc_Date)
-          // console.log("minDate==", this.minDate)
-          // const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 1);
-          // this.maxDate = new Date(tempTimeBill);
+           //this.Datevalue = this.DateService.dateConvert(new Date(data[0].Doc_Date));
+           this.Datevalue = new Date(data[0].Doc_Date);
+             let tempDate:Date =  new Date(data[0].Doc_Date)
+             const mindate = tempDate.setDate(tempDate.getDate() - 1);
+             this.minDate = new Date(mindate);
+            console.log("minDate==", this.minDate)
+            const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 2);
+            this.maxDate = new Date(tempTimeBill);
            data.forEach(element => {
              const  productObj = {
               Product_ID : element.Product_ID,

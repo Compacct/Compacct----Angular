@@ -178,9 +178,13 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-2">
                                                         <label class="control-label">Date</label>
-                                                        <ejs-datepicker strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='BillDate' [min]='minDate' [max]='maxDate'></ejs-datepicker>
-                                                        <!-- <input class="form-control" name="Date" [disabled]="true" [ngModel]='BillDate  | date :"dd-MMM-yyyy"'> -->
+                                                        <ejs-datepicker strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='BillDate' [min]='minDate' [max]='maxDate' [enabled]="datedisable"></ejs-datepicker>
+                                                        <!-- <input *ngIf="editList" class="form-control" name="Date" [disabled]="true" [ngModel]='BillDate  | date :"dd-MMM-yyyy"'> -->
                                                     </div>
+                                                    <!-- <div class="col-sm-2" *ngIf="editList">
+                                                        <label class="control-label">Date</label>
+                                                        <input class="form-control" name="Date" [disabled]="true" [ngModel]='EditBillDate  | date :"dd-MMM-yyyy"'>
+                                                    </div> -->
                                                     <div class="col-sm-3">
                                                         <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
                                                         <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="ObjOTclosingwithbatch.Brand_ID" [attr.disabled]="BrandDisable ? true : null" [ngClass]="{'clearance': OTclosingstockwithbatchFormSubmitted && Brand_ID?.errors?.required}" required>
@@ -277,6 +281,11 @@
                                 <p-table *ngIf="productlist.length" [value]="productlist" #dt1 [paginator]="true" [rows]="300" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [rowHover]="true" [globalFilterFields]='["Product_Type","Product_Description","Batch_No","Expiry_Date","batch_Qty","Issue_Qty"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
+                                            <div class="col-sm-1" *ngIf="buttonname != 'Save'">
+                                                <button class="btn btn-success custombutton2" (click)="exportoexcel4(editList,'Closing_Stock_With_Batch')">
+                                                   <span  class="glyphicon glyphicon-save"></span> Export to Excel
+                                                </button>
+                                            </div>
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>

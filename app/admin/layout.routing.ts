@@ -189,6 +189,9 @@ import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward
 import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
 import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
 import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
+import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
+import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
+import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 
 
 
@@ -1367,6 +1370,27 @@ const layoutRoutes: Routes = [{
   data: {
     title: 'User Absent'
   }
+},
+{
+  path: 'Tutopia_BDA_Joining',
+  component: TutoBdaJoiningComponent,
+  data: {
+    title: 'BDA Joining'
+  }
+},
+{
+  path: 'Tutopia_ASP_Unavailability',
+  component: TutoAspUnavaliblityComponent,
+  data: {
+    title: 'ASP Unavailability'
+  }
+  },
+  {
+    path: 'Attendance_Sheet',
+    component: AttendanceSheetComponent,
+    data: {
+      title: 'AttendanceSheetComponent'
+    }
 }
 
 

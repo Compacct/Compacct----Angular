@@ -143,10 +143,13 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Machine<span class="text-danger">*</span></label>
-                                        <select class="form-control" name="machine" #machine="ngModel" [(ngModel)]='ObjInstalledMachine.Machine' [ngClass]="{'clearance': InstalledMachineFormSubmit && machine?.errors?.required}" required>
+                                        <p-dropdown [options]="MachineList" name="Machine" [(ngModel)]="ObjInstalledMachine.Machine" [showClear]="true" [emptyFilterMessage]="' No Machine Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                        [placeholder]="'Select Machine'" [virtualScroll]="true" itemSize="30" #Machine="ngModel" [required]="true" [ngClass]="{'clearance':InstalledMachineFormSubmit && Machine?.errors?.required}" required>
+                                    </p-dropdown>
+                                        <!-- <select class="form-control" name="machine" #machine="ngModel" [(ngModel)]='ObjInstalledMachine.Machine' [ngClass]="{'clearance': InstalledMachineFormSubmit && machine?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of MachineList" [value]="option.Product_ID">{{option.Machine}}</option>
-                                    </select>
+                                    </select> -->
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Customer<span class="text-danger">*</span></label>
@@ -209,7 +212,10 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker id='date' name="date" inputClass="form-control" [(ngModel)]="DateOfInstallation"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="DateOfInstallationid" name="DateOfInstallationid"
+                                            Class="form-control" (ngModelChange)="DateOfInstallation= $event"
+                                            [(ngModel)]="DateOfInstallation"/>
+                                            <!-- <np-datepicker language="en"  id='date' name="date" inputClass="form-control" [(ngModel)]="DateOfInstallation"></np-datepicker> -->
                                         </div>
                                     </div>
                                 </div>

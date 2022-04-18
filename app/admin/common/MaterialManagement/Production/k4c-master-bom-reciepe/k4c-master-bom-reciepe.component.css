@@ -1,26 +1,36 @@
-#ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
-  width: auto !important;
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
 }
-.ui-table-auto-layout > .ui-table-wrapper {
-  width: auto !important;
-  min-height: 170px !important;
+
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+    min-height: 170px !important;
 }
+
 .custombutton {
-  margin-top: 25px;
+    margin-top: 25px;
 }
+
 .custombutton1 {
-  margin-top: 28px;
+    margin-top: 28px;
 }
+
 hr {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
-.Outlet{
-  display: inline-block !important;
+
+.Outlet {
+    display: inline-block !important;
 }
+
 div.label-t {
-  padding: 6px 12px;
-  background: rgb(206 216 216 / 51%);
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}
+
+.header-width {
+    width: 50%;
 }

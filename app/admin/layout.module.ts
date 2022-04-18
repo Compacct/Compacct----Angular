@@ -274,8 +274,12 @@ import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward
 import {SplitButtonModule} from 'primeng/splitbutton';
 import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
 import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
-import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
+import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component';
+import { TutoBdaJoiningComponent } from './common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component';
+import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component'
 
+import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-angular-gantt';
+import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 
 
 
@@ -479,7 +483,10 @@ import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.c
     GrnViewPurchaseBillComponent,
     ProductsPlaningComponent,
     CompacctTxnTaskGanttComponent,
-    UserAbsentComponent
+    UserAbsentComponent,
+    TutoBdaJoiningComponent,
+    TutoAspUnavaliblityComponent,
+    AttendanceSheetComponent
     
   ],
   imports: [
@@ -541,6 +548,9 @@ import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.c
     DateNepalConvertService,
     SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
+    SortService,
+    FilterService,
+    ColumnMenuService
   ]
 })
 export class LayoutModule {}

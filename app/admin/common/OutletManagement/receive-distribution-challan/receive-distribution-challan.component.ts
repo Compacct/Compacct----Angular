@@ -650,14 +650,15 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     //console.log(this.Net_Amount);
   }
  getdataforSaveFranchise(){
-    this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
+    //this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
     if(this.FranchiseProductList.length) {
       let tempArr =[]
       this.FranchiseProductList.forEach(item => {
-       // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+        if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const TempObj = {
             Doc_No:  "A",
-            Doc_Date: this.currentDate,
+            //Doc_Date: this.currentDate,
+            Doc_Date: this.DateService.dateConvert(new Date(this.date)),
             Sub_Ledger_ID : Number(this.subledgerid),
             Cost_Cen_ID	: 2,//this.fromCostId,
             Product_ID	: item.Product_ID,
@@ -693,6 +694,19 @@ export class ReceiveDistributionChallanComponent implements OnInit {
             HSL_No : item.HSN_NO
          }
       tempArr.push(TempObj)
+    } else {
+      setTimeout(()=>{
+      this.Spinner = false;
+      this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+       key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error in Taxable amount"
+    });
+    },600)
+  }
       });
       console.log("Save Data ===", tempArr)
       return JSON.stringify(tempArr);

@@ -96,6 +96,13 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   RegenerateDocDate = undefined;
   RegenerateBillNo = undefined;
   salebillno: any;
+
+  ViewPoppup = false;
+  viewList = [];
+  view_Doc_No = undefined;
+  view_Doc_date = undefined;
+  view_Order_No = undefined;
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -372,7 +379,9 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                  Vehicle_Details : el.Vehicle_Details,
                  Adv_Order_No : el.Adv_Order_No,
                  Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
-                 Box_Charge : el.Box_Charge ? el.Box_Charge : 0
+                 Box_Charge : el.Box_Charge ? el.Box_Charge : 0,
+                 Box_Charge_Remarks : el.Box_Charge_Remarks,
+                 Order_Cost_Centre_ID : el.Order_Cost_Centre_ID
                }
                this.saveData.push(saveObj)
               }
@@ -404,7 +413,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                this.buttonname = "Create";
                this.clearData();
                this.searchData();
-               this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+              // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
                  } else{
                   this.ngxService.stop();
                   this.compacctToast.clear();
@@ -565,10 +574,11 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
      if(this.FranchiseProductList.length) {
        let tempArr =[]
        this.FranchiseProductList.forEach(item => {
-        // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
+        if (Number(item.Taxable) && Number(item.Taxable) != 0) {
       const TempObj = {
              Doc_No:  "A",
-             Doc_Date: this.currentDate,
+             //Doc_Date: this.currentDate,
+             Doc_Date: this.DateService.dateConvert(new Date(this.ChallanDate)),
              Sub_Ledger_ID : Number(this.subledgerid),
              Cost_Cen_ID	: 2,
              Product_ID	: item.Product_ID,
@@ -601,9 +611,25 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
              Total_SGST_Amt : Number(this.sgst),
              Total_IGST_Amt : Number(this.igst),
              Total_Net_Amt : this.netamount,
-             HSL_No : item.HSN_NO
+             HSL_No : item.HSN_NO,
+             Net_Amount : item.Net_Amount,
+             Order_Cost_Centre_ID : item.Order_Cost_Centre_ID,
+             Adv_Order_No : item.Adv_Order_No
           }
        tempArr.push(TempObj)
+        } else {
+          setTimeout(()=>{
+          this.Spinner = false;
+          this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+           key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error in Taxable amount"
+        });
+        },600)
+      }
        });
        console.log("Save Data ===", tempArr)
        return JSON.stringify(tempArr);
@@ -612,8 +638,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
    }
    SaveFranSaleBill(){
      const obj = {
-       "SP_String" : "SP_K4C_Accounting_Journal",
-       "Report_Name_String" : "Save_Franchise_Sale_Bill",
+       "SP_String" : "[SP_K4C_Accounting_Journal_M_O]",
+       "Report_Name_String" : "Save_Franchise_Sale_Bill_Against_Adv_Order",
        "Json_Param_String" : this.getdataforSaveFranchise(),
        "Json_1_String" : JSON.stringify([{Order_No : this.dispatchchallanno}])
  
@@ -707,6 +733,36 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       })
 
   }
+  View(row){
+    //console.log("View ==",DocNo);
+  this.clearData();
+  if(row.Doc_No){
+  this.view_Doc_No = row.Doc_No;
+  //this.ViewPoppup = true;
+  this.GetViewData(this.view_Doc_No);
+  }
+  }
+  GetViewData(Doc_No){
+    this.viewList = [];
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "View Custom Order Dispatch Details",
+      "Json_Param_String": JSON.stringify([{Doc_No : this.view_Doc_No}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Data From Api",data);
+      this.viewList = data;
+       this.view_Doc_No = data[0].Doc_No;
+       this.view_Doc_date = new Date(data[0].Doc_Date);
+       this.view_Order_No = data[0].Adv_Order_No;
+    
+    this.ViewPoppup = true;
+
+    // console.log("this.viewList  ===",this.viewList);
+
+  })
+  }
   GetDist1() {
     let DOrderBy = [];
     this.OutletFilter = [];
@@ -751,13 +807,15 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
         Doc_No   :    element.Doc_No,
         Adv_Order_No   :  element.Adv_Order_No,
         Doc_Date    :  this.DateService.dateConvert(new Date(element.Doc_Date)),
+        Sale_Bill_No : element.Bill_NO,
         Customer_Name   :  element.Customer_Name,
         Costomer_Mobile   :  element.Costomer_Mobile,
         amount_payable   :  element.amount_payable,
         godown_name  :  element.godown_name,
         Cost_Cen_Name   :  element.Cost_Cen_Name,
         Total_Qty  :  element.Total_Qty,
-        Total_Amount   :  element.Total_Amount,
+        Franchise_Amount   :  element.Total_Amount,
+        Box_Charge : element.Box_Charge,
         Vehicle_Details   :  element.Vehicle_Details,
         Transaction_Date_Time   :  element.Transaction_Date_Time
        }
@@ -836,10 +894,16 @@ dataforregeneratingbill(DocNo){
   this.RegenerateBillNo = DocNo.Bill_NO;
   this.RegenerateDocDate = DocNo.Doc_Date;
 
+      const tempDate = {
+        Doc_No : this.RegenerateDocNo,
+        Adv_Order_No : DocNo.Adv_Order_No
+
+      }
+
   const obj = {
-    "SP_String": "SP_K4C_Accounting_Journal",
-    "Report_Name_String" : "Get Franchise Bill Ageinst Custom Order Challan",
-    "Json_Param_String": JSON.stringify([{Doc_No : DocNo.Doc_No}])
+    "SP_String": "SP_K4C_Accounting_Journal_M_O",
+    "Report_Name_String" : "Custom Order challan data For refresh",
+    "Json_Param_String": JSON.stringify([tempDate])
   }
 this.GlobalAPI.getData(obj).subscribe((data:any)=>{
   console.log("From Api",data);
@@ -933,15 +997,15 @@ RegenerateBill(){
         item['Total_SGST_Amt'] = Number(this.sgstRegenerate),
         item['Total_IGST_Amt'] = Number(this.igstRegenerate),
         item['Total_Net_Amt'] = Number(this.netamountRegenerate),
-        item['Sale_Bill_No'] = this.RegenerateBillNo,
+        item['Bill_No'] = this.RegenerateBillNo,
         item['Doc_Date'] = this.RegenerateDocDate,
         item['Discount'] = 0,
         item['Remarks'] = "NA",
         item['HSL_No'] = item.HSN_NO
       })
      const obj = {
-      "SP_String" : "SP_K4C_Accounting_Journal_Regenerate",
-      "Report_Name_String" : "Regenerate_Franchise_Sale_Bill",
+      "SP_String" : "SP_K4C_Accounting_Journal_M_O",
+      "Report_Name_String" : "Refresh_Franchise_Sale_Bill_Against_Adv_Order",
       "Json_Param_String": JSON.stringify(this.Regeneratelist),
       "Json_1_String" : JSON.stringify([{Order_No : this.RegenerateDocNo}])
      }

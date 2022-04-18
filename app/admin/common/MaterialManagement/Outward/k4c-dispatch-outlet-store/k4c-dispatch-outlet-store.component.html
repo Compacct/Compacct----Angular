@@ -68,11 +68,11 @@
                             </form>
                             <div class="table-responsive no-padding">
                                 <p-table [value]="GetAllDataList" [paginator]="GetAllDataList.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [globalFilterFields]="['Doc_No','Doc_Date','godown_name','Cost_Cen_Name','Total_Qty','Total_Amount','Vehicle_Details','Total_Accepted_Qty']"
-                                    [rowHover]="true" #dt>
+                                    [rowHover]="true" #dt3>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
-                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
 
@@ -131,6 +131,11 @@
                                                         <li>
                                                             <a (click)="exportoexcel(col,'Store_Dispatch_Challan')">
                                                                 <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Franchise != 'N'">
+                                                            <a (click)="dataforregeneratingbill(col)">
+                                                                <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
                                                             </a>
                                                         </li>
                                                     </ul>

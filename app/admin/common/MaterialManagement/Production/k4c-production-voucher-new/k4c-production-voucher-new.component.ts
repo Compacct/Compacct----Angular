@@ -947,7 +947,18 @@ const obj = {
       this.Objproduction.Shift = data[0].Shift_ID;
       this.Objproduction.To_Cost_Cen_ID = data[0].To_Cost_Cen_ID;
       this.Objproduction.To_godown_id = data[0].To_godown_id;
-      this.Datevalue = data[0].Doc_Date;
+
+      //this.Datevalue = data[0].Doc_Date;
+      this.Datevalue = new Date(data[0].Doc_Date);
+      let Datetemp:Date =  new Date(data[0].Doc_Date)
+      const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 1);
+      this.minDate = new Date(Timetemp);
+      console.log("minDate==", this.minDate)
+      // this.minDate =  new Date(data[0].Column1);
+       let tempDate:Date =  new Date(data[0].Doc_Date)
+      const tempTimeBill =  tempDate.setDate(tempDate.getDate() + 1);
+      this.maxDate = new Date(tempTimeBill);
+
       this.todayDate = data[0].Req_Date;
        data.forEach(element => {
        const  productObj = {
@@ -1190,7 +1201,7 @@ const obj = {
     this.ProtypeDisabled = false;
     this.ProcessProductList =[];
     this.AddProDetails = [];
-    this.Datevalue = this.DateService.dateConvert(new Date(this.Datevalue));
+    //this.Datevalue = this.DateService.dateConvert(new Date(this.Datevalue));
     this.todayDate = new Date();
     this.SelectedIndent = [];
     this.IndentFilter = []

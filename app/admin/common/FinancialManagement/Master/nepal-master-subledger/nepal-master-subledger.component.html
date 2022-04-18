@@ -892,7 +892,7 @@
                                                         <th nowrap>Location Address</th>
                                                         <th nowrap>Mobile No</th>
                                                         <th nowrap>Email</th>
-                                                        <th>Edit</th>
+                                                        <th  class="text-center">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -903,8 +903,11 @@
                                                         <td>{{obj.Mobile_No}}</td>
                                                         <td>{{obj.Email}}</td>
                                                         <td class="text-center">
-                                                            <a *ngIf='!LocationEditFlag' class="btn btn-sm btn-primary" (click)='EditLocationList(i)'>
-                                                                <i class='fa fa-fw fa-pencil'></i>&nbsp;Edit
+                                                            <a *ngIf='!LocationEditFlag' class="btn btn-xs btn-primary" (click)='EditLocationList(i)'>
+                                                                <i class='fa fa-fw fa-pencil'></i>&nbsp;
+                                                            </a>&nbsp;&nbsp;
+                                                            <a  class="btn btn-xs btn-pinterest" (click)='DeleteLocation(obj)'>
+                                                                <i class='fa fa-fw fa-trash'></i>&nbsp;
                                                             </a>
                                                         </td>
                                                     </tr>
