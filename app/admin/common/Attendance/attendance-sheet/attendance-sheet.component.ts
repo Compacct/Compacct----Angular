@@ -40,6 +40,14 @@ export class AttendanceSheetComponent implements OnInit {
   buttonname = "Save"
   AllAttendanceData = [];
   attendanceIdMap = new Map();
+
+  displayALLEmployee = false;
+  Attendance_Status_ALlEmployee = undefined;
+  Atten_Type_AllEmployee : any;
+  colorAllEmp = undefined;
+  inddate = undefined;
+  Doc_date_AllEmp = undefined;
+  DayName = undefined;
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -53,7 +61,7 @@ export class AttendanceSheetComponent implements OnInit {
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Attendance Sheet",
-      // Link: " Outlet -> Pos Bill -> Outlet Report"
+      Link: " HR -> Transaction -> Attendance Sheet"
     });
     this.getAttendanceType();
     const d = new Date();
@@ -126,9 +134,25 @@ export class AttendanceSheetComponent implements OnInit {
        })
     })
   }
+  onrightclick(i,row,i2){
+    event.preventDefault();
+    console.log("sgclicki",i)
+    console.log("sgclicki2",i2)
+    if(!this.employeelist[i].monthData[i2]) {
+    this.employeelist[i].monthData[i2] = 'P';
+    }
+    // event.preventDefault();
+    // return false;
+    // const noContext = document.getElementById('noContextMenu');
+
+    // noContext.addEventListener('contextmenu', e => {
+    //   e.preventDefault();
+    // });
+  }
   getdialog(i,row,i2){
     this.attendancestatusFormSubmitted = false;
     this.Attendance_Status = undefined;
+    console.log("i",i)
     console.log("i2",i2)
     console.log("row",row)
    //this.employeelist[i].monthData[i2] = 'deba'
@@ -183,7 +207,7 @@ export class AttendanceSheetComponent implements OnInit {
          if(empid != null && date != null) {
           ctrl.employeelist[empid].monthData[date.getDate() - 1] = element.Sht_Desc;
          }
-        }, 100)
+        }, 200)
           console.log('this.AllAttendanceData',this.AllAttendanceData)
      });
 
@@ -261,5 +285,31 @@ export class AttendanceSheetComponent implements OnInit {
         });
       }
     })
+  }
+  ChangeAllRow(ind){
+    this.Doc_date_AllEmp = undefined;
+    console.log("col" ,ind)
+    this.inddate = ind;
+    this.MonthdayDatelist.forEach((ele,inx) => {
+      if(inx === ind){
+        //console.log("ele",ele);
+        this.Doc_date_AllEmp = ele.Date;
+        this.DayName = ele.WeekDay;
+      }
+      });
+    this.displayALLEmployee = true;
+    this.Attendance_Status_ALlEmployee = undefined;
+    
+  }
+  SaveForALLEmployee(){
+    var AttenTypeAllEmp = this.AttenTypelist.filter( items => Number(items.Atten_Type_ID) === Number(this.Attendance_Status_ALlEmployee));
+      this.Atten_Type_AllEmployee = AttenTypeAllEmp != null && AttenTypeAllEmp.length > 0 ? AttenTypeAllEmp[0].Sht_Desc : undefined;
+      this.colorAllEmp = AttenTypeAllEmp != null && AttenTypeAllEmp.length > 0 ? AttenTypeAllEmp[0].Colour_Code : undefined;
+     // this.employeelist[this.index].monthData[this.index2] = this.Atten_Type_AllEmployee;
+      this.employeelist.forEach((el)=>{
+        el.monthData[this.inddate] = this.Atten_Type_AllEmployee;
+
+      })
+      this.displayALLEmployee = false;
   }
 }

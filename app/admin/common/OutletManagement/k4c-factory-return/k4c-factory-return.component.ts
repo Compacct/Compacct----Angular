@@ -1530,6 +1530,17 @@ onReject(){
       }
     })
 }
+VoucherPrint(obj) {
+  //console.log("CR_No ===", obj.CR_No)
+  if (this.$CompacctAPI.CompacctCookies.User_Type != 'U'){
+  if (obj.CR_No) {
+    window.open("/Report/Crystal_Files/Finance/SaleBill/Credit_Note_K4C.aspx?Doc_No=" + obj.CR_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
+  }
+}
+
   getFranchisechallan(){
   // if (this.dispatchchallanno){
    const Obj = {
@@ -1675,8 +1686,8 @@ SaveFranSaleBill(){
 SaleBillPrint(obj) {
   //console.log("CR_No ===", obj.CR_No)
   if (this.$CompacctAPI.CompacctCookies.User_Type != 'U'){
-  if (obj.CR_No) {
-    window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.CR_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  if (obj.Bill_No) {
+    window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
     );
   }
