@@ -194,14 +194,7 @@ import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unava
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 import { MasterCompanyComponent } from "./common/FinancialManagement/Master/master-company/master-company.component";
 import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
-
-
-
-
-
-
-
-
+import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
 
 
 const layoutRoutes: Routes = [{
@@ -1409,6 +1402,14 @@ const layoutRoutes: Routes = [{
         title: 'User Master'
 
       }
+  },
+  {
+  path: 'Journal',
+  component: JournalVoucherComponent,
+  data: {
+    title: 'journal'
+
+  }
 }
 
 
