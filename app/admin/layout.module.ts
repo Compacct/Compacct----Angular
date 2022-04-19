@@ -282,6 +282,9 @@ import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 import { MasterCompanyComponent } from './common/FinancialManagement/Master/master-company/master-company.component';
 import { JournalVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component';
+import { UserMasterComponent } from './common/UserManagement/Master/user-master/user-master.component';
+
+
 
 
 
@@ -490,7 +493,9 @@ import { JournalVoucherComponent } from './common/FinancialManagement/Transactio
     TutoAspUnavaliblityComponent,
     AttendanceSheetComponent,
     MasterCompanyComponent,
-    JournalVoucherComponent
+    JournalVoucherComponent,
+    UserMasterComponent
+
     
   ],
   imports: [
