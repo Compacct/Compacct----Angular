@@ -1,0 +1,148 @@
+<div class="form-group">
+    <div class="col-sm-4">
+        <label class="control-label">Name<sup class="text-danger">*</sup></label>
+        <input class="form-control" name="Name" ng-model="ctrl.objMasterUser.Name" placeholder="Name" allow-pattern="[a-z ]" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.Name.$error.required}" required>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">User Name<sup class="text-danger">*</sup></label>
+        <input class="form-control" name="userName" ng-model="ctrl.objMasterUser.User_Name" placeholder="User Name" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.userName.$error.required}" required>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Password<sup class="text-danger">*</sup></label>
+        <input type="password" class="form-control" name="userpass" ng-model="ctrl.objMasterUser.Password" ng-change="ctrl.confirmPassword()" placeholder="Password" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.userpass.$error.required}"
+            required>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-4">
+        <label class="control-label">Confirm Password<sup class="text-danger">*</sup></label>
+        <input type="password" class="form-control" name="confirmPass" ng-model="ctrl.confirmPass" ng-change="ctrl.confirmPassword()" placeholder="Confirm Password" ng-class="{'clearance': ctrl.ConfirmPasswordCheck || ( ctrl.UserRegistrationSubmitted && UserForm.confirmPass.$error.required) }"
+            required>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label"> Mobile No.<sup class="text-danger">*</sup></label>
+        <!-- <input class="form-control"
+               name="User_mobileNo"
+               ng-class="{'clearance': ctrl.UserRegistrationSubmitted  && UserForm.User_mobileNo.$error.required ||((UserForm.User_mobileNo.$error.minlength || UserForm.User_mobileNo.$error.maxlength) && UserForm.User_mobileNo.$dirty) }"
+               ng-model="ctrl.objMasterUser.User_Mobile"
+               placeholder="Mobile Number"
+               ng-maxlength="{{maxMobileLength}}"
+               ng-minlength="{{minMobileLength}}"
+               maxlength="{{maxMobileLength}}"
+               valid-number required> -->
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Email<sup class="text-danger">*</sup></label>
+        <input type="email" class="form-control" name="user_Email" ng-model="ctrl.objMasterUser.User_Email" placeholder="Email " ng-class="{ 'clearance':ctrl.UserRegistrationSubmitted && ( UserForm.user_Email.$error.email || UserForm.user_Email.$error.required)}"
+            required>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-4">
+        <label class="control-label">User Type<sup class="text-danger">*</sup></label>
+        <select class="form-control" name="user_Type" ng-model="ctrl.objMasterUser.User_Type" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.user_Type.$error.required}" required>
+          <option value="">Select</option>
+          <option value="A">Admin</option>
+          <option value="U">User</option>
+        </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+        <select class="form-control" name="Cost_Center" ng-model="ctrl.objMasterUser.Cost_Cen_ID" ng-options="v.Cost_Cen_ID as v.Cost_Cen_Name for v in ctrl.CostCenterList" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.Cost_Center.$error.required}"
+            required>
+          <option value="">Select</option>
+
+        </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Department<sup class="text-danger">*</sup></label>
+        <select class="form-control" name="user_Department" ng-model="ctrl.objMasterUser.Dept_ID" ng-options="v.Dept_ID as v.Dept_Name for v in ctrl.DepartmentList" ng-change="ctrl.changeDepartment(ctrl.objMasterUser.Dept_ID)" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.user_Department.$error.required}"
+            required>
+          <option value="">Select</option>
+
+        </select>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-4">
+        <label class="control-label"> Sub Department<sup class="text-danger">*</sup></label>
+        <select class="form-control" name="user_Sub_Department" ng-model="ctrl.objMasterUser.Sub_Dept_ID" ng-options="v.Sub_Dept_ID as v.Sub_Dept_Name for v in ctrl.subDepartmentList" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.user_Sub_Department.$error.required}"
+            required>
+          <option value="">Select</option>
+
+        </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Delete Right<sup class="text-danger"></sup></label>
+        <select class="form-control" name="Del_Right" ng-model="ctrl.objMasterUser.Del_Right">
+          <option value="N">No</option>
+          <option value="Y">Yes</option>
+        </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Menu Reference<sup class="text-danger">*</sup></label>
+        <select class="form-control" name="MenuRefList" ng-model="ctrl.objMasterUser.Menu_Ref_ID" ng-options="v.Menu_Ref_ID as v.Menu_Ref_Name for v in ctrl.MenuRefList" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.MenuRefList.$error.required}"
+            required>
+          <option value="">Select</option>
+
+        </select>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-4">
+        <label class="control-label">Expiry Date<sup class="text-danger"></sup></label>
+        <div class="input-group date">
+            <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+            </div>
+            <input type="date" name="expiry_Date" ng-model="ctrl.ExpiryDate" class="form-control pull-right" ng-class="{'clearance':ctrl.UserRegistrationSubmitted && UserForm.expiry_Date.$error.required}">
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">API User Name<sup class="text-danger"></sup></label>
+        <input class="form-control" name="API_User_Name" ng-model="ctrl.objMasterUser.API_User_Name" placeholder="API User Name" ng-class="{'clearance': ctrl.UserRegistrationSubmitted && UserForm.API_User_Name.$error.required}">
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">User Time Required<sup class="text-danger">*</sup></label>
+        <select class="form-control" name="User_Time" ng-model="ctrl.objMasterUser.User_Time" ng-class="{'clearance':ctrl.UserRegistrationSubmitted && UserForm.User_Time.$error.required}">
+          <option value="NO">No</option>
+          <option value="YES">Yes</option>
+        </select>
+    </div>
+    <div class="col-sm-2" ng-if="ctrl.objMasterUser.User_Time == 'YES'">
+        <label class="control-label">Start Time<sup class="text-danger">*</sup></label>
+        <input type="time" placeholder="HH:mm:ss" name="UserStartTime" ng-model="ctrl.UserStartTime" ng-class="{'clearance':ctrl.UserRegistrationSubmitted && UserForm.UserStartTime.$error.required}" class="form-control" required>
+    </div>
+    <div class="col-sm-2" ng-if="ctrl.objMasterUser.User_Time == 'YES'">
+        <label class="control-label">End Time<sup class="text-danger">*</sup></label>
+        <input type="time" placeholder="HH:mm:ss" name="UserEndTime" ng-model="ctrl.UserEndTime" ng-class="{'clearance':ctrl.UserRegistrationSubmitted && UserForm.UserEndTime.$error.required}" class="form-control" required>
+    </div>
+
+    <div class="col-sm-4">
+        <label class="control-label">Authorized Computer<sup class="text-danger">*</sup></label>
+        <select class="form-control" name="Authorized_Computer" ng-model="ctrl.objMasterUser.Authorized_Computer" ng-class="{'clearance':ctrl.UserRegistrationSubmitted && UserForm.Authorized_Computer.$error.required}" required>
+          <option value="NO">No</option>
+          <option value="YES">Yes</option>
+        </select>
+    </div>
+    <div class="col-sm-4">
+        <label>Upload Profile Photo</label>
+        <div class="input-group">
+            <span class="input-group-btn">
+            <span class="btn btn-default btn-file">
+              Browseâ€¦ <input type="file"
+                             id="i_file"
+                             upload-file="Imagefile"
+                             accept="image/*"
+                             capture="camera"
+                             onchange="angular.element(this).scope().ImageChange(this)" />
+            </span>
+            </span>
+            <input type="text" class="form-control" ng-model="ctrl.fileName" readonly>
+        </div>
+        <br ng-if="ctrl.imageFieldShow" />
+        <div id="lightgallery" ng-show="ctrl.imageFieldShow">
+            <img ng-src="{{ctrl.objMasterUser.User_Pic}}" id="img-upload" style="width:120px;height:70px;" />
+        </div>
+    </div>
+</div>
