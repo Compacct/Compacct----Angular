@@ -192,7 +192,9 @@ import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.c
 import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
 import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
+import { MasterCompanyComponent } from "./common/FinancialManagement/Master/master-company/master-company.component";
 import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
+
 
 
 
@@ -1394,10 +1396,18 @@ const layoutRoutes: Routes = [{
     }
   },
     {
+      path: 'Master_Company',
+      component: MasterCompanyComponent,
+      data: {
+        title: 'Master Company'
+      }
+    },
+      {
       path: 'User_Master',
       component: UserMasterComponent,
       data: {
         title: 'User Master'
+
       }
 }
 
