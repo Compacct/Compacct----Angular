@@ -281,6 +281,8 @@ import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unava
 import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-angular-gantt';
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 import { MasterCompanyComponent } from './common/FinancialManagement/Master/master-company/master-company.component';
+import { UserMasterComponent } from './common/UserManagement/Master/user-master/user-master.component';
+
 
 
 
@@ -489,6 +491,8 @@ import { MasterCompanyComponent } from './common/FinancialManagement/Master/mast
     TutoAspUnavaliblityComponent,
     AttendanceSheetComponent,
     MasterCompanyComponent
+    UserMasterComponent
+
     
   ],
   imports: [
