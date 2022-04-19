@@ -44,6 +44,7 @@ export class MasterCompanyComponent implements OnInit {
       Link: "Financial Management --> Master -> Master Comapny"
     });
     this.GetBrowse();
+    this.getCountry();
   }
   TabClick(e){
     console.log(e)
@@ -76,6 +77,16 @@ export class MasterCompanyComponent implements OnInit {
      console.log("pin Data",data);
     });
    } 
+  }
+  getCountry(){
+    const obj = {
+      "SP_String": "sp_UR_Master_Company",
+      "Report_Name_String": "Get_Country_Dropdown"
+    }
+    this.GlobalAPI.postData(obj).subscribe((data) => {
+      this.CountryList = data;
+      console.log("CountryList",this.CountryList); 
+    });
   }
 }
 class company{
