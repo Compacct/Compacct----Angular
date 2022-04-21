@@ -102,6 +102,9 @@ export class JournalVoucherComponent implements OnInit {
     this.seachSpinner = false;
     this.objjournal = new journalTopper();
     this.journalFormSubmitted = false;
+    this.VoucherNo = undefined;
+    this.objjournal.Cost_Cen_ID_Trn = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
   }
  
   lowerAdd(valid){
@@ -112,22 +115,24 @@ export class JournalVoucherComponent implements OnInit {
     let LedgerFilter = this.LedgerdataList.filter((el) => el.Ledger_ID == Number(this.objjournalloweer.Ledger_ID));
     let LedgersubFilter = this.SubLedgerDataListlow.filter((el) => el.Sub_Ledger_ID == Number(this.objjournalloweer.Sub_Ledger_ID));
     let costCernterFilter = this.costHeadDataList.filter((el)=>el.Cost_Head_ID === Number(this.objjournalloweer.Cost_Head_ID))
+    console.log("this.objjournalloweer.ITC_Eligibility",this.objjournalloweer.ITC_Eligibility);
     this.lowerList.push({
      Ledger_Name : LedgerFilter[0].Ledger_Name,
      Ledger_ID: this.objjournalloweer.Ledger_ID,
      Sub_Ledger_ID : this.objjournalloweer.Sub_Ledger_ID,
-     Cost_Head_Name : costCernterFilter[0].Cost_Head_Name,
+     Cost_Head_Name : costCernterFilter.length ? costCernterFilter[0].Cost_Head_Name : "",
      Cost_Head_ID : this.objjournalloweer.Cost_Head_ID,
-     Sub_Ledger_Name : LedgersubFilter[0].Sub_Ledger_Name,
+     Sub_Ledger_Name : LedgersubFilter.length ? LedgersubFilter[0].Sub_Ledger_Name : "",
      Ref_Doc_No : this.objjournalloweer.Ref_Doc_No,
-     Ref_Doc_Date : this.DateService.dateConvert(new Date(this.RefDocDate)),
+     Ref_Doc_Date : this.objjournalloweer.Ref_Doc_No ?  this.DateService.dateConvert(new Date(this.RefDocDate)) : "01/Jan/1900",
      HSN_NO : this.objjournalloweer.HSN_NO,
      GST_Per : Number(this.objjournalloweer.GST_Per),
-     ITC_Eligibility : this.objjournalloweer.ITC_Eligibility,
+     ITC_Eligibility : this.objjournalloweer.ITC_Eligibility ? this.objjournalloweer.ITC_Eligibility : "",
      DR_Amt : this.objjournalloweer.DrCrdata === "DR" ? Number(this.objjournalloweer.Amount) : 0,
      CR_Amt : this.objjournalloweer.DrCrdata === "CR" ? Number(this.objjournalloweer.Amount) : 0,
      Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID
       })
+      console.log("lowerList",this.lowerList)
     this.journallowerFormSubmitted = false;
     this.objjournalloweer = new journalTopper()
     this.getTotalDRCR();
@@ -247,7 +252,7 @@ ShowSearchData(valid){
     ? this.DateService.dateConvert(new Date(this.objsearch.End_date))
     : this.DateService.dateConvert(new Date());
     let saveData = {
-      Voucher_Type_ID: this.objsearch.Voucher_Type_ID,
+      Voucher_Type_ID: Number(this.objsearch.Voucher_Type_ID),
       Cost_Cen_ID: this.objsearch.Cost_Cen_ID,
       Satrt_date: this.objsearch.Start_date,
       End_date: this.objsearch.End_date
@@ -266,10 +271,21 @@ ShowSearchData(valid){
 getTotalDRCR(){
   this.totalDR = 0;
   this.totalCR = 0;
+  if(this.objjournal.DrCrdata === "DR"){
+    this.totalDR = Number(this.objjournal.Amount);
+   }
+   else if(this.objjournal.DrCrdata === "CR"){
+    this.totalCR = Number(this.objjournal.Amount);
+   }
+   else {
+     console.error("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
+   }
  this.lowerList.forEach(el=>{
    this.totalDR += Number(el.DR_Amt);
-   this.totalCR += Number(el.CR_Amt)
+   this.totalCR += Number(el.CR_Amt);
  })
+
+ 
 }
 getVoucherType(){
   this.VoucherTypeList = [];
@@ -414,13 +430,16 @@ EditJournal(col){
      this.objjournal = data[0];
      this.lowerList = data[0].L_element;
       this.getsubLedgertop(data[0].Ledger_ID,data[0].Sub_Ledger_ID);
+      
      if(data[0].DR_Amt){
       this.objjournal.Amount = data[0].DR_Amt
       this.objjournal.DrCrdata = "DR";
+      this.getTotalDRCR()
     }
     else if (data[0].CR_Amt){
       this.objjournal.Amount = data[0].CR_Amt
       this.objjournal.DrCrdata = "CR";
+      this.getTotalDRCR()
     }
     else {
       console.error("Amount Not Found");
@@ -468,6 +487,15 @@ onConfirm(){
   }
 
 
+}
+getDate(date){
+return date != "01/Jan/1900" ? date : ""
+}
+validcheck(){
+  return this.SubLedgerList.length ? true : false
+}
+validchecklow(){
+  return this.SubLedgerListlow.length ? true : false
 }
 }
 class journalTopper{

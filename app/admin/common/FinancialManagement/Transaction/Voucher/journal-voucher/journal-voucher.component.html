@@ -42,7 +42,7 @@
                                       </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">Voucher Type</label>
+                                        <label class="control-label">Voucher Type<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="VoucherType" #VoucherType="ngModel" [(ngModel)]="objsearch.Voucher_Type_ID">
                                                   <option  [ngValue]="undefined">Select</option>
                                            <option *ngFor = "let option of VoucherTypeList" [value] ="option.Voucher_Type_ID">
@@ -175,22 +175,21 @@
                                             </p-dropdown>
                                             </div>
                                             <div class="col-sm-4">
-                                                <label class="control-label">Sub Ledger &nbsp;<span class="text-danger">*</span></label>
+                                                <label class="control-label">Sub Ledger &nbsp;<span *ngIf = "SubLedgerList.length" class="text-danger">*</span></label>
                                                 <p-dropdown [options]="SubLedgerList" name="Sub_Ledger_ID" [(ngModel)]="objjournal.Sub_Ledger_ID"
                                                 [showClear]="true" [emptyFilterMessage]="' No Ledger Found'"
                                                 [filter]="true" filterBy="label,value.name"
                                                 [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Sub_Ledger_ID="ngModel"
-                                                [styleClass]="journalFormSubmitted && Sub_Ledger_ID.errors?.required ? 'clearance': ''" required>
+                                                [styleClass]="journalFormSubmitted && Sub_Ledger_ID.errors?.required  &&  validcheck()? 'clearance': ''" [required]="validcheck()">
                                             </p-dropdown>
                                             </div>
                                             <div class="col-sm-4">
-                                                <label class="control-label">Cost Head<sup class="text-danger">*</sup></label>
+                                                <label class="control-label">Cost Head</label>
                                                 <select class="form-control"
                                                 name="Cost_Head_ID"
                                                 #Cost_Head_ID="ngModel"
                                                [(ngModel)]="objjournal.Cost_Head_ID"
-                                               [ngClass]="{'clearance': journalFormSubmitted && Cost_Head_ID?.errors?.required}"
-                                               required
+                                               
                                                 >
                                                 <option  [ngValue]="undefined">Select</option>
                                                 <option *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
@@ -209,6 +208,7 @@
                                                                 #Amount="ngModel"
                                                                 [(ngModel)]="objjournal.Amount"
                                                                 placeholder="Amount"
+                                                                (change)="getTotalDRCR()"
                                                                 CompacctDigitonly="true"
                                                                 [ngClass]="{'clearance': journalFormSubmitted && Amount?.errors?.required}"
                                                                 required>
@@ -220,6 +220,7 @@
                                                            name="DrCrdata"
                                                            #DrCrdata="ngModel"
                                                            [(ngModel)]="objjournal.DrCrdata"
+                                                           (change)="getTotalDRCR()"
                                                           >
                                                         <option  value= "DR">
                                                            DR
@@ -317,22 +318,21 @@
                                             </p-dropdown>
                                             </div>
                                             <div class="col-sm-4">
-                                                <label class="control-label">Sub Ledger &nbsp;<span class="text-danger">*</span></label>
+                                                <label class="control-label">Sub Ledger &nbsp;<span *ngIf = "SubLedgerListlow.length" class="text-danger">*</span></label>
                                                 <p-dropdown [options]="SubLedgerListlow" name="Sub_Ledger_ID_Lower" [(ngModel)]="objjournalloweer.Sub_Ledger_ID"
                                                 [showClear]="true" [emptyFilterMessage]="' No Ledger Found'" 
                                                 [filter]="true" filterBy="label,value.name"
                                                 [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Sub_Ledger_ID_Lower="ngModel"
-                                                [styleClass]="journallowerFormSubmitted && Sub_Ledger_ID_Lower.errors?.required ? 'clearance': ''" required>
+                                                [styleClass]="journallowerFormSubmitted && Sub_Ledger_ID_Lower.errors?.required && validchecklow()? 'clearance': ''" [required] = "validchecklow()">
                                             </p-dropdown>
                                             </div>
                                             <div class="col-sm-4">
-                                                <label class="control-label">Cost Head<sup class="text-danger">*</sup></label>
+                                                <label class="control-label">Cost Head</label>
                                                 <select class="form-control"
                                                 name="cost_Head"
                                                 #cost_Head="ngModel"
                                                [(ngModel)]="objjournalloweer.Cost_Head_ID"
-                                               [ngClass]="{'clearance': journallowerFormSubmitted && cost_Head?.errors?.required}"
-                                               required
+                                              
                                               >
                                                 <option  [ngValue]="undefined">Select</option>
                                                 <option *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
@@ -363,28 +363,26 @@
                                                 </select>
                                                </div> -->
                                                <div class="col-sm-3">
-                                                <label class="control-label">Ref Doc No<sup class="text-danger">*</sup></label>
+                                                <label class="control-label">Ref Doc No</label>
                                                 <input class="form-control"
                                                         name="Ref_Doc_No"
                                                         #Ref_Doc_No="ngModel"
                                                         [(ngModel)]="objjournalloweer.Ref_Doc_No"
                                                         placeholder="Ref Doc No"
-                                                        [ngClass]="{'clearance': journallowerFormSubmitted && Ref_Doc_No?.errors?.required}"
-                                                        required>
+                                                       >
                                                 </div>
                                                 <div class="col-sm-3">
                                                 <label class="control-label">Ref Doc Date<sup class="text-danger">*</sup></label>
                                                 <ejs-datepicker  [(value)]="RefDocDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <label class="control-label">HSN NO<sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">HSN NO</label>
                                                     <input class="form-control"
                                                             name="HSN_NO"
                                                             #HSN_NO="ngModel"
                                                             [(ngModel)]="objjournalloweer.HSN_NO"
                                                             placeholder="HSN NO"
-                                                            [ngClass]="{'clearance': journallowerFormSubmitted && HSN_NO?.errors?.required}"
-                                                            required>
+                                                           >
                                                 </div> 
                                                <div class="col-sm-3">
                                                 <div class="col-sm-6">
@@ -419,24 +417,22 @@
                                            
                                              <div class="form-group">
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">GST Per<sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">GST Per</label>
                                                     <input class="form-control"
                                                             name="GST_Per"
                                                             #GST_Per="ngModel"
                                                             [(ngModel)]="objjournalloweer.GST_Per"
                                                             placeholder="GST Per"
                                                             CompacctDigitonly="true"
-                                                            [ngClass]="{'clearance': journallowerFormSubmitted && GST_Per?.errors?.required}"
-                                                            required>
+                                                            >
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">ITC Eligibility<sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">ITC Eligibility</label>
                                                    <select class="form-control"
                                                         name="ITC_Eligibility"
                                                         #ITC_Eligibility="ngModel"
                                                         [(ngModel)]="objjournalloweer.ITC_Eligibility"
-                                                        [ngClass]="{'clearance': journallowerFormSubmitted && ITC_Eligibility?.errors?.required}"
-                                                        required
+                                                        
                                                         >
                                                           <option  [ngValue]="undefined">Select</option>
                                                           <option  Value="Input Services">Input Services</option>
@@ -478,10 +474,11 @@
                                                    <td>{{obj.DR_Amt ? obj.DR_Amt : ''}}</td>
                                                    <td>{{obj.CR_Amt ? obj.CR_Amt : ''}}</td>
                                                    <td>{{obj.Ref_Doc_No}}</td>
-                                                   <td>{{obj.Ref_Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                   <td>{{getDate(obj.Ref_Doc_Date) | date : 'dd/MMM/yyyy'}}</td>
                                                    <td>{{obj.HSN_NO}}</td>
-                                                   <td>{{obj.GST_Per}}</td>
                                                    <td>{{obj.ITC_Eligibility}}</td>
+                                                   <td>{{obj.GST_Per ? obj.GST_Per : ""}}</td>
+                                                   
                                                    <td><button (click)="DeleteProduct(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                </tr>
                                             </tbody>
