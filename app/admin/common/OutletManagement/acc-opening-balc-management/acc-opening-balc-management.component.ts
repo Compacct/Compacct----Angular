@@ -39,8 +39,8 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
   CostHeadList = [];
 
   ACOpeningBalcList = [];
-  DRAmt_Total = 0;
-  CRAmt_Total = 0;
+  DRAmt_Total:any = 0;
+  CRAmt_Total:any = 0;
   AllAcOpeningBalc = [];
   constructor(
     private $http: HttpClient,
@@ -265,8 +265,8 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
       DR_Amt_Total  += Number(this.ACOpeningBalcList[i].DR_Amt);
       CR_Amt_Total  += Number(this.ACOpeningBalcList[i].CR_Amt);
    }
-   this.DRAmt_Total = DR_Amt_Total;
-   this.CRAmt_Total = CR_Amt_Total;
+   this.DRAmt_Total = (DR_Amt_Total).toFixed(2);
+   this.CRAmt_Total = (CR_Amt_Total).toFixed(2);
   }
 
   SaveACOpeningBalc(){

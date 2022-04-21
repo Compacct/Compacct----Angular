@@ -504,6 +504,7 @@
                                                     <th>Wight in <br> Pound</th>
                                                     <th>Accomplishment <br> Amt</th>
                                                     <th>Amount</th>
+                                                    <th>Taxable B4 Disc.</th>
                                                     <th>Dis %</th>
                                                     <th>Dis Amt</th>
                                                     <th>Taxable</th>
@@ -572,6 +573,7 @@
                                                     <td>{{obj.Weight_in_Pound}}</td>
                                                     <td>{{obj.Acompanish}}</td>
                                                     <td>{{obj.Amount}}</td>
+                                                    <td>{{obj.Amount_berore_Tax}}</td>
                                                     <td>{{obj.Max_Discount}}</td>
                                                     <td>{{obj.Dis_Amount}}</td>
                                                     <td>{{obj.Taxable}}</td>
@@ -976,6 +978,20 @@
                                          <span class="'fa fa-fw fa fa-upload" *ngIf="!col.uploadSpinner" ></span>
                                          Upload
                       </button></td>
+
+
+                      <!-- <td> 
+                        <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="pan" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" >
+                        </p-fileUpload>
+                        <a [href]="col.ProductPDFLink" *ngIf="col.PDFViewFlag" style="display: block;">
+                            <img [src]="col.ProductPDFLink" class='img-rounded pdf' style="width:100px; height:100px " alt="image">
+                        </a>
+                    </td>
+                    <td><button type="button" (click)="upload()" class="btn btn-primary">
+                        <p-progressSpinner *ngIf="col.uploadSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span class="'fa fa-fw fa fa-upload" *ngIf="!col.uploadSpinner" ></span>
+                                         Upload
+                      </button></td> -->
 
                 </tr>
             </tbody>
