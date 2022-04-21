@@ -83,6 +83,10 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   QuotationDocID = undefined;
   CustomerCreatePopup = false;
 
+  CustomercreateFormSubmitted = false;
+  Company_Name:any;
+  Address:any;
+
 
   constructor(
     private $http: HttpClient,
@@ -823,7 +827,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   CreateCustomer(){
     this.CustomerCreatePopup = true;
   }
-  SaveCustomer(){}
+  //SaveCustomer(){}
 
 }
 class SupportTicket{

@@ -303,9 +303,8 @@
     </div>
 </div>
 <!-- SHOW PREVIOUS CONTRACT -->
-<p-dialog header="Create Customer" [appendTo]="'body'" [(visible)]="CustomerCreatePopup" [closeOnEscape]="true" [modal]="true" [responsive]="true"  [style]="{ width: '60%', minWidth: '250px' }" style="text-align: center;" [minY]="60"
+<!-- <p-dialog header="Create Customer" [appendTo]="'body'" [(visible)]="CustomerCreatePopup" [closeOnEscape]="true" [modal]="true" [responsive]="true"  [style]="{ width: '60%', minWidth: '250px' }" style="text-align: center;" [minY]="60"
     >
-    <!-- <div class="clearfix"></div> -->
     <div class="form-horizontal">
         <form name="CustomercreateForm" #MfcreateForm="ngForm" novalidate>
             <div class="form-group" style="padding: 1em;">
@@ -321,14 +320,14 @@
             </h5>
                 <div class="col-sm-6">
                     <label class="control-label">Company Name<sup class="text-danger">*</sup></label>
-                    <input type="text" class="form-control" name="company" #company="ngModel" [(ngModel)]="ManufacturerName" placeholder="Manufacturer Name" [ngClass]="{
-          clearance: MfcreateFormSubmitted && name?.errors?.required
+                    <input type="text" class="form-control" name="company" #company="ngModel" [(ngModel)]="Company_Name" placeholder="Company Name" [ngClass]="{
+          clearance: CustomercreateFormSubmitted && company?.errors?.required
         }" required />
                 </div>
                 <div class="col-sm-6">
                     <label class="control-label">Address<sup class="text-danger">*</sup></label>
-                    <input type="text" class="form-control" name="address" #address="ngModel" [(ngModel)]="ManufacturerName" placeholder="Manufacturer Name" [ngClass]="{
-          clearance: MfcreateFormSubmitted && name?.errors?.required
+                    <input type="text" class="form-control" name="address" #address="ngModel" [(ngModel)]="Address" placeholder="Address" [ngClass]="{
+          clearance: CustomercreateFormSubmitted && address?.errors?.required
         }" required />
                 </div>
             </div>
@@ -353,4 +352,4 @@
 >&nbsp;Create
 </button>
     </p-footer>
-</p-dialog>
+</p-dialog> -->
