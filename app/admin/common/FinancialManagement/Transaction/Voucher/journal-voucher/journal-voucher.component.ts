@@ -135,9 +135,10 @@ export class JournalVoucherComponent implements OnInit {
 
   }
   Getledger() {
+    this.LedgerList = [];
     const obj = {
       "SP_String": "sp_Comm_Controller",
-      "Report_Name_String": "Get_Master_Accounting_Ledger_Dropdown",
+      "Report_Name_String": "Get_Master_Accounting_Ledger_Dropdown",   
       
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -157,6 +158,7 @@ export class JournalVoucherComponent implements OnInit {
   }
  getsubLedgertop(id,subID?){
   if(id){
+    this.SubLedgerList = [];
     const obj = {
       "SP_String": "sp_Comm_Controller",
       "Report_Name_String": "Get_Accounting_Sub_Ledger_Dropdown",
@@ -174,13 +176,17 @@ export class JournalVoucherComponent implements OnInit {
           });
          
         });
+        if(subID){
+          this.objjournal.Sub_Ledger_ID = undefined;
+          setTimeout(()=>{
+            this.objjournal.Sub_Ledger_ID = Number(subID);
+            console.log("fun sub",this.objjournal.Sub_Ledger_ID);
+          },900)
+        }
         
       
     })
-    if(subID){
-      this.objjournal.Sub_Ledger_ID = subID.toString();
-      console.log("fun sub",this.objjournal.Sub_Ledger_ID);
-    }
+    
   }
  
  }
@@ -384,6 +390,7 @@ EditJournal(col){
     this.VoucherNo = col.Voucher_No;
     this.objjournal = new journalTopper();
     this.lowerList = [];
+    this.SubLedgerList = [];
     this.totalDR = 0;
     this.totalCR= 0;
     this.journallowerFormSubmitted = false;
@@ -404,21 +411,16 @@ EditJournal(col){
    this.GlobalAPI.getData(obj).subscribe((res:any)=>{
      let data = JSON.parse(res[0].T_element);
      console.log("Edit Data",data);
-  
-     setTimeout(()=> {
-      this.objjournal = data[0];
-    }, 1000);
-    setTimeout(()=> {
-      this.getsubLedgertop(data[0].Ledger_ID,data[0].Sub_Ledger_ID);
-    }, 1000);
+     this.objjournal = data[0];
      this.lowerList = data[0].L_element;
+      this.getsubLedgertop(data[0].Ledger_ID,data[0].Sub_Ledger_ID);
      if(data[0].DR_Amt){
       this.objjournal.Amount = data[0].DR_Amt
-      this.objjournal.DrCrdata = "DR"
+      this.objjournal.DrCrdata = "DR";
     }
     else if (data[0].CR_Amt){
       this.objjournal.Amount = data[0].CR_Amt
-      this.objjournal.DrCrdata = "CR"
+      this.objjournal.DrCrdata = "CR";
     }
     else {
       console.error("Amount Not Found");
@@ -469,6 +471,7 @@ onConfirm(){
 }
 }
 class journalTopper{
+        Voucher_No:any
 	      Voucher_Type_ID:any;
 				Voucher_Date:any;
 				Ledger_ID:any;
