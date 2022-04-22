@@ -105,6 +105,9 @@ export class JournalVoucherComponent implements OnInit {
     this.VoucherNo = undefined;
     this.objjournal.Cost_Cen_ID_Trn = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.totalDR = undefined;
+    this.totalCR = undefined;
+
   }
  
   lowerAdd(valid){
@@ -227,7 +230,8 @@ export class JournalVoucherComponent implements OnInit {
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     // console.log(data);
-    this.costHeadList = data ;
+    this.costHeadList = data;
+    this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
     console.log("costHeadList",this.costHeadList);
    })
  }
@@ -319,6 +323,7 @@ saveJournal(valid){
       msg = "Update";
       report = "BL_Txn_Acc_Journal_Update"
       savedata = {
+        User_ID: Number(this.$CompacctAPI.CompacctCookies.User_ID),
         Voucher_No : this.VoucherNo,
         Voucher_Type_ID	: this.VoucherTypeID,
 				Voucher_Date: this.DateService.dateConvert(new Date(this.voucherdata)), 
@@ -341,6 +346,7 @@ saveJournal(valid){
       msg = "Create";
       report = "BL_Txn_Acc_Journal_Create";
       savedata = {
+        User_ID: Number(this.$CompacctAPI.CompacctCookies.User_ID),
         Voucher_Type_ID	: this.VoucherTypeID,
 				Voucher_Date: this.DateService.dateConvert(new Date(this.voucherdata)), 
 				Ledger_ID	: this.objjournal.Ledger_ID,
@@ -499,6 +505,7 @@ validchecklow(){
 }
 }
 class journalTopper{
+        User_ID:any;
         Voucher_No:any
 	      Voucher_Type_ID:any;
 				Voucher_Date:any;
