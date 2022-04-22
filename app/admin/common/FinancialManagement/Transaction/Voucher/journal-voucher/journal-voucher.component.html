@@ -169,7 +169,7 @@
                                                 <label class="control-label">Ledger &nbsp;<span class="text-danger">*</span></label>
                                                 <p-dropdown [options]="LedgerList" name="Ledger_ID" [(ngModel)]="objjournal.Ledger_ID"
                                                 [showClear]="true" [emptyFilterMessage]="' No Ledger Found'" (onChange)="getsubLedgertop(objjournal.Ledger_ID)"
-                                                [filter]="true" filterBy="label,value"
+                                                [filter]="true" filterBy="label,value" [resetFilterOnHide]="true"
                                                 [placeholder]="'Select Ledger'" [virtualScroll]="true" #Ledger_ID="ngModel"
                                                 [styleClass]="journalFormSubmitted && Ledger_ID.errors?.required ? 'clearance': ''" required>
                                             </p-dropdown>
@@ -178,7 +178,7 @@
                                                 <label class="control-label">Sub Ledger &nbsp;<span *ngIf = "SubLedgerList.length" class="text-danger">*</span></label>
                                                 <p-dropdown [options]="SubLedgerList" name="Sub_Ledger_ID" [(ngModel)]="objjournal.Sub_Ledger_ID"
                                                 [showClear]="true" [emptyFilterMessage]="' No Ledger Found'"
-                                                [filter]="true" filterBy="label,value.name"
+                                                [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                 [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Sub_Ledger_ID="ngModel"
                                                 [styleClass]="journalFormSubmitted && Sub_Ledger_ID.errors?.required  &&  validcheck()? 'clearance': ''" [required]="validcheck()">
                                             </p-dropdown>
@@ -312,7 +312,7 @@
                                                 <label class="control-label">Ledger &nbsp;<span class="text-danger">*</span></label>
                                                 <p-dropdown [options]="LedgerList" name="Ledger_ID_lower" [(ngModel)]="objjournalloweer.Ledger_ID"
                                                 [showClear]="true" [emptyFilterMessage]="' No Ledger Found'" (onChange)="getsubLedger(objjournalloweer.Ledger_ID)"
-                                                [filter]="true" filterBy="label,value.name"
+                                                [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                 [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Ledger_ID_lower="ngModel"
                                                 [styleClass]="journallowerFormSubmitted && Ledger_ID_lower.errors?.required ? 'clearance': ''" required>
                                             </p-dropdown>
@@ -321,7 +321,7 @@
                                                 <label class="control-label">Sub Ledger &nbsp;<span *ngIf = "SubLedgerListlow.length" class="text-danger">*</span></label>
                                                 <p-dropdown [options]="SubLedgerListlow" name="Sub_Ledger_ID_Lower" [(ngModel)]="objjournalloweer.Sub_Ledger_ID"
                                                 [showClear]="true" [emptyFilterMessage]="' No Ledger Found'" 
-                                                [filter]="true" filterBy="label,value.name"
+                                                [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                 [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Sub_Ledger_ID_Lower="ngModel"
                                                 [styleClass]="journallowerFormSubmitted && Sub_Ledger_ID_Lower.errors?.required && validchecklow()? 'clearance': ''" [required] = "validchecklow()">
                                             </p-dropdown>
