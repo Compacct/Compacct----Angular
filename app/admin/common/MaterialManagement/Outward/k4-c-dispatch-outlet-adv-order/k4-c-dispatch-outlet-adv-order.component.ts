@@ -102,6 +102,10 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   view_Doc_No = undefined;
   view_Doc_date = undefined;
   view_Order_No = undefined;
+  flagbox = false;
+
+  Cancle_Remarks : string;
+  remarksFormSubmitted = false;
 
   constructor(
     private $http: HttpClient,
@@ -359,7 +363,10 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       this.ngxService.start();
           this.saveData = [];
              this.productDetails.forEach(el=>{
-               if(el.Delivery_Qty && Number(el.Delivery_Qty) !== 0 ){
+               if(Number(el.Delivery_Qty) && Number(el.Delivery_Qty) !== 0 ){
+                 if(el.Franchise === 'Y') {//(Number(el.Box_Charge) || Number(el.Box_Charge) === 0)) {
+                this.flagbox = false;
+                   if(el.Box_Charge) {
                const saveObj = {
                  Doc_No: "A",
                  Doc_Date: el.Doc_Date,
@@ -379,13 +386,44 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                  Vehicle_Details : el.Vehicle_Details,
                  Adv_Order_No : el.Adv_Order_No,
                  Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
-                 Box_Charge : el.Box_Charge ? el.Box_Charge : 0,
+                 Box_Charge : el.Box_Charge, //? el.Box_Charge : 0,
                  Box_Charge_Remarks : el.Box_Charge_Remarks,
                  Order_Cost_Centre_ID : el.Order_Cost_Centre_ID
                }
                this.saveData.push(saveObj)
               }
-             })
+              else {
+                  this.flagbox = true;
+                   }
+                  }
+                   else {
+                    const saveObj = {
+                      Doc_No: "A",
+                      Doc_Date: el.Doc_Date,
+                      F_Cost_Cen_ID: el.F_Cost_Cen_ID,
+                      F_Godown_ID: el.F_Godown_ID,
+                      To_Cost_Cen_ID: el.To_Cost_Cen_ID,
+                      To_Godown_ID: el.To_Godown_ID,
+                      Batch_No : el.Batch_NO,
+                      Product_ID: el.Product_ID,
+                      Qty: el.Delivery_Qty,
+                      Accepted_Qty : el.Delivery_Qty,
+                      Rate: 0,
+                      UOM: el.UOM,
+                      User_ID: el.User_ID,
+                      REMARKS: el.REMARKS,
+                      Fin_Year_ID: el.Fin_Year_ID,
+                      Vehicle_Details : el.Vehicle_Details,
+                      Adv_Order_No : el.Adv_Order_No,
+                      Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
+                      Box_Charge : el.Box_Charge ? el.Box_Charge : 0,
+                      Box_Charge_Remarks : el.Box_Charge_Remarks,
+                      Order_Cost_Centre_ID : el.Order_Cost_Centre_ID
+                    }
+                    this.saveData.push(saveObj)
+                   }
+                   }
+            })
              if(this.saveData.length){
               const obj = {
                 "SP_String": "SP_Production_Voucher",
@@ -449,6 +487,54 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                   });
             }
         }
+// saveboxcharge(){
+  // this.flagbox = false;
+  // for(let i = 0; i < this.productDetails.length ; i++){
+  //  if(!this.productDetails[i].Delivery_Qty && this.productDetails[i].Franchise === "N" && !this.productDetails[i].Box_Charge) {
+  //   this.flagbox = false;
+  //       return true;
+  //     }
+  //     else {
+  //       this.flagbox = true;
+  //       this.compacctToast.clear();
+  //            this.compacctToast.add({
+  //                key: "compacct-toast",
+  //                severity: "error",
+  //                summary: "Warn Message",
+  //                detail: "Box Charge is null "
+  //              });
+
+  //            }
+  // }
+//    this.flagbox = true;
+//  for(let i = 0; i < this.productDetails.length ; i++){
+//   if(this.productDetails[i].Franchise === "N") {
+//     this.flagbox = false;
+//     break;
+//   }
+//  }
+//  console.log('this.flagbox',this.flagbox)
+//  return this.flagbox;
+
+//  this.flagbox = false;
+//     console.log("col",col);
+//     if(col.Franchise === "N"){
+//         this.flagbox = false;
+//         return true;
+//       }
+//       else {
+//         this.flagbox = true;
+//         this.compacctToast.clear();
+//              this.compacctToast.add({
+//                  key: "compacct-toast",
+//                  severity: "error",
+//                  summary: "Warn Message",
+//                  detail: "Box Charge is null "
+//                });
+
+//              }
+//     }
+// }
   qtyChq(col){
     this.flag = false;
     console.log("col",col);
@@ -763,6 +849,54 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
 
   })
   }
+  UpdateBox (viewobj){
+    if(viewobj.Txn_ID && viewobj.Box_Charge) {
+      const tempObj = {
+        Txn_ID : viewobj.Txn_ID,
+        Doc_No : viewobj.Doc_No,
+        Adv_Order_No : viewobj.Adv_Order_No,
+        Box_Charge : viewobj.Box_Charge,
+        Box_Charge_Remarks : viewobj.Box_Charge_Remarks
+      }
+     const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Update_Box_Charge_In_Custom_Order",
+      "Json_Param_String": JSON.stringify([tempObj])
+     }
+     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           // console.log(data);
+            if(data[0].Column1 === "Done") {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                //summary: 'SKU ID : ' + obj.Product_ID,
+                detail: "Succesfully Updated ! Need to Regenerate this bill once."
+              });
+              this.searchData();
+              //this.dataforregeneratingbill(true);
+              //this.GetViewData(true);
+            }else{
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Error",
+                detail: "Error Occured"
+              });
+            }
+      });
+    }
+    if(!viewobj.Box_Charge){
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Please Enter Box Charge"
+      });
+    }
+  }
   GetDist1() {
     let DOrderBy = [];
     this.OutletFilter = [];
@@ -836,6 +970,8 @@ PrintOrder(obj) {
   //editmaster(col){}
   deleteAdvDispatch(masterProduct){
     console.log("deleteCol",masterProduct)
+    this.Cancle_Remarks = undefined;
+    this.remarksFormSubmitted = false;
     this.doc_no = undefined;
     this.salebillno = undefined;
     if (masterProduct.Doc_No) {
@@ -852,23 +988,27 @@ PrintOrder(obj) {
      });
    }
    }
-   onConfirm(){
-    if(this.doc_no){
-      const TempObj = {
+   onConfirm(valid){
+     //this.Can_Remarks = true;
+    this.remarksFormSubmitted = true;
+    // if(this.Doc_No){
+       const Tempdata = {
         Doc_No : this.doc_no,
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
         Doc_Date : this.doc_date,
-        Sale_Bill_No : this.salebillno
-      }
-      const obj = {
+        Sale_Bill_No : this.salebillno,
+        Remarks : this.Cancle_Remarks
+       }
+       if (valid) {
+       const objj = {
         "SP_String": "SP_Production_Voucher",
         "Report_Name_String": "Delete Custom Distribution Challan",
-        "Json_Param_String": JSON.stringify([TempObj])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log("del Data===", data[0].Column1)
+        "Json_Param_String": JSON.stringify([Tempdata])
+       }
+       this.GlobalAPI.getData(objj).subscribe((data:any)=>{
          if (data[0].Column1 === "Done"){
-           this.onReject();
+           //this.onReject();
+           this.remarksFormSubmitted = false;
            this.searchData();
            this.compacctToast.clear();
            this.compacctToast.add({
@@ -878,9 +1018,18 @@ PrintOrder(obj) {
              detail: "Succesfully Deleted"
            });
            this.clearData();
-         }
-       })
-    }
+     }
+     else {
+       this.compacctToast.clear();
+       this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Error Occured "
+       });
+     }
+     })
+     }
   }
   onReject(){
     this.compacctToast.clear("c");

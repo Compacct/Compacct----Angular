@@ -7,9 +7,15 @@
             <p>{{message.detail}}</p>
         </div>
 
+        <form name="remarksForm" #remarksForm="ngForm" novalidate>
+            <div style="text-align: center">
+                <label class="control-label">Remarks <sup class="text-danger">*</sup></label>
+                <input class="form-control" name="remark" #remark="ngModel" [(ngModel)]="Cancle_Remarks" [ngClass]="{'clearance':remarksFormSubmitted && remark?.errors?.required}" required>
+            </div>
+        </form>
         <div class="ui-g ui-fluid">
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onConfirm(remarksForm.form.valid)" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -264,7 +270,7 @@
                                             <td>{{col.Batch_NO}}</td>
                                             <td>{{col.Qty}}</td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge' [ngClass]="{'clearance' : flagbox}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" /></td>
                                         </tr>
                                     </ng-template>
@@ -327,7 +333,7 @@
                 </div>
 
             </ng-template>
-            <ng-template pTemplate="header">
+            <ng-template pTemplate="header" >
                 <tr>
                     <th>Order No</th>
                     <th>Cost Centre</th>
@@ -339,6 +345,9 @@
                     <th>Amount Payable</th>
                     <th>Total Paid</th>
                     <th>Net Due</th>
+                    <th >Box Charge</th>
+                    <th >Box Remarks</th>
+                    <th >Action</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col let-i="rowIndex">
@@ -353,6 +362,14 @@
                     <td>{{col.Amount_Payable}}</td>
                     <td>{{col.Total_Paid}}</td>
                     <td>{{col.Net_Due}}</td>
+                    <td *ngIf="col.Franchise == 'Y'"><input type="text" [name]="col.Txn_ID" [(ngModel)]='col.Box_Charge' [ngClass]="{'clearance' : flagbox}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                    <td *ngIf="col.Franchise == 'Y'"><input type="text" [name]="col.Txn_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" /></td>
+                    <td *ngIf="col.Franchise == 'Y'">
+                        <button class="btn btn-primary custombtn" (click)='UpdateBox(col)' type="button" [id]="col.Txn_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                            Update
+                        </button>
+                        <!-- <button type="text" [id]="'RowID'+col.Product_ID" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" > Update </button> -->
+                    </td>
 
                 </tr>
             </ng-template>
