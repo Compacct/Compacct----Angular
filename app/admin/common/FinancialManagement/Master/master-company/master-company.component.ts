@@ -88,6 +88,7 @@ export class MasterCompanyComponent implements OnInit {
       console.log("CountryList",this.CountryList); 
     });
   }
+  onReject(){}
 }
 class company{
   Company_Name:any;

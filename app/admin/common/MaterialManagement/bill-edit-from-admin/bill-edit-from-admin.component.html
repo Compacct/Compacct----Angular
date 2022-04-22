@@ -315,6 +315,7 @@
                                                     <th>Batch No</th>
                                                     <th>Rate</th>
                                                     <th>Amount</th>
+                                                    <th>Taxable B4 Disc.</th>
                                                     <th *ngIf="editList">Delivery Charge</th>
                                                     <th>Dis %</th>
                                                     <th>Dis Amt</th>
@@ -372,6 +373,7 @@
                                                     <td>{{obj.Batch_No}}</td>
                                                     <td>{{obj.Net_Price}}</td>
                                                     <td>{{obj.Amount}}</td>
+                                                    <td>{{obj.Amount_berore_Tax}}</td>
                                                     <td *ngIf='editList'>{{obj.Delivery_Charge}}</td>
                                                     <td>{{obj.Max_Discount}}</td>
                                                     <td>{{obj.Dis_Amount}}</td>

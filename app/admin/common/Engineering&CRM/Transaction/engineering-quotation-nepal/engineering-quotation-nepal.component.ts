@@ -80,6 +80,13 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   Browse_Sub_Ledger_ID : any;
   SearchFormSubmitted = false;
 
+  QuotationDocID = undefined;
+  CustomerCreatePopup = false;
+
+  CustomercreateFormSubmitted = false;
+  Company_Name:any;
+  Address:any;
+
 
   constructor(
     private $http: HttpClient,
@@ -267,7 +274,8 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       this.ObjEnginnerQuoation.Location_Name = TempArr.length ? TempArr[0].Location_Name : undefined;
       //this.ObjEnginnerQuoation.Quotation_Date = this.QuoationDate;
       //this.ObjEnginnerQuoation.Quotation_Date = this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.QuoationDate))
-      this.ObjEnginnerQuoation.Quotation_Doc_ID = "A";
+      // this.ObjEnginnerQuoation.Spare_Parts_Product_ID = this.ObjEnginnerQuoation.Quotation_Type != 'Spare'
+      this.ObjEnginnerQuoation.Quotation_Doc_ID = Number(this.QuotationDocID) ? Number(this.QuotationDocID) : 0;
     if(valid) {
       this.EnginnerQuoationMachineFormSubmitted = false;
       this.EngQuoationProductList.push(this.ObjEnginnerQuoation);
@@ -344,14 +352,11 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+    this.QuotationDocID = undefined;
   }
   clearData() {
     this.Spinner = false;
-    this.ObjSupportTicket = new SupportTicket();
-    this.SupportTicketDate = this.CurrentDateNepal;
-    this.ExpectedcompletionDate = this.CurrentDateNepal;
-    this.SupportStartDate = this.CurrentDateNepal;
-    this.SupportEndDate = this.CurrentDateNepal;
+   
     this.MfList = [];
     this.MachineList = [];
     this.LoctionList = [];
@@ -371,6 +376,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.SparePartsList = [];
     this.EnginnerQuoationFormSubmit = false; 
     this.EnginnerQuoationFormSubmitted = false;
+    this.EnginnerQuoationMachineFormSubmitted = false;
   }
   GetCallType(){
     //  console.log("StatusList ===", this.StatusList)
@@ -644,45 +650,6 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     //     }
     //   })
     // // } else {
-    //   this.EnginnerQuoationFormSubmit = true;
-    //   this.Spinner = true;
-    //   if (valid) {
-    //     let arr =[]
-    // if(this.EngQuoationProductList.length) {
-    //   this.EngQuoationProductList.forEach(el => {
-    //       // const Dobj = {
-          //   Symptom_ID : el
-          //   }
-            // arr.push({...this.ObjEnginnerQuoation,...this.EngQuoationProductList})
-            // console.log('save',arr)
-        // }
-
-    // });
-      // console.log("Table Data ===", Rarr)
-      // return Rarr.length ? JSON.stringify(Rarr) : '';
-  //  }
-       // const d1 = new NepaliDate(this.SupportTicketDate.year, this.SupportTicketDate.month, this.SupportTicketDate.day);
-        // const TempObj = {
-        //   Doc_No: 'A',
-        //   Cost_Cent_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-        //   Support_Ticket_Status: 'PENDING',
-         // Support_Ticket_Date: this.DateService.dateConvert(d1.getEnglishDate()),
-        //  Support_Ticket_Date_Nepali: d1.format('dd-mm-yyyy'),
-        //   Support_Ticket_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportTicketDate)),
-        //   Support_Ticket_Date_Nepali: this.SupportTicketDate,
-        //   Expected_Completion_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ExpectedcompletionDate)),
-        //   Support_Start_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportStartDate)),
-        //   Support_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportEndDate)),
-        //   Call_Type: this.ObjSupportTicket.Call_Type,
-        //   Sub_Ledger_ID: this.ObjSupportTicket.Customer_Name,
-        //   Location_ID: this.ObjSupportTicket.Location,
-        //   Product_Mfg_Comp_ID: this.ObjSupportTicket.Machine_Manufacturer,
-        //   Product_ID: this.ObjSupportTicket.Machine,
-        //   Serial_No: this.ObjSupportTicket.Serial_No,
-        //   Engineer_User_ID: this.ObjSupportTicket.Assigned_Engineer,
-        //   Contract_Status: this.ObjSupportTicket.Contract_Status,
-        //   Remarks: this.ObjSupportTicket.Remarks
-        // }
       this.EnginnerQuoationFormSubmit = true;
       this.Spinner = true;
      if (this.ObjEnginnerQuoation.Quotation_Type && this.ObjEnginnerQuoation.Quotation_To_Company) {
@@ -694,23 +661,23 @@ export class EngineeringQuotationNepalComponent implements OnInit {
         }
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
           console.log(data);
-          var msg = data[0].Column1;
+          //var msg = data[0].Column1;
           if (data[0].Column1) {
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
               severity: "success",
-              summary: "Installed Machine",
-              detail: msg != "Already Exists" ? "Succesfully Saved" : "Already Exists"
+              summary: "Engineering Quotation",
+              detail: this.buttonname != "Save" ? "Succesfully Updated" : "Succesfully Saved"
             });
-            // if (msg != "Already Exists") {
               this.clearData();
-            // }
-            // this.ServiceContractFormSubmit = false;
-            this.Spinner = false;
-            // this.ObjServiceContract = new ServiceContract();
-            // this.MachineList = [];
-            // this.LoctionList = [];
+              this.GetSearchedList(true)
+              this.Spinner = false;
+              if (this.buttonname != "Save"){
+                this.clearData();
+                this.tabIndexToView = 0;
+                this.GetSearchedList(true);
+              }
 
           } else {
             this.Spinner = false;
@@ -774,9 +741,93 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       })
     }
   }
-  Edit(){}
+  Edit(rowdata){
+    this.QuotationDocID = undefined;
+    this.clearData();
+    if (rowdata.Quotation_Doc_ID) {
+      console.log('Quotation_Doc_ID',rowdata.Quotation_Doc_ID)
+      this.QuotationDocID = rowdata.Quotation_Doc_ID
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE"];
+      this.buttonname = "Update";
+      this.clearData();
+      this.GetEdit(this.QuotationDocID);
+    }
+  }
+  GetEdit(rowdata){
+    this.EditList = [];
+    const obj = {
+      "SP_String": "SP_Quotation_Master",
+      "Report_Name_String": "Retrieve_Quotation",
+      "Json_Param_String": JSON.stringify([{Quotation_Doc_ID  : this.QuotationDocID}])
+  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.EditList = data;
+      this.ObjEnginnerQuoation.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+      this.GetLocation();
+      this.ObjEnginnerQuoation.Quotation_Type = data[0].Quotation_Type;
+      this.ObjEnginnerQuoation.Quotation_To_Company = data[0].Quotation_To_Company;
+
+      data.forEach(element => {
+        const  QuotObj = {
+            Sub_Ledger_ID : element.Sub_Ledger_ID,
+            Quotation_Type : element.Quotation_Type,
+            Quotation_To_Company : element.Quotation_To_Company,
+            Location_ID : element.Location_ID,
+            Location_Name : element.Location_Name,
+            Product_Mfg_Comp_ID : element.Product_Mfg_Comp_ID,
+            Mfg_Company : element.Mfg_Company,
+            Product_ID : element.Product_ID,
+            Machine :  element.Machine,
+            Spare_Parts_Product_ID : element.Spare_Parts_Product_ID,
+            Spare_Part_Description : element.Spare_Part_Description,
+            Qty : element.Qty,
+            Rate : element.Rate,
+            Total_Amount : element.Total_Amount,
+            Discount : element.Discount,
+            Discount_Type : element.Discount_Type,
+            Discount_Amount : element.Discount_Amount,
+            Taxable_Amount : element.Taxable_Amount,
+            VAT : element.VAT,
+            Net_Amt : element.Taxable_Amount,
+            Quotation_Doc_ID : element.Quotation_Doc_ID
+          };
+    
+          this.EngQuoationProductList.push(QuotObj);
+        });
+      // const editDataList = data[0];
+      // this.ObjEnginnerQuoation = editDataList;
+      // this.EngQuoationProductList.push(this.ObjEnginnerQuoation);
+      // const PrevObj = {...this.ObjEnginnerQuoation};
+      // this.ObjEnginnerQuoation = new EnginnerQuoation();
+      // console.log('edit this.EngQuoationProductList',this.EngQuoationProductList)
+      //const PrevObj = {...this.ObjEnginnerQuoation};
+      //  this.ObjMachineMaster.Product_Model = data[0].Product_Code;
+       //this.myDate = data[0].Date;
+      //  this.ObjMachineMaster.Product_Description = data[0].Product_Description;
+      //  this.ObjMachineMaster.Manufacturer = data[0].Product_Mfg_Comp_ID;
+      //  this.GetManufacturer();
+      // console.log("this.editList  ===",this.editList);
+
+      // const editDataList = data[0];
+      // this.ObjmasterProduct = editDataList;
+      // this.ProductTypeChange(editDataList.Product_Type_ID);
+      // this.ObjmasterProduct.Product_Sub_Type_ID = editDataList.Product_Sub_Type_ID;
+      // console.log("ObjmasterProduct ===",this.ObjmasterProduct);
+      // this.ObjmasterProduct.Product_ID = product_id;
+      // console.log("this.ObjmasterProduct.Product_ID",this.ObjmasterProduct.Product_ID);
+  
+  })
+  }
   onConfirm(){}
   onReject(){}
+
+  // Customer Creation
+  CreateCustomer(){
+    this.CustomerCreatePopup = true;
+  }
+  //SaveCustomer(){}
 
 }
 class SupportTicket{
@@ -799,7 +850,7 @@ class Browse{
 }
 class EnginnerQuoation{
   Quotation_ID:string;
-  Quotation_Doc_ID:"A"
+  Quotation_Doc_ID:Number;
   Sub_Ledger_ID:string;
   Quotation_Date:any;
   Quotation_Type:string;

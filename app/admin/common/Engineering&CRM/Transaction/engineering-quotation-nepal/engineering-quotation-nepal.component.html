@@ -72,17 +72,17 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th style="width:5em">Action</th>
                                             <th>Customer Name</th>
                                             <th>Quotation Type</th>
                                             <th>Quotation To Company</th>
-                                            <th>Taxable Amount</th>
+                                            <th>Total Taxable Amount</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
 
-                                            <!-- <td>
+                                            <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                                 <i class="fa fa-fw fa-bars"></i>
@@ -96,11 +96,11 @@
                                                         </li>
                                                     </ul>
                                                 </div>
-                                            </td> -->
+                                            </td>
                                             <td>{{col.Sub_Ledger_Name}}</td>
                                             <td>{{col.Quotation_Type}}</td>
                                             <td>{{col.Quotation_To_Company}}</td>
-                                            <td>{{col.Taxable_Amount}}</td>
+                                            <td>{{col.Total_Taxable_Amount}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -115,6 +115,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Customer&nbsp;<span class="text-danger">*</span></label>
+                                        <span (click)="CreateCustomer()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                         <p-dropdown [options]="CustomerList" name="Customer" [(ngModel)]="ObjEnginnerQuoation.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                             [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #Customer="ngModel" [disabled]="EngQuoationProductList.length" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Customer.errors?.required ? 'clearance' :''"
                                             [required]="true">
@@ -135,7 +136,7 @@
                                     </div> -->
                                     <div class="col-sm-3">
                                         <label class="control-label">Quotation Type<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="quotype" #quotype="ngModel" [(ngModel)]="ObjEnginnerQuoation.Quotation_Type" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && quotype.errors?.required}" required>
+                                        <select class="form-control" name="quotype" #quotype="ngModel" [disabled]="EngQuoationProductList.length" [(ngModel)]="ObjEnginnerQuoation.Quotation_Type" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && quotype.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                               <option  value="Machine">Machine</option>
                                                               <option  value="Spare">Spare</option>
@@ -145,7 +146,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Quotation To Company<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="quotocmpny" #quotocmpny="ngModel" [(ngModel)]="ObjEnginnerQuoation.Quotation_To_Company" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && quotocmpny.errors?.required}" required>
+                                        <select class="form-control" name="quotocmpny" #quotocmpny="ngModel" [disabled]="EngQuoationProductList.length" [(ngModel)]="ObjEnginnerQuoation.Quotation_To_Company" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && quotocmpny.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                               <option  value="Trishul Trade Links">Trishul Trade Links</option>
                                                               <option  value="S.G. Nepal Pvt. Ltd.">S.G. Nepal Pvt. Ltd.</option>
@@ -182,8 +183,8 @@
                                     </div>
                                     <div class="col-sm-4" style="margin-top: -2px;">
                                         <label class="control-label">Spare Parts&nbsp;<span class="text-danger">*</span></label>
-                                        <p-dropdown [options]="SparePartsList" name="Spare" [(ngModel)]="ObjEnginnerQuoation.Spare_Parts_Product_ID" [showClear]="true" (onChange)="SparePartChange()" [emptyFilterMessage]="'No Spare Parts Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                            [placeholder]="'Select Spare Parts'" [virtualScroll]="true" itemSize="30" #Spare="ngModel" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Spare.errors?.required ? 'clearance' :''" [required]="true">
+                                        <p-dropdown [options]="SparePartsList" name="Spare" [(ngModel)]="ObjEnginnerQuoation.Spare_Parts_Product_ID" [disabled]="ObjEnginnerQuoation.Quotation_Type != 'Spare'" [showClear]="true" (onChange)="SparePartChange()" [emptyFilterMessage]="'No Spare Parts Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                            [placeholder]="'Select Spare Parts'" [virtualScroll]="true" itemSize="30" #Spare="ngModel" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Spare.errors?.required ? 'clearance' :''" [required]="ObjEnginnerQuoation.Quotation_Type != 'Spare'">
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-2">
@@ -302,55 +303,53 @@
     </div>
 </div>
 <!-- SHOW PREVIOUS CONTRACT -->
-<p-dialog header="Contract Details" [appendTo]="'body'" [visible]="PreviousContractPopup" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '300px' }" style="text-align: center;" [minY]="80"
-    [maximizable]="true" [baseZIndex]="10000">
-    <!-- <div class="clearfix"></div> -->
-    <div class="table-responsive no-padding">
-        <p-table [value]="previouscontractList" [globalFilterFields]='["Sub_Ledger_Name","Location_Name","Mfg_Company","Machine","Serial_No","Service_Type","Service_Start_Date","Service_End_Date","Payment_Status","Payment_Date"]' [rowHover]="true" [autoLayout]="true"
-            #dt3>
-            <ng-template pTemplate="caption">
-                <div class="row">
-                    <div class="col-sm-3 pull-right" style="text-align: right">
-                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                    </div>
+<!-- <p-dialog header="Create Customer" [appendTo]="'body'" [(visible)]="CustomerCreatePopup" [closeOnEscape]="true" [modal]="true" [responsive]="true"  [style]="{ width: '60%', minWidth: '250px' }" style="text-align: center;" [minY]="60"
+    >
+    <div class="form-horizontal">
+        <form name="CustomercreateForm" #MfcreateForm="ngForm" novalidate>
+            <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: 15px;
+                ">
+                <i class="fa fa-fw fa-fax">
+                </i> &nbsp;<strong>Tender Information :</strong>
+            </h5>
+                <div class="col-sm-6">
+                    <label class="control-label">Company Name<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" name="company" #company="ngModel" [(ngModel)]="Company_Name" placeholder="Company Name" [ngClass]="{
+          clearance: CustomercreateFormSubmitted && company?.errors?.required
+        }" required />
                 </div>
+                <div class="col-sm-6">
+                    <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" name="address" #address="ngModel" [(ngModel)]="Address" placeholder="Address" [ngClass]="{
+          clearance: CustomercreateFormSubmitted && address?.errors?.required
+        }" required />
+                </div>
+            </div>
 
-            </ng-template>
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Customer Name</th>
-                    <th>Location</th>
-                    <th>Manufacturer</th>
-                    <th>Machine</th>
-                    <th>Serial No</th>
-                    <th>Type of Service</th>
-                    <th>Service Start Date</th>
-                    <th>Service End Date</th>
-                    <th>Payment Status</th>
-                    <th>Payment Date</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
-                <tr>
-
-                    <td>{{col.Sub_Ledger_Name}}</td>
-                    <td>{{col.Location_Name}}</td>
-                    <td>{{col.Mfg_Company}}</td>
-                    <td>{{col.Machine}}</td>
-                    <td>{{col.Serial_No}}</td>
-                    <td>{{col.Service_Type}}</td>
-                    <td>{{col.Service_Start_Date | date : 'dd/MMM/yyyy'}}</td>
-                    <td>{{col.Service_End_Date | date : 'dd/MMM/yyyy'}}</td>
-                    <td>{{col.Payment_Status}}</td>
-                    <td>{{col.Payment_Date | date : 'dd/MMM/yyyy'}}</td>
-
-                </tr>
-            </ng-template>
-        </p-table>
+        </form>
     </div>
     <p-footer>
-        <button type="button" (click)="PreviousContractPopup = false" class="btn btn-default">
-                                  CLOSE
-                                </button>
+        <button type="button" (click)="CustomerCreatePopup = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="SaveCustomer(CustomercreateForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;Create
+</button>
     </p-footer>
-</p-dialog>
+</p-dialog> -->
