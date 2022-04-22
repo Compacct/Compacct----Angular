@@ -195,6 +195,7 @@ import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/a
 import { MasterCompanyComponent } from "./common/FinancialManagement/Master/master-company/master-company.component";
 import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
 import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
+import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 
 
 const layoutRoutes: Routes = [{
@@ -1408,6 +1409,14 @@ const layoutRoutes: Routes = [{
   component: JournalVoucherComponent,
   data: {
     title: 'journal'
+
+  }
+  },
+  {
+  path: 'Product_Category_Update',
+  component: K4cProductCategoryUpdateComponent,
+  data: {
+    title: 'Product_Category_Update'
 
   }
 }
