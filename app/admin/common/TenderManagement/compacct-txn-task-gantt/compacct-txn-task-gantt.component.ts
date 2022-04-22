@@ -721,6 +721,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.ObjTask.Waitage_Value = undefined;
   }
   DependencyRequiredChange(){
+    this.PlanedProductFormSubmit = false;
     this.ObjTask.Dependency_Job_ID = undefined;
     this.ObjTask.Dependency_Relationship = undefined;
   }
@@ -920,7 +921,8 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   //  ADD TASK
   AddTask(valid) {
     this.TaskSubmitted = true;
-    if (valid && this.CheckTaskValid()) {
+    const checkBOM = this.ObjTask.BOM === 'Y' ? (this.AddedPlanedProductList.length) : true;
+    if (valid && this.CheckTaskValid() && checkBOM) {
       this.TaskSubmitSpinner = true;
       this.ObjTask.Planned_Start_Date = this.DateService.dateConvert(new Date(this.TaskStartDate));
       const endDate = this.AddDaysToDate(this.TaskStartDate, this.ObjTask.No_Of_Days)
@@ -946,6 +948,15 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       // this.TaskEndtDate = new Date();
       this.SaveTask(JSONobj);
       
+    }
+    if(!checkBOM){
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "warn",
+        summary: "Validation",
+        detail: "BOM Required."
+      });
     }
   }
   DeleteTask(k) {
@@ -1124,7 +1135,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     if (this.ObjProdPlan.Type_Of_Product) {
       const obj = {
         "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
-        "Report_Name_String": "Get_Product_With_Material_Type",
+        "Report_Name_String": "Get_Product_With_Material_Type_BOM",
         "Json_Param_String": JSON.stringify([this.ObjProdPlan])
       }
       this.GlobalAPI
@@ -1162,6 +1173,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data[0].Column1) {
+          this.PlanedProductFormSubmit = false;
           this.GetBOM();
           this.ObjProdPlan = new ProdPlan();
           this.ObjProdPlan.Project_ID = obj2.Project_ID;

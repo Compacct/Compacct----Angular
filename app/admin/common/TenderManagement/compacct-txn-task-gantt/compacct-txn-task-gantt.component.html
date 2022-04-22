@@ -106,7 +106,8 @@
               </e-columns>
               <ng-template #tooltipSettingsTaskbar let-data>
                 <div> <ng-container>
-                  Job Name : <b>{{data.Task_Name}}</b>
+                  Task Name : <b>{{data.Task_Name}}</b>
+                  <div>Job Name : <b>{{data.Job_Name}}</b></div> 
                   <div>Expected start date: <b>{{data.Task_Start_Date | date :'dd/MMM/yyyy'}}</b> </div>
                   <div>Remarks : <b>{{data.Remarks}}</b> </div>
                   <div>No Of Days : <b>{{data.No_Of_Days}}</b> </div>
@@ -634,14 +635,10 @@
                        [required]="true">
                     </p-dropdown>
                   </div>
-                  <div class="col-sm-2">
-                    <button class="btn btn-primary custombutton" 
-                      (click)="AddTask(TaskModalUpdate.form.valid)" [disabled]="TaskSubmitSpinner">
-                      <p-progressSpinner *ngIf="TaskSubmitSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
-                        animationDuration=".5s"></p-progressSpinner>
-                      <i class="fa fa-fw fa-plus"></i>&nbsp;ADD</button>
-                  </div>
                 </div>
+              </fieldset>
+            </form>
+            <form name="TaskModalUpdate" *ngIf="ObjTask.BOM === 'Y' && ObjProdPlan.Budget_Group_ID && ObjTask.Job_ID" #TaskModalUpdate="ngForm" novalidate>
                 <div class="form-group" 
                   style="margin-top: 2em; background: rgba(128, 128, 128, 0.13);"
                   *ngIf="ObjTask.BOM === 'Y' && ObjProdPlan.Budget_Group_ID && ObjTask.Job_ID">
@@ -654,7 +651,7 @@
                   <i class="fa fa-fw fa-fax">
                   </i> &nbsp;<strong>BOM Product Details :</strong>
               </h5>
-                  <div class="col-sm-4">
+                  <div class="col-sm-3">
                     <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
                         <select class="form-control"
                             name="Type_Of_Product"
@@ -687,11 +684,11 @@
                         [ngClass]="{'clearance': PlanedProductFormSubmit && Qty?.errors?.required}" placeholder="Qty"
                         [required]="true" />
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-3">
                         <button (click)="SaveProductPlanForm()" class="btn btn-primary custombutton" [disabled]="PlanedProductSpinner">
                           <p-progressSpinner *ngIf="PlanedProductSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
                             animationDuration=".5s"></p-progressSpinner>
-                          <i class="fa fa-plus"></i>&nbsp;ADD
+                          <i class="fa fa-plus"></i>&nbsp;Add to TASK Bom
                         </button>
                     </div>
                     <div class="col-sm-12">
@@ -721,6 +718,14 @@
                     </div>
                     
                 </div>
+            </form>
+            <div class="box-footer">
+              <button class="btn btn-warning custombutton" 
+                (click)="AddTask(TaskModalUpdate.form.valid)" [disabled]="TaskSubmitSpinner">
+                <p-progressSpinner *ngIf="TaskSubmitSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                  animationDuration=".5s"></p-progressSpinner>
+                <i class="fa fa-fw fa-plus"></i>&nbsp;Save Project Task</button>
+            </div>
                 <div class="table-responsive no-padding" style="margin-top:2.5em">
                   <table class="table table-bordered">
                     <thead>
@@ -767,8 +772,6 @@
                     </tbody>
                   </table>
                 </div>
-              </fieldset>
-            </form>
           </div>
         </div>
       </div>
