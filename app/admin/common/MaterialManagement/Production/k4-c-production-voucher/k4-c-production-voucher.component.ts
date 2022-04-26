@@ -8,7 +8,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
 declare var $: any;
 import * as moment from "moment";
 import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
-import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
+import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service"; 
 
 @Component({
   selector: 'app-k4-c-production-voucher',
@@ -44,6 +44,13 @@ export class K4CProductionVoucherComponent implements OnInit {
   shiftList = [];
   Objproduction : production = new production ();
   ObjBrowse : Browse = new Browse ();
+  PDFFile:any={};
+  PDFViewFlag = false;
+  PDFFlag = false;
+  ProductPDFFile:any = {};
+  ProductPDFLink = undefined;
+  @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
+  uploadSpinner = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -78,6 +85,31 @@ export class K4CProductionVoucherComponent implements OnInit {
     this.buttonname = "Create";
     this.clearData();
   }
+  FetchPDFFile(event) {
+    this.PDFViewFlag = true;
+    this.PDFFile={};
+    if (event) {
+      this.PDFViewFlag = false;
+      this.PDFFile= event.files[0];
+    }
+  }
+  async upload(){
+   
+    console.log("file",this.PDFFile);
+    
+    const formData: FormData = new FormData();
+    formData.append("pan", this.PDFFile);
+    const requestHeaders: HeadersInit = new Headers();
+    requestHeaders.set('x-functions-key', 'CdiqMVWYkfRuKLdqeVe3CSFYjHCzWM2A5/OVeIplauq5vnePb4voyA==');
+    let response = await fetch('https://urbanmoney.azurewebsites.net/api/PAN_Update?lead_id=1353&doc_type_id=1&doc_ID=BDBPA5086P',{ 
+     method: 'POST',
+     headers:  requestHeaders,
+     body: formData // This is your file object
+   });
+   let responseText = await response.text();
+   console.log("responseText",responseText);
+   
+   }
   onConfirm(){}
   onConfirm_save(){
     console.log("save")

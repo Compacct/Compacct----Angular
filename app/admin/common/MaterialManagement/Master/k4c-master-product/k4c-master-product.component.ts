@@ -98,7 +98,9 @@ export class K4cMasterProductComponent implements OnInit {
       this.getBrand();
     }
     else if(this.Param_Flag === 'Store Item - N/Saleable'){
-      this.getRowData();
+      this.getBrand();
+      this.getBandlist();
+      //this.getRowData();
       this.getProductTypeListRow(0);
     }
     else if(this.Param_Flag === 'Store Item - Saleable'){
@@ -336,7 +338,8 @@ export class K4cMasterProductComponent implements OnInit {
                 detail: "Succesfully Updated"
               });
               this.Spinner = false;
-              this.getRowData();
+              //this.getRowData();
+              this.getBandlist();
               }
           })
           this.tabIndexToView = 0;
@@ -535,6 +538,10 @@ export class K4cMasterProductComponent implements OnInit {
       this.ObjmasterProduct.Product_Sub_Type_ID = editDataList.Product_Sub_Type_ID;
       console.log("ObjmasterProduct ===",this.ObjmasterProduct);
        this.ObjmasterProduct.Product_ID = product_id;
+       if (this.Param_Flag === 'Store Item - Saleable' || this.Param_Flag === 'Store Item - N/Saleable') {
+       this.ObjmasterProduct.Brand_ID = editDataList.Brand_ID === 0 ? undefined : editDataList.Brand_ID;
+       this.brandInput = false;
+       }
        console.log("this.ObjmasterProduct.Product_ID",this.ObjmasterProduct.Product_ID);
       
     })
@@ -556,7 +563,7 @@ export class K4cMasterProductComponent implements OnInit {
     console.log("Browse API",TempReportName);
     const obj = {
       "SP_String": "SP_Controller_Master",
-      "Report_Name_String": TempReportName,
+      "Report_Name_String": TempReportName
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -676,10 +683,11 @@ export class K4cMasterProductComponent implements OnInit {
     this.rowDataList = [];
     this.BackupRowDataList = [];
     
-      if (this.Param_Flag === 'Store Item - Saleable') {
+      if (this.Param_Flag === 'Store Item - Saleable' || this.Param_Flag === 'Store Item - N/Saleable') {
+        const ReportName = this.Param_Flag === 'Store Item - N/Saleable' ? "Browse - Store Item Product Master" : "Browse - Store Item Saleable Product Master";
         const obj = {
           "SP_String": "SP_Controller_Master",
-          "Report_Name_String": "Browse - Store Item Saleable Product Master",
+          "Report_Name_String": ReportName,
           "Json_Param_String": JSON.stringify([{Brand_ID : this.Objbrand.Brand_ID ? this.Objbrand.Brand_ID : 0}])
     
         }
