@@ -196,6 +196,7 @@ import { MasterCompanyComponent } from "./common/FinancialManagement/Master/mast
 import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
 import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
+import { TutoAspMaxAppoComponent } from './common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component';
 
 
 const layoutRoutes: Routes = [{
@@ -1416,9 +1417,17 @@ const layoutRoutes: Routes = [{
   path: 'Product_Category_Update',
   component: K4cProductCategoryUpdateComponent,
   data: {
-    title: 'Product_Category_Update'
+    title: 'Product Category Update'
 
   }
+  },
+  {
+  path: 'Asp_Max_Appo',
+  component: TutoAspMaxAppoComponent,
+  data: {
+    title: 'Asp Max Appo'
+
+}
 }
 
 
