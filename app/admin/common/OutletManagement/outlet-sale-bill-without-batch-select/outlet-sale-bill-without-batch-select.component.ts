@@ -689,7 +689,7 @@ autoaFranchiseBill() {
      var tax = Number(Number(Amount) - Number(Dis_Amount)); //- Number(totalgst));
    } 
    else {
-    var Amount = Number(Number(this.ObjaddbillForm.Stock_Qty) * Number(this.ObjaddbillForm.Sale_rate));
+    var Amount = Number(Number(BQ) * Number(this.ObjaddbillForm.Sale_rate));
     var Amtbeforetax = (Number(Amount * 100) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100));
     var rate =((Number(this.ObjaddbillForm.Sale_rate * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100)).toFixed(2);
     // var tax = Number(Number(rate) * Number(this.ObjaddbillForm.Stock_Qty));
@@ -1447,7 +1447,7 @@ checkdiscountamt(){
    if(this.productSubmit.length) {
      let tempArr =[]
      this.productSubmit.forEach(item => {
-      if (Number(item.Taxable) && Number(item.Taxable) != 0) {
+      if (Number(item.Amount_berore_Tax) && Number(item.Amount_berore_Tax) != 0) {
        const obj = {
            Product_ID : item.Product_ID,
            Product_Description : item.Product_Description,

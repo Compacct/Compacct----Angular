@@ -1425,7 +1425,7 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
   if(this.productSubmit.length) {
     let tempArr =[]
     this.productSubmit.forEach(item => {
-      if (Number(item.Taxable) && Number(item.Taxable) != 0) {
+      if (Number(item.Amount_berore_Tax) && Number(item.Amount_berore_Tax) != 0) {
       const obj = {
           Product_ID : item.Product_ID,
           Product_Description : item.Product_Description,

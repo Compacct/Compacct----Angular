@@ -285,13 +285,7 @@ import { JournalVoucherComponent } from './common/FinancialManagement/Transactio
 import { UserMasterComponent } from './common/UserManagement/Master/user-master/user-master.component';
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 import { PurchaseOrderComponent } from './common/MaterialManagement/Inward/purchase-order/purchase-order.component';
-
-
-
-
-
-
-
+import { TutoAspMaxAppoComponent } from './common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component';
 
 
 
@@ -499,9 +493,9 @@ import { PurchaseOrderComponent } from './common/MaterialManagement/Inward/purch
     UserMasterComponent,
     K4cProductCategoryUpdateComponent,
     PurchaseOrderComponent
+    TutoAspMaxAppoComponent
 
-    
-  ],
+ ],
   imports: [
     CommonModule,
     FormsModule,
