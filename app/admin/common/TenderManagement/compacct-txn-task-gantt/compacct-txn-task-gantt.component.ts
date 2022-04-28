@@ -202,6 +202,10 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.labelSettings = {
       taskLabel: 'Job_Name',
   };
+  this.Header.pushHeader({
+    Header: "Project Planing",
+    Link: "Project Management -> Project Planing"
+  });
     this.ganttObj.timelineSettings.bottomTier.format = 'dd';
     this.GetProject();
     this.GetUserList();

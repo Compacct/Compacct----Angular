@@ -718,10 +718,10 @@ ngOnInit() {
     }
   }
   getPurchaseAmt(){
-    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0)
+    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0).toFixed(2)
   }
   getTotalPurchaseAmt(){
-    return Number(this.ObjEstimate.No_of_Site) * this.getPurchaseAmt();
+    return (Number(this.ObjEstimate.No_of_Site) * this.getPurchaseAmt()).toFixed(2);
   }
   AddEstimate(valid) {
     this.EstimateInfoSubmitted = true;

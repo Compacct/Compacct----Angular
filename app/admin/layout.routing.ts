@@ -192,6 +192,10 @@ import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.c
 import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
 import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
 
+import { RetailBrowseComponent } from './common/FinancialManagement/Retail/retail-browse/retail-browse.component';
+import { RetailBrowseReceiveComponent } from './common/FinancialManagement/Retail/retail-browse-receive/retail-browse-receive.component';
+import { RetailBrowseAdvanceComponent } from './common/FinancialManagement/Retail/retail-browse-advance/retail-browse-advance.component';
+
 
 
 
@@ -1383,7 +1387,28 @@ const layoutRoutes: Routes = [{
   data: {
     title: 'ASP Unavailability'
   }
-}
+},
+{
+  path: 'Retail_Txn_SALE_Bill_cum_challan_GST_V2',
+  component: RetailBrowseComponent,
+  data: {
+    title: 'Retail Browse'
+  }
+},
+{
+  path: 'Retail_ACC_Txn_Acc_Journal_V2',
+  component: RetailBrowseReceiveComponent,
+  data: {
+    title: 'Browse for Receive'
+  }
+},
+{
+  path: 'Hearing_Advance_Order_V2',
+  component: RetailBrowseAdvanceComponent,
+  data: {
+    title: 'Browse of Advance Order'
+  }
+},
 
 
     /*{
