@@ -1,0 +1,335 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6"  *ngIf="can_popup && !act_popup">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6"  *ngIf="act_popup && !can_popup">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="form-horizontal">
+                    <div class="box-body">
+                         <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                                <div class="table-responsive no-padding">
+                                    <div class="table-responsive no-padding">
+                                        <p-table [value]="AllData" [paginator]="AllData.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [globalFilterFields]="['','Primary/Alternative','Decimal_Place']"[rowHover]="true" #dt>
+
+                                            <ng-template pTemplate="caption">
+                                                <div class="row">
+                                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                    </div>
+                                                </div>
+    
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width:5em">Action</th>
+                                                    <th>Name</th>
+                                                    <th>UserName</th>
+                                                    <th>CostCenter</th>
+                                                    <th>Mobile No.</th>
+                                                    <th>User Name</th>
+                                                    <th>Menu Reference</th>
+                                                    
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col>
+                                                <tr [class]='col.Is_Active === "N" ? "text-red-active" : ""'>
+    
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                                <span class="caret"></span>
+                                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a (click)="EditUser(col)">
+                                                                        <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                    </a>
+                                                                </li>
+                                                                <li *ngIf="col.Is_Active == 'Y'">
+                                                                    <a (click)="DeleteUser(col)">
+                                                                        <i class="fa fa-fw fa-trash"></i> Delete
+                                                                    </a>
+                                                                </li>
+                                                                <li *ngIf="col.Is_Active == 'N'" >
+                                                                    <a (click)="Active(col)">
+                                                                          <i class="fa fa-power-off"></i> Active
+                                                                    </a>
+                                                               </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    
+                                                    <td>{{col.Name}}</td>
+                                                    <td>{{col.User_Name}}</td>
+                                                    <td>{{col.Cost_Cen_Name}}</td>
+                                                    <td>{{col.User_Mobile}}</td>
+                                                    <td>{{col.User_Name}}</td>
+                                                    <td>{{col.Menu_Ref_Name}}</td>
+                                                    
+                                                </tr>
+                                            </ng-template>
+                                             <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->
+                                    </p-table>
+                                </div>
+
+                                </div>
+
+                            </p-tabPanel>
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="userForm" #userForm="ngForm" novalidate >
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Name
+                                            <sup class="text-danger">*</sup></label>
+                                        <input class="form-control" 
+                                        name="Name" 
+                                                #Name ="ngModel"
+                                                [(ngModel)]="ObjUser.Name"
+                                                [ngClass]="{'clearance': userFormSubmitted && Name?.errors?.required}" 
+                                                placeholder="Type Name"required>
+                                    </div>
+                                     <div class="col-sm-4">
+                                        <label class="control-label">User Name
+                                                <sup class="text-danger">*</sup>
+                                            </label>
+                                        <input class="form-control"
+                                                name="User_Name" 
+                                                #User_Name ="ngModel"
+                                                [(ngModel)]="ObjUser.User_Name"
+                                                [ngClass]="{'clearance': userFormSubmitted && User_Name?.errors?.required}" 
+                                                placeholder="User Name"required> 
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Password
+                                                <sup class="taxt-danger">*</sup>
+                                            </label>
+                                        <input type="password" class="form-control" placeholder="Password"
+                                                name="Password" 
+                                                #Password ="ngModel"
+                                                [(ngModel)]="pass"
+                                                [ngClass]="{'clearance': userFormSubmitted && Password?.errors?.required}" 
+                                                placeholder="Password"required>
+                                    </div> 
+                                   <div class="col-sm-4">
+                                        <label class="control-label">Conform Password
+                                                <sup class="taxt-danger">*</sup>
+                                            </label>
+                                        <input type="password" class="form-control" placeholder="Conform Password" 
+                                                name="CPassword" 
+                                                #CPassword ="ngModel"
+                                                [(ngModel)]="ObjUser.Password"
+                                                (ngModelChange)="passCheck()" 
+                                                [ngClass]="{'clearance': userFormSubmitted && (CPassword?.errors?.required || passCheck())}" 
+                                                placeholder="Conform Password" required> 
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Mobile No.
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                    <input class="form-control" 
+                                    CompacctDigitonly="true" minlength="10" maxlength="10" 
+                                    name="User_Mobile" 
+                                    #User_Mobile ="ngModel"
+                                    [(ngModel)]="ObjUser.User_Mobile"
+                                    [ngClass]="{'clearance': userFormSubmitted && User_Mobile?.errors?.required}" 
+                                    placeholder="Mobile No"required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Email
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                    <input type="email" class="form-control"
+                                    name="User_Email" 
+                                    #User_Email ="ngModel"
+                                    [(ngModel)]="ObjUser.User_Email"
+                                    [ngClass]="{'clearance': userFormSubmitted && User_Email?.errors?.required}" 
+                                    placeholder="Type Email"required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">User Type
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                        <select class="form-control" name="User_type"
+                                                #User_type ="ngModel"
+                                                [(ngModel)]="ObjUser.User_Type"
+                                                [ngClass]="{'clearance': userFormSubmitted && User_type?.errors?.required}" 
+                                                required>
+                                            <option [ngValue]="undefined">Select</option>
+                                        <option  value="A">Admin</option>
+                                        <option  value="U">User</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                        <select class="form-control" 
+                                                name="Cost_Cen_ID" 
+                                                #Cost_Cen_ID ="ngModel"
+                                                [(ngModel)]="ObjUser.Cost_Cen_ID"
+                                                [ngClass]="{'clearance': userFormSubmitted && Cost_Cen_ID?.errors?.required}" 
+                                                required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let cost of costData"  value ={{cost.Cost_Cen_ID}}>{{cost.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Department
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                        <select class="form-control" name="Dept_ID" 
+                                        #Dept_ID ="ngModel"
+                                        [(ngModel)]="ObjUser.Dept_ID"
+                                        [ngClass]="{'clearance': userFormSubmitted && Dept_ID?.errors?.required}"
+                                        (change)="getSubDeptData()"
+                                        required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of deptData"  value ={{option.Dept_ID}}>{{option.Dept_Name}}</option>
+                                        
+                                        </select>
+                                    </div>
+                                   <div class="col-sm-4">
+                                        <label class="control-label">Sub Department
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                        <select class="form-control" 
+                                        name="Sub_Dept_ID"
+                                        #Sub_Dept_ID ="ngModel"
+                                        [(ngModel)]="ObjUser.Sub_Dept_ID"
+                                        [ngClass]="{'clearance': userFormSubmitted && Sub_Dept_ID?.errors?.required}" 
+                                        required> 
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let sub of subData"  value ={{sub.Sub_Dept_ID}}>{{sub.Sub_Dept_Description}}</option>
+                                        
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Delete Right
+                                            
+                                        </label>
+                                        <select class="form-control" name="Del_Right"
+                                        name="Del_Right"
+                                        #Del_Right ="ngModel"
+                                        [(ngModel)]="ObjUser.Del_Right"
+                                        [ngClass]="{'clearance': userFormSubmitted && Del_Right?.errors?.required}" 
+                                        required >      
+                                        <option  value="N">No</option>
+                                        <option  value="Y">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Menu Reference
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                        <select class="form-control" 
+                                        name="Menu_Ref_ID"
+                                        #Menu_Ref_ID ="ngModel"
+                                        [(ngModel)]="ObjUser.Menu_Ref_ID"
+                                        [ngClass]="{'clearance': userFormSubmitted && Menu_Ref_ID?.errors?.required}" 
+                                        required >
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let menu of menuData"  value ={{menu.Menu_Ref_ID}}>{{menu.Menu_Ref_Name}}</option>
+                                        
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Expiry Date
+                                       </label>
+                                        <input class="form-control" type="date" id="Expiry"
+                                           name="Expiry_Date"
+                                         #Expiry_Date ="ngModel"
+                                         [(ngModel)]="ObjUser.Expiry_Date"
+                                         >
+                                    </div>
+                                     <div class="col-sm-4">
+                                        <label class="control-label">API User Name </label>
+                                        <input  class="form-control" placeholder="API User Name"
+                                        name="API_User_Name"
+                                        #API_User_Name ="ngModel"
+                                        [(ngModel)]="ObjUser.API_User_Name"
+                                        [ngClass]="{'clearance': userFormSubmitted && API_User_Name?.errors?.required}" 
+                                        require>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">User Time Required
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                        <select class="form-control" name="user" 
+                                        name="User_Time"
+                                        #User_Time ="ngModel"
+                                        [(ngModel)]="ObjUser.User_Time"
+                                        [ngClass]="{'clearance': userFormSubmitted && User_Time?.errors?.required}" 
+                                        require>
+                                            <option  value="N">No</option>
+                                            <option  value="Y">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Authorized Computer
+                                            <sup class="taxt-danger">*</sup>
+                                        </label>
+                                        <select class="form-control" name="computer"
+                                        name="Authorized_Computer"
+                                        #Authorized_Computer ="ngModel"
+                                        [(ngModel)]="ObjUser.Authorized_Computer"
+                                        [ngClass]="{'clearance': userFormSubmitted && Authorized_Computer?.errors?.required}" 
+                                        require >
+                                       <option  value="N">No</option>
+                                        <option  value="Y">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Upload Profile Photo</label>
+                                        <input type="uploded" class="form-control"
+                                        name="User_Pic"
+                                        #User_Pic ="ngModel"
+                                        [(ngModel)]="ObjUser.User_Pic"
+                                        [ngClass]="{'clearance': userFormSubmitted && User_Pic?.errors?.required}" 
+                                        require>
+                                              
+                                    </div>
+                               </div> 
+
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right"  id="load" (click)="saveData(userForm.form.valid)" [disabled]="Spinner">
+                                                    <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                            </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                 </p-tabView>  
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+      <!-- <p-dialog header="This User already in list" [(visible)]="matchDisplay" [modal]="true" [responsive]="true" [style]="{width: '350px', minWidth: '200px'}" [minY]="70" [baseZIndex]="10000">
+    <p>This Unit of Measure already in List</p>
+       <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="Gobrowse()" label="Yes"></button>
+      </p-footer>
+</p-dialog>  -->

@@ -52,6 +52,7 @@ export class JournalVoucherComponent implements OnInit {
   VoucherNo = undefined;
   costHeadDataList = [];
   projectDataList = [];
+  DynamicHeader = [];
   VoucherTypeID = undefined;
   constructor(
     private $http: HttpClient,
@@ -269,7 +270,10 @@ ShowSearchData(valid){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      console.log("all Data",data);
      this.AlljournalData = data;
-    })
+      if(this.AlljournalData.length){
+        this.DynamicHeader = Object.keys(data[0]);
+      }
+     })
   }
 }
 getTotalDRCR(){
