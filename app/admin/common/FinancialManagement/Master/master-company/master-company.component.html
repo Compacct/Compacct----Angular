@@ -6,25 +6,137 @@
             <h3>{{message.summary}}</h3>
             <p>{{message.detail}}</p>
         </div>
+
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6">
+            <div class="ui-g-6"  *ngIf="!can_popup && act_popup">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6"  *ngIf="!act_popup && can_popup">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
             </div>
         </div>
     </ng-template>
-</p-toast>
+    </p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" aria-hidden="true">
-                            </p-tabPanel>
-                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon= "glyphicon glyphicon-floppy-save" aria-hidden="true" >
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <div class=" no-padding">
+                                    <p-table [value]="AllData" 
+                                    [paginator]="AllData.length ? true : false" 
+                                    [rows]="10" 
+                                    [rowHover]="true" 
+                                    [autoLayout]="true" 
+                                    sortMode="multiple" 
+                                    [rowsPerPageOptions]="[10,20,30]" 
+                                    [globalFilterFields]="['','Primary/Alternative','Decimal_Place']" 
+                                    [rowHover]="true" #dt>
+
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>CIN</th>
+                                                <th>Company Name</th>
+                                                <th>Company Prefix</th>
+                                                <th>Country</th>
+                                                <th>State</th>
+                                                <th>Currency Name</th>
+                                                <th>Currency Symbol</th>
+                                                <th>Decimal position</th>
+                                                <th>District</th>
+                                                <th>Email</th>
+                                                <th>Form Email Id</th>
+                                                <th>Form Email Name</th>
+                                                <th>Form Email Password</th>
+                                                <th>From SMTP</th>
+                                                <th>From SMTP Port</th>
+                                                <th>From SSL</th>
+                                                <th>Logo Image</th>
+                                                <th>Mailing Address 1</th>
+                                                <th>Mailing Address 2</th>
+                                                <th>Mailing Name</th>
+                                                <th>Phone No</th>
+                                                <th>Pin</th>
+                                                <th>SMS Gateway</th>
+                                                <th>VAT CST GST</th>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr [class]='col.Is_Visible === "N" ? "text-red-active" : ""'>
+
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                                            <i class="fa fa-fw fa-bars"></i>
+                                                                            <span class="caret"></span>
+                                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="EditCompany(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Is_Visible == 'Y'">
+                                                                <a (click)="Deactive(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Deactive
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Is_Visible == 'N'" >
+                                                                <a (click)="Active(col)">
+                                                                      <i class="fa fa-power-off"></i> Active
+                                                                </a>
+                                                           </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                
+                                                <td>{{col.CIN ? col.CIN :"-"}}</td>
+                                                <td>{{col.Company_Name ? col.Company_Name :"-"}}</td>
+                                                <td>{{col.Company_Prefix ? col.Company_Prefix :"-"}}</td>
+                                                <td>{{col.Country ? col.Country :"-"}}</td>
+                                                <td>{{col.State ? col.State  :"-"}}</td>
+                                                <td>{{col.Currency_Formal_Name ? col.Currency_Formal_Name:"-"}}</td>
+                                                <td>{{col.Currency_Symbol ? col.Currency_Symbol  :"-"}}</td>
+                                                <td>{{col.Decimal_Position ? col.Decimal_Position :"-"}}</td>
+                                                <td>{{col.District ? col.District :"-"}}</td>
+                                                <td>{{col.Email ? col.Email :"-"}}</td>
+                                                <td>{{col.From_Email_ID ? col.From_Email_ID :"-"}}</td>
+                                                <td>{{col.From_Email_Name ? col.From_Email_Name  :"-"}}</td>
+                                                <td>{{col.From_Email_Pass ? col.From_Email_Pass :"-"}}</td>
+                                                <td>{{col.From_SMTP ? col.From_SMTP :"-"}}</td>
+                                                <td>{{col.From_SMTP_Port ? col.From_SMTP_Port :"-"}}</td>
+                                                <td>{{col.From_SSL ? col.From_SSL:"-"}}</td>
+                                                <td>{{col.Logo_Img ? col.Logo_Img:"-"}}</td>
+                                                <td>{{col.Mailing_Address_1 ? col.Mailing_Address_1 :"-"}}</td>
+                                                <td>{{col.Mailing_Address_2 ? col.Mailing_Address_2 :"-"}}</td>
+                                                <td>{{col.Mailing_Name ? col.Mailing_Name :"-"}}</td>
+                                                <td>{{col.Phone ? col.Phone :"-"}}</td>
+                                                <td>{{col.Pin  ? col.Pin :"-"}}</td>
+                                                <td>{{col.SMS_Gateway ? col.SMS_Gateway :"-"}}</td>
+                                                <td>{{col.VAT_CST_GST ? col.VAT_CST_GST : "-"}}</td>
+                                          </tr>
+                                        </ng-template>
+                                       
+                                </p-table>
+                            </div>
+                      </p-tabPanel>
+                           <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon= "glyphicon glyphicon-floppy-save" aria-hidden="true" >
                                 <form name="MasterCompanyForm"  #MasterCompanyForm="ngForm" novalidate>
                                     <div class="form-group">
                                         <div class="col-sm-4">
@@ -40,7 +152,7 @@
                                         <div class="col-sm-4">
                                             <label class="control-label"> Mailing Name<sup class="text-danger">*</sup></label>
                                               <input class="form-control"
-                                                    name="Company_Name"
+                                                    name="Mailing_Name"
                                                     #Mailing_Name="ngModel"
                                                     [(ngModel)]="objcompany.Mailing_Name"
                                                     placeholder="Mailing Name"
@@ -54,38 +166,38 @@
                                                     #Mailing_Address_1="ngModel"
                                                     [(ngModel)]="objcompany.Mailing_Address_1"
                                                     placeholder="Mailing Address 1"
-                                                    [ngClass]="{'clearance': MasterCompanyFormSubmit && Company_Name?.errors?.required}"
+                                                    [ngClass]="{'clearance': MasterCompanyFormSubmit && Mailing_Address_1?.errors?.required}"
                                                     required>
                                         </div>
                                         </div> 
                                         <div class="form-group">
                                             <div class="col-sm-4">
-                                                <label class="control-label"> Mailing Address 2</label>
+                                                <label class="control-label"> Mailing Address 2<sup class="text-danger">*</sup></label>
                                                   <input class="form-control"
                                                         name="Mailing_Address_2"
                                                         #Mailing_Address_2="ngModel"
                                                         [(ngModel)]="objcompany.Mailing_Address_2"
-                                                        placeholder="Mailing Address 2"
-                                                        >
+                                                        placeholder="Mailing Address 2" 
+                                                        [ngClass]="{'clearance': MasterCompanyFormSubmit && Mailing_Address_2?.errors?.required}"
+                                                        required>
                                             </div>
                                             <div class="col-sm-4">
-                                                <label class="control-label">Country
+                                                <label class="control-label">Country<sup class="text-danger">*</sup>
                                                 </label>
                                               <select class="form-control"
                                                       name="Country"
                                                       #Country="ngModel"
                                                       [(ngModel)]="objcompany.Country"
-                                                      [ngClass]="{'clearance': MasterCompanyFormSubmit && Mailing_Name?.errors?.required}"
-                                                        required
-                                                      >
+                                                      [ngClass]="{'clearance': MasterCompanyFormSubmit && Country?.errors?.required}"
+                                                        required>
                                                       <option  [ngValue]="undefined">Select</option>
-                                                  <option *ngFor="let option of CountryList" value={{option.country}}>
-                                                      {{option.country}}
+                                                  <option *ngFor="let option of CountryList" value={{option.Country}}>
+                                                      {{option.Country}}
                                                       </option>
                                               </select>
                                             </div>
                                             <div class="col-sm-4">
-                                                <label class="control-label">PIN<sup class="text-danger"></sup></label>
+                                                <label class="control-label">PIN<sup class="text-danger">*</sup></label>
                                                 <input class="form-control"
                                                             name="Pin"
                                                             #Pin="ngModel"
@@ -95,41 +207,33 @@
                                                             minlength="6"
                                                             maxlength="6"
                                                             CompacctDigitonly="true"
-                                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && Pin?.errors?.required && Pin?.errors?.minlength}"
-                                                            required
-                                                       >
+                                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && (Pin?.errors?.required || Pin?.errors?.minlength || Pin?.errors?.maxlength)}"
+                                                            required>
                                             </div>
                                             </div> 
                                             <div class="form-group">
                                                 <div class="col-sm-4">
-                                                    <label class="control-label"> State</label>
-                                                      <input class="form-control"
-                                                            name="State"
-                                                            #State="ngModel"
-                                                            [(ngModel)]="objcompany.State"
-                                                            placeholder="State"
-                                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && State?.errors?.required }"
-                                                            required
-                                                            >
+                                                    <label class="control-label"> State<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    name="State"
+                                                    #State="ngModel"
+                                                    [(ngModel)]="objcompany.State"
+                                                    placeholder="State"
+                                                    disabled>
+                                                     
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">District
+                                                    <label class="control-label">District<sup class="text-danger">*</sup>
                                                     </label>
-                                                  <select class="form-control"
-                                                          name="Country"
-                                                          #District="ngModel"
-                                                          [(ngModel)]="objcompany.District"
-                                                          [ngClass]="{'clearance': MasterCompanyFormSubmit && District?.errors?.required}"
-                                                            required
-                                                          >
-                                                          <option  [ngValue]="undefined">Select</option>
-                                                      <option *ngFor="let option of CountryList" value={{option.country}}>
-                                                          {{option.country}}
-                                                          </option>
-                                                  </select>
+                                                    <input class="form-control"
+                                                    name="District"
+                                                    #State="ngModel"
+                                                    [(ngModel)]="objcompany.District"
+                                                    placeholder="District"
+                                                    disabled>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">Phone<sup class="text-danger"></sup></label>
+                                                    <label class="control-label">Phone<sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
                                                                 name="Phone"
                                                                 #Phone="ngModel"
@@ -138,84 +242,180 @@
                                                                 minlength="10"
                                                                 maxlength="10"
                                                                 CompacctDigitonly="true"
-                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && Phone?.errors?.required && Phone?.errors?.minlength}"
-                                                                required
-                                                           >
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && (Phone?.errors?.required || Phone?.errors?.minlength || Phone?.errors?.maxlength)}"
+                                                                required>
                                                 </div>
                                             </div> 
                                             <div class="form-group">
                                                 <div class="col-sm-4">
-                                                    <label class="control-label"> Email</label>
+                                                    <label class="control-label"> Email<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
                                                             name="Email"
                                                             #Email="ngModel"
                                                             [(ngModel)]="objcompany.Email"
                                                             placeholder="Email"
-                                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && Pin?.errors?.required }"
-                                                            required
-                                                            >
+                                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && Email?.errors?.required }"
+                                                            required>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label"> Currency Symbol</label>
+                                                    <label class="control-label"> Currency Symbol<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
                                                             name="Currency_Symbol"
                                                             #Currency_Symbol="ngModel"
                                                             [(ngModel)]="objcompany.Currency_Symbol"
                                                             placeholder="Currency Symbol"
                                                             [ngClass]="{'clearance': MasterCompanyFormSubmit && Currency_Symbol?.errors?.required }"
-                                                            required
-                                                            >
+                                                            required>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">Currency Formal Name<sup class="text-danger"></sup></label>
+                                                    <label class="control-label">Currency Formal Name<sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
                                                                 name="Currency_Formal_Name"
                                                                 #Currency_Formal_Name="ngModel"
                                                                 [(ngModel)]="objcompany.Currency_Formal_Name"
                                                                 placeholder="Currency Formal Name"
                                                                 [ngClass]="{'clearance': MasterCompanyFormSubmit && Currency_Formal_Name?.errors?.required}"
-                                                                required
-                                                           >
+                                                                required>
                                                 </div>
                                             </div> 
                                             <div class="form-group">
                                                 <div class="col-sm-4">
-                                                    <label class="control-label"> Decimal Position</label>
+                                                    <label class="control-label"> Decimal <sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
                                                             name="Decimal_Position"
                                                             #Decimal_Position="ngModel"
                                                             [(ngModel)]="objcompany.Decimal_Position"
                                                             placeholder="Decimal Position"
                                                             [ngClass]="{'clearance': MasterCompanyFormSubmit && Decimal_Position?.errors?.required }"
-                                                            required
-                                                            >
+                                                            required>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label"> Company Prefix</label>
+                                                    <label class="control-label"> Company Prefix<sup class="text-danger">*</sup></label>
                                                       <input class="form-control"
                                                             name="Company_Prefix"
                                                             #Company_Prefix="ngModel"
                                                             [(ngModel)]="objcompany.Company_Prefix"
                                                             placeholder="Company Prefix"
                                                             [ngClass]="{'clearance': MasterCompanyFormSubmit && Company_Prefix?.errors?.required }"
-                                                            required
-                                                            >
+                                                            required>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">VAT CST GST<sup class="text-danger"></sup></label>
+                                                    <label class="control-label">VAT CST GST<sup class="text-danger">*</sup></label>
                                                     <input class="form-control"
                                                                 name="VAT_CST_GST"
                                                                 #VAT_CST_GST="ngModel"
                                                                 [(ngModel)]="objcompany.VAT_CST_GST"
-                                                                placeholder="Currency Formal Name"
+                                                                placeholder="Type VAT CST GST"
                                                                 [ngClass]="{'clearance': MasterCompanyFormSubmit && VAT_CST_GST?.errors?.required}"
-                                                                required
-                                                           >
+                                                                required>
+                                                    </div>         
+                                            </div> 
+                                            <div class="form-group">  
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">From Email<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                                name="From_Email_ID"
+                                                                #From_Email_ID="ngModel"
+                                                                [(ngModel)]="objcompany.From_Email_ID"
+                                                                placeholder="Type Email"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && From_Email_ID?.errors?.required}"
+                                                                required>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Form Email Name<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                                name="From_Email_Name "
+                                                                #From_Email_Name ="ngModel"
+                                                                [(ngModel)]="objcompany.From_Email_Name "
+                                                                placeholder="Type Email Name"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && From_Email_Name ?.errors?.required}"
+                                                                required>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Email Password<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" type="password"
+                                                                name="From_Email_Pass"
+                                                                #From_Email_Pass="ngModel"
+                                                                [(ngModel)]="objcompany.From_Email_Pass"
+                                                                placeholder="Type Email Password"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && From_Email_Pass?.errors?.required}"
+                                                                required>
+                                                </div>
+                                            </div>  
+                                            <div class="form-group">  
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">From SMTP<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                                name="From_SMTP"
+                                                                #From_SMTP="ngModel"
+                                                                [(ngModel)]="objcompany.From_SMTP"
+                                                                placeholder="Type SMTP"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && From_SMTP?.errors?.required}"
+                                                                required>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label"> From SMTP Port<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                                name="From_SMTP_Port               "
+                                                                #From_SMTP_Port="ngModel"
+                                                                [(ngModel)]="objcompany.From_SMTP_Port               "
+                                                                placeholder="Type SMTP Port"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && From_SMTP_Port?.errors?.required}"
+                                                                required>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label"> From SSL<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                                name="From_SSL "
+                                                                #From_SSL ="ngModel"
+                                                                [(ngModel)]="objcompany.From_SSL "
+                                                                placeholder="Type SSL"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && From_SSL ?.errors?.required}"
+                                                                required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">    
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">CIN<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                                name="CIN "
+                                                                #CIN ="ngModel"
+                                                                [(ngModel)]="objcompany.CIN "
+                                                                placeholder="CIN Number"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && CIN ?.errors?.required}"
+                                                                required>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">SMS Gateway<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                                name="SMS_Gateway"
+                                                                #SMS_Gateway="ngModel"
+                                                                [(ngModel)]="objcompany.SMS_Gateway"
+                                                                placeholder="SMS Gateway"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && SMS_Gateway?.errors?.required}"
+                                                                required>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Logo Image<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                                name="Logo_Img"
+                                                                #Logo_Img="ngModel"
+                                                                [(ngModel)]="objcompany.Logo_Img"
+                                                                placeholder="Logo Image"
+                                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && Logo_Img?.errors?.required}"
+                                                                required>
                                                 </div>
                                             </div> 
+                                            <div class="box-footer">
+                                                <button class="btn btn-primary pull-right"  id="load" (click)="saveData(MasterCompanyForm.form.valid)" [disabled]="Spinner">
+                                                                <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                                        </button>
+                                            </div>
                                 </form>
+                                
                             </p-tabPanel>
-                        </p-tabView>
+                    </p-tabView>
 
                 </div>
             </div>
