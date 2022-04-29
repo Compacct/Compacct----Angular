@@ -197,7 +197,7 @@ import { UserMasterComponent } from "./common/UserManagement/Master/user-master/
 import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
-import { TutoAspMaxAppoComponent } from './common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component';
+
 
 
 
@@ -1386,13 +1386,6 @@ const layoutRoutes: Routes = [{
   }
   },
   {
-    path: 'Attendance_Sheet',
-    component: AttendanceSheetComponent,
-    data: {
-      title: 'AttendanceSheetComponent'
-    }
-  },
-    {
       path: 'Master_Company',
       component: MasterCompanyComponent,
       data: {
@@ -1428,14 +1421,9 @@ path: 'Purchase_Order',
 component: PurchaseOrderComponent,
 data: {
   title: 'Purchase Order'
- },
-  {
-  path: 'Asp_Max_Appo',
-  component: TutoAspMaxAppoComponent,
-  data: {
-    title: 'Asp Max Appo'
-}
-}
+ }
+},
+  
 
 
     /*{
