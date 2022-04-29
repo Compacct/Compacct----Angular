@@ -70,7 +70,7 @@ export class TenderViewDetailsCompComponent implements OnInit {
   TenderPublishDate = new Date()
 
 
-  TabItems = ['Tender Details', 'Budget Details', 'Finance Details', 'Tender Log', 'Bidder List', 'Bid Opening & AOC Details']
+  TabItems = ['Tender Details', 'Pre Bid Budget', 'Finance Details', 'Tender Log', 'Bidder List', 'Bid Opening & AOC Details']
   BudgetDetails$: Observable < [any] > ;
   FinanceDetails$: Observable < [any] > ;
   TenderLogDetails$: Observable < [any] > ;

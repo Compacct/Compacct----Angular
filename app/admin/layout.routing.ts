@@ -191,12 +191,16 @@ import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacc
 import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
 import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
 import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
+import { RetailBrowseComponent } from './common/FinancialManagement/Retail/retail-browse/retail-browse.component';
+import { RetailBrowseReceiveComponent } from './common/FinancialManagement/Retail/retail-browse-receive/retail-browse-receive.component';
+import { RetailBrowseAdvanceComponent } from './common/FinancialManagement/Retail/retail-browse-advance/retail-browse-advance.component';
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 import { MasterCompanyComponent } from "./common/FinancialManagement/Master/master-company/master-company.component";
 import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
 import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
+import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component";
 
 
 
@@ -1384,8 +1388,30 @@ const layoutRoutes: Routes = [{
   data: {
     title: 'ASP Unavailability'
   }
-  },
-  {
+
+},
+{
+  path: 'Retail_Txn_SALE_Bill_cum_challan_GST_V2',
+  component: RetailBrowseComponent,
+  data: {
+    title: 'Retail Browse'
+  }
+},
+{
+  path: 'Retail_ACC_Txn_Acc_Journal_V2',
+  component: RetailBrowseReceiveComponent,
+  data: {
+    title: 'Browse for Receive'
+  }
+},
+{
+  path: 'Hearing_Advance_Order_V2',
+  component: RetailBrowseAdvanceComponent,
+  data: {
+    title: 'Browse of Advance Order'
+  }
+},
+ {
       path: 'Master_Company',
       component: MasterCompanyComponent,
       data: {
@@ -1423,7 +1449,16 @@ data: {
   title: 'Purchase Order'
  }
 },
+  {
+path: 'Asp_Max_Appo',
+component: TutoAspMaxAppoComponent,
+data: {
+  title: 'Asp Max Appo'
+ }
+},
+    
   
+
 
 
     /*{

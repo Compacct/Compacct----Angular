@@ -104,11 +104,12 @@ export class ProductsPlaningComponent implements OnInit {
   GetProjectList() {
     this.ExsitData = [];
     const obj = {
-      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
-      "Report_Name_String": "Get_Project_Name",
+      "SP_String": "SP_Task_Management_Tender",
+      "Report_Name_String": "Get_Project_All",
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       data.forEach(el => {
+        el['work_name'] = el.Project_Description;
         el['label'] = el.work_name;
         el['value'] = el.Tender_Doc_ID;
       });
@@ -129,10 +130,10 @@ export class ProductsPlaningComponent implements OnInit {
       this.GetGroupNameList();
       const obj = {
         "SP_String": "SP_Tender_Management_All",
-        "Report_Name_String": "Get Site",
+        "Report_Name_String": "Get_Site_For_Project_Planning",
         "Json_Param_String": JSON.stringify([{
-          'Tender_Doc_ID': this.ObjProdPlan.Tender_Doc_ID,
-          'Budget_Short_Description': this.ObjProdPlan.work_name
+          'Project_ID': arr[0].Project_ID,
+          'Tender_Doc_ID': arr[0].Tender_Doc_ID
         }])
       }
       this.GlobalAPI

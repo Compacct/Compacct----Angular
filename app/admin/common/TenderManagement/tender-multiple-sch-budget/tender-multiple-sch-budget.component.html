@@ -124,7 +124,7 @@
                     <input class="form-control" name="Budget_Short_Description" #Budget_Short_Description="ngModel"
                       [(ngModel)]="ObjEstimate.Budget_Short_Description"
                       [ngClass]="{'clearance': EstimateInfoSubmitted && Budget_Short_Description?.errors?.required}"
-                      placeholder="Project Name" [required]="true" (change)='getSiteList()' [disabled]='EditSiteFlag'/>
+                      placeholder="Project Name" [required]="true" (change)='getSiteList()' [disabled]='true'/>
                   </div>
                   <div class="col-sm-4">
                     <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>

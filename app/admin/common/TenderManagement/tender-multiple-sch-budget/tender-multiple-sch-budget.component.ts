@@ -943,7 +943,7 @@ ngOnInit() {
     }
   }
   getPurchaseAmt(){
-    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0)
+    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0).toFixed(2)
   }
   getTotalPurchaseAmt(){
     return this.getPurchaseAmt();
