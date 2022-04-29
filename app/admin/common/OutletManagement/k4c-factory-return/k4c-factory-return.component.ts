@@ -1016,7 +1016,7 @@ console.log(this.editList)
     this.From_cost_cen_ID = data[0].F_Cost_Cen_ID;
     this.To_cost_cen_ID = data[0].To_Cost_Cen_ID;
   //  this.UOM = data[0].UOM,
-    //console.log("this.editList  ===",data);     
+    console.log("this.editList  ===",data);     
     if (this.AcceptChallanPoppup) {
     for(let i = 0; i < this.editList.length ; i++){
     if(this.editList[i].Accepted_Qty === 0){
@@ -1448,7 +1448,7 @@ onReject(){
         if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const TempObj = {
             Doc_No:  "A",
-            Doc_Date: this.currentDate,
+            Doc_Date: this.DateService.dateConvert(new Date(this.Doc_date)),//this.currentDate,
             Sub_Ledger_ID : Number(this.subledgerid),
             Cost_Cen_ID	: 2, //this.franchisecostcenid,
             Product_ID	: item.Product_ID,
@@ -1530,6 +1530,17 @@ onReject(){
       }
     })
 }
+VoucherPrint(obj) {
+  //console.log("CR_No ===", obj.CR_No)
+  if (this.$CompacctAPI.CompacctCookies.User_Type != 'U'){
+  if (obj.CR_No) {
+    window.open("/Report/Crystal_Files/Finance/SaleBill/Credit_Note_K4C.aspx?Doc_No=" + obj.CR_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
+  }
+}
+
   getFranchisechallan(){
   // if (this.dispatchchallanno){
    const Obj = {
@@ -1592,7 +1603,7 @@ onReject(){
        // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
      const TempObj = {
             Doc_No:  "A",
-            Doc_Date: this.currentDate,
+            Doc_Date: this.DateService.dateConvert(new Date(this.Doc_date)),//this.currentDate,
             Sub_Ledger_ID : Number(this.subledgerid),
             Cost_Cen_ID	: 2, //this.franchisecostcenid,
             Product_ID	: item.Product_ID,
@@ -1675,8 +1686,8 @@ SaveFranSaleBill(){
 SaleBillPrint(obj) {
   //console.log("CR_No ===", obj.CR_No)
   if (this.$CompacctAPI.CompacctCookies.User_Type != 'U'){
-  if (obj.CR_No) {
-    window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.CR_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  if (obj.Bill_No) {
+    window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
     );
   }

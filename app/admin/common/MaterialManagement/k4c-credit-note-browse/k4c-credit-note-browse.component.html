@@ -8,9 +8,15 @@
             <p>{{message.detail}}</p>
         </div>
 
+        <form name="remarksForm" #remarksForm="ngForm" novalidate>
+            <div style="text-align: center">
+                <label class="control-label">Remarks <sup class="text-danger">*</sup></label>
+                <input class="form-control" name="remark" #remark="ngModel" [(ngModel)]="Cancle_Remarks" [ngClass]="{'clearance':remarksFormSubmitted && remark?.errors?.required}" required>
+            </div>
+        </form>
         <div class="ui-g ui-fluid">
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onConfirm(remarksForm.form.valid)" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -97,11 +103,11 @@
                                                             <i class="fa fa-fw fa-print"></i> Print
                                                         </a>
                                                     </li>
-                                                    <!-- <li>
+                                                    <li>
                                                         <a (click)="Delete(col)">
                                                             <i class="fa fa-fw fa-trash"></i> Delete
                                                         </a>
-                                                    </li> -->
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </td>

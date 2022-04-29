@@ -27,7 +27,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   items = [];
 
   ObjSupportTicket = new SupportTicket();
-  SupportTicketFormSubmit = false;
+  EnginnerQuoationFormSubmit = false;
   SupportTicketDate : any = {};
   ExpectedcompletionDate : any = {};
   SupportStartDate : any = {};
@@ -77,6 +77,16 @@ export class EngineeringQuotationNepalComponent implements OnInit {
 
   EngQuoationProductList = [];
 
+  Browse_Sub_Ledger_ID : any;
+  SearchFormSubmitted = false;
+
+  QuotationDocID = undefined;
+  CustomerCreatePopup = false;
+
+  CustomercreateFormSubmitted = false;
+  Company_Name:any;
+  Address:any;
+
 
   constructor(
     private $http: HttpClient,
@@ -89,6 +99,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     private DateNepalConvertService : DateNepalConvertService
   ) {
     this.CurrentDateNepal = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+    console.log(this.DateNepalConvertService.GetNepaliCurrentDateNew())
     console.log(this.DateNepalConvertService.convertNepaliDateToEngDate(this.CurrentDateNepal))
    }
 
@@ -106,7 +117,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.BrowseEndDate = this.CurrentDateNepal;
        this.GetCallType();
        this.GetCustomer();
-      // this.GetManufacturer();
+       this.GetManufactureList();
       // this.GetSerialNo();
        this.GetEngineer();
        this.GetContractStatus();
@@ -131,10 +142,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     });
   }
   GetLocation() {
-    this.InstallMachineList =[];
-    this.SparePartsList =[];
     this.LoctionList = [];
-    this.ManufactureList = [];
     if(this.ObjEnginnerQuoation.Sub_Ledger_ID) {
     const TObj = {
       Sub_Ledger_ID: this.ObjEnginnerQuoation.Sub_Ledger_ID
@@ -161,17 +169,17 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.ObjEnginnerQuoation.Product_ID = undefined;
     this.ObjEnginnerQuoation.Spare_Parts_Product_ID = undefined;
     this.ObjEnginnerQuoation.Spare_Part_Description = undefined;
-    if(this.ObjEnginnerQuoation.Sub_Ledger_ID && this.ObjEnginnerQuoation.Location_ID) {      
-      const TempArr = $.grep(this.LoctionList,(arr)=>{ return arr.Location_ID === this.ObjEnginnerQuoation.Location_ID});
-      this.ObjEnginnerQuoation.Location_Name = TempArr.length ? TempArr[0].Location_Name : undefined;
-    const Obj = {
-      Sub_Ledger_ID: this.ObjEnginnerQuoation.Sub_Ledger_ID,
-      Location_ID: this.ObjEnginnerQuoation.Location_ID
-    }
+    //if(this.ObjEnginnerQuoation.Sub_Ledger_ID && this.ObjEnginnerQuoation.Location_ID) {      
+      // const TempArr = $.grep(this.LoctionList,(arr)=>{ return arr.Location_ID === this.ObjEnginnerQuoation.Location_ID});
+      // this.ObjEnginnerQuoation.Location_Name = TempArr.length ? TempArr[0].Location_Name : undefined;
+    // const Obj = {
+    //   Sub_Ledger_ID: this.ObjEnginnerQuoation.Sub_Ledger_ID,
+    //   Location_ID: this.ObjEnginnerQuoation.Location_ID
+    // }
       const obj = {
         "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
-        "Report_Name_String": "Get_Manufacturer",
-        "Json_Param_String": JSON.stringify([Obj])
+        "Report_Name_String": "Get_Manufacturer_All",
+        //"Json_Param_String": JSON.stringify([Obj])
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach((obj)=>{
@@ -180,7 +188,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       })
     this.ManufactureList = data;  
     });
-    }
+   // }
   }
   GetInstallMachine(){
     this.InstallMachineList =[];
@@ -194,12 +202,12 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       this.ObjEnginnerQuoation.Mfg_Company = TempArr.length ? TempArr[0].Mfg_Company : undefined;
       const TObj = {
         Product_Mfg_Comp_ID : this.ObjEnginnerQuoation.Product_Mfg_Comp_ID,
-        Sub_Ledger_ID: this.ObjEnginnerQuoation.Sub_Ledger_ID,
-        Location_ID: this.ObjEnginnerQuoation.Location_ID
+        // Sub_Ledger_ID: this.ObjEnginnerQuoation.Sub_Ledger_ID,
+        // Location_ID: this.ObjEnginnerQuoation.Location_ID
       }
       const obj = {
         "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
-        "Report_Name_String": "Get_Machine",
+        "Report_Name_String": "Get_All_Machine",
         "Json_Param_String": JSON.stringify([TObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -220,8 +228,8 @@ export class EngineeringQuotationNepalComponent implements OnInit {
         Machine_Product_ID : this.ObjEnginnerQuoation.Product_ID
       }
       const obj = {
-        "SP_String": "SP_Support_Ticket_Nepal",
-        "Report_Name_String": "Get_Spare_Parts_with_Machine_ID",
+        "SP_String": "SP_Engg_CRM_Installed_Machine_Service_Contract",
+        "Report_Name_String": "Get_Spare_Parts_with_Machine_ID_for_Quotation",
         "Json_Param_String": JSON.stringify([TObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -238,6 +246,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     if(this.ObjEnginnerQuoation.Spare_Parts_Product_ID){      
       const TempArr = $.grep(this.SparePartsList,(arr)=>{ return arr.Spare_Parts_Product_ID === this.ObjEnginnerQuoation.Spare_Parts_Product_ID});
       this.ObjEnginnerQuoation.Spare_Part_Description = TempArr.length ? TempArr[0].Spare_Part_Description : undefined;
+      this.ObjEnginnerQuoation.Rate = TempArr.length ? TempArr[0].Sale_rate : undefined;
     }
   }
   ProductChange() {
@@ -245,12 +254,12 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.ObjEnginnerQuoation.Spare_Part_Description = undefined;
     this.ObjEnginnerQuoation.Qty = undefined;
     this.ObjEnginnerQuoation.Rate = undefined;
-    this.ObjEnginnerQuoation.Amount = undefined;
+    this.ObjEnginnerQuoation.Total_Amount = undefined;
     this.ObjEnginnerQuoation.Discount = undefined;
     this.ObjEnginnerQuoation.Discount_Type = undefined;
-    this.ObjEnginnerQuoation.Discount_Type_Amount = undefined;
+    this.ObjEnginnerQuoation.Discount_Amount = undefined;
     this.ObjEnginnerQuoation.Taxable_Amount = undefined;
-    this.ObjEnginnerQuoation.Vat_Tax = 0;
+    this.ObjEnginnerQuoation.VAT = 0;
     this.ObjEnginnerQuoation.Net_Amt = undefined;
     if(this.ObjEnginnerQuoation.Product_ID) {
       const TempArr = $.grep(this.InstallMachineList,(arr)=>{ return arr.Product_ID === this.ObjEnginnerQuoation.Product_ID});
@@ -261,12 +270,20 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   // ADD PRODUCT
   AddProductInfo(valid){
     this.EnginnerQuoationMachineFormSubmitted = true;
+    const TempArr = $.grep(this.LoctionList,(arr)=>{ return arr.Location_ID === this.ObjEnginnerQuoation.Location_ID});
+      this.ObjEnginnerQuoation.Location_Name = TempArr.length ? TempArr[0].Location_Name : undefined;
+      //this.ObjEnginnerQuoation.Quotation_Date = this.QuoationDate;
+      //this.ObjEnginnerQuoation.Quotation_Date = this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.QuoationDate))
+      // this.ObjEnginnerQuoation.Spare_Parts_Product_ID = this.ObjEnginnerQuoation.Quotation_Type != 'Spare'
+      this.ObjEnginnerQuoation.Quotation_Doc_ID = Number(this.QuotationDocID) ? Number(this.QuotationDocID) : 0;
     if(valid) {
       this.EnginnerQuoationMachineFormSubmitted = false;
       this.EngQuoationProductList.push(this.ObjEnginnerQuoation);
       const PrevObj = {...this.ObjEnginnerQuoation};
       this.ObjEnginnerQuoation = new EnginnerQuoation();
       this.ObjEnginnerQuoation.Sub_Ledger_ID = PrevObj.Sub_Ledger_ID;
+      this.ObjEnginnerQuoation.Quotation_Type = PrevObj.Quotation_Type;
+      this.ObjEnginnerQuoation.Quotation_To_Company = PrevObj.Quotation_To_Company;
       console.log(this.EngQuoationProductList);
     }
   }
@@ -276,23 +293,23 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   
   CalculateAmount() {
     if (this.ObjEnginnerQuoation.Rate && this.ObjEnginnerQuoation.Qty) {
-      this.ObjEnginnerQuoation.Amount =(Number(this.ObjEnginnerQuoation.Rate) * Number(this.ObjEnginnerQuoation.Qty));
+      this.ObjEnginnerQuoation.Total_Amount =(Number(this.ObjEnginnerQuoation.Rate) * Number(this.ObjEnginnerQuoation.Qty));
     } else {
-      this.ObjEnginnerQuoation.Amount = 0;
+      this.ObjEnginnerQuoation.Total_Amount = 0;
     }
     this.DiscountTypeChange();
   }
   CalculateTax(){
     this.ObjEnginnerQuoation.Net_Amt = undefined;
-    this.ObjEnginnerQuoation.Vat_Tax = this.ObjEnginnerQuoation.Vat_Tax ? this.ObjEnginnerQuoation.Vat_Tax : 0;
+    this.ObjEnginnerQuoation.VAT = this.ObjEnginnerQuoation.VAT ? this.ObjEnginnerQuoation.VAT : 0;
     if(this.ObjEnginnerQuoation.Taxable_Amount) {
-      const percenAmt = ( Number(this.ObjEnginnerQuoation.Vat_Tax) / 100) * Number(this.ObjEnginnerQuoation.Taxable_Amount);
+      const percenAmt = ( Number(this.ObjEnginnerQuoation.VAT) / 100) * Number(this.ObjEnginnerQuoation.Taxable_Amount);
       this.ObjEnginnerQuoation.Net_Amt = Number(this.ObjEnginnerQuoation.Taxable_Amount) + percenAmt;
     }
   }
   DiscountTypeClean = function() {
     this.ObjEnginnerQuoation.Discount = undefined;
-    this.ObjEnginnerQuoation.Discount_Type_Amount = undefined;
+    this.ObjEnginnerQuoation.Discount_Amount = undefined;
     this.ObjEnginnerQuoation.Taxable_Amount = undefined;
     if (
       this.ObjEnginnerQuoation.Discount_Type === undefined ||
@@ -305,24 +322,24 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   DiscountTypeChange = function() {
     if (this.ObjEnginnerQuoation.Discount_Type) {
       if (this.ObjEnginnerQuoation.Discount_Type === "%") {
-        this.ObjEnginnerQuoation.Discount_Type_Amount = (
-          (this.ObjEnginnerQuoation.Amount * this.ObjEnginnerQuoation.Discount) /
+        this.ObjEnginnerQuoation.Discount_Amount = (
+          (this.ObjEnginnerQuoation.Total_Amount * this.ObjEnginnerQuoation.Discount) /
           100
         ).toFixed(2);
         this.ObjEnginnerQuoation.Taxable_Amount = (
-          this.ObjEnginnerQuoation.Amount - this.ObjEnginnerQuoation.Discount_Type_Amount
+          this.ObjEnginnerQuoation.Total_Amount - this.ObjEnginnerQuoation.Discount_Amount
         ).toFixed(2);
       } else if (this.ObjEnginnerQuoation.Discount_Type === "AMT") {
-        this.ObjEnginnerQuoation.Discount_Type_Amount = this.ObjEnginnerQuoation.Discount;
+        this.ObjEnginnerQuoation.Discount_Amount = this.ObjEnginnerQuoation.Discount;
         this.ObjEnginnerQuoation.Taxable_Amount = (
-          this.ObjEnginnerQuoation.Amount - this.ObjEnginnerQuoation.Discount_Type_Amount
+          this.ObjEnginnerQuoation.Total_Amount - this.ObjEnginnerQuoation.Discount_Amount
         ).toFixed(2);
       }
     } else {
       this.ObjEnginnerQuoation.Discount = 0;
-      this.ObjEnginnerQuoation.Discount_Type_Amount = this.ObjEnginnerQuoation.Discount;
+      this.ObjEnginnerQuoation.Discount_Amount = this.ObjEnginnerQuoation.Discount;
       this.ObjEnginnerQuoation.Taxable_Amount = (
-        this.ObjEnginnerQuoation.Amount - this.ObjEnginnerQuoation.Discount_Type_Amount
+        this.ObjEnginnerQuoation.Total_Amount - this.ObjEnginnerQuoation.Discount_Amount
       ).toFixed(2);
     }
     this.CalculateTax();
@@ -335,15 +352,11 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+    this.QuotationDocID = undefined;
   }
   clearData() {
     this.Spinner = false;
-    this.ObjSupportTicket = new SupportTicket();
-    this.SupportTicketDate = this.CurrentDateNepal;
-    this.ExpectedcompletionDate = this.CurrentDateNepal;
-    this.SupportStartDate = this.CurrentDateNepal;
-    this.SupportEndDate = this.CurrentDateNepal;
-    this.SupportTicketFormSubmit = false;
+   
     this.MfList = [];
     this.MachineList = [];
     this.LoctionList = [];
@@ -356,8 +369,14 @@ export class EngineeringQuotationNepalComponent implements OnInit {
      this.alignedenggid = undefined;
      this.alignedengineer = undefined;
      //
-     
     this.QuoationDate = this.CurrentDateNepal;
+    this.ObjEnginnerQuoation = new EnginnerQuoation();
+    this.EngQuoationProductList = [];
+    this.InstallMachineList = [];
+    this.SparePartsList = [];
+    this.EnginnerQuoationFormSubmit = false; 
+    this.EnginnerQuoationFormSubmitted = false;
+    this.EnginnerQuoationMachineFormSubmitted = false;
   }
   GetCallType(){
     //  console.log("StatusList ===", this.StatusList)
@@ -571,7 +590,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     // };
   }
   
-  SaveSupportTicket(valid) {
+  SaveEnggQuotation() {
     // this.SupportTicketFormSubmit = true;
     // this.Spinner = true;
     // if (valid && this.Contract_ID) {
@@ -630,71 +649,35 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     //       });
     //     }
     //   })
-    // } else {
-      this.SupportTicketFormSubmit = true;
+    // // } else {
+      this.EnginnerQuoationFormSubmit = true;
       this.Spinner = true;
-      if (valid) {
-        let arr =[]
-    if(this.ObjSupportTicket.Symptom.length) {
-      this.ObjSupportTicket.Symptom.forEach(el => {
-        if(el){
-          const Dobj = {
-            Symptom_ID : el
-            }
-            arr.push(Dobj)
-        }
-
-    });
-      // console.log("Table Data ===", Rarr)
-      // return Rarr.length ? JSON.stringify(Rarr) : '';
-   }
-       // const d1 = new NepaliDate(this.SupportTicketDate.year, this.SupportTicketDate.month, this.SupportTicketDate.day);
-        const TempObj = {
-          Doc_No: 'A',
-          Cost_Cent_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-          Support_Ticket_Status: 'PENDING',
-         // Support_Ticket_Date: this.DateService.dateConvert(d1.getEnglishDate()),
-        //  Support_Ticket_Date_Nepali: d1.format('dd-mm-yyyy'),
-          Support_Ticket_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportTicketDate)),
-          Support_Ticket_Date_Nepali: this.SupportTicketDate,
-          Expected_Completion_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ExpectedcompletionDate)),
-          Support_Start_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportStartDate)),
-          Support_End_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.SupportEndDate)),
-          Call_Type: this.ObjSupportTicket.Call_Type,
-          Sub_Ledger_ID: this.ObjSupportTicket.Customer_Name,
-          Location_ID: this.ObjSupportTicket.Location,
-          Product_Mfg_Comp_ID: this.ObjSupportTicket.Machine_Manufacturer,
-          Product_ID: this.ObjSupportTicket.Machine,
-          Serial_No: this.ObjSupportTicket.Serial_No,
-          Engineer_User_ID: this.ObjSupportTicket.Assigned_Engineer,
-          Contract_Status: this.ObjSupportTicket.Contract_Status,
-          Remarks: this.ObjSupportTicket.Remarks
-        }
+     if (this.ObjEnginnerQuoation.Quotation_Type && this.ObjEnginnerQuoation.Quotation_To_Company) {
+        console.log('save',this.ObjEnginnerQuoation)
         const obj = {
-          "SP_String": "SP_Support_Ticket_Nepal",
-          "Report_Name_String": "Create_Engg_CRM_Support_Ticket_Master",
-          "Json_Param_String": JSON.stringify([TempObj]),
-          "Json_1_String" : JSON.stringify(arr)
+          "SP_String": "SP_Quotation_Master",
+          "Report_Name_String": "Create_Edit_Quotation",
+          "Json_Param_String": JSON.stringify(this.EngQuoationProductList)
         }
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
           console.log(data);
-          var msg = data[0].Column1;
+          //var msg = data[0].Column1;
           if (data[0].Column1) {
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
               severity: "success",
-              summary: "Installed Machine",
-              detail: msg != "Already Exists" ? "Succesfully Saved" : "Already Exists"
+              summary: "Engineering Quotation",
+              detail: this.buttonname != "Save" ? "Succesfully Updated" : "Succesfully Saved"
             });
-            if (msg != "Already Exists") {
               this.clearData();
-            }
-            // this.ServiceContractFormSubmit = false;
-            this.Spinner = false;
-            // this.ObjServiceContract = new ServiceContract();
-            // this.MachineList = [];
-            // this.LoctionList = [];
+              this.GetSearchedList(true)
+              this.Spinner = false;
+              if (this.buttonname != "Save"){
+                this.clearData();
+                this.tabIndexToView = 0;
+                this.GetSearchedList(true);
+              }
 
           } else {
             this.Spinner = false;
@@ -737,13 +720,13 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     if (valid) {
       this.seachSpinner = true;
       const tempobj = {
-        // Sub_Ledger_ID: this.ObjBrowse.Customer_Name
-        From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
-        To_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
+        Sub_Ledger_ID: this.Browse_Sub_Ledger_ID ? this.Browse_Sub_Ledger_ID : 0,
+        // Start_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
+        // End_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
       }
       const obj = {
-        "SP_String": "SP_Support_Ticket_Nepal",
-        "Report_Name_String": "Browse_Engg_CRM_Support_Ticket_Master",
+        "SP_String": "SP_Quotation_Master",
+        "Report_Name_String": "Get_Quotation",
         "Json_Param_String": JSON.stringify([tempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
@@ -758,9 +741,93 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       })
     }
   }
-  Edit(){}
+  Edit(rowdata){
+    this.QuotationDocID = undefined;
+    this.clearData();
+    if (rowdata.Quotation_Doc_ID) {
+      console.log('Quotation_Doc_ID',rowdata.Quotation_Doc_ID)
+      this.QuotationDocID = rowdata.Quotation_Doc_ID
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE"];
+      this.buttonname = "Update";
+      this.clearData();
+      this.GetEdit(this.QuotationDocID);
+    }
+  }
+  GetEdit(rowdata){
+    this.EditList = [];
+    const obj = {
+      "SP_String": "SP_Quotation_Master",
+      "Report_Name_String": "Retrieve_Quotation",
+      "Json_Param_String": JSON.stringify([{Quotation_Doc_ID  : this.QuotationDocID}])
+  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.EditList = data;
+      this.ObjEnginnerQuoation.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+      this.GetLocation();
+      this.ObjEnginnerQuoation.Quotation_Type = data[0].Quotation_Type;
+      this.ObjEnginnerQuoation.Quotation_To_Company = data[0].Quotation_To_Company;
+
+      data.forEach(element => {
+        const  QuotObj = {
+            Sub_Ledger_ID : element.Sub_Ledger_ID,
+            Quotation_Type : element.Quotation_Type,
+            Quotation_To_Company : element.Quotation_To_Company,
+            Location_ID : element.Location_ID,
+            Location_Name : element.Location_Name,
+            Product_Mfg_Comp_ID : element.Product_Mfg_Comp_ID,
+            Mfg_Company : element.Mfg_Company,
+            Product_ID : element.Product_ID,
+            Machine :  element.Machine,
+            Spare_Parts_Product_ID : element.Spare_Parts_Product_ID,
+            Spare_Part_Description : element.Spare_Part_Description,
+            Qty : element.Qty,
+            Rate : element.Rate,
+            Total_Amount : element.Total_Amount,
+            Discount : element.Discount,
+            Discount_Type : element.Discount_Type,
+            Discount_Amount : element.Discount_Amount,
+            Taxable_Amount : element.Taxable_Amount,
+            VAT : element.VAT,
+            Net_Amt : element.Taxable_Amount,
+            Quotation_Doc_ID : element.Quotation_Doc_ID
+          };
+    
+          this.EngQuoationProductList.push(QuotObj);
+        });
+      // const editDataList = data[0];
+      // this.ObjEnginnerQuoation = editDataList;
+      // this.EngQuoationProductList.push(this.ObjEnginnerQuoation);
+      // const PrevObj = {...this.ObjEnginnerQuoation};
+      // this.ObjEnginnerQuoation = new EnginnerQuoation();
+      // console.log('edit this.EngQuoationProductList',this.EngQuoationProductList)
+      //const PrevObj = {...this.ObjEnginnerQuoation};
+      //  this.ObjMachineMaster.Product_Model = data[0].Product_Code;
+       //this.myDate = data[0].Date;
+      //  this.ObjMachineMaster.Product_Description = data[0].Product_Description;
+      //  this.ObjMachineMaster.Manufacturer = data[0].Product_Mfg_Comp_ID;
+      //  this.GetManufacturer();
+      // console.log("this.editList  ===",this.editList);
+
+      // const editDataList = data[0];
+      // this.ObjmasterProduct = editDataList;
+      // this.ProductTypeChange(editDataList.Product_Type_ID);
+      // this.ObjmasterProduct.Product_Sub_Type_ID = editDataList.Product_Sub_Type_ID;
+      // console.log("ObjmasterProduct ===",this.ObjmasterProduct);
+      // this.ObjmasterProduct.Product_ID = product_id;
+      // console.log("this.ObjmasterProduct.Product_ID",this.ObjmasterProduct.Product_ID);
+  
+  })
+  }
   onConfirm(){}
   onReject(){}
+
+  // Customer Creation
+  CreateCustomer(){
+    this.CustomerCreatePopup = true;
+  }
+  //SaveCustomer(){}
 
 }
 class SupportTicket{
@@ -782,7 +849,12 @@ class Browse{
   end_date : Date;
 }
 class EnginnerQuoation{
+  Quotation_ID:string;
+  Quotation_Doc_ID:Number;
   Sub_Ledger_ID:string;
+  Quotation_Date:any;
+  Quotation_Type:string;
+  Quotation_To_Company:string;
   Product_Mfg_Comp_ID:String;
   Mfg_Company:String;
   Location_ID:String;
@@ -793,11 +865,13 @@ class EnginnerQuoation{
   Spare_Part_Description:String;
   Qty:Number;
   Rate:Number;
-  Amount:Number;
+  Total_Amount:Number;
   Discount:String;
   Discount_Type:String;
-  Discount_Type_Amount:String;
+  Discount_Amount:String;
   Taxable_Amount:String;
-  Vat_Tax:Number;
+  //Vat_Tax:Number;
+  VAT:Number;
   Net_Amt:Number;
+  //Status:"ACTIVE"
 }

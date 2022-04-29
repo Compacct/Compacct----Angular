@@ -1,0 +1,50 @@
+div.table-responsive.table-id > p-table > div > div {
+    width: auto !important;
+  }
+  .box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+  }
+  .custombutton {
+    margin-top: 25px;
+  }
+  div.label-t {
+    padding: 6px 12px;
+    background: rgb(206, 216, 216);
+  }
+  body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active.compacct-tabs-2{
+    border:none !important;
+  }
+  .compacct-tabs-2.ui-state-active {
+    border-bottom: 2px solid rgb(64 70 255) !important;
+    background-color: #bcbcbc59 !important;
+    box-shadow: inset 1px 1px 20px #73737338;
+}
+.form-horizontal .control-label{
+  padding-top: 0 !important;
+}
+.createPatient {
+  padding: 0 5px !important;
+  border-radius: 3px !important;
+}
+.ui-table-auto-layout>.ui-table-wrapper {
+  width: auto !important;
+}
+
+.custombutton {
+  margin-top: 25px;
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.Outlet {
+  display: inline-block !important;
+}
+.text-red-active>td {
+  color: red;
+}

@@ -191,15 +191,16 @@ import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacc
 import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
 import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
 import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
-
 import { RetailBrowseComponent } from './common/FinancialManagement/Retail/retail-browse/retail-browse.component';
 import { RetailBrowseReceiveComponent } from './common/FinancialManagement/Retail/retail-browse-receive/retail-browse-receive.component';
 import { RetailBrowseAdvanceComponent } from './common/FinancialManagement/Retail/retail-browse-advance/retail-browse-advance.component';
-
-
-
-
-
+import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
+import { MasterCompanyComponent } from "./common/FinancialManagement/Master/master-company/master-company.component";
+import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
+import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
+import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
+import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
+import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component";
 
 
 
@@ -1387,6 +1388,7 @@ const layoutRoutes: Routes = [{
   data: {
     title: 'ASP Unavailability'
   }
+
 },
 {
   path: 'Retail_Txn_SALE_Bill_cum_challan_GST_V2',
@@ -1409,6 +1411,54 @@ const layoutRoutes: Routes = [{
     title: 'Browse of Advance Order'
   }
 },
+ {
+      path: 'Master_Company',
+      component: MasterCompanyComponent,
+      data: {
+        title: 'Master Company'
+      }
+    },
+      {
+      path: 'User_Master',
+      component: UserMasterComponent,
+      data: {
+        title: 'User Master'
+
+      }
+  },
+  {
+  path: 'Journal',
+  component: JournalVoucherComponent,
+  data: {
+    title: 'journal'
+
+  }
+  },
+  {
+  path: 'Product_Category_Update',
+  component: K4cProductCategoryUpdateComponent,
+  data: {
+    title: 'Product Category Update'
+
+  }
+},
+{
+path: 'Purchase_Order',
+component: PurchaseOrderComponent,
+data: {
+  title: 'Purchase Order'
+ }
+},
+  {
+path: 'Asp_Max_Appo',
+component: TutoAspMaxAppoComponent,
+data: {
+  title: 'Asp Max Appo'
+ }
+},
+    
+  
+
 
 
     /*{

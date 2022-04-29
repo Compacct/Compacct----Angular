@@ -22,6 +22,8 @@ export class K4cCreditNoteBrowseComponent implements OnInit {
   seachSpinner = false;
   Doc_No = undefined;
   franshisedisable = false;
+  Cancle_Remarks : string;
+  remarksFormSubmitted = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -104,6 +106,8 @@ const obj = {
  })
   }
   Delete(col){
+    this.Cancle_Remarks = undefined;
+    this.remarksFormSubmitted = false;
     this.Doc_No = undefined;
   if(col.Doc_No){
     this.Doc_No = col.Doc_No;
@@ -117,20 +121,25 @@ const obj = {
     });
   }
   }
-  onConfirm(){
-    if(this.Doc_No){
+  onConfirm(valid){
+    //this.Can_Remarks = true;
+    this.remarksFormSubmitted = true;
+   // if(this.Doc_No){
       const Tempdata = {
-       // User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-        Doc_No : this.Doc_No
+        Doc_No : this.Doc_No,
+        User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+        Remarks : this.Cancle_Remarks
       }
+      if (valid) {
       const objj = {
         "SP_String": "SP_Franchise_Sale_Bill",
-        "Report_Name_String": "Delete Franchise Sale Bill",
+        "Report_Name_String": "Delete Credit Note",
         "Json_Param_String": JSON.stringify([Tempdata])
       }
       this.GlobalAPI.getData(objj).subscribe((data:any)=>{
         if (data[0].Column1 === "Done"){
-          this.onReject();
+          //this.onReject();
+          this.remarksFormSubmitted = false;
           this.GetSearchedList();
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -139,9 +148,18 @@ const obj = {
             summary: "Doc No.: " + this.Doc_No.toString(),
             detail: "Succesfully Deleted"
           });
-         // this.clearData();
-        }
-      })
+          // this.clearData();
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+    })
     }
   }
   onReject() {

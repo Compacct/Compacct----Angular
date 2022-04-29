@@ -240,7 +240,7 @@
                                         </div>
                                         <div class="col-sm-1">
                                             <label class="control-label">Rate <sup class="text-danger">*</sup></label>
-                                            <input class="form-control" name="Net_Price" #Net_Price="ngModel" [disabled]="true" [(ngModel)]="ObjaddbillForm.Sale_rate" [disabled]="true" CompacctDigitonly="true" [ngClass]="{'clearance':addbillFormSubmitted && Net_Price?.errors?.required}" required>
+                                            <input class="form-control" name="Net_Price" #Net_Price="ngModel" [disabled]="true" [(ngModel)]="ObjaddbillForm.Sale_rate" CompacctDigitonly="true" [ngClass]="{'clearance':addbillFormSubmitted && Net_Price?.errors?.required}" required>
 
                                         </div>
                                         <div class="col-sm-3">
@@ -333,10 +333,12 @@
                                                     <th>Qty</th>
                                                     <th>Batch No</th>
                                                     <th>Rate</th>
+                                                    <th>Amount</th>
+                                                    <th>Taxable B4 Disc.</th>
                                                     <th *ngIf="AdvOderDetailList">Delivery Charge</th>
-                                                    <th>Taxable</th>
                                                     <th>Dis %</th>
                                                     <th>Dis Amt</th>
+                                                    <th>Taxable</th>
                                                     <th>SGST % / <br> SGST Amt</th>
                                                     <!-- <th>SGST Amt</th> -->
                                                     <th>CGST % / <br> CGST Amt</th>
@@ -389,10 +391,12 @@
                                                     <td>{{obj.Stock_Qty}}</td>
                                                     <td>{{obj.Batch_No}}</td>
                                                     <td>{{obj.Net_Price}}</td>
+                                                    <td>{{obj.Amount}}</td>
+                                                    <td>{{obj.Amount_berore_Tax}}</td>
                                                     <td *ngIf='AdvOderDetailList'>{{obj.Delivery_Charge}}</td>
-                                                    <td>{{obj.Taxable}}</td>
                                                     <td>{{obj.Max_Discount}}</td>
                                                     <td>{{obj.Dis_Amount}}</td>
+                                                    <td>{{obj.Taxable}}</td>
                                                     <td>{{obj.SGST_Per}} <br> {{obj.SGST_Amount}}
                                                     </td>
                                                     <!-- <td>{{obj.SGST_Amount}}</td> -->
@@ -482,14 +486,14 @@
                                             <div class="box-body1">
                                                 <div class="form-group">
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">Taxable Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{TotalTaxable}}
+                                                        <label class="control-label">Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Amount}}
                                                     </div>
 
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Discount Amount:</label> &nbsp;&nbsp;&nbsp; {{Dis_Amount}}
                                                     </div>
                                                     <div class='col-sm-12'>
-                                                        <label class="control-label">Gross Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Gross_Amount}}
+                                                        <label class="control-label">Taxable Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{TotalTaxable}}
                                                     </div>
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">SGST Amount:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{SGST_Amount}}
@@ -664,6 +668,7 @@
         </div>
     </div>
 </div>
+
 <!-- Cancle Remarks Popup -->
 <!-- <p-dialog header="Remarks Details" [appendTo]="'body'" [(visible)]="CanRemarksPoppup" [modal]="true" [responsive]="true" [minY]="50" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '30%', minWidth: '50px'}">
     <form name="canRemarksd" #SearchForm="ngForm" novalidate>

@@ -1,4 +1,18 @@
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
 
 .custombutton {
     margin-top: 25px;
+}
+
+.createPatient {
+    padding: 0 5px !important;
+    border-radius: 3px !important;
+    margin-top: 5px !important;
+}
+
+.pull-right {
+    float: right!important;
+    margin-top: 20px;
 }
