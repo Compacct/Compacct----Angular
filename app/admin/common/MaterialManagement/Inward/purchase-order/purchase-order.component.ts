@@ -333,7 +333,7 @@ export class PurchaseOrderComponent implements OnInit {
       Discount: Number(this.objaddPurchacse.Discount),
       Total_Amount: Number(this.objaddPurchacse.Total_Amount),
       AO_No: "NA",
-      Unit: this.objaddPurchacse.Unit
+      UOM: this.objaddPurchacse.Unit
      }
       this.addPurchaseList.push(saveData)
       this.objaddPurchacse = new addPurchacse();
