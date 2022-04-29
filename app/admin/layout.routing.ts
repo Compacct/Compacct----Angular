@@ -200,7 +200,7 @@ import { UserMasterComponent } from "./common/UserManagement/Master/user-master/
 import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
-import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component";
+import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component"
 
 
 
@@ -1388,30 +1388,29 @@ const layoutRoutes: Routes = [{
   data: {
     title: 'ASP Unavailability'
   }
-
-},
-{
-  path: 'Retail_Txn_SALE_Bill_cum_challan_GST_V2',
-  component: RetailBrowseComponent,
-  data: {
-    title: 'Retail Browse'
-  }
-},
-{
-  path: 'Retail_ACC_Txn_Acc_Journal_V2',
-  component: RetailBrowseReceiveComponent,
-  data: {
-    title: 'Browse for Receive'
-  }
-},
-{
-  path: 'Hearing_Advance_Order_V2',
-  component: RetailBrowseAdvanceComponent,
-  data: {
-    title: 'Browse of Advance Order'
-  }
-},
- {
+  },
+  {
+    path: 'Retail_Txn_SALE_Bill_cum_challan_GST_V2',
+    component: RetailBrowseComponent,
+    data: {
+      title: 'Retail Browse'
+    }
+  },
+  {
+    path: 'Retail_ACC_Txn_Acc_Journal_V2',
+    component: RetailBrowseReceiveComponent,
+    data: {
+      title: 'Browse for Receive'
+    }
+  },
+  {
+    path: 'Hearing_Advance_Order_V2',
+    component: RetailBrowseAdvanceComponent,
+    data: {
+      title: 'Browse of Advance Order'
+    }
+  },
+  {
       path: 'Master_Company',
       component: MasterCompanyComponent,
       data: {
@@ -1448,17 +1447,15 @@ component: PurchaseOrderComponent,
 data: {
   title: 'Purchase Order'
  }
-},
-  {
-path: 'Asp_Max_Appo',
-component: TutoAspMaxAppoComponent,
-data: {
-  title: 'Asp Max Appo'
- }
-},
-    
-  
+},{
+  path: 'Asp_Max_Appo',
+  component: TutoAspMaxAppoComponent,
+  data: {
+    title: 'Asp Max Appo'
+   }
+  },
 
+  
 
 
     /*{
