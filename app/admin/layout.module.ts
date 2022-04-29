@@ -279,13 +279,13 @@ import { TutoBdaJoiningComponent } from './common/CRM/Transaction/tuto-bda-joini
 import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component'
 
 import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-angular-gantt';
+import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
+import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
+import { MasterCompanyComponent } from "./common/FinancialManagement/Master/master-company/master-company.component";
+import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
-import { MasterCompanyComponent } from './common/FinancialManagement/Master/master-company/master-company.component';
-import { JournalVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component';
-import { UserMasterComponent } from './common/UserManagement/Master/user-master/user-master.component';
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
-import { PurchaseOrderComponent } from './common/MaterialManagement/Inward/purchase-order/purchase-order.component';
-import { TutoAspMaxAppoComponent } from './common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component';
+
 
 
 
@@ -487,15 +487,13 @@ import { TutoAspMaxAppoComponent } from './common/CRM/Master/tuto-asp-max-appo/t
     UserAbsentComponent,
     TutoBdaJoiningComponent,
     TutoAspUnavaliblityComponent,
-    AttendanceSheetComponent,
-    MasterCompanyComponent,
+    PurchaseOrderComponent,
     JournalVoucherComponent,
+    MasterCompanyComponent,
     UserMasterComponent,
-    K4cProductCategoryUpdateComponent,
-    PurchaseOrderComponent
-    TutoAspMaxAppoComponent
-
- ],
+    AttendanceSheetComponent,
+    K4cProductCategoryUpdateComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,

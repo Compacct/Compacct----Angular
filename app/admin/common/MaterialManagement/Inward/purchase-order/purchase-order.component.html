@@ -468,15 +468,15 @@
                                                 <td>{{col.Product_Spec}}</td>
                                                 <td>{{col.AO_No}}</td>
                                                 <td>{{col.Qty}}</td>
-                                                <td>{{col.Unit}}</td>
-                                                <td>{{col.Rate}}</td>
-                                                <td>{{col.Gross_Amt}}</td>
-                                                <td>{{col.Excise_Tax_Percentage}}</td>
-                                                <td>{{col.Excise_Tax}}</td>
+                                                <td>{{col.UOM}}</td>
+                                                <td>{{col.Rate ? col.Rate : 0}}</td>
+                                                <td>{{col.Gross_Amt ? col.Gross_Amt :0}}</td>
+                                                <td>{{col.Excise_Tax_Percentage ? col.Excise_Tax_Percentage : 0}}</td>
+                                                <td>{{col.Excise_Tax ? col.Excise_Tax : 0}}</td>
                                                 <td>{{col.Tax_Desc}}</td>
-                                                <td>{{col.Tax_Rate}}</td>
-                                                <td>{{col.Discount}}</td>
-                                                <td>{{col.Total_Amount}}</td>
+                                                <td>{{col.Tax_Rate ? col.Tax_Rate : 0}}</td>
+                                                <td>{{col.Discount ? col.Discount : 0}}</td>
+                                                <td>{{col.Total_Amount ? col.Total_Amount : 0}}</td>
                                                <td> <a (click)="DeleteAddPurchase(i)"
                                                 ><div><i class="fa fa-fw fa-trash"> </i></div>
                                               </a></td>
