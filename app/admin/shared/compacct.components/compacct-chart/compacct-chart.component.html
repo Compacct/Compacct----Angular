@@ -14,8 +14,18 @@
     maxHeight: '600px',
     overflow: 'auto'
   }" style="text-align: center;" [positionTop]="10" [maximizable]="true" [baseZIndex]="10000">
+    <div class="row text-center">
+        <button *ngIf="ChartDeatilsList.length" (click)="exportexcel(ChartDeatilsList)" class="btn btn-primary custombutton">
+            <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+          </button>
+    </div>
     <div class="table-responsive no-padding text-center table-id">
-        <p-table #dt [columns]="ChartColList" [value]="ChartDeatilsList" [paginator]="ChartDeatilsList.length ? true : false" [rows]="10" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowHover]="true">
+        <p-table #dt  
+        [globalFilterFields]="ChartSearchColList"
+        [columns]="ChartColList" [value]="ChartDeatilsList"
+        [paginator]="ChartDeatilsList.length ? true : false" 
+        [rows]="10" [loading]="seachSpinner" [rowHover]="true" 
+        [autoLayout]="true" sortMode="multiple" [rowHover]="true">
             <ng-template pTemplate="caption">
                 <div class="row">
                     <div class="col-sm-3 pull-right" style="text-align: right">
