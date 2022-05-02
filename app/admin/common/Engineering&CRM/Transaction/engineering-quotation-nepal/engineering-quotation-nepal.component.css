@@ -16,3 +16,9 @@ div.table-responsive.table-id>p-table>div>div {
     float: right!important;
     margin-top: 20px;
 }
+textarea.form-control {
+    height: 35px;
+}
+div.pac-container.pac-logo {
+    z-index: 9999999 !important;
+}
