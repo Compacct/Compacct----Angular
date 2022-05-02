@@ -291,8 +291,6 @@ import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k
 import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component";
 
 
-
-
 @NgModule({
   declarations: [
     AppLayoutComponent,
