@@ -1839,7 +1839,7 @@ getadvorderdetails(Adv_Order_No){
             GST_Tax_Per_Amt : element.IGST_Amt,
             GST_Tax_Per_forcalcu : Number(element.IGST_Per).toFixed(2),
             Net_Amount : Number(element.Net_Amount).toFixed(2),
-            Taxable_Amount : Number(element.Amount),
+            Taxable_Amount : Number(element.Taxable),
             CGST_Output_Ledger_ID : Number(element.CGST_Output_Ledger_ID),
             SGST_Output_Ledger_ID : Number(element.SGST_Output_Ledger_ID),
             IGST_Output_Ledger_ID : Number(element.IGST_Output_Ledger_ID),

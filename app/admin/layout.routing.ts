@@ -201,6 +201,7 @@ import { JournalVoucherComponent } from "./common/FinancialManagement/Transactio
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
 import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component"
+import { TutoBdaAttendanceComponent } from './common/CRM/Master/tuto-bda-attendance/tuto-bda-attendance.component';
 
 
 
@@ -1447,13 +1448,21 @@ component: PurchaseOrderComponent,
 data: {
   title: 'Purchase Order'
  }
-},{
+},
+{
   path: 'Asp_Max_Appo',
   component: TutoAspMaxAppoComponent,
   data: {
     title: 'Asp Max Appo'
    }
   },
+  {
+    path: 'Tutopia_BDA_Attendance',
+    component: TutoBdaAttendanceComponent,
+    data: {
+      title: 'Tutopia BDA Attendance'
+     }
+    },
 
   
 

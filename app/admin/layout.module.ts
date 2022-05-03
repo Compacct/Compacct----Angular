@@ -289,6 +289,7 @@ import { UserMasterComponent } from "./common/UserManagement/Master/user-master/
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component";
+import { TutoBdaAttendanceComponent } from './common/CRM/Master/tuto-bda-attendance/tuto-bda-attendance.component';
 
 
 @NgModule({
@@ -498,7 +499,8 @@ import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/t
     UserMasterComponent,
     AttendanceSheetComponent,
     K4cProductCategoryUpdateComponent,
-    TutoAspMaxAppoComponent
+    TutoAspMaxAppoComponent,
+    TutoBdaAttendanceComponent
   ],
   imports: [
     CommonModule,
