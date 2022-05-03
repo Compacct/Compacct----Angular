@@ -17,7 +17,7 @@
                                                 <div class="panel-body">
                                                     <div class="form-group">
                                                     <div class="col-sm-12">
-                                                        <label class="control-label">Quotation From&nbsp;<span class="text-danger">*</span></label> &nbsp;&nbsp;
+                                                        <label class="control-label">Quotation From&nbsp;</label> &nbsp;&nbsp;
                                                          <input type="radio" name="browsequotfrom" value="CustomerBrowse" [(ngModel)]="ObjBrowseQuotation.Quotation_From" (change)="radiobrowsechange()">
                                                          <label style="font-weight: 400;">Customer</label>&nbsp;&nbsp;
                                                          <input type="radio" name="browsequotfrom" value="LeadBrowse" [(ngModel)]="ObjBrowseQuotation.Quotation_From" (change)="radiobrowsechange()">
@@ -26,7 +26,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                     <div class="col-sm-12" *ngIf="ObjBrowseQuotation.Quotation_From === 'CustomerBrowse'">
-                                                        <label class="control-label">Customer&nbsp;<span class="text-danger">*</span></label>
+                                                        <label class="control-label">Customer&nbsp;</label>
                                                         <!-- <div class="col-sm-4">
                                                             <label class="control-label">Customer&nbsp;<span class="text-danger">*</span></label> -->
                                                             <p-dropdown [options]="CustomerBrowseList" name="BrowseCustomer" [(ngModel)]="ObjBrowseQuotation.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
@@ -38,7 +38,7 @@
                                                             [required]="ObjEnginnerQuoation.Quotation_From === 'Customer' ? true : false">
                                                         </p-dropdown> -->
                                                     <div class="col-sm-12" *ngIf="ObjBrowseQuotation.Quotation_From === 'LeadBrowse'">
-                                                        <label class="control-label">Lead&nbsp;<span class="text-danger">*</span></label>
+                                                        <label class="control-label">Lead&nbsp;</label>
                                                         <p-dropdown [options]="LeadBrowseList" name="Browselead" [(ngModel)]="ObjBrowseQuotation.Foot_Fall_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                             [placeholder]="'Select Lead'" [virtualScroll]="true" itemSize="30" #Browselead="ngModel"  [styleClass]="SearchFormSubmitted &&  Browselead.errors?.required ? 'clearance' :''"
                                                             [required]="ObjBrowseQuotation.Quotation_From === 'Lead' ? true : false">
@@ -111,7 +111,8 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Customer Name</th>
+                                            <th *ngIf="ObjBrowseQuotation.Quotation_From === 'CustomerBrowse'">Customer Name</th>
+                                            <th *ngIf="ObjBrowseQuotation.Quotation_From === 'LeadBrowse'">Lead Name</th>
                                             <th>Quotation Type</th>
                                             <th>Quotation To Company</th>
                                             <th>Total Taxable Amount</th>
@@ -135,7 +136,8 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <td>{{col.Sub_Ledger_Name}}</td>
+                                            <td *ngIf="ObjBrowseQuotation.Quotation_From === 'CustomerBrowse'">{{col.Sub_Ledger_Name}}</td>
+                                            <td *ngIf="ObjBrowseQuotation.Quotation_From === 'LeadBrowse'">{{col.Org_Name}}</td>
                                             <td>{{col.Quotation_Type}}</td>
                                             <td>{{col.Quotation_To_Company}}</td>
                                             <td>{{col.Total_Taxable_Amount}}</td>
@@ -157,7 +159,7 @@
                                             <div class="panel-body">
                                                 <div class="form-group">
                                                 <div class="col-sm-12">
-                                                    <label class="control-label">Quotation From&nbsp;</label> &nbsp;&nbsp;
+                                                    <label class="control-label">Quotation From&nbsp;<span class="text-danger">*</span></label> &nbsp;&nbsp;
                                                      <input type="radio" name="quotfrom" value="Customer" [(ngModel)]="ObjEnginnerQuoation.Quotation_From" [disabled]="EngQuoationProductList.length" (change)="radiochange()">
                                                      <label style="font-weight: 400;">Customer</label>&nbsp;&nbsp;
                                                      <input type="radio" name="quotfrom" value="Lead" [(ngModel)]="ObjEnginnerQuoation.Quotation_From" [disabled]="EngQuoationProductList.length" (change)="radiochange()">
@@ -166,7 +168,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                 <div class="col-sm-12" *ngIf="ObjEnginnerQuoation.Quotation_From === 'Customer'">
-                                                    <label class="control-label">Customer&nbsp;</label>
+                                                    <label class="control-label">Customer&nbsp;<span class="text-danger">*</span></label>
                                                     <!-- <span (click)="CreateCustomer()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span> -->
                                                     <p-dropdown [options]="CustomerList" name="Customer" [(ngModel)]="ObjEnginnerQuoation.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                         [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #Customer="ngModel" [disabled]="EngQuoationProductList.length" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Customer.errors?.required ? 'clearance' :''"
@@ -174,7 +176,7 @@
                                                     </p-dropdown>
                                                 </div>
                                                 <div class="col-sm-12" *ngIf="ObjEnginnerQuoation.Quotation_From === 'Lead'">
-                                                    <label class="control-label">Lead&nbsp;</label>
+                                                    <label class="control-label">Lead&nbsp;<span class="text-danger">*</span></label>
                                                     <span (click)="CreateCustomer()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                                     <p-dropdown [options]="LeadList" name="lead" [(ngModel)]="ObjEnginnerQuoation.Foot_Fall_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                         [placeholder]="'Select Lead'" [virtualScroll]="true" itemSize="30" #Customer="ngModel" [disabled]="EngQuoationProductList.length" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Customer.errors?.required ? 'clearance' :''"
@@ -330,7 +332,7 @@
                                         let index = index
                                       " [class.even]="odd">
                                             <td>{{ index + 1 }}</td>
-                                            <td>{{ d.Location_Name }}</td>
+                                            <td>{{ d.Location_Name ? d.Location_Name : '-' }}</td>
                                             <td>{{ d.Mfg_Company ? d.Mfg_Company : '-' }}</td>
                                             <td>{{ d.Machine ? d.Machine : '-' }}</td>
                                             <td>{{ d.Spare_Part_Description ? d.Spare_Part_Description : '-' }}</td>
@@ -533,7 +535,7 @@
                     <div class="form-group">
                     <div class="col-sm-3">
                         <label class="control-label">Assign To<sup class="text-danger">*</sup></label>
-                        <select class="form-control" name="assignto" #assignto="ngModel" [(ngModel)]="ObjLeadCreation.Assign_TO" [ngClass]="{'clearance': LeadcreateFormSubmitted && assignto.errors?.required}" required>
+                        <select class="form-control" name="assignto" #assignto="ngModel" [(ngModel)]="ObjLeadCreation.Assign_To" [ngClass]="{'clearance': LeadcreateFormSubmitted && assignto.errors?.required}" required>
                             <option  [ngValue]="undefined">Select</option>
                             <option *ngFor="let option of AssignToList" [ngValue]="option.Member_ID">
                               {{option.Member_Name}}

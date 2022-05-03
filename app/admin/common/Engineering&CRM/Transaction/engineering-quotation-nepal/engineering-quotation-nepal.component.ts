@@ -182,7 +182,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach((obj)=>{
-        obj.label = obj.Contact_Name;
+        obj.label = obj.Org_Name;
         obj.value = obj.Foot_Fall_ID;
       })
      this.LeadList = data;  
@@ -222,7 +222,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach((obj)=>{
-        obj.label = obj.Contact_Name;
+        obj.label = obj.Org_Name;
         obj.value = obj.Foot_Fall_ID;
       })
      this.LeadBrowseList = data;  
@@ -232,8 +232,10 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   radiobrowsechange(){
     if (this.ObjBrowseQuotation.Quotation_From === "CustomerBrowse") {
       this.GetBrowseCustomer();
+      this.BrowseList = [];
     } else {
       this.GetBrowseLead();
+      this.BrowseList = [];
     }
   }
   GetLocation() {
@@ -377,6 +379,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       const PrevObj = {...this.ObjEnginnerQuoation};
       this.ObjEnginnerQuoation = new EnginnerQuoation();
       this.ObjEnginnerQuoation.Sub_Ledger_ID = PrevObj.Sub_Ledger_ID;
+      this.ObjEnginnerQuoation.Foot_Fall_ID = PrevObj.Foot_Fall_ID;
       this.ObjEnginnerQuoation.Quotation_Type = PrevObj.Quotation_Type;
       this.ObjEnginnerQuoation.Quotation_To_Company = PrevObj.Quotation_To_Company;
       this.ObjEnginnerQuoation.Quotation_From = PrevObj.Quotation_From;
@@ -1187,7 +1190,7 @@ class LeadCreation {
   Status: "Prospecting";
   Sub_Dept_ID:number;
   Sent_To: 0;
-  Assign_TO:string;
+  Assign_To:string;
   Product_Type_IDs:string;
   Existing:string;
   Existing_Name:string;

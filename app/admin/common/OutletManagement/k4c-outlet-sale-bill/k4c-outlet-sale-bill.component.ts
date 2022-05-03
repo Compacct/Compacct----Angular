@@ -560,6 +560,14 @@ getcredittoaccount(){
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.creditlist = data;
+       if (!this.QueryStringObj.Ledger_Name) {
+        this.creditlist = data;
+       } else {
+        var couponid = this.creditlist.filter(function(value, index, arr){
+          return value.Txn_ID == 5;
+        });
+        this.creditlist = couponid;
+       }
      })
   //}
 }
@@ -646,7 +654,7 @@ add(valid) {
       //var Amount = Number(this.ObjaddbillForm.Stock_Qty * this.ObjaddbillForm.Sale_rate);
       var Amount = Number(Number(this.ObjaddbillForm.Stock_Qty) * Number(this.ObjaddbillForm.Sale_rate));
       var Amtbeforetax = (Number(Amount * 100) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100));
-      //var rate =((Number(Number(this.ObjaddbillForm.Sale_rate) * 100)) / (0 + 100)).toFixed(2);
+      var rate =((Number(Number(this.ObjaddbillForm.Sale_rate) * 100)) / (0 + 100)).toFixed(2);
       //var tax = Number(Number(rate) * Number(this.ObjaddbillForm.Stock_Qty));
       var Dis_Amount = Number(Number(rate) * Number(this.ObjaddbillForm.Max_Discount) / 100);
       //var Gross_Amount = Number(rate - Dis_Amount) ;
@@ -657,16 +665,17 @@ add(valid) {
       var IGST_Per = 0;
       var IGST_Amount = 0 ;
       totalgst = Number(IGST_Amount) ? (Number(SGST_Amount) + Number(CGST_Amount) + Number(IGST_Amount)).toFixed(2) : (Number(SGST_Amount) + Number(CGST_Amount)).toFixed(2);
-      var tax = Number(Number(Amount) - Number(Dis_Amount)); //- Number(totalgst));
+      var tax = Number(Number(Amtbeforetax) - Number(Dis_Amount)); //- Number(totalgst));
     } 
     else {
    //console.log("call");
   //console.log("this.ObjaddbillForm===",this.ObjaddbillForm)
   var Amount = Number(Number(this.ObjaddbillForm.Stock_Qty) * Number(this.ObjaddbillForm.Sale_rate));
   var Amtbeforetax = (Number(Amount * 100) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100));
-  var rate =((Number(this.ObjaddbillForm.Sale_rate * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100)).toFixed(2);
+  //var rate =((Number(this.ObjaddbillForm.Sale_rate * 100)) / (Number(this.ObjaddbillForm.GST_Tax_Per) + 100)).toFixed(2);
   // var tax = Number(Number(rate) * Number(this.ObjaddbillForm.Stock_Qty));
-  var Dis_Amount = Number(Number(rate) * Number(this.ObjaddbillForm.Max_Discount) / 100);
+  // var Dis_Amount = Number(Number(rate) * Number(this.ObjaddbillForm.Max_Discount) / 100);
+  var Dis_Amount = Number(Number(this.ObjaddbillForm.Sale_rate) * Number(this.ObjaddbillForm.Max_Discount) / 100);
   var SGST_Per = Number(Number(this.ObjaddbillForm.GST_Tax_Per) / 2);
   //var Gross_Amount = Number(rate - Dis_Amount) ;
   SGST_Amount = (Number(Number(Amtbeforetax) * Number(SGST_Per)) / 100).toFixed(2); 
@@ -722,7 +731,8 @@ add(valid) {
     Max_Discount : Number(this.ObjaddbillForm.Max_Discount),
     Dis_Amount : Number(Dis_Amount).toFixed(2),
     Taxable : Number(tax).toFixed(2),
-    Gross_Amount : Number(Number(tax) - Number(Dis_Amount)).toFixed(2),
+    //Gross_Amount : Number(Number(tax) - Number(Dis_Amount)).toFixed(2),
+    Gross_Amount : Number(Amtbeforetax).toFixed(2),
     SGST_Per : Number(IGST_Amount) ? 0 : Number(SGST_Per).toFixed(2),
     SGST_Amount : Number(SGST_Amount).toFixed(2),
     CGST_Per : Number(IGST_Amount) ? 0 : Number(CGST_Per).toFixed(2),
@@ -733,7 +743,7 @@ add(valid) {
    // Net_Amount : Number(Gross_Amount + SGST_Amount + CGST_Amount).toFixed(2),
     Net_Amount : Number(ntamt).toFixed(2),
     // Taxable_Amount : Number(rate).toFixed(3),
-    Taxable_Amount : Number(tax).toFixed(3),
+    Taxable_Amount : Number(Amtbeforetax).toFixed(3),
     CGST_Output_Ledger_ID : this.CGST_Ledger_Id,
     SGST_Output_Ledger_ID : this.SGST_Ledger_Id,
     IGST_Output_Ledger_ID : this.IGST_Ledger_Id
@@ -912,7 +922,7 @@ listofamount(){
     }
     count1 = count1 + Number(item.Dis_Amount);
     //count2 = count2 + Number(item.Gross_Amount);
-    count2 = count2 + Number(item.Taxable - item.Dis_Amount);
+    // count2 = count2 + Number(item.Taxable - item.Dis_Amount);
     count3 = count3 + Number(item.SGST_Amount);
     count4 = count4 + Number(item.CGST_Amount);
     count5 = count5 + Number(item.GST_Tax_Per_Amt);
@@ -923,8 +933,9 @@ listofamount(){
   this.taxb4disamt = (count8).toFixed(2);
   this.Dis_Amount = (count1).toFixed(2);
   this.TotalTaxable = (count6).toFixed(3);
+  this.Gross_Amount = (count8).toFixed(2);
   //this.Gross_Amount = (count2).toFixed(2);
-  this.Gross_Amount = (Number(this.TotalTaxable) - Number(this.Dis_Amount)).toFixed(2);
+  //this.Gross_Amount = (Number(this.TotalTaxable) - Number(this.Dis_Amount)).toFixed(2);
   this.SGST_Amount = (count3).toFixed(2);
   this.CGST_Amount = (count4).toFixed(2);
   this.GST_Tax_Per_Amt = (count5).toFixed(2);
@@ -1050,7 +1061,7 @@ CalculateDiscount(){
       damt = Number((Number(el.Amount_berore_Tax) / Number(this.taxb4disamt)) * Number(this.ObjcashForm.Credit_To_Amount));
       el.Dis_Amount = Number(damt).toFixed(2);
       var da = Number(el.Dis_Amount);
-      var grossamt = Number(Number(el.Taxable) - Number(el.Dis_Amount));
+      //var grossamt = Number(Number(el.Taxable) - Number(el.Dis_Amount));
       //var amt = (Number(el.Amount) - Number(da)).toFixed(2);
       var sgstperamt = (Number(((Number(el.Amount_berore_Tax) - Number(da)) * Number(el.SGST_Per)) / 100)).toFixed(2);
       var cgstperamt = (Number(((Number(el.Amount_berore_Tax) - Number(da)) * Number(el.CGST_Per)) / 100)).toFixed(2);
@@ -1067,7 +1078,7 @@ CalculateDiscount(){
       netamount = Number(Number(taxamount) + Number(totalgstamt)).toFixed(2);
       //this.Dis_Amount = undefined;
 
-     el.Gross_Amount = Number(grossamt).toFixed(2);
+     //el.Gross_Amount = Number(grossamt).toFixed(2);
      el.SGST_Amount = Number(sgstperamt).toFixed(2);
      el.CGST_Amount = Number(cgstperamt).toFixed(2);
      el.Taxable = Number(taxamount).toFixed(2);
@@ -1085,7 +1096,7 @@ CalculateDiscount(){
       //var netamount2 = el.Taxable + el.SGST_Amount + el.CGST_Amount;
 
       el.Dis_Amount = 0 ;
-      el.Gross_Amount = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount)).toFixed(2);
+      //el.Gross_Amount = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount)).toFixed(2);
       el.SGST_Amount = Number((Number(el.Amount_berore_Tax) * Number(el.SGST_Per)) / 100).toFixed(2); 
       el.CGST_Amount = Number((Number(el.Amount_berore_Tax) * Number(el.CGST_Per)) / 100).toFixed(2);
       el.GST_Tax_Per_Amt = Number((Number(el.Amount_berore_Tax) * Number(el.GST_Tax_Per)) / 100).toFixed(2);
@@ -1449,7 +1460,7 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
           IGST_Per : item.GST_Tax_Per,
           IGST_Amt : item.GST_Tax_Per_Amt,
           Net_Amount : item.Net_Amount,
-          Taxable_Amount : item.Taxable_Amount,
+          Taxable_Amonut : item.Taxable_Amount,
           CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
           SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
           IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,

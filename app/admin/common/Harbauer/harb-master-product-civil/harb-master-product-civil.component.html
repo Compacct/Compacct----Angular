@@ -98,11 +98,11 @@
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Sub_Type}}</td>
                                             <td>{{col.Cat_Name}}</td>
-                                            <td>{{col.MOC_Description}}</td>
-                                            <td>{{col.Capacity_Size_Desc}}</td>
+                                            <td>{{col.MOC_Description ? col.MOC_Description : '-'}}</td>
+                                            <td>{{col.Capacity_Size_Desc ? col.Capacity_Size_Desc : '-'}}</td>
                                             <td>{{col.Product_Feature_Desc}}</td>
-                                            <td>{{col.Grade_Description}}</td>
-                                            <td>{{col.Remarks}}</td>
+                                            <td>{{col.Grade_Description ? col.Grade_Description : '-'}}</td>
+                                            <td>{{col.Remarks ? col.Remarks : '-'}}</td>
                                             <td>{{col.HSN_NO}}</td>
                                             <td>{{col.GST_Percentage}}</td>
                                             <td>{{col.UOM}}</td>
@@ -217,8 +217,8 @@
                                                       </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="ObjMasterProductCivil.Remarks" placeholder="Remarks" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && remarks.errors?.required}" required>
+                                        <label class="control-label">Remarks</label>
+                                        <input class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="ObjMasterProductCivil.Remarks" placeholder="Remarks" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && remarks.errors?.required}" >
                                     </div>
                                 </div>
                                 <div class="form-group">
