@@ -13,3 +13,13 @@ div.table-responsive.table-id>p-table>div>div {
 .custombutton {
     margin-top: 25px;
 }
+.box.boxboxDivide-primary{
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset
+}
+.amt-td{
+    background: #f1f1f1;
+    text-align: center;
+}

@@ -280,10 +280,10 @@ getTotalDRCR(){
   this.totalDR = 0;
   this.totalCR = 0;
   if(this.objjournal.DrCrdata === "DR"){
-    this.totalDR = Number(this.objjournal.Amount);
+    this.totalDR = Number((this.objjournal.Amount).toFixed(2));
    }
    else if(this.objjournal.DrCrdata === "CR"){
-    this.totalCR = Number(this.objjournal.Amount);
+    this.totalCR = Number((this.objjournal.Amount).toFixed(2));
    }
    else {
      console.error("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
@@ -336,8 +336,8 @@ saveJournal(valid){
 				Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
 				Cost_Cen_ID_Trn	: this.objjournal.Cost_Cen_ID_Trn,
 				Cost_Head_ID: this.objjournal.Cost_Head_ID,
-				DR_Amt: this.objjournal.DrCrdata === "DR" ? Number(this.objjournal.Amount) : 0,
-				CR_Amt: this.objjournal.DrCrdata === "CR" ? Number(this.objjournal.Amount) : 0,
+				DR_Amt: this.objjournal.DrCrdata === "DR" ? Number((this.objjournal.Amount).toFixed(2)) : 0,
+				CR_Amt: this.objjournal.DrCrdata === "CR" ? Number((this.objjournal.Amount).toFixed(2)) : 0,
 				Naration: this.objjournal.Naration,
 				Project_ID: this.objjournal.Project_ID,
 				Is_Topper	: "Y",
@@ -442,12 +442,12 @@ EditJournal(col){
       this.getsubLedgertop(data[0].Ledger_ID,data[0].Sub_Ledger_ID);
       
      if(data[0].DR_Amt){
-      this.objjournal.Amount = data[0].DR_Amt
+      this.objjournal.Amount = Number((data[0].DR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "DR";
       this.getTotalDRCR()
     }
     else if (data[0].CR_Amt){
-      this.objjournal.Amount = data[0].CR_Amt
+      this.objjournal.Amount = Number((data[0].CR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "CR";
       this.getTotalDRCR()
     }
