@@ -14,6 +14,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
   encapsulation: ViewEncapsulation.None
 })
 export class RetailBrowseAdvanceComponent implements OnInit {
+  tabIndexToView = 0;
   HearingAdvanceFormseachSpinner = false;
   HearingAdvanceFormSubmitted = false;
   HearingAdvanceBillList = [];

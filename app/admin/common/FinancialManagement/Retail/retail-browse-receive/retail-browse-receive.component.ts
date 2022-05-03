@@ -13,6 +13,8 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
   providers: [MessageService]
 })
 export class RetailBrowseReceiveComponent implements OnInit {
+  tabIndexToView = 0;
+  HearingAdvanceFormSubmitted = false;
   HearingReceiveVFormseachSpinner = false;
   HearingReceiveVFormSubmitted = false;
   HearingReceiveVBillList = [];
