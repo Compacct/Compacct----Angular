@@ -202,6 +202,7 @@ import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k
 import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
 import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component"
 import { TutoBdaAttendanceComponent } from './common/CRM/Master/tuto-bda-attendance/tuto-bda-attendance.component';
+import { HrLeaveOpeningComponent } from './common/MICL/hr-leave-opening/hr-leave-opening.component';
 
 
 
@@ -1462,6 +1463,13 @@ data: {
     data: {
       title: 'Tutopia BDA Attendance'
      }
+    },
+    {
+      path: 'HR_Leave_Opening_Issue_Balance',
+      component: HrLeaveOpeningComponent,
+      data: {
+        title: 'Leave Application'
+      }
     },
 
   
