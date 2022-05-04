@@ -291,6 +291,7 @@ import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k
 import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component";
 import { TutoBdaAttendanceComponent } from './common/CRM/Master/tuto-bda-attendance/tuto-bda-attendance.component';
 import { HrLeaveOpeningComponent } from './common/MICL/hr-leave-opening/hr-leave-opening.component';
+import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-target/tuto-bda-wise-target.component';
 
 
 @NgModule({
@@ -501,7 +502,9 @@ import { HrLeaveOpeningComponent } from './common/MICL/hr-leave-opening/hr-leave
     AttendanceSheetComponent,
     K4cProductCategoryUpdateComponent,
     TutoAspMaxAppoComponent,
-    TutoBdaAttendanceComponent
+    TutoBdaAttendanceComponent,
+    HrLeaveOpeningComponent,
+    TutoBdaWiseTargetComponent
   ],
   imports: [
     CommonModule,

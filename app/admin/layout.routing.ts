@@ -203,6 +203,7 @@ import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purch
 import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component"
 import { TutoBdaAttendanceComponent } from './common/CRM/Master/tuto-bda-attendance/tuto-bda-attendance.component';
 import { HrLeaveOpeningComponent } from './common/MICL/hr-leave-opening/hr-leave-opening.component';
+import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-target/tuto-bda-wise-target.component';
 
 
 
@@ -1469,6 +1470,13 @@ data: {
       component: HrLeaveOpeningComponent,
       data: {
         title: 'Leave Application'
+      }
+    },
+    {
+      path: 'Tutopia_BDA_Wise_Target',
+      component: TutoBdaWiseTargetComponent,
+      data: {
+        title: 'Tutopia BDA Wise Target'
       }
     },
 
