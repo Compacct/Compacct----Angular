@@ -25,7 +25,7 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
-                            <div class="table-responsive no-padding">
+                            <div class="no-padding">
                                 <p-table [value]="getAllDataList"
                                 [paginator]="getAllDataList.length ? true : false"
                                 *ngIf='getAllDataList.length'
@@ -93,15 +93,32 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="purChaseForm" #purChaseForm="ngForm" novalidate>
-                                <div class="col-lg-6">
-                                    <div class="panel-group">
-                                        <div class="panel panel-primary">
-                                          <div class="panel-body">
-                                            <div class="form-group">
+                                <!-- <div class="form-group">
+                                <div class="col-sm-6">
+                                    <div class="form-group"> 
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                          </div>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" 
+                                            name="company" 
+                                            #company="ngModel" 
+                                            [(ngModel)]="objpurchase.company"
+                                            [ngClass]="{'clearance': purchaseFormSubmitted && company?.errors?.required }"
+                                            required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor = "let option of companyList" [value] ="option.Company_Id">
+                                                  {{option.Company_Name}}
+                                                </option>
+                                          </select>
+                                        </div>
+                                    </div>
+                                          <div class="form-group">
                                                 <div class="col-sm-3">
-                                                    <label class="control-label">Select Vendor<sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
                                                    </div>
                                                    <div class="col-sm-9">
+                                                       <label class="pull-right"><span  class="glyphicon glyphicon-zoom-in"></span></label>
                                                     <p-dropdown 
                                                     [options]="SubLedgerList" 
                                                     name="Sub_Ledger_ID" 
@@ -124,17 +141,12 @@
                                                 (click)="getDetalis('Vendor')"
                                                 [disabled]="!objpurchase.Sub_Ledger_ID"
                                                 >
-                                              <span class="	glyphicon glyphicon-zoom-in"></span> Show Detalis
+                                              <span class="	glyphicon glyphicon-zoom-in"></span>
                                        </button>
-                                            </div>
-                                         </div>
-                                     </div>
+                                      
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="panel-group">
-                                        <div class="panel panel-primary">
-                                          <div class="panel-body">
-                                            <div class="form-group"> 
+                                <div class="col-sm-6">
+                                      <div class="form-group"> 
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Billing To<sup class="text-danger">*</sup></label>
                                                   </div>
@@ -174,11 +186,74 @@
                                             (click)="getDetalis('Deliver')"
                                             [disabled]="!objpurchase.Cost_Cen_ID"
                                             >
-                                          <span class="	glyphicon glyphicon-zoom-in"></span> Show Detalis
+                                          <span class="	glyphicon glyphicon-zoom-in"></span>
                                          </button>
-                                              </div>
-                                              </div>
-                                      </div>
+                                        
+                                </div>
+                                </div> -->
+                                <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="company" 
+                                    #company="ngModel" 
+                                    [(ngModel)]="objpurchase.company"
+                                    [ngClass]="{'clearance': purchaseFormSubmitted && company?.errors?.required }"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Vendor<sup class="text-danger">*</sup></label> 
+                                    <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "objpurchase.Sub_Ledger_ID" (click)="getDetalis('Vendor')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                    <p-dropdown 
+                                    [options]="SubLedgerList" 
+                                    name="Sub_Ledger_ID" 
+                                    [(ngModel)]="objpurchase.Sub_Ledger_ID"
+                                    [showClear]="true" 
+                                    [emptyFilterMessage]="' No Vendor Found'" 
+                                    [filter]="true" 
+                                    filterBy="label,value.name" 
+                                    [resetFilterOnHide]="true"
+                                    [placeholder]="'Vendor'" 
+                                    [virtualScroll]="true" 
+                                    itemSize="30" 
+                                    #Sub_Ledger_ID="ngModel"
+                                    (onChange)="getSubLedgerDetalis()"
+                                    [styleClass]="purchaseFormSubmitted && Sub_Ledger_ID.errors?.required ? 'clearance': ''" [required] = "true">
+                                </p-dropdown>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Billing To<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="Billing_To" 
+                                    #Billing_To="ngModel" 
+                                    [(ngModel)]="objpurchase.Billing_To"
+                                    [ngClass]="{'clearance': purchaseFormSubmitted && Billing_To?.errors?.required }"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
+                                          {{option.Cost_Cen_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Deliver To<sup class="text-danger">*</sup></label>
+                                   <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "objpurchase.Cost_Cen_ID" (click)="getDetalis('Deliver')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                    <select class="form-control" 
+                                        name="Cost_Cen_ID" 
+                                        #Cost_Cen_ID="ngModel"
+                                        [(ngModel)]="objpurchase.Cost_Cen_ID"
+                                        (change)="getCostCenterDetalis()">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
+                                                {{option.Cost_Cen_Name}}
+                                            </option>
+                                        </select>
+                                </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -211,22 +286,6 @@
                                         >
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">Supplier Ref No</label>
-                                        <input type="text" 
-                                        class="form-control"
-                                        name="Supp_Ref_No"
-                                        #Supp_Ref_No="ngModel"
-                                        [(ngModel)]="objpurchase.Supp_Ref_No"
-                                        placeholder="Supplier Ref No"
-                                       >
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Ref. Date</label>
-                                        <ejs-datepicker  [(value)]="RefDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
-                                    </div>
-                                    <div class="col-sm-3">
                                         <label class="control-label">Project</label>
                                         <select class="form-control" 
                                         name="Project_ID" 
@@ -239,7 +298,23 @@
                                             </option>
                                       </select>
                                     </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-3">
+                                        <label class="control-label">Supplier Ref No</label>
+                                        <input type="text" 
+                                        class="form-control"
+                                        name="Supp_Ref_No"
+                                        #Supp_Ref_No="ngModel"
+                                        [(ngModel)]="objpurchase.Supp_Ref_No"
+                                        placeholder="Supplier Ref No"
+                                       >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Ref. Date</label>
+                                        <ejs-datepicker  [(value)]="RefDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                    </div>
+                                   <div class="col-sm-3">
                                         <label class="control-label">Order Type<sup class="text-danger">*</sup></label>
                                         <select class="form-control" 
                                         name="Type_ID" 
@@ -255,10 +330,8 @@
                                     </div>
                                     <div class="col-sm-3"></div>
                                 </div>
-                                <div class="panel-group" style="margin-top: 3px;">
-                                    <div class="panel panel-primary">
-                                      <div class="panel-body">
-                                <form name="purChaseAddForm" #purChaseAddForm="ngForm" novalidate>
+                                <hr class="box boxboxDivide-primary">
+                               <form name="purChaseAddForm" #purChaseAddForm="ngForm" novalidate>
                                     <div class="form-group">
                                         <div class="col-sm-4">
                                             <label class="control-label">Product Details<sup class="text-danger">*</sup></label>
@@ -275,7 +348,7 @@
                                             [virtualScroll]="true" 
                                             itemSize="30" 
                                             #Product_ID="ngModel"
-                                            (onChange)="getProductDetalis()"
+                                            (onChange)="GetProductSpecification()"
                                             [styleClass]="purChaseAddFormSubmit && Product_ID.errors?.required ? 'clearance': ''" [required] = "true">
                                         </p-dropdown>
                                         </div>
@@ -304,7 +377,7 @@
                                     <div class="form-group">
                                         <div class="col-sm-3">
                                             <label class="control-label">Expected Delivery<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker  [(value)]="ExpectedDeliverydate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                        <ejs-datepicker  [(value)]="ExpectedDeliverydate" (change)="getProductDetalis()"  [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
                                         </div>
                                         <div class="col-sm-2">
                                             <label class="control-label">Qty<sup class="text-danger">*</sup></label>
@@ -315,7 +388,7 @@
                                             [(ngModel)]="objaddPurchacse.Qty"
                                             placeholder="Quantity"
                                             CompacctDigitonly="true"
-                                            (ngModelChange)="getGrsAmt()" 
+                                            (ngModelChange)="getProductDetalis()" 
                                             [ngClass]="{'clearance': purChaseAddFormSubmit && Qty?.errors?.required }"
                                             required
                                             [disabled] = "!objaddPurchacse.Product_ID">
@@ -327,7 +400,7 @@
                                             name="Unit"
                                             #Unit="ngModel"
                                             [(ngModel)]="objaddPurchacse.Unit"
-                                            placeholder="Quantity"
+                                            placeholder="Unit"
                                            disabled>
                                         </div>
                                         <div class="col-sm-2">
@@ -339,7 +412,7 @@
                                             [(ngModel)]="objaddPurchacse.Rate"
                                             placeholder="Rate"
                                             CompacctDigitonly="true"
-                                            disabled>
+                                            [disabled] = 'disable'>
                                         </div>
                                         <div class="col-sm-2">
                                             <label class="control-label">Grs Amt<sup class="text-danger"></sup></label>
@@ -352,21 +425,21 @@
                                             CompacctDigitonly="true"
                                             disabled>
                                         </div>
-                                    </div>
+                                     </div>
                                     <div class="form-group">
-                                        <div class="col-sm-3">
-                                            <label class="control-label">Excise Tax<sup class="text-danger"></sup></label>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Excise Tax (%)<sup class="text-danger"></sup></label>
                                             <input type="text"
                                             class="form-control"
                                             name="Excise_Tax_Percentage"
                                             #Excise_Tax_Percentage="ngModel"
                                             [(ngModel)]="objaddPurchacse.Excise_Tax_Percentage"
                                             (ngModelChange)="getExciseAmt()"
-                                            placeholder="Excise Tax"
+                                            placeholder="Excise Tax (%)"
                                             CompacctDigitonly="true"
                                             >
                                         </div>
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-3">
                                             <label class="control-label">Excise Amt<sup class="text-danger"></sup></label>
                                             <input type="text"
                                             class="form-control"
@@ -377,106 +450,155 @@
                                             CompacctDigitonly="true"
                                             disabled>
                                         </div>
-                                        <div class="col-sm-3">
-                                            <label class="control-label">Tax Desc<sup class="text-danger"></sup></label>
-                                            <input type="text"
-                                            class="form-control"
-                                            name="Tax_Desc"
-                                            #Tax_Desc="ngModel"
-                                            [(ngModel)]="objaddPurchacse.Tax_Desc"
-                                            placeholder="Tax Desc"
-                                           
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
+                                            <select class="form-control" 
+                                            name="Discount_Type" 
+                                            #Type_ID="ngModel" 
+                                            [(ngModel)]="objaddPurchacse.Discount_Type"
+                                            (change)="DisClear()"
                                             >
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor = "let option of DiscountTypeList" [value] ="option.Dtype">
+                                                  {{option.Dtype}}
+                                                </option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                                <label class="control-label">Discount <span>{{objaddPurchacse.Discount_Type}}</span><sup class="text-danger"></sup></label>
+                                                <input type="text"
+                                                class="form-control"
+                                                name="Discount"
+                                                #Discount="ngModel"
+                                                [(ngModel)]="objaddPurchacse.Discount"
+                                                (ngModelChange)="getDis()"
+                                                placeholder="Discount"
+                                                CompacctDigitonly="true"
+                                                [disabled] = "!objaddPurchacse.Discount_Type"
+                                                >
                                         </div>
                                         <div class="col-sm-2">
-                                            <label class="control-label">Tax(%)<sup class="text-danger"></sup></label>
+                                            <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
                                             <input type="text"
                                             class="form-control"
-                                            name="Tax_Rate"
-                                            #Tax_Rate="ngModel"
-                                            [(ngModel)]="objaddPurchacse.Tax_Rate"
-                                            placeholder="Tax(%)"
-                                            (ngModelChange)="getTotalForTax()"
+                                            name="Discount_AMT"
+                                            #Discount_AMT="ngModel"
+                                            [(ngModel)]="objaddPurchacse.Discount_AMT"
+                                            (ngModelChange)="getTaxAble()"
+                                            placeholder="Discount AMT"
                                             CompacctDigitonly="true"
-                                            >
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <label class="control-label">Discount<sup class="text-danger"></sup></label>
-                                            <input type="text"
-                                            class="form-control"
-                                            name="Discount"
-                                            #Discount="ngModel"
-                                            [(ngModel)]="objaddPurchacse.Discount"
-                                            (ngModelChange)="getDis()"
-                                            placeholder="Discount"
-                                            CompacctDigitonly="true"
-                                            >
+                                             disabled>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-3">
-                                            <label class="control-label">Tol. Amt<sup class="text-danger"></sup></label>
-                                            <input type="text"
-                                            class="form-control"
-                                            name="Total_Amount"
-                                            #Total_Amount="ngModel"
-                                            [(ngModel)]="objaddPurchacse.Total_Amount"
-                                            placeholder="Total Amount"
-                                            CompacctDigitonly="true"
-                                            disabled
-                                            >
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <button class="btn btn-primary pull-left" 
-                                            style="margin-top: 28px;margin-left: 85%;" 
-                                            (click)="AddPurchase(purChaseAddForm.form.valid)"
-                                           >
-                                             <span  class="	glyphicon glyphicon-plus"></span>&nbsp;Add
-                                             </button>
-                                        </div>   
+                                 <div class="form-group">
+                                    <div class="col-sm-2">
+                                    <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                    class="form-control"
+                                    name="taxable_AMT"
+                                    #taxable_AMT="ngModel"
+                                    [(ngModel)]="objaddPurchacse.taxable_AMT"
+                                    placeholder="Taxable AMT"
+                                    disabled
+                                    >
                                     </div>
-                                
+                                    <div class="col-sm-3">
+                                        <label class="control-label">GST(%)<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="Gst"
+                                        #Gst="ngModel"
+                                        [(ngModel)]="objaddPurchacse.Gst"
+                                        placeholder="GST(%)"
+                                        CompacctDigitonly="true"
+                                        disabled>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">GST Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="GST_AMT"
+                                        #GST_AMT="ngModel"
+                                        [(ngModel)]="objaddPurchacse.GST_AMT"
+                                        placeholder="GST AMT"
+                                        CompacctDigitonly="true"
+                                        disabled
+                                        >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Net Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="Total_Amount"
+                                        #Total_Amount="ngModel"
+                                        [(ngModel)]="objaddPurchacse.Total_Amount"
+                                        placeholder="Net Amount"
+                                        CompacctDigitonly="true"
+                                        disabled
+                                        >
+                                    </div>
+                                     <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" 
+                                        style="margin-top: 28px;margin-left: 25%;" 
+                                        (click)="AddPurchase(purChaseAddForm.form.valid)"
+                                       >
+                                         <span  class="	glyphicon glyphicon-plus"></span>&nbsp;Add
+                                         </button>
+                                     </div>
+                                    </div>
+                                    <!-- <div class="box-footer">
+                                      
+                                    </div> -->
                                 </form>
-                                </div>
-                            </div>
-                               </div>
+                              
                               <div class="table table-responsive" style="margin-top: 13px;">
                                 <table class="table table-bordered">
                                         <thead>
                                             <tr style="background-color:#3c8dbc;color:white;">
-                                        <th >Sl. No.</th>
-                                        <th >Product Details</th>
-                                        <th >Product Spec</th>
-                                        <th >Acceptance of Order</th>
-                                        <th >Qty</th>
-                                        <th >Unit</th>
-                                        <th >Rate</th>
-                                        <th >Gross Amt</th>
-                                        <th >Excise Tax</th>
-                                        <th >Excise Amt.</th>
-                                        <th >Tax Desc</th>
-                                        <th >Tax Rate(%)</th>
-                                        <th >Discount</th>
-                                        <th >Tol. Amt</th>
-                                        <th >Delete</th>
-                                        </tr>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Sl. No.</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Product Details</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Product Spec</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Qty</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Unit</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Rate</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Gross Amt</th>
+                                        <th nowrap="" colspan="2" style="vertical-align:middle">Excise Tax</th>
+                                        <th nowrap="" colspan="3" style="vertical-align:middle">Discount </th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
+                                        <th  nowrap="" colspan="2" style="vertical-align:middle">GST</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Net Amount</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Delete</th>
+                                         </tr>
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                            <th nowrap="" style="vertical-align:middle">Tax</th>
+                                            <th nowrap="" style="vertical-align:middle">Amt.</th>
+                                            <th nowrap="" style="vertical-align:middle">Disc Type</th>
+                                            <th nowrap="" style="vertical-align:middle">Disc %</th>
+                                            <th nowrap="" style="vertical-align:middle">Disc Amt</th>
+                                            <th nowrap="" style="vertical-align:middle">GST(%)</th>
+                                            <th nowrap="" style="vertical-align:middle">GST Amt</th>
+                                           
+                                            
+                                            </tr>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor='let col of addPurchaseList let i = index' >
                                                 <td>{{i + 1}}</td>
                                                 <td>{{col.Product_Name ? col.Product_Name : '-'}}</td>
                                                 <td>{{col.Product_Spec}}</td>
-                                                <td>{{col.AO_No}}</td>
                                                 <td>{{col.Qty}}</td>
                                                 <td>{{col.UOM}}</td>
                                                 <td>{{col.Rate ? col.Rate : 0}}</td>
                                                 <td>{{col.Gross_Amt ? col.Gross_Amt :0}}</td>
                                                 <td>{{col.Excise_Tax_Percentage ? col.Excise_Tax_Percentage : 0}}</td>
-                                                <td>{{col.Excise_Tax ? col.Excise_Tax : 0}}</td>
-                                                <td>{{col.Tax_Desc}}</td>
-                                                <td>{{col.Tax_Rate ? col.Tax_Rate : 0}}</td>
+                                                <td>{{col.Excise_Amount ? col.Excise_Amount : 0}}</td>
+                                                <td>{{col.Discount_Type ? col.Discount_Type : 0}}</td>
                                                 <td>{{col.Discount ? col.Discount : 0}}</td>
-                                                <td>{{col.Total_Amount ? col.Total_Amount : 0}}</td>
+                                                <td>{{col.Discount_Amount ? col.Discount_Amount : 0}}</td>
+                                                <td>{{col.Taxable_Amount ? col.Taxable_Amount : 0}}</td>
+                                                <td>{{col.GST_Percentage ? col.GST_Percentage : 0}}</td>
+                                                <td>{{col.GST_Amount ? col.GST_Amount : 0}}</td>
+                                                <td>{{col.Net_Amount ? col.Net_Amount : 0}}</td>
                                                <td> <a (click)="DeleteAddPurchase(i)"
                                                 ><div><i class="fa fa-fw fa-trash"> </i></div>
                                               </a></td>
@@ -484,6 +606,27 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                 <div class="table-responsive">
+                                      <table class="table">
+                                        <tbody><tr>
+                                          <th>Gross Amount:</th>
+                                          <td class="amt-td ">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
+                                          <th>Taxable Amount :</th>
+                                          <td class="amt-td ">{{getTofix(taxAblTotal) ? getTofix(taxAblTotal) : 0}}</td>
+                                          <th>Discount Amount :</th>
+                                          <td class="amt-td">{{getTofix(disTotal) ? getTofix(disTotal) : 0}}</td>
+                                           </tr>
+                                        <tr>
+                                          <th>Excise Amount:</th>
+                                          <td class="amt-td">{{getTofix(ExciTotal) ? getTofix(ExciTotal) : 0}}</td>
+                                          <th>GST Amount :</th>
+                                          <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td>
+                                          <th>Net Amount : </th>
+                                          <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td>
+                                            </tr>
+                                       </tbody>
+                                    </table>
+                                    </div>
                                 <h5 style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;

@@ -50,6 +50,17 @@ export class PurchaseOrderComponent implements OnInit {
   DocNo = undefined;
   getAllDataList = [];
   DynamicHeader = [];
+  companyList = [];
+  disable = false;
+  DiscountTypeList = [{Dtype : '%'},{Dtype : "AMT"}]
+  grTotal:any = 0
+  disTotal:any = 0
+  ExciTotal:any = 0
+  taxAblTotal:any = 0
+  GSTTotal:any = 0
+  NetTotal:any = 0;
+  disAmtBackUpAMT:number = 0
+  disAmtBackUpPer:number = 0
   objaddPurchacse : addPurchacse = new addPurchacse();
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -79,6 +90,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.GetProject();
       this.getProduct();
       this.getAllData();
+      this.getcompany();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -104,6 +116,14 @@ export class PurchaseOrderComponent implements OnInit {
     this.ExpectedDeliverydate = new Date;
     this.DocDate = new Date();
     this.RefDate = new Date();
+    this.disable = false
+    this.grTotal = 0;
+    this.taxAblTotal = 0;
+    this.disTotal = 0;
+    this.ExciTotal = 0;
+    this.GSTTotal  = 0;
+    this.NetTotal  = 0;
+    this.disAmtBackUpAMT = 0
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -240,77 +260,220 @@ export class PurchaseOrderComponent implements OnInit {
            });
         })
     }
+  GetProductSpecification(){
+   if(this.objaddPurchacse.Product_ID){
+    let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID));
+    this.objaddPurchacse.Product_Spec = tempVal[0].Product_Spec;
+   }
+  }
   getProductDetalis(){
-    if(this.objaddPurchacse.Product_ID){
-      let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
-       this.objaddPurchacse.Unit = tempVal[0].UOM
-       this.objaddPurchacse.Product_Spec = tempVal[0].Product_Spec
-       this.getAcceptanceOrder(this.objaddPurchacse.Product_ID);
-    }
-    else{
-      this.objaddPurchacse.Unit = undefined;
-      this.objaddPurchacse.Product_Spec = undefined;
-    }
-  }
-  getAcceptanceOrder(id){
-    const obj = {
-      "SP_String": "sp_Comm_Controller",
-      "Report_Name_String": "Get_Previous_PO_Rate",
-      "Json_Param_String": JSON.stringify([{ProductID : id}])
-      }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        this.rate = data[0].Rt
-     })
-  }
-  getGrsAmt(){
     if(this.objaddPurchacse.Qty){
-      this.objaddPurchacse.Rate = undefined;
-      this.objaddPurchacse.Gross_Amt = undefined;
-      this.objaddPurchacse.Total_Amount = undefined;
-      this.objaddPurchacse.Rate = this.rate;
-      this.objaddPurchacse.Gross_Amt = (Number(this.objaddPurchacse.Qty) * Number(this.objaddPurchacse.Rate)).toFixed(2)
-      this.objaddPurchacse.Total_Amount = (Number(this.objaddPurchacse.Qty) * Number(this.objaddPurchacse.Rate)).toFixed(2)
-      this.totalRate = this.objaddPurchacse.Total_Amount;
+      if(this.objaddPurchacse.Product_ID){
+        let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
+         this.objaddPurchacse.Unit = tempVal[0].UOM
+         console.log("tempVal",tempVal);
+         this.GetTaxDetalis(this.objaddPurchacse.Product_ID);
+         if(tempVal[0].Rate_Form_Quote === 'Y'){
+         this.disable = true;
+           this.GetRateY()
+         }
+         else {
+          this.disable = false
+          this.getRateN(this.objaddPurchacse.Product_ID);
+         }
+       }
+      else{
+        this.objaddPurchacse.Unit = undefined;
+        this.objaddPurchacse.Product_Spec = undefined;
+      }
     }
     else {
       this.objaddPurchacse.Rate = undefined;
       this.objaddPurchacse.Gross_Amt = undefined;
+      this.objaddPurchacse.Excise_Tax_Percentage = undefined;
+      this.objaddPurchacse.Excise_Tax = undefined;
+      this.objaddPurchacse.Discount_Type = undefined;
+      this.objaddPurchacse.Discount = undefined;
+      this.objaddPurchacse.Discount_AMT = undefined;
+      this.objaddPurchacse.taxable_AMT = undefined;
+      this.objaddPurchacse.Gst = undefined;
+      this.objaddPurchacse.GST_AMT = undefined;
       this.objaddPurchacse.Total_Amount = undefined;
+      this.objaddPurchacse.Unit = undefined;
     }
+  }
+ 
+  GetRateY(){
+    if(this.objpurchase.Sub_Ledger_ID && this.objaddPurchacse.Product_ID){
+      let sendData = {
+            Sub_Ledger_ID: Number(this.objpurchase.Sub_Ledger_ID),
+						ProductID:Number(this.objaddPurchacse.Product_ID),
+						Qty:Number(this.objaddPurchacse.Qty),
+						Dated: this.DateService.dateConvert(new Date(this.DocDate))
+      }
+      const obj = {
+        "SP_String": "sp_Comm_Controller",
+        "Report_Name_String": "Dropdown_Rate_Form_Quote",
+        "Json_Param_String": JSON.stringify(sendData)
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if(data[0].Rate){
+          this.rate = data[0].Rate;
+          this.objaddPurchacse.Rate = this.rate ? this.rate : 0
+          this.getGrsAmt();
+        }
+         
+       })
+    }
+  }
+
+  getRateN(id){
+    this.rate = undefined
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Get_Previous_PO_Rate",
+      "Json_Param_String": JSON.stringify([{ProductID : Number(id)}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if( data[0].Rate){
+        this.rate = data[0].Rate
+        this.objaddPurchacse.Rate = this.rate ? this.rate : 0
+        this.getGrsAmt();
+      }
+        
+     })
+  }
+  GetTaxDetalis(ProductID){
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Dropdown_Tax",
+      "Json_Param_String": JSON.stringify([{ProductID : Number(ProductID)}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.objaddPurchacse.Tax_Desc = data[0].Cat_Name;
+        this.objaddPurchacse.Gst =  data[0].GST_Tax_Per;
+       // this.getTotalForTax();
+     })
+  }
+  getGrsAmt(){
+    if(this.rate){
+      if(this.objaddPurchacse.Qty){
+        this.objaddPurchacse.Rate = undefined;
+        this.objaddPurchacse.Gross_Amt = undefined;
+        this.objaddPurchacse.taxable_AMT = undefined;
+        this.objaddPurchacse.Rate = this.rate;
+        this.objaddPurchacse.Gross_Amt = (Number(this.objaddPurchacse.Qty) * Number(this.objaddPurchacse.Rate)).toFixed(2)
+        this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.Qty) * Number(this.objaddPurchacse.Rate)).toFixed(2)
+        this.totalRate = this.objaddPurchacse.taxable_AMT;
+        if(this.objaddPurchacse.taxable_AMT){
+          this.GetGSTAmt();
+        }
+       
+      }
+      else {
+        this.objaddPurchacse.Rate = undefined;
+        this.objaddPurchacse.Gross_Amt = undefined;
+        this.objaddPurchacse.taxable_AMT = undefined;
+        this.GetGSTAmt();
+      }
+    }
+   
   }
   getExciseAmt(){
     if(this.objaddPurchacse.Excise_Tax_Percentage){
       this.objaddPurchacse.Excise_Tax = undefined;
-      this.objaddPurchacse.Total_Amount = undefined;
+      this.objaddPurchacse.taxable_AMT = undefined;
       this.objaddPurchacse.Excise_Tax = (Number(this.objaddPurchacse.Gross_Amt) * (Number(this.objaddPurchacse.Excise_Tax_Percentage) / 100)).toFixed(2)
-      this.objaddPurchacse.Total_Amount = (this.totalRate + this.objaddPurchacse.Excise_Tax).toFixed(2)
-      this.totalbackUp = this.objaddPurchacse.Total_Amount
+      this.objaddPurchacse.taxable_AMT = Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
+      this.totalbackUp = this.objaddPurchacse.taxable_AMT;
+      this.getDis();
+      this.GetGSTAmt();
     }
     else {
       this.objaddPurchacse.Excise_Tax = undefined;
-      this.objaddPurchacse.Total_Amount = this.totalRate
+      this.objaddPurchacse.taxable_AMT = this.totalRate;
+      this.GetGSTAmt();
     }
   }
   getTotalForTax(){
     if(this.objaddPurchacse.Tax_Rate){
-      this.objaddPurchacse.Total_Amount = undefined;
+      this.objaddPurchacse.taxable_AMT = undefined;
       const totalAmt = this.totalbackUp ? this.totalbackUp : this.totalRate
-      this.objaddPurchacse.Total_Amount = ((Number(totalAmt) * (Number(this.objaddPurchacse.Tax_Rate) / 100)) + totalAmt).toFixed(2)
-      this.totalAmtBackUp =  this.objaddPurchacse.Total_Amount
+      this.objaddPurchacse.taxable_AMT = ((Number(totalAmt) * (Number(this.objaddPurchacse.Tax_Rate) / 100)) + totalAmt).toFixed(2)
+      this.totalAmtBackUp =  this.objaddPurchacse.taxable_AMT
     }
     else {
-      this.objaddPurchacse.Total_Amount = this.totalbackUp ? (this.totalbackUp).toFixed(2) : (this.totalRate).toFixed(2)
+      this.objaddPurchacse.taxable_AMT = this.totalbackUp ? Number((this.totalbackUp).toFixed(2)) : Number((this.totalRate).toFixed(2))
+    }
+  }
+  DisClear(){
+    if(!this.objaddPurchacse.Discount_Type){
+      this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) + (Number(this.objaddPurchacse.Discount_AMT) ? Number(this.objaddPurchacse.Discount_AMT) : 0)).toFixed(2)
+      this.objaddPurchacse.Discount_AMT = undefined;
+      this.objaddPurchacse.Discount = undefined;
+      this.GetGSTAmt();
+     }
+    else {
+      this.objaddPurchacse.Discount_AMT = undefined;
+      this.objaddPurchacse.Discount = undefined;
+      this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+      this.GetGSTAmt();
+     
     }
   }
   getDis(){
-    if(this.objaddPurchacse.Discount){
+    if(this.objaddPurchacse.Discount_Type === 'AMT'){
+        this.objaddPurchacse.Discount_AMT = undefined;
+        //const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
+        let taxacl:number =  this.objaddPurchacse.taxable_AMT
+        this.objaddPurchacse.taxable_AMT = undefined
+        this.objaddPurchacse.Discount_AMT = this.objaddPurchacse.Discount;
+        //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
+        //   taxacl = Number(this.disAmtBackUpAMT) + Number(taxacl)
+        //  }
+        //  this.disAmtBackUpAMT = 0
+        //  this.disAmtBackUpAMT = this.objaddPurchacse.Discount_AMT ? Number(this.objaddPurchacse.Discount_AMT) : 0;
+        if(this.objaddPurchacse.Discount_AMT){
+          this.objaddPurchacse.taxable_AMT  = (Number(taxacl) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
+          this.GetGSTAmt();
+        }
+        else {
+          this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+          this.GetGSTAmt();
+        }
+         
+        }
+      else if(this.objaddPurchacse.Discount_Type === '%'){
+        this.objaddPurchacse.Discount_AMT = undefined;
+        let taxacl:number =  this.objaddPurchacse.taxable_AMT
+        this.objaddPurchacse.taxable_AMT = undefined
+        let tempExiAmt = this.objaddPurchacse.Excise_Tax ? Number(this.objaddPurchacse.Excise_Tax) : 0 
+        let tempGrsAmt = this.objaddPurchacse.Gross_Amt ? Number(this.objaddPurchacse.Gross_Amt) : 0 
+        let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
+        
+       this.objaddPurchacse.Discount_AMT = (Number(totalAmt) * Number(this.objaddPurchacse.Discount)/100).toFixed(2);
+       
+       if(this.objaddPurchacse.Discount_AMT){
+        this.objaddPurchacse.taxable_AMT  = (Number(totalAmt) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
+        this.GetGSTAmt();
+      }
+      else {
+        this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+        this.GetGSTAmt();
+      }
+        // this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
+        // this.getTaxAble()
+      }
+     else {
+      this.objaddPurchacse.Discount_AMT = undefined;
       this.objaddPurchacse.Total_Amount = undefined;
-      const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
-      this.objaddPurchacse.Total_Amount = Number(tempTotal) - Number(this.objaddPurchacse.Discount)
+      this.objaddPurchacse.GST_AMT = undefined
+      this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+      this.GetGSTAmt();
     }
-    else {
-      this.objaddPurchacse.Total_Amount = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
-    }
+  }
+  getTaxAble(){
+ 
   }
   AddPurchase(valid){
     this.purChaseAddFormSubmit = true
@@ -319,26 +482,30 @@ export class PurchaseOrderComponent implements OnInit {
      const productFilter = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
      console.log("productFilter",productFilter[0])
      let saveData = {
-      Product_ID : this.objaddPurchacse.Product_ID,
-      Product_Name : productFilter[0].Product_Name,
-      Product_Spec: productFilter[0].Product_Spec,
-      Exp_Delivery : this.DateService.dateConvert(new Date(this.ExpectedDeliverydate)),
-      Qty :Number(this.objaddPurchacse.Qty),
-      Rate: Number(this.objaddPurchacse.Rate),
-      Gross_Amt: Number(this.objaddPurchacse.Gross_Amt),
-      Excise_Tax_Percentage: Number(this.objaddPurchacse.Excise_Tax_Percentage),
-      Excise_Tax: Number(this.objaddPurchacse.Excise_Tax),
-      Tax_Desc: this.objaddPurchacse.Tax_Desc,
-      Tax_Rate:Number(this.objaddPurchacse.Tax_Rate),
-      Discount: Number(this.objaddPurchacse.Discount),
-      Total_Amount: Number(this.objaddPurchacse.Total_Amount),
-      AO_No: "NA",
-      UOM: this.objaddPurchacse.Unit
+        Product_ID: Number(this.objaddPurchacse.Product_ID),
+        Product_Name:  productFilter[0].Product_Name,
+        Product_Spec: productFilter[0].Product_Spec,
+        Exp_Delivery: this.DateService.dateConvert(new Date(this.ExpectedDeliverydate)),
+        Qty: Number(this.objaddPurchacse.Qty),
+        Rate: Number(this.objaddPurchacse.Rate),
+        Gross_Amt	: Number(this.objaddPurchacse.Gross_Amt),
+        Excise_Tax_Percentage: Number(this.objaddPurchacse.Excise_Tax_Percentage),
+        Excise_Amount: Number(this.objaddPurchacse.Excise_Tax),
+        Taxable_Amount:  Number(this.objaddPurchacse.taxable_AMT),
+        Discount_Type:  this.objaddPurchacse.Discount_Type,
+        Discount:  this.objaddPurchacse.Discount,
+        Discount_Amount: Number(this.objaddPurchacse.Discount_AMT),
+        UOM: this.objaddPurchacse.Unit,
+        Net_Amount:  Number(this.objaddPurchacse.Total_Amount),
+        GST_Percentage: Number( this.objaddPurchacse.Gst),
+        GST_Amount: (this.objaddPurchacse.GST_AMT)
      }
-      this.addPurchaseList.push(saveData)
+      this.addPurchaseList.push(saveData);
+      
       this.objaddPurchacse = new addPurchacse();
       this.purChaseAddFormSubmit = false;
       console.log("addPurchaseList",this.addPurchaseList);
+      this.getAllTotal();
    }
  }
  savePurchase(valid){
@@ -475,8 +642,53 @@ export class PurchaseOrderComponent implements OnInit {
  }
  DeleteAddPurchase(index) {
   this.addPurchaseList.splice(index,1);
+  this.getAllTotal();
 }
+GetGSTAmt(){
+  if(this.objaddPurchacse.taxable_AMT){
+    this.objaddPurchacse.GST_AMT = (Number(this.objaddPurchacse.taxable_AMT) * (Number(this.objaddPurchacse.Gst)/100)).toFixed(2);
+    this.objaddPurchacse.Total_Amount = Number(this.objaddPurchacse.GST_AMT) + Number(this.objaddPurchacse.taxable_AMT)
+  }
+  else {
+    this.objaddPurchacse.Total_Amount = undefined;
+    this.objaddPurchacse.taxable_AMT = this.totalAmtBackUp;
+    this.objaddPurchacse.GST_AMT = (Number(this.objaddPurchacse.taxable_AMT) * (Number(this.objaddPurchacse.Gst)/100)).toFixed(2);
+  }
+}
+getAllTotal(){
+  this.grTotal = 0;
+  this.taxAblTotal = 0;
+  this.disTotal = 0;
+  this.ExciTotal = 0;
+  this.ExciTotal = 0;
+  this.GSTTotal = 0;
+  this.NetTotal = 0;
+  if(this.addPurchaseList.length){
+    this.addPurchaseList.forEach(ele => {
+      this.grTotal += Number(ele.Gross_Amt) ? Number(ele.Gross_Amt) : 0
+      this.taxAblTotal += Number(ele.Taxable_Amount) ? Number(ele.Taxable_Amount) : 0
+      this.disTotal += Number(ele.Discount_Amount) ?  Number(ele.Discount_Amount) : 0
+      this.ExciTotal += Number(ele.Excise_Amount) ? Number(ele.Excise_Amount) : 0
+      this.GSTTotal += Number(ele.GST_Amount) ? Number(ele.GST_Amount) : 0
+      this.NetTotal += Number(ele.Net_Amount) ? Number(ele.Net_Amount)  :0
+    });
+  }
 
+
+}
+getTofix(key){
+ return key.toFixed(2)
+}
+getcompany(){
+  const obj = {
+    "SP_String": "sp_Comm_Controller",
+    "Report_Name_String": "Dropdown_Company",
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   this.companyList = data
+   console.log("companyList",this.companyList)
+  })
+}
 }
 class purchase {
         Doc_No:any;
@@ -526,7 +738,8 @@ class purchase {
         Currency_ID:any;
         Currency_Symbol:any;
         L_element:any;
-        
+        company:any
+       
 }
 class addPurchacse{
       Product_ID:any;
@@ -534,9 +747,9 @@ class addPurchacse{
       Product_Spec:any;
       Exp_Delivery:any;
       Qty:any;
-      Rate:any;
+      Rate:number;
       Gross_Amt:any;
-      Excise_Tax_Percentage:any;
+      Excise_Tax_Percentage:Number = 0;
       Excise_Tax:any;
       Tax_Desc:any;
       Tax_Rate:any;
@@ -545,5 +758,10 @@ class addPurchacse{
       Batch_Number:any;
       AO_No:any;
       Unit:any;
-     
+      Discount_Type:any;
+      Discount_AMT:any;
+      taxable_AMT :any;
+      GST_AMT:any;
+      Gst:any;
+      Taxable_Amount:any;
 }
