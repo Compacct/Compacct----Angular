@@ -492,14 +492,13 @@ import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/t
     RetailBrowseComponent,
     RetailBrowseReceiveComponent,
     RetailBrowseAdvanceComponent,
+    PurchaseOrderComponent,
     JournalVoucherComponent,
     MasterCompanyComponent,
     UserMasterComponent,
     AttendanceSheetComponent,
     K4cProductCategoryUpdateComponent,
-    PurchaseOrderComponent,
     TutoAspMaxAppoComponent
-
   ],
   imports: [
     CommonModule,

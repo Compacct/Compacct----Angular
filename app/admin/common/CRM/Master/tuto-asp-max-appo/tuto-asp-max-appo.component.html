@@ -39,12 +39,6 @@
                                     <label class="control-label">Distributor Name <span class="text-danger"></span></label>
                                     <p-multiSelect [options]="DistDistributorName" [(ngModel)]="SelectedDistDistributorName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Distributor_Name"></p-multiSelect>
                                 </div>
-                                <!-- <div class="col-sm-3">
-                            <label class="control-label">Product Type <span class="text-danger"></span></label>
-                            <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType"
-                              itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
-                              name="Product_Type"></p-multiSelect>
-                          </div> -->
                                 <div class="col-sm-3">
                                     <label class="control-label">ASP name <span class="text-danger"></span></label>
                                     <p-multiSelect [options]="DistAspName" [(ngModel)]="SelectedDistAspName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="ASP_Name"></p-multiSelect>
@@ -70,10 +64,7 @@
                                     <th >ASP Name</th>
                                     <th >Asp Max Appo</th>
                                     <th >Asp CC List ID</th>
-                                    <!-- <th width='8%'>Affi Sale Min Sale</th>
-                                    <th width='8%'>Affi Sale Commission</th>
-                                    <th width='8%'>Dist Sale Min Sale</th>
-                                    <th width='8%'>Dist Sale Commission</th> -->
+                                    <!-- <th width='8%'>Dist Sale Commission</th> -->
                                     <th width='12%'>Action</th>
                                     
 
@@ -89,10 +80,6 @@
                                         <div class="input-group">
                                             <input type="text" [(ngModel)]='col.ASP_Max_Appo' class="form-control" CompacctDigitonly="true" style="width: 81px;">
                                             <span class="input-group-btn">
-                                         <!-- <button class="btn btn-primary" (click)='UpdateDescription(col)' type="button" [id]="'RowID'+col.Product_ID"
-                                         data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
-                                            Update
-                                          </button> -->
                                     </span>
                                         </div>
                                     </td>
@@ -107,11 +94,6 @@
                                             Update
                                     </button>
                                     </td>
-                                    <!-- <td>
-                                        <button class="btn btn-primary custombtn" (click)='GetUpdateCommission(col.Product_ID)' type="button" [id]="'RowcomID'+col.Product_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
-                                            Update Commission
-                                    </button>
-                                    </td> -->
                                    
                                 </tr>
                             </ng-template>
