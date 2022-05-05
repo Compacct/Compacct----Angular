@@ -73,9 +73,9 @@
                                 <p-table #dt
                                          [value]='HearingAidBillList'
                                          [globalFilterFields]="SEarchFilter"
-                                         [paginator]="true" [rows]="10" [rowHover]="true"
+                                         [paginator]="true" [rows]="100" [rowHover]="true"
                                          [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[10,20,30]"
+                                         [rowsPerPageOptions]="[25,50,100]"
                                          [rowHover]="true">
                                            <ng-template pTemplate="caption">
                                                <div class="row">
@@ -102,7 +102,7 @@
     
                                                 </tr>
                                             </ng-template>
-                                            <ng-template pTemplate="body" let-col>
+                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                                 <tr>
                                                     <td>
                                                         <div class="dropdown">
@@ -136,6 +136,13 @@
                                                     <td>{{col.Net_Amt}}</td>
                                                     <td>{{col.Net_Amt1}}</td>
                                                     <td>{{col.Fin_Year_Name}}</td>
+                                                </tr>
+                                                <tr *ngIf='(rowIndex + 1)  === HearingAidBillList.length'>
+                                                    <td colspan="8" class="text-bold  text-right">Total Taxable Amount : {{GetTotal(HearingAidBillList,'Taxable_Amt')}}</td>
+                                                    <td  class="text-bold">Total Tax Amount : {{GetTotal(HearingAidBillList,'Tax')}}</td>
+                                                    <td  class="text-bold">Total Net Amount : {{GetTotal(HearingAidBillList,'Net_Amt')}}</td>
+                                                    <td  class="text-bold">Total Paid Amount : {{GetTotal(HearingAidBillList,'Net_Amt1')}}</td>
+                                                    <td>-</td>
                                                 </tr>
                                             </ng-template>    
                                             <ng-template pTemplate="paginatorright" let-state>
@@ -194,9 +201,9 @@
                                 <p-table #dt2
                                          [value]='AccessoriesBillList'
                                          [globalFilterFields]="SEarchFilter"
-                                         [paginator]="true" [rows]="10" [rowHover]="true"
+                                         [paginator]="true" [rows]="100" [rowHover]="true"
                                          [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[10,20,30]"
+                                         [rowsPerPageOptions]="[25,50,100]"
                                          [rowHover]="true">
                                            <ng-template pTemplate="caption">
                                                <div class="row">
@@ -224,7 +231,7 @@
     
                                                 </tr>
                                             </ng-template>
-                                            <ng-template pTemplate="body" let-col>
+                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                                 <tr>
                                                     <td>
                                                         <div class="dropdown">
@@ -257,6 +264,13 @@
                                                     <td>{{col.Net_Amt}}</td>
                                                     <td>{{col.Net_Amt1}}</td>
                                                     <td>{{col.Fin_Year_Name}}</td>
+                                                </tr>
+                                                <tr *ngIf='(rowIndex + 1)  === AccessoriesBillList.length'>
+                                                    <td colspan="8" class="text-bold  text-right">Total Taxable Amount : {{GetTotal(AccessoriesBillList,'Taxable_Amt')}}</td>
+                                                    <td  class="text-bold">Total Tax Amount : {{GetTotal(AccessoriesBillList,'Tax')}}</td>
+                                                    <td  class="text-bold">Total Net Amount : {{GetTotal(AccessoriesBillList,'Net_Amt')}}</td>
+                                                    <td  class="text-bold">Total Paid Amount : {{GetTotal(AccessoriesBillList,'Net_Amt1')}}</td>
+                                                    <td>-</td>
                                                 </tr>
                                             </ng-template>    
                                             <ng-template pTemplate="paginatorright" let-state>
@@ -315,9 +329,9 @@
                                 <p-table #dt3
                                          [value]='ServiceBillList'
                                          [globalFilterFields]="SEarchFilter"
-                                         [paginator]="true" [rows]="10" [rowHover]="true"
+                                         [paginator]="true" [rows]="100" [rowHover]="true"
                                          [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[10,20,30]"
+                                         [rowsPerPageOptions]="[25,50,100]"
                                          [rowHover]="true">
                                            <ng-template pTemplate="caption">
                                                <div class="row">
@@ -344,7 +358,7 @@
     
                                                 </tr>
                                             </ng-template>
-                                            <ng-template pTemplate="body" let-col>
+                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                                 <tr>
                                                     <td>
                                                         <div class="dropdown">
@@ -377,6 +391,13 @@
                                                     <td>{{col.Net_Amt}}</td>
                                                     <td>{{col.Net_Amt1}}</td>
                                                     <td>{{col.Fin_Year_Name}}</td>
+                                                </tr>
+                                                <tr *ngIf='(rowIndex + 1)  === ServiceBillList.length'>
+                                                    <td colspan="8" class="text-bold text-right">Total Taxable Amount : {{GetTotal(ServiceBillList,'Taxable_Amt')}}</td>
+                                                    <td  class="text-bold">Total Tax Amount : {{GetTotal(ServiceBillList,'Tax')}}</td>
+                                                    <td  class="text-bold">Total Net Amount : {{GetTotal(ServiceBillList,'Net_Amt')}}</td>
+                                                    <td  class="text-bold">Total Paid Amount : {{GetTotal(ServiceBillList,'Net_Amt1')}}</td>
+                                                    <td>-</td>
                                                 </tr>
                                             </ng-template>    
                                             <ng-template pTemplate="paginatorright" let-state>

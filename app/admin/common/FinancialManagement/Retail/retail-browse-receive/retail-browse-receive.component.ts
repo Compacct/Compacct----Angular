@@ -104,6 +104,10 @@ export class RetailBrowseReceiveComponent implements OnInit {
       });
     }
   }
+  
+  GetTotal(arr,field) {
+    return arr.reduce((n,obj) => n + Number(obj[field]), 0).toFixed(2)
+  }
   PdfPrint (obj) {
     if (obj) {
       window.open("/Report/Crystal_Files/Finance/Voucher/report_voucher_print.aspx?Doc_No=" + obj.Voucher_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');

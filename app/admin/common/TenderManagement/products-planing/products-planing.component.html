@@ -146,7 +146,7 @@
                                 </div>
                                 <div class="col-sm-5">
                                     <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
-                                    <span *ngIf='SiteList.length === 0' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i
+                                    <span *ngIf='ObjProdPlan.Tender_Doc_ID' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i
                                         class="fa fa-fw  fa-plus"></i> Create</span>
                                     <p-dropdown [options]="SiteList" name="siteName" [(ngModel)]="ObjProdPlan.Site_ID"
                                       [showClear]="true" [emptyFilterMessage]="' No Site Found'"

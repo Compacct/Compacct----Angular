@@ -73,9 +73,9 @@
                                 <p-table #dt
                                          [value]='HearingReceiveVBillList'
                                          [globalFilterFields]="SEarchFilter"
-                                         [paginator]="true" [rows]="10" [rowHover]="true"
+                                         [paginator]="true" [rows]="100" [rowHover]="true"
                                          [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[10,20,30]"
+                                         [rowsPerPageOptions]="[25,50,100]"
                                          [rowHover]="true">
                                            <ng-template pTemplate="caption">
                                                <div class="row">
@@ -101,7 +101,7 @@
     
                                                 </tr>
                                             </ng-template>
-                                            <ng-template pTemplate="body" let-col>
+                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                                 <tr>
                                                     <td>
                                                         <div class="dropdown">
@@ -132,6 +132,13 @@
                                                     <td>{{ col.Bank_Txn_Type ? col.Bank_Txn_Type:'-' }}</td>
                       
                                                     <td>{{col.Fin_Year_Name}}</td>
+                                                </tr>
+                                                
+                                                <tr *ngIf='(rowIndex + 1)  === HearingReceiveVBillList.length'>
+                                                    <td colspan="8" class="text-bold  text-right">Total Adjusted Amount : {{GetTotal(HearingReceiveVBillList,'Adj_Amount')}}</td>
+                                                    <td  class="text-bold">Total Voucher  Amount : {{GetTotal(HearingReceiveVBillList,'Rec_Amt')}}</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
                                                 </tr>
                                             </ng-template>    
                                             <ng-template pTemplate="paginatorright" let-state>

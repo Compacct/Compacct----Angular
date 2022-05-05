@@ -147,14 +147,14 @@ updateRowGroupMetaData() {
     }
 }
   ngOnInit() {
-    this.items = ["Pending Budget", "Created Budget", "Create Single Scheme"];
+    this.items = ["Pending Pre Bid Budget", "Created Pre Bid Budget", "Create Single Scheme"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
     this.Header.pushHeader({
-      Header: "Budget",
-      Link: "Project Management -> Budget"
+      Header: "Pre Bid Budget",
+      Link: "Project Management -> Pre Bid Budget"
     });
     this.budGetreqList = [];
     this.budGetsubList = [];
@@ -255,7 +255,7 @@ updateRowGroupMetaData() {
   onConfirm(){}
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["Pending Budget", "Created Budget", "Create Single Scheme"];
+    this.items = ["Pending Pre Bid Budget", "Created Pre Bid Budget", "Create Single Scheme"];
     this.buttonname = "Create";
     this.clearData();
     this.GetSingleScheCreatedList();
