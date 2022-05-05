@@ -168,6 +168,88 @@ export class TenderHarbauerViewComponent implements OnInit {
   
   ViewTenderID = undefined;
   TenderviewModel = false;
+
+  EstimateProductChangeModal = false;
+  ShowAddedEstimateProductList = [];
+  rowGroupMetadata: any;
+  SpinnerProd = false;
+  colsForProduct = [{
+      field: 'SL_No',
+      header: 'SL No.'
+    },
+    {
+      field: 'Budget_Group_Name',
+      header: 'Group Name'
+    },
+    {
+      field: 'Budget_Sub_Group_Name',
+      header: 'Sub Group Name'
+    },
+    {
+      field: 'Work_Details',
+      header: 'Work Details'
+    },
+    {
+      field: 'Site_Description',
+      header: 'Site'
+    },
+    {
+      field: 'Product_Description',
+      header: 'Product'
+    },
+    {
+      field: 'unit',
+      header: 'Unit'
+    },
+    {
+      field: 'Qty',
+      header: 'Qty'
+    },
+    {
+      field: 'Nos',
+      header: 'Nos'
+    },
+    {
+      field: 'TQty',
+      header: 'Total Qty'
+    },
+    {
+      field: 'UOM',
+      header: 'UOM'
+    },
+    {
+      field: 'saleRate',
+      header: 'Sale Rate'
+    },
+    {
+      field: 'Sale_Amount',
+      header: 'Sale Amount'
+    },
+    {
+      field: 'Rate',
+      header: 'Purchase Rate'
+    },
+    {
+      field: 'Amount',
+      header: 'Purchase Amount'
+    },
+    {
+      field: 'Changed_Sale_Rate',
+      header: 'Changed Sale Rate'
+    },
+    {
+      field: 'Changed_Sale_Amount',
+      header: 'Changed Sale Amount'
+    },
+    {
+      field: 'Changed_Rate',
+      header: 'Changed Purchase Rate'
+    },
+    {
+      field: 'Changed_Amount',
+      header: 'Changed Purchase Amount'
+    }
+  ];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -1537,6 +1619,39 @@ CheckIfTenderIDExist(){
       });
     }
   }
+  
+  
+  SaveDraftBidOpening(){
+    if (this.BidOpenListView.length) {
+       const obj = {
+      "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+      "Report_Name_String" : "Tender_Govt_Bidding_Add_harbour",
+      "Json_Param_String": JSON.stringify(this.BidOpenListView),
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log("data",data);
+       if(data[0].Column1){
+        this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Draft ' ,
+          detail: "Succesfully Saved"
+        });
+       }
+       else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error"
+        });
+       }
+       
+    })
+  }
+  }
   convertNumberToWords(amount) {
     var words = new Array();
     words[0] = '';
@@ -2037,6 +2152,103 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
    }
   }
   
+  
+  //Budget Details
+  onSort() {
+    this.updateRowGroupMetaData();
+  }
+  updateRowGroupMetaData() {
+    this.rowGroupMetadata = {};
+    if (this.ShowAddedEstimateProductList) {
+      for (let i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+        let rowData = this.ShowAddedEstimateProductList[i];
+        let brand = rowData.Budget_Group_Name;
+        if (i == 0) {
+          this.rowGroupMetadata[brand] = {
+            index: 0,
+            size: 1
+          };
+        } else {
+          let previousRowData = this.ShowAddedEstimateProductList[i - 1];
+          let previousRowGroup = previousRowData.Budget_Group_Name;
+          if (brand === previousRowGroup)
+            this.rowGroupMetadata[brand].size++;
+          else
+            this.rowGroupMetadata[brand] = {
+              index: i,
+              size: 1
+            };
+        }
+      }
+    }
+  }
+  GetEstimateProductScheme(_TenderId) {
+    this.ShowAddedEstimateProductList = [];
+    if (_TenderId) {
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Get Data Tender Estimate_With_Changed_Amount",
+        "Json_Param_String": JSON.stringify([{
+          'Tender_Doc_ID': _TenderId
+        }])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          if (data.length) {
+            this.ShowAddedEstimateProductList = data;
+            this.EstimateProductChangeModal = true;
+            console.log(data)
+          }
+        });
+    }
+  }
+  getPurchaseAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Amount
+    }) => n + Number(Amount), 0)
+  }
+  getSaleAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Sale_Amount
+    }) => n + Number(Sale_Amount), 0)
+  }
+  getTotalPurchaseAmt() {
+    return this.ShowAddedEstimateProductList.length ? Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt() : '-';
+  }
+  SaveChangeEstimateProduct(){
+    if(this.ShowAddedEstimateProductList.length) {
+        this.SpinnerProd = true;
+        const obj = {
+          "SP_String": "SP_Tender_Management_All",
+          "Report_Name_String": "Update_Data_Tender_Estimate_With_Changed_Amount",
+          "Json_Param_String": JSON.stringify(this.ShowAddedEstimateProductList)
+        }
+        this.GlobalAPI.getData(obj).subscribe((data: any) => {
+          console.log(data)
+        if (data[0].message) {
+          // if (this.ObjTender.Tender_Doc_ID) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "",
+              detail: "Succesfully Updated"
+            });
+          this.EstimateProductChangeModal= false;
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+        this.SpinnerProd = false;
+        });
+    }
+    }
 }
 class search{
   Filter1_Text:string;

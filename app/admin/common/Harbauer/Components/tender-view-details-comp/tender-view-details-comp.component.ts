@@ -139,6 +139,22 @@ export class TenderViewDetailsCompComponent implements OnInit {
     {
       field: 'Amount',
       header: 'Purchase Amount'
+    },
+    {
+      field: 'Changed_Sale_Rate',
+      header: 'Changed Sale Rate'
+    },
+    {
+      field: 'Changed_Sale_Amount',
+      header: 'Changed Sale Amount'
+    },
+    {
+      field: 'Changed_Rate',
+      header: 'Changed Purchase Rate'
+    },
+    {
+      field: 'Changed_Amount',
+      header: 'Changed Purchase Amount'
     }
   ];
 
@@ -377,7 +393,7 @@ export class TenderViewDetailsCompComponent implements OnInit {
     if (this._TenderId) {
       const obj = {
         "SP_String": "SP_Tender_Management_All",
-        "Report_Name_String": "Get Data Tender Estimate",
+        "Report_Name_String": "Get Data Tender Estimate_With_Changed_Amount",
         "Json_Param_String": JSON.stringify([{
           'Tender_Doc_ID': this._TenderId
         }])
@@ -396,6 +412,11 @@ export class TenderViewDetailsCompComponent implements OnInit {
     return this.ShowAddedEstimateProductList.reduce((n, {
       Amount
     }) => n + Number(Amount), 0)
+  }
+  getSaleAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Sale_Amount
+    }) => n + Number(Sale_Amount), 0)
   }
   getTotalPurchaseAmt() {
     return this.ShowAddedEstimateProductList.length ? Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt() : '-';

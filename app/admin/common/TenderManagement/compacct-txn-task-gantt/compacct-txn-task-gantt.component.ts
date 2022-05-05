@@ -41,6 +41,7 @@ import {
   EditSettingsModel
 } from '@syncfusion/ej2-angular-gantt';
 import {
+  PdfExportProperties,
   SelectionSettingsModel
 } from '@syncfusion/ej2-angular-grids';
 
@@ -190,7 +191,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.splitterSettings = {
       columnIndex: 3
     };
-    this.toolbar = ['ExpandAll', 'CollapseAll', 'ExcelExport',
+    this.toolbar = ['ExpandAll', 'CollapseAll', 'ExcelExport','PdfExport',
       {
         text: '',
         tooltipText: 'ADD TASK',
@@ -320,7 +321,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   }
   AddDaysToDate(date, numberOfDaysToAdd) {
     const someDate = new Date(date);
-    let result = someDate.setDate(someDate.getDate() + Number(numberOfDaysToAdd));
+    let result = someDate.setDate(someDate.getDate() + Number(numberOfDaysToAdd - 1));
     return new Date(result);
   }
   
@@ -547,6 +548,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     if (args.item.id === 'createTask') {
       this.OpenTaskModal()
     }
+   
   };
   OpenTaskModal() {
     this.TaskCreateList = [];

@@ -66,10 +66,10 @@ viewModel = false;
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Budget Approval",
-      Link: "Project Management -> Budget Approval"
+      Header: "Pre Bid Budget Approval",
+      Link: "Project Management -> Pre Bid Budget Approval"
     });
-    this.items = ['Pending Approval','Approved Budget','Not Approved Budget'];
+    this.items = ['Pending Approval','Approved Pre Bid Budget','Not Approved Pre Bid Budget'];
     this.GetPendinApvList();
     this.GetAprvBudgetList();
     this.GetNotAprvBudgetList();
@@ -77,7 +77,7 @@ viewModel = false;
 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items =  ['Pending Approval','Approved Budget','Not Approved Budget']
+    this.items =  ['Pending Approval','Approved Pre Bid Budget','Not Approved Pre Bid Budget']
     this.clearData();
   }
   clearData(){
