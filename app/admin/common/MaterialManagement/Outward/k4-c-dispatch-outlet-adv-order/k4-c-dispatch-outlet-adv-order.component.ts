@@ -106,6 +106,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
 
   Cancle_Remarks : string;
   remarksFormSubmitted = false;
+  advordernumber: any;
 
   constructor(
     private $http: HttpClient,
@@ -974,10 +975,12 @@ PrintOrder(obj) {
     this.remarksFormSubmitted = false;
     this.doc_no = undefined;
     this.salebillno = undefined;
+    this.advordernumber = undefined;
     if (masterProduct.Doc_No) {
      this.doc_no = masterProduct.Doc_No;
      this.doc_date = masterProduct.Doc_Date;
      this.salebillno = masterProduct.Bill_NO;
+     this.advordernumber = masterProduct.Adv_Order_No
      this.compacctToast.clear();
      this.compacctToast.add({
        key: "c",
@@ -997,7 +1000,8 @@ PrintOrder(obj) {
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
         Doc_Date : this.doc_date,
         Sale_Bill_No : this.salebillno,
-        Remarks : this.Cancle_Remarks
+        Remarks : this.Cancle_Remarks,
+        Adv_Order_No : this.advordernumber
        }
        if (valid) {
        const objj = {
@@ -1006,7 +1010,8 @@ PrintOrder(obj) {
         "Json_Param_String": JSON.stringify([Tempdata])
        }
        this.GlobalAPI.getData(objj).subscribe((data:any)=>{
-         if (data[0].Column1 === "Done"){
+         var msg = data[0].Column1;
+         if (data[0].Column1){
            //this.onReject();
            this.remarksFormSubmitted = false;
            this.searchData();
@@ -1015,7 +1020,7 @@ PrintOrder(obj) {
              key: "compacct-toast",
              severity: "success",
              summary: "Doc No.: " + this.doc_no.toString(),
-             detail: "Succesfully Deleted"
+             detail: msg
            });
            this.clearData();
      }

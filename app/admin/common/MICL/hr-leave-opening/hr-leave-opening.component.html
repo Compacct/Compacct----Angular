@@ -152,10 +152,10 @@
                                 <div class="col-sm-4">
                                     <label class="control-label">Leave Type
                                         <sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="LEAVE_TYPE"
-                                        #LEAVE_TYPE ="ngModel"
+                                        <select class="form-control" name="LEAVETYPE"
+                                        #LEAVETYPE ="ngModel"
                                         [(ngModel)]="Objleave.LEAVE_TYPE"
-                                        [ngClass]="{'clearance': leaveFormSubmitted && LEAVE_TYPE?.errors?.required}" 
+                                        [ngClass]="{'clearance': leaveFormSubmitted && LEAVETYPE?.errors?.required}" 
                                         [disabled]="Editdisable"
                                         required>
                                         <option [ngValue]="undefined">Select</option>

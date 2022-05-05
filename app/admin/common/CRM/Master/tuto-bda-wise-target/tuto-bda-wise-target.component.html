@@ -1,1 +1,356 @@
-<p>tuto-bda-wise-target works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                  <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                      
+                    <button type="button" (click)="clearData()" class="btn btn-primary" style="margin-left:18px">
+                        <i class="fa fa-refresh"></i>&nbsp;  Refresh
+                      </button>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="fa fa-fw  fa fa-list-alt">
+                     <div class="col-lg-12">
+                     <div class="panel-group">
+                     <div class="panel panel-primary">
+                     <div class="panel-heading" style="text-align:center; background-color: #4b5a91;"><b>BDA WISE ATTENDANCE</b></div>
+                     <div class="panel-body">
+                     <div class="table-responsive no-padding" style="height:70vh">
+                        <table class="table table-bordered">
+                        <thead style="position: sticky;top: 0">
+                            <!-- <tr>
+                                <th colspan="2"></th>
+                                <th>BDA WISE ATTENDANCE</th>
+                            </tr> -->
+                            <tr>
+                                <!-- <th rowspan="2" style="background-color:rgb(97, 121, 165) !important ; color:white">Sl No.</th> -->
+                                <th rowspan="2" style="background-color:rgb(94, 103, 120) !important ; color:white">BDA <br> Call ID</th>
+                                <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
+                                    <div class="col-sm-12">
+                                        <!-- <label for="monthpicker">Month Picker</label> -->
+                                        <input type="month" name="month" [(ngModel)]="Month_Name" (change)="getmonthdaydate()" style="background-color: rgb(70, 93, 136);
+                                        color: #ffff;">
+                                    </div>
+                                </th>
+                                <th *ngFor="let col of MonthdayDatelist" style="background-color:rgb(96, 129, 190) !important ; color:white">
+                                    <tr>{{col.WeekDay}} </tr>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="background-color:#7f7d7d !important ; color:white">Employee Name</th>
+                                <th *ngFor="let Data of dateNumber ;let ind = index;" style="background-color:rgb(111, 119, 136) !important ; color:white">
+                                    <tr><a class="btn btn-sm" style="color:white" (click)='ChangeAllRow(ind)'>{{Data.date}}</a></tr>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-spy="scroll">
+                                <tr *ngFor="let row of employeelist;let i = index;"> <!--let odd = odd;"[class.even]="odd" -->
+                                <!-- <td>{{ i + 1 }}</td> -->
+                                <td>{{ row.User_ID }}</td>
+                                <td>{{ row.Member_Name }}</td>
+                                <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" style="text-align: center;">
+                                    {{col}}
+                                </td>
+                                <!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+                     </div>
+                     <div class="box-footer">
+                         <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                             </button>
+                     </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-fw  fa fa-list-alt">
+                        <div class="col-lg-12">
+                        <div class="panel-group">
+                        <div class="panel panel-primary">
+                        <div class="panel-heading" style="text-align:center; background-color: #4b5a91;"><b>BDA WISE BOOKING</b></div>
+                        <div class="panel-body">
+                        <div class="table-responsive no-padding" style="height:70vh">
+                           <table class="table table-bordered">
+                           <thead style="position: sticky;top: 0">
+                               <!-- <tr>
+                                   <th colspan="2"></th>
+                                   <th>BDA WISE ATTENDANCE</th>
+                               </tr> -->
+                               <tr>
+                                   <!-- <th rowspan="2" style="background-color:rgb(97, 121, 165) !important ; color:white">Sl No.</th> -->
+                                   <th rowspan="2" style="background-color:rgb(94, 103, 120) !important ; color:white">BDA <br> Call ID</th>
+                                   <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
+                                       <div class="col-sm-12">
+                                           <!-- <label for="monthpicker">Month Picker</label> -->
+                                           <input type="month" name="month" [(ngModel)]="Month_Name" (change)="getmonthdaydate()" style="background-color: rgb(70, 93, 136);
+                                           color: #ffff;">
+                                       </div>
+                                   </th>
+                                   <th *ngFor="let col of MonthdayDatelist" style="background-color:rgb(96, 129, 190) !important ; color:white">
+                                       <tr>{{col.WeekDay}} </tr>
+                                   </th>
+                               </tr>
+                               <tr>
+                                   <th style="background-color:#7f7d7d !important ; color:white">Employee Name</th>
+                                   <th *ngFor="let Data of dateNumber ;let ind = index;" style="background-color:rgb(111, 119, 136) !important ; color:white">
+                                       <tr><a class="btn btn-sm" style="color:white" (click)='ChangeAllRow(ind)'>{{Data.date}}</a></tr>
+                                   </th>
+                               </tr>
+                           </thead>
+                           <tbody data-spy="scroll">
+                                   <tr *ngFor="let row of employeelist;let i = index;"> <!--let odd = odd;"[class.even]="odd" -->
+                                   <!-- <td>{{ i + 1 }}</td> -->
+                                   <td>{{ row.User_ID }}</td>
+                                   <td>{{ row.Member_Name }}</td>
+                                   <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" style="text-align: center;">
+                                       {{col}}
+                                   </td>
+                                   <!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
+                               </tr>
+                           </tbody>
+                       </table>
+                   </div>
+               </div>
+           </div>
+       </div>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                        </div>
+                       </p-tabPanel>
+                       <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-fw  fa fa-list-alt">
+                        <div class="col-lg-12">
+                        <div class="panel-group">
+                        <div class="panel panel-primary">
+                        <div class="panel-heading" style="text-align:center; background-color: #4b5a91;"><b>BDA WISE CONDUCTION DONE</b></div>
+                        <div class="panel-body">
+                        <div class="table-responsive no-padding" style="height:70vh">
+                           <table class="table table-bordered">
+                           <thead style="position: sticky;top: 0">
+                               <!-- <tr>
+                                   <th colspan="2"></th>
+                                   <th>BDA WISE ATTENDANCE</th>
+                               </tr> -->
+                               <tr>
+                                   <!-- <th rowspan="2" style="background-color:rgb(97, 121, 165) !important ; color:white">Sl No.</th> -->
+                                   <th rowspan="2" style="background-color:rgb(94, 103, 120) !important ; color:white">BDA <br> Call ID</th>
+                                   <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
+                                       <div class="col-sm-12">
+                                           <!-- <label for="monthpicker">Month Picker</label> -->
+                                           <input type="month" name="month" [(ngModel)]="Month_Name" (change)="getmonthdaydate()" style="background-color: rgb(70, 93, 136);
+                                           color: #ffff;">
+                                       </div>
+                                   </th>
+                                   <th *ngFor="let col of MonthdayDatelist" style="background-color:rgb(96, 129, 190) !important ; color:white">
+                                       <tr>{{col.WeekDay}} </tr>
+                                   </th>
+                               </tr>
+                               <tr>
+                                   <th style="background-color:#7f7d7d !important ; color:white">Employee Name</th>
+                                   <th *ngFor="let Data of dateNumber ;let ind = index;" style="background-color:rgb(111, 119, 136) !important ; color:white">
+                                       <tr><a class="btn btn-sm" style="color:white" (click)='ChangeAllRow(ind)'>{{Data.date}}</a></tr>
+                                   </th>
+                               </tr>
+                           </thead>
+                           <tbody data-spy="scroll">
+                                   <tr *ngFor="let row of employeelist;let i = index;"> <!--let odd = odd;"[class.even]="odd" -->
+                                   <!-- <td>{{ i + 1 }}</td> -->
+                                   <td>{{ row.User_ID }}</td>
+                                   <td>{{ row.Member_Name }}</td>
+                                   <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" style="text-align: center;">
+                                       {{col}}
+                                   </td>
+                                   <!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
+                               </tr>
+                           </tbody>
+                       </table>
+                   </div>
+               </div>
+           </div>
+       </div>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                        </div>
+                       </p-tabPanel>
+                       <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="fa fa-fw  fa fa-list-alt">
+                        <div class="col-lg-12">
+                        <div class="panel-group">
+                        <div class="panel panel-primary">
+                        <div class="panel-heading" style="text-align:center; background-color: #4b5a91;"><b>BDA WISE SUBSCRIBER</b></div>
+                        <div class="panel-body">
+                        <div class="table-responsive no-padding" style="height:70vh">
+                           <table class="table table-bordered">
+                           <thead style="position: sticky;top: 0">
+                               <!-- <tr>
+                                   <th colspan="2"></th>
+                                   <th>BDA WISE ATTENDANCE</th>
+                               </tr> -->
+                               <tr>
+                                   <!-- <th rowspan="2" style="background-color:rgb(97, 121, 165) !important ; color:white">Sl No.</th> -->
+                                   <th rowspan="2" style="background-color:rgb(94, 103, 120) !important ; color:white">BDA <br> Call ID</th>
+                                   <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
+                                       <div class="col-sm-12">
+                                           <!-- <label for="monthpicker">Month Picker</label> -->
+                                           <input type="month" name="month" [(ngModel)]="Month_Name" (change)="getmonthdaydate()" style="background-color: rgb(70, 93, 136);
+                                           color: #ffff;">
+                                       </div>
+                                   </th>
+                                   <th *ngFor="let col of MonthdayDatelist" style="background-color:rgb(96, 129, 190) !important ; color:white">
+                                       <tr>{{col.WeekDay}} </tr>
+                                   </th>
+                               </tr>
+                               <tr>
+                                   <th style="background-color:#7f7d7d !important ; color:white">Employee Name</th>
+                                   <th *ngFor="let Data of dateNumber ;let ind = index;" style="background-color:rgb(111, 119, 136) !important ; color:white">
+                                       <tr><a class="btn btn-sm" style="color:white" (click)='ChangeAllRow(ind)'>{{Data.date}}</a></tr>
+                                   </th>
+                               </tr>
+                           </thead>
+                           <tbody data-spy="scroll">
+                                   <tr *ngFor="let row of employeelist;let i = index;"> <!--let odd = odd;"[class.even]="odd" -->
+                                   <!-- <td>{{ i + 1 }}</td> -->
+                                   <td>{{ row.User_ID }}</td>
+                                   <td>{{ row.Member_Name }}</td>
+                                   <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" style="text-align: center;">
+                                       {{col}}
+                                   </td>
+                                   <!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
+                               </tr>
+                           </tbody>
+                       </table>
+                   </div>
+               </div>
+           </div>
+       </div>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                        </div>
+                       </p-tabPanel>
+                       <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="fa fa-fw  fa fa-list-alt">
+                        <div class="col-lg-12">
+                        <div class="panel-group">
+                        <div class="panel panel-primary">
+                        <div class="panel-heading" style="text-align:center; background-color: #4b5a91;"><b>BDA WISE REVENUE</b></div>
+                        <div class="panel-body">
+                        <div class="table-responsive no-padding" style="height:70vh">
+                           <table class="table table-bordered">
+                           <thead style="position: sticky;top: 0">
+                               <!-- <tr>
+                                   <th colspan="2"></th>
+                                   <th>BDA WISE ATTENDANCE</th>
+                               </tr> -->
+                               <tr>
+                                   <!-- <th rowspan="2" style="background-color:rgb(97, 121, 165) !important ; color:white">Sl No.</th> -->
+                                   <th rowspan="2" style="background-color:rgb(94, 103, 120) !important ; color:white">BDA <br> Call ID</th>
+                                   <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
+                                       <div class="col-sm-12">
+                                           <!-- <label for="monthpicker">Month Picker</label> -->
+                                           <input type="month" name="month" [(ngModel)]="Month_Name" (change)="getmonthdaydate()" style="background-color: rgb(70, 93, 136);
+                                           color: #ffff;">
+                                       </div>
+                                   </th>
+                                   <th *ngFor="let col of MonthdayDatelist" style="background-color:rgb(96, 129, 190) !important ; color:white">
+                                       <tr>{{col.WeekDay}} </tr>
+                                   </th>
+                               </tr>
+                               <tr>
+                                   <th style="background-color:#7f7d7d !important ; color:white">Employee Name</th>
+                                   <th *ngFor="let Data of dateNumber ;let ind = index;" style="background-color:rgb(111, 119, 136) !important ; color:white">
+                                       <tr><a class="btn btn-sm" style="color:white" (click)='ChangeAllRow(ind)'>{{Data.date}}</a></tr>
+                                   </th>
+                               </tr>
+                           </thead>
+                           <tbody data-spy="scroll">
+                                   <tr *ngFor="let row of employeelist;let i = index;"> <!--let odd = odd;"[class.even]="odd" -->
+                                   <!-- <td>{{ i + 1 }}</td> -->
+                                   <td>{{ row.User_ID }}</td>
+                                   <td>{{ row.Member_Name }}</td>
+                                   <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" style="text-align: center;">
+                                       {{col}}
+                                   </td>
+                                   <!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
+                               </tr>
+                           </tbody>
+                       </table>
+                   </div>
+               </div>
+           </div>
+       </div>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                        </div>
+                       </p-tabPanel>
+                   </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- FOR ONE EMPLOYEE (ONE CELL) -->
+<p-dialog header="Target" [appendTo]="'body'" [(visible)]="display" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
+    <form name="attendancestatusForm" #attendancestatusForm="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label>Employee Name:</label>&nbsp; {{employeename}}
+        </div>
+        <div class="col-sm-12">
+            <label>Date:</label>&nbsp; {{Doc_date | date :"dd/MMM/yyyy"}}
+
+        </div>
+        <div class="col-sm-12">
+            <label>Target <sup class="text-danger">*</sup></label>&nbsp;
+            <input type="text" name="atten" #atten="ngModel" [(ngModel)]="Attendance_Status" [ngClass]="{'clearance': attendancestatusFormSubmitted && atten?.errors?.required}" CompacctDigitonly="true" style="width: 75px;"/>
+        </div>
+        <hr>
+        <p-footer>
+            <div class="text-right">
+                <button type="button" (click)="display = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
+                <button type="button" (click)="SaveAttendanceType()" class="btn btn-success">
+           <i class="fa fa-check"></i>&nbsp;  Done
+         </button>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+
+<!-- FOR ALL EMPLOYEE (ONE COLUMN)-->
+<p-dialog header={{DayName}} [appendTo]="'body'" [(visible)]="displayALLEmployee" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '300px' }">
+    <div class="col-sm-12">
+        <label>Date:</label>&nbsp; {{Doc_date_AllEmp | date :"dd/MMM/yyyy"}}
+
+    </div>
+    <div class="col-sm-12">
+        <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+        <input type="text" name="attenaalemp" #attenaalemp="ngModel" [(ngModel)]="Attendance_Status_ALlEmployee" [ngClass]="{'clearance': attendancestatusFormSubmitted && attenaalemp?.errors?.required}" CompacctDigitonly="true" style="width: 75px;"/>
+    </div>
+    <hr>
+    <p-footer>
+        <div class="text-right">
+            <button type="button" (click)="displayALLEmployee = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
+            <button type="button" (click)="SaveForALLEmployee()" class="btn btn-success">
+           <i class="fa fa-check"></i>&nbsp;  Done
+         </button>
+        </div>
+    </p-footer>
+</p-dialog>

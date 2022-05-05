@@ -289,6 +289,7 @@ class leave{
   Leave_Month:any
   Leave_Year:any
   Leave_Type:any
+  LEAVE_TYPE:any
   Tran_Type:any
   DR_Leave:any
   CR_Leave:any
