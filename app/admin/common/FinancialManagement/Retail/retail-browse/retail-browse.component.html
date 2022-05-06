@@ -38,7 +38,7 @@
                                         <p-dropdown
                                         [options]="CostCenterList"
                                         name="Center"
-                                        [(ngModel)]="ObjSearchHearingAidForm.Cost_Cen_ID"
+                                        [(ngModel)]="ObjSearchHearingForm.Cost_Cen_ID"
                                         [showClear]="true"
                                         [emptyFilterMessage]="' No Cost Center Found'"
                                         [filter]="true"
@@ -48,30 +48,37 @@
                                         itemSize="30"
                                         #Center="ngModel"
                                         [styleClass]="
-                                        HearingAidFormSubmitted && Center.errors?.required
+                                        HearingFormSubmitted && Center.errors?.required
                                             ? 'clearance'
                                             : ''
                                         "
                                         [required]="$CompacctAPI.CompacctCookies.User_Type ==='U'"
                                         >
                                         </p-dropdown>
-                                    </div>
+                                    </div> 
                                     <div class="col-sm-4">
                                         <button class="btn btn-primary custombutton" 
-                                            (click)="Search(HearingAidForm.form,'HearingAidForm')" id="load"
-                                            [disabled]="HearingAidFormseachSpinner">
-                                            <p-progressSpinner *ngIf="HearingAidFormseachSpinner"
+                                            (click)="Search(HearingAidForm.form.valid)" id="load"
+                                            [disabled]="HearingFormseachSpinner">
+                                            <p-progressSpinner *ngIf="HearingFormseachSpinner"
                                                 [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
                                                 animationDuration=".5s"></p-progressSpinner>
-                                            <span *ngIf="!HearingAidFormseachSpinner"
+                                            <span *ngIf="!HearingFormseachSpinner"
                                                 class="glyphicon glyphicon-search"></span>&nbsp;Search
                                         </button>
+                                    </div>
+                                </div>
+                                <div class="form-group" *ngIf="HearingBillList.length">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Filter By</label>
+                                        <p-multiSelect [options]="FilterByBillList" [(ngModel)]="SelectedFilterType" [styleClass]="'compacct-multiselect'" name="ProductTypefilter" (onChange)="FilterDist1()">
+                                        </p-multiSelect>
                                     </div>
                                 </div>
                             </form>
                             <div class="table-responsive table-id">
                                 <p-table #dt
-                                         [value]='HearingAidBillList'
+                                         [value]='HearingBillList'
                                          [globalFilterFields]="SEarchFilter"
                                          [paginator]="true" [rows]="100" [rowHover]="true"
                                          [autoLayout]="true" sortMode="multiple"
@@ -113,7 +120,7 @@
                                                             <ul class="dropdown-menu">
                                                                 
                                                                 <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
-                                                                    <a (click)="saleBillUpdate(col.Doc_No,'HearingAidForm')"><i class="fa fa-fw fa-pencil"></i>Edit</a>
+                                                                    <a (click)="saleBillUpdate(col)"><i class="fa fa-fw fa-pencil"></i>Edit</a>
                                                                 </li>
                                                                 <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
                                                                     <a (click)="DeleteSaleBill(col.Doc_No)"><i class="fa fa-fw fa-trash"></i>Delete</a>
@@ -137,266 +144,11 @@
                                                     <td>{{col.Net_Amt1}}</td>
                                                     <td>{{col.Fin_Year_Name}}</td>
                                                 </tr>
-                                                <tr *ngIf='(rowIndex + 1)  === HearingAidBillList.length'>
-                                                    <td colspan="8" class="text-bold  text-right">Total Taxable Amount : {{GetTotal(HearingAidBillList,'Taxable_Amt')}}</td>
-                                                    <td  class="text-bold">Total Tax Amount : {{GetTotal(HearingAidBillList,'Tax')}}</td>
-                                                    <td  class="text-bold">Total Net Amount : {{GetTotal(HearingAidBillList,'Net_Amt')}}</td>
-                                                    <td  class="text-bold">Total Paid Amount : {{GetTotal(HearingAidBillList,'Net_Amt1')}}</td>
-                                                    <td>-</td>
-                                                </tr>
-                                            </ng-template>    
-                                            <ng-template pTemplate="paginatorright" let-state>
-                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                                            </ng-template>
-                                </p-table>
-                                </div> 
-                        </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
-                            <form name="AccessoriesBillForm" #AccessoriesBillForm="ngForm" novalidate>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Period</label>
-    
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange2($event)">
-                                        </app-compacct-daterangepicker>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">
-                                            Cost Center &nbsp;<span class="text-danger">*</span></label>
-                                        <p-dropdown
-                                        [options]="CostCenterList"
-                                        name="Center"
-                                        [(ngModel)]="ObjSearchAccessoriesBillForm.Cost_Cen_ID"
-                                        [showClear]="true"
-                                        [emptyFilterMessage]="' No Cost Center Found'"
-                                        [filter]="true"
-                                        filterBy="label,value.name"
-                                        [placeholder]="'Select Cost Center'"
-                                        [virtualScroll]="true"
-                                        itemSize="30"
-                                        #Center="ngModel"
-                                        [styleClass]="
-                                        AccessoriesBillFormSubmitted && Center.errors?.required
-                                            ? 'clearance'
-                                            : ''
-                                        "
-                                        [required]="$CompacctAPI.CompacctCookies.User_Type ==='U'"
-                                        >
-                                        </p-dropdown>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <button class="btn btn-primary custombutton" 
-                                            (click)="Search(AccessoriesBillForm.form,'AccessoriesBillForm')" id="load"
-                                            [disabled]="AccessoriesBillFormseachSpinner">
-                                            <p-progressSpinner *ngIf="AccessoriesBillFormseachSpinner"
-                                                [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
-                                                animationDuration=".5s"></p-progressSpinner>
-                                            <span *ngIf="!AccessoriesBillFormseachSpinner"
-                                                class="glyphicon glyphicon-search"></span>&nbsp;Search
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="table-responsive table-id">
-                                <p-table #dt2
-                                         [value]='AccessoriesBillList'
-                                         [globalFilterFields]="SEarchFilter"
-                                         [paginator]="true" [rows]="100" [rowHover]="true"
-                                         [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[25,50,100]"
-                                         [rowHover]="true">
-                                           <ng-template pTemplate="caption">
-                                               <div class="row">
-                                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                        </div>
-                                               </div>
-    
-                                            </ng-template>    
-                                            <ng-template pTemplate="header">
-                                                <tr>
-                                                    <th>Action</th>
-                                                    
-                                                    <th>Bill No</th>
-                                                    <th>Bill Date</th>
-                                                    <th>Bill Type</th>
-                                                    <th>Patient Name</th>
-                                                    <th>Mobile No</th>
-                                                    <th>CostCenter</th>
-                                                    <th>Taxable Amount</th>
-                                                    <th>Tax Amount</th>
-                                                    <th>Net Amount</th>
-                                                    <th>Paid Amount</th>
-                                                    <th>Fin Year</th>
-    
-                                                </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
-                                                <tr>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
-                                                                <i class="fa fa-fw fa-bars"></i>
-                                                                <span class="caret"></span>
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
-                                                                    <a (click)="saleBillUpdate(col.Doc_No,'AccessoriesBillForm')"><i class="fa fa-fw fa-pencil"></i>Edit</a>
-                                                                </li>
-                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
-                                                                    <a (click)="DeleteSaleBill(col.Doc_No)"><i class="fa fa-fw fa-trash"></i>Delete</a>
-                                                                </li>
-                                                                <li>
-                                                                    <a (click)="PdfPrint(col)"> <i class="fa fa-fw fa-file-pdf-o"> </i>Print</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                   
-                                                    <td>{{col.Doc_No}}</td>
-                                                    <td>{{col.Doc_Date | date:'dd/MM/yyyy'}}</td>
-                                                    <td>{{col.Bill_Type}}</td>
-                                                    <td>{{col.Contact_Name}}</td>
-                                                    <td>{{col.Mobile}}</td>
-                                                    <td>{{col.Cost_Cen_Name}}</td>
-                                                    <td>{{col.Taxable_Amt}}</td>
-                                                    <td>{{col.Tax}}</td>
-                                                    <td>{{col.Net_Amt}}</td>
-                                                    <td>{{col.Net_Amt1}}</td>
-                                                    <td>{{col.Fin_Year_Name}}</td>
-                                                </tr>
-                                                <tr *ngIf='(rowIndex + 1)  === AccessoriesBillList.length'>
-                                                    <td colspan="8" class="text-bold  text-right">Total Taxable Amount : {{GetTotal(AccessoriesBillList,'Taxable_Amt')}}</td>
-                                                    <td  class="text-bold">Total Tax Amount : {{GetTotal(AccessoriesBillList,'Tax')}}</td>
-                                                    <td  class="text-bold">Total Net Amount : {{GetTotal(AccessoriesBillList,'Net_Amt')}}</td>
-                                                    <td  class="text-bold">Total Paid Amount : {{GetTotal(AccessoriesBillList,'Net_Amt1')}}</td>
-                                                    <td>-</td>
-                                                </tr>
-                                            </ng-template>    
-                                            <ng-template pTemplate="paginatorright" let-state>
-                                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
-                                            </ng-template>
-                                </p-table>
-                                </div> 
-                        </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
-                            <form name="ServiceBillForm" #ServiceBillForm="ngForm" novalidate>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Period</label>
-    
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange3($event)">
-                                        </app-compacct-daterangepicker>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">
-                                            Cost Center &nbsp;<span class="text-danger">*</span></label>
-                                        <p-dropdown
-                                        [options]="CostCenterList"
-                                        name="Center"
-                                        [(ngModel)]="ObjSearchServiceBillForm.Cost_Cen_ID"
-                                        [showClear]="true"
-                                        [emptyFilterMessage]="' No Cost Center Found'"
-                                        [filter]="true"
-                                        filterBy="label,value.name"
-                                        [placeholder]="'Select Cost Center'"
-                                        [virtualScroll]="true"
-                                        itemSize="30"
-                                        #Center="ngModel"
-                                        [styleClass]="
-                                        ServiceBillFormSubmitted && Center.errors?.required
-                                            ? 'clearance'
-                                            : ''
-                                        "
-                                        [required]="$CompacctAPI.CompacctCookies.User_Type ==='U'"
-                                        >
-                                        </p-dropdown>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <button class="btn btn-primary custombutton" 
-                                            (click)="Search(ServiceBillForm.form,'ServiceBillForm')" id="load"
-                                            [disabled]="ServiceBillFormseachSpinner">
-                                            <p-progressSpinner *ngIf="ServiceBillFormseachSpinner"
-                                                [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
-                                                animationDuration=".5s"></p-progressSpinner>
-                                            <span *ngIf="!ServiceBillFormseachSpinner"
-                                                class="glyphicon glyphicon-search"></span>&nbsp;Search
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="table-responsive table-id">
-                                <p-table #dt3
-                                         [value]='ServiceBillList'
-                                         [globalFilterFields]="SEarchFilter"
-                                         [paginator]="true" [rows]="100" [rowHover]="true"
-                                         [autoLayout]="true" sortMode="multiple"
-                                         [rowsPerPageOptions]="[25,50,100]"
-                                         [rowHover]="true">
-                                           <ng-template pTemplate="caption">
-                                               <div class="row">
-                                                    <div class="col-sm-3 pull-right" style="text-align: right">
-                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                        </div>
-                                               </div>
-    
-                                            </ng-template>    
-                                            <ng-template pTemplate="header">
-                                                <tr>
-                                                    <th>Action</th>
-                                                    <th>Bill No</th>
-                                                    <th>Bill Date</th>
-                                                    <th>Bill Type</th>
-                                                    <th>Patient Name</th>
-                                                    <th>Mobile No</th>
-                                                    <th>CostCenter</th>
-                                                    <th>Taxable Amount</th>
-                                                    <th>Tax Amount</th>
-                                                    <th>Net Amount</th>
-                                                    <th>Paid Amount</th>
-                                                    <th>Fin Year</th>
-    
-                                                </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
-                                                <tr>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
-                                                                <i class="fa fa-fw fa-bars"></i>
-                                                                <span class="caret"></span>
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
-                                                                    <a (click)="saleBillUpdate(col.Doc_No,'ServiceBillForm')"><i class="fa fa-fw fa-pencil"></i>Edit</a>
-                                                                </li>
-                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
-                                                                    <a (click)="DeleteSaleBill(col.Doc_No)"><i class="fa fa-fw fa-trash"></i>Delete</a>
-                                                                </li>
-                                                                <li>
-                                                                    <a (click)="PdfPrint(col)"> <i class="fa fa-fw fa-file-pdf-o"> </i>Print</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                   
-                                                    <td>{{col.Doc_No}}</td>
-                                                    <td>{{col.Doc_Date | date:'dd/MM/yyyy'}}</td>
-                                                    <td>{{col.Bill_Type}}</td>
-                                                    <td>{{col.Contact_Name}}</td>
-                                                    <td>{{col.Mobile}}</td>
-                                                    <td>{{col.Cost_Cen_Name}}</td>
-                                                    <td>{{col.Taxable_Amt}}</td>
-                                                    <td>{{col.Tax}}</td>
-                                                    <td>{{col.Net_Amt}}</td>
-                                                    <td>{{col.Net_Amt1}}</td>
-                                                    <td>{{col.Fin_Year_Name}}</td>
-                                                </tr>
-                                                <tr *ngIf='(rowIndex + 1)  === ServiceBillList.length'>
-                                                    <td colspan="8" class="text-bold text-right">Total Taxable Amount : {{GetTotal(ServiceBillList,'Taxable_Amt')}}</td>
-                                                    <td  class="text-bold">Total Tax Amount : {{GetTotal(ServiceBillList,'Tax')}}</td>
-                                                    <td  class="text-bold">Total Net Amount : {{GetTotal(ServiceBillList,'Net_Amt')}}</td>
-                                                    <td  class="text-bold">Total Paid Amount : {{GetTotal(ServiceBillList,'Net_Amt1')}}</td>
+                                                <tr *ngIf='(rowIndex + 1)  === HearingBillList.length'>
+                                                    <td colspan="8" class="text-bold  text-right">Total Taxable Amount : {{GetTotal(HearingBillList,'Taxable_Amt')}}</td>
+                                                    <td  class="text-bold">Total Tax Amount : {{GetTotal(HearingBillList,'Tax')}}</td>
+                                                    <td  class="text-bold">Total Net Amount : {{GetTotal(HearingBillList,'Net_Amt')}}</td>
+                                                    <td  class="text-bold">Total Paid Amount : {{GetTotal(HearingBillList,'Net_Amt1')}}</td>
                                                     <td>-</td>
                                                 </tr>
                                             </ng-template>    
