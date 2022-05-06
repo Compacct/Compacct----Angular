@@ -8,6 +8,7 @@
                         <thead style="position: sticky;top: 0">
                             <tr>
                                 <!-- <th rowspan="2" style="background-color:rgb(97, 121, 165) !important ; color:white">Sl No.</th> -->
+                                <th rowspan="2" style="background-color:rgb(94, 103, 120) !important ; color:white">BDA <br> Call ID</th>
                                 <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
                                     <div class="col-sm-12">
                                         <!-- <label for="monthpicker">Month Picker</label> -->
@@ -20,7 +21,7 @@
                                 </th>
                             </tr>
                             <tr>
-                                <th style="background-color:#7f7d7d !important ; color:white">Employee Name</th>
+                                <th style="background-color:#7f7d7d !important ; color:white">BDA Name</th>
                                 <th *ngFor="let Data of dateNumber ;let ind = index;" style="background-color:rgb(111, 119, 136) !important ; color:white">
                                     <tr><a class="btn btn-sm" style="color:white" (click)='ChangeAllRow(ind)'>{{Data.date}}</a></tr>
                                 </th>
@@ -29,6 +30,7 @@
                         <tbody data-spy="scroll">
                                 <tr *ngFor="let row of employeelist;let i = index;"> <!--let odd = odd;"[class.even]="odd" -->
                                 <!-- <td>{{ i + 1 }}</td> -->
+                                <td>{{ row.User_ID }}</td>
                                 <td>{{ row.Member_Name }}</td>
                                 <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" (contextmenu)="onrightclick(i,row,i2)" [class]="col">
                                     {{col}}

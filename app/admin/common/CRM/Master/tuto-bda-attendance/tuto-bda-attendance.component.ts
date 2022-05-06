@@ -80,7 +80,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
       "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
       "Report_Name_String": "Get_EMP_Data"
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.GlobalAPI.tutopiacallapis(obj).subscribe((data:any)=>{
       data.forEach(obj=> {
         obj.monthData = [...new Array(this.MonthdayDatelist.length)];
       })
@@ -103,7 +103,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
       "Report_Name_String": "Month_Data",
       "Json_Param_String": JSON.stringify([TObj])
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.GlobalAPI.tutopiacallapis(obj).subscribe((data:any)=>{
       this.MonthdayDatelist = data;
      
     ///let myArray = text.split(" ");
@@ -125,7 +125,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
       "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
       "Report_Name_String": "Get_Attn_Data_Type"
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.GlobalAPI.tutopiacallapis(obj).subscribe((data:any)=>{
       this.AttenTypelist = data;
        console.log("AttenTypelist ===",this.AttenTypelist);
        this.AttenTypelist.forEach((val) => {
@@ -167,8 +167,8 @@ export class TutoBdaAttendanceComponent implements OnInit {
     }
     });
     this.display = true;
-    // var Attent = this.AttenTypelist.filter( items => items.Sht_Desc === this.employeelist[this.index].monthData[this.index2]);
-    // this.Attendance_Status = Attent ? Attent[0].Atten_Type_ID : undefined;
+    var Attent = this.AttenTypelist.filter( items => items.Sht_Desc === this.employeelist[this.index].monthData[this.index2]);
+    this.Attendance_Status = Attent ? Attent[0].Atten_Type_ID : undefined;
      // this.Doc_date = col.Date;
     console.log("this.employeename",this.employeename)
     console.log("this.Doc_date",this.Doc_date)
@@ -197,7 +197,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
       "Json_Param_String": JSON.stringify([AtObj])
 
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.GlobalAPI.tutopiacallapis(obj).subscribe((data:any)=>{
       console.log("Data From Api",data);
       this.AllAttendanceData = data;
        data.forEach(element => {
@@ -255,7 +255,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
       "Json_Param_String" : this.getdataforattendance()
 
     }
-    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    this.GlobalAPI.tutopiacallapis(obj).subscribe((data:any)=>{
       //console.log(data);
       var tempID = data[0].Column1;
       console.log("After Save",tempID);

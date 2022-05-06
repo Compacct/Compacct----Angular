@@ -1,0 +1,7 @@
+div.pac-container.pac-logo {
+    z-index: 9999999 !important;
+}
+
+.ui-tree.ui-widget.ui-widget-content.ui-corner-all.ui-tree-selectable {
+    width: 100%;
+}
