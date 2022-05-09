@@ -191,7 +191,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.splitterSettings = {
       columnIndex: 3
     };
-    this.toolbar = ['ExpandAll', 'CollapseAll', 'ExcelExport','PdfExport',
+    this.toolbar = ['ExpandAll', 'CollapseAll', 'ExcelExport',
       {
         text: '',
         tooltipText: 'ADD TASK',

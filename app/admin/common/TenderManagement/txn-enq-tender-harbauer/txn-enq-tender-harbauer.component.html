@@ -153,7 +153,7 @@
 
                                     <div class="col-sm-4">
                                         <label class="control-label">State<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" [ngClass]="{'clearance': TenderFormSubmitted && Contact.errors?.required}" required>
+                                        <select class="form-control" name="State" #State="ngModel" [(ngModel)]="ObjTender.State" [ngClass]="{'clearance': TenderFormSubmitted && State.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of StateList" [ngValue]="option.State">
                                                               {{option.State}}
