@@ -54,6 +54,7 @@ export class JournalVoucherComponent implements OnInit {
   projectDataList = [];
   DynamicHeader = [];
   VoucherTypeID = undefined;
+
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -95,6 +96,7 @@ export class JournalVoucherComponent implements OnInit {
   }
   clearData(){
     this.journallowerFormSubmitted = false;
+    this.journalFormSubmitted = false;
     this.objjournal = new journalTopper()
     this.getTotalDRCR();
     this.lowerList = [];
@@ -108,7 +110,10 @@ export class JournalVoucherComponent implements OnInit {
     this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.totalDR = undefined;
     this.totalCR = undefined;
-
+    this.initDate = [new Date(),new Date()];
+    this.getCostCenter();
+    this.AlljournalData = [];
+    this.objsearch.Voucher_Type_ID = undefined
   }
  
   lowerAdd(valid){
@@ -121,6 +126,7 @@ export class JournalVoucherComponent implements OnInit {
     let costCernterFilter = this.costHeadDataList.filter((el)=>el.Cost_Head_ID === Number(this.objjournalloweer.Cost_Head_ID))
     console.log("this.objjournalloweer.ITC_Eligibility",this.objjournalloweer.ITC_Eligibility);
     this.lowerList.push({
+     Slno: this.lowerList.length + 1,
      Ledger_Name : LedgerFilter[0].Ledger_Name,
      Ledger_ID: this.objjournalloweer.Ledger_ID,
      Sub_Ledger_ID : this.objjournalloweer.Sub_Ledger_ID,
@@ -279,11 +285,11 @@ ShowSearchData(valid){
 getTotalDRCR(){
   this.totalDR = 0;
   this.totalCR = 0;
-  if(this.objjournal.DrCrdata === "DR"){
-    this.totalDR = Number((this.objjournal.Amount).toFixed(2));
+  if(this.objjournal.DrCrdata === "DR" && this.objjournal.Amount){
+    this.totalDR = Number(Number((this.objjournal.Amount)).toFixed(2));
    }
-   else if(this.objjournal.DrCrdata === "CR"){
-    this.totalCR = Number((this.objjournal.Amount).toFixed(2));
+   else if(this.objjournal.DrCrdata === "CR" && this.objjournal.Amount){
+    this.totalCR = Number(Number((this.objjournal.Amount)).toFixed(2));
    }
    else {
      console.error("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
@@ -377,6 +383,13 @@ saveJournal(valid){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      if(data[0].Column1 === "Done"){
+      this.tabIndexToView = 0;
+      this.items = ["BROWSE", "CREATE"];
+      this.buttonname = "Create";
+      this.initDate = [new Date(),new Date()];
+      this.getCostCenter();
+      this.AlljournalData = [];
+      this.objsearch.Voucher_Type_ID = undefined
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",

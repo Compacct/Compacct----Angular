@@ -29,7 +29,7 @@
                                     <div class="col-sm-3">
                                         <label class="control-label">Date </label>
                                         <app-compacct-daterangepicker
-                                        (DaterangeObj)="getDateRange($event)">
+                                        (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
@@ -457,7 +457,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor='let obj of lowerList let i = index' >
-                                                   <td>{{i + 1}}</td>
+                                                   <td>{{obj.Slno}}</td>
                                                    <td>{{obj.Ledger_Name}}</td>
                                                    <td>{{obj.Sub_Ledger_Name}}</td>
                                                    <td>{{obj.Cost_Head_Name}}</td>
