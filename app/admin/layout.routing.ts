@@ -1425,7 +1425,7 @@ data: {
  }
 },
 {
-  path: 'Requisition',
+  path: 'Txn_Requisition',
   component: MiclRequisitionComponent,
   data: {
     title: 'Requisition'
