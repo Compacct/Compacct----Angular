@@ -181,6 +181,12 @@
                                                                       Bid Opening & AOC
                                                                   </a>
                                                               </li>
+                                                              <li *ngIf="col.Status === 'AWARDING THE TENDER'">
+                                                                <a (click)="GetEstimateProductScheme(col.Tender_Doc_ID)">
+                                                                    <i class="fa fa-fw fa-clone"></i>
+                                                                    Update Pre Bid Budget
+                                                                </a>
+                                                            </li>
                                                                   <!-- <li >
                                                                       <a (click)="updateFinance(col)">
                                                                           <i class="fa fa-fw fa-clone"></i>
@@ -1743,6 +1749,11 @@ header="Bid openning & AOC"
           </table>
         </div>
         <div class="form-group"  style="padding:1em 2.5em;">
+          <button 
+          class="btn btn-openid pull-right"
+          (click)="SaveDraftBidOpening()">
+            Save as Draft
+          </button>
           <button
           type="submit"
           name="bidopen"
@@ -2162,3 +2173,101 @@ id="load2"
    <button type="button" pButton icon="pi pi-close" (click)="TenderviewModel=false" label="Close" class="ui-button-secondary"></button>
    </p-footer>
 </p-dialog>
+<!-- ESTIMATE PRODUCT EDIT -->
+<p-dialog
+  [header]="'Update Pre Bid Budget'"
+  [appendTo]="'body'"
+  [visible]="EstimateProductChangeModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '75%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<div class="form-horizontal">
+  <div class="table-responsive no-padding" style="margin-top: 15px;">
+
+    <p-table [value]="ShowAddedEstimateProductList" sortField="Budget_Group_Name" sortMode="single"
+      [rowHover]="true" [autoLayout]="true" (onSort)="onSort()">
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of colsForProduct">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+        <tr>
+          <td>{{rowData.SL_No}}</td>
+          <td *ngIf="rowGroupMetadata[rowData.Budget_Group_Name].index === rowIndex"
+            [attr.rowspan]="rowGroupMetadata[rowData.Budget_Group_Name].size">
+            {{rowData.Budget_Group_Name}}
+          </td>
+          <td>{{rowData.Budget_Sub_Group_Name}}</td>
+          <td>{{rowData.Work_Details}}</td>
+          <td>{{rowData.Site_Description}}</td>
+          <td>{{rowData.Product_Description}}</td>
+          <td>{{rowData.unit}}</td>
+          <td>{{rowData.Qty}}</td>
+          <td>{{rowData.Nos}}</td>
+          <td>{{rowData.TQty}}</td>
+          <td>{{rowData.UOM}}</td>
+          <td>{{rowData.saleRate}}</td>
+          <td>{{rowData.Sale_Amount}}</td>
+          <td>{{rowData.Rate}}</td>
+          <td>{{rowData.Amount}}</td>
+          <td><input name="{{rowData.Estimate_ID+'Changed_Sale_Rate'}}" class="form-control" [(ngModel)]="rowData.Changed_Sale_Rate"></td>
+          <td><input name="{{rowData.Estimate_ID+'Changed_Sale_Amount'}}" class="form-control" [(ngModel)]="rowData.Changed_Sale_Amount"></td>
+          <td><input name="{{rowData.Estimate_ID+'Changed_Rate'}}" class="form-control" [(ngModel)]="rowData.Changed_Rate"></td>
+          <td><input name="{{rowData.Estimate_ID+'Changed_Amount'}}" class="form-control" [(ngModel)]="rowData.Changed_Amount"></td>
+        </tr>
+        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+          <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+        </tr>
+        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+          <td colspan="15" class="text-bold text-right"> Sale  Amount : {{getSaleAmt()}}</td>
+        </tr>
+        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+          <td colspan="15" class="text-bold text-right"> No of Site :
+            {{ShowAddedEstimateProductList.length ? ShowAddedEstimateProductList[0].No_of_Site : '-'}}</td>
+        </tr>
+        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+          <td colspan="15" class="text-bold text-right"> Total Purchase Amount :
+            {{getTotalPurchaseAmt()}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  </div>
+  <p-footer>
+  <button
+    type="button"
+    (click)="EstimateProductChangeModal = false"
+    class="btn btn-default"
+  >
+    CANCEL
+  </button>
+  <button
+class="btn btn-primary pull-right custombutton"
+(click)="SaveChangeEstimateProduct()"
+id="load2"
+[disabled]="SpinnerProd"
+>
+<p-progressSpinner
+  *ngIf="SpinnerProd"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!SpinnerProd"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;UPDATE
+</button>
+  </p-footer>
+  </p-dialog>

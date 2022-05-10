@@ -285,7 +285,7 @@ autoaFranchiseBill() {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.editList = data;
-        this.ObjaddbillForm.Advance = data[0].Adv_Order_No ? data[0].Adv_Order_No : undefined;
+        this.ObjaddbillForm.Advance = data[0].Online_Order_No ? data[0].Online_Order_No : data[0].Adv_Order_No;
         this.Objcustomerdetail.Costomer_Mobile = data[0].Costomer_Mobile;
         this.Objcustomerdetail.Customer_Name= data[0].Customer_Name;
         // this.Objcustomerdetail.Customer_DOB = data[0].Customer_DOB;
@@ -344,7 +344,7 @@ autoaFranchiseBill() {
             this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID;
             this.ObjcashForm.Credit_To_Ac = data[0].Credit_To_Ac;
             this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount;
-            this.creditdisabled = true;
+            this.creditdisabled = false;
           } else {
             this.ObjcashForm.Credit_To_Ac_ID = undefined;
             this.ObjcashForm.Credit_To_Ac = undefined;
@@ -744,8 +744,9 @@ add(valid) {
     Max_Discount : Number(this.ObjaddbillForm.Max_Discount),
     Dis_Amount : Number(Dis_Amount).toFixed(2),
     Taxable : Number(tax).toFixed(2),
+    Gross_Amount : Number(Amtbeforetax).toFixed(2),
    // Gross_Amount : Number(Gross_Amount).toFixed(2),
-    Gross_Amount : Number(Number(tax) - Number(Dis_Amount)).toFixed(2),
+    // Gross_Amount : Number(Number(tax) - Number(Dis_Amount)).toFixed(2),
     SGST_Per : Number(IGST_Amount) ? 0 : Number(SGST_Per).toFixed(2),
     SGST_Amount : Number(SGST_Amount).toFixed(2),
     CGST_Per : Number(IGST_Amount) ? 0 : Number(CGST_Per).toFixed(2),
@@ -756,7 +757,7 @@ add(valid) {
     GST_Tax_Per_forcalcu : Number(IGST_Per).toFixed(2),
     //Net_Amount : Number(Gross_Amount + SGST_Amount + CGST_Amount).toFixed(2)
     Net_Amount : Number(ntamt).toFixed(2),
-    Taxable_Amount : Number(tax).toFixed(3),
+    Taxable_Amount : Number(Amtbeforetax).toFixed(3),
     CGST_Output_Ledger_ID : this.CGST_Ledger_Id,
     SGST_Output_Ledger_ID : this.SGST_Ledger_Id,
     IGST_Output_Ledger_ID : this.IGST_Ledger_Id
@@ -941,7 +942,7 @@ GetSelectedBatchqty () {
       }
       count1 = count1 + Number(item.Dis_Amount);
       //count2 = count2 + Number(item.Gross_Amount);
-      count2 = count2 + Number(item.Taxable - item.Dis_Amount)
+      // count2 = count2 + Number(item.Taxable - item.Dis_Amount)
       count3 = count3 + Number(item.SGST_Amount);
       count4 = count4 + Number(item.CGST_Amount);
       count5 = count5 + Number(item.GST_Tax_Per_Amt);
@@ -952,7 +953,8 @@ GetSelectedBatchqty () {
     this.taxb4disamt = (count8).toFixed(2);
     this.Dis_Amount = (count1).toFixed(2);
     this.TotalTaxable = (count6).toFixed(3);
-    this.Gross_Amount = (Number(this.TotalTaxable) - Number(this.Dis_Amount)).toFixed(2);
+    this.Gross_Amount = (count8).toFixed(2);
+    //this.Gross_Amount = (Number(this.TotalTaxable) - Number(this.Dis_Amount)).toFixed(2);
     // this.Gross_Amount = (count2).toFixed(2);
     this.SGST_Amount = (count3).toFixed(2);
     this.CGST_Amount = (count4).toFixed(2);
@@ -1036,7 +1038,7 @@ GetSelectedBatchqty () {
         damt = Number((Number(el.Amount_berore_Tax) / Number(this.taxb4disamt)) * Number(this.ObjcashForm.Credit_To_Amount));
         el.Dis_Amount = Number(damt).toFixed(2);
         var da = el.Dis_Amount;
-        var grossamt = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount));
+        //var grossamt = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount));
         //var amt = (Number(el.Amount) - Number(da)).toFixed(2);
         var sgstperamt = (Number(((Number(el.Amount_berore_Tax) - Number(da)) * Number(el.SGST_Per)) / 100)).toFixed(2);
         var cgstperamt = (Number(((Number(el.Amount_berore_Tax) - Number(da)) * Number(el.CGST_Per)) / 100)).toFixed(2);
@@ -1051,7 +1053,7 @@ GetSelectedBatchqty () {
         netamount = Number(Number(taxamount) + Number(totalgstamt)).toFixed(2);
         //this.Dis_Amount = undefined;
   
-       el.Gross_Amount = Number(grossamt).toFixed(2);
+      //  el.Gross_Amount = Number(grossamt).toFixed(2);
        el.SGST_Amount = Number(sgstperamt).toFixed(2);
        el.CGST_Amount = Number(cgstperamt).toFixed(2);
        el.Taxable = Number(taxamount).toFixed(2);
@@ -1071,7 +1073,7 @@ GetSelectedBatchqty () {
         // var taxableamt = el.Net_Price * el.Stock_Qty;
         // el.Taxable = Number(taxableamt);
         el.Dis_Amount = 0 ;
-        el.Gross_Amount = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount)).toFixed(2);
+        // el.Gross_Amount = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount)).toFixed(2);
         el.SGST_Amount = Number((Number(el.Amount_berore_Tax) * Number(el.SGST_Per)) / 100).toFixed(2); 
         el.CGST_Amount = Number((Number(el.Amount_berore_Tax) * Number(el.CGST_Per)) / 100).toFixed(2);
         el.GST_Tax_Per_Amt = Number((Number(el.Amount_berore_Tax) * Number(el.GST_Tax_Per)) / 100).toFixed(2);
@@ -1174,6 +1176,7 @@ checkdiscountamt(){
       let tempArr =[]
       this.productSubmit.forEach(item => {
         if (Number(item.Amount_berore_Tax) && Number(item.Amount_berore_Tax) != 0) {
+          this.Objcustomerdetail.Doc_Date = this.DateService.dateConvert(new Date(this.myDate))
         const obj = {
             Product_ID : item.Product_ID,
             Product_Description : item.Product_Description,
@@ -1196,7 +1199,7 @@ checkdiscountamt(){
             IGST_Per : item.GST_Tax_Per,
             IGST_Amt : item.GST_Tax_Per_Amt,
             Net_Amount : item.Net_Amount,
-            Taxable_Amount : item.Taxable_Amount,
+            Taxable_Amount : item.Amount_berore_Tax,
             CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
             SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
             IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
@@ -1227,7 +1230,7 @@ checkdiscountamt(){
         Total_Taxable : this.TotalTaxable,
         Bill_No : this.Objcustomerdetail.Bill_No,
         Doc_Number : "A",
-        Doc_Date : this.DateService.dateConvert(new Date(this.myDate)),
+        // Doc_Date : this.DateService.dateConvert(new Date(this.myDate)),
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
         Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
   

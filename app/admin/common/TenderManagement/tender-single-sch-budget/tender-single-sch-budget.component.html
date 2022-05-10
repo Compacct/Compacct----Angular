@@ -43,7 +43,7 @@
                     <input class="form-control" name="Budget_Short_Description" #Budget_Short_Description="ngModel"
                       [(ngModel)]="ObjEstimate.Budget_Short_Description"
                       [ngClass]="{'clearance': EstimateInfoSubmitted && Budget_Short_Description?.errors?.required}"
-                      placeholder="Project Name" [required]="true" [disabled]="editData.length" />
+                      placeholder="Project Name" [required]="true" [disabled]="true" />
                   </div>
                   <div class="col-sm-6">
                     <label class="control-label">No of Site&nbsp;<span class="text-danger">*</span></label>
@@ -284,6 +284,10 @@
                         </tr>
                         <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                           <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+                        </tr>
+                        
+                        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                          <td colspan="15" class="text-bold text-right"> Sale  Amount : {{getSaleAmt()}}</td>
                         </tr>
                         <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                           <td colspan="15" class="text-bold text-right"> No of Site : {{ObjEstimate.No_of_Site}}</td>

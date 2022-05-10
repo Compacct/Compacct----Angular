@@ -831,10 +831,12 @@ add(valid) {
     Acompanish : Number(this.ObjaddbillForm.Acompanish).toFixed(2),
     Amount :Number(totalAmt).toFixed(2),
     Amount_berore_Tax : Number(Amtbeforetax).toFixed(2),
-    Taxable : Number(taxable).toFixed(2),
+    // Taxable : Number(taxable).toFixed(2),
+    Taxable : Number(Amtbeforetax).toFixed(2),
     Max_Discount : Number(this.ObjaddbillForm.Max_Discount),
     Dis_Amount : Number(Dis_Amount).toFixed(2),
-    Gross_Amount : Number(Number(Amount) - Number(Dis_Amount)).toFixed(2),
+    Gross_Amount : Number(Amtbeforetax).toFixed(2),
+    // Gross_Amount : Number(Number(Amount) - Number(Dis_Amount)).toFixed(2),
     SGST_Per : Number(GST_Tax_Per_Amt) ? 0 : Number(SGST_Per).toFixed(2),
     SGST_Amount : Number(SGST_Amount).toFixed(2),
     CGST_Per : Number(GST_Tax_Per_Amt) ? 0 : Number(CGST_Per).toFixed(2),
@@ -970,8 +972,9 @@ listofamount(){
   this.taxb4disamt = (count8).toFixed(2);
   this.Dis_Amount = (count1).toFixed(2);
   this.Totaltaxable = (count6).toFixed(2);
+  this.Gross_Amount = (count8).toFixed(2);
   //this.Gross_Amount = (count2).toFixed(2);
-  this.Gross_Amount = (Number(this.Totaltaxable) - Number(this.Dis_Amount)).toFixed(2);
+  // this.Gross_Amount = (Number(this.Totaltaxable) - Number(this.Dis_Amount)).toFixed(2);
   this.SGST_Amount = (count3).toFixed(2);
   this.CGST_Amount = (count4).toFixed(2);
   this.GST_Tax_Per_Amt = (count5).toFixed(2);
@@ -1062,7 +1065,7 @@ CalculateDiscount(){
       damt = Number((Number(el.Amount_berore_Tax) / Number(this.taxb4disamt)) * Number(this.ObjcashForm.Credit_To_Amount));
       el.Dis_Amount = Number(damt).toFixed(2);
       var da = Number(el.Dis_Amount);
-      var grossamt = Number(Number(el.Taxable) - Number(el.Dis_Amount));
+      // var grossamt = Number(Number(el.Taxable) - Number(el.Dis_Amount));
       //var amt = (Number(el.Amount) - Number(da)).toFixed(2);
       var sgstperamt = (Number(((Number(el.Amount_berore_Tax) - Number(da)) * Number(el.SGST_Per)) / 100)).toFixed(2);
       var cgstperamt = (Number(((Number(el.Amount_berore_Tax) - Number(da)) * Number(el.CGST_Per)) / 100)).toFixed(2);
@@ -1079,7 +1082,7 @@ CalculateDiscount(){
       netamount = Number(Number(taxamount) + Number(totalgstamt)).toFixed(2);
       //this.Dis_Amount = undefined;
 
-      el.Gross_Amount = Number(grossamt).toFixed(2);
+      // el.Gross_Amount = Number(grossamt).toFixed(2);
       el.SGST_Amount = Number(sgstperamt).toFixed(2);
       el.CGST_Amount = Number(cgstperamt).toFixed(2);
       el.Taxable = Number(taxamount).toFixed(2);
@@ -1094,7 +1097,7 @@ CalculateDiscount(){
    } else {
     this.productSubmit.forEach(el=>{
       el.Dis_Amount = 0 ;
-      el.Gross_Amount = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount)).toFixed(2);
+      // el.Gross_Amount = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount)).toFixed(2);
       el.SGST_Amount = Number((Number(el.Amount_berore_Tax) * Number(el.SGST_Per)) / 100).toFixed(2); 
       el.CGST_Amount = Number((Number(el.Amount_berore_Tax) * Number(el.CGST_Per)) / 100).toFixed(2);
       el.GST_Tax_Per_Amt = Number((Number(el.Amount_berore_Tax) * Number(el.GST_Tax_Per)) / 100).toFixed(2);
@@ -1451,6 +1454,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
          this.Objcustomerdetail.Del_Date_Time = hr+ ":" +min
      console.log("time ==" , this.Objcustomerdetail.Del_Date_Time)
     this.productSubmit.forEach(item => {
+      if (Number(item.Amount_berore_Tax) && Number(item.Amount_berore_Tax) != 0) {
       const obj = {
           Product_ID : item.Product_ID,
           Product_Description : item.Product_Description,
@@ -1506,6 +1510,20 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
       Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
     }
     tempArr.push({...obj,...TempObj,...this.Objcustomerdetail,...this.ObjcashForm,...this.ObjHomeDelivery})
+  
+      } else {
+        setTimeout(()=>{
+        this.Spinner = false;
+        this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+         key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error in Taxable amount"
+      });
+      },600)
+  }
   });
   console.log(tempArr)
   return JSON.stringify(tempArr);

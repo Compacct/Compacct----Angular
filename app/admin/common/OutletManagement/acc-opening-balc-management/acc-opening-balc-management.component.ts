@@ -338,6 +338,20 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
       })
     }
   }
+  exportoexcel(tempobj,fileName){
+    const obj = {
+      "SP_String": "SP_Opening_Journal",
+      "Report_Name_String": "Download_Journal",
+      "Json_Param_String": JSON.stringify([{Fin_Year_ID : tempobj.Fin_Year_ID}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+      
+    })
+  }
 
 }
 class ACbalc {

@@ -191,12 +191,21 @@ import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacc
 import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
 import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
 import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
+import { RetailBrowseComponent } from './common/FinancialManagement/Retail/retail-browse/retail-browse.component';
+import { RetailBrowseReceiveComponent } from './common/FinancialManagement/Retail/retail-browse-receive/retail-browse-receive.component';
+import { RetailBrowseAdvanceComponent } from './common/FinancialManagement/Retail/retail-browse-advance/retail-browse-advance.component';
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 import { MasterCompanyComponent } from "./common/FinancialManagement/Master/master-company/master-company.component";
 import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
 import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
+import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component"
+import { TutoBdaAttendanceComponent } from './common/CRM/Master/tuto-bda-attendance/tuto-bda-attendance.component';
+import { HrLeaveOpeningComponent } from './common/MICL/hr-leave-opening/hr-leave-opening.component';
+import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-target/tuto-bda-wise-target.component';
+import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto-sales-tree.component';
+import { GrnComponent } from './common/MICL/grn/grn.component';
 import { MiclRequisitionComponent } from "./common/MaterialManagement/Outward/micl-requisition/micl-requisition.component";
 
 
@@ -1387,6 +1396,27 @@ const layoutRoutes: Routes = [{
   }
   },
   {
+    path: 'Retail_Txn_SALE_Bill_cum_challan_GST_V2',
+    component: RetailBrowseComponent,
+    data: {
+      title: 'Retail Browse'
+    }
+  },
+  {
+    path: 'Retail_ACC_Txn_Acc_Journal_V2',
+    component: RetailBrowseReceiveComponent,
+    data: {
+      title: 'Browse for Receive'
+    }
+  },
+  {
+    path: 'Hearing_Advance_Order_V2',
+    component: RetailBrowseAdvanceComponent,
+    data: {
+      title: 'Browse of Advance Order'
+    }
+  },
+  {
       path: 'Master_Company',
       component: MasterCompanyComponent,
       data: {
@@ -1424,13 +1454,55 @@ data: {
   title: 'Purchase Order'
  }
 },
-{
-  path: 'Txn_Requisition',
-  component: MiclRequisitionComponent,
+  path: 'Asp_Max_Appo',
+  component: TutoAspMaxAppoComponent,
   data: {
-    title: 'Requisition'
+    title: 'Asp Max Appo'
    }
   },
+  {
+    path: 'Tutopia_BDA_Attendance',
+    component: TutoBdaAttendanceComponent,
+    data: {
+      title: 'Tutopia BDA Attendance'
+     }
+    },
+    {
+      path: 'HR_Leave_Opening_Issue_Balance',
+      component: HrLeaveOpeningComponent,
+      data: {
+        title: 'Leave Application'
+      }
+    },
+    {
+      path: 'Tutopia_BDA_Wise_Target',
+      component: TutoBdaWiseTargetComponent,
+      data: {
+        title: 'Tutopia BDA Wise Target'
+      }
+    },
+    {
+      path: 'Sales_Tree',
+      component: TutoSalesTreeComponent,
+      data: {
+        title: 'Sales Tree'
+      }
+    },
+    {
+      path: 'GRN',
+      component: GrnComponent,
+      data: {
+        title: 'GRN'
+      }
+    },
+   {
+     path: 'Txn_Requisition',
+     component: MiclRequisitionComponent,
+     data: {
+     title: 'Requisition'
+    }
+   },
+
   
 
 

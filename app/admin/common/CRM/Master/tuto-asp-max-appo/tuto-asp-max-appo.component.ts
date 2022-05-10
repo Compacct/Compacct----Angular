@@ -102,7 +102,7 @@ export class TutoAspMaxAppoComponent implements OnInit {
   }
   }
   UpdateAspMaxAppo (objAsp){
-    if(objAsp.ASP_Max_Appo && objAsp.ASP_CC_List_ID) {
+    if(objAsp.Member_ID && objAsp.ASP_Max_Appo && objAsp.ASP_CC_List_ID) {
       const tempObj = {
         Member_ID : objAsp.Member_ID,
         ASP_Max_Appo : objAsp.ASP_Max_Appo,
@@ -147,5 +147,7 @@ export class TutoAspMaxAppoComponent implements OnInit {
       });
     }
   }
+  onReject(){}
+  onConfirm(){}
 
 }

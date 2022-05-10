@@ -855,6 +855,10 @@ export class HarbMasterProductCivilComponent implements OnInit {
   
   SaveMasterProductCivil(valid){
     //if(this.Product_Mfg_Comp_ID.length) {
+      if (this.productid) {
+        this.Spinner = true;
+        this.MasterProductCivilFormSubmitted = true;
+      if(valid && this.Product_Mfg_Comp_ID.length){
       let UpdateArr =[]
       this.Product_Mfg_Comp_ID.forEach(item => {
         const Obj = {
@@ -865,7 +869,6 @@ export class HarbMasterProductCivilComponent implements OnInit {
         UpdateArr.push({...Obj,...this.ObjMasterProductCivil})
     });
     console.log("Update =" , UpdateArr)
-    if(valid && this.productid){
       // const Obj = {
       //   Product_ID  : this.productid,
       //   Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
@@ -879,8 +882,9 @@ export class HarbMasterProductCivilComponent implements OnInit {
          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
            console.log(data);
            var tempID = data[0].Column1;
-           this.upload(data[0].Product_Manufacturing_Group);
+          //  this.upload(data[0].Product_Manufacturing_Group);
            if(data[0].Column1){
+           this.upload(data[0].Product_Manufacturing_Group);
             // this.compacctToast.clear();
             // //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
             // this.compacctToast.add({
@@ -889,7 +893,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
             //  summary: " " ,//"Return_ID  " + tempID,
             //  detail: "Succesfully Updated" //+ mgs
             //  });
-           this.clearData();
+           //this.clearData();
            this.productid = undefined;
            this.tabIndexToView = 0;
            this.items = ["BROWSE", "CREATE"];
@@ -908,14 +912,28 @@ export class HarbMasterProductCivilComponent implements OnInit {
            }
          })
        // }
-      } 
+      } else {
+        this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            // detail: "No Docs Selected"
+            detail: "Error Occured "
+          });
+      }
+      }
         else {
       // const Obj = {
       //   Product_Code : this.ObjMachineMaster.Product_Model,
       //   Product_Description : this.ObjMachineMaster.Product_Description,
       //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
       // }
-      if(this.Product_Mfg_Comp_ID.length) {
+     this.Spinner = true;
+     this.MasterProductCivilFormSubmitted = true;
+      if(valid && this.Product_Mfg_Comp_ID.length){
+      // if(this.Product_Mfg_Comp_ID.length) {
         let tempArr =[]
         this.Product_Mfg_Comp_ID.forEach(item => {
           const obj = {
@@ -927,9 +945,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
       });
       console.log("create =" , tempArr)
      // return JSON.stringify(tempArr);
-     this.Spinner = true;
-     this.MasterProductCivilFormSubmitted = true;
-      if(valid && this.ProductPDFFile['size']){
+      // if(valid && this.ProductPDFFile['size']){
          const obj = {
            "SP_String": "SP_Harbauer_Master_Product_Civil",
            "Report_Name_String" : "Master_Product_Civil_Create",
@@ -964,17 +980,19 @@ export class HarbMasterProductCivilComponent implements OnInit {
            }
          })
         }
-       if(!this.ProductPDFFile['size']) {
+        else {
+      //  if(!this.ProductPDFFile['size']) {
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
             summary: "Validation",
-            detail: "No Docs Selected"
+            // detail: "No Docs Selected"
+            detail: "Error Occured "
           });
       }
-    }
+    // }
   }
   }
   async upload(id){
@@ -1078,11 +1096,11 @@ export class HarbMasterProductCivilComponent implements OnInit {
        this.ObjMasterProductCivil.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
        this.ObjMasterProductCivil.Cat_ID = data[0].Cat_ID;
        this.ObjMasterProductCivil.Product_Description = data[0].Product_Description;
-       this.ObjMasterProductCivil.MOC_ID = data[0].MOC_ID;
-       this.ObjMasterProductCivil.Capacity_Size_ID = data[0].Capacity_Size_ID;
+       this.ObjMasterProductCivil.MOC_ID = data[0].MOC_ID ? data[0].MOC_ID : undefined;
+       this.ObjMasterProductCivil.Capacity_Size_ID = data[0].Capacity_Size_ID ? data[0].Capacity_Size_ID : undefined;
        this.ObjMasterProductCivil.Product_Feature_ID = data[0].Product_Feature_ID;
-       this.ObjMasterProductCivil.Grade_ID = data[0].Grade_ID;
-       this.ObjMasterProductCivil.Remarks = data[0].Remarks;
+       this.ObjMasterProductCivil.Grade_ID = data[0].Grade_ID ? data[0].Grade_ID : undefined;
+       this.ObjMasterProductCivil.Remarks = data[0].Remarks ? data[0].Remarks : undefined;
        this.ObjMasterProductCivil.HSN_NO = data[0].HSN_NO;
        this.ObjMasterProductCivil.GST_Percentage = data[0].GST_Percentage;
        this.ObjMasterProductCivil.UOM = data[0].UOM;

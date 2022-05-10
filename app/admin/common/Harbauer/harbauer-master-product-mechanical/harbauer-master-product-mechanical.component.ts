@@ -854,6 +854,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   // }
   SaveMasterProductM(valid){
     //if(this.Product_Mfg_Comp_ID.length) {
+      if (this.productid) {
+        this.Spinner = true;
+        this.MasterProductmFormSubmitted = true;
+      if(valid && this.Product_Mfg_Comp_ID.length){
       let UpdateArr =[]
       this.Product_Mfg_Comp_ID.forEach(item => {
         const Obj = {
@@ -864,7 +868,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
         UpdateArr.push({...Obj,...this.ObjMasterProductm})
     });
     console.log("Update =" , UpdateArr)
-    if(valid && this.productid){
+    // if(valid && this.productid){
       // const Obj = {
       //   Product_ID  : this.productid,
       //   Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
@@ -878,8 +882,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
            console.log(data);
            var tempID = data[0].Column1;
-           this.upload(data[0].Column1);
            if(data[0].Column1){
+            this.upload(data[0].Product_Manufacturing_Group);
           //   this.compacctToast.clear();
           //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
           //   this.compacctToast.add({
@@ -888,7 +892,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
           //    summary: "Return_ID  " + tempID,
           //    detail: "Succesfully Updated" //+ mgs
           //  });
-           this.clearData();
+          //  this.clearData();
            this.productid = undefined;
            this.tabIndexToView = 0;
            this.items = ["BROWSE", "CREATE"];
@@ -907,7 +911,19 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
            }
          })
        // }
-      } 
+      
+      } else {
+      this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          // detail: "No Docs Selected"
+          detail: "Error Occured "
+        });
+      }
+    }
         else {
       this.Spinner = true;
       this.MasterProductmFormSubmitted = true;
@@ -916,7 +932,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       //   Product_Description : this.ObjMachineMaster.Product_Description,
       //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
       // }
-      if(this.Product_Mfg_Comp_ID.length) {
+      if(valid && this.Product_Mfg_Comp_ID.length){
+      // if(this.Product_Mfg_Comp_ID.length) {
         let tempArr =[]
         this.Product_Mfg_Comp_ID.forEach(item => {
           const obj = {
@@ -928,7 +945,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       });
       console.log("create =" , tempArr)
      // return JSON.stringify(tempArr);
-      if(valid && this.ProductPDFFile['size']){
+      // if(valid && this.ProductPDFFile['size']){
          const obj = {
            "SP_String": "SP_Harbauer_Master_Product_mechanical",
            "Report_Name_String" : "Master_Product_Mech_Create",
@@ -964,17 +981,19 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
            }
          })
         }
-        if(!this.ProductPDFFile['size']) {
+        else {
+        //if(!this.ProductPDFFile['size']) {
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
             summary: "Validation",
-            detail: "No Docs Selected"
+            // detail: "No Docs Selected"
+            detail: "Error Occured "
           });
       }
-    }
+    // }
   }
   }
   async upload(id){
@@ -1078,11 +1097,11 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
        this.ObjMasterProductm.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
        this.ObjMasterProductm.Cat_ID = data[0].Cat_ID;
        this.ObjMasterProductm.Product_Description = data[0].Product_Description;
-       this.ObjMasterProductm.MOC_ID = data[0].MOC_ID;
-       this.ObjMasterProductm.Capacity_Size_ID = data[0].Capacity_Size_ID;
+       this.ObjMasterProductm.MOC_ID = data[0].MOC_ID ? data[0].MOC_ID : undefined;
+       this.ObjMasterProductm.Capacity_Size_ID = data[0].Capacity_Size_ID ? data[0].Capacity_Size_ID : undefined;
        this.ObjMasterProductm.Product_Feature_ID = data[0].Product_Feature_ID;
-       this.ObjMasterProductm.Grade_ID = data[0].Grade_ID;
-       this.ObjMasterProductm.Remarks = data[0].Remarks;
+       this.ObjMasterProductm.Grade_ID = data[0].Grade_ID ? data[0].Grade_ID : undefined;
+       this.ObjMasterProductm.Remarks = data[0].Remarks ? data[0].Remarks : undefined;
        this.ObjMasterProductm.HSN_NO = data[0].HSN_NO;
        this.ObjMasterProductm.GST_Percentage = data[0].GST_Percentage;
        this.ObjMasterProductm.UOM = data[0].UOM;

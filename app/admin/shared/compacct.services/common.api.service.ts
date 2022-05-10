@@ -106,4 +106,5 @@ class Cookies {
   Fin_Year_Start: any;
   Amyo_sessionId: any;
   Amyo_campaignId: any;
+  UserPermission:any;
 }

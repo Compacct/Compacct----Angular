@@ -11,6 +11,44 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="SearchForm" #SearchForm="ngForm" novalidate>
                                 <div class="form-group">
+                                    <div class="col-lg-6">
+                                        <div class="panel-group">
+                                            <div class="panel panel-primary">
+                                                <div class="panel-body">
+                                                    <div class="form-group">
+                                                    <div class="col-sm-12">
+                                                        <label class="control-label">Quotation From&nbsp;</label> &nbsp;&nbsp;
+                                                         <input type="radio" name="browsequotfrom" value="CustomerBrowse" [(ngModel)]="ObjBrowseQuotation.Quotation_From" (change)="radiobrowsechange()">
+                                                         <label style="font-weight: 400;">Customer</label>&nbsp;&nbsp;
+                                                         <input type="radio" name="browsequotfrom" value="LeadBrowse" [(ngModel)]="ObjBrowseQuotation.Quotation_From" (change)="radiobrowsechange()">
+                                                         <label style="font-weight: 400;">Lead</label>                                                  
+                                                    </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                    <div class="col-sm-12" *ngIf="ObjBrowseQuotation.Quotation_From === 'CustomerBrowse'">
+                                                        <label class="control-label">Customer&nbsp;</label>
+                                                        <!-- <div class="col-sm-4">
+                                                            <label class="control-label">Customer&nbsp;<span class="text-danger">*</span></label> -->
+                                                            <p-dropdown [options]="CustomerBrowseList" name="BrowseCustomer" [(ngModel)]="ObjBrowseQuotation.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                                [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #BrowseCustomer="ngModel" [styleClass]="SearchFormSubmitted &&  BrowseCustomer.errors?.required ? 'clearance' :''" [required]="ObjBrowseQuotation.Quotation_From === 'Customer' ? true : false">
+                                                            </p-dropdown>
+                                                        </div>
+                                                        <!-- <p-dropdown [options]="CustomerList" name="Customer" [(ngModel)]="ObjEnginnerQuoation.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                            [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #Customer="ngModel" [disabled]="EngQuoationProductList.length" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Customer.errors?.required ? 'clearance' :''"
+                                                            [required]="ObjEnginnerQuoation.Quotation_From === 'Customer' ? true : false">
+                                                        </p-dropdown> -->
+                                                    <div class="col-sm-12" *ngIf="ObjBrowseQuotation.Quotation_From === 'LeadBrowse'">
+                                                        <label class="control-label">Lead&nbsp;</label>
+                                                        <p-dropdown [options]="LeadBrowseList" name="Browselead" [(ngModel)]="ObjBrowseQuotation.Foot_Fall_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                            [placeholder]="'Select Lead'" [virtualScroll]="true" itemSize="30" #Browselead="ngModel"  [styleClass]="SearchFormSubmitted &&  Browselead.errors?.required ? 'clearance' :''"
+                                                            [required]="ObjBrowseQuotation.Quotation_From === 'Lead' ? true : false">
+                                                        </p-dropdown>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                   </div>
+                                                 </div>
+                                                 </div>
                                     <!-- <div class="col-sm-3">
                                         <label class="control-label">From Date <sup class="text-danger">*</sup></label>
                                         <div class="input-group date">
@@ -29,12 +67,12 @@
                                             <input CompacctNepaliDatepicker id="BEdate" name="BEdate" Class="form-control" (ngModelChange)="BrowseEndDate= $event" [(ngModel)]="BrowseEndDate" />
                                         </div>
                                     </div> -->
-                                    <div class="col-sm-4">
+                                    <!-- <div class="col-sm-4">
                                         <label class="control-label">Customer&nbsp;<span class="text-danger">*</span></label>
                                         <p-dropdown [options]="CustomerList" name="BrowseCustomer" [(ngModel)]="Browse_Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                             [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #Customer="ngModel" [styleClass]="SearchFormSubmitted &&  Customer.errors?.required ? 'clearance' :''">
                                         </p-dropdown>
-                                    </div>
+                                    </div> -->
 
                                     <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSearchedList(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
@@ -73,7 +111,8 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Customer Name</th>
+                                            <th *ngIf="ObjBrowseQuotation.Quotation_From === 'CustomerBrowse'">Customer Name</th>
+                                            <th *ngIf="ObjBrowseQuotation.Quotation_From === 'LeadBrowse'">Lead Name</th>
                                             <th>Quotation Type</th>
                                             <th>Quotation To Company</th>
                                             <th>Total Taxable Amount</th>
@@ -97,7 +136,8 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <td>{{col.Sub_Ledger_Name}}</td>
+                                            <td *ngIf="ObjBrowseQuotation.Quotation_From === 'CustomerBrowse'">{{col.Sub_Ledger_Name}}</td>
+                                            <td *ngIf="ObjBrowseQuotation.Quotation_From === 'LeadBrowse'">{{col.Org_Name}}</td>
                                             <td>{{col.Quotation_Type}}</td>
                                             <td>{{col.Quotation_To_Company}}</td>
                                             <td>{{col.Total_Taxable_Amount}}</td>
@@ -113,14 +153,41 @@
                             <!-- <form name="EnginnerQuoationForm" #EnginnerQuoationForm="ngForm" novalidate> -->
                             <form name="EnginnerQuoationMachineForm" #EnginnerQuoationMachineForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Customer&nbsp;<span class="text-danger">*</span></label>
-                                        <span (click)="CreateCustomer()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
-                                        <p-dropdown [options]="CustomerList" name="Customer" [(ngModel)]="ObjEnginnerQuoation.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                            [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #Customer="ngModel" [disabled]="EngQuoationProductList.length" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Customer.errors?.required ? 'clearance' :''"
-                                            [required]="true">
-                                        </p-dropdown>
-                                    </div>
+                                <div class="col-lg-6">
+                                    <div class="panel-group">
+                                        <div class="panel panel-primary">
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                <div class="col-sm-12">
+                                                    <label class="control-label">Quotation From&nbsp;<span class="text-danger">*</span></label> &nbsp;&nbsp;
+                                                     <input type="radio" name="quotfrom" value="Customer" [(ngModel)]="ObjEnginnerQuoation.Quotation_From" [disabled]="EngQuoationProductList.length" (change)="radiochange()">
+                                                     <label style="font-weight: 400;">Customer</label>&nbsp;&nbsp;
+                                                     <input type="radio" name="quotfrom" value="Lead" [(ngModel)]="ObjEnginnerQuoation.Quotation_From" [disabled]="EngQuoationProductList.length" (change)="radiochange()">
+                                                     <label style="font-weight: 400;">Lead</label>                                                  
+                                                </div>
+                                                </div>
+                                                <div class="form-group">
+                                                <div class="col-sm-12" *ngIf="ObjEnginnerQuoation.Quotation_From === 'Customer'">
+                                                    <label class="control-label">Customer&nbsp;<span class="text-danger">*</span></label>
+                                                    <!-- <span (click)="CreateCustomer()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span> -->
+                                                    <p-dropdown [options]="CustomerList" name="Customer" [(ngModel)]="ObjEnginnerQuoation.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #Customer="ngModel" [disabled]="EngQuoationProductList.length" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Customer.errors?.required ? 'clearance' :''"
+                                                        [required]="ObjEnginnerQuoation.Quotation_From === 'Customer' ? true : false">
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-sm-12" *ngIf="ObjEnginnerQuoation.Quotation_From === 'Lead'">
+                                                    <label class="control-label">Lead&nbsp;<span class="text-danger">*</span></label>
+                                                    <span (click)="CreateCustomer()" class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                                    <p-dropdown [options]="LeadList" name="lead" [(ngModel)]="ObjEnginnerQuoation.Foot_Fall_ID" [showClear]="true" [emptyFilterMessage]="' No Customer Found'" (onChange)="GetLocation()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Lead'" [virtualScroll]="true" itemSize="30" #Customer="ngModel" [disabled]="EngQuoationProductList.length" [styleClass]="EnginnerQuoationMachineFormSubmitted &&  Customer.errors?.required ? 'clearance' :''"
+                                                        [required]="ObjEnginnerQuoation.Quotation_From === 'Lead' ? true : false">
+                                                    </p-dropdown>
+                                                </div>
+                                                </div>
+                                                </div>
+                                               </div>
+                                             </div>
+                                           </div>
                                     <!-- <div class="col-sm-2">
                                         <label class="control-label">Quoation Date <sup class="text-danger">*</sup></label>
                                         <div class="input-group date">
@@ -161,7 +228,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Location<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjEnginnerQuoation.Location_ID" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && location.errors?.required}" required>
+                                        <select class="form-control" name="location" #location="ngModel" [(ngModel)]="ObjEnginnerQuoation.Location_ID" [disabled]="ObjEnginnerQuoation.Quotation_From === 'Lead'" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && location.errors?.required}" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor="let option of LoctionList" [ngValue]="option.Location_ID">
                                                               {{option.Location_Name}}
@@ -265,7 +332,7 @@
                                         let index = index
                                       " [class.even]="odd">
                                             <td>{{ index + 1 }}</td>
-                                            <td>{{ d.Location_Name }}</td>
+                                            <td>{{ d.Location_Name ? d.Location_Name : '-' }}</td>
                                             <td>{{ d.Mfg_Company ? d.Mfg_Company : '-' }}</td>
                                             <td>{{ d.Machine ? d.Machine : '-' }}</td>
                                             <td>{{ d.Spare_Part_Description ? d.Spare_Part_Description : '-' }}</td>
@@ -302,11 +369,10 @@
         </div>
     </div>
 </div>
-<!-- SHOW PREVIOUS CONTRACT -->
-<!-- <p-dialog header="Create Customer" [appendTo]="'body'" [(visible)]="CustomerCreatePopup" [closeOnEscape]="true" [modal]="true" [responsive]="true"  [style]="{ width: '60%', minWidth: '250px' }" style="text-align: center;" [minY]="60"
-    >
+<!-- Lead Creation -->
+<p-dialog header="Create Customer" [appendTo]="'body'" [(visible)]="CustomerCreatePopup" [closeOnEscape]="true" [modal]="true" [responsive]="true"  [style]="{ width: '60%', minWidth: '250px' }" style="text-align: center;" [minY]="60">
     <div class="form-horizontal">
-        <form name="CustomercreateForm" #MfcreateForm="ngForm" novalidate>
+        <form name="LeadcreateForm" #LeadcreateForm="ngForm" novalidate>
             <div class="form-group" style="padding: 1em;">
                 <h5 style="
                 padding: 0.5em 1em;
@@ -316,29 +382,263 @@
                 margin-top: 15px;
                 ">
                 <i class="fa fa-fw fa-fax">
-                </i> &nbsp;<strong>Tender Information :</strong>
+                </i> &nbsp;<strong>Lead Details :</strong>
             </h5>
                 <div class="col-sm-6">
                     <label class="control-label">Company Name<sup class="text-danger">*</sup></label>
-                    <input type="text" class="form-control" name="company" #company="ngModel" [(ngModel)]="Company_Name" placeholder="Company Name" [ngClass]="{
-          clearance: CustomercreateFormSubmitted && company?.errors?.required
-        }" required />
+                    <input type="text" class="form-control" name="company" #company="ngModel" [(ngModel)]="ObjLeadCreation.Org_Name" placeholder="Company Name" 
+                           [ngClass]="{clearance: LeadcreateFormSubmitted && company?.errors?.required}" required />
                 </div>
                 <div class="col-sm-6">
                     <label class="control-label">Address<sup class="text-danger">*</sup></label>
-                    <input type="text" class="form-control" name="address" #address="ngModel" [(ngModel)]="Address" placeholder="Address" [ngClass]="{
-          clearance: CustomercreateFormSubmitted && address?.errors?.required
-        }" required />
+                    <input class="form-control" name="Location" id='Location' [(ngModel)]="ObjLeadCreation.Address" #address Compacct-Place (setAddress)="getAddressOnChange($event)" placeholder="Address">
+                    <!-- <input type="text" class="form-control" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Address"  /> -->
                 </div>
-            </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Date <sup class="text-danger">*</sup></label>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+
+                        <input CompacctNepaliDatepicker id="Date" name="Date" Class="form-control" (ngModelChange)="Lead_Date= $event" [(ngModel)]="Lead_Date" />
+                 </div>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Landmark</label>
+                    <input type="text" class="form-control" name="landmark" #landmark="ngModel" [(ngModel)]="ObjLeadCreation.Landmark" placeholder="landmark" />
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Lead Priority<sup class="text-danger">*</sup></label>
+                    <select class="form-control" name="leadpriority" #leadpriority="ngModel" [(ngModel)]="ObjLeadCreation.Lead_Priority" [ngClass]="{'clearance': LeadcreateFormSubmitted && leadpriority.errors?.required}" required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                          <option  value="Hot">Hot</option>
+                                          <option  value="Warm">Warm</option>
+                                          <option  value="Cold">Cold</option>
+                                  </select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Industry<sup class="text-danger">*</sup></label>
+                    <select class="form-control" name="industry" #industry="ngModel" [(ngModel)]="ObjLeadCreation.Sub_Ledger_Cat_ID" [ngClass]="{'clearance': LeadcreateFormSubmitted && industry.errors?.required}" required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                      <option *ngFor="let option of IndustryList" [ngValue]="option.Sub_Ledger_Cat_ID">
+                                          {{option.Sub_Ledger_Cat_Name}}
+                                          </option>
+                                  </select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Source<sup class="text-danger">*</sup></label>
+                    <select class="form-control" name="source" #source="ngModel" [(ngModel)]="ObjLeadCreation.Enq_Source_ID" [ngClass]="{'clearance': LeadcreateFormSubmitted && source.errors?.required}" required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                      <option *ngFor="let option of SourceList" [ngValue]="option.Enq_Source_ID">
+                                          {{option.Enq_Source_Name}}
+                                          </option>
+                                  </select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Website</label>
+                    <input type="text" class="form-control" name="website" #website="ngModel" [(ngModel)]="ObjLeadCreation.Website" placeholder="Website"  
+                           [ngClass]="{clearance: LeadcreateFormSubmitted && website?.errors?.required}"  />
+                </div>
+                </div>
+            <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: 15px;
+                ">
+                <i class="fa fa-fw fa-fax">
+                </i> &nbsp;<strong>Social Media Links :</strong>
+            </h5>
+                <div class="col-sm-4">
+                    <label class="control-label">Facebook Link</label>
+                    <input type="text" class="form-control" name="fblink" #fblink="ngModel" [(ngModel)]="ObjLeadCreation.Social_FaceBook_Link" placeholder="Facebook Link" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Instagram Link</label>
+                    <input type="text" class="form-control" name="instalink" #instalink="ngModel" [(ngModel)]="ObjLeadCreation.Social_Instagram_Link" placeholder="Instagram Link" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Linkedin Link</label>
+                    <input type="text" class="form-control" name="linkedinlink" #linkedinlink="ngModel" [(ngModel)]="ObjLeadCreation.Social_Linkedin_Link" placeholder="Linkedin Link" />
+                </div>
+                </div>
+
+            <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: 15px;
+                ">
+                <i class="fa fa-fw fa-fax">
+                </i> &nbsp;<strong>Contacts Info :</strong>
+            </h5>
+                <div class="col-sm-3">
+                    <label class="control-label">Contact Person<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" name="Contact_Person_Name" #contactpername="ngModel" [(ngModel)]="ObjLeadCreation.Contact_Name" placeholder="Contact Person Name" 
+                    [ngClass]="{clearance: LeadcreateFormSubmitted && contactpername?.errors?.required}" required />
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Designation<sup class="text-danger">*</sup></label>
+                    <select class="form-control" name="designation" #designation="ngModel" [(ngModel)]="ObjLeadCreation.Desig" [ngClass]="{'clearance': LeadcreateFormSubmitted && designation.errors?.required}" required>
+                      <option  [ngValue]="undefined">Select</option>
+                      <option  value="Manager">Manager</option>
+                      <option  value="Sales Person">Sales Person</option>
+                      <option  value="Employee">Employee</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Phone<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" name="phone" #phone="ngModel" CompacctDigitonly="true" maxlength="10" [(ngModel)]="ObjLeadCreation.Mobile" placeholder="Mobile Number" 
+                    [ngClass]="{clearance: LeadcreateFormSubmitted && phone?.errors?.required}" required />
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Email</label>
+                    <input type="text" class="form-control" name="email" #email="ngModel" [(ngModel)]="ObjLeadCreation.Email" placeholder="Email Address" 
+                    [ngClass]="{clearance: LeadcreateFormSubmitted && email?.errors?.required}" />
+                </div>
+                <div class="col-sm-5">
+                    <label class="control-label">Land Line</label>
+                    <div class="input-group" style="width:100%">
+                    <select class="form-control" name="landline" #landline="ngModel" [(ngModel)]="ObjLeadCreation.Land_Line" >
+                        <option  [ngValue]="undefined">Select</option>
+                        <!-- <option  value="Manager">Manager</option>
+                        <option  value="Sales Person">Sales Person</option>
+                        <option  value="Employee">Employee</option> -->
+                    </select>
+                    <span class="input-group-addon" style="border-color: #ffffff; padding:0px"></span>
+                    <input type="text" class="form-control" name="landlineno" #landlineno="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjLeadCreation.Phone" placeholder="Phone Number" />
+                </div>
+                </div>
+                </div>
+
+                <div class="form-group" style="padding: 1em;">
+                    <h5 style="
+                    padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: 15px;
+                    ">
+                    <i class="fa fa-fw fa-fax">
+                    </i> &nbsp;<strong>Lead Info :</strong>
+                </h5>
+                    <!-- <div class="col-sm-3">
+                        <label class="control-label">Contact Person<sup class="text-danger">*</sup></label>
+                        <input type="text" class="form-control" name="Contact_Person_Name" #contactpername="ngModel" [(ngModel)]="Facebook_Links" placeholder="Contact Person Name" 
+                        [ngClass]="{clearance: CustomercreateFormSubmitted && contactpername?.errors?.required}" required />
+                    </div> -->
+                    <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Assign To<sup class="text-danger">*</sup></label>
+                        <select class="form-control" name="assignto" #assignto="ngModel" [(ngModel)]="ObjLeadCreation.Assign_To" [ngClass]="{'clearance': LeadcreateFormSubmitted && assignto.errors?.required}" required>
+                            <option  [ngValue]="undefined">Select</option>
+                            <option *ngFor="let option of AssignToList" [ngValue]="option.Member_ID">
+                              {{option.Member_Name}}
+                            </option>
+                    </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Product Groups 
+                        </label>
+                        <!-- <p-multiSelect itemSize="30" [options]="ProductGrpFilter" [styleClass]="'compacct-multiselect'" name="ProGrp" #ProGrp="ngModel" [(ngModel)]="Product_Groups" (onChange)="filterProGrpList()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true">
+                        </p-multiSelect> -->
+                        <p-multiSelect itemSize="30" [options]="ProductGrpList" [styleClass]="'compacct-multiselect'" name="ProGrp" #ProGrp="ngModel" [(ngModel)]="ObjLeadCreation.Product_Type_IDs" [filter]="true" filterBy="label,value.name"  [resetFilterOnHide]="true" [ngClass]="{'clearance': LeadcreateFormSubmitted && ProGrp.errors?.required}" >
+                        </p-multiSelect>
+                        <!-- <div class="col-sm-4">
+                  <label class="control-label">Indent List <span class="text-danger"></span></label>
+                  <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType"
+                    itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
+                    name="Product_Type"></p-multiSelect>
+                </div> -->
+
+                    </div>
+                    <div class="col-sm-5">
+                        <label class="control-label">Existing</label> <br>
+                        <div style="margin-top: 10px; margin-left: 25px">
+                         <input type="radio" name="exit" value="Competitor" [(ngModel)]="ObjLeadCreation.Existing" (change)="existingchange()">
+                         <label style="font-weight: 400;">Competitor</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                         <input type="radio" name="exit" value="Trader" [(ngModel)]="ObjLeadCreation.Existing" (change)="existingchange()">
+                         <label style="font-weight: 400;">Trader</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                         <input type="radio" name="exit" value="Other" [(ngModel)]="ObjLeadCreation.Existing" (change)="existingchange()">
+                         <label style="font-weight: 400;">Other</label>   
+                        </div>                                          
+                    </div>
+                    </div>
+                    <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">{{existingname}}<sup class="text-danger">*</sup></label>
+                        <input type="text" class="form-control" name="exitchange" #exitchange="ngModel" [(ngModel)]="ObjLeadCreation.Existing_Name" placeholder={{existingname}} 
+                        (keypress)="letterOnly($event)" [ngClass]="{clearance: LeadcreateFormSubmitted && exitchange?.errors?.required}" required />
+                    </div>
+                    <div class="col-sm-5">
+                        <label class="control-label">Competition Activity</label>
+                        <textarea class="form-control" name="compact" #compact="ngModel" [(ngModel)]="ObjLeadCreation.Competition_Activity" placeholder="Competition Activity" [ngClass]="{'clearance': LeadcreateFormSubmitted && compact.errors?.required}"></textarea>
+                        <!-- <input type="text" class="form-control" name="compact" #compact="ngModel" [(ngModel)]="ObjLeadCreation.Competition_Activity" placeholder="Competition Activity" 
+                        [ngClass]="{clearance: CustomercreateFormSubmitted && compact?.errors?.required}" required /> -->
+                    </div>
+                    </div>
+                    </div>
+                    <!-- <div class="form-group" style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: 15px;
+                        ">
+                        <i class="fa fa-fw fa-fax">
+                        </i> &nbsp;<strong>Task Info  :</strong>
+                    </h5>
+                    <div class="col-sm-4">
+                        <label class="control-label">Subject<sup class="text-danger">*</sup></label>
+                        <select class="form-control" name="subjetc" #subjetc="ngModel" [(ngModel)]="ObjLeadCreation.Subject" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && subjetc.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SubjectList" [ngValue]="option.Subject_ID">
+                                 {{option.Subject}}
+                                </option>
+                        </select>
+                    </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Task From Date <sup class="text-danger">*</sup></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <input type="date" class="form-control" name="TaskFromDate" [(ngModel)]="Task_From_Date" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && TaskFromDate.errors?.required}" required>
+                         </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Task To Date <sup class="text-danger">*</sup></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <input type="date" class="form-control" name="TaskToDate" [(ngModel)]="Task_To_Date" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && TaskFromDate.errors?.required}" required>
+                         </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Task Priority <sup class="text-danger">*</sup></label>
+                            <select class="form-control" name="taskpriority" #taskpriority="ngModel" [(ngModel)]="ObjLeadCreation.Task_Priority" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && taskpriority.errors?.required}" required>
+                                                  <option  [ngValue]="undefined">Select</option>
+                                                  <option  value="High">High</option>
+                                                  <option  value="Medium">Medium</option>
+                                                  <option  value="Low">Low</option>
+                                          </select>
+                        </div>
+                        </div> -->
 
         </form>
     </div>
     <p-footer>
         <button type="button" (click)="CustomerCreatePopup = false" class="btn btn-default">
-  CANCEL
+  Close
 </button>
-        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="SaveCustomer(CustomercreateForm.form.valid)" id="load2" [disabled]="Spinner">
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="SaveLeadCreation(LeadcreateForm.form.valid)" id="load2" [disabled]="Spinner">
 <p-progressSpinner
   *ngIf="Spinner"
   [style]="{ width: '15px', height: '15px' }"
@@ -349,7 +649,7 @@
   *ngIf="!Spinner"
   class="glyphicon glyphicon-save"
 ></span
->&nbsp;Create
+>&nbsp;Save
 </button>
     </p-footer>
-</p-dialog> -->
+</p-dialog>

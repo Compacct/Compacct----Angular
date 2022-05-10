@@ -41,6 +41,7 @@ import {
   EditSettingsModel
 } from '@syncfusion/ej2-angular-gantt';
 import {
+  PdfExportProperties,
   SelectionSettingsModel
 } from '@syncfusion/ej2-angular-grids';
 
@@ -202,6 +203,10 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.labelSettings = {
       taskLabel: 'Job_Name',
   };
+  this.Header.pushHeader({
+    Header: "Project Planing",
+    Link: "Project Management -> Project Planing"
+  });
     this.ganttObj.timelineSettings.bottomTier.format = 'dd';
     this.GetProject();
     this.GetUserList();
@@ -316,7 +321,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   }
   AddDaysToDate(date, numberOfDaysToAdd) {
     const someDate = new Date(date);
-    let result = someDate.setDate(someDate.getDate() + Number(numberOfDaysToAdd));
+    let result = someDate.setDate(someDate.getDate() + Number(numberOfDaysToAdd - 1));
     return new Date(result);
   }
   
@@ -543,6 +548,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     if (args.item.id === 'createTask') {
       this.OpenTaskModal()
     }
+   
   };
   OpenTaskModal() {
     this.TaskCreateList = [];

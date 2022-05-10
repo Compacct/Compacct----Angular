@@ -70,7 +70,7 @@
           <div class="form-group">
             <div class="col-sm-4">
               <label class="control-label">State<sup class="text-danger">*</sup></label>
-              <input class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" disabled>
+              <input class="form-control" name="State" #State="ngModel" [(ngModel)]="ObjTender.State" disabled>
 
             </div>
             <div class="col-sm-8">
@@ -209,9 +209,16 @@
                 <td>{{rowData.Sale_Amount}}</td>
                 <td>{{rowData.Rate}}</td>
                 <td>{{rowData.Amount}}</td>
+                <td>{{rowData.Changed_Sale_Rate}}</td>
+                <td>{{rowData.Changed_Sale_Amount}}</td>
+                <td>{{rowData.Changed_Rate}}</td>
+                <td>{{rowData.Changed_Amount}}</td>
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                 <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+              </tr>
+              <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                <td colspan="15" class="text-bold text-right"> Sale  Amount : {{getSaleAmt()}}</td>
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                 <td colspan="15" class="text-bold text-right"> No of Site :

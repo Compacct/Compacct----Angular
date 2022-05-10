@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 declare var $: any;
 import * as Chart from "chart.js";
 import "chartjs-plugin-datalabels";
+import * as XLSX from 'xlsx';
 // import Chart from "../../../../../assets/Chart";
 // import ChartJsPluginDataLabels from "";
 
@@ -26,6 +27,7 @@ export class CompacctChartComponent implements OnInit {
   ChartDetailsTitle = "Chart";
   ChartDeatilsList = [];
   ChartColList = [];
+  ChartSearchColList = [];
   BARoptions: any;
   Horioptions: any;
   PIEoption: any;
@@ -301,6 +303,7 @@ export class CompacctChartComponent implements OnInit {
         StartDate: this._searchDetails["StartDate"],
         EndDate: this._searchDetails["EndDate"]
       };
+      this.ChartSearchColList = [];
       this.$http
         .get("/Business_Dashboard/Get_Hearing_Chart", {
           params: obj
@@ -310,6 +313,7 @@ export class CompacctChartComponent implements OnInit {
           const keyslist = this.ChartDeatilsList.length ? Object.keys(this.ChartDeatilsList[0]) : [];
           if(keyslist.length){
             this.ChartColList = [];
+            this.ChartSearchColList = [...keyslist];
             keyslist.forEach(item =>{
               const hobj = { field: item, header: item.replace(/_/g,' ') };
               this.ChartColList.push(hobj);
@@ -321,6 +325,13 @@ export class CompacctChartComponent implements OnInit {
     }
   }
 
+  // EXPORT TO EXCEL
+  exportexcel(Arr): void {
+    const fileName = this._searchDetails["reportname"]+'##'+this._searchDetails["StartDate"]+'#To#'+this._searchDetails["EndDate"]
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
   ApplyChartType(type) {
     this._ChartTypeDynamic = type;
   }

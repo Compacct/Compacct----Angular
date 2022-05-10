@@ -698,6 +698,7 @@ ngOnInit() {
   CalculateEstimateAmount() {
     this.ObjEstimate.Amount = undefined;
     if (this.ObjEstimate.TQty && this.ObjEstimate.Rate) {
+      this.ObjEstimate.Rate = this.ObjEstimate.Rate.toFixed(2);
       this.ObjEstimate.Amount = (Number(this.ObjEstimate.Rate) * Number(this.ObjEstimate.TQty)).toFixed(2);
 
     }
@@ -705,6 +706,7 @@ ngOnInit() {
   CalculateEstimatesaleAmount() {
     this.ObjEstimate.Sale_Amount = undefined;
     if (this.ObjEstimate.TQty && this.ObjEstimate.saleRate) {
+      this.ObjEstimate.saleRate = this.ObjEstimate.saleRate.toFixed(2);
       this.ObjEstimate.Sale_Amount = (Number(this.ObjEstimate.saleRate) * Number(this.ObjEstimate.TQty)).toFixed(2);
 
     }
@@ -712,16 +714,22 @@ ngOnInit() {
   CalculateEstimateQty() {
     this.ObjEstimate.TQty = undefined;
     if (this.ObjEstimate.Qty && this.ObjEstimate.Nos) {
+      this.ObjEstimate.Qty = this.ObjEstimate.Qty.toFixed(2);
       this.ObjEstimate.TQty = (Number(this.ObjEstimate.Nos) * Number(this.ObjEstimate.Qty));
       this.CalculateEstimateAmount();
       this.CalculateEstimatesaleAmount();
     }
   }
   getPurchaseAmt(){
-    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0)
+    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0).toFixed(2)
+  }
+  getSaleAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Sale_Amount
+    }) => n + Number(Sale_Amount), 0)
   }
   getTotalPurchaseAmt(){
-    return Number(this.ObjEstimate.No_of_Site) * this.getPurchaseAmt();
+    return (Number(this.ObjEstimate.No_of_Site) * this.getPurchaseAmt()).toFixed(2);
   }
   AddEstimate(valid) {
     this.EstimateInfoSubmitted = true;
