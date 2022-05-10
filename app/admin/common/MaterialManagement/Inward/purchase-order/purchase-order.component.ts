@@ -51,7 +51,7 @@ export class PurchaseOrderComponent implements OnInit {
   getAllDataList = [];
   DynamicHeader = [];
   companyList = [];
-  disable = false;
+  disable = true;
   DiscountTypeList = [{Dtype : '%'},{Dtype : "AMT"}]
   grTotal:any = 0
   disTotal:any = 0
@@ -181,6 +181,7 @@ export class PurchaseOrderComponent implements OnInit {
         this.getCostCenterDetalis();
       }
       console.log("Cost Center",this.costCenterList);
+      console.log("compacct Cookies",this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
   })
   }
   getCostCenterDetalis(){
@@ -356,8 +357,9 @@ export class PurchaseOrderComponent implements OnInit {
      })
   }
   getGrsAmt(){
-    if(this.rate){
+    if(this.rate || this.objaddPurchacse.Rate){
       if(this.objaddPurchacse.Qty){
+        this.rate = this.objaddPurchacse.Rate
         this.objaddPurchacse.Rate = undefined;
         this.objaddPurchacse.Gross_Amt = undefined;
         this.objaddPurchacse.taxable_AMT = undefined;
@@ -623,6 +625,9 @@ export class PurchaseOrderComponent implements OnInit {
     this.DocDate = new Date(data[0].Doc_Date);
     this.RefDate = new Date(data[0].Supp_Ref_Date)
     this.addPurchaseList = data[0].L_element;
+    if(this.addPurchaseList.length){
+      this.getAllTotal()
+    }
   })
  }
  Delete(col){

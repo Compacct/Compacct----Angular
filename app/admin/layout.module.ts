@@ -294,6 +294,7 @@ import { HrLeaveOpeningComponent } from './common/MICL/hr-leave-opening/hr-leave
 import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-target/tuto-bda-wise-target.component';
 import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto-sales-tree.component';
 import { GrnComponent } from './common/MICL/grn/grn.component';
+import { MiclRequisitionComponent } from './common/MaterialManagement/Outward/micl-requisition/micl-requisition.component';
 
 
 @NgModule({
@@ -508,7 +509,8 @@ import { GrnComponent } from './common/MICL/grn/grn.component';
     HrLeaveOpeningComponent,
     TutoBdaWiseTargetComponent,
     TutoSalesTreeComponent,
-    GrnComponent
+    GrnComponent,
+    MiclRequisitionComponent
   ],
   imports: [
     CommonModule,
