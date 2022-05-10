@@ -293,6 +293,7 @@ import { TutoBdaAttendanceComponent } from './common/CRM/Master/tuto-bda-attenda
 import { HrLeaveOpeningComponent } from './common/MICL/hr-leave-opening/hr-leave-opening.component';
 import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-target/tuto-bda-wise-target.component';
 import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto-sales-tree.component';
+import { GrnComponent } from './common/MICL/grn/grn.component';
 
 
 @NgModule({
@@ -506,7 +507,8 @@ import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto
     TutoBdaAttendanceComponent,
     HrLeaveOpeningComponent,
     TutoBdaWiseTargetComponent,
-    TutoSalesTreeComponent
+    TutoSalesTreeComponent,
+    GrnComponent
   ],
   imports: [
     CommonModule,
