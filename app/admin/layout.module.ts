@@ -285,6 +285,7 @@ import { MasterCompanyComponent } from "./common/FinancialManagement/Master/mast
 import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
+import { MiclRequisitionComponent } from './common/MaterialManagement/Outward/micl-requisition/micl-requisition.component';
 
 
 
@@ -492,7 +493,8 @@ import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k
     MasterCompanyComponent,
     UserMasterComponent,
     AttendanceSheetComponent,
-    K4cProductCategoryUpdateComponent
+    K4cProductCategoryUpdateComponent,
+    MiclRequisitionComponent
   ],
   imports: [
     CommonModule,

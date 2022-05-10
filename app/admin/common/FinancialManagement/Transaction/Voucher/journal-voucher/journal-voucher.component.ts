@@ -327,6 +327,7 @@ saveJournal(valid){
  this.journalFormSubmitted = true;
  if(valid){
    let savedata = {};
+   this.Spinner = true;
    let msg = "";
    let report = "";
     if(this.VoucherNo){
@@ -388,6 +389,7 @@ saveJournal(valid){
       this.buttonname = "Create";
       this.initDate = [new Date(),new Date()];
       this.getCostCenter();
+      this.Spinner = false;
       this.AlljournalData = [];
       this.objsearch.Voucher_Type_ID = undefined
       this.compacctToast.clear();
@@ -398,6 +400,15 @@ saveJournal(valid){
         detail: "Succesfully "+msg
       });
       this.clearData();
+     }
+     else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something wrong"
+      });
      }
     })
  }

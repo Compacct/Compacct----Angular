@@ -197,6 +197,7 @@ import { UserMasterComponent } from "./common/UserManagement/Master/user-master/
 import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
 import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
+import { MiclRequisitionComponent } from "./common/MaterialManagement/Outward/micl-requisition/micl-requisition.component";
 
 
 
@@ -1423,6 +1424,13 @@ data: {
   title: 'Purchase Order'
  }
 },
+{
+  path: 'Requisition',
+  component: MiclRequisitionComponent,
+  data: {
+    title: 'Requisition'
+   }
+  },
   
 
 

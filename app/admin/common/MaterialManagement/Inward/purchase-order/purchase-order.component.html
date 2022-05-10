@@ -241,7 +241,7 @@
                                   </select>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="control-label">Deliver To<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">Deliver To<sup class="text-danger"></sup></label>
                                    <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "objpurchase.Cost_Cen_ID" (click)="getDetalis('Deliver')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
                                     <select class="form-control" 
                                         name="Cost_Cen_ID" 
@@ -412,6 +412,7 @@
                                             [(ngModel)]="objaddPurchacse.Rate"
                                             placeholder="Rate"
                                             CompacctDigitonly="true"
+                                            (ngModelChange)="getGrsAmt()"
                                             [disabled] = 'disable'>
                                         </div>
                                         <div class="col-sm-2">
@@ -454,7 +455,7 @@
                                             <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
                                             <select class="form-control" 
                                             name="Discount_Type" 
-                                            #Type_ID="ngModel" 
+                                            #Discount_Type="ngModel" 
                                             [(ngModel)]="objaddPurchacse.Discount_Type"
                                             (change)="DisClear()"
                                             >
