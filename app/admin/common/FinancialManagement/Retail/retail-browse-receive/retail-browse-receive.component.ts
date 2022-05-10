@@ -113,7 +113,16 @@ export class RetailBrowseReceiveComponent implements OnInit {
       window.open("/Report/Crystal_Files/Finance/Voucher/report_voucher_print.aspx?Doc_No=" + obj.Voucher_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     }
   }
-
+  EditRecive(id){
+    if(id){
+      window.open('/Retail_ACC_Txn_Acc_Journal?Voucher_Type_ID=1&Sub_Ledger_ID=14899&Ledger_ID=6&VoucherEdit='+id, '_blank').focus();
+    }
+  }
+  ViewOnly(id){
+    if(id){
+      window.open('/Retail_ACC_Txn_Acc_Journal?Voucher_Type_ID=1&Sub_Ledger_ID=14899&Ledger_ID=6&VoucherEdit='+id+'&VoucherEditView=true', '_blank').focus(); 
+    }
+  }
   onReject() {
     this.compacctToast.clear("c");
   }
