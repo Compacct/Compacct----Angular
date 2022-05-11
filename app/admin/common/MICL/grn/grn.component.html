@@ -8,14 +8,14 @@
             <p>{{message.detail}}</p>
         </div>
 
-        <!-- <div *ngIf="checkSave" class="ui-g ui-fluid">
+        <div class="ui-g ui-fluid">
           <div class="ui-g-6">
               <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
           </div>
           <div class="ui-g-6">
               <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
           </div>
-      </div> -->
+      </div>
 
     </ng-template>
 </p-toast>
@@ -26,8 +26,8 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
-                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <!-- <form name="SearchForm" #SearchForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
                                     <label class="control-label">Date</label>
@@ -63,14 +63,15 @@
                                     </div>
                                 </div>
                             </div>
-                            </form>
-                            <div class="row">
+                            </form> -->
+                            <!-- <div class="row">
                                 <div class="col-sm-8">
                                     <h5><strong></strong></h5>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="table-responsive table-id">
-                                <p-table [value]="Searchedlist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Amount","Confirm_Amount","Autho_One_Staus"]'>
+                                <p-table [value]="Searchedlist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["GRN_No","GRN_Date","Sub_Ledger_Name","Cost_Cen_Name","godown_name","RDB_No_Date","SE_No_Date","PO_Doc_No","PO_Doc_Date","Mode_Of_transport",
+                                  "LR_No_Date","Vehicle_No","Remarks","Quantity_Remarks","Quality_Rejection_Remarks","Deduction_For_Rejection"] '>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -82,11 +83,26 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Doc No</th>
-                                            <th>Date</th>
-                                            <th>Total Amount</th>
-                                            <th>Confirm Amount</th>
-                                            <th>Confirm Status </th>
+                                            <th>GRN No</th>
+                                            <th>GRN Date</th>
+                                            <th>Supplier</th>
+                                            <th>Cost Center</th>
+                                            <th>Godown</th>
+                                            <th>RDB No Date</th>
+                                            <th>SE No Date</th>
+                                            <th>PO Doc No</th>
+                                            <th>PO Doc Date</th>
+                                            <!-- Inv_No_Date
+                                            AC_Head -->
+                                            <th>Mode Of Transport</th>
+                                            <th>LR No Date</th>
+                                            <th>Vehicle No</th>
+                                            <!-- Supplier_Bill_No
+                                            Supplier_Bill_Date 
+                                            <th>Remarks</th> -->
+                                            <th>Quantity Remarks</th>
+                                            <th>Quality / Rejection Remarks</th>
+                                            <th>Deduction For Rejection</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -98,7 +114,7 @@
                                                             <span class="caret"></span>
                                                         </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <!-- <li>
                                                             <a (click)="View(col)">
                                                                 <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
                                                             </a>
@@ -124,21 +140,32 @@
                                                             <a (click)="exportoexcel2(col,'Purchase_Planning')">
                                                                 <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
                                                             </a>
-                                                        </li>
-                                                        <li *ngIf = "col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
+                                                        </li> -->
+                                                        <li>
                                                                 <a (click)="Delete(col)">
                                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                                     Delete
                                                                 </a>
                                                             </li>
                                                     </ul>
-                                                </div>
+                                                </div>      
                                             </td>
-                                            <td>{{col.Doc_No}}</td>
-                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
-                                            <td>{{col.Amount}}</td>
-                                            <td>{{col.Confirm_Amount ? col.Confirm_Amount : '-'}}</td>
-                                            <td>{{col.Autho_One_Staus }}</td>
+                                            <td>{{col.GRN_No}}</td>
+                                            <td>{{col.GRN_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Sub_Ledger_Name}}</td>
+                                            <td>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <td>{{col.godown_name }}</td>
+                                            <td>{{col.RDB_No_Date }}</td>
+                                            <td>{{col.SE_No_Date }}</td>
+                                            <td>{{col.PO_Doc_No }}</td>
+                                            <td>{{col.PO_Doc_Date | date : 'dd/MMM/yyyy' }}</td>
+                                            <td>{{col.Mode_Of_transport }}</td>
+                                            <td>{{col.LR_No_Date }}</td>
+                                            <td>{{col.Vehicle_No }}</td>
+                                            <!-- <td>{{col.Remarks }}</td> -->
+                                            <td>{{col.Quantity_Remarks }}</td>
+                                            <td>{{col.Quality_Rejection_Remarks }}</td>
+                                            <td>{{col.Deduction_For_Rejection }}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -148,7 +175,7 @@
 
                             </div>
 
-                        </p-tabPanel> -->
+                        </p-tabPanel>
 
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <div class="panel-group">
@@ -156,9 +183,13 @@
                                     <div class="panel-body">
                                         <form name="GRNForm" #GRNForm="ngForm" novalidate>
                                             <div class="form-group">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">GRN Date <sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='GRNDate'></ejs-datepicker>
+                                                </div>
+                                                <div class="col-sm-4">
                                                     <label class="control-label">Supplier <sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="supplier" #supplier="ngModel" [(ngModel)]="ObjGRN1.Supplier" (change)="GetPOorder()" [ngClass]="{'clearance': GRNFormSubmitted && supplier?.errors?.required}" required>
+                                                    <select class="form-control" name="supplier" #supplier="ngModel" [(ngModel)]="ObjGRN1.Sub_Ledger_ID" (change)="GetPOorder()" [ngClass]="{'clearance': GRNFormSubmitted && supplier?.errors?.required}" required>
                                                         <option  [ngValue]="undefined">Select</option>
                                                           <option *ngFor = "let option of Supplierlist" value= "{{option.Sub_Ledger_ID}}">
                                                             {{option.Sub_Ledger_Name}}
@@ -166,11 +197,31 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-3">
+                                                    <label class="control-label">Cost center<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="CostCenter" #CostCenter="ngModel" [(ngModel)]="ObjGRN1.Cost_Cen_ID" [ngClass]="{'clearance': GRNFormSubmitted && CostCenter?.errors?.required}" (change)="GetGodown()">
+                                                          <option  [ngValue]="undefined">Select</option>
+                                                          <option  *ngFor="let option of CostCenterlist" value="{{option.Cost_Cen_ID}}">
+                                                            {{option.Cost_Cen_Name}}
+                                                          </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="godown" #godown="ngModel" [(ngModel)]="ObjGRN1.godown_id" (change)="GetGodown()" [ngClass]="{'clearance': GRNFormSubmitted && godown?.errors?.required}">
+                                                         <option  [ngValue]="undefined">Select</option>
+                                                            <option  *ngFor="let option of Godownlist" value="{{option.godown_id}}">
+                                                            {{option.godown_name}}
+                                                            </option>
+                                                     </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">R.D.B No. & Date <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="rdbnondate" #rdbnondate="ngModel" [(ngModel)]="ObjGRN1.RDB_No_Date" placeholder="R.D.B No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && rdbnondate?.errors?.required}" required>
                                                     <!-- <textarea class="form-control" name="rdbnondate" #rdbnondate="ngModel" [(ngModel)]="ObjGRN.RDB_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && rdbnondate?.errors?.required}" required></textarea> -->
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">S.E No. & Date <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN1.SE_No_Date" placeholder="S.E No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required>
                                                     <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
@@ -178,38 +229,36 @@
                                                 
                                                 <div class="col-sm-3">
                                                     <label class="control-label">P.O Order <sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="poorder" #poorder="ngModel" [(ngModel)]="ObjGRN1.PO_Order" (change)='GetProductDetails()' [ngClass]="{'clearance': GRNFormSubmitted && poorder?.errors?.required}" required>
+                                                    <select class="form-control" name="poorder" #poorder="ngModel" [(ngModel)]="ObjGRN1.PO_Doc_No" (change)='GetProductDetails()' [ngClass]="{'clearance': GRNFormSubmitted && poorder?.errors?.required}" required>
                                                      <option  [ngValue]="undefined">Select</option>
                                                          <option *ngFor = "let option of POorderlist" value= "{{option.Doc_No}}">
                                                             {{option.Doc_No}}
                                                         </option>
                                                     </select>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">P.O Date <sup class="text-danger">*</sup></label>
-                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PODate'></ejs-datepicker>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PODate' [enabled]="podatedisabled"></ejs-datepicker>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Mode of Transport <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="mot" #mot="ngModel" [(ngModel)]="ObjGRN1.Mode_Of_transport" placeholder="Mode of Transport" [ngClass]="{'clearance':GRNFormSubmitted && mot?.errors?.required}" required>
                                                 </div>
                                                 <!-- <div class="col-sm-3">
                                                     <label class="control-label">P.O Date <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="podate" #podate="ngModel" [(ngModel)]="ObjGRN.PO_Date" [ngClass]="{'clearance':GRNFormSubmitted && podate?.errors?.required}" required>
                                                 </div> -->
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">Mode of Transport <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="mot" #mot="ngModel" [(ngModel)]="ObjGRN1.Mode_of_Transport" placeholder="Mode of Transport" [ngClass]="{'clearance':GRNFormSubmitted && mot?.errors?.required}" required>
-                                                </div>
-                                                <div class="col-sm-3">
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">L.R No. & Date <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="lrnondate" #lrnondate="ngModel" [(ngModel)]="ObjGRN1.LR_No_Date" placeholder="L.R No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && lrnondate?.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">Vehicle No. <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="vehicleno" #vehicleno="ngModel" [(ngModel)]="ObjGRN1.Vehicle_No" placeholder="Vehicle No." [ngClass]="{'clearance':GRNFormSubmitted && vehicleno?.errors?.required}" required>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-4">
                                                     <label class="control-label">Product Details <sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="productdetails" #productdetails="ngModel" [(ngModel)]="ObjGRN.Product_ID"  (change)="GetRate()" [ngClass]="{'clearance': GRNFormSubmitted && productdetails?.errors?.required}" required>
                                                      <option  [ngValue]="undefined">Select</option>
@@ -218,31 +267,33 @@
                                                         </option>
                                                     </select>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">HSN Code <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="hsncode" #hsncode="ngModel" [(ngModel)]="ObjGRN.HSN_Code" placeholder="HSN Code" [ngClass]="{'clearance':GRNFormSubmitted && hsncode?.errors?.required}" required>
-                                                </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">Unit <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="unit" #unit="ngModel" [(ngModel)]="ObjGRN.Unit" placeholder="Unit" [ngClass]="{'clearance':GRNFormSubmitted && unit?.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">Challan <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="chanllan" #chanllan="ngModel" [(ngModel)]="ObjGRN.Challan" placeholder="Challan" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && chanllan?.errors?.required}" required>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">HSN Code <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="hsncode" #hsncode="ngModel" [(ngModel)]="ObjGRN.HSN_Code" placeholder="HSN Code" [ngClass]="{'clearance':GRNFormSubmitted && hsncode?.errors?.required}" required>
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">Received <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="rec" #rec="ngModel" [(ngModel)]="ObjGRN.Received" (change)="Calculate()" placeholder="Received" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && rec?.errors?.required}" required>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Challan Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="chanllan" #chanllan="ngModel" [(ngModel)]="ObjGRN.Challan_Qty" placeholder="Challan" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && chanllan?.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">Rejected <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="reject" #reject="ngModel" [(ngModel)]="ObjGRN.Rejected" placeholder="Rejected" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && reject?.errors?.required}" required>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Received Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="rec" #rec="ngModel" [(ngModel)]="ObjGRN.Received_Qty" (ngModelChange)="RecQtyValidation()" placeholder="Received" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && rec?.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">Accepted <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="accept" #accept="ngModel" [(ngModel)]="ObjGRN.Accepted" placeholder="Accepted" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && accept?.errors?.required}" required>
+                                            <!-- </div>
+                                            <div class="form-group"> -->
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Accepted Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="accept" #accept="ngModel" [(ngModel)]="ObjGRN.Accepted_Qty" placeholder="Accepted" (ngModelChange)="Calculate()" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && accept?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Rejected Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="reject" #reject="ngModel" [(ngModel)]="ObjGRN.Rejected_Qty" placeholder="Rejected" [disabled]="true" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && reject?.errors?.required}" required>
                                                 </div>
                                                 <div class="col-sm-1">
                                                     <button id="row-Add" class="btn btn-primary custombutton2" (click)="Add(GRNForm.form.valid)">
@@ -322,16 +373,16 @@
                                             <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Quantity Remarks <sup class="text-danger">*</sup></label>
-                                                    <textarea class="form-control" name="qtyremarks" #qtyremarks="ngModel" [(ngModel)]="ObjGRN2.Qty_Remarks" placeholder="Quantity Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && qtyremarks?.errors?.required}" required></textarea>
+                                                    <textarea class="form-control" name="qtyremarks" #qtyremarks="ngModel" [(ngModel)]="ObjGRN2.Quantity_Remarks" placeholder="Quantity Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && qtyremarks?.errors?.required}" required></textarea>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Quality / Rejection Remarks <sup class="text-danger">*</sup></label>
-                                                    <textarea class="form-control" name="qlrejremarks" #qlrejremarks="ngModel" [(ngModel)]="ObjGRN2.Quality_Remarks" placeholder="Quality / Rejection Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && qlrejremarks?.errors?.required}" required></textarea>
+                                                    <textarea class="form-control" name="qlrejremarks" #qlrejremarks="ngModel" [(ngModel)]="ObjGRN2.Quality_Rejection_Remarks" placeholder="Quality / Rejection Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && qlrejremarks?.errors?.required}" required></textarea>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Deduction for Rejection <sup class="text-danger">*</sup></label>
                                                     <!-- <input class="form-control" name="deduction" #deduction="ngModel" [(ngModel)]="ObjGRN2.Deduction_for_Rejection" placeholder="Deduction for Rejection" [ngClass]="{'clearance':GRN2FormSubmitted && deduction?.errors?.required}" required> -->
-                                                    <textarea class="form-control" name="deduction" #deduction="ngModel" [(ngModel)]="ObjGRN2.Deduction_for_Rejection" placeholder="Deduction for Rejection" [ngClass]="{'clearance':GRN2FormSubmitted && deduction?.errors?.required}" required></textarea>
+                                                    <textarea class="form-control" name="deduction" #deduction="ngModel" [(ngModel)]="ObjGRN2.Deduction_For_Rejection" placeholder="Deduction for Rejection" [ngClass]="{'clearance':GRN2FormSubmitted && deduction?.errors?.required}" required></textarea>
                                                 </div>
                                             </div>
                                         
@@ -345,7 +396,7 @@
                             <!-- <hr class="box boxboxDivide-primary ng-scope"> -->
 
                             <div class="box-footer">
-                                <button class="btn btn-primary pull-right" (click)="SaveGRN(GRN2Form.valid.form)" id="load" [disabled]="Spinner">
+                                <button class="btn btn-primary pull-right" (click)="SaveGRN(GRN2Form.form.valid)" id="load" [disabled]="Spinner">
                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                    </button>

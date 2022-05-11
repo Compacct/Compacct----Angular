@@ -7,7 +7,7 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { Router } from '@angular/router';
-import * as XLSX from 'xlsx';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-grn',
@@ -27,60 +27,23 @@ export class GrnComponent implements OnInit {
   GRNFormSubmitted = false;
   ObjGRN1 : GRN1 = new GRN1();
   ObjGRN : GRN = new GRN ();
+  GRNDate = new Date();
   Supplierlist = [];
+  CostCenterlist = [];
+  Godownlist = [];
   POorderlist = [];
-  PODate : any = "09/May/2022";//new Date();
+  PODate : any = new Date();
+  podatedisabled = true;
   ProductDetailslist = [];
 
   GRN2FormSubmitted = false;
   ObjGRN2 : GRN2 = new GRN2();
-  uomdisabeld = false;
-  localpurchaseFLag = false;
   Productlist = [];
   productaddSubmit = [];
-  vendordisabled = false;
-  vendorlist :any = [];
-  materialtypelist = [];
-  producttypelist = [];
-  SelectedProductType :any = [];
-  productListFilter = [];
-  backUpproductList = [];
-  data = "(Show Requisition Products)";
 
-  ObjBrowse : Browse = new Browse ();
   Searchedlist = [];
-  ApprovedFLag = false;
-  AuthPoppup = false;
-  Doc_no = undefined;
-  Doc_date = undefined;
-  AuthorizedList = [];
-  BackupSearchedlist = [];
-  todayDate : any = new Date();
-  LastPurDate : any = new Date();
-  ovaldisabled = false;
-  stockqtydisabled = false;
-  ViewPoppup = false;
-  ViewList = [];
-  exceldataList = [];
-  //filteredData = [];
-  StockLevelFormSubmitted = false;
-  costcenlist = [];
-  GodownList = [];
-  StockReportSearchlist = [];
-  Orderlist = [];
-  productdisabled = false;
-  BackupStockReportSearchlist = [];
-  DistMaterialType = [];
-  SelectedDistMaterialType = [];
-  DistProductType = [];
-  SelectedDistProductType = [];
-  SearchFields = [];
-  Appbuttonname = "Approved"
-
-  Vendor_ID : any;
-  Credit_Days : number;
-  PPdoc_no : any;
   EditList = [];
+  doc_no: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -90,6 +53,7 @@ export class GrnComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -99,6 +63,8 @@ export class GrnComponent implements OnInit {
       Link: " Material Management -> Inward -> GRN"
     });
     this.GetSupplier();
+    this.GetCostCenter();
+    this.GetSearchedlist();
   }
   TabClick(e){
     // console.log(e)
@@ -107,9 +73,20 @@ export class GrnComponent implements OnInit {
      this.buttonname = "Save";
      this.Spinner = false;
     //  this.clearData();
+     this.ObjGRN1 = new GRN1();
+     this.GRNFormSubmitted = false;
+     this.productaddSubmit = [];
+     this.ObjGRN2 = new GRN2;
+     this.GRN2FormSubmitted = false;
+     this.PODate = new Date();
+     this.podatedisabled = true;
+     this.Spinner = false;
+     this.Godownlist = [];
+     this.POorderlist = [];
+     this.ProductDetailslist = [];
    }
    GetSupplier(){
-      this.producttypelist = [];
+      this.Supplierlist = [];
       const obj = {
         "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
         "Report_Name_String": "Get_Sub_Ledger"
@@ -120,12 +97,37 @@ export class GrnComponent implements OnInit {
        console.log("Supplierlist======",this.Supplierlist);
      });
    }
+   GetCostCenter(){
+    this.CostCenterlist = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "Get_Cost_Center"
+
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.CostCenterlist = data;
+     console.log("CostCenterlist======",this.CostCenterlist);
+   });
+ }
+ GetGodown(){
+  this.Godownlist = [];
+  const obj = {
+    "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+    "Report_Name_String": "Get_Cost_Center_Godown",
+    "Json_Param_String": JSON.stringify([{Cost_Cen_ID : this.ObjGRN1.Cost_Cen_ID}])
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Godownlist = data;
+   console.log("Godownlist======",this.Godownlist);
+ });
+}
    GetPOorder(){
     this.POorderlist = [];
     const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
       "Report_Name_String": "Get_Pending_PO_Order_Nos",
-      "Json_Param_String": JSON.stringify([{Sub_Ledger_ID : this.ObjGRN1.Supplier}])
+      "Json_Param_String": JSON.stringify([{Sub_Ledger_ID : this.ObjGRN1.Sub_Ledger_ID}])
 
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -137,7 +139,7 @@ export class GrnComponent implements OnInit {
   GetProductDetails(){
     this.ProductDetailslist = [];
     const postobj = {
-      Doc_No : this.ObjGRN1.PO_Order
+      Doc_No : this.ObjGRN1.PO_Doc_No
     }
     const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
@@ -167,28 +169,53 @@ export class GrnComponent implements OnInit {
    }
 }
  GetPODate(){
-  this.ObjGRN1.PO_Date = undefined;
-  if(this.ObjGRN1.PO_Order) {
+  this.ObjGRN1.PO_Doc_Date = undefined;
+  this.podatedisabled = true;
+  if(this.ObjGRN1.PO_Doc_No) {
     const ctrl = this;
-    const DateObj = $.grep(ctrl.POorderlist,function(item: any) {return item.Doc_No == ctrl.ObjGRN1.PO_Order})[0];
+    const DateObj = $.grep(ctrl.POorderlist,function(item: any) {return item.Doc_No == ctrl.ObjGRN1.PO_Doc_No})[0];
     console.log(DateObj);
-    this.ObjGRN1.PO_Date = new Date(DateObj.Doc_Date);
-    this.PODate = new Date(this.ObjGRN1.PO_Date);
- 
+    this.ObjGRN1.PO_Doc_Date = new Date(DateObj.Doc_Date);
+    this.PODate = new Date(this.ObjGRN1.PO_Doc_Date);
+    this.podatedisabled = false;
+   }
+   else {
+     this.PODate = new Date();
+     this.podatedisabled = true;
    }
 }
+ RecQtyValidation(){
+   if (Number(this.ObjGRN.Received_Qty) && Number(this.ObjGRN.Received_Qty) > Number(this.ObjGRN.Challan_Qty)){
+    // this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Received Qty is more than Challan Qty "
+  });
+  return false;
+   }
+   this.Calculate();
+ }
  Calculate() {
   //this.ExpiredProductFLag = false;
- if(Number(this.ObjGRN.Challan)) {
-   this.ObjGRN.Rejected = Number(Number(this.ObjGRN.Challan) - Number(this.ObjGRN.Received)).toFixed(2);
-   this.ObjGRN.Accepted = Number(Number(this.ObjGRN.Challan) - Number(this.ObjGRN.Rejected)).toFixed(2);
+ if(Number(this.ObjGRN.Received_Qty) && Number(this.ObjGRN.Accepted_Qty)) {
+   this.ObjGRN.Rejected_Qty = Number(Number(this.ObjGRN.Received_Qty) - Number(this.ObjGRN.Accepted_Qty)).toFixed(2);
+  //  this.ObjGRN.Rejected = Number(Number(this.ObjGRN.Challan) - Number(this.ObjGRN.Received)).toFixed(2);
+  //  this.ObjGRN.Accepted = Number(Number(this.ObjGRN.Challan) - Number(this.ObjGRN.Rejected)).toFixed(2);
+  }
+  else {
+    this.ObjGRN.Rejected_Qty = 0;
   }
   }
   
   Add(valid){
     this.GRNFormSubmitted = true;
     if(valid){
-      var amount = Number(this.ObjGRN.Accepted * this.ObjGRN.Rate).toFixed(2);
+      if (Number(this.ObjGRN.Received_Qty) && Number(this.ObjGRN.Received_Qty) <= Number(this.ObjGRN.Challan_Qty)){
+        if (Number(this.ObjGRN.Rejected_Qty) >= 0) {
+      var amount = Number(this.ObjGRN.Accepted_Qty * this.ObjGRN.Rate).toFixed(2);
       // var taxablevalue = Number((Number(amount) * 100) / Number(this.ObjGRN1.GST_Tax_Per) + 100).toFixed(2);
       var taxsgstcgst =  (Number(Number(amount) * Number(this.ObjGRN.GST_Tax_Per)) / 100).toFixed(2);
       var totalamount = (Number(amount) + Number(taxsgstcgst)).toFixed(2);
@@ -200,10 +227,10 @@ export class GrnComponent implements OnInit {
       Product_Details : this.ObjGRN.Product_Details,
       HSN_Code : this.ObjGRN.HSN_Code,
       Unit : this.ObjGRN.Unit,
-      Challan : this.ObjGRN.Challan,
-      Received : this.ObjGRN.Received,
-      Rejected : this.ObjGRN.Rejected,
-      Accepted : this.ObjGRN.Accepted,
+      Challan : this.ObjGRN.Challan_Qty,
+      Received : this.ObjGRN.Received_Qty,
+      Rejected : this.ObjGRN.Rejected_Qty,
+      Accepted : this.ObjGRN.Accepted_Qty,
       // Rate : this.DateService.dateConvert(new Date(this.LastPurDate)),
       Rate : this.ObjGRN.Rate,
       Taxable_Value : Number(amount).toFixed(2),
@@ -218,134 +245,132 @@ export class GrnComponent implements OnInit {
     // this.clearData();
     this.ObjGRN = new GRN();
     //this.localpurchaseFLag = false;
-    }
+        }
+         else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Rejected Qty is less than Zero "
+          });
+         }
+        }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Received Qty is more than Challan Qty "
+        });
+      }
+   }
    }
    delete(index) {
     this.productaddSubmit.splice(index,1)
 
   }
-  dataforSaveProduct(){
-    // // console.log(this.DateService.dateConvert(new Date(this.myDate)))
-    // // this.ObjSaveForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
-    // if(this.productaddSubmit.length) {
-    //   let tempArr =[]
-    //   this.productaddSubmit.forEach(item => {
-    //     const obj = {
-    //         //Product_Type_ID : item.Product_Type_ID,
-    //         Product_Type : item.Product_Type,
-    //         Product_ID : item.Product_ID,
-    //         Product_Description : item.Product_Description,
-    //         Weekly_Avg_Cons : Number(item.Weekly_Avg_Cons),
-    //         UOM : item.UOM,
-    //         Weekly_Cons_Value : Number(item.Weekly_Cons_Value),
-    //         Last_Puchase_Date : item.Last_Puchase_Date,
-    //         Last_Puchase_Qty : Number(item.Last_Puchase_Qty),
-    //         Order_UOM : item.UOM,
-    //         Last_Purchase_Rate : Number(item.Last_Purchase_Rate),
-    //        // Last_Purchase_With_GST : item.Last_Purchase_With_GST,
-    //         Current_Stock : Number(item.Current_Stock),
-    //         Due_Payment : item.Due_Payment,
-    //         //Order_Qty : item.Stock_Qty,
-    //         //Current_Rate : item.Sale_rate,
-    //         Stock_Qty : Number(item.Stock_Qty),
-    //         Rate : Number(item.Sale_rate),
-    //         Order_Value : item.Order_Value,
-    //         Order_Stock_Qty : item.Stock_Qty,
-    //         Order_Stock_UOM : item.Stock_UOM,
-    //         Estimated_Time_Of_Delivery : Number(item.Estimated_Time_Of_Delivery),
-    //         Indent_Qty : 0,
-    //         //Total_Amount_With_GST : item.Total_Amount_With_GST,
-    //         Remarks : item.Remarks,
-    //         Sub_Ledger_ID : item.Vendor_ID,
-    //         Vendor_Name : item.Vendor,
-    //         Credit_days : item.Credit_days,
+  DataForSaveProduct(){
+    // console.log(this.DateService.dateConvert(new Date(this.myDate)))
+     this.ObjGRN1.GRN_Date = this.DateService.dateConvert(new Date(this.GRNDate));
+     this.ObjGRN2.Created_By = this.$CompacctAPI.CompacctCookies.User_ID;
+    if(this.productaddSubmit.length) {
+      let tempArr =[]
+      this.productaddSubmit.forEach(item => {
+        const obj = {
+            Product_ID : item.Product_ID,
+            //Product_Description : item.Product_Description,
+            HSN_Code : item.HSN_Code,
+            UOM : item.Unit,
+            Challan_Qty : Number(item.Challan),
+            Received_Qty : Number(item.Received),
+            Rejected_Qty : Number(item.Rejected),
+            Accepted_Qty : Number(item.Accepted),
+            Rate : Number(item.Rate),
+            Taxable_Value : Number(item.Taxable_Value).toFixed(2),
+            Tax_Percentage : item.GST_Tax_Per,
+            Total_Tax_Amount : Number(item.Tax).toFixed(2),
+            Total_Amount : Number(item.Total_Amount).toFixed(2),
+            Remarks : item.Remarks,
+        }
 
-    //         GST_PER	 : 0,
-    //         Last_Purchase_With_GST	: 0,
-    //         Monthly_Req_Value	 : 0,
-    //         Order_Qty	: Number(item.Order_Qty),
-    //         Amount	: item.Order_Value,
-    //         Total_Amount_With_GST	: 0,
-    //         Created_By	: '',
-    //         Created_On	: '',
-    //         Autho_One	 : '',
-    //         Autho_Two	: '',
-    //         Autho_Two_Staus	: 'NA',
-    //         Ref_PO_Doc_No	: 'NA',
-    //         Ref_PO_Doc_Date	: '',
-    //         Confirm_Qty	: 0,
-    //         Confirm_Rate	: 0,
-    //         Confirm_Amount	: 0,
-    //         Confirm_Amount_With_GST	 : 0,
+        // const TempObj = {
+        //  // UOM : "PCS",
+        //   Doc_No : this.PPdoc_no ? this.PPdoc_no : "A",
+        //   Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
+        //   User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+        //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        //   //Return_Reason_ID : this.ObjProductaddForm.Return_Reason_ID
+        //   Autho_One_Staus : "NO"
 
-    //     }
+        // }
+        tempArr.push({...this.ObjGRN1,...obj,...this.ObjGRN2})
+      });
+      console.log(tempArr)
+      return JSON.stringify(tempArr);
 
-    //     const TempObj = {
-    //      // UOM : "PCS",
-    //       Doc_No : this.PPdoc_no ? this.PPdoc_no : "A",
-    //       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
-    //       User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-    //       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-    //       //Return_Reason_ID : this.ObjProductaddForm.Return_Reason_ID
-    //       Autho_One_Staus : "NO"
-
-    //     }
-    //     tempArr.push({...obj,...TempObj})
-    //   });
-    //   console.log(tempArr)
-    //   return JSON.stringify(tempArr);
-
-    // }
+    }
    }
    SaveGRN(valid){
     this.Spinner = true;
     this.GRN2FormSubmitted = true;
+    this.ngxService.start();
     if (valid && this.productaddSubmit.length) {
-    // const obj = {
-    //   "SP_String": "SP_Purchase_Planning",
-    //   "Report_Name_String" : "Save Purchase Order Planning",
-    //  "Json_Param_String": this.dataforSaveProduct()
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String" : "Create_BL_Txn_Purchase_Challan_GRN",
+     "Json_Param_String": this.DataForSaveProduct()
 
-    // }
-    // this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-    //   console.log(data);
-    //   var tempID = data[0].Column1;
-    //   this.PPdoc_no = data[0].Column1;
-    //   if(data[0].Column1){
-    //     this.compacctToast.clear();
-    //     //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-    //     this.compacctToast.add({
-    //      key: "compacct-toast",
-    //      severity: "success",
-    //      summary: "Return_ID  " + tempID,
-    //      detail: "Succesfully Created" //+ mgs
-    //    });
-    //    this.clearData();
-    //    this.Vendor_ID = undefined;
-    //    this.Credit_Days = undefined;
-    //    this.getproduct();
-    //    this.producttypelist = [];
-    //    this.data = "(Show Requisition Products)"
-    //   // this.Productlist = [];
-    //    this.todayDate = new Date();
-    //    this.ObjMPtype.Material_Type = undefined;
-    //    this.ObjMPtype.Product_Type = undefined;
-    //    this.productaddSubmit =[];
-    //    this.Spinner = false;
-    //    //this.ObjSaveForm = new SaveForm();
-    //    this.GetDataforUpdate();
+    }
+    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      console.log(data);
+      var tempID = data[0].Column1;
+      if(data[0].Column1){
+        this.compacctToast.clear();
+        //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         summary: "Return_ID  " + tempID,
+         detail: "Succesfully Saved" //+ mgs
+       });
+       this.ObjGRN1 = new GRN1();
+       this.GRNFormSubmitted = false;
+       this.productaddSubmit = [];
+       this.ObjGRN2 = new GRN2;
+       this.GRN2FormSubmitted = false;
+       this.PODate = new Date();
+       this.podatedisabled = true;
+       this.Spinner = false;
+       this.Godownlist = [];
+       this.POorderlist = [];
+       this.ProductDetailslist = [];
+       this.ngxService.stop();
+       this.GetSearchedlist();
 
-    //   } else{
-    //     this.Spinner = false;
-    //     this.compacctToast.clear();
-    //     this.compacctToast.add({
-    //       key: "compacct-toast",
-    //       severity: "error",
-    //       summary: "Warn Message",
-    //       detail: "Error Occured "
-    //     });
-    //   }
-    // })
+      } 
+      else{
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+    }
+    else{
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
     }
 
    }
@@ -411,16 +436,16 @@ export class GrnComponent implements OnInit {
 
    // CREATE TAB END
 
-   getDateRange(dateRangeObj) {
-    if (dateRangeObj.length) {
-      this.ObjBrowse.start_date = dateRangeObj[0];
-      this.ObjBrowse.end_date = dateRangeObj[1];
-    }
-  }
-  //  GetSearchedlist(){
-  //   //this.SearchFactoryFormSubmit = true;
-  //   this.seachSpinner = true;
-  //   this.Searchedlist = [];
+  //  getDateRange(dateRangeObj) {
+  //   if (dateRangeObj.length) {
+  //     this.ObjBrowse.start_date = dateRangeObj[0];
+  //     this.ObjBrowse.end_date = dateRangeObj[1];
+  //   }
+  // }
+   GetSearchedlist(){
+    //this.SearchFactoryFormSubmit = true;
+    this.seachSpinner = true;
+    this.Searchedlist = [];
   //   const start = this.ObjBrowse.start_date
   //   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   //   : this.DateService.dateConvert(new Date());
@@ -432,59 +457,68 @@ export class GrnComponent implements OnInit {
   //   From_Date : start,
   //   To_Date : end
   // }
-  // const obj = {
-  //   "SP_String": "SP_Purchase_Planning",
-  //   "Report_Name_String": "Browse Purchase Order Planning",
-  //   "Json_Param_String": JSON.stringify([tempobj])
-  // }
-  //  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //    this.Searchedlist = data;
-  //    this.BackupSearchedlist = data;
-  //    //console.log('Search list=====',this.Searchedlist)
-  //    this.seachSpinner = false;
-  //   // this.SearchFactoryFormSubmit = false;
-  //  })
-  // // }
-  //  }
-  //  getTotalValue(key){
-  //   let Amtval = 0;
-  //   this.AuthorizedList.forEach((item)=>{
-  //     Amtval += Number(item[key]);
-  //   });
-
-  //   return Amtval ? Amtval : '-';
-  // }
-   GetCostCen(){
-    // const obj = {
-    //   "SP_String": "SP_Production_Voucher",
-    //   "Report_Name_String": "Get - Non Outlet Cost Centre"
-    // }
-    // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    //   this.costcenlist = data;
-    //   //this.Objproduction.From_Cost_Cen_ID = this.Fcostcenlist.length === 21 ? this.Fcostcenlist[0].From_Cost_Cen_ID : undefined;
-    //   this.ObjStockLevel.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    //   //console.log("Cost Cen List ===",this.Fcostcenlist);
-    //   this.GetGodown();
-    // })
+  const obj = {
+    "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+    "Report_Name_String": "Browse_BL_Txn_Purchase_Challan_GRN",
+    // "Json_Param_String": JSON.stringify([tempobj])
   }
-  GetGodown(){
-    // const tempObj = {
-    //   //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
-    //   Cost_Cen_ID : this.ObjStockLevel.Cost_Cen_ID
-    // }
-    // const obj = {
-    //   "SP_String": "SP_Production_Voucher",
-    //   "Report_Name_String": "Get - Godown",
-    //   "Json_Param_String": JSON.stringify([tempObj])
-    // }
-    // this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    //   this.GodownList = data;
-    //   this.ObjStockLevel.Godown_ID = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-    //  // this.ObjStockLevel.Godown_ID = data[0].godown_id;
-    //    //console.log("From Godown List ===",this.FromGodownList);
-    // })
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Searchedlist = data;
+    //  this.BackupSearchedlist = data;
+     //console.log('Search list=====',this.Searchedlist)
+     this.seachSpinner = false;
+    // this.SearchFactoryFormSubmit = false;
+   })
+  // }
+   }
+   Delete(data){
+    this.doc_no = undefined;
+    if (data.GRN_No) {
+     this.doc_no = data.GRN_No;
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+   }
+   }
+   onConfirm(){
+      const objj = {
+       "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+       "Report_Name_String": "Delete_BL_Txn_Purchase_Challan_GRN",
+       "Json_Param_String": JSON.stringify([{Doc_No : this.doc_no}])
+      }
+      this.GlobalAPI.getData(objj).subscribe((data:any)=>{
+        //var msg = data[0].Column1;
+        if (data[0].Column1){
+          //this.onReject();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Doc No.: " + this.doc_no.toString(),
+            detail: "Succefully Deleted"
+          });
+          this.GetSearchedlist();
+        }
+        else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+      })
+   }
+  onReject(){
+   this.compacctToast.clear("c");
   }
-   Order(pro_id){
+  //  Order(pro_id){
     //  //this.clearData();
     // if(pro_id.Product_ID){
     // this.ObjStockLevel.Product_ID = pro_id.Product_ID;
@@ -496,8 +530,8 @@ export class GrnComponent implements OnInit {
     // // console.log("this.EditDoc_No ", this.Adv_Order_No );
     // this.getOrderdetails(this.ObjStockLevel.Product_ID);
     // }
-  }
-  getOrderdetails(Product_ID){
+  // }
+  // getOrderdetails(Product_ID){
     // const tempobj = {
     //   Product_ID : this.ObjStockLevel.Product_ID,
     //   Material_Type : this.ObjStockLevel.Material_Type,
@@ -534,56 +568,21 @@ export class GrnComponent implements OnInit {
     //   //  this.ObjPurchasePlan.Sale_rate = data[0].Last_Purchase_Rate;
 
     //  })
-  }
-  onReject(){}
-
-  // ORDER STOCK REPORT END
-
-  clearData(){
-    this.ObjGRN = new GRN();
-    // this.localpurchaseFLag = false;
-    // this.vendordisabled = false;
-    // //this.getproduct();
-    // this.uomdisabeld = false;
-    // //this.productaddSubmit = [];
-    // // this.todayDate = new Date();
-    // this.LastPurDate = new Date();
-    // this.ovaldisabled = false;
-    // this.stockqtydisabled = false;
-    // // this.ObjStockLevel.Material_Type = undefined;
-    // // this.ObjStockLevel.Godown_ID = undefined;
-    // // this.StockReportSearchlist = [];
-    // this.productdisabled = false;
-    // this.Orderlist = [];
-  }
-  // Refresh(){
-  //   this.ObjMPtype = new MPtype();
-  //   this.ObjPurchasePlan = new PurchasePlan();
-  //   this.localpurchaseFLag = false;
-  //   this.vendordisabled = false;
-  //   this.getproduct();
-  //   this.uomdisabeld = false;
-  //   //this.productaddSubmit = [];
-  //   this.todayDate = new Date();
-  //   this.LastPurDate = new Date();
-  //   this.ovaldisabled = false;
-  //   this.stockqtydisabled = false;
-  //   // this.ObjStockLevel.Material_Type = undefined;
-  //   // this.ObjStockLevel.Godown_ID = undefined;
-  //   // this.StockReportSearchlist = [];
-  //   this.productdisabled = false;
-  //   this.Orderlist = [];
   // }
+
 
 }
 
 class GRN1 {
-  Supplier : any;
+  GRN_Date : any;
+  Sub_Ledger_ID : any;
+  Cost_Cen_ID : any;
+  godown_id : any;
   RDB_No_Date : any;
   SE_No_Date : any;
-  PO_Order : any;
-  PO_Date : any;
-  Mode_of_Transport : any;
+  PO_Doc_No : any;
+  PO_Doc_Date : any;
+  Mode_Of_transport : any;
   LR_No_Date : any;
   Vehicle_No : any;
 }
@@ -595,49 +594,16 @@ class GRN {
   GST_Tax_Per : any;
   HSN_Code : any;
   Unit : string;
-  Challan : any;
-  Received : any;
-  Rejected : any;
-  Accepted : any;
-  Doc_No : string;
-  // Product_Type_ID : any;
-  // Product_Type : string;
-  //product_type : string;
-  Product_Description : string;
-  Sale_rate : number;
-  Order_Qty : number;
-  Stock_Qty : number;
-  Indent_Qty : number;
-  UOM : string;
-  Doc_Date : string;
-  Remarks : any;
-  Vendor : string;
-  Vendor_ID : any;
-  Last_Purchase_Rate : number;
-  Last_Purchase_Qty : number;
-  Last_Purchase_With_GST : number;
-  Current_Stock : number;
-  Due_Payment : any;
-  Weekly_Avg_Cons : number;
-  Weekly_Cons_Value : number;
-  Estimated_Time_Of_Delivery : number;
-  Order_Value : number;
-  // From_godown_id : string;
-  // To_godown_id : string;
-  // To_Cost_Cen_ID : string;
-  // From_Cost_Cen_ID : string;
-  // Indent_List : string;
-  AL_UOM : string;
-  Pcs_UOM : string;
-  Alt_UOM : string;
-  Stock_UOM : string;
-  UOM_Qty : number;
-  Credit_Days : number;
+  Challan_Qty : any;
+  Received_Qty : any;
+  Rejected_Qty : any;
+  Accepted_Qty : any;
  }
  class GRN2 {
-  Qty_Remarks : string;
-  Quality_Remarks : string;
-  Deduction_for_Rejection : string;
+  Quantity_Remarks : string;
+  Quality_Rejection_Remarks : string;
+  Deduction_For_Rejection : string;
+  Created_By : string;
  }
  class Browse {
   Doc_No : any;

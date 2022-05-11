@@ -207,6 +207,7 @@ import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-ta
 import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto-sales-tree.component';
 import { GrnComponent } from './common/MICL/grn/grn.component';
 import { MiclRequisitionComponent } from "./common/MaterialManagement/Outward/micl-requisition/micl-requisition.component";
+import { MiclDispatchChallanComponent } from './common/MICL/micl-dispatch-challan/micl-dispatch-challan.component';
 
 
 
@@ -1503,6 +1504,13 @@ data: {
      title: 'Requisition'
     }
    },
+   {
+    path: 'MICL_Dispatch_Challan',
+    component: MiclDispatchChallanComponent,
+    data: {
+    title: 'MICL Dispatch Challan'
+   }
+  },
 
   
 
