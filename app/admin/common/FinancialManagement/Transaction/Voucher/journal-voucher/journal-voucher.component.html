@@ -457,7 +457,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor='let obj of lowerList let i = index' >
-                                                   <td>{{obj.Slno}}</td>
+                                                   <td>{{obj.Slno ? obj.Slno : (i + 1)}}</td>
                                                    <td>{{obj.Ledger_Name}}</td>
                                                    <td>{{obj.Sub_Ledger_Name}}</td>
                                                    <td>{{obj.Cost_Head_Name}}</td>

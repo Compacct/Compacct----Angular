@@ -1453,7 +1453,7 @@ component: PurchaseOrderComponent,
 data: {
   title: 'Purchase Order'
  }
-},
+},{
   path: 'Asp_Max_Appo',
   component: TutoAspMaxAppoComponent,
   data: {
