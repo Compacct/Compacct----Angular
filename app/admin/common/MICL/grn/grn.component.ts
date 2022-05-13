@@ -489,7 +489,7 @@ export class GrnComponent implements OnInit {
       const objj = {
        "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
        "Report_Name_String": "Delete_BL_Txn_Purchase_Challan_GRN",
-       "Json_Param_String": JSON.stringify([{Doc_No : this.doc_no}])
+       "Json_Param_String": JSON.stringify([{Doc_No : this.doc_no , Created_By : this.$CompacctAPI.CompacctCookies.User_ID}])
       }
       this.GlobalAPI.getData(objj).subscribe((data:any)=>{
         //var msg = data[0].Column1;

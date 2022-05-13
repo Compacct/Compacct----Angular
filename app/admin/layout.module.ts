@@ -296,6 +296,9 @@ import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto
 import { GrnComponent } from './common/MICL/grn/grn.component';
 import { MiclRequisitionComponent } from './common/MaterialManagement/Outward/micl-requisition/micl-requisition.component';
 import { MiclDispatchChallanComponent } from './common/MICL/micl-dispatch-challan/micl-dispatch-challan.component';
+import { HrLeaveApplyComponent } from "./common/MICL/hr-leave-apply/hr-leave-apply.component";
+import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Master/subledger-for-accounts/subledger-for-accounts.component";
+import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
 
 
 @NgModule({
@@ -512,7 +515,10 @@ import { MiclDispatchChallanComponent } from './common/MICL/micl-dispatch-challa
     TutoSalesTreeComponent,
     GrnComponent,
     MiclRequisitionComponent,
-    MiclDispatchChallanComponent
+    MiclDispatchChallanComponent,
+    HrLeaveApplyComponent,
+    SubledgerForAccountsComponent,
+    MasterProductGeneralConsumablesComponent
   ],
   imports: [
     CommonModule,
