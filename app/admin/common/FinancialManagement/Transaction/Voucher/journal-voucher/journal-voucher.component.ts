@@ -344,8 +344,8 @@ saveJournal(valid){
 				Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
 				Cost_Cen_ID_Trn	: this.objjournal.Cost_Cen_ID_Trn,
 				Cost_Head_ID: this.objjournal.Cost_Head_ID,
-				DR_Amt: this.objjournal.DrCrdata === "DR" ? Number((this.objjournal.Amount).toFixed(2)) : 0,
-				CR_Amt: this.objjournal.DrCrdata === "CR" ? Number((this.objjournal.Amount).toFixed(2)) : 0,
+				DR_Amt: this.objjournal.DrCrdata === "DR" ? Number(Number(this.objjournal.Amount).toFixed(2)) : 0,
+				CR_Amt: this.objjournal.DrCrdata === "CR" ? Number(Number(this.objjournal.Amount).toFixed(2)) : 0,
 				Naration: this.objjournal.Naration,
 				Project_ID: this.objjournal.Project_ID,
 				Is_Topper	: "Y",
@@ -511,7 +511,7 @@ onConfirm(){
     const obj = {
       "SP_String": "Sp_Acc_Journal",
       "Report_Name_String":"BL_Txn_Acc_Journal_Delete",
-      "Json_Param_String": JSON.stringify([{Voucher_No : this.VoucherNo}]) 
+      "Json_Param_String": JSON.stringify([{Voucher_No : this.VoucherNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
       }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("data ==",data[0].Column1);
