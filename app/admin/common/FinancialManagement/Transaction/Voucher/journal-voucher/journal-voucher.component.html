@@ -425,8 +425,11 @@
                                                         
                                                         >
                                                           <option  [ngValue]="undefined">Select</option>
+                                                          <option  Value="Input Goods">Input Goods</option>
                                                           <option  Value="Input Services">Input Services</option>
                                                           <option  Value="Output Services">Output Services</option>
+                                                          <option  Value="Capital Goods">Capital Goods</option>  
+                                                          <option  Value="None">None</option>
                                                 </select>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -457,7 +460,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor='let obj of lowerList let i = index' >
-                                                   <td>{{obj.Slno}}</td>
+                                                   <td>{{obj.Slno ? obj.Slno : (i + 1)}}</td>
                                                    <td>{{obj.Ledger_Name}}</td>
                                                    <td>{{obj.Sub_Ledger_Name}}</td>
                                                    <td>{{obj.Cost_Head_Name}}</td>
