@@ -195,8 +195,11 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewProductType(){
     this.ProductTypeList = [];
-    this.ViewProTypeModal = true;
     this.GetProductType();
+    setTimeout(() => {
+      this.ViewProTypeModal = true;
+    }, 300);
+    
     // const obj = {
     //   "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
     //   "Report_Name_String" : "Get_Tender_Organization",
@@ -302,8 +305,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewProductSubType(){
     this.ProductSubTypeList = [];
-    this.ViewProSubTModal = true;
     this.GetProductSubType();
+    setTimeout(() => {
+      this.ViewProSubTModal = true;
+    }, 300);
   }
   deleteProSubT(protypesubid){
     this.is_Active = false;
@@ -410,8 +415,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewMoc(){
     this.MocList = [];
-    this.ViewMocModal = true;
     this.GetMOC();
+    setTimeout(() => {
+    this.ViewMocModal = true;
+    }, 300);
   }
   deleteMoc(mocid){
     this.is_Active = false;
@@ -504,8 +511,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewCapacity(){
     this.CapacitySizeList = [];
-    this.ViewCapacityModal = true;
     this.GetCapacity();
+    setTimeout(() => {
+    this.ViewCapacityModal = true;
+    }, 300);
   }
   deleteCapacity(capacityid){
     this.is_Active = false;
@@ -598,8 +607,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewAddFeature1(){
     this.AddFeature1List = [];
-    this.ViewAddFeature1Modal = true;
     this.GetAddFeature1();
+    setTimeout(() => {
+    this.ViewAddFeature1Modal = true;
+    }, 300);
   }
   deleteAddFeature1(addfeatureid1){
     this.is_Active = false;
@@ -692,8 +703,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewAddFeature2(){
     this.AddFeature2List = [];
-    this.ViewAddFeature2Modal = true;
     this.GetAddFeature2();
+    setTimeout(() => {
+      this.ViewAddFeature2Modal = true;
+    }, 300);
   }
   deleteAddFeature2(addfeatureid2){
     this.is_Active = false;
@@ -786,8 +799,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewAddFeature3(){
     this.AddFeature3List = [];
-    this.ViewAddFeature3Modal = true;
     this.GetAddFeature3();
+    setTimeout(() => {
+      this.ViewAddFeature3Modal = true;
+    }, 300);
   }
   deleteAddFeature3(addfeatureid3){
     this.is_Active = false;
@@ -880,8 +895,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewAddFeature4(){
     this.AddFeature4List = [];
-    this.ViewAddFeature4Modal = true;
     this.GetAddFeature4();
+    setTimeout(() => {
+      this.ViewAddFeature4Modal = true;
+    }, 300);
   }
   deleteAddFeature4(addfeatureid4){
     this.is_Active = false;
@@ -974,8 +991,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewGrade(){
     this.GradeList = [];
-    this.ViewGradeModal = true;
     this.GetGrade();
+    setTimeout(() => {
+      this.ViewGradeModal = true;
+    }, 300);
   }
   deleteGrade(gradeid){
     this.is_Active = false;

@@ -207,6 +207,10 @@ import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-ta
 import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto-sales-tree.component';
 import { GrnComponent } from './common/MICL/grn/grn.component';
 import { MiclRequisitionComponent } from "./common/MaterialManagement/Outward/micl-requisition/micl-requisition.component";
+import { MiclDispatchChallanComponent } from './common/MICL/micl-dispatch-challan/micl-dispatch-challan.component';
+import { HrLeaveApplyComponent } from "./common/MICL/hr-leave-apply/hr-leave-apply.component";
+import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Master/subledger-for-accounts/subledger-for-accounts.component";
+import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
 
 
 
@@ -1453,7 +1457,8 @@ component: PurchaseOrderComponent,
 data: {
   title: 'Purchase Order'
  }
-},{
+},
+{
   path: 'Asp_Max_Appo',
   component: TutoAspMaxAppoComponent,
   data: {
@@ -1502,6 +1507,34 @@ data: {
      title: 'Requisition'
     }
    },
+   {
+    path: 'MICL_Dispatch_Challan',
+    component: MiclDispatchChallanComponent,
+    data: {
+    title: 'MICL Dispatch Challan'
+   }
+  },
+  {
+    path: 'Leave_Application',
+    component: HrLeaveApplyComponent,
+    data: {
+      title: 'Leave Application'
+    }
+  },
+  {
+    path: 'Subledger_For_Accounts',
+    component: SubledgerForAccountsComponent,
+    data: {
+      title: 'Subledger For Accounts'
+  }
+},
+{
+  path: 'Master_Product_General_Consumables',
+  component: MasterProductGeneralConsumablesComponent,
+  data: {
+    title: 'Master Product General Consumables'
+}
+},
 
   
 

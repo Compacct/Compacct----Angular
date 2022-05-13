@@ -666,8 +666,9 @@
 
 <!-- VIEWS -->
 <!-- Product Type -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
-    [baseZIndex]="10000">
+<!-- <p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '80%', minWidth: '300px'}"> -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewProTypeModal"  [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '40%', minWidth: '200px'}"  
+[baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="ProductTypeList">
             <!-- <p-table [value]="vieworgList" [globalFilterFields]="['Tender_Organization']" [rowHover]="true" [autoLayout]="true" #dt>
@@ -700,7 +701,7 @@
     </p-footer>
 </p-dialog>
 <!-- Product Sub Type -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProSubTModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewProSubTModal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '40%', minWidth: '200px'}"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="ProductSubTypeList">
@@ -726,7 +727,7 @@
     </p-footer>
 </p-dialog>
 <!-- Material Of Cons. -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewMocModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewMocModal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{ width: '40%', minWidth: '200px' }"  
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="MocList">
@@ -752,7 +753,7 @@
     </p-footer>
 </p-dialog>
 <!-- Capacity / Size -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewCapacityModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewCapacityModal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '40%', minWidth: '200px'}"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="CapacitySizeList">
@@ -778,7 +779,7 @@
     </p-footer>
 </p-dialog>
 <!-- Additional Feature 1 -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewAddFeature1Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewAddFeature1Modal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '40%', minWidth: '200px'}"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="AddFeature1List">
@@ -804,7 +805,7 @@
     </p-footer>
 </p-dialog>
 <!-- Additional Feature 2 -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewAddFeature2Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewAddFeature2Modal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '40%', minWidth: '200px'}"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="AddFeature2List">
@@ -830,7 +831,7 @@
     </p-footer>
 </p-dialog>
 <!-- Additional Feature 3 -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewAddFeature3Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewAddFeature3Modal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '40%', minWidth: '200px'}"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="AddFeature3List">
@@ -856,7 +857,7 @@
     </p-footer>
 </p-dialog>
 <!-- Additional Feature 4 -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewAddFeature4Modal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewAddFeature4Modal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '40%', minWidth: '200px'}"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="AddFeature4List">
@@ -882,7 +883,7 @@
     </p-footer>
 </p-dialog>
 <!-- Grade -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewGradeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewGradeModal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '40%', minWidth: '200px'}"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
         <p-table [value]="GradeList">

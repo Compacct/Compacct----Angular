@@ -173,8 +173,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   }
   ViewProductType(){
     this.ProductTypeList = [];
-    this.ViewProTypeModal = true;
     this.GetProductType();
+    setTimeout(() => {
+      this.ViewProTypeModal = true;
+    }, 300);
     // const obj = {
     //   "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
     //   "Report_Name_String" : "Get_Tender_Organization",
@@ -223,8 +225,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   }
   ViewProductSubType(){
     this.ProductSubTypeList = [];
-    this.ViewProSubTModal = true;
     this.GetProductSubType();
+    setTimeout(() => {
+      this.ViewProSubTModal = true;
+    }, 300);
   }
   deleteProSubT(protypesubid){
     this.is_Active = false;
@@ -272,8 +276,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   }
   ViewMoc(){
     this.MocList = [];
-    this.ViewMocModal = true;
     this.GetMOC();
+    setTimeout(() => {
+      this.ViewMocModal = true;
+    }, 300);
   }
   deleteMoc(mocid){
     this.is_Active = false;
@@ -310,8 +316,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   }
   ViewCapacity(){
     this.CapacitySizeList = [];
-    this.ViewCapacityModal = true;
     this.GetCapacity();
+    setTimeout(() => {
+      this.ViewCapacityModal = true;
+    }, 300);
   }
   deleteCapacity(capacityid){
     this.is_Active = false;
@@ -348,8 +356,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   }
   ViewProFeature(){
     this.ProductFeatureList = [];
-    this.ViewProFeatureModal = true;
     this.GetProductFeature();
+    setTimeout(() => {
+      this.ViewProFeatureModal = true;
+    }, 300);
   }
   deleteProFeature(Profeatureid){
     this.is_Active = false;
@@ -386,8 +396,10 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   }
   ViewGrade(){
     this.GradeList = [];
-    this.ViewGradeModal = true;
     this.GetGrade();
+    setTimeout(() => {
+      this.ViewGradeModal = true;
+    }, 300);
   }
   deleteGrade(gradeid){
     this.is_Active = false;

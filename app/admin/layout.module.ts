@@ -295,6 +295,10 @@ import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-ta
 import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto-sales-tree.component';
 import { GrnComponent } from './common/MICL/grn/grn.component';
 import { MiclRequisitionComponent } from './common/MaterialManagement/Outward/micl-requisition/micl-requisition.component';
+import { MiclDispatchChallanComponent } from './common/MICL/micl-dispatch-challan/micl-dispatch-challan.component';
+import { HrLeaveApplyComponent } from "./common/MICL/hr-leave-apply/hr-leave-apply.component";
+import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Master/subledger-for-accounts/subledger-for-accounts.component";
+import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
 
 
 @NgModule({
@@ -510,7 +514,11 @@ import { MiclRequisitionComponent } from './common/MaterialManagement/Outward/mi
     TutoBdaWiseTargetComponent,
     TutoSalesTreeComponent,
     GrnComponent,
-    MiclRequisitionComponent
+    MiclRequisitionComponent,
+    MiclDispatchChallanComponent,
+    HrLeaveApplyComponent,
+    SubledgerForAccountsComponent,
+    MasterProductGeneralConsumablesComponent
   ],
   imports: [
     CommonModule,

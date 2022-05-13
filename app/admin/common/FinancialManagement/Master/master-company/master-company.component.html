@@ -27,16 +27,9 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
-                            <div class=" no-padding">
-                                    <p-table [value]="AllData" 
-                                    [paginator]="AllData.length ? true : false" 
-                                    [rows]="10" 
-                                    [rowHover]="true" 
-                                    [autoLayout]="true" 
-                                    sortMode="multiple" 
-                                    [rowsPerPageOptions]="[10,20,30]" 
-                                    [globalFilterFields]="['','Primary/Alternative','Decimal_Place']" 
-                                    [rowHover]="true" #dt>
+                            <div class="table-responsive no-padding">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="AllData" [paginator]="AllData.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [globalFilterFields]="['','Primary/Alternative','Decimal_Place']"[rowHover]="true" #dt>
 
                                         <ng-template pTemplate="caption">
                                             <div class="row">
@@ -135,7 +128,10 @@
                                        
                                 </p-table>
                             </div>
-                      </p-tabPanel>
+
+                            </div>
+
+                        </p-tabPanel>
                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon= "glyphicon glyphicon-floppy-save" aria-hidden="true" >
                                 <form name="MasterCompanyForm"  #MasterCompanyForm="ngForm" novalidate>
                                     <div class="form-group">
