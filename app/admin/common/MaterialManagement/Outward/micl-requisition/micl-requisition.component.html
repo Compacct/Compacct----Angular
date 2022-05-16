@@ -144,7 +144,7 @@
                                         #Cost_Cen_ID_te="ngModel"
                                          [(ngModel)]='objreqi.Cost_Cen_ID' 
                                          [ngClass]="{'clearance': reqiFormSubmitted && Cost_Cen_ID_te?.errors?.required}" 
-                                         (change)="Getgodown()"
+                                         (change)="Getgodown(objreqi.Cost_Cen_ID)"
                                          disabled
                                          required>
                                   <option  [ngValue]="undefined">Select</option>
