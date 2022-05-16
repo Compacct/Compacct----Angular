@@ -101,6 +101,7 @@ export class JournalVoucherComponent implements OnInit {
     this.getTotalDRCR();
     this.lowerList = [];
     this.RefDocDate = new Date();
+    this.voucherdata = new Date();
     this.buttonname = "Create";
     this.seachSpinner = false;
     this.objjournal = new journalTopper();
@@ -293,7 +294,7 @@ getTotalDRCR(){
     this.totalCR = Number(Number((this.objjournal.Amount)).toFixed(2));
    }
    else {
-     console.error("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
+     console.log("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
    }
  this.lowerList.forEach(el=>{
   this.totalDR += Number(Number(el.DR_Amt).toFixed(2));
@@ -472,7 +473,7 @@ GetEditMasterUom(V_NO){
      this.objjournal = data[0];
      this.lowerList = data[0].L_element;
       this.getsubLedgertop(data[0].Ledger_ID,data[0].Sub_Ledger_ID);
-      
+      this.voucherdata = new Date(data[0].Voucher_Date)
      if(data[0].DR_Amt){
       this.objjournal.Amount = Number((data[0].DR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "DR";
