@@ -164,7 +164,7 @@
                                             <td>{{getTotalValue('Total_Qty')}}</td>
                                             <!-- <td>{{getTotalValue('Total_Accepted_Qty')}}</td>
                                             <td>{{getTotalValue('Total_Amount')}}</td> -->
-                                            <td colspan="2"></td>
+                                            <td colspan="3"></td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -197,7 +197,7 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
-                                                        <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="Objdispatch.F_Godown_ID" [disabled]="inputBoxDisabled" [ngClass]="{'clearance': DispatchFormSubmit && ToGodown?.errors?.required}" >
+                                                        <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="Objdispatch.F_Godown_ID" [disabled]="inputBoxDisabled" [ngClass]="{'clearance': DispatchFormSubmit && ToGodown?.errors?.required}" required>
                                                                 <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let option of FromGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                                                         </select>
@@ -214,7 +214,7 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">To Stock Point<span class="text-danger">*</span></label>
-                                                        <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="Objdispatch.To_Godown_ID" [disabled]="inputBoxDisabled" [ngClass]="{'clearance' : DispatchFormSubmit && ToGodown.errors?.required}" 
+                                                        <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="Objdispatch.To_Godown_ID" [disabled]="inputBoxDisabled" [ngClass]="{'clearance' : DispatchFormSubmit && ToGodown.errors?.required}"
                                                                           required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                               <option  *ngFor="let option of ToGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
@@ -235,7 +235,7 @@
                                                         <textarea class="form-control" name="REMARKS" #REMARKS="ngModel" [(ngModel)]="Objdispatch.Remarks" [disabled]="inputBoxDisabled"></textarea>
                                                     </div>
                                                     <div class="col-sm-2">
-                                                        <button type="button" class="btn btn-primary pull-right" style="margin-top: 30px; margin-right: 40px;" (click)="GetIndentList()" id="load" [disabled]="SpinnerShow" [disabled]="inputBoxDisabled">
+                                                        <button type="button" class="btn btn-primary pull-right" style="margin-top: 30px; margin-right: 40px;" (click)="GetIndentList(DispatchForm.form.valid)" id="load" [disabled]="SpinnerShow" [disabled]="inputBoxDisabled">
                                                                 <p-progressSpinner *ngIf="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                              <span *ngIf="!SpinnerShow"></span> Get Indent List <!--class="glyphicon glyphicon-save" -->
                                                         </button>

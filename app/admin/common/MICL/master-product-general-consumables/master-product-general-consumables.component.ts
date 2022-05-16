@@ -734,6 +734,13 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       const productFeatureFilter = this.productFetr.filter(el=>Number(el.Product_Feature_ID) === Number(this.Objproduct.Product_Feature_ID))
       this.Objproduct.Product_Feature_Desc = productFeatureFilter.length ? productFeatureFilter[0].Product_Feature_Desc : undefined;
       this.Objproduct.Product_Feature_Desc = Number(this.Objproduct.Product_Feature_ID)
+      
+      var gradedes = this.gradeTyp.filter(item => item.Grade_ID === Number(this.Objproduct.Grade_ID))
+      this.Objproduct.Grade_Description = gradedes[0].Grade_Description;
+
+      var mfgdes = this.mfgData.filter(item => item.Product_Mfg_Comp_ID === Number(this.Objproduct.Product_Mfg_Comp_ID))
+      this.Objproduct.Mfg_Company = mfgdes[0].Mfg_Company;
+
       this.Objproduct.MOC_Description = mocdes.length ? mocdes[0].MOC_Description : 0;
       this.Objproduct.Product_ID = this.productCode ? this.productCode : 0
       
@@ -953,7 +960,6 @@ class product{
   Product_Code:any;			
   Product_Description	:any;	
   Cat_ID:number;				
-  Product_Mfg_Comp_ID:number;
   UOM:any;					
   MOC_ID:number;	
   MOC_Description : any;	
@@ -966,7 +972,9 @@ class product{
   Capacity_Size_ID:any;
   Product_ID:number; 
   Product_Feature_Desc:any;
+  Grade_ID : number;
   Grade_Description:any;
   GST_Percentage:any;
+  Product_Mfg_Comp_ID: number;
   Mfg_Company:any;
 }
