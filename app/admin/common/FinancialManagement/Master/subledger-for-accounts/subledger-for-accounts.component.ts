@@ -19,6 +19,7 @@ export class SubledgerForAccountsComponent implements OnInit {
   menuList=[];
   tabIndexToView= 0;
   buttonname = "Create";
+  Spinner = false;
   AllData=[];
   Objsubledger: subledger= new subledger()
   constructor(  
@@ -51,6 +52,7 @@ export class SubledgerForAccountsComponent implements OnInit {
     this.clearData();
     
   }
+  onReject(){}
   clearData(){
     // this.leaveFormSubmitted = false;
      this.Objsubledger = new subledger();
@@ -67,6 +69,7 @@ export class SubledgerForAccountsComponent implements OnInit {
       console.log("Browse data==",data);
       });   
    }
+   saveData(valid){}
 }
 class subledger{
 
