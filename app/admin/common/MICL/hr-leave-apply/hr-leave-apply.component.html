@@ -88,8 +88,8 @@
                                                     
                                                     <td>{{col.Emp_Name ? col.Emp_Name:"-"}}</td> 
                                                     <td>{{col.LEAVE_TYPE ? col.LEAVE_TYPE:"-"}}</td>
-                                                    <td>{{col.Apply_From_Date ? col.Apply_From_Date:"-"}}</td>
-                                                    <td>{{col.Apply_To_Date ? col.Apply_To_Date:"-"}}</td>
+                                                    <td>{{col.Apply_From_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td>{{col.Apply_To_Date  | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.No_Of_Days_Apply ? col.No_Of_Days_Apply:"-"}}</td>
                                                     <td>{{col.Remarks ? col.Remarks:"-"}}</td>
                                                 </tr>
