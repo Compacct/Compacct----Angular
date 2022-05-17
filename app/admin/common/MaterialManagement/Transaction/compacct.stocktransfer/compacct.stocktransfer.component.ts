@@ -391,6 +391,7 @@ export class StocktransferComponent implements OnInit {
         
         if(this.databaseName === 'BSHPL'){
           this.ObjProductInfo.Rate = obj.MRP;
+          this.CalculateAmount();
         }
       } else {
         this.SelectedProduct = "";
