@@ -540,6 +540,11 @@ validcheck(){
 validchecklow(){
   return this.SubLedgerListlow.length ? true : false
 }
+getToFix(number){
+ if(number){
+  return Number(Number(number).toFixed(2))
+ }
+}
 }
 class journalTopper{
         User_ID:any;

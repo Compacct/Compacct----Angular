@@ -493,7 +493,7 @@
                                         <button class="btn btn-primary pull-right"
                                          id="load"
                                          (click)="saveJournal(journalForm.form.valid)"
-                                        [disabled]="Spinner || (totalDR != totalCR) || !lowerList.length? true : false">
+                                        [disabled]="Spinner || (getToFix(totalDR) != getToFix(totalCR)) || !lowerList.length? true : false">
                                         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                 </button>
