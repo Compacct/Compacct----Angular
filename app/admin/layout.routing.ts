@@ -1422,6 +1422,13 @@ const layoutRoutes: Routes = [{
     }
   },
   {
+    path: 'Attendance_Sheet',
+    component: AttendanceSheetComponent,
+    data: {
+      title: 'AttendanceSheetComponent'
+    }
+  },
+  {
       path: 'Master_Company',
       component: MasterCompanyComponent,
       data: {

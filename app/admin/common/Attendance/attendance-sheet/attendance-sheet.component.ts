@@ -166,8 +166,8 @@ export class AttendanceSheetComponent implements OnInit {
     }
     });
     this.display = true;
-    // var Attent = this.AttenTypelist.filter( items => items.Sht_Desc === this.employeelist[this.index].monthData[this.index2]);
-    // this.Attendance_Status = Attent ? Attent[0].Atten_Type_ID : undefined;
+    var Attent = this.AttenTypelist.filter( items => items.Sht_Desc === this.employeelist[this.index].monthData[this.index2]);
+    this.Attendance_Status = Attent ? Attent[0].Atten_Type_ID : undefined;
      // this.Doc_date = col.Date;
     console.log("this.employeename",this.employeename)
     console.log("this.Doc_date",this.Doc_date)

@@ -481,11 +481,11 @@
                                         <table class="table">
                                             <tbody><tr>
                                                 <th style="width:30%">Total DR Amount:</th>
-                                                <td>{{totalDR ? totalDR : ""}}</td>
+                                                <td>{{totalDR ? getToFix(totalDR) : ""}}</td>
                                             </tr>
                                             <tr>
                                                 <th>Total CR Amount:</th>
-                                                <td>{{totalCR ? totalCR : ""}}</td>
+                                                <td>{{totalCR ? getToFix(totalCR) : ""}}</td>
                                             </tr>                                         
                                         </tbody></table>
                                     </div>
