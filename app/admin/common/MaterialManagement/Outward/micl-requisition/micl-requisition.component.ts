@@ -49,6 +49,7 @@ export class MiclRequisitionComponent implements OnInit {
   RequistionSearchFormSubmit = false;
   seachSpinner = false;
   productTypeList = [];
+  docno : any;
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -159,6 +160,7 @@ export class MiclRequisitionComponent implements OnInit {
        }
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
          console.log("After Data",data)
+         this.docno = data[0].Column1;
          if(data[0].Column1){
            this.ngxService.stop();
            this.compacctToast.clear();
@@ -168,6 +170,7 @@ export class MiclRequisitionComponent implements OnInit {
             summary: "Requisition No: " +data[0].Column1,
             detail: "Succesfully " + mgs
           });
+            this.SaveNPrintBill();
             this.clearData();
             this.searchData(true);
             this.tabIndexToView = 0;
@@ -191,6 +194,14 @@ export class MiclRequisitionComponent implements OnInit {
       });
      }
    }
+  }
+  SaveNPrintBill() {
+    if (this.docno) {
+      window.open("/Report/Crystal_Files/MICL/Txn_Requisition_Print.aspx?DocNo=" + this.docno, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  
+      );
+    }
+    // console.log('Doc_No ==', this.Objcustomerdetail.Bill_No)
   }
   delete(i){
     this.AddMaterialsList.splice(i,1);
@@ -421,7 +432,12 @@ export class MiclRequisitionComponent implements OnInit {
           })
         }
     }
- 
+  getPrint(obj) {  
+    if (obj.Req_No) { 
+    window.open('/Report/Crystal_Files/MICL/Txn_Requisition_Print.aspx?DocNo=' + obj.Req_No,
+      'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');   
+}
+}
 }
 
 class reqi{
