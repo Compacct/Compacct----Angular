@@ -251,16 +251,7 @@ export class TutoSalesTreeComponent implements OnInit {
        })
     }
     
-    if(event.node.Sub_Dept != "ADMINISTRATION") {
-      if(event.node.Sub_Dept != "CHANNEL_SALES") {
-    if(event.node.Sub_Dept != "TELE SALES") {
-      if(event.node.Sub_Dept != "ZONAL HEAD") {
-      if(event.node.Sub_Dept != "SCHOOL") {
-      if(event.node.Sub_Dept != "ASP") {
-      if(event.node.Sub_Dept != "ISM (SALES HEAD)") {
-    if(event.node.Sub_Dept === "BDA - GROUP 1" || "BDA - GROUP 2" || "BDA - GROUP 3"){
-      // if(event.node.Sub_Dept === "BDA - GROUP 2") {
-      // if(event.node.Sub_Dept === "BDA - GROUP 3") {
+    if((event.node.Sub_Dept === "BDA - GROUP 1") || (event.node.Sub_Dept === "BDA - GROUP 2") || (event.node.Sub_Dept === "BDA - GROUP 3")){
       this.BDAinactivePopup = true;
       this.GetISMBDAIntroducer(event.node.Sub_Dept);
     console.log(event.node);
@@ -282,16 +273,7 @@ export class TutoSalesTreeComponent implements OnInit {
        }
      });
     }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    // }
-    // } 
+    } 
    }
    nodeUnselect(event) {
      console.log(event.node.label);
