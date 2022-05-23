@@ -6,6 +6,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 import * as XLSX from 'xlsx';
 declare var $:any;
 
@@ -49,6 +50,9 @@ export class TutoBdaAttendanceComponent implements OnInit {
   Doc_date_AllEmp = undefined;
   DayName = undefined;
 
+  Select_ISM = undefined;
+  IsmList = [];
+
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -57,6 +61,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -64,6 +69,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
       Header: "BDA Attendance",
       Link: " CRM Master -> BDA -> BDA Attendance"
     });
+    this.GetISM();
     this.getAttendanceType();
     const d = new Date();
     let month = d.getMonth() + 1;
@@ -75,10 +81,31 @@ export class TutoBdaAttendanceComponent implements OnInit {
    // this.Month_Name = new Date();
     this.getmonthdaydate();
   }
+  GetISM(){
+    const obj = {
+      "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
+      "Report_Name_String": "Get_ISM",
+      "Json_Param_String": JSON.stringify({User_ID : this.$CompacctAPI.CompacctCookies.User_ID})
+    }
+    this.GlobalAPI.tutopiacallapis(obj).subscribe((data:any)=>{
+      console.log("IsmList  ===",data);
+      this.IsmList = data;
+      if (this.$CompacctAPI.CompacctCookies.User_Type != 'A') {
+      this.Select_ISM = data[0].Member_ID;
+      this.getmonthdaydate();
+      }
+      else {
+        this.Select_ISM = undefined;
+      }
+      })
+  }
   getemployeename(){
     const obj = {
       "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
-      "Report_Name_String": "Get_EMP_Data"
+      // "Report_Name_String": "Get_EMP_Data"
+      "Report_Name_String": "Get_Employee_List_Against_Member_Id",
+      "Json_Param_String": JSON.stringify({Member_ID : this.Select_ISM})
+      
     }
     this.GlobalAPI.tutopiacallapis(obj).subscribe((data:any)=>{
       data.forEach(obj=> {
@@ -188,6 +215,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
     this.AllAttendanceData = [];
     var firstDate = this.Month_Name+'-'+'01'
     console.log('firstDate',firstDate)
+    this.ngxService.start();
     const AtObj = {
       Date : this.DateService.dateConvert(new Date(firstDate)),
     }
@@ -211,6 +239,7 @@ export class TutoBdaAttendanceComponent implements OnInit {
         }, 200)
           console.log('this.AllAttendanceData',this.AllAttendanceData)
      });
+     this.ngxService.stop();
 
   })
   }

@@ -60,6 +60,9 @@ export class PurchaseBillFromGrnComponent implements OnInit {
   Searchedlist = [];
   EditList = [];
   doc_no: any;
+  SpinnerShow = false;
+  inputBoxDisabled = false;
+
 
   constructor(
     private Header: CompacctHeader,
@@ -408,6 +411,8 @@ export class PurchaseBillFromGrnComponent implements OnInit {
   // }
    GetGodown(){}
    SaveGRN(){}
+   
+   GetIndentList(){}
 
 }
 class PurBillChallan {

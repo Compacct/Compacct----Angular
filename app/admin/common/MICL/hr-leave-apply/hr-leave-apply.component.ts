@@ -15,16 +15,6 @@ import * as moment from "moment";
   encapsulation: ViewEncapsulation.None
 })
 export class HrLeaveApplyComponent implements OnInit {
-
-  constructor(
-    private http: HttpClient,
-    private compact: CompacctCommonApi,
-    private header:CompacctHeader, 
-    private GlobalAPI:CompacctGlobalApiService,
-    private compacctToast:MessageService,
-    private DateService: DateTimeConvertService,
-    public $CompacctAPI: CompacctCommonApi,
-  ) { }
   items = [];
   menuList=[];
   AllData = [];
@@ -48,16 +38,36 @@ export class HrLeaveApplyComponent implements OnInit {
   LEAVETYPE = undefined;
   TranType = undefined;
   Editdisable = false;
-  From_Time = new Date()
-  To_Time = new Date()
-  minDateFrom_Time = new Date()
-  minDateTo_Time = new Date()
-  maxDateFrom_Time = new Date()
-  maxDateTo_Time = new Date()
+  // From_Time = new Date()
+  // To_Time = new Date()
+  // minDateFrom_Time = new Date()
+  // minDateTo_Time = new Date()
+  // maxDateFrom_Time = new Date()
+  // maxDateTo_Time = new Date()
   showBaln = undefined;
   NOfDayApplyBackUp = undefined;
   leaveStatusCheck = true;
   showErrorMsg = false
+
+  currentdate = new Date();
+  FromDatevalue : any = Date;
+  ToDatevalue = new Date();
+  minFromDate : Date;
+  maxFromDate : Date;
+  minToDate : Date;
+  maxToDate : Date;
+  mndays = undefined;
+  applydays = undefined;
+
+  constructor(
+    private http: HttpClient,
+    private compact: CompacctCommonApi,
+    private header:CompacctHeader, 
+    private GlobalAPI:CompacctGlobalApiService,
+    private compacctToast:MessageService,
+    private DateService: DateTimeConvertService,
+    public $CompacctAPI: CompacctCommonApi,
+  ) { }
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
     this.menuList = [
@@ -69,12 +79,15 @@ export class HrLeaveApplyComponent implements OnInit {
       Header: "HR Leave Apply",
       Link: " MICL -> HR-leave-apply"
     })
-  this.minDateTo_Time = this.From_Time
+  // this.minDateTo_Time = this.From_Time
+    this.FromDatevalue = new Date(this.currentdate);
+    this.ToDatevalue = new Date();
     this.employeeData();
     this.GetBrowseData();
     this.hrYearList();
     this.leaveTypList();
-    //this.GetNumberOfdays();
+    this.GetNumberOfdays();
+    this.ToDatevalue = new Date();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -87,9 +100,9 @@ export class HrLeaveApplyComponent implements OnInit {
     this.leaveHrFormSubmitted = false;
     this.ObjHrleave =new Hrleave();
     this.HrleaveId = undefined;
-    this.From_Time = new Date(this.To_Time.setDate(new Date().getDate() + 1 ))
-    this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
-    this.minDateTo_Time = this.From_Time
+    // this.From_Time = new Date(this.To_Time.setDate(new Date().getDate() + 1 ))
+    // this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
+    this.minToDate = this.FromDatevalue
     this.showBaln = undefined;
     this.showErrorMsg = false
     this.GetNumberOfdays();
@@ -128,7 +141,7 @@ export class HrLeaveApplyComponent implements OnInit {
        console.log("Hr Year==",this.hrYeatList);
        this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined
         if(this.ObjHrleave.HR_Year_ID){
-         this.getMaxMindate()
+        //  this.getMaxMindate()
        }
        });
    }
@@ -150,8 +163,8 @@ export class HrLeaveApplyComponent implements OnInit {
       console.log("HrleaveId==",this.HrleaveId);
       this.Spinner = true
       if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
-     this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.From_Time));
-     this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.To_Time));
+     this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.FromDatevalue));
+     this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
      this.ObjHrleave.Issued_From_Date = this.ObjHrleave.Apply_From_Date;
      this.ObjHrleave.Issued_To_Date =  this.ObjHrleave.Apply_To_Date;
      this.ObjHrleave.No_Of_Days_Issued = this.ObjHrleave.No_Of_Days_Apply;
@@ -185,8 +198,8 @@ export class HrLeaveApplyComponent implements OnInit {
             this.tabIndexToView = 0;
             this.leaveHrFormSubmitted = false;
             this.ObjHrleave =new Hrleave();
-            this.From_Time = new Date()
-            this.To_Time = new Date()
+            this.FromDatevalue = new Date()
+            this.ToDatevalue = new Date()
             this.GetNumberOfdays();
             }
             else {
@@ -208,18 +221,18 @@ export class HrLeaveApplyComponent implements OnInit {
       }
         
     }
-    onReject(){
-      this.compacctToast.clear("c");
-    }
+  onReject(){
+    this.compacctToast.clear("c");
+  }
  GetNumberOfdays(){
-    if(this.To_Time && this.From_Time){
-      const diffTime = Math.abs(Number(new Date(this.To_Time.toLocaleString().split(',')[0])) - Number(new Date(this.From_Time.toLocaleString().split(',')[0])));
+    if(this.ToDatevalue && this.FromDatevalue){
+      const diffTime = Math.abs(Number(new Date(this.ToDatevalue.toLocaleString().split(',')[0])) - Number(new Date(this.FromDatevalue.toLocaleString().split(',')[0])));
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-       this.minDateTo_Time = this.From_Time;
+       this.minToDate = this.FromDatevalue;
        console.log("diffDays",diffDays + 1);
        this.ObjHrleave.No_Of_Days_Apply = undefined;
        this.ObjHrleave.No_Of_Days_Apply = diffDays + 1;
-       this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
+      //  this.ToDatevalue = new Date(this.ToDatevalue.setDate((this.FromDatevalue.getDate() + this.mndays) - 1 ))
        console.log("No_Of_Days_Apply",this.ObjHrleave.No_Of_Days_Apply);
     }
   }
@@ -240,23 +253,48 @@ export class HrLeaveApplyComponent implements OnInit {
          console.log("Show Blan",data)
          this.showBaln = data[0].Balance;
        // this.checkLeave();
+       this.getminday();
        })
     }
   
   } 
- getMaxMindate(){
-    if(this.ObjHrleave.HR_Year_ID){
-      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.ObjHrleave.HR_Year_ID))[0];
-      console.log("HRFilterValue",HRFilterValue)
-      this.maxDateFrom_Time = new Date(HRFilterValue.HR_Year_End);
-      this.maxDateTo_Time = new Date(HRFilterValue.HR_Year_End);
-      this.minDateFrom_Time = new Date(HRFilterValue.HR_Year_Start);
-      console.log("this.maxDateFrom_Time",this.maxDateFrom_Time )
-      console.log("this.maxDateTo_Time",this.maxDateTo_Time )
-      console.log("this.maxDateFrom_Time",this.minDateFrom_Time )
-      
-    }
+  getminday(){
+    this.mndays = undefined;
+    this.applydays = undefined;
+    this.minFromDate  = new Date();
+  if(this.ObjHrleave.Leave_Type) {
+    const ctrl = this;
+    const mindayobj = $.grep(ctrl.leaveList,function(item) {return item.Leave_Type == ctrl.ObjHrleave.Leave_Type})[0];
+    console.log("mindayobj >>",mindayobj);
+    
+    // this.minFromDate = new Date(new Date().getDate() + Number(mindayobj.Min_day));
+   // this.minFromDate.setDate(this.minFromDate.getDate() + Number(mindayobj.Min_day));
+    //this.FromDatevalue = new Date(new Date().getDate() + Number(mindayobj.Min_day))
+    this.mndays = mindayobj.Min_day;
+    this.applydays = mindayobj.Apply_day;
+
+    this.FromDatevalue =  new Date(this.minFromDate.setDate(new Date().getDate() + Number(mindayobj.Apply_day)));
+    this.minToDate  = new Date(this.FromDatevalue);
+    this.ToDatevalue = new Date(this.minToDate.setDate(new Date(this.FromDatevalue).getDate() + (Number(mindayobj.Min_day) - 1)))
+    
+    // this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
+    // 
+    //this.getapplydayschange();
   }
+}
+//  getMaxMindate(){
+//     if(this.ObjHrleave.HR_Year_ID){
+//       const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.ObjHrleave.HR_Year_ID))[0];
+//       console.log("HRFilterValue",HRFilterValue)
+//       this.maxDateFrom_Time = new Date(HRFilterValue.HR_Year_End);
+//       this.maxDateTo_Time = new Date(HRFilterValue.HR_Year_End);
+//       this.minDateFrom_Time = new Date(HRFilterValue.HR_Year_Start);
+//       console.log("this.maxDateFrom_Time",this.maxDateFrom_Time )
+//       console.log("this.maxDateTo_Time",this.maxDateTo_Time )
+//       console.log("this.maxDateFrom_Time",this.minDateFrom_Time )
+      
+//     }
+//   }
 }
 class Hrleave {
   Emp_ID:any;

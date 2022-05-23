@@ -8,6 +8,8 @@
                     <div class="ui-g-12">
                         <button *ngIf='EditDistributorObj?.Sub_Dept === "TELE SALES"' (click)="OpenSaleFieldModal(EditDistributorObj?.Sub_Dept,EditDistributorObj)"  class="btn btn-facebook btn-sm btn-social"><i class="fa fa-fw fa-pencil"></i>&nbsp;EDIT</button>
                         <button *ngIf='EditDistributorObj?.Sub_Dept === "ZONAL HEAD"' (click)="InactiveZonalHead(EditDistributorObj)" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button>
+                        
+                        <!-- <button *ngIf='EditDistributorObj?.Sub_Dept === "BDA - GROUP 1" || "BDA - GROUP 2" || "BDA - GROUP 3"' (click)="InactiveZonalHead(EditDistributorObj)" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button> -->
                     </div>
                 </div>
             </div>
@@ -38,7 +40,7 @@
                   <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal2("BDA - GROUP2")'>
                     <span class="glyphicon glyphicon-plus"></span> Create BDA - GROUP2
                   </button>
-                  <button class="btn btn-primary btn-sm" (click)='OpenSaleFieldModal2("TELE SALES - GROUP3")'>
+                  <button class="btn btn-primary btn-sm" (click)='OpenSaleFieldModal2("BDA - GROUP3")'>
                     <span class="glyphicon glyphicon-plus"></span> Create BDA - GROUP3
                   </button>
                 </div>
@@ -435,6 +437,51 @@
     </button>
     <button type="button" *ngIf='!SaveFlag && !ShowDisabled' class="btn btn-primary" (click)="UpdateField2(CreateSalesUpdate2.form.valid)">
       UPDATE
+    </button>
+    </p-footer>
+</p-dialog>
+
+<!-- BDA POPUP -->
+<p-dialog  [appendTo]="'body'" [(visible)]="BDAinactivePopup" [closeOnEscape]="true"  [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '400px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-group" style="margin-left:15px">
+      <button *ngIf='EditDistributorObj?.Sub_Dept === "BDA - GROUP 1" || "BDA - GROUP 2" || "BDA - GROUP 3"' (click)="InactiveBDA()" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button>
+    </div>
+      <form name="SelectISMForm"  #SelectISMForm="ngForm" style="margin:1.5em 0" novalidate>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Select ISM &nbsp;<span class="text-danger" >*</span></label>
+                <p-dropdown
+                  [options]="ISMIntroducerList"
+                  name="ISM"
+                  [(ngModel)]="Intro_Member_ID"
+                  [showClear]="true"
+                  [emptyFilterMessage]="' No Introducer Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [resetFilterOnHide]="true"
+                  [placeholder]="'Select Introducer'"
+                  [virtualScroll]="true"
+                  itemSize="30"
+                  #ISM="ngModel"
+                  [styleClass]="
+                  SelectISMFormSubmitted && ISM.errors?.required
+                      ? 'clearance'
+                      : ''
+                  "
+                  [required]="true"
+                >
+                </p-dropdown>
+              </div>
+        </div>
+    </form>
+      
+    <p-footer>
+        <button type="button" (click)="BDAinactivePopup = false" class="btn btn-default">
+      CANCEL
+    </button>
+        <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveSelectISM(SelectISMForm.form.valid)">
+      SAVE
     </button>
     </p-footer>
 </p-dialog>

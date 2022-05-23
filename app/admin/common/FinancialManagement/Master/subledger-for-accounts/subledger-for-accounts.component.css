@@ -22,3 +22,6 @@ hr {
     width: 137px;
     text-align: center;
 }
+.text-red-active>td {
+    color: red;
+}

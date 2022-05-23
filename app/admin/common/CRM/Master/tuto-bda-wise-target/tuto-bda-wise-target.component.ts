@@ -368,5 +368,10 @@ export class TutoBdaWiseTargetComponent implements OnInit {
       })
       this.displayALLEmployee = false;
   }
+  // exportoexcel(Arr,fileName): void {
+  //   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  //   const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  //   XLSX.writeFile(workbook, fileName+'.xlsx');
+  // }
 
 }

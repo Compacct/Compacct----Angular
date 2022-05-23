@@ -500,7 +500,7 @@
                                     <input class="form-control" name="termamt" #termamt="ngModel" [(ngModel)]="ObjPurBillChallan.Term_Amount" placeholder="Term Amount" [ngClass]="{'clearance':PurChallanGRNFormSubmitted && termamt?.errors?.required}" required>
                                 </div>
                                 <div class="col-sm-1">
-                                    <button type="button" class="btn btn-primary pull-right" style="margin-top: 28px;" (click)="GetIndentList(DispatchForm.form.valid)" id="load" [disabled]="SpinnerShow" [disabled]="inputBoxDisabled">
+                                    <button type="button" class="btn btn-primary pull-right" style="margin-top: 28px;" (click)="GetIndentList()" id="load" [disabled]="SpinnerShow" [disabled]="inputBoxDisabled">
                                             <p-progressSpinner *ngIf="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                          <span *ngIf="!SpinnerShow" class="glyphicon glyphicon-save"></span> Add <!--class="glyphicon glyphicon-save" -->
                                     </button>
