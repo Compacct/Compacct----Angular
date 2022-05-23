@@ -222,6 +222,14 @@ export class ProductsPlaningComponent implements OnInit {
     }
   }
 
+  validate3 (e) {
+    let input = e.target.value;
+    const reg = /^\d*(\.\d{0,2})?$/;
+  
+    if (!reg.test(input)) {
+      e.preventDefault();
+    }
+  }
   // CHECK EDIT / UPDATE
   CheckIfExist(){
     this.ExsitData = [];
@@ -336,6 +344,7 @@ export class ProductsPlaningComponent implements OnInit {
     if (valid) {
       this.PlanedProductFormSubmit = false;
       this.AddedPlanedProductList.push(this.ObjProdPlan);
+      this.ObjProdPlan.Qty = Number(this.ObjProdPlan.Qty).toFixed(3);
       const obj = {
         ...this.ObjProdPlan
       };

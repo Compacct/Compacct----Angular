@@ -234,7 +234,7 @@
                   <div class="col-sm-2">
                     <label class="control-label">Qty<sup class="text-danger">*</sup></label>
                     <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjEstimate.Qty"
-                      (ngModelChange)="CalculateEstimateQty()" CompacctDigitonly="true"
+                      (change)="CalculateEstimateQty()" CompacctDigitonly="true"  (keypress)="validate3($event)"
                       [ngClass]="{'clearance': EstimateInfoSubmitted && Qty?.errors?.required}" placeholder="Qty"
                       [required]="true" />
                   </div>
@@ -264,7 +264,7 @@
                     <label class="control-label">Purchase Rate<sup class="text-danger">*</sup></label>
                     <input class="form-control" name="rate" type="text"
                       [ngClass]="{'clearance':EstimateInfoSubmitted && rate?.errors?.required }" #rate="ngModel"
-                      [(ngModel)]="ObjEstimate.Rate" (ngModelChange)="CalculateEstimateAmount()"
+                      [(ngModel)]="ObjEstimate.Rate"  (keypress)="validate2($event)" (change)="CalculateEstimateAmount()"
                       CompacctDigitonly="true" [required]="true" placeholder="Rate" />
                   </div>
                   <div class="col-sm-2">
@@ -275,7 +275,7 @@
                   <div class="col-sm-2">
                     <label class="control-label">Sale Rate</label>
                     <input class="form-control" name="saleRate" #saleRate="ngModel" [(ngModel)]="ObjEstimate.saleRate"
-                      (ngModelChange)="CalculateEstimatesaleAmount()" placeholder="Sale Rate" />
+                    (keypress)="validate2($event)" (change)="CalculateEstimatesaleAmount()" placeholder="Sale Rate" />
                   </div>
                   <div class="col-sm-2">
                     <label class="control-label">Sale Amount</label>
