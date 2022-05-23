@@ -209,6 +209,7 @@
                                 <label class="control-label">Qty<sup class="text-danger">*</sup></label>
                                 <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjProdPlan.Qty"
                                     CompacctDigitonly="true"
+                                    (keypress)="validate3($event)"
                                     [ngClass]="{'clearance': PlanedProductFormSubmit && Qty?.errors?.required}" placeholder="Qty"
                                     [required]="true" />
                                 </div>

@@ -250,6 +250,8 @@ export class TenderHarbauerViewComponent implements OnInit {
       header: 'Changed Purchase Amount'
     }
   ];
+
+  BiddinStatusFlag = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -1400,6 +1402,7 @@ CheckIfTenderIDExist(){
   // Bid Opeing & AOC
   ViewBidOpening(col){
    console.log("col",col);
+   this.BiddinStatusFlag = false;
    this.BidOpenListViewByRateFlag = false;
    this.BidOpenListViewByLotteryFlag = false;
    this.BidTenderId = undefined;
@@ -1431,10 +1434,10 @@ CheckIfTenderIDExist(){
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{ 
         if(data.length && data[0].Status) {
-          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Agreement_Number){
+          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Agreement_Value){
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status;
             this.AgreementList = data;
-            this.ObjAgreement.Tender_Negotiated_Value = data[0].Agreement_Number;
+            this.ObjAgreement.Tender_Negotiated_Value = data[0].Agreement_Value;
             this.ObjAgreement.Tender_Doc_ID = TenderDocID;
           }
           if(data[0].Status === 'NOT- AWARDING THE TENDER' && data[0].Not_Awarding_Reason){    
@@ -1562,6 +1565,9 @@ CheckIfTenderIDExist(){
         arr[i].Temp_Bidder_Array = [...arrTemp];
       }
       this.BidOpenListViewByLottery.push(arr[i]);
+    }
+    if(this.ObjBidOpening.Financial_Bid_Status === 'AWARDING THE TENDER'){
+      this.BiddinStatusFlag = true;
     }
     console.log( "BidOpenListViewByLottery",this.BidOpenListViewByLottery)
   }
