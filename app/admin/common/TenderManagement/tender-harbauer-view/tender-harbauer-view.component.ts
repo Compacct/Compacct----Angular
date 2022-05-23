@@ -1434,11 +1434,12 @@ CheckIfTenderIDExist(){
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{ 
         if(data.length && data[0].Status) {
-          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Agreement_Value){
+          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Tender_Negotiated_Value){
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status;
             this.AgreementList = data;
-            this.ObjAgreement.Tender_Negotiated_Value = data[0].Agreement_Value;
+            this.ObjAgreement.Tender_Negotiated_Value = data[0].Tender_Negotiated_Value;
             this.ObjAgreement.Tender_Doc_ID = TenderDocID;
+            this.BiddinStatusFlag = true;
           }
           if(data[0].Status === 'NOT- AWARDING THE TENDER' && data[0].Not_Awarding_Reason){    
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status; 
@@ -1565,9 +1566,6 @@ CheckIfTenderIDExist(){
         arr[i].Temp_Bidder_Array = [...arrTemp];
       }
       this.BidOpenListViewByLottery.push(arr[i]);
-    }
-    if(this.ObjBidOpening.Financial_Bid_Status === 'AWARDING THE TENDER'){
-      this.BiddinStatusFlag = true;
     }
     console.log( "BidOpenListViewByLottery",this.BidOpenListViewByLottery)
   }
@@ -2135,7 +2133,7 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("data",data);
-        if (data.success) {
+        if (data[0].Column1) {
           this.compacctToast.clear();
           this.compacctToast.add({
           key: "compacct-toast",
