@@ -330,7 +330,7 @@ export class TenderViewDetailsCompComponent implements OnInit {
           const tenderCategory = this.tenderCategoryList.filter(el => Number(el.Tender_Category_ID) === Number(data[0].Tender_Category_ID));
           this.ObjTender.Tender_Category_ID = tenderCategory.length ? tenderCategory[0].Tender_Category_Name : '';
           const tendrInformation = this.TenderInfoEnqList.filter(el => Number(el.Enq_Source_ID) === Number(data[0].Enq_Source_ID));
-          this.ObjTender.State = tendrInformation.length ? tendrInformation[0].Enq_Source_Name : '';
+          this.ObjTender.Enq_Source_Name = tendrInformation.length ? tendrInformation[0].Enq_Source_Name : '';
           const tendrAssign = this.UserList.filter(el => Number(el.User_ID) === Number(data[0].User_ID));
           this.ObjTender.User_ID = tendrAssign.length ? tendrAssign[0].User_Name : '';
         }
