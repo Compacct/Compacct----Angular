@@ -61,6 +61,9 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   GradeModal = false;
   GradeFormSubmitted = false;
   GradeName = undefined;
+  MakeMulModal = false;
+  MakeMulFormSubmitted = false;
+  MakeMulName = undefined;
 
   ViewProTypeModal = false;
   ViewProSubTModal = false;
@@ -68,6 +71,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   ViewCapacityModal = false;
   ViewProFeatureModal = false;
   ViewGradeModal = false;
+  ViewMakeMulModal = false;
 
   protypeid = undefined;
   protypesubid = undefined;
@@ -95,6 +99,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   sizeid = undefined;
   pfetureid = undefined;
   grdid = undefined;
+  makemulid = undefined;
   rmrk = undefined;
   hcode = undefined;
   per = undefined;
@@ -444,6 +449,36 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   
     });
   }
+  ViewMakeMul(){
+    this.MakeList = [];
+    this.GetMake();
+    setTimeout(() => {
+      this.ViewMakeMulModal = true;
+    }, 300);
+  }
+  deleteMakeMul(makemulid){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.Profeatureid = undefined;
+    this.gradeid = undefined;
+    this.makemulid =undefined;
+    if(makemulid.Product_Mfg_Comp_ID){
+      this.makemulid = makemulid.Product_Mfg_Comp_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
 
  //Common Delete
   onConfirm() {
@@ -493,6 +528,13 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
         Grade_ID: this.gradeid
       }
       FunctionRefresh = 'GetGrade';
+    }
+    if (this.makemulid) {
+      ReportName = "Delete_Master_Product_Manufacture_Data"
+      ObjTemp = {
+        Product_Mfg_Comp_ID: this.makemulid
+      }
+      FunctionRefresh = 'GetMake';
     }
       const obj = {
         "SP_String": "SP_Harbauer_Master_Product_mechanical",
@@ -572,6 +614,9 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
          })
        
         }
+        else{
+          this.Spinner = false;
+        }
   }
   ProSubTypePopup(){
     this.ProductSubTypeFormSubmitted = false;
@@ -624,6 +669,9 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
          })
        
         }
+        else{
+          this.Spinner = false;
+        }
   }
   MocPopup(){
     this.CreateMocFormSubmitted = false;
@@ -674,6 +722,9 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
            }
          })
        
+        }
+        else{
+          this.Spinner = false;
         }
   }
   CapacityPopup(){
@@ -726,6 +777,9 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
          })
        
         }
+        else{
+          this.Spinner = false;
+        }
   }
   ProFeaturePopup(){
     this.ProFeatureFormSubmitted = false;
@@ -777,6 +831,9 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
          })
        
         }
+        else{
+          this.Spinner = false;
+        }
   }
   GradePopup(){
     this.GradeFormSubmitted = false;
@@ -827,6 +884,63 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
            }
          })
        
+        }
+        else{
+          this.Spinner = false;
+        }
+  }
+  MakeMulPopup(){
+    this.MakeMulFormSubmitted = false;
+    this.MakeMulName = undefined;
+    this.MakeMulModal = true;
+    this.Spinner = false;
+  }
+  CreateMakeMul(valid){
+    this.MakeMulFormSubmitted = true;
+    this.Spinner = true;
+      const Obj = {
+        Mfg_Company : this.MakeMulName
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_mechanical",
+           "Report_Name_String" : "Master_Product_Manufacture_Create",
+           "Json_Param_String": JSON.stringify([Obj])
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Return_ID  " + tempID,
+             detail: "Succesfully Created" //+ mgs
+           });
+           this.MakeMulFormSubmitted = false;
+           this.MakeMulName = undefined;
+           this.MakeMulModal = false;
+           this.Spinner = false;
+           this.GetMake();
+       
+           } else{
+             this.Spinner = false;
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       
+        }
+        else{
+          this.Spinner = false;
         }
   }
   // onUpload(event) {

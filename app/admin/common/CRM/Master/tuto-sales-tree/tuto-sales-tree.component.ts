@@ -69,6 +69,7 @@ export class TutoSalesTreeComponent implements OnInit {
   ISMIntroducerList = [];
   Bdamemberidforsave = undefined;
   Intro_Member_ID = undefined;
+  BDAname = undefined;
 
   constructor(
     private $http: HttpClient,
@@ -253,6 +254,7 @@ export class TutoSalesTreeComponent implements OnInit {
     
     if((event.node.Sub_Dept === "BDA - GROUP 1") || (event.node.Sub_Dept === "BDA - GROUP 2") || (event.node.Sub_Dept === "BDA - GROUP 3")){
       this.BDAinactivePopup = true;
+      this.BDAname = event.node.label;
       this.GetISMBDAIntroducer(event.node.Sub_Dept);
     console.log(event.node);
     if(event.node.Member_ID) {
@@ -373,6 +375,7 @@ export class TutoSalesTreeComponent implements OnInit {
             this.BDAinactivePopup = false;
             this.Bdamemberidforsave = undefined;
             this.Intro_Member_ID = undefined;
+            this.BDAname = undefined;
             this.SelectISMFormSubmitted = false;
             this.compacctToast.clear();
             this.compacctToast.add({

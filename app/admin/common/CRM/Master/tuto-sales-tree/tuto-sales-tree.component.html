@@ -442,7 +442,7 @@
 </p-dialog>
 
 <!-- BDA POPUP -->
-<p-dialog  [appendTo]="'body'" [(visible)]="BDAinactivePopup" [closeOnEscape]="true"  [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '400px' }" style="text-align: center;"
+<p-dialog  header={{BDAname}} [appendTo]="'body'" [(visible)]="BDAinactivePopup" [closeOnEscape]="true"  [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '400px' }" style="text-align: center;"
     [minY]="70" [maximizable]="true" [baseZIndex]="10000">
     <div class="form-group" style="margin-left:15px">
       <button (click)="InactiveBDA()" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button>
