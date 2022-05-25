@@ -270,7 +270,7 @@ export class TenderHarbauerViewComponent implements OnInit {
       Link: "Tender Management -> Update"
     });
     this.filterByList = ['FINANCIAL YEAR','DEPARTMENT',"PRIVATE OR GOVT","TENDER TYPE"];
-    this.filteroptionList = ['NOT RECEIVED TENDER','L1 TENDER','NOT SUBMITTED TENDER','PENDING TENDER']
+    this.filteroptionList = ['AWARDING THE TENDER','NOT SUBMITTED TENDER','PENDING TENDER']
     this.getFinancial();
     this.GetTenderOrgList();
     this.GetTypeList();
