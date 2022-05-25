@@ -316,7 +316,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Actual Issue Observed<sup
-                                                class="text-danger"></sup></label>
+                                                class="text-danger">*</sup></label>
                                         <input class="form-control" name="Actual_Issue_Observed"
                                             #Actual_Issue_Observed="ngModel"
                                             [(ngModel)]="ObjEngineerCall.Actual_Issue_Observed"
@@ -355,10 +355,9 @@
                                     <div class="col-sm-4">
                                     </div>
 
-                                </div>
+                            </div>
                             </form>
-
-                            <div class="cl-sm-12">
+                            <ng-template [ngIf]="ObjEngineerCall.Main_Status === 'OPEN' && ObjEngineerCall.Call_Status === 'Need Spare'">
                                 <div class="panel-group" style="margin-top:5px">
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">Spare Details</div>
@@ -411,105 +410,106 @@
                                                 </div>
 
                                             </form>
+                                            <div class="clearfix"></div>
+                                            <div class="table-responsive no-padding" style="margin-Top:5px">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr style="background-color:#4fa1d1;color:white;">
+                                                            <th>Spare</th>
+                                                            <th>Serial No.</th>
+                                                            <th>Quality</th>
+                                                            <th>Delete</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let obj of SpareDetailsList; let ind = index;">
+                                                            <td>{{obj.spare}}</td>
+                                                            <td>{{obj.serialNo}}</td>
+                                                            <td>{{obj.Qty}}</td>
+                                                            <td><button (click)="checkDelete(ind)" class="btn danger"><i
+                                                                        class="fa fa-trash"></i></button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="table-responsive no-padding" style="margin-Top:5px">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr style="background-color:#4fa1d1;color:white;">
-                                            <th>Spare</th>
-                                            <th>Serial No.</th>
-                                            <th>Quality</th>
-                                            <th>Delete</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let obj of SpareDetailsList; let ind = index;">
-                                            <td>{{obj.spare}}</td>
-                                            <td>{{obj.serialNo}}</td>
-                                            <td>{{obj.Qty}}</td>
-                                            <td><button (click)="checkDelete(ind)" class="btn danger"><i
-                                                        class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="panel-group">
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading">Required Spare Details</div>
-                                        <div class="panel-body">
-                                            <form name="RequiredSpareDetailshForm" #RequiredSpareDetailshForm="ngForm"
-                                                novalidate>
-                                                <div class="form-group">
-                                                    <div class="col-sm-4">
-                                                        <label class="control-label">Spare<span
-                                                                class="text-danger">*</span></label>
-                                                        <select class="form-control" name="SpareRequired"
-                                                            #SpareRequired="ngModel"
-                                                            [(ngModel)]='ObjRequiredSpareDetails.Spare_Parts_Product_ID'
-                                                            [ngClass]="{'clearance': RequiredSpareDetailsSubmit && SpareRequired.errors?.required}"
-                                                            required>
-                                                            <option [ngValue]="undefined">Select</option>
-                                                            <option *ngFor="let option of SparePartsList"
-                                                                [value]="option.Spare_Parts_Product_ID">
-                                                                {{option.Spare_Part_Description}}</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <label class="control-label">Qty<sup
-                                                                class="text-danger"></sup></label>
-                                                        <input class="form-control" name="QtyRequired"
-                                                            #QtyRequired="ngModel" placeholder="Serial No"
-                                                            [(ngModel)]='ObjRequiredSpareDetails.Qty'
-                                                            [ngClass]="{'clearance': RequiredSpareDetailsSubmit && QtyRequired.errors?.required}"
-                                                            required>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <button class="btn btn-primary custombutton1"
-                                                            (click)="addRequiredSpareDetails(RequiredSpareDetailshForm.form.valid)"
-                                                            id="load" [disabled]="Spinner">
-                                                            <p-progressSpinner *ngIf="Spinner"
-                                                                [style]="{width: '15px', height: '15px'}"
-                                                                strokeWidth="8" animationDuration=".5s">
-                                                            </p-progressSpinner>
-                                                            <span *ngIf="!Spinner"
-                                                                class="glyphicon glyphicon-Add"></span>Add
-                                                        </button>
+                                <p-checkbox styleClass="custombutton" label="Required Spare Details"
+                                [(ngModel)]="requiredSpare" [binary]="true"></p-checkbox>
+                                <div class="panel-group" *ngIf = "requiredSpare">
+                                        <div class="panel panel-primary">
+                                            <div class="panel-heading">Required Spare Details</div>
+                                            <div class="panel-body">
+                                                <form name="RequiredSpareDetailshForm" #RequiredSpareDetailshForm="ngForm"
+                                                    novalidate>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label">Spare<span
+                                                                    class="text-danger">*</span></label>
+                                                            <select class="form-control" name="SpareRequired"
+                                                                #SpareRequired="ngModel"
+                                                                [(ngModel)]='ObjRequiredSpareDetails.Spare_Parts_Product_ID'
+                                                                [ngClass]="{'clearance': RequiredSpareDetailsSubmit && SpareRequired.errors?.required}"
+                                                                required>
+                                                                <option [ngValue]="undefined">Select</option>
+                                                                <option *ngFor="let option of SparePartsList"
+                                                                    [value]="option.Spare_Parts_Product_ID">
+                                                                    {{option.Spare_Part_Description}}</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <label class="control-label">Qty<sup
+                                                                    class="text-danger"></sup></label>
+                                                            <input class="form-control" name="QtyRequired"
+                                                                #QtyRequired="ngModel" placeholder="Qty"
+                                                                [(ngModel)]='ObjRequiredSpareDetails.Qty'
+                                                                [ngClass]="{'clearance': RequiredSpareDetailsSubmit && QtyRequired.errors?.required}"
+                                                                required>
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <button class="btn btn-primary custombutton1"
+                                                                (click)="addRequiredSpareDetails(RequiredSpareDetailshForm.form.valid)"
+                                                                id="load" [disabled]="Spinner">
+                                                                <p-progressSpinner *ngIf="Spinner"
+                                                                    [style]="{width: '15px', height: '15px'}"
+                                                                    strokeWidth="8" animationDuration=".5s">
+                                                                </p-progressSpinner>
+                                                                <span *ngIf="!Spinner"
+                                                                    class="glyphicon glyphicon-Add"></span>Add
+                                                            </button>
+
+                                                        </div>
 
                                                     </div>
 
-                                                </div>
-
-                                            </form>
-                                        </div>
-                                    </div>
+                                                </form>
+                                                <div class="clearfix"></div>
+                                <div class="table-responsive no-padding" style="margin-Top:5px">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#4fa1d1;color:white;">
+                                                <th>Spare</th>
+                                                <th>Qty</th>
+                                                <th>Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let obj of RequiredSpareDetailsList; let ind = index;">
+                                                <td>{{obj.spare}}</td>
+                                                <td>{{obj.Qty}}</td>
+                                                <td><button (click)="checkDeleteRequired(ind)" class="btn danger"><i
+                                                            class="fa fa-trash"></i></button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="table-responsive no-padding">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr style="background-color:#4fa1d1;color:white;">
-                                            <th>Spare</th>
-                                            <th>Qty</th>
-                                            <th>Delete</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let obj of RequiredSpareDetailsList; let ind = index;">
-                                            <td>{{obj.spare}}</td>
-                                            <td>{{obj.Qty}}</td>
-                                            <td><button (click)="checkDeleteRequired(ind)" class="btn danger"><i
-                                                        class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="box-footer">
+                                            </div>
+                                        </div>
+                                 </div>
+                            </ng-template>
+                                
+                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right1" id="load"
                                     (click)="SaveCallSheet(pendingCallFormTap.form.valid,'tab')" [disabled]="Spinner">
                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}"
@@ -692,7 +692,6 @@
                                 </div>
                                 <input  CompacctNepaliDatepicker id="BSStartdate" name="BSStartdate"
                                             Class="form-control" (ngModelChange)="StartDate= $event"
-                                           
                                             [(ngModel)]="StartDate"/>
                                 <!-- <np-datepicker language="en"  id='BSStartdate' name="BSStartdate" inputClass="form-control"
                                     [(ngModel)]="StartDate"></np-datepicker> -->
@@ -740,7 +739,7 @@
                                 required></textarea>
                         </div>
                         <div class="col-sm-4">
-                            <label class="control-label">Actual Issue Observed<sup class="text-danger"></sup></label>
+                            <label class="control-label">Actual Issue Observed<sup class="text-danger">*</sup></label>
                             <input class="form-control" name="Actual_Issue_Observed" #Actual_Issue_Observed="ngModel"
                                 [(ngModel)]="ObjEngineerCall.Actual_Issue_Observed" placeholder="Actual Issue Observed"
                                 [ngClass]="{'clearance': pendingCallFormSubmit && Actual_Issue_Observed.errors?.required}"
@@ -777,145 +776,151 @@
 
                     </div>
                 </form>
-
-                <div class="cl-sm-12">
-                    <div class="panel-group" style="margin-top:5px">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">Spare Details</div>
-                            <div class="panel-body">
-                                <form name="SpareDetailshForm" #SpareDetailshForm="ngForm" novalidate>
-                                    <div class="form-group">
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Spare<span class="text-danger">*</span></label>
-                                            <select class="form-control" name="Spare" #Spare="ngModel"
-                                                [(ngModel)]='ObjSpareDetails.Spare_Parts_Product_ID'
-                                                [ngClass]="{'clearance': SpareDetailsSubmit && Spare.errors?.required}"
-                                                required>
-                                                <option [ngValue]="undefined">Select</option>
-                                                <option *ngFor="let option of SparePartsList"
-                                                    [value]="option.Spare_Parts_Product_ID">
-                                                    {{option.Spare_Part_Description}}</option>
-                                            </select>
+                <ng-template [ngIf]="ObjEngineerCall.Main_Status === 'OPEN' && ObjEngineerCall.Call_Status === 'Need Spare'">
+                    <div class="col-sm-12">
+                        <div class="panel-group" style="margin-top:5px">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Spare Details</div>
+                                <div class="panel-body">
+                                    <form name="SpareDetailshForm" #SpareDetailshForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Spare<span class="text-danger">*</span></label>
+                                                <select class="form-control" name="Spare" #Spare="ngModel"
+                                                    [(ngModel)]='ObjSpareDetails.Spare_Parts_Product_ID'
+                                                    [ngClass]="{'clearance': SpareDetailsSubmit && Spare.errors?.required}"
+                                                    required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let option of SparePartsList"
+                                                        [value]="option.Spare_Parts_Product_ID">
+                                                        {{option.Spare_Part_Description}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Serial No.<sup
+                                                        class="text-danger"></sup></label>
+                                                <input class="form-control" name="SerialNo" #SerialNo="ngModel"
+                                                    placeholder="Serial No" [(ngModel)]='ObjSpareDetails.serialNo'
+                                                    [ngClass]="{'clearance': SpareDetailsSubmit && SerialNo.errors?.required}"
+                                                    required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">QTY<sup class="text-danger"></sup></label>
+                                                <input class="form-control" name="QTY2" #QTY2="ngModel"
+                                                    [(ngModel)]='ObjSpareDetails.Qty' placeholder="QTY"
+                                                    [ngClass]="{'clearance': SpareDetailsSubmit && QTY2.errors?.required}"
+                                                    required>
+                                            </div>
+                                            <div class="box-footer">
+                                                <button class="btn btn-primary pull-right1" style="margin-top : 5px"
+                                                    (click)="addSpareDetails(SpareDetailshForm.form.valid)" id="load"
+                                                    [disabled]="Spinner">
+                                                    <p-progressSpinner *ngIf="Spinner"
+                                                        [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                                                        animationDuration=".5s"></p-progressSpinner>
+                                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-Add"></span>Add
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Serial No.<sup
-                                                    class="text-danger"></sup></label>
-                                            <input class="form-control" name="SerialNo" #SerialNo="ngModel"
-                                                placeholder="Serial No" [(ngModel)]='ObjSpareDetails.serialNo'
-                                                [ngClass]="{'clearance': SpareDetailsSubmit && SerialNo.errors?.required}"
-                                                required>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Quality<sup class="text-danger"></sup></label>
-                                            <input class="form-control" name="Quality" #Quality="ngModel"
-                                                [(ngModel)]='ObjSpareDetails.Qty' placeholder="Quality"
-                                                [ngClass]="{'clearance': SpareDetailsSubmit && Quality.errors?.required}"
-                                                required>
-                                        </div>
-                                        <div class="box-footer">
-                                            <button class="btn btn-primary pull-right1" style="margin-top : 5px"
-                                                (click)="addSpareDetails(SpareDetailshForm.form.valid)" id="load"
-                                                [disabled]="Spinner">
-                                                <p-progressSpinner *ngIf="Spinner"
-                                                    [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                                    animationDuration=".5s"></p-progressSpinner>
-                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-Add"></span>Add
-                                            </button>
-                                        </div>
+    
+                                    </form>
+                                    <div class="clearfix"></div>
+                                    <div class="table-responsive no-padding" style="margin-Top:5px">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr style="background-color:#4fa1d1;color:white;">
+                                                    <th>Spare</th>
+                                                    <th>Serial No.</th>
+                                                    <th>Quality</th>
+                                                    <th>Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let obj of SpareDetailsList; let ind = index;">
+                                                    <td>{{obj.spare}}</td>
+                                                    <td>{{obj.serialNo}}</td>
+                                                    <td>{{obj.Qty}}</td>
+                                                    <td><button (click)="checkDelete(ind)" class="btn danger"><i
+                                                                class="fa fa-trash"></i></button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="clearfix"></div>
-                <div class="table-responsive no-padding" style="margin-Top:5px">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr style="background-color:#4fa1d1;color:white;">
-                                <th>Spare</th>
-                                <th>Serial No.</th>
-                                <th>Quality</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let obj of SpareDetailsList; let ind = index;">
-                                <td>{{obj.spare}}</td>
-                                <td>{{obj.serialNo}}</td>
-                                <td>{{obj.Qty}}</td>
-                                <td><button (click)="checkDelete(ind)" class="btn danger"><i
-                                            class="fa fa-trash"></i></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-sm-12">
-                    <div class="panel-group">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">Required Spare Details</div>
-                            <div class="panel-body">
-                                <form name="RequiredSpareDetailshForm" #RequiredSpareDetailshForm="ngForm" novalidate>
-                                    <div class="form-group">
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Spare<span class="text-danger">*</span></label>
-                                            <select class="form-control" name="SpareRequired" #SpareRequired="ngModel"
-                                                [(ngModel)]='ObjRequiredSpareDetails.Spare_Parts_Product_ID'
-                                                [ngClass]="{'clearance': RequiredSpareDetailsSubmit && SpareRequired.errors?.required}"
-                                                required>
-                                                <option [ngValue]="undefined">Select</option>
-                                                <option *ngFor="let option of SparePartsList"
-                                                    [value]="option.Spare_Parts_Product_ID">
-                                                    {{option.Spare_Part_Description}}</option>
-                                            </select>
+                    
+                    <div class="col-sm-12">
+                        <p-checkbox styleClass="custombutton" label="Required Spare Details"
+                    [(ngModel)]="requiredSpare" [binary]="true"></p-checkbox>
+                        <div class="panel-group" *ngIf = "requiredSpare">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Required Spare Details</div>
+                                <div class="panel-body">
+                                    <form name="RequiredSpareDetailshForm" #RequiredSpareDetailshForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Spare<span class="text-danger">*</span></label>
+                                                <select class="form-control" name="SpareRequired" #SpareRequired="ngModel"
+                                                    [(ngModel)]='ObjRequiredSpareDetails.Spare_Parts_Product_ID'
+                                                    [ngClass]="{'clearance': RequiredSpareDetailsSubmit && SpareRequired.errors?.required}"
+                                                    required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let option of SparePartsList"
+                                                        [value]="option.Spare_Parts_Product_ID">
+                                                        {{option.Spare_Part_Description}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Qty<sup class="text-danger"></sup></label>
+                                                <input class="form-control" name="Qtypop" #Qtypop="ngModel"
+                                                    placeholder="Qty" [(ngModel)]='ObjRequiredSpareDetails.Qty'
+                                                    [ngClass]="{'clearance': RequiredSpareDetailsSubmit && Qtypop.errors?.required}"
+                                                    required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <button class="btn btn-primary custombutton1"
+                                                    (click)="addRequiredSpareDetails(RequiredSpareDetailshForm.form.valid)"
+                                                    id="load" [disabled]="Spinner">
+                                                    <p-progressSpinner *ngIf="Spinner"
+                                                        [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                                                        animationDuration=".5s"></p-progressSpinner>
+                                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-Add"></span>Add
+                                                </button>
+    
+                                            </div>
+    
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Qty<sup class="text-danger"></sup></label>
-                                            <input class="form-control" name="Qtypop" #Qtypop="ngModel"
-                                                placeholder="Qty" [(ngModel)]='ObjRequiredSpareDetails.Qty'
-                                                [ngClass]="{'clearance': RequiredSpareDetailsSubmit && Qtypop.errors?.required}"
-                                                required>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <button class="btn btn-primary custombutton1"
-                                                (click)="addRequiredSpareDetails(RequiredSpareDetailshForm.form.valid)"
-                                                id="load" [disabled]="Spinner">
-                                                <p-progressSpinner *ngIf="Spinner"
-                                                    [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                                    animationDuration=".5s"></p-progressSpinner>
-                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-Add"></span>Add
-                                            </button>
-
-                                        </div>
-
+    
+                                    </form>
+                                    <div class="clearfix"></div>
+                                    <div class="table-responsive no-padding" style="margin-Top:5px">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr style="background-color:#4fa1d1;color:white;">
+                                                    <th>Spare</th>
+                                                    <th>Qty</th>
+                                                    <th>Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let obj of RequiredSpareDetailsList; let ind = index;">
+                                                    <td>{{obj.spare}}</td>
+                                                    <td>{{obj.Qty}}</td>
+                                                    <td><button (click)="checkDeleteRequired(ind)" class="btn danger"><i
+                                                                class="fa fa-trash"></i></button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="clearfix"></div>
-                <div class="table-responsive no-padding">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr style="background-color:#4fa1d1;color:white;">
-                                <th>Spare</th>
-                                <th>Qty</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let obj of RequiredSpareDetailsList; let ind = index;">
-                                <td>{{obj.spare}}</td>
-                                <td>{{obj.Qty}}</td>
-                                <td><button (click)="checkDeleteRequired(ind)" class="btn danger"><i
-                                            class="fa fa-trash"></i></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    </ng-template>
+              
+               
                 <div class="box-footer">
                     <button class="btn btn-primary pull-right1"
                         (click)="SaveCallSheet(pendingCallForm.form.valid,'popup')" id="load" [disabled]="Spinner">
@@ -989,44 +994,47 @@
 
         </div>
     </div>
-    <div class="clearfix"></div>
-    <div class="table-responsive no-padding" style="margin-Top:5px">
-        <table class="table table-bordered">
-            <thead>
-                <tr style="background-color:#4fa1d1;color:white;">
-                    <th>Spare</th>
-                    <th>Serial No.</th>
-                    <th>Quality</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let obj of ViewSpareData; let ind = index;">
-                    <td>{{SpareName(obj.Product_ID)}}</td>
-                    <td>{{obj.Serial_No}}</td>
-                    <td>{{obj.Qty}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="clearfix"></div>
-    <div class="table-responsive no-padding">
-        <table class="table table-bordered">
-            <thead>
-                <tr style="background-color:#4fa1d1;color:white;">
-                    <th>Spare</th>
-                    <th>Qty</th>
-
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let obj of ViewSpareRequired; let ind = index;">
-                    <td>{{SpareName(obj.Product_ID)}}</td>
-                    <td>{{obj.Qty}}</td>
-
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <ng-template [ngIf]="getViewData.Main_Status === 'OPEN' && getViewData.Call_Status === 'Need Spare'">
+        <div class="clearfix"></div>
+        <div class="table-responsive no-padding" style="margin-Top:5px">
+            <table class="table table-bordered">
+                <thead>
+                    <tr style="background-color:#4fa1d1;color:white;">
+                        <th>Spare</th>
+                        <th>Serial No.</th>
+                        <th>Quality</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let obj of ViewSpareData; let ind = index;">
+                        <td>{{SpareName(obj.Product_ID)}}</td>
+                        <td>{{obj.Serial_No}}</td>
+                        <td>{{obj.Qty}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="clearfix"></div>
+        <div class="table-responsive no-padding">
+            <table class="table table-bordered">
+                <thead>
+                    <tr style="background-color:#4fa1d1;color:white;">
+                        <th>Spare</th>
+                        <th>Qty</th>
+    
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let obj of ViewSpareRequired; let ind = index;">
+                        <td>{{SpareName(obj.Product_ID)}}</td>
+                        <td>{{obj.Qty}}</td>
+    
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </ng-template>
+  
     <p-footer>
         <button type="button" pButton icon="pi pi-close" (click)="ViewModel=false" label="Close"
             class="ui-button-secondary"></button>

@@ -61,6 +61,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   callStartTime = new Date();
   BScallEndTime = new Date();
   BScallStartTime = new Date();
+  requiredSpare = false;
   CurrentDateNepal:any;
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -146,7 +147,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   TicketDetails(col){
    if(col.Support_Ticket_No){
      this.supportTicketNo = undefined;
-     this.supportTicketNo = col.Support_Ticket_No
+     this.supportTicketNo = col.Support_Ticket_No;
+     this.requiredSpare = false;
     const ctrl = this;
     setTimeout(() => {
       ctrl.showTicket = true;
@@ -178,6 +180,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   TabClick(e) {
     this.tabIndexToViewticket = e.index;
     this.items = ["Ticket Details", "Engineer call Sheet","Used Spare","Required Spare","Followups"];
+    this.requiredSpare = false;
   }
    MainTabClick(e) {
     this.tabIndexToView = e.index;
@@ -327,6 +330,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
      this.supportTicketNo = undefined;
      this.supportTicketNo = col.Support_Ticket_No;
      this.callsheettab = true;
+     this.requiredSpare = false;
     const ctrl = this;
     setTimeout(() => {
       ctrl.tabIndexToView = 1;
@@ -414,13 +418,13 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
    let tempObj= [];
    let tempObj1= [];
    if(valid){
-      if(this.SpareDetailsList.length && this.RequiredSpareDetailsList.length){
+      if(this.SaveCheck()){
         let getStartDate = value ==="tab"? this.StartDatecall : this.StartDate;
         let geEndDate = value ==="tab"? this.EndDatecall : this.EndDatecall;
         let getStartTimeDate = value ==="tab"? this.BScallStartTime : this.callStartTime;
         let getEndTimeDate = value ==="tab"? this.BScallEndTime : this.callStartTime;
-       this.ObjEngineerCall.Call_Start_Time = this.DateService.dateConvert(this.convertNepaliDateToEngDate(getStartDate))+' ' +' '+new Date(getStartTimeDate).toLocaleTimeString();
-       this.ObjEngineerCall.Call_End_Time = this.DateService.dateConvert(this.convertNepaliDateToEngDate(geEndDate))+' ' +' '+new Date(getEndTimeDate).toLocaleTimeString();
+       this.ObjEngineerCall.Call_Start_Time = this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(getStartDate))+' ' +' '+new Date(getStartTimeDate).toLocaleTimeString();
+       this.ObjEngineerCall.Call_End_Time = this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(geEndDate))+' ' +' '+new Date(getEndTimeDate).toLocaleTimeString();
        this.ObjEngineerCall.Support_Ticket_No = this.supportTicketNo;
        this.ObjEngineerCall.Login_User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
        this.SpareDetailsList.forEach(el=>{
@@ -462,6 +466,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
            this.BScallEndTime = new Date();
            this.BScallStartTime = new Date();
            this.pendingCallFormSubmit = false;
+           this.requiredSpare = false; 
            this.compacctToast.clear();
            this.compacctToast.add({
              key: "compacct-toast",
@@ -495,6 +500,33 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
        });
      }
     }
+}
+
+SaveCheck(){
+  let flag = false;
+   if(this.ObjEngineerCall.Main_Status === "OPEN" && this.ObjEngineerCall.Call_Status === "Need Spare"){
+     if(this.requiredSpare){
+       if(this.RequiredSpareDetailsList.length){
+        flag = true
+       }
+       else { 
+        flag = false
+       }
+     }
+     else{
+       if(this.SpareDetailsList.length){
+        flag = true
+       }
+       else{
+        flag = false
+       }
+     }
+   }
+   else {
+     flag = true
+   }
+ 
+  return flag
 }
  tConvert(date) {
   const DateArr = date.split('T');
