@@ -774,7 +774,6 @@ class Tender {
   Budget_Required_By: string;
   Govt_Proposal: string;
   Tender_Publishing_Info_From: any;
-  Enq_Source_Name:any;
 }
 class BidOpeningList {
   Schedule_ID: string;
