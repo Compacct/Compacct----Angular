@@ -70,6 +70,8 @@ export class TutoSalesTreeComponent implements OnInit {
   Bdamemberidforsave = undefined;
   Intro_Member_ID = undefined;
   BDAname = undefined;
+  changeName = undefined;
+  updateMemNameFormSubmitted = false;
 
   constructor(
     private $http: HttpClient,
@@ -253,6 +255,8 @@ export class TutoSalesTreeComponent implements OnInit {
     }
     
     if((event.node.Sub_Dept === "BDA - GROUP 1") || (event.node.Sub_Dept === "BDA - GROUP 2") || (event.node.Sub_Dept === "BDA - GROUP 3")){
+      this.SelectISMFormSubmitted = false;
+      this.updateMemNameFormSubmitted = false;
       this.BDAinactivePopup = true;
       this.BDAname = event.node.label;
       this.GetISMBDAIntroducer(event.node.Sub_Dept);
@@ -267,6 +271,7 @@ export class TutoSalesTreeComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        if(data.length) {
+        this.changeName = data[0].Member_Name;
          const type = data[0].Sub_Dept_Name;
          const openField = type.includes('TELE SALES') ? true : type.includes('SALES HEAD') ? true : false;
          openField ? this.OpenSaleFieldModal2(type,event.node) : this.ngxService.stop(); 
@@ -409,6 +414,74 @@ export class TutoSalesTreeComponent implements OnInit {
      }
 
    }
+   UpdateMemberName(valid){
+    this.updateMemNameFormSubmitted = true;
+    if(valid){
+     // const reportName = this.EditFlag ? 'Edit_Distributor_Introducer' : 'Create_Sales_Tree';
+     // let UserNameCheck = true;
+     // if(this.CreateFieldModalTitle === 'ASP') {
+     //  let responseData = await this.CheckASPname(); 
+     //  console.log(responseData)
+     //  if(responseData[0].Column1.toString() === 'YES') { 
+     //   UserNameCheck = false;
+     //  }
+     // }
+     // if(UserNameCheck) {
+       const objsave = {
+         Member_ID : this.Bdamemberidforsave,
+         Member_Name : this.changeName
+       }
+       const obj = {
+         "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
+         "Report_Name_String": "Update_Member_Name",
+         "Json_Param_String": JSON.stringify(objsave)
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         console.log(data);
+         if(data[0].Column1) {
+           this.EditDistributorObj = {};
+           this.ClearData();
+           this.loading = true;
+           this.GetTreeData();
+           this.ClearData2();
+           this.BDAinactivePopup = false;
+           this.Bdamemberidforsave = undefined;
+           this.Intro_Member_ID = undefined;
+           this.BDAname = undefined;
+           this.updateMemNameFormSubmitted = false;
+           this.changeName = undefined;
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             // summary: '' + Type,
+             detail:  "Succesfully Updated"
+           });
+           // this.onReject();
+ 
+         } else {
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: "Error Occured "
+           });
+         }
+ 
+       })
+     // }else {
+     //   this.compacctToast.clear();
+     //     this.compacctToast.add({
+     //       key: "compacct-toast",
+     //       severity: "error",
+     //       summary: "Validation Message",
+     //       detail: "This User Name Already Exits."
+     //     });
+     // }
+    }
+
+  }
    GetTreeData(){
     this.loading = true;
     const obj = {

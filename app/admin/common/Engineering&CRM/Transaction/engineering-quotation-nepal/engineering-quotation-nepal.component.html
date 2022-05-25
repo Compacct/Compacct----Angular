@@ -98,7 +98,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table #dt [value]="BrowseList" [globalFilterFields]="['Location_Name','Mfg_Company','Machine','Serial_No','Service_Type','Service_Start_Date','Service_End_Date','Payment_Status','Payment_Date']" [paginator]="BrowseList.length ? true:false" [rows]="10"
+                                <p-table #dt [columns]="cols" [value]="BrowseList" [globalFilterFields]="['Location_Name','Mfg_Company','Machine','Serial_No','Service_Type','Service_Start_Date','Service_End_Date','Payment_Status','Payment_Date']" [paginator]="BrowseList.length ? true:false" [rows]="10"
                                     [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -108,14 +108,18 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngIf="ObjBrowseQuotation.Quotation_From === 'CustomerBrowse'">Customer Name</th>
+                                            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                                                {{col.header}}
+                                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <!-- <th *ngIf="ObjBrowseQuotation.Quotation_From === 'CustomerBrowse'">Customer Name</th>
                                             <th *ngIf="ObjBrowseQuotation.Quotation_From === 'LeadBrowse'">Lead Name</th>
                                             <th>Quotation Type</th>
                                             <th>Quotation To Company</th>
-                                            <th>Total Taxable Amount</th>
+                                            <th>Total Taxable Amount</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -284,16 +288,24 @@
                                         <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
                                         <input class="form-control" name="DisAmt" #DisAmt="ngModel" [(ngModel)]="ObjEnginnerQuoation.Discount_Amount" [disabled]="true" placeholder="Discount Amount" />
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Taxable<sup class="text-danger"></sup></label>
+                                        <select class="form-control" name="tax" #tax="ngModel" [(ngModel)]="ObjEnginnerQuoation.VAT" (change)="CalculateTax()" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && tax.errors?.required}" required>
+                                            <!-- <option  [ngValue]="undefined">Select</option> -->
+                                            <option  value="13">Taxable</option>
+                                            <option  value="0">Not Taxable</option>
+                                    </select>
+                                        </div>
+                                    <!-- <div class="col-sm-3">
                                         <label class="control-label">VAT %<sup class="text-danger"></sup></label>
                                         <div class="input-group">
                                             <input class="form-control" name="VAT" #VAT="ngModel" [(ngModel)]="ObjEnginnerQuoation.VAT" (change)="CalculateTax()" placeholder="VAT %" CompacctDigitonly="true" />
                                             <div class="input-group-addon">
                                                 %
                                             </div>
-                                        </div>
+                                        </div> 
 
-                                    </div>
+                                    </div> -->
                                     <div class="col-sm-2">
                                         <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
                                         <input class="form-control" name="TaxableAmt" #TaxableAmt="ngModel" [(ngModel)]="ObjEnginnerQuoation.Net_Amt" [disabled]="true" placeholder="Taxable Amount" />
@@ -319,7 +331,7 @@
                                             <th class="text-center" style="vertical-align:middle">Total Amount</th>
                                             <th class="text-center" style="vertical-align:middle">Disount Type</th>
                                             <th class="text-center" style="vertical-align:middle">Disount Amt</th>
-                                            <th class="text-center" style="vertical-align:middle">Vat %</th>
+                                            <th class="text-center" style="vertical-align:middle">Tax %</th>
                                             <th class="text-center" style="vertical-align:middle">Taxable Amt</th>
                                             <th class="text-center" style="vertical-align:middle">Delete</th>
                                         </tr>

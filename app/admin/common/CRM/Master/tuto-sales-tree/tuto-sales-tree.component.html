@@ -449,7 +449,7 @@
     </div>
       <form name="SelectISMForm"  #SelectISMForm="ngForm" style="margin:1.5em 0" novalidate>
         <div class="form-group">
-            <div class="col-sm-12">
+            <div class="col-sm-9">
                 <label class="control-label">Select ISM &nbsp;<span class="text-danger" >*</span></label>
                 <p-dropdown
                   [options]="ISMIntroducerList"
@@ -472,16 +472,34 @@
                   [required]="true"
                 >
                 </p-dropdown>
-              </div>
+              </div> 
+            <div class="col-sm-3" style="margin-top:25px;">
+              <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveSelectISM(SelectISMForm.form.valid)">
+                SAVE
+              </button>
+            </div>
         </div>
     </form>
+    <div class="form-group">
+        <form name="updateMemNameForm"  #updateMemNameForm="ngForm" style="margin:1.5em 0" novalidate>
+            <div class="col-sm-9">
+              <label class="control-label">Name<sup class="text-danger">*</sup></label>
+              <input type="text" class="form-control" placeholder=Name name="changename" #changename="ngModel" [(ngModel)]="changeName" [ngClass]="{clearance:updateMemNameFormSubmitted && changename.errors?.required}" required>
+          </div>
+          <div class="col-sm-3" style="margin-top:25px;">
+            <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="UpdateMemberName(updateMemNameForm.form.valid)">
+              Update Name
+            </button>
+          </div>
+        </form>
+    </div>
       
     <p-footer>
         <button type="button" (click)="BDAinactivePopup = false" class="btn btn-default">
       CANCEL
     </button>
-        <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveSelectISM(SelectISMForm.form.valid)">
+        <!-- <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveSelectISM(SelectISMForm.form.valid)">
       SAVE
-    </button>
+    </button> -->
     </p-footer>
 </p-dialog>

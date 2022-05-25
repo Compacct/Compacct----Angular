@@ -104,6 +104,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   SubjectList = [];
   CustomerBrowseList = [];
   LeadBrowseList = [];
+  cols =[];
  
 
   constructor(
@@ -154,6 +155,17 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.ObjLeadCreation.Existing = "Other";
        this.existingchange();
        this.GetSubject();
+
+       this.cols = [
+        { field: 'Sub_Ledger_Name', header: 'Customer Name' },
+        // { field: 'Org_Name', header: 'Lead Name' },
+        { field: 'Quotation_Type', header: 'Quotation Type' },
+        { field: 'Quotation_To_Company', header: 'Quotation To Company' },
+        { field: 'Total_Taxable_Amount', header: 'Total Taxable Amount' },
+        // { field: 'State', header: 'State' }
+      ];
+
+      this.ObjEnginnerQuoation.VAT = 13;
   }
 
   // CREATE CUSTOMER DROPDOWN
@@ -233,9 +245,25 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     if (this.ObjBrowseQuotation.Quotation_From === "CustomerBrowse") {
       this.GetBrowseCustomer();
       this.BrowseList = [];
+      this.cols = [
+        { field: 'Sub_Ledger_Name', header: 'Customer Name' },
+        // { field: 'Org_Name', header: 'Lead Name' },
+        { field: 'Quotation_Type', header: 'Quotation Type' },
+        { field: 'Quotation_To_Company', header: 'Quotation To Company' },
+        { field: 'Total_Taxable_Amount', header: 'Total Taxable Amount' },
+        // { field: 'State', header: 'State' }
+      ];
     } else {
       this.GetBrowseLead();
       this.BrowseList = [];
+      this.cols = [
+        // { field: 'Sub_Ledger_Name', header: 'Customer Name' },
+        { field: 'Org_Name', header: 'Lead Name' },
+        { field: 'Quotation_Type', header: 'Quotation Type' },
+        { field: 'Quotation_To_Company', header: 'Quotation To Company' },
+        { field: 'Total_Taxable_Amount', header: 'Total Taxable Amount' },
+        // { field: 'State', header: 'State' }
+      ];
     }
   }
   GetLocation() {
@@ -356,12 +384,15 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.ObjEnginnerQuoation.Discount_Type = undefined;
     this.ObjEnginnerQuoation.Discount_Amount = undefined;
     this.ObjEnginnerQuoation.Taxable_Amount = undefined;
-    this.ObjEnginnerQuoation.VAT = 0;
+    // this.ObjEnginnerQuoation.VAT = 0;
     this.ObjEnginnerQuoation.Net_Amt = undefined;
     if(this.ObjEnginnerQuoation.Product_ID) {
       const TempArr = $.grep(this.InstallMachineList,(arr)=>{ return arr.Product_ID === this.ObjEnginnerQuoation.Product_ID});
       this.ObjEnginnerQuoation.Machine = TempArr.length ? TempArr[0].Machine : undefined;
       this.GetSpareParts();
+      if(this.ObjEnginnerQuoation.Quotation_Type != "Spare") {
+      this.ObjEnginnerQuoation.Rate = TempArr.length ? TempArr[0].Sale_rate : undefined;
+      }
     }
   }
   // ADD PRODUCT
@@ -383,6 +414,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       this.ObjEnginnerQuoation.Quotation_Type = PrevObj.Quotation_Type;
       this.ObjEnginnerQuoation.Quotation_To_Company = PrevObj.Quotation_To_Company;
       this.ObjEnginnerQuoation.Quotation_From = PrevObj.Quotation_From;
+      this.ObjEnginnerQuoation.VAT = PrevObj.VAT;
       console.log(this.EngQuoationProductList);
     }
   }
@@ -400,10 +432,23 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   }
   CalculateTax(){
     this.ObjEnginnerQuoation.Net_Amt = undefined;
-    this.ObjEnginnerQuoation.VAT = this.ObjEnginnerQuoation.VAT ? this.ObjEnginnerQuoation.VAT : 0;
-    if(this.ObjEnginnerQuoation.Taxable_Amount) {
-      const percenAmt = ( Number(this.ObjEnginnerQuoation.VAT) / 100) * Number(this.ObjEnginnerQuoation.Taxable_Amount);
-      this.ObjEnginnerQuoation.Net_Amt = Number(this.ObjEnginnerQuoation.Taxable_Amount) + percenAmt;
+    // this.ObjEnginnerQuoation.VAT = this.ObjEnginnerQuoation.VAT ? this.ObjEnginnerQuoation.VAT : 0;
+    // this.ObjEnginnerQuoation.Taxable = this.ObjEnginnerQuoation.Taxable === "Taxable" ? 13 : 0;
+    // if(this.ObjEnginnerQuoation.Taxable_Amount) {
+    //   const percenAmt = ( Number(this.ObjEnginnerQuoation.Taxable) / 100) * Number(this.ObjEnginnerQuoation.Taxable_Amount);
+    //   this.ObjEnginnerQuoation.Net_Amt = Number(this.ObjEnginnerQuoation.Taxable_Amount) + percenAmt;
+    // }
+    if (this.ObjEnginnerQuoation.VAT == 13) {
+      if(this.ObjEnginnerQuoation.Taxable_Amount) {
+        const percenAmt = ( 13 / 100) * Number(this.ObjEnginnerQuoation.Taxable_Amount);
+        this.ObjEnginnerQuoation.Net_Amt = Number(this.ObjEnginnerQuoation.Taxable_Amount) + percenAmt;
+      }
+    }
+    else {
+      if(this.ObjEnginnerQuoation.Taxable_Amount) {
+        const percenAmt = ( 0 / 100) * Number(this.ObjEnginnerQuoation.Taxable_Amount);
+        this.ObjEnginnerQuoation.Net_Amt = Number(this.ObjEnginnerQuoation.Taxable_Amount) + percenAmt;
+      }
     }
   }
   DiscountTypeClean = function() {
@@ -453,6 +498,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     this.clearData();
     this.QuotationDocID = undefined;
     this.ObjEnginnerQuoation.Quotation_From = "Customer";
+    this.ObjEnginnerQuoation.VAT = 13;
   }
   clearData() {
     this.Spinner = false;
