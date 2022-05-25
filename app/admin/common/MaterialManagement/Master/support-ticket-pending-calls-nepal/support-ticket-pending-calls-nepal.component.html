@@ -258,8 +258,11 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='Startdatecallid' name="Startdatecallid"
-                                                inputClass="form-control" [(ngModel)]="StartDatecall"></np-datepicker>
+                                            <input  CompacctNepaliDatepicker id="CSStartdate" name="CSStartdate"
+                                            Class="form-control" (ngModelChange)="StartDatecall= $event"
+                                            [(ngModel)]="StartDatecall"/>
+                                            <!-- <np-datepicker language="en"  id='Startdatecallid' name="Startdatecallid"
+                                                inputClass="form-control" [(ngModel)]="StartDatecall"></np-datepicker> -->
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
@@ -275,8 +278,11 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <np-datepicker language="en"  id='Enddatecallid' name="Enddatecallid"
-                                                inputClass="form-control" [(ngModel)]="EndDatecall"></np-datepicker>
+                                            <!-- <np-datepicker language="en"  id='Enddatecallid' name="Enddatecallid"
+                                                inputClass="form-control" [(ngModel)]="EndDatecall"></np-datepicker> -->
+                                                <input  CompacctNepaliDatepicker id="CStartdate" name="CStartdate"
+                                                Class="form-control" (ngModelChange)="EndDatecall= $event"
+                                                [(ngModel)]="EndDatecall"/>
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
@@ -382,11 +388,11 @@
                                                             required>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                        <label class="control-label">Quality<sup
+                                                        <label class="control-label">QTY<sup
                                                                 class="text-danger"></sup></label>
-                                                        <input class="form-control" name="Quality" #Quality="ngModel"
-                                                            [(ngModel)]='ObjSpareDetails.Qty' placeholder="Quality"
-                                                            [ngClass]="{'clearance': SpareDetailsSubmit && Quality.errors?.required}"
+                                                        <input class="form-control" name="QTY1" #QTY1="ngModel"
+                                                            [(ngModel)]='ObjSpareDetails.Qty' placeholder="QTY"
+                                                            [ngClass]="{'clearance': SpareDetailsSubmit && QTY.errors?.required}"
                                                             required>
                                                     </div>
                                                     <div class="box-footer">
@@ -686,7 +692,7 @@
                                 </div>
                                 <input  CompacctNepaliDatepicker id="BSStartdate" name="BSStartdate"
                                             Class="form-control" (ngModelChange)="StartDate= $event"
-                                            [containerId]="'modalBody'"
+                                           
                                             [(ngModel)]="StartDate"/>
                                 <!-- <np-datepicker language="en"  id='BSStartdate' name="BSStartdate" inputClass="form-control"
                                     [(ngModel)]="StartDate"></np-datepicker> -->
@@ -704,8 +710,7 @@
                                 </div>
                                 <input  CompacctNepaliDatepicker id="BSEnddate" name="BSEnddate"
                                 Class="form-control" (ngModelChange)="EndDate= $event"
-                                [containerId]="'modalBody'"
-                                [(ngModel)]="EndDate"/>
+                                 [(ngModel)]="EndDate"/>
                                 <!-- <np-datepicker language="en"  id='BSEnddate' name="BSEnddate" inputClass="form-control"
                                     [(ngModel)]="EndDate"></np-datepicker> -->
                             </div>
