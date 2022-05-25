@@ -298,6 +298,15 @@ export class TenderHarbauerViewComponent implements OnInit {
   clearData(){
 
   }
+  
+  validate2 (e) {
+    let input = e.target.value;
+    const reg = /^\d*(\.\d{0,1})?$/;
+  
+    if (!reg.test(input)) {
+      e.preventDefault();
+    }
+  }
   onReject() {
     this.compacctToast.clear("c");
   }
