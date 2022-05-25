@@ -299,7 +299,7 @@ import { MiclDispatchChallanComponent } from './common/MICL/micl-dispatch-challa
 import { HrLeaveApplyComponent } from "./common/MICL/hr-leave-apply/hr-leave-apply.component";
 import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Master/subledger-for-accounts/subledger-for-accounts.component";
 import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
-import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
+
 
 
 @NgModule({
@@ -519,8 +519,8 @@ import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-g
     MiclDispatchChallanComponent,
     HrLeaveApplyComponent,
     SubledgerForAccountsComponent,
-    MasterProductGeneralConsumablesComponent,
-    PurchaseBillFromGrnComponent
+    MasterProductGeneralConsumablesComponent
+    
   ],
   imports: [
     CommonModule,
