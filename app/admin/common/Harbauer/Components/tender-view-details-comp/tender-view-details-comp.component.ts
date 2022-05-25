@@ -768,6 +768,7 @@ class Tender {
   EMD_Amount: string;
   T_Fee_Amount: string;
   Enq_Source_ID: number;
+  Enq_Source_Name: string;
   Tender_Informed_Date: string;
   Period_Of_Working: string;
   Budget_Required_By: string;
