@@ -983,16 +983,16 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       if (this.productid) {
         this.Spinner = true;
         this.MasterProductmFormSubmitted = true;
-      if(valid && this.Product_Mfg_Comp_ID.length){
+      if(valid){
       let UpdateArr =[]
-      this.Product_Mfg_Comp_ID.forEach(item => {
+      // this.Product_Mfg_Comp_ID.forEach(item => {
         const Obj = {
             Product_ID : this.productid,
-            Product_Mfg_Comp_ID : item
+            Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
            // Mfg_Company : item.label
         }
         UpdateArr.push({...Obj,...this.ObjMasterProductm})
-    });
+    // });
     console.log("Update =" , UpdateArr)
     // if(valid && this.productid){
       // const Obj = {
@@ -1231,8 +1231,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
        this.ObjMasterProductm.HSN_NO = data[0].HSN_NO;
        this.ObjMasterProductm.GST_Percentage = data[0].GST_Percentage;
        this.ObjMasterProductm.UOM = data[0].UOM;
-      // this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
-       this.GetMakedist();
+       this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
+      //  this.GetMakedist();
        this.makedisabled = true;
        this.PDFViewFlag = data[0].Product_Image ? true : false;
        this.ProductPDFLink = data[0].Product_Image

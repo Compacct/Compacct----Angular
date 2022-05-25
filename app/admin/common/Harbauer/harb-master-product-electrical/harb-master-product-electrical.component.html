@@ -47,7 +47,7 @@
                                             <th>Product Description</th>
                                             <th>Product Type</th>
                                             <th>Product Sub Type</th>
-                                            <th>Product Category</th>
+                                            <th>GST Category</th>
                                             <th>Material of Cons.</th>
                                             <th>Capacity</th>
                                             <th>Additional Feature 1</th>
@@ -297,15 +297,15 @@
                                             <button (click)="ViewMake()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
                                             <button (click)="MakePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
                                         </div>
-                                        <p-multiSelect itemSize="30" [options]="MakeList" [styleClass]="'compacct-multiselect'" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [disabled]="makedisabled" [ngClass]="{'clearance': MasterProductelFormSubmitted && make.errors?.required}"
+                                        <p-multiSelect *ngIf="buttonname === 'Create'" itemSize="30" [options]="MakeList" [styleClass]="'compacct-multiselect'" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [disabled]="makedisabled" [ngClass]="{'clearance': MasterProductelFormSubmitted && make.errors?.required}"
                                             required>
                                         </p-multiSelect>
-                                        <!-- <select class="form-control" name="make" #make="ngModel" [(ngModel)]="ObjMasterProductm.Product_Mfg_Comp_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}" required>
-                                                              <option  [ngValue]="undefined">Select</option>
-                                                          <option *ngFor="let option of MakeList" [ngValue]="option.Product_Mfg_Comp_ID">
-                                                              {{option.Mfg_Company}}
-                                                              </option>
-                                                      </select> -->
+                                        <select *ngIf="buttonname != 'Create'" class="form-control" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [ngClass]="{'clearance': MasterProductelFormSubmitted && make.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of MakeList" [ngValue]="option.Product_Mfg_Comp_ID">
+                                                    {{option.Mfg_Company}}
+                                                </option>
+                                        </select>
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">File Upload</label>
