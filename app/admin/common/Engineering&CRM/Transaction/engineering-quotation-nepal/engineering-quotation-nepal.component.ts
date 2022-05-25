@@ -975,6 +975,18 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   
   })
   }
+  Print(obj) {
+    if (obj.Quotation_Doc_ID) {
+      
+        let Quotation_Doc_ID = obj.Quotation_Doc_ID
+        let Sub_Ledger_ID = this.ObjBrowseQuotation.Sub_Ledger_ID ? this.ObjBrowseQuotation.Sub_Ledger_ID : 0
+        let Foot_Fall_ID = this.ObjBrowseQuotation.Foot_Fall_ID ? this.ObjBrowseQuotation.Foot_Fall_ID : 0
+      
+      window.open("/Report/Crystal_Files/Nepal/Quotation_Print_New.aspx?Quotation_Doc_ID="+Quotation_Doc_ID+"&Sub_Ledger_ID="+Sub_Ledger_ID+"&Foot_Fall_ID="+Foot_Fall_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  
+      );
+    }
+  }
   onConfirm(){}
   onReject(){}
 
