@@ -95,8 +95,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
           this.getSpareParts(params['SUP']);
           this.BScallEndTime = new Date();
           this.BScallStartTime = new Date();
-          this.StartDatecall = this.CurrentDateNepal;
-          this.EndDatecall = this.CurrentDateNepal;
+         
           this.SpareDetailsSubmit = false;
           this.RequiredSpareDetailsSubmit = false;
           this.pendingCallFormSubmit = false;
@@ -111,6 +110,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
       Link: " Engineering CRM -> Master -> Pending Call"
     });
     this.mainItems = ["BROWSE", "CALL SHEET"];
+    this.StartDatecall = this.CurrentDateNepal;
+    this.EndDatecall = this.CurrentDateNepal;
     this.GetEngineerName();
   }
   onConfirm(){}
