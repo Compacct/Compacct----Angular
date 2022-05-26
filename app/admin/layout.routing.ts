@@ -211,6 +211,7 @@ import { MiclDispatchChallanComponent } from './common/MICL/micl-dispatch-challa
 import { HrLeaveApplyComponent } from "./common/MICL/hr-leave-apply/hr-leave-apply.component";
 import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Master/subledger-for-accounts/subledger-for-accounts.component";
 import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
+import { HarbaTaskListComponent } from "./common/TenderManagement/harba-task-list/harba-task-list.component";
 
 
 
@@ -1533,6 +1534,13 @@ data: {
   component: MasterProductGeneralConsumablesComponent,
   data: {
     title: 'Master Product General Consumables'
+}
+},
+{
+  path: 'BL_CRM_TXN_TASK_LIST',
+  component: HarbaTaskListComponent,
+  data: {
+    title: 'Task List'
 }
 },
 
