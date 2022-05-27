@@ -506,12 +506,12 @@
                 <tr>
                     <th>Product Description</th>
                     <th>Batch No</th>
-                    <th>Issue Qty</th>
-                    <th>Accepted Qty</th>
+                    <th>Qty</th>
+                    <!-- <th>Accepted Qty</th>
                     <th>Sale Rate</th>
                     <th>Franchise Rate</th>
                     <th>Total Franchise Rate</th>
-                    <th>Reason</th>
+                    <th>Reason</th> -->
                     <th>Action</th>
                 </tr>
             </ng-template>
@@ -524,13 +524,13 @@
                         <input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' [ngClass]="{'clearance' : editFlag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" />
                     </td>
                     <!-- <td>{{col.Accepted_Qty}}</td> -->
-                    <td>
+                    <!-- <td>
                         <input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' [ngClass]="{'clearance' : editFlag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" />
-                    </td>
-                    <td>{{col.Rate ? col.Rate : '-'}}</td>
+                    </td> -->
+                    <!-- <td>{{col.Rate ? col.Rate : '-'}}</td>
                     <td>{{col.Franchise_Rate ? col.Franchise_Rate : '-'}}</td>
                     <td>{{col.Total_Franchise_Rate ? col.Total_Franchise_Rate : '-'}}</td>
-                    <td>{{col.Accept_Reason}}</td>
+                    <td>{{col.Accept_Reason}}</td> -->
                     <td>
                         <button class="btn btn-primary custombtn" (click)='UpdateQty(col)' type="button" [id]="col.Txn_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                             Update
@@ -547,12 +547,13 @@
                 <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Update
         </button>
     </div> -->
-    <!-- <p-footer>
-        <button type="button" class="btn btn-success pull-right" (click)="saveDispatch()" id="load" [disabled]="Spinner">
+    <p-footer>
+        <!-- <button type="button" class="btn btn-success pull-right" (click)="saveDispatch()" id="load" [disabled]="Spinner">
             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                 <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Update
-        </button>
-   </p-footer> -->
+        </button> -->
+        <button type="button" (click)="updateQtyPopUp = false" class="btn btn-default">Close</button>
+   </p-footer>
 </p-dialog>
 <!-- popup Save -->
 <p-dialog header="Dispatch" [(visible)]="displaysavepopup" [modal]="true" [responsive]="true" [style]="{width: '545px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">

@@ -238,7 +238,8 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Make (Multiple)<sup class="text-danger">*</sup></label>
+                                        <label class="control-label" *ngIf="buttonname === 'Create'">Make (Multiple)<sup class="text-danger">*</sup></label>
+                                        <label class="control-label" *ngIf="buttonname != 'Create'">Make <sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
                                             <button (click)="ViewMakeMul()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
                                             <button (click)="MakeMulPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>

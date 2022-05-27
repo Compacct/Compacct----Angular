@@ -1325,8 +1325,17 @@ refreshEditmaster(DocNo){
            summary: "Distribution Challan No. " + Challan_No,
            detail: "Succesfully Updated"
          });
+         this.searchData(true);
        }
-        console.log("this.Objdispatch",this.productDetails);
+       else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
 
       })
 }
@@ -1777,7 +1786,7 @@ UpdateQty (updateobj){
       Doc_No : updateobj.Doc_No,
       Product_ID : updateobj.Product_ID,
       Qty : updateobj.Qty,
-      Accepted_Qty : updateobj.Accepted_Qty
+      Accepted_Qty : updateobj.Qty
     }
    const obj = {
     "SP_String": "SP_Add_ON",
@@ -1786,7 +1795,7 @@ UpdateQty (updateobj){
    }
    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
          // console.log(data);
-         var msg = this.billnumber === "NA" ? "Need to Refresh this bill once." : "Need to Refresh and Regenerate this bill once."
+         var msg = this.billnumber === "NA" ? "Need to Refresh this Challan once." : "Need to Refresh and Regenerate this bill once."
           if(data[0].Column1 === "Done") {
             this.compacctToast.clear();
             this.compacctToast.add({

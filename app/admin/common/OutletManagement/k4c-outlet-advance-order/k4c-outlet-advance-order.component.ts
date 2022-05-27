@@ -118,6 +118,10 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
 
   CostcentState : any;
 
+  UpdatePayModeModal = false;
+  UpdatePayModeList = [];
+  ObjUpdatePayMode : UpdatePayMode =  new  UpdatePayMode();
+
   constructor(
     private Header: CompacctHeader,
     private $http : HttpClient,
@@ -2093,6 +2097,62 @@ RefundSave(){
   })
 }
 
+// UPDATE PAYMENT MODE
+UpdatePaymentMode(ordno){
+  this.UpdatePayModeList = [];
+  if(ordno.Adv_Order_No) {
+  const obj = {
+    "SP_String": "SP_Add_ON",
+    "Report_Name_String": "Get_Advance_Order_Payment_Details",
+    "Json_Param_String": JSON.stringify([{Doc_No : ordno.Adv_Order_No}])
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    this.UpdatePayModeList = data;
+    this.ObjUpdatePayMode.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID ? data[0].Credit_To_Ac_ID : undefined;
+    this.ObjUpdatePayMode.Credit_To_Ac = data[0].Credit_To_Ac ? data[0].Credit_To_Ac : undefined;
+    this.ObjUpdatePayMode.Credit_To_Amount = data[0].Credit_To_Amount ? data[0].Credit_To_Amount : undefined;
+    this.ObjUpdatePayMode.Wallet_Ac_ID = data[0].Wallet_Ac_ID ? data[0].Wallet_Ac_ID : undefined;
+    this.ObjUpdatePayMode.Wallet_Ac = data[0].Wallet_Ac ? data[0].Wallet_Ac : undefined;
+    this.ObjUpdatePayMode.Wallet_Amount = data[0].Wallet_Amount ? data[0].Wallet_Amount : undefined;
+    this.ObjUpdatePayMode.Cash_Amount = data[0].Cash_Amount ? data[0].Cash_Amount : undefined;
+    this.ObjUpdatePayMode.Card_Amount = data[0].Card_Amount ? data[0].Card_Amount : undefined;
+    this.ObjUpdatePayMode.Total_Paid = data[0].Total_Paid ? data[0].Total_Paid : undefined;
+    this.ObjUpdatePayMode.Net_Due = data[0].Net_Due ? data[0].Net_Due : undefined;
+    this.UpdatePayModeModal = true;
+  })
+  }
+}
+AmountChangeUpdatePayMode(){
+  //console.log("called");
+  // var coupon_per = this.ObjcashForm.Coupon_Per ? this.ObjcashForm.Coupon_Per : 0;
+  // var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
+  var wallet_amount = this.ObjUpdatePayMode.Wallet_Amount ? this.ObjUpdatePayMode.Wallet_Amount : 0;
+  var cash_amount = this.ObjUpdatePayMode.Cash_Amount ? this.ObjUpdatePayMode.Cash_Amount : 0 ;
+  var card_amount = this.ObjUpdatePayMode.Card_Amount ? this.ObjUpdatePayMode.Card_Amount : 0;
+  var AdditionalPayment = this.ObjUpdatePayMode ? this.ObjUpdatePayMode : 0;
+  
+   this.ObjUpdatePayMode.Total_Paid = Number(wallet_amount) + Number(cash_amount) + Number(card_amount) + Number(AdditionalPayment);
+   
+  var lefttotal = Number(wallet_amount) + Number(card_amount);
+  
+   this.ObjUpdatePayMode.Net_Due = (Number(this.Amount_Payable) - Number(this.ObjUpdatePayMode.Total_Paid)).toFixed(2);
+
+   if(Number(lefttotal) > Number(this.Amount_Payable)) {
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Collected Amount is more than amount payable "
+  });
+  return false;
+  }
+
+}
+UpdatePMode(){}
+
 }
  class search{
   start_date : string;
@@ -2196,5 +2256,17 @@ class RefundcashForm{
   Wallet_Amount : number;
   Cash_Amount: number;
   // Refund_Amount : number = 0;
+}
+class UpdatePayMode{
+  Credit_To_Ac_ID : any;
+  Credit_To_Ac : string;
+  Credit_To_Amount: any;
+  Wallet_Ac_ID : any;
+  Wallet_Ac : string;
+  Wallet_Amount : number;
+  Cash_Amount: number;
+  Card_Amount: number;
+  Total_Paid : any;
+  Net_Due : any;
 }
 

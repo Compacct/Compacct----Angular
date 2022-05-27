@@ -102,6 +102,11 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
+                                                        <li *ngIf="col.Total_Qty === col.Total_Accepted_Qty">
+                                                            <a (click)="Refresh(col)">
+                                                                <i class="fa fa-refresh"></i> Refresh
+                                                            </a>
+                                                        </li>
                                                         <li>
                                                             <a (click)="view(col)">
                                                                 <i class="fa fa-fw fa-eye"></i> View
