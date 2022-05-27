@@ -239,6 +239,9 @@ export class HarbaProjectEstimateComponent implements OnInit {
       this.delete(index);
     }
   }
+  DeleteCostcenter(col){
+
+  }
 }
 class estimate {
     Project_ID : any;
