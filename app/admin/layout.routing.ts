@@ -1551,6 +1551,7 @@ data: {
     title: 'Task List'
 }
 },
+{
   path: 'Purchase_Bill_From_GRN',
   component: PurchaseBillFromGrnComponent,
   data: {
