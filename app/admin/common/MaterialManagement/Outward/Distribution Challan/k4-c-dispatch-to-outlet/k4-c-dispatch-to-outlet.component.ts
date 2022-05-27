@@ -141,6 +141,13 @@ export class K4CDispatchToOutletComponent implements OnInit {
   RegenerateBillNo = undefined;
   franchisechallandate: any = Date;
 
+  updateQtyPopUp = false;
+  updateproductDetails = [];
+  updateDocNO = undefined;
+  updateFromStokePoint = undefined;
+  updatedate = undefined;
+  billnumber = undefined;
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -1318,8 +1325,17 @@ refreshEditmaster(DocNo){
            summary: "Distribution Challan No. " + Challan_No,
            detail: "Succesfully Updated"
          });
+         this.searchData(true);
        }
-        console.log("this.Objdispatch",this.productDetails);
+       else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
 
       })
 }
@@ -1738,33 +1754,82 @@ Print(Doc_No){
     );
   }
 }
-// editmaster(masterProduct){
-//   if(masterProduct.Doc_No){
-//     this.doc_no = masterProduct.Doc_No ;
-//     const obj = {
-//           "SP_String": "SP_Production_Voucher",
-//           "Report_Name_String": "Get Dispatch Details For Edit",
-//           "Json_Param_String": JSON.stringify([{Doc_No : masterProduct.Doc_No}])
-//         }
-//         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-//           let editdata = data;
-//           this.editdataList = data;
-//           console.log("editdataList",this.editdataList);
-//           if(editdata.length){
-//             this.editPopUp = true;
-//           }
-//           this.brand = data[0].Brand_Name;
-//           this.toOutlet = data[0].To_Location;
-//           this.OutletStokePoint = data[0].To_godown_name;
-//           this.challanDate = new Date(data[0].Doc_Date);
-//           this.fromStokePoint =  data[0].F_godown_name;
-//           this.VehicleDetails = data[0].Vehicle_Details;
-//           this.Remarks = data[0].REMARKS === "NA" ? "  " : data[0].REMARKS ;
-//           this.GetProductBatch();
+// UPDATE QTY START
+dataforUpdateQty(docnoobj){
+  this.clearData();
+  this.billnumber = undefined;
+ if(docnoobj.Doc_No){
+   this.updateproductDetails = [];
+   this.billnumber = docnoobj.Bill_No;
+  const obj = {
+    "SP_String": "SP_Production_Voucher",
+    "Report_Name_String": "Get Data For Accepted Receive Distribution Challan",
+    "Json_Param_String": JSON.stringify([{Doc_No : docnoobj.Doc_No}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Api update",data);
+    this.updateproductDetails = data;
+    this.updateDocNO = data[0].Doc_No,
+    this.updateFromStokePoint = data[0].From_godown_name,
+    this.updatedate = new Date(data[0].Doc_Date)
 
-//         })
-//   }
-// }
+    //console.log("this.EditList",this.productDetails);
+
+  this.updateQtyPopUp = true;
+  })
+ }
+}
+UpdateQty (updateobj){
+  if(updateobj.Txn_ID && updateobj.Qty && updateobj.Accepted_Qty) {
+    const tempObj = {
+      Txn_ID : updateobj.Txn_ID,
+      Doc_No : updateobj.Doc_No,
+      Product_ID : updateobj.Product_ID,
+      Qty : updateobj.Qty,
+      Accepted_Qty : updateobj.Qty
+    }
+   const obj = {
+    "SP_String": "SP_Add_ON",
+    "Report_Name_String": "Update_Dispatch_Challan_Finished_Item_Qty",
+    "Json_Param_String": JSON.stringify([tempObj])
+   }
+   this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+         // console.log(data);
+         var msg = this.billnumber === "NA" ? "Need to Refresh this Challan once." : "Need to Refresh and Regenerate this bill once."
+          if(data[0].Column1 === "Done") {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              //summary: 'SKU ID : ' + obj.Product_ID,
+              detail: "Succesfully Updated ! " + msg
+            });
+            this.searchData(true);
+            // this.billnumber = undefined;
+            //this.dataforregeneratingbill(true);
+            //this.GetViewData(true);
+          }else{
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Error Occured"
+            });
+          }
+    });
+  }
+  if(!updateobj.Qty || !updateobj.Accepted_Qty){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Please Enter Qty"
+    });
+  }
+}
+// UPDATE QTY END
 GetProductBatch(){
   this.EditList.forEach(item=>{
     const tempObj = {

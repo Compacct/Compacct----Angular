@@ -101,6 +101,11 @@
                                                             <span class="caret"></span>
                                                         </button>
                                                     <ul class="dropdown-menu">
+                                                        <li *ngIf="col.Toyal_Qty === col.Accepted_Qty && $CompacctAPI.CompacctCookies.User_Type === 'A'">
+                                                            <a (click)="Refresh(col)">
+                                                                <i class="fa fa-refresh"></i> Refresh
+                                                            </a>
+                                                        </li>
                                                         <li>
                                                             <a (click)="view(col)">
                                                                 <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View

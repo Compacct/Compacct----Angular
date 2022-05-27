@@ -110,13 +110,13 @@
                                                                 <span class="caret"></span>
                                                             </button>
                                                             <ul class="dropdown-menu">
-                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
+                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') && (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
                                                                     <a (click)="ViewOnly(col.Voucher_No)"><i class="fa fa-fw fa-file-text-o"></i>View</a>
                                                                 </li>
-                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
+                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') && (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
                                                                     <a (click)="EditRecive(col.Voucher_No)"><i class="fa fa-fw fa-pencil"></i>Edit</a>
                                                                 </li>
-                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') || (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
+                                                                <li *ngIf="($CompacctAPI.CompacctCookies.Del_Right ==='Y') && (col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID)">
                                                                     <a (click)="DeleteRecvBill(col.Voucher_No)"><i class="fa fa-fw fa-trash"></i>Delete</a>
                                                                 </li>
                                                                 <li>

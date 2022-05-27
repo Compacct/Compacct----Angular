@@ -188,6 +188,11 @@
                                                                 <i class="fa fa-picture-o"></i> Show Image
                                                             </a>
                                                         </li>
+                                                        <li *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A"'>
+                                                            <a (click)="UpdatePaymentMode(col)">
+                                                                <i class="fa fa-money"></i> Update Payment Mode
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -218,7 +223,7 @@
                                     </ng-template>
                                 </p-table>
                             </div>
-
+                            <!-- MAKE PAYMENT -->
                             <p-dialog header="PAYMENT" [appendTo]="'body'" [visible]="MakePaymentModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" [maximizable]="true"
                                 [baseZIndex]="10000">
                                 <div class="col-sm-6">
@@ -1008,3 +1013,75 @@
        </button>
     </p-footer>
 </p-dialog>
+
+<!-- UPDATE PAYMENT MODE -->
+<p-dialog header="Update Payment Mode" [appendTo]="'body'" [(visible)]="UpdatePayModeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" [maximizable]="true"
+                                [baseZIndex]="10000">
+                                <div class="col-sm-6">
+                                    <div class="box box-successMP wellMP well-smMP shadow">
+                                        <div class="form-horizontal">
+                                            <div class="box-body">
+                                                <div class="form-group">
+                                                    <!-- <div class='col-sm-12'>
+                                                        <label class="control-label">Amount Payable:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Amount_Payable}}
+                                                    </div> -->
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Cash Amount:</label>
+                                                        <input class="form-control" type="text" style="text-align: center" name="cash" #cash="ngModel" [(ngModel)]="ObjUpdatePayMode.Cash_Amount" (ngModelChange)="AmountChangeUpdatePayMode()" CompacctDigitonly="true">
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Wallet Amount: </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">
+                                                                <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjUpdatePayMode.Wallet_Ac_ID" >
+                                                              <option [ngValue]="undefined">select</option>
+                                                              <option *ngFor = "let option of walletlist" [value] ="option.Txn_ID">
+                                                                  {{option.Ledger_Name}}
+                                                              </option>
+                                                          </select>
+                                                            </div>
+                                                            <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjUpdatePayMode.Wallet_Amount" (ngModelChange)="AmountChangeUpdatePayMode()" CompacctDigitonly="true">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Card Amount: </label>
+                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [(ngModel)]="ObjUpdatePayMode.Card_Amount" (ngModelChange)="AmountChangeUpdatePayMode()" CompacctDigitonly="true">
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Credit to Account:</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">
+                                                                <select name="Credit" #Credit="ngModel" [(ngModel)]="ObjUpdatePayMode.Credit_To_Ac_ID">
+                                                                    <option [ngValue]="undefined">select</option>
+                                                                    <option *ngFor = "let option of creditlist" [value] ="option.Txn_ID">
+                                                                        {{option.Ledger_Name}}
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                            <input type="text" class="form-control" id="exampleInputAmount1" name="credit" #credit="ngModel" [(ngModel)]="ObjUpdatePayMode.Credit_To_Amount" (ngModelChange)="AmountChangeUpdatePayMode()" CompacctDigitonly="true">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Total Paid:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjUpdatePayMode.Total_Paid}}
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Net Due:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjUpdatePayMode.Net_Due}}
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-footer>
+                                    <button type="button" (click)="UpdatePayModeModal = false" class="btn btn-default">
+                                  CLOSE
+                                </button>
+                                    <button type="button" (click)="UpdatePMode()" class="btn btn-success">
+                                  UPDATE
+                                </button>
+                                </p-footer>
+                            </p-dialog>

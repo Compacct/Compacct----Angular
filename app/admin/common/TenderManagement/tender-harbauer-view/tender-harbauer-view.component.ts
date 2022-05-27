@@ -250,6 +250,8 @@ export class TenderHarbauerViewComponent implements OnInit {
       header: 'Changed Purchase Amount'
     }
   ];
+
+  BiddinStatusFlag = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -268,7 +270,7 @@ export class TenderHarbauerViewComponent implements OnInit {
       Link: "Tender Management -> Update"
     });
     this.filterByList = ['FINANCIAL YEAR','DEPARTMENT',"PRIVATE OR GOVT","TENDER TYPE"];
-    this.filteroptionList = ['NOT RECEIVED TENDER','L1 TENDER','NOT SUBMITTED TENDER','PENDING TENDER']
+    this.filteroptionList = ['NOT RECEIVED TENDER','AWARDING THE TENDER','NOT SUBMITTED TENDER','PENDING TENDER']
     this.getFinancial();
     this.GetTenderOrgList();
     this.GetTypeList();
@@ -295,6 +297,15 @@ export class TenderHarbauerViewComponent implements OnInit {
   }
   clearData(){
 
+  }
+  
+  validate2 (e) {
+    let input = e.target.value;
+    const reg = /^\d*(\.\d{0,1})?$/;
+  
+    if (!reg.test(input)) {
+      e.preventDefault();
+    }
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -1400,6 +1411,7 @@ CheckIfTenderIDExist(){
   // Bid Opeing & AOC
   ViewBidOpening(col){
    console.log("col",col);
+   this.BiddinStatusFlag = false;
    this.BidOpenListViewByRateFlag = false;
    this.BidOpenListViewByLotteryFlag = false;
    this.BidTenderId = undefined;
@@ -1431,11 +1443,12 @@ CheckIfTenderIDExist(){
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{ 
         if(data.length && data[0].Status) {
-          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Agreement_Number){
+          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Tender_Negotiated_Value){
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status;
             this.AgreementList = data;
-            this.ObjAgreement.Tender_Negotiated_Value = data[0].Agreement_Number;
+            this.ObjAgreement.Tender_Negotiated_Value = data[0].Tender_Negotiated_Value;
             this.ObjAgreement.Tender_Doc_ID = TenderDocID;
+            this.BiddinStatusFlag = true;
           }
           if(data[0].Status === 'NOT- AWARDING THE TENDER' && data[0].Not_Awarding_Reason){    
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status; 
@@ -2129,7 +2142,7 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("data",data);
-        if (data.success) {
+        if (data[0].Column1) {
           this.compacctToast.clear();
           this.compacctToast.add({
           key: "compacct-toast",

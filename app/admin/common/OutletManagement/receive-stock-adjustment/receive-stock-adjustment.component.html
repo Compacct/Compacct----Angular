@@ -9,8 +9,11 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6">
+            <div class="ui-g-6" *ngIf="updexp_pop && !del_pop">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="del_pop && !updexp_pop">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -121,7 +124,7 @@
                                                             </a>
                                                         </li> -->
                                                         <li>
-                                                            <a>
+                                                            <a (click)="DeleteAdjustment(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>
                                                         </li>

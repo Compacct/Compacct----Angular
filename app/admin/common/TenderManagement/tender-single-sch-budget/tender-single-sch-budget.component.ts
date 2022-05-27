@@ -695,10 +695,26 @@ ngOnInit() {
       this.ObjEstimate.UOM = arr[0].UOM;
     }
   }
+  validate2 (e) {
+    let input = e.target.value;
+    const reg = /^\d*(\.\d{0,1})?$/;
+  
+    if (!reg.test(input)) {
+      e.preventDefault();
+    }
+  }
+  validate3 (e) {
+    let input = e.target.value;
+    const reg = /^\d*(\.\d{0,2})?$/;
+  
+    if (!reg.test(input)) {
+      e.preventDefault();
+    }
+  }
   CalculateEstimateAmount() {
     this.ObjEstimate.Amount = undefined;
     if (this.ObjEstimate.TQty && this.ObjEstimate.Rate) {
-      this.ObjEstimate.Rate = this.ObjEstimate.Rate.toFixed(2);
+      this.ObjEstimate.Rate = Number(this.ObjEstimate.Rate).toFixed(2);
       this.ObjEstimate.Amount = (Number(this.ObjEstimate.Rate) * Number(this.ObjEstimate.TQty)).toFixed(2);
 
     }
@@ -706,7 +722,7 @@ ngOnInit() {
   CalculateEstimatesaleAmount() {
     this.ObjEstimate.Sale_Amount = undefined;
     if (this.ObjEstimate.TQty && this.ObjEstimate.saleRate) {
-      this.ObjEstimate.saleRate = this.ObjEstimate.saleRate.toFixed(2);
+      this.ObjEstimate.saleRate = Number(this.ObjEstimate.saleRate).toFixed(2);
       this.ObjEstimate.Sale_Amount = (Number(this.ObjEstimate.saleRate) * Number(this.ObjEstimate.TQty)).toFixed(2);
 
     }
@@ -714,8 +730,8 @@ ngOnInit() {
   CalculateEstimateQty() {
     this.ObjEstimate.TQty = undefined;
     if (this.ObjEstimate.Qty && this.ObjEstimate.Nos) {
-      this.ObjEstimate.Qty = this.ObjEstimate.Qty.toFixed(2);
-      this.ObjEstimate.TQty = (Number(this.ObjEstimate.Nos) * Number(this.ObjEstimate.Qty));
+      this.ObjEstimate.Qty = Number(this.ObjEstimate.Qty).toFixed(3);
+      this.ObjEstimate.TQty = (Number(this.ObjEstimate.Nos) * Number(this.ObjEstimate.Qty)).toFixed(3);
       this.CalculateEstimateAmount();
       this.CalculateEstimatesaleAmount();
     }

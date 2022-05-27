@@ -1943,6 +1943,7 @@ header="Bid openning & AOC"
         [ngClass]="{
           clearance: BidOpeningListFormSubmitted && Bid_Status?.errors?.required
         }"
+        [disabled]="BiddinStatusFlag"
         required
       >
         <option [ngValue]="undefined">Select</option>
@@ -1987,7 +1988,6 @@ header="Bid openning & AOC"
     name="Agreement"
     #Agreement="ngModel"
     [(ngModel)]="ObjAgreement.Agreement_Number"
-    CompacctDigitonly="true"
     placeholder="Agreement Number"
     [ngClass]="{'clearance': AgreementSubmitted && Agreement.errors?.required}" required>
    </div>
@@ -1997,6 +1997,7 @@ header="Bid openning & AOC"
     name="AgreementValue"
     #AgreementValue="ngModel"
     [(ngModel)]="ObjAgreement.Agreement_Value"
+    (keypress)="validate2($event)"
     CompacctDigitonly="true"
     placeholder="Agreement value"
     [ngClass]="{'clearance': AgreementSubmitted && AgreementValue.errors?.required}" required>

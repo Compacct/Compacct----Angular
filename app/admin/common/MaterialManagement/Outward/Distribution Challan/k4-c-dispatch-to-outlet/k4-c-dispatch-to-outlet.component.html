@@ -146,6 +146,11 @@
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.Total_Qty === col.Total_Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID != 'A'">
+                                                            <a (click)="dataforUpdateQty(col)">
+                                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Qty
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -466,51 +471,33 @@
         <button type="button" pButton icon="fa fa-times" (click)="tabView=false" label="Close" class="ui-button-secondary"></button>
    </p-footer> -->
 </p-dialog>
-<!-- edit -->
-<p-dialog header="Edit" [(visible)]="editPopUp" [modal]="true" [responsive]="true" [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+<!-- Update Qty -->
+<p-dialog header="Update Qty" [(visible)]="updateQtyPopUp" [modal]="true" [responsive]="true" [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
     <div class="form-group">
-        <div class="col-sm-3">
-            <label class="control-label">Brand</label>
-            <div class="label-t">{{brand}}</div>
-        </div>
-        <div class="col-sm-3">
-            <label class="control-label">Outlet</label>
-            <div class="label-t">{{toOutlet}}</div>
-        </div>
-
-        <div class="col-sm-3">
-            <label class="control-label">Outlet Stock Point</label>
-            <div class="label-t">{{OutletStokePoint}}</div>
-
-        </div>
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <label class="control-label">Challan Date</label>
-            <div class="label-t">{{challanDate | date :"dd/MMM/yyyy"}}</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-4">
-            <label class="control-label">Dispatch Stock Point</label>
-            <div class="label-t">{{fromStokePoint}}</div>
+            <div class="label-t">{{updatedate | date :"dd/MMM/yyyy"}}</div>
         </div>
         <div class="col-sm-4">
-            <label class="control-label">Vehicle Details</label>
-            <div class="label-t">{{VehicleDetails}}</div>
+            <label class="control-label">Challan No</label>
+            <div class="label-t">{{updateDocNO}}</div>
         </div>
 
         <div class="col-sm-4">
-            <label class="control-label">Remarks</label>
-            <textarea class="form-control" name="REMARKS" [(ngModel)]="Remarks" disabled></textarea>
+            <label class="control-label">From Stoke Point</label>
+            <div class="label-t">{{updateFromStokePoint}}</div>
 
         </div>
+
+
     </div>
     <div class="clearfix"></div>
-    <div class="no-padding">
-        <p-table [value]="editdataList" [globalFilterFields]="['Product_Description','Rate','Req_Qty','Batch_No','Issue_Qty']" [rowHover]="true" [autoLayout]="true" #dt1>
+    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="updateproductDetails" [globalFilterFields]="['Product_Description','Batch_No','Qty','Accepted_Qty','Rate','Franchise_Rate','Total_Franchise_Rate','Accept_Reason']" [rowHover]="true" [autoLayout]="true" #dt0>
             <ng-template pTemplate="caption">
                 <div class="row">
                     <div class="col-sm-3 pull-right" style="text-align: right">
-                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt0.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                     </div>
                 </div>
 
@@ -518,37 +505,55 @@
             <ng-template pTemplate="header">
                 <tr>
                     <th>Product Description</th>
-                    <th>Req Qty</th>
                     <th>Batch No</th>
-                    <th>Batch Qty</th>
-                    <th>Issue Qty</th>
+                    <th>Qty</th>
+                    <!-- <th>Accepted Qty</th>
+                    <th>Sale Rate</th>
+                    <th>Franchise Rate</th>
+                    <th>Total Franchise Rate</th>
+                    <th>Reason</th> -->
+                    <th>Action</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col let-i="rowIndex">
                 <tr>
-                    <ng-container *ngIf="CheckLengthProductIDedit(col.Product_ID) !== 1 && CheckIndexProductIDedit(col.Product_ID) === i;">
-                        <td [attr.rowspan]="CheckLengthProductIDedit(col.Product_ID)">{{col.Product_Description}}</td>
-                        <td [attr.rowspan]="CheckLengthProductIDedit(col.Product_ID)">{{col.Req_Qty}}</td>
-
-                    </ng-container>
-                    <ng-container *ngIf="CheckLengthProductIDedit(col.Product_ID) === 1">
-                        <td>{{col.Product_Description}}</td>
-                        <td>{{col.Req_Qty}}</td>
-                    </ng-container>
+                    <td>{{col.Product_Description}}</td>
                     <td>{{col.Batch_No}}</td>
-                    <td>{{col.Batch_Qty}}</td>
-                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' (ngModelChange)='qtyChqEdit(col)' [ngClass]="{'clearance' : editFlag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                    <!-- <td>{{col.Qty}}</td> -->
+                    <td>
+                        <input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' [ngClass]="{'clearance' : editFlag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" />
+                    </td>
+                    <!-- <td>{{col.Accepted_Qty}}</td> -->
+                    <!-- <td>
+                        <input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' [ngClass]="{'clearance' : editFlag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" />
+                    </td> -->
+                    <!-- <td>{{col.Rate ? col.Rate : '-'}}</td>
+                    <td>{{col.Franchise_Rate ? col.Franchise_Rate : '-'}}</td>
+                    <td>{{col.Total_Franchise_Rate ? col.Total_Franchise_Rate : '-'}}</td>
+                    <td>{{col.Accept_Reason}}</td> -->
+                    <td>
+                        <button class="btn btn-primary custombtn" (click)='UpdateQty(col)' type="button" [id]="col.Txn_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                            Update
+                        </button>
+                    </td>
 
                 </tr>
             </ng-template>
         </p-table>
     </div>
-    <div class="box-footer">
+    <!-- <div class="box-footer">
         <button type="button" class="btn btn-primary pull-right" (click)="saveDispatch()" id="load" [disabled]="Spinner">
-                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Update
-                    </button>
-    </div>
+            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Update
+        </button>
+    </div> -->
+    <p-footer>
+        <!-- <button type="button" class="btn btn-success pull-right" (click)="saveDispatch()" id="load" [disabled]="Spinner">
+            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Update
+        </button> -->
+        <button type="button" (click)="updateQtyPopUp = false" class="btn btn-default">Close</button>
+   </p-footer>
 </p-dialog>
 <!-- popup Save -->
 <p-dialog header="Dispatch" [(visible)]="displaysavepopup" [modal]="true" [responsive]="true" [style]="{width: '545px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">

@@ -212,6 +212,7 @@ import { HrLeaveApplyComponent } from "./common/MICL/hr-leave-apply/hr-leave-app
 import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Master/subledger-for-accounts/subledger-for-accounts.component";
 import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
 import { HarbaTaskListComponent } from "./common/TenderManagement/harba-task-list/harba-task-list.component";
+import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 
 
 
@@ -1422,6 +1423,13 @@ const layoutRoutes: Routes = [{
     }
   },
   {
+    path: 'Attendance_Sheet',
+    component: AttendanceSheetComponent,
+    data: {
+      title: 'AttendanceSheetComponent'
+    }
+  },
+  {
       path: 'Master_Company',
       component: MasterCompanyComponent,
       data: {
@@ -1541,6 +1549,12 @@ data: {
   component: HarbaTaskListComponent,
   data: {
     title: 'Task List'
+}
+},
+  path: 'Purchase_Bill_From_GRN',
+  component: PurchaseBillFromGrnComponent,
+  data: {
+    title: 'Purchase Bill From GRN'
 }
 },
 

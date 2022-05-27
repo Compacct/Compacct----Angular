@@ -70,7 +70,7 @@ export class TenderHarbauerActualViewComponent implements OnInit {
     this.GetTenderOrgList();
     this.GetTypeList();
     this.filterByList = ['FINANCIAL YEAR','DEPARTMENT',"PRIVATE OR GOVT","TENDER TYPE"];
-    this.filteroptionList = ['NOT RECEIVED TENDER','L1 TENDER','NOT SUBMITTED TENDER','PENDING TENDER'];
+    this.filteroptionList = ['NOT RECEIVED TENDER','AWARDING THE TENDER','NOT SUBMITTED TENDER','PENDING TENDER'];
     this.cols = [
       { field: 'Work_Name', header: 'Name of Work' },
       { field: 'Tender_Authority', header: 'Tender Authority' },

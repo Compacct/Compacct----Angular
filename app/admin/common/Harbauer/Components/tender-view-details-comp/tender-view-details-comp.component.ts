@@ -330,7 +330,7 @@ export class TenderViewDetailsCompComponent implements OnInit {
           const tenderCategory = this.tenderCategoryList.filter(el => Number(el.Tender_Category_ID) === Number(data[0].Tender_Category_ID));
           this.ObjTender.Tender_Category_ID = tenderCategory.length ? tenderCategory[0].Tender_Category_Name : '';
           const tendrInformation = this.TenderInfoEnqList.filter(el => Number(el.Enq_Source_ID) === Number(data[0].Enq_Source_ID));
-          this.ObjTender.State = tendrInformation.length ? tendrInformation[0].Enq_Source_Name : '';
+          this.ObjTender.Enq_Source_Name = tendrInformation.length ? tendrInformation[0].Enq_Source_Name : '';
           const tendrAssign = this.UserList.filter(el => Number(el.User_ID) === Number(data[0].User_ID));
           this.ObjTender.User_ID = tendrAssign.length ? tendrAssign[0].User_Name : '';
         }
@@ -768,11 +768,12 @@ class Tender {
   EMD_Amount: string;
   T_Fee_Amount: string;
   Enq_Source_ID: number;
+  Enq_Source_Name: string;
   Tender_Informed_Date: string;
   Period_Of_Working: string;
   Budget_Required_By: string;
   Govt_Proposal: string;
-  Tender_Publishing_Info_From: any
+  Tender_Publishing_Info_From: any;
 }
 class BidOpeningList {
   Schedule_ID: string;

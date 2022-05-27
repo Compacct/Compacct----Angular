@@ -47,7 +47,7 @@
                                             <th>Product Description</th>
                                             <th>Product Type</th>
                                             <th>Product Sub Type</th>
-                                            <th>Product Category</th>
+                                            <th>GST Category</th>
                                             <th>Material of Cons.</th>
                                             <th>Capacity</th>
                                             <th>Product Feature</th>
@@ -145,7 +145,7 @@
                                                             </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Product Category<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">GST Category<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="productcategory" #productcategory="ngModel" [(ngModel)]="ObjMasterProductm.Cat_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && productcategory.errors?.required}" required>
                                                                     <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let option of ProductCategoryList" [ngValue]="option.Cat_ID">
@@ -238,16 +238,21 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Make (Multiple)<sup class="text-danger">*</sup></label>
-                                        <p-multiSelect itemSize="30" [options]="MakeList" [styleClass]="'compacct-multiselect'" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [disabled]="makedisabled" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}"
+                                        <label class="control-label" *ngIf="buttonname === 'Create'">Make (Multiple)<sup class="text-danger">*</sup></label>
+                                        <label class="control-label" *ngIf="buttonname != 'Create'">Make <sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <button (click)="ViewMakeMul()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                            <button (click)="MakeMulPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                        </div>
+                                        <p-multiSelect *ngIf="buttonname === 'Create'" itemSize="30" [options]="MakeList" [styleClass]="'compacct-multiselect'" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [disabled]="makedisabled" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}"
                                             required>
                                         </p-multiSelect>
-                                        <!-- <select class="form-control" name="make" #make="ngModel" [(ngModel)]="ObjMasterProductm.Product_Mfg_Comp_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}" required>
-                                                              <option  [ngValue]="undefined">Select</option>
-                                                          <option *ngFor="let option of MakeList" [ngValue]="option.Product_Mfg_Comp_ID">
-                                                              {{option.Mfg_Company}}
-                                                              </option>
-                                                      </select> -->
+                                        <select *ngIf="buttonname != 'Create'" class="form-control" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of MakeList" [ngValue]="option.Product_Mfg_Comp_ID">
+                                                    {{option.Mfg_Company}}
+                                                </option>
+                                            </select>
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">File Upload</label>
@@ -495,6 +500,41 @@
 </button>
     </p-footer>
 </p-dialog>
+<p-dialog [header]="'Create Make (Multiple)'" [appendTo]="'body'" [visible]="MakeMulModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="MakeMulForm" #MakeMulForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Make (Multiple)<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" class="form-control" name="makemulname" #makemulname="ngModel" [(ngModel)]="MakeMulName" placeholder="Make (Multiple)" [ngClass]="{
+          clearance: MakeMulFormSubmitted && makemulname?.errors?.required
+        }" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="MakeMulModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateMakeMul(MakeMulForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
 
 <!-- VIEWS -->
 <!-- Product Type -->
@@ -657,6 +697,32 @@
     </div>
     <p-footer>
         <button type="button" (click)="ViewGradeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<!-- Make (Multiple) -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewMakeMulModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="MakeList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Make (Multiple)</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Mfg_Company}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteMakeMul(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewMakeMulModal = false" class="btn btn-default">
   CANCEL
 </button>
     </p-footer>

@@ -64,6 +64,15 @@ export class TutoSalesTreeComponent implements OnInit {
 
   nodeselect = false;
 
+  BDAinactivePopup = false;
+  SelectISMFormSubmitted = false;
+  ISMIntroducerList = [];
+  Bdamemberidforsave = undefined;
+  Intro_Member_ID = undefined;
+  BDAname = undefined;
+  changeName = undefined;
+  updateMemNameFormSubmitted = false;
+
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -180,11 +189,14 @@ export class TutoSalesTreeComponent implements OnInit {
     this.nodeselect = true;
     console.log(event.node.label);
     this.EditFlag = false;
+    this.BDAinactivePopup = false;
     this.EditDistributorObj = {};
     if(event.node.Sub_Dept === "DISTRIBUTOR") {
+      this.BDAinactivePopup = false;
       event.node.Sub_Dept = "TELE SALES"
     }
     if(event.node.Sub_Dept === "TELE SALES"){
+      this.BDAinactivePopup = false;
       this.EditFlag = true;
       this.EditDistributorObj ={...event.node};
       this.compacctToast.clear();
@@ -199,6 +211,7 @@ export class TutoSalesTreeComponent implements OnInit {
      // this.OpenSaleFieldModal(event.node.Sub_Dept, event.node)
     }
     if(event.node.Sub_Dept === "ZONAL HEAD"){
+      this.BDAinactivePopup = false;
       this.EditDistributorObj ={...event.node};
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -211,6 +224,7 @@ export class TutoSalesTreeComponent implements OnInit {
       });
     }
     if(event.node.Sub_Dept === "SCHOOL"){
+      this.BDAinactivePopup = false;
       const TempObj  ={...event.node};
       const obj = {
         "SP_String": "Tutopia_Sales_Tree_Edit_SP",
@@ -225,6 +239,7 @@ export class TutoSalesTreeComponent implements OnInit {
        })
     }
     if(event.node.Sub_Dept === "ASP"){
+      this.BDAinactivePopup = false;
       const TempObj  ={...event.node};
       const obj = {
         "SP_String": "Tutopia_Sales_Tree_Edit_SP",
@@ -238,9 +253,16 @@ export class TutoSalesTreeComponent implements OnInit {
    
        })
     }
-
+    
+    if((event.node.Sub_Dept === "BDA - GROUP 1") || (event.node.Sub_Dept === "BDA - GROUP 2") || (event.node.Sub_Dept === "BDA - GROUP 3")){
+      this.SelectISMFormSubmitted = false;
+      this.updateMemNameFormSubmitted = false;
+      this.BDAinactivePopup = true;
+      this.BDAname = event.node.label;
+      this.GetISMBDAIntroducer(event.node.Sub_Dept);
     console.log(event.node);
     if(event.node.Member_ID) {
+      this.Bdamemberidforsave = event.node.Member_ID;
      this.ngxService.start();
      const obj = {
        "SP_String": "Tutopia_Inside_sales_Team_Update_SP",
@@ -249,6 +271,7 @@ export class TutoSalesTreeComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        if(data.length) {
+        this.changeName = data[0].Member_Name;
          const type = data[0].Sub_Dept_Name;
          const openField = type.includes('TELE SALES') ? true : type.includes('SALES HEAD') ? true : false;
          openField ? this.OpenSaleFieldModal2(type,event.node) : this.ngxService.stop(); 
@@ -257,10 +280,208 @@ export class TutoSalesTreeComponent implements OnInit {
        }
      });
     }
+    } 
    }
    nodeUnselect(event) {
      console.log(event.node.label);
    }
+   // BDA POPUP
+   InactiveBDA() {
+     console.log("this.Bdamemberidforsave ===", this.Bdamemberidforsave)
+    if(this.Bdamemberidforsave) {
+      const obj1 = {
+        "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
+        "Report_Name_String": "InActive_Member",
+        "Json_Param_String": JSON.stringify([{Member_ID : this.Bdamemberidforsave}])
+      }
+      this.GlobalAPI.getData(obj1).subscribe((data:any)=>{
+        console.log(data);
+        if (data[0].Column1 === "Done"){
+          // let Type = obj.Sub_Dept;
+          this.EditDistributorObj = {};
+          this.ClearData();
+          this.ClearData2();
+          this.BDAinactivePopup = false;
+          this.loading = true;
+          this.GetTreeData();
+          // this.compacctToast.clear('c4');
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            // summary: '' + Type,
+            detail:  "Inactivated Succesfully "
+          });
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+
+      })
+    }
+  }
+   GetISMBDAIntroducer(SupDeptName,edit?){
+    this.ISMIntroducerList = [];
+    if (SupDeptName === "ISM (SALES HEAD)"){
+      SupDeptName = "SALES HEAD"
+    }
+    SupDeptName = SupDeptName.includes('- GROUP') ? 'TELE SALES' : SupDeptName;
+    const obj = {
+      "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
+      "Report_Name_String": "Get_Introducer_Dropdown",
+      "Json_1_String": JSON.stringify([{Sub_Dept_Name : SupDeptName}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      data.forEach(element => {
+        element['label'] = element.Member_Name;
+        element['value'] = element.Member_ID;
+      });
+      this.ISMIntroducerList = data;
+      // this.CreateFieldModal2 = edit && edit.Member_ID ? false : true;
+      // this.SaleTree = false;
+      // edit && edit.Member_ID ? this.GetEditData(edit) : null;
+    });
+   }
+   SaveSelectISM(valid){
+     this.SelectISMFormSubmitted = true;
+     if(valid){
+      // const reportName = this.EditFlag ? 'Edit_Distributor_Introducer' : 'Create_Sales_Tree';
+      // let UserNameCheck = true;
+      // if(this.CreateFieldModalTitle === 'ASP') {
+      //  let responseData = await this.CheckASPname(); 
+      //  console.log(responseData)
+      //  if(responseData[0].Column1.toString() === 'YES') { 
+      //   UserNameCheck = false;
+      //  }
+      // }
+      // if(UserNameCheck) {
+        const objsave = {
+          Member_ID : this.Bdamemberidforsave,
+          Intro_Member_ID : this.Intro_Member_ID
+        }
+        const obj = {
+          "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
+          "Report_Name_String": "Update_ISM",
+          "Json_Param_String": JSON.stringify(objsave)
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          console.log(data);
+          if(data[0].Column1) {
+            this.EditDistributorObj = {};
+            this.ClearData();
+            this.loading = true;
+            this.GetTreeData();
+            this.ClearData2();
+            this.BDAinactivePopup = false;
+            this.Bdamemberidforsave = undefined;
+            this.Intro_Member_ID = undefined;
+            this.BDAname = undefined;
+            this.SelectISMFormSubmitted = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              // summary: '' + Type,
+              detail:  "Succesfully Created"
+            });
+            // this.onReject();
+  
+          } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+          }
+  
+        })
+      // }else {
+      //   this.compacctToast.clear();
+      //     this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "error",
+      //       summary: "Validation Message",
+      //       detail: "This User Name Already Exits."
+      //     });
+      // }
+     }
+
+   }
+   UpdateMemberName(valid){
+    this.updateMemNameFormSubmitted = true;
+    if(valid){
+     // const reportName = this.EditFlag ? 'Edit_Distributor_Introducer' : 'Create_Sales_Tree';
+     // let UserNameCheck = true;
+     // if(this.CreateFieldModalTitle === 'ASP') {
+     //  let responseData = await this.CheckASPname(); 
+     //  console.log(responseData)
+     //  if(responseData[0].Column1.toString() === 'YES') { 
+     //   UserNameCheck = false;
+     //  }
+     // }
+     // if(UserNameCheck) {
+       const objsave = {
+         Member_ID : this.Bdamemberidforsave,
+         Member_Name : this.changeName
+       }
+       const obj = {
+         "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
+         "Report_Name_String": "Update_Member_Name",
+         "Json_Param_String": JSON.stringify(objsave)
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         console.log(data);
+         if(data[0].Column1) {
+           this.EditDistributorObj = {};
+           this.ClearData();
+           this.loading = true;
+           this.GetTreeData();
+           this.ClearData2();
+           this.BDAinactivePopup = false;
+           this.Bdamemberidforsave = undefined;
+           this.Intro_Member_ID = undefined;
+           this.BDAname = undefined;
+           this.updateMemNameFormSubmitted = false;
+           this.changeName = undefined;
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             // summary: '' + Type,
+             detail:  "Succesfully Updated"
+           });
+           // this.onReject();
+ 
+         } else {
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: "Error Occured "
+           });
+         }
+ 
+       })
+     // }else {
+     //   this.compacctToast.clear();
+     //     this.compacctToast.add({
+     //       key: "compacct-toast",
+     //       severity: "error",
+     //       summary: "Validation Message",
+     //       detail: "This User Name Already Exits."
+     //     });
+     // }
+    }
+
+  }
    GetTreeData(){
     this.loading = true;
     const obj = {
@@ -655,27 +876,6 @@ GetIntroducerList2(SupDeptName,edit?){
 //     this.CurrentNode = e;
 //   }
 // }
-nodeSelect2(event) {
-  this.nodeselect = false;
- console.log(event.node);
- if(event.node.Member_ID) {
-  this.ngxService.start();
-  const obj = {
-    "SP_String": "Tutopia_Inside_sales_Team_Update_SP",
-    "Report_Name_String": "Retrieve_Sales_Head_OR_Tele_Sales",
-    "Json_1_String": JSON.stringify([{Member_ID : event.node.Member_ID}])
-  }
-  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    if(data.length) {
-      const type = data[0].Sub_Dept_Name;
-      const openField = type.includes('TELE SALES') ? true : type.includes('SALES HEAD') ? true : false;
-      openField ? this.OpenSaleFieldModal2(type,event.node) : this.ngxService.stop(); 
-    } else{
-      this.ngxService.stop();
-    }
-  });
- }
-}
 // nodeUnselect(event) {
 //   console.log(event.node.label);
 // }

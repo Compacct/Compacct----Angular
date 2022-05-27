@@ -8,15 +8,15 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <!--<div class="ui-g-6">
+            <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
-            <div class="ui-g-6"  *ngIf="act_popup && !can_popup">
+           <!-- <div class="ui-g-6"  *ngIf="act_popup && !can_popup">
                 <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
-            </div> 
+            </div> -->
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
-            </div>-->
+            </div>
         </div>
     </ng-template>
 </p-toast>
@@ -26,7 +26,7 @@
             <div class="form-horizontal">
                 <div class="box-body">
                      <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list">
                             <div class="table-responsive no-padding">
                                 <div class="table-responsive no-padding">
                                     <p-table [value]="AllData" 
@@ -47,7 +47,6 @@
                                         </ng-template>
                                         <ng-template pTemplate="header">
                                             <tr>
-                                                <th style="width:5em">Action</th>
                                                 <th>Ledger Name</th>
                                                 <th>Subledger Name</th>
                                                 <th>Edit</th>
@@ -57,14 +56,14 @@
                                         <ng-template pTemplate="body" let-col>
                                             <tr>
 
-                                                <td>
+                                                <!-- <td>
                                                     <div class="dropdown">
                                                         <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
                                                         type="button" data-toggle="dropdown" style="height:27px">
                                                                             <i class="fa fa-fw fa-bars"></i>
                                                                             <span class="caret"></span>
                                                                         </button>
-                                                       <!-- <ul class="dropdown-menu">
+                                                        <ul class="dropdown-menu">
                                                             <li>
                                                                 <a (click)="EditLeave(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
@@ -80,16 +79,23 @@
                                                                       <i class="fa fa-power-off"></i> Active
                                                                 </a>
                                                            </li> 
-                                                        </ul>-->
+                                                        </ul>
                                                     </div>
-                                                </td> 
-                                                
+                                                </td>  -->
                                                 <td>{{col.Ledger_Name}}</td>
                                                 <td>{{col.Sub_Ledger_Name}}</td>
-                                                <td></td>
-                                                <td></td>
-                                               
-                                                
+                                                <td>
+                                                     <a (click)="EditLedger(col)"
+                                                        class="fa fa-fw fa-pencil" 
+                                                        style="cursor: pointer">
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                     <a (click)="DeleteLedger(col)"
+                                                         class="fa fa-fw fa-trash" 
+                                                         style="cursor: pointer">
+                                                    </a>
+                                                </td>
                                             </tr>
                                         </ng-template>
                                 </p-table>
@@ -98,35 +104,52 @@
                             </div>
 
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
-                        <form name="leaveForm" #leaveForm="ngForm" novalidate >
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-pencil">
+                        <form name="ledgerForm" #ledgerForm="ngForm" novalidate >
                     <div class="form-group">
                         <div class="col-sm-6">
-                            <label class="control-label">Ledger
-                                <sup class="text-danger">*</sup></label>
-                                <p-dropdown filter="true"placeholder="Select a Ledger">
-                                    <ng-template let-item pTemplate="selectedItem">
-                                        <span style="vertical-align:middle; margin-left: .5em"></span>
-                                    </ng-template>
-                                </p-dropdown>    
-                            
+                                <label class="control-label">Ledger<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="ledgerList" name="Ledger_Name" 
+                                [(ngModel)]="Objsubledger.Ledger_ID" 
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Item Found'" 
+                                [filter]="true" 
+                                filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Item'" 
+                                [virtualScroll]="true"
+                                itemSize="30" 
+                                #Ledger_Name="ngModel" 
+                                [styleClass]=" LedgerFormSubmit && Ledger_Name.errors?.required?'clearance': ''" [required]="true">
+                               </p-dropdown>
                             </div>
+                            
                                 <div class="col-sm-6">
                                     <label class="control-label">Subledger Name
                                         <sup class="text-danger">*</sup></label>
-                                    <input  class="form-control" placeholder="Subledger Name">
-                                   
+                                    <input  class="form-control" 
+                                    placeholder="Subledger Name" name="Sub_Ledger_Name"
+                                    #Sub_Ledger_Name ="ngModel"
+                                   [(ngModel)]="Objsubledger.Sub_Ledger_Name"
+                                   [ngClass]="{'clearance': LedgerFormSubmit && Sub_Ledger_Name?.errors?.required}"
+                                   required> 
                                 </div>
                         <div class="form-group">        
-                                    <div class="col-sm-6" style="margin-top: 6px; margin-left: 15px;">
-                                        <label class="control-label">Tag Ledger</label>
-                                        <p-multiSelect [styleClass]="'compacct-multiselect'"  optionLabel="name" optionValue="id" optionGroupLabel="label" optionGroupChildren="subItems"></p-multiSelect>
-                                       
-                                    </div> 
+                                <div class="col-sm-6" style="margin-top: 8px; margin-left:15px; width:49%;" >
+                                        <label class="control-label">Tag Ledger<sup class="text-danger">*</sup></label>
+                                    <p-multiSelect 
+                                        [options]="TagledgerList" 
+                                        [(ngModel)]="SelectedTagLedger" 
+                                        [styleClass]="'compacct-multiselect'" 
+                                        name="CatagorytTypefilter" 
+                                         #CatagorytTypefilter="ngModel" 
+                                        [ngClass]="{'clearance': LedgerFormSubmit && CatagorytTypefilter.errors?.required}"required>
+                                    </p-multiSelect>
+                                </div> 
                         </div>            
                         </div>
                             <div class="box-footer">
-                                <button class="btn btn-primary pull-right"  id="load" (click)="saveData(leaveForm.form.valid)"   [disabled]="Spinner">
+                                <button class="btn btn-primary pull-right"  id="load" (click)="saveData(ledgerForm.form.valid)"   [disabled]="Spinner">
                                                 <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
                                         </button>

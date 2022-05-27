@@ -60,6 +60,9 @@ export class HarbMasterProductCivilComponent implements OnInit {
   GradeModal = false;
   GradeFormSubmitted = false;
   GradeName = undefined;
+  MakeMultipleModal = false;
+  MakeMultipleFormSubmitted = false;
+  MakeMultipleName = undefined;
 
   ViewProTypeModal = false;
   ViewProSubTModal = false;
@@ -67,6 +70,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
   ViewCapacityModal = false;
   ViewProFeatureModal = false;
   ViewGradeModal = false;
+  ViewMakeMultipleModal = false;
 
   protypeid = undefined;
   protypesubid = undefined;
@@ -94,6 +98,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
   sizeid = undefined;
   pfetureid = undefined;
   grdid = undefined;
+  makemultipleid = undefined;
   rmrk = undefined;
   hcode = undefined;
   per = undefined;
@@ -778,6 +783,89 @@ export class HarbMasterProductCivilComponent implements OnInit {
   
     });
   }
+  ViewMakeMultiple(){
+    this.MakeList = [];
+    this.GetMake();
+    setTimeout(() => {
+      this.ViewMakeMultipleModal = true;
+    }, 300);
+  }
+  deleteMakeMultiple(makemultipleid){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.Profeatureid = undefined;
+    this.gradeid = undefined;
+    this.makemultipleid = undefined;
+    if(makemultipleid.Product_Mfg_Comp_ID ){
+      this.makemultipleid = makemultipleid.Product_Mfg_Comp_ID ;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  MakemultiplePopup(){
+    this.MakeMultipleFormSubmitted = false;
+    this.MakeMultipleName = undefined;
+    this.MakeMultipleModal = true;
+    this.Spinner = false;
+  }
+  CreateMakeMultiple(valid){
+    this.MakeMultipleFormSubmitted = true;
+    this.Spinner = true;
+      const Obj = {
+        Mfg_Company : this.MakeMultipleName
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_mechanical",
+           "Report_Name_String" : "Master_Product_Manufacture_Create",
+           "Json_Param_String": JSON.stringify([Obj])
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Return_ID  " + tempID,
+             detail: "Succesfully Created" //+ mgs
+           });
+           this.MakeMultipleFormSubmitted = false;
+           this.MakeMultipleName = undefined;
+           this.MakeMultipleModal = false;
+           this.Spinner = false;
+           this.GetMake();
+       
+           } else{
+             this.Spinner = false;
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       
+        } else{
+          this.Spinner = false;
+        }
+  }
 
  //Common Delete
   onConfirm() {
@@ -828,6 +916,13 @@ export class HarbMasterProductCivilComponent implements OnInit {
       }
       FunctionRefresh = 'GetGrade';
     }
+    if (this.makemultipleid) {
+      ReportName = "Delete_Master_Product_Manufacture_Data"
+      ObjTemp = {
+        Product_Mfg_Comp_ID: this.makemultipleid
+      }
+      FunctionRefresh = 'GetMake';
+    }
       const obj = {
         "SP_String": "SP_Harbauer_Master_Product_mechanical",
         "Report_Name_String" : ReportName,
@@ -870,16 +965,16 @@ export class HarbMasterProductCivilComponent implements OnInit {
       if (this.productid) {
         this.Spinner = true;
         this.MasterProductCivilFormSubmitted = true;
-      if(valid && this.Product_Mfg_Comp_ID.length){
+      if(valid){
       let UpdateArr =[]
-      this.Product_Mfg_Comp_ID.forEach(item => {
+      // this.Product_Mfg_Comp_ID.forEach(item => {
         const Obj = {
             Product_ID : this.productid,
-            Product_Mfg_Comp_ID : item
+            Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
            // Mfg_Company : item.label
         }
         UpdateArr.push({...Obj,...this.ObjMasterProductCivil})
-    });
+    // });
     console.log("Update =" , UpdateArr)
       // const Obj = {
       //   Product_ID  : this.productid,
@@ -1116,8 +1211,8 @@ export class HarbMasterProductCivilComponent implements OnInit {
        this.ObjMasterProductCivil.HSN_NO = data[0].HSN_NO;
        this.ObjMasterProductCivil.GST_Percentage = data[0].GST_Percentage;
        this.ObjMasterProductCivil.UOM = data[0].UOM;
-      // this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
-       this.GetMakedist();
+       this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
+      //  this.GetMakedist();
        this.makedisabled = true;
        this.PDFViewFlag = data[0].Product_Image ? true : false;
        this.ProductPDFLink = data[0].Product_Image

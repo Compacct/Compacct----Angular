@@ -2014,6 +2014,34 @@ SaveFranRegenerateSaleBill(){
     }
   })
 }
+Refresh(obj){
+  // this.refreshEditmaster(obj.Doc_No);
+
+}
+// refreshEditmaster(DocNo){
+//   const obj = {
+//          "SP_String": "SP_Production_Voucher",
+//          "Report_Name_String": "Refresh Distribution Challan",
+//          "Json_Param_String": JSON.stringify([{Doc_No : DocNo}])
+//        }
+//      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//        console.log("From Api",data);
+//        this.Refreshlist = data;
+//        var Challan_No = data[0].Column1;
+//        console.log("this.Refreshlist",this.Refreshlist);
+//        if(data[0].Column1){
+//        this.compacctToast.clear();
+//           this.compacctToast.add({
+//            key: "compacct-toast",
+//            severity: "success",
+//            summary: "Distribution Challan No. " + Challan_No,
+//            detail: "Succesfully Updated"
+//          });
+//        }
+//         console.log("this.Objdispatch",this.productDetails);
+
+//       })
+// }
 
 
 }

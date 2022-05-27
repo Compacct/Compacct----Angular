@@ -294,9 +294,10 @@ export class MiclDispatchChallanComponent implements OnInit {
     })
   }
   // FOR INDENT NUMBER
-  GetIndentList(){
+  GetIndentList(valid){
     // this.RawMaterialIssueFormSubmitted = true;
-     //if(valid){
+    this.DispatchFormSubmit = true;
+     if(valid){
       this.SpinnerShow = true;
      const TempObj = {
        Req_Date : this.DateService.dateConvert(new Date(this.ReqDate)),
@@ -322,6 +323,7 @@ export class MiclDispatchChallanComponent implements OnInit {
       this.From_Godown_ID_Dis = true;
       this.To_Godown_ID_Dis = true;
       this.SpinnerShow = false;
+      this.DispatchFormSubmit = false;
      // } else {
      //   this.IndentNoList = [];
 
@@ -330,7 +332,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     console.log("this.Indentlist======",this.IndentNoList);
     this.GetIndent();
    })
-  // }
+  }
    }
    GetIndent(){
      let DIndent = [];
@@ -769,15 +771,15 @@ saveqty(){
         detail: "Distribution Challan Entry Succesfully"
       });
 
-      this.tabIndexToView = 0;
-      this.items = ["BROWSE", "CREATE"];
-      this.buttonname = "Create";
+      // this.tabIndexToView = 0;
+      // this.items = ["BROWSE", "CREATE"];
+      // this.buttonname = "Create";
      // this.clearData()
       this.ReqDate = new Date();
-      this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+      this.ChallanDate = new Date();
       // this.ObjBrowseData.Cost_Cen_ID = this.Objdispatch.Cost_Cen_ID;
       // this.ObjBrowseData.Brand_ID = this.Objdispatch.Brand_ID;
-      // this.searchData(true);
+      this.searchData(true);
       this.displaysavepopup = false;
       this.SelectedIndent = [];
       this.IndentFilter = [];
@@ -788,8 +790,8 @@ saveqty(){
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.clearData();
-     this.ReqDate = new Date();
-     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+    //  this.ReqDate = new Date();
+    //  this.ChallanDate = this.DateService.dateConvert(new Date(this.challanDate));
      }else{
       this.ngxService.stop();
       this.compacctToast.clear();
@@ -884,7 +886,7 @@ saveqty(){
         console.log("this.GetAllDataList",this.GetAllDataList);
         this.clearData();
         // this.todayDate = new Date();
-        this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+        // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
        // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
       })
     }
@@ -941,7 +943,7 @@ onConfirm(){
          });
          this.clearData();
          this.ReqDate = new Date();
-         this.ChallanDate = this.DateService.dateConvert(new Date(this.challanDate));
+         this.ChallanDate = new Date();;
        }
      })
   }
