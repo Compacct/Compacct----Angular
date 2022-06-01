@@ -215,6 +215,7 @@ import { HarbaTaskListComponent } from "./common/TenderManagement/harba-task-lis
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
+import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-category.component';
 
 
 
@@ -1572,6 +1573,13 @@ data: {
   component: BdaWiseTargetAchievementComponent,
   data: {
     title: 'BDA Wise Target Achievement'
+}
+},
+{
+  path: 'Tax_Category',
+  component: TaxCategoryComponent,
+  data: {
+    title: 'Tax Category'
 }
 },
 

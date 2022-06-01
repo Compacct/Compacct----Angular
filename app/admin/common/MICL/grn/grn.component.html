@@ -97,10 +97,10 @@
                                             <th nowrap="nowrap">Supplier</th>
                                             <th nowrap="nowrap">Cost Center</th>
                                             <th nowrap="nowrap">Godown</th>
-                                            <th nowrap="nowrap">RDB No Date</th>
+                                            <!-- <th nowrap="nowrap">RDB No Date</th> -->
                                             <th nowrap="nowrap">SE No Date</th>
-                                            <th nowrap="nowrap">PO Doc No</th>
-                                            <th nowrap="nowrap">PO Doc Date</th>
+                                            <th nowrap="nowrap">RDB No</th>
+                                            <th nowrap="nowrap">RDB Date</th>
                                             <!-- Inv_No_Date
                                             AC_Head -->
                                             <th nowrap="nowrap">Mode Of Transport</th>
@@ -164,10 +164,10 @@
                                             <td nowrap="nowrap">{{col.Sub_Ledger_Name}}</td>
                                             <td nowrap="nowrap">{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
                                             <td nowrap="nowrap">{{col.godown_name }}</td>
-                                            <td nowrap="nowrap">{{col.RDB_No_Date }}</td>
+                                            <!-- <td nowrap="nowrap">{{col.RDB_No_Date }}</td> -->
                                             <td nowrap="nowrap">{{col.SE_No_Date }}</td>
                                             <td nowrap="nowrap">{{col.RDB_No }}</td>
-                                            <td nowrap="nowrap">{{col.PO_Doc_Date | date : 'dd/MMM/yyyy' }}</td>
+                                            <td nowrap="nowrap">{{col.RDB_Date | date : 'dd/MMM/yyyy' }}</td>
                                             <td nowrap="nowrap">{{col.Mode_Of_transport }}</td>
                                             <td nowrap="nowrap">{{col.LR_No_Date }}</td>
                                             <td nowrap="nowrap">{{col.Vehicle_No }}</td>

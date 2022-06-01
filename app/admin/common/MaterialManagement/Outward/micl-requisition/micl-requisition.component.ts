@@ -104,6 +104,7 @@ export class MiclRequisitionComponent implements OnInit {
       this.AddMaterialsList.push({
         Product_ID: this.objmaterial.Product_ID,
         Product_Description: productFilter[0].Product_Description,
+        Product_Code: productFilter[0].Product_Code,
         Req_Qty: this.objmaterial.Req_Qty,
         UOM: this.objmaterial.UOM,
         Remarks: this.objmaterial.Remarks,
