@@ -126,7 +126,7 @@ export class GrnComponent implements OnInit {
     this.POorderlist = [];
     const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
-      "Report_Name_String": "Get_Pending_PO_Order_Nos",
+      "Report_Name_String": "Get_Pending_RDB_Nos",
       "Json_Param_String": JSON.stringify([{Sub_Ledger_ID : this.ObjGRN1.Sub_Ledger_ID}])
 
    }
@@ -137,9 +137,13 @@ export class GrnComponent implements OnInit {
   }
 
   GetProductDetails(){
-    this.ProductDetailslist = [];
+     this.ProductDetailslist = [];
+    this.ObjGRN.Rate = undefined;
+    this.ObjGRN.Product_Details = undefined;
+    this.ObjGRN.GST_Tax_Per = undefined;
+    this.ObjGRN = new GRN();
     const postobj = {
-      Doc_No : this.ObjGRN1.PO_Doc_No
+      Doc_No : this.ObjGRN1.RDB_No
     }
     const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
@@ -154,29 +158,27 @@ export class GrnComponent implements OnInit {
    this.GetPODate();
  }
  GetRate(){
-  this.ObjGRN.Rate = undefined;
-  this.ObjGRN.Product_Details = undefined;
-  this.ObjGRN.GST_Tax_Per = undefined;
+
   console.log(this.ObjGRN.Rate)
   if(this.ObjGRN.Product_ID) {
     const ctrl = this;
     const RateObj = $.grep(ctrl.ProductDetailslist,function(item: any) {return item.Product_ID == ctrl.ObjGRN.Product_ID})[0];
     console.log(RateObj);
     this.ObjGRN.Rate = RateObj.Rate;
-    this.ObjGRN.Product_Details = RateObj.Product_Name;
-    this.ObjGRN.GST_Tax_Per = RateObj.GST_Percentage;
+    this.ObjGRN.Product_Details = RateObj.Product_Description;
+    this.ObjGRN.GST_Tax_Per = RateObj.GST_Tax_Per;
  
    }
 }
  GetPODate(){
-  this.ObjGRN1.PO_Doc_Date = undefined;
+  this.ObjGRN1.RDB_Date = undefined;
   this.podatedisabled = true;
-  if(this.ObjGRN1.PO_Doc_No) {
+  if(this.ObjGRN1.RDB_No) {
     const ctrl = this;
-    const DateObj = $.grep(ctrl.POorderlist,function(item: any) {return item.Doc_No == ctrl.ObjGRN1.PO_Doc_No})[0];
+    const DateObj = $.grep(ctrl.POorderlist,function(item: any) {return item.RDB_No == ctrl.ObjGRN1.RDB_No})[0];
     console.log(DateObj);
-    this.ObjGRN1.PO_Doc_Date = new Date(DateObj.Doc_Date);
-    this.PODate = new Date(this.ObjGRN1.PO_Doc_Date);
+    this.ObjGRN1.RDB_Date = new Date(DateObj.RDB_Date);
+    this.PODate = new Date(this.ObjGRN1.RDB_Date);
     this.podatedisabled = false;
    }
    else {
@@ -236,7 +238,7 @@ export class GrnComponent implements OnInit {
       Taxable_Value : Number(amount).toFixed(2),
       GST_Tax_Per : Number(this.ObjGRN.GST_Tax_Per),
       //Last_Purchase_With_GST : Number(lastpurchaseGST),
-      Tax : Number(taxsgstcgst).toFixed(2),
+      Tax :  Number(taxsgstcgst).toFixed(2),
       Total_Amount : Number(totalamount).toFixed(2)
     };
     this.productaddSubmit.push(productObj);
@@ -244,6 +246,9 @@ export class GrnComponent implements OnInit {
     this.GRNFormSubmitted = false;
     // this.clearData();
     this.ObjGRN = new GRN();
+    this.ObjGRN.Rate = undefined;
+    this.ObjGRN.Product_Details = undefined;
+    this.ObjGRN.GST_Tax_Per = undefined;
     //this.localpurchaseFLag = false;
         }
          else {
@@ -489,7 +494,7 @@ export class GrnComponent implements OnInit {
       const objj = {
        "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
        "Report_Name_String": "Delete_BL_Txn_Purchase_Challan_GRN",
-       "Json_Param_String": JSON.stringify([{Doc_No : this.doc_no , Created_By : this.$CompacctAPI.CompacctCookies.User_ID}])
+       "Json_Param_String": JSON.stringify([{Doc_No : this.doc_no , Created_By : this.$CompacctAPI.CompacctCookies.User_ID }])
       }
       this.GlobalAPI.getData(objj).subscribe((data:any)=>{
         //var msg = data[0].Column1;
@@ -580,8 +585,8 @@ class GRN1 {
   godown_id : any;
   RDB_No_Date : any;
   SE_No_Date : any;
-  PO_Doc_No : any;
-  PO_Doc_Date : any;
+  RDB_No : any;
+  RDB_Date : any;
   Mode_Of_transport : any;
   LR_No_Date : any;
   Vehicle_No : any;
