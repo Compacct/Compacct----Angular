@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MessageService } from "primeng/api";
 import {CompacctHeader} from "../../../shared/compacct.services/common.header.service"
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, JsonpClientBackend } from '@angular/common/http';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { DatePickerComponent, DateTimePickerModule, TimePickerComponent } from "@syncfusion/ej2-angular-calendars";
@@ -121,6 +121,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   UpdatePayModeModal = false;
   UpdatePayModeList = [];
   ObjUpdatePayMode : UpdatePayMode =  new  UpdatePayMode();
+  Ord_No = undefined;
 
   constructor(
     private Header: CompacctHeader,
@@ -1626,8 +1627,10 @@ geteditlist(Adv_Order_No){
         Delivery_Charge : Number(element.Delivery_Charge),
         Stock_Qty :  Number(element.Qty),
         Amount :Number(element.Amount).toFixed(2),
+        Amount_berore_Tax : Number(element.Taxable).toFixed(2),
         Max_Discount : Number(element.Discount_Per),
         Dis_Amount : Number(element.Discount_Amt).toFixed(2),
+        Taxable : Number(Number(element.Taxable) - Number(element.Discount_Amt)).toFixed(2),
         Gross_Amount : Number(element.Gross_Amt).toFixed(2),
         SGST_Per : Number(element.SGST_Per).toFixed(2),
         SGST_Amount : Number(element.SGST_Amt).toFixed(2),
@@ -2109,6 +2112,7 @@ UpdatePaymentMode(ordno){
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     //console.log(data);
     this.UpdatePayModeList = data;
+    this.ObjUpdatePayMode.Amount_Payable = data[0].Amount_Payable ? data[0].Amount_Payable : undefined;
     this.ObjUpdatePayMode.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID ? data[0].Credit_To_Ac_ID : undefined;
     this.ObjUpdatePayMode.Credit_To_Ac = data[0].Credit_To_Ac ? data[0].Credit_To_Ac : undefined;
     this.ObjUpdatePayMode.Credit_To_Amount = data[0].Credit_To_Amount ? data[0].Credit_To_Amount : undefined;
@@ -2119,39 +2123,158 @@ UpdatePaymentMode(ordno){
     this.ObjUpdatePayMode.Card_Amount = data[0].Card_Amount ? data[0].Card_Amount : undefined;
     this.ObjUpdatePayMode.Total_Paid = data[0].Total_Paid ? data[0].Total_Paid : undefined;
     this.ObjUpdatePayMode.Net_Due = data[0].Net_Due ? data[0].Net_Due : undefined;
+    this.ObjUpdatePayMode.Doc_No = data[0].Adv_Order_No;
+    this.ObjUpdatePayMode.Order_Date = this.DateService.dateConvert(new Date(data[0].Order_Date));
+    this.ObjUpdatePayMode.Cost_Cent_ID = data[0].Cost_Cent_ID;
+    this.ObjUpdatePayMode.Del_Cost_Cent_ID = data[0].Del_Cost_Cent_ID;
+    this.ObjUpdatePayMode.Del_Date = this.DateService.dateConvert(new Date(data[0].Del_Date));
+    this.ObjUpdatePayMode.Del_Date_Time = this.DateService.dateTimeConvert(new Date(data[0].Del_Date_Time));
+    this.ObjUpdatePayMode.Foot_Fall_ID = data[0].Foot_Fall_ID;
+    this.ObjUpdatePayMode.Costomer_Mobile = data[0].Costomer_Mobile;
+    this.ObjUpdatePayMode.Customer_Name = data[0].Customer_Name;
+    this.ObjUpdatePayMode.Customer_DOB = this.DateService.dateConvert(new Date(data[0].Customer_DOB));
+    this.ObjUpdatePayMode.Customer_Anni = this.DateService.dateConvert(new Date(data[0].Customer_Anni));
+    this.ObjUpdatePayMode.Customer_GST = data[0].Customer_GST;
+    this.ObjUpdatePayMode.Net_Payable = data[0].Net_Payable;
     this.UpdatePayModeModal = true;
   })
   }
 }
-AmountChangeUpdatePayMode(){
-  //console.log("called");
-  // var coupon_per = this.ObjcashForm.Coupon_Per ? this.ObjcashForm.Coupon_Per : 0;
-  // var credit_amount = this.ObjcashForm.Credit_To_Amount ? this.ObjcashForm.Credit_To_Amount : 0;
-  var wallet_amount = this.ObjUpdatePayMode.Wallet_Amount ? this.ObjUpdatePayMode.Wallet_Amount : 0;
-  var cash_amount = this.ObjUpdatePayMode.Cash_Amount ? this.ObjUpdatePayMode.Cash_Amount : 0 ;
-  var card_amount = this.ObjUpdatePayMode.Card_Amount ? this.ObjUpdatePayMode.Card_Amount : 0;
-  var AdditionalPayment = this.ObjUpdatePayMode ? this.ObjUpdatePayMode : 0;
-  
-   this.ObjUpdatePayMode.Total_Paid = Number(wallet_amount) + Number(cash_amount) + Number(card_amount) + Number(AdditionalPayment);
-   
-  var lefttotal = Number(wallet_amount) + Number(card_amount);
-  
-   this.ObjUpdatePayMode.Net_Due = (Number(this.Amount_Payable) - Number(this.ObjUpdatePayMode.Total_Paid)).toFixed(2);
-
-   if(Number(lefttotal) > Number(this.Amount_Payable)) {
-    this.ngxService.stop();
+UpdatePMode(){
+  if((this.ObjUpdatePayMode.Cash_Amount > this.ObjUpdatePayMode.Total_Paid) ||
+     (this.ObjUpdatePayMode.Wallet_Amount > this.ObjUpdatePayMode.Total_Paid) ||
+     (this.ObjUpdatePayMode.Card_Amount > this.ObjUpdatePayMode.Total_Paid)){
     this.compacctToast.clear();
     this.compacctToast.add({
       key: "compacct-toast",
       severity: "error",
       summary: "Warn Message",
-      detail: "Collected Amount is more than amount payable "
-  });
-  return false;
+      detail: "Amount can't be more than Total Paid"
+    });
+    return false;
   }
+  if((this.ObjUpdatePayMode.Wallet_Ac_ID == undefined && this.ObjUpdatePayMode.Wallet_Amount) ||
+     (!this.ObjUpdatePayMode.Wallet_Amount && this.ObjUpdatePayMode.Wallet_Ac_ID )){
+      this.Spinner = false;
+      this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error in wallet Amount"
+    });
+    return false;
+  }
+  if((!this.ObjUpdatePayMode.Cash_Amount) && (!this.ObjUpdatePayMode.Wallet_Amount) && (!this.ObjUpdatePayMode.Card_Amount)){
+      this.Spinner = false;
+      this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Enter Amount"
+    });
+    return false;
+  }
+  this.ObjUpdatePayMode.Cash_Amount = this.ObjUpdatePayMode.Cash_Amount ? Number(this.ObjUpdatePayMode.Cash_Amount) : 0;
+  this.ObjUpdatePayMode.Wallet_Ac_ID = this.ObjUpdatePayMode.Wallet_Ac_ID ? Number(this.ObjUpdatePayMode.Wallet_Ac_ID) : 0;
+  this.ObjUpdatePayMode.Wallet_Amount = this.ObjUpdatePayMode.Wallet_Amount ? Number(this.ObjUpdatePayMode.Wallet_Amount) : 0;
+  this.ObjUpdatePayMode.Card_Amount = this.ObjUpdatePayMode.Card_Amount ? Number(this.ObjUpdatePayMode.Card_Amount) : 0;
+  this.ObjUpdatePayMode.Credit_To_Ac_ID = this.ObjUpdatePayMode.Credit_To_Ac_ID ? Number(this.ObjUpdatePayMode.Credit_To_Ac_ID) : 0;
+  this.ObjUpdatePayMode.Credit_To_Amount = this.ObjUpdatePayMode.Credit_To_Amount ? Number(this.ObjUpdatePayMode.Credit_To_Amount) : 0;
+  this.ObjUpdatePayMode.Fin_Year_ID = Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID);
 
+  const obj = {
+    "SP_String": "SP_Add_ON",
+    "Report_Name_String": "Update_Advance_Order_Payment_Details",
+    "Json_Param_String": JSON.stringify([this.ObjUpdatePayMode])
+   }
+   this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    var tempID = data[0].Column1;
+    // this.Adv_Order_No = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+     // const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: " " + tempID,
+       detail: "Succesfully Updated" 
+     });
+     this.UpdatePayModeModal = false;
+     this.Showdata();
+     this.Showdatabymobile(true);
+     this.ObjUpdatePayMode = new UpdatePayMode();
+    } else{
+
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
 }
-UpdatePMode(){}
+DelMulPayments(obj){
+    //console.log(this.Objcustomerdetail.Adv_Order_No)
+    this.Ord_No = undefined;
+    if(obj.Adv_Order_No){
+      this.checkSave = true;
+      this.Can_Remarks = false;
+    this.Ord_No = obj.Adv_Order_No;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+      });
+    }
+}
+onConfirm2(){
+  this.Can_Remarks = false;
+    const Tempobj = {
+      Doc_No : this.Ord_No
+    }
+    const obj = {
+      "SP_String": "SP_Add_ON",
+      "Report_Name_String": "Delete_Multiple_Payment",
+      "Json_Param_String": JSON.stringify([Tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // var msg = data[0].Column1;
+      //console.log(data);
+      //if(data[0].Column1 === "Cancel Successfully") {
+        if(data[0].Column1) {
+        this.Showdata();
+        this.Showdatabymobile(true);
+        this.cancleFormSubmitted = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Adv_Order_No : " + this.Ord_No,
+          detail:  "Successfully Deleted"
+        });
+        this.Ord_No = undefined;
+
+      } else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+}
 
 }
  class search{
@@ -2258,6 +2381,8 @@ class RefundcashForm{
   // Refund_Amount : number = 0;
 }
 class UpdatePayMode{
+  Doc_No : any;
+  Amount_Payable : any;
   Credit_To_Ac_ID : any;
   Credit_To_Ac : string;
   Credit_To_Amount: any;
@@ -2268,5 +2393,18 @@ class UpdatePayMode{
   Card_Amount: number;
   Total_Paid : any;
   Net_Due : any;
+  Order_Date : any;
+  Cost_Cent_ID : number;
+  Del_Cost_Cent_ID : number;
+  Del_Date : any;
+  Del_Date_Time : any;
+  Foot_Fall_ID : number;
+  Costomer_Mobile : any;
+  Customer_Name : string;
+  Customer_DOB : any;
+  Customer_Anni : any;
+  Customer_GST : string;
+  Net_Payable : number;
+  Fin_Year_ID : number;
 }
 

@@ -73,6 +73,7 @@ export class OutletStockTransferComponent implements OnInit {
   RequistionSearchFormSubmit = false;
   DisabledBatch = false;
   MTdisabled = false;
+  Refreshlist = [];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -1142,6 +1143,40 @@ ValidateEntryCheck(){
     }
   })
 }
+}
+
+Refresh(DocNo){
+  const obj = {
+         "SP_String": "SP_Add_ON",
+         "Report_Name_String": "Refresh Outlet Stock Transfer",
+         "Json_Param_String": JSON.stringify([{Doc_No : DocNo.Doc_No}])
+       }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log("From Api",data);
+       this.Refreshlist = data;
+       var Challan_No = data[0].Column1;
+       console.log("this.Refreshlist",this.Refreshlist);
+       if(data[0].Column1){
+       this.compacctToast.clear();
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Distribution Challan No. " + Challan_No,
+           detail: "Succesfully Updated"
+         });
+         this.searchData(true);
+       }
+       else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+
+      })
 }
 }
 

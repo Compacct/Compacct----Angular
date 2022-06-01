@@ -302,6 +302,7 @@ import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-p
 import { HarbaTaskListComponent } from './common/TenderManagement/harba-task-list/harba-task-list.component';
 import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
+import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
 
 @NgModule({
   declarations: [
@@ -523,7 +524,9 @@ import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-g
     MasterProductGeneralConsumablesComponent,
     HarbaTaskListComponent,
     RdbComponent,
-    PurchaseBillFromGrnComponent
+    PurchaseBillFromGrnComponent,
+    BdaWiseTargetAchievementComponent
+    
   ],
   imports: [
     CommonModule,

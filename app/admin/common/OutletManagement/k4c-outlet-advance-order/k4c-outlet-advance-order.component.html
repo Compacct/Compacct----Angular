@@ -6,8 +6,8 @@
             <h3>{{message.summary}}</h3>
             <p *ngIf="checkSave">{{message.detail}}</p>
         </div>
-        <form name="cancleForm" #cancleForm="ngForm" novalidate>
-            <div style="text-align: center">
+        <form  name="cancleForm" #cancleForm="ngForm" novalidate>
+            <div style="text-align: center" *ngIf="Can_Remarks">
                 <label class="control-label">Remarks <sup class="text-danger">*</sup></label>
                 <input class="form-control" name="cancleremarks" #cancleremarks="ngModel" [(ngModel)]="Cancle_Remarks" [ngClass]="{'clearance':cancleFormSubmitted && cancleremarks?.errors?.required}" required>
             </div>
@@ -17,7 +17,7 @@
                 <button type="button" pButton (click)="onConfirm(cancleForm.form.valid)" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6" *ngIf="!Can_Remarks">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -148,11 +148,11 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <!-- <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y" && !col.Bill_No' a>
+                                                        <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y" && !col.Bill_No'>
                                                             <a (click)="CreateBill(col,'editorder')">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
-                                                        </li> -->
+                                                        </li>
                                                         <li>
                                                             <a (click)="PrintOrder(col)">
                                                                 <i class="fa fa-print" aria-hidden="true"></i> Order Print
@@ -178,7 +178,7 @@
                                                                 <i class="fa fa-inr" aria-hidden="true"></i> Make Payment
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf='col.Cancel_Order === "N"'>
                                                             <a (click)="Refund(col)">
                                                                 <i class="fa fa-money" aria-hidden="true"></i> Refund
                                                             </a>
@@ -188,9 +188,14 @@
                                                                 <i class="fa fa-picture-o"></i> Show Image
                                                             </a>
                                                         </li>
-                                                        <li *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A"'>
+                                                        <li *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A" && col.Total_Paid && col.Cancel_Order === "N"'>
                                                             <a (click)="UpdatePaymentMode(col)">
                                                                 <i class="fa fa-money"></i> Update Payment Mode
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A" && col.Cancel_Order === "N"'>
+                                                            <a (click)="DelMulPayments(col)">
+                                                                <i class="fa fa-trash"></i> Delete Multiple Payments
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -1022,12 +1027,12 @@
                                         <div class="form-horizontal">
                                             <div class="box-body">
                                                 <div class="form-group">
-                                                    <!-- <div class='col-sm-12'>
-                                                        <label class="control-label">Amount Payable:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Amount_Payable}}
-                                                    </div> -->
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Amount Payable:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjUpdatePayMode.Amount_Payable}}
+                                                    </div>
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Cash Amount:</label>
-                                                        <input class="form-control" type="text" style="text-align: center" name="cash" #cash="ngModel" [(ngModel)]="ObjUpdatePayMode.Cash_Amount" (ngModelChange)="AmountChangeUpdatePayMode()" CompacctDigitonly="true">
+                                                        <input class="form-control" type="text" style="text-align: center" name="cash" #cash="ngModel" [(ngModel)]="ObjUpdatePayMode.Cash_Amount"  CompacctDigitonly="true">
                                                     </div>
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Wallet Amount: </label>
@@ -1040,13 +1045,13 @@
                                                               </option>
                                                           </select>
                                                             </div>
-                                                            <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjUpdatePayMode.Wallet_Amount" (ngModelChange)="AmountChangeUpdatePayMode()" CompacctDigitonly="true">
+                                                            <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjUpdatePayMode.Wallet_Amount"  CompacctDigitonly="true">
                                                         </div>
                                                     </div>
 
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Card Amount: </label>
-                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [(ngModel)]="ObjUpdatePayMode.Card_Amount" (ngModelChange)="AmountChangeUpdatePayMode()" CompacctDigitonly="true">
+                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [(ngModel)]="ObjUpdatePayMode.Card_Amount"  CompacctDigitonly="true">
                                                     </div>
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Credit to Account:</label>
@@ -1059,7 +1064,7 @@
                                                                     </option>
                                                                 </select>
                                                             </div>
-                                                            <input type="text" class="form-control" id="exampleInputAmount1" name="credit" #credit="ngModel" [(ngModel)]="ObjUpdatePayMode.Credit_To_Amount" (ngModelChange)="AmountChangeUpdatePayMode()" CompacctDigitonly="true">
+                                                            <input type="text" class="form-control" id="exampleInputAmount1" name="credit" #credit="ngModel" [(ngModel)]="ObjUpdatePayMode.Credit_To_Amount" [disabled]="true" CompacctDigitonly="true">
                                                         </div>
                                                     </div>
 

@@ -123,6 +123,11 @@
                                                                 <i class="fa fa-print"></i> Print
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.Qty === col.Accepted_Qty">
+                                                            <a (click)="Refresh(col)">
+                                                                <i class="fa fa-refresh"></i> Refresh
+                                                            </a>
+                                                        </li>
 
                                                     </ul>
                                                 </div>

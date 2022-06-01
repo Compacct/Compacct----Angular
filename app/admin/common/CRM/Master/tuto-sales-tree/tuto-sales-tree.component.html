@@ -231,7 +231,7 @@
               </div>
             <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"|| CreateFieldModalTitle === "School")'>
                 <label class="control-label">{{CreateFieldModalTitle}} Name<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle + ' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required disabled>
+                <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle + ' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required [disabled]="CreateFieldModalTitle != 'ASP'">
             </div>
             <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
                 <label class="control-label">User Name<sup class="text-danger">*</sup></label>

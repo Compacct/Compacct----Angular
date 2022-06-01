@@ -214,6 +214,10 @@ import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-p
 import { HarbaTaskListComponent } from "./common/TenderManagement/harba-task-list/harba-task-list.component";
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 import { RdbComponent } from "./common/MICL/rdb/rdb.component";
+import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
+
+
+
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1561,8 +1565,15 @@ data: {
   component: RdbComponent,
   data: {
     title: 'RDB Entry'
-  }
 }
+},
+{
+  path: 'BDA_Wise_Target_Achievement',
+  component: BdaWiseTargetAchievementComponent,
+  data: {
+    title: 'BDA Wise Target Achievement'
+}
+},
 
   
 
