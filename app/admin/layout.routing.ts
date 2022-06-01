@@ -213,6 +213,7 @@ import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Mast
 import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
 import { HarbaTaskListComponent } from "./common/TenderManagement/harba-task-list/harba-task-list.component";
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
+import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
 
 
@@ -1557,6 +1558,13 @@ data: {
   component: PurchaseBillFromGrnComponent,
   data: {
     title: 'Purchase Bill From GRN'
+}
+},
+{
+  path: 'RDB_Entry',
+  component: RdbComponent,
+  data: {
+    title: 'RDB Entry'
 }
 },
 {

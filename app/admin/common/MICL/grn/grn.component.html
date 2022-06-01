@@ -69,8 +69,17 @@
                                     <h5><strong></strong></h5>
                                 </div>
                             </div> -->
-                            <div class="table-responsive table-id">
-                                <p-table [value]="Searchedlist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["GRN_No","GRN_Date","Sub_Ledger_Name","Cost_Cen_Name","godown_name","RDB_No_Date","SE_No_Date","PO_Doc_No","PO_Doc_Date","Mode_Of_transport",
+                            <div class="table-id">
+                                <p-table [value]="Searchedlist" #dt1 
+                                [paginator]="true" [rows]="100" 
+                                [loading]="seachSpinner" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                [responsive]="true"
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[10,25,50,100]"
+                                 [rowHover]="true" 
+                                 [globalFilterFields]='["GRN_No","GRN_Date","Sub_Ledger_Name","Cost_Cen_Name","godown_name","RDB_No_Date","SE_No_Date","RDB_No","PO_Doc_Date","Mode_Of_transport",
                                   "LR_No_Date","Vehicle_No","Remarks","Quantity_Remarks","Quality_Rejection_Remarks","Deduction_For_Rejection"] '>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -83,26 +92,26 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>GRN No</th>
-                                            <th>GRN Date</th>
-                                            <th>Supplier</th>
-                                            <th>Cost Center</th>
-                                            <th>Godown</th>
-                                            <th>RDB No Date</th>
-                                            <th>SE No Date</th>
-                                            <th>PO Doc No</th>
-                                            <th>PO Doc Date</th>
+                                            <th nowrap="nowrap">GRN No</th>
+                                            <th nowrap="nowrap">GRN Date</th>
+                                            <th nowrap="nowrap">Supplier</th>
+                                            <th nowrap="nowrap">Cost Center</th>
+                                            <th nowrap="nowrap">Godown</th>
+                                            <th nowrap="nowrap">RDB No Date</th>
+                                            <th nowrap="nowrap">SE No Date</th>
+                                            <th nowrap="nowrap">PO Doc No</th>
+                                            <th nowrap="nowrap">PO Doc Date</th>
                                             <!-- Inv_No_Date
                                             AC_Head -->
-                                            <th>Mode Of Transport</th>
-                                            <th>LR No Date</th>
-                                            <th>Vehicle No</th>
+                                            <th nowrap="nowrap">Mode Of Transport</th>
+                                            <th nowrap="nowrap">LR No Date</th>
+                                            <th nowrap="nowrap">Vehicle No</th>
                                             <!-- Supplier_Bill_No
                                             Supplier_Bill_Date 
                                             <th>Remarks</th> -->
-                                            <th>Quantity Remarks</th>
-                                            <th>Quality / Rejection Remarks</th>
-                                            <th>Deduction For Rejection</th>
+                                            <th nowrap="nowrap">Quantity Remarks</th>
+                                            <th nowrap="nowrap">Quality / Rejection Remarks</th>
+                                            <th nowrap="nowrap">Deduction For Rejection</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -150,22 +159,22 @@
                                                     </ul>
                                                 </div>      
                                             </td>
-                                            <td>{{col.GRN_No}}</td>
-                                            <td>{{col.GRN_Date | date : 'dd/MMM/yyyy'}}</td>
-                                            <td>{{col.Sub_Ledger_Name}}</td>
-                                            <td>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
-                                            <td>{{col.godown_name }}</td>
-                                            <td>{{col.RDB_No_Date }}</td>
-                                            <td>{{col.SE_No_Date }}</td>
-                                            <td>{{col.PO_Doc_No }}</td>
-                                            <td>{{col.PO_Doc_Date | date : 'dd/MMM/yyyy' }}</td>
-                                            <td>{{col.Mode_Of_transport }}</td>
-                                            <td>{{col.LR_No_Date }}</td>
-                                            <td>{{col.Vehicle_No }}</td>
+                                            <td nowrap="nowrap">{{col.GRN_No}}</td>
+                                            <td nowrap="nowrap">{{col.GRN_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td nowrap="nowrap">{{col.Sub_Ledger_Name}}</td>
+                                            <td nowrap="nowrap">{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.godown_name }}</td>
+                                            <td nowrap="nowrap">{{col.RDB_No_Date }}</td>
+                                            <td nowrap="nowrap">{{col.SE_No_Date }}</td>
+                                            <td nowrap="nowrap">{{col.RDB_No }}</td>
+                                            <td nowrap="nowrap">{{col.PO_Doc_Date | date : 'dd/MMM/yyyy' }}</td>
+                                            <td nowrap="nowrap">{{col.Mode_Of_transport }}</td>
+                                            <td nowrap="nowrap">{{col.LR_No_Date }}</td>
+                                            <td nowrap="nowrap">{{col.Vehicle_No }}</td>
                                             <!-- <td>{{col.Remarks }}</td> -->
-                                            <td>{{col.Quantity_Remarks }}</td>
-                                            <td>{{col.Quality_Rejection_Remarks }}</td>
-                                            <td>{{col.Deduction_For_Rejection }}</td>
+                                            <td nowrap="nowrap">{{col.Quantity_Remarks }}</td>
+                                            <td nowrap="nowrap">{{col.Quality_Rejection_Remarks }}</td>
+                                            <td nowrap="nowrap">{{col.Deduction_For_Rejection }}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -216,28 +225,28 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <div class="col-sm-2">
+                                                <!-- <div class="col-sm-2">
                                                     <label class="control-label">R.D.B No. & Date <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="rdbnondate" #rdbnondate="ngModel" [(ngModel)]="ObjGRN1.RDB_No_Date" placeholder="R.D.B No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && rdbnondate?.errors?.required}" required>
-                                                    <!-- <textarea class="form-control" name="rdbnondate" #rdbnondate="ngModel" [(ngModel)]="ObjGRN.RDB_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && rdbnondate?.errors?.required}" required></textarea> -->
-                                                </div>
-                                                <div class="col-sm-2">
+                                                    
+                                                </div> -->
+                                                <div class="col-sm-3">
                                                     <label class="control-label">S.E No. & Date <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN1.SE_No_Date" placeholder="S.E No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required>
                                                     <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
                                                 </div>
                                                 
                                                 <div class="col-sm-3">
-                                                    <label class="control-label">P.O Order <sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="poorder" #poorder="ngModel" [(ngModel)]="ObjGRN1.PO_Doc_No" (change)='GetProductDetails()' [ngClass]="{'clearance': GRNFormSubmitted && poorder?.errors?.required}" required>
+                                                    <label class="control-label">R.D.B No<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="poorder" #poorder="ngModel" [(ngModel)]="ObjGRN1.RDB_No" (change)='GetProductDetails()' [ngClass]="{'clearance': GRNFormSubmitted && poorder?.errors?.required}" required>
                                                      <option  [ngValue]="undefined">Select</option>
-                                                         <option *ngFor = "let option of POorderlist" value= "{{option.Doc_No}}">
-                                                            {{option.Doc_No}}
+                                                         <option *ngFor = "let option of POorderlist" value= "{{option.RDB_No}}">
+                                                            {{option.RDB_No}}
                                                         </option>
                                                     </select>
                                                 </div>
-                                                <div class="col-sm-2">
-                                                    <label class="control-label">P.O Date <sup class="text-danger">*</sup></label>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">R.D.B Date  <sup class="text-danger">*</sup></label>
                                                     <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PODate' [enabled]="podatedisabled"></ejs-datepicker>
                                                 </div>
                                                 <div class="col-sm-3">
@@ -263,7 +272,7 @@
                                                     <select class="form-control" name="productdetails" #productdetails="ngModel" [(ngModel)]="ObjGRN.Product_ID"  (change)="GetRate()" [ngClass]="{'clearance': GRNFormSubmitted && productdetails?.errors?.required}" required>
                                                      <option  [ngValue]="undefined">Select</option>
                                                          <option *ngFor = "let option of ProductDetailslist" value= "{{option.Product_ID}}">
-                                                            {{option.Product_Name}}
+                                                            {{option.Product_Description}}
                                                         </option>
                                                     </select>
                                                 </div>
@@ -356,7 +365,7 @@
                                             <td>{{obj.Taxable_Value}}</td>
                                             <td>{{obj.GST_Tax_Per}}</td>
                                             <td>{{obj.Tax}}</td>
-                                            <td>{{obj.Total_Amount}}</td>
+                                            <td>{{ obj.Total_Amount}}</td>
                                             <td><input type="text" [name]="obj.Product_ID" [(ngModel)]='obj.Remarks' class="form-control" style="width: 200px;" /></td> 
                                             <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>

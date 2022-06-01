@@ -300,10 +300,9 @@ import { HrLeaveApplyComponent } from "./common/MICL/hr-leave-apply/hr-leave-app
 import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Master/subledger-for-accounts/subledger-for-accounts.component";
 import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
 import { HarbaTaskListComponent } from './common/TenderManagement/harba-task-list/harba-task-list.component';
+import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
-
-
 
 @NgModule({
   declarations: [
@@ -524,6 +523,7 @@ import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-
     SubledgerForAccountsComponent,
     MasterProductGeneralConsumablesComponent,
     HarbaTaskListComponent,
+    RdbComponent,
     PurchaseBillFromGrnComponent,
     BdaWiseTargetAchievementComponent
     
@@ -572,7 +572,8 @@ import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-
     GanttAllModule,
     ChipsModule,
     NpDatepickerModule,
-    SplitButtonModule
+    SplitButtonModule,
+    
   ],
   exports: [],
   providers: [
