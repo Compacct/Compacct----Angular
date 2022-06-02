@@ -1,0 +1,261 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Is_View && !is_Active">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="is_Active && !Is_View">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="form-group"> 
+<div class="col-sm-4">
+    <label class="control-label">Product Type
+        <sup class="text-danger">*</sup>
+    </label>
+    <div class="pull-right">
+        <button (click)="ViewProductType()" class="btn btn-primary  createPatient">
+        <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+        <button (click)="ProTypePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus">
+        </i> Create
+        </button>
+    </div>
+    <p-dropdown 
+    [options]="AllproductData" 
+    name="Product_Type"
+    [(ngModel)]="Objproduct.Product_Type_ID"
+    #Product_Type="ngModel" 
+    [showClear]="true" 
+    [emptyFilterMessage]="' No Product Found'" 
+    [filter]="true" filterBy="label,value.name" 
+    [resetFilterOnHide]="true" 
+    [placeholder]="'Select Product Type'" 
+    [virtualScroll]="true" 
+    itemSize="30"
+    (onChange)="getProductSubTyp(Objproduct.Product_Type_ID)"
+    [ngClass]="{'clearance': MaterialFormSubmit && Product_Type.errors?.required}"required>
+    </p-dropdown>
+</div>
+<div class="col-sm-4">
+    <label class="control-label">Product Sub Type
+        <sup class="text-danger">*</sup>
+    </label>
+    <div class="pull-right">
+        <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!Objproduct.Product_Type_ID">
+        <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+        <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!Objproduct.Product_Type_ID"><i class="fa fa-fw  fa-plus">
+        </i> Create
+        </button>
+    </div>
+    <p-dropdown 
+    [options]="AllproductSubData" 
+    name="Product_Sub_Type"
+    [(ngModel)]="Objproduct.Product_Sub_Type_ID"
+    #Product_Sub_Type="ngModel" 
+    [showClear]="true" 
+    [emptyFilterMessage]="' No Item Found'" 
+    [filter]="true" filterBy="label,value.name" 
+    [resetFilterOnHide]="true" 
+    [placeholder]="'Select Product Sub Type'" 
+    [virtualScroll]="true" 
+    itemSize="30"
+    [ngClass]="{'clearance': MaterialFormSubmit && Product_Sub_Type.errors?.required}"required>
+    </p-dropdown>  
+</div>
+<div class="col-sm-4">
+    <label class="control-label">Product Code</label>
+    <input CompacctDigitonly="true"  class="form-control" placeholder="Product Code"
+        name="Product_Code"
+        #Product_Code ="ngModel"
+        [(ngModel)]="Objproduct.Product_Code">
+</div>
+</div>
+<div class="form-group"> 
+<!-- <div class="clearfix"></div> -->
+<div class="col-sm-4">
+    <label class="control-label">Description/Model
+        <sup class="text-danger">*</sup>
+    </label>
+    <input class="form-control" type="text" placeholder="Description/Mode"
+        name="Product_Description"
+        #Product_Description ="ngModel"
+        [(ngModel)]="Objproduct.Product_Description">
+</div> 
+<div class="col-sm-4">
+        <label class="control-label">Rack No.</label> 
+        <input type="text" class="form-control" placeholder="Rack No."
+        name="Rack_NO"
+        #Rack_NO ="ngModel"
+        [(ngModel)]="Objproduct.Rack_NO">    
+</div>
+</div>
+
+<!-- CREATE -->
+<!--Product Type-->
+<p-dialog 
+[header]="'Create Product Type'" 
+[appendTo]="'body'" 
+[visible]="ProTypeModal" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true"
+[style]="{ width: '40%', minWidth: '200px' }" 
+style="text-align: center;" 
+[minY]="70"
+[maximizable]="true" 
+[baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="ProductTypeForm" #ProductTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Product Type<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" 
+                    class="form-control" 
+                    name="PT" #PT="ngModel" 
+                    [(ngModel)]="ProductTypeName" 
+                    placeholder="Product Type" 
+                    allow-pattern="([a-z ]|\.)" 
+                    [ngClass]="{clearance: ProductTypeFormSubmitted && PT?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ProTypeModal = false" class="btn btn-default">
+        CANCEL
+        </button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateProductType(ProductTypeForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!--Product Sub Type-->      
+<p-dialog 
+[header]="'Create  Sub Product Type'" 
+[appendTo]="'body'" 
+[visible]="ProTypeSubModal" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true"
+[style]="{ width: '40%', minWidth: '200px' }" 
+style="text-align: center;" 
+[minY]="70"
+[maximizable]="true" 
+[baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="ProductSubTypeForm" #ProductSubTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Product Type<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" 
+                    class="form-control" 
+                    name="PST" #PST="ngModel" 
+                    [(ngModel)]="ProductSubTypeName" 
+                    placeholder="Product Sub Type" 
+                    allow-pattern="([a-z ]|\.)" 
+                    [ngClass]="{clearance: ProductSubTypeFormSubmitted && PT?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ProTypeSubModal = false" class="btn btn-default">
+        CANCEL
+        </button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateProductSubType(ProductSubTypeForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- VIEWS -->
+<!--Product Type-->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="viewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="productData">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Product Type</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Product_Type}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteProductType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="viewProTypeModal = false" class="btn btn-default">
+            CANCEL
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!--Product Sub Type-->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewSubProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="productSubData">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th width="50%">Product Sub Type</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{col.Product_Sub_Type}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteProSubT(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewSubProTypeModal = false" class="btn btn-default">
+             CANCEL
+        </button>
+    </p-footer>
+</p-dialog>

@@ -304,6 +304,9 @@ import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
 import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-category.component';
+import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
+import { CompacctgstandcustomdutyComponent } from './shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
+import { CompacctProductDetailsComponent } from './shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
 
 @NgModule({
   declarations: [
@@ -527,7 +530,10 @@ import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-categ
     RdbComponent,
     PurchaseBillFromGrnComponent,
     BdaWiseTargetAchievementComponent,
-    TaxCategoryComponent
+    TaxCategoryComponent,
+    ProductMasterComponent,
+    CompacctgstandcustomdutyComponent,
+    CompacctProductDetailsComponent
     
   ],
   imports: [

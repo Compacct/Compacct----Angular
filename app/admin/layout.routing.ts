@@ -216,6 +216,7 @@ import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-g
 import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
 import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-category.component';
+import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
 
 
 
@@ -1580,6 +1581,13 @@ data: {
   component: TaxCategoryComponent,
   data: {
     title: 'Tax Category'
+}
+},
+{
+  path: 'Product_Master',
+  component: ProductMasterComponent,
+  data: {
+    title: 'Product Master'
 }
 },
 
