@@ -48,9 +48,6 @@ export class ProductMasterComponent implements OnInit {
   PDFViewFlag = false;
   materialPDFLink = undefined;
   AllDiscountData = [];
-  AllVendorLedger=[];
-  VendorledgerList = [];
-  SelectedVendorLedger = [];
   Spinner = false;
   MaterialFormSubmit =false;
   materialId = undefined;
@@ -72,6 +69,8 @@ export class ProductMasterComponent implements OnInit {
   ViewUomModal = false;
   MaterialPDFFile = {};
   productCode : number ;
+  is_Active = false;
+  Is_View = false;
   masterProductId : number;
   is_Active = false;
   Is_View = false;
@@ -80,6 +79,8 @@ export class ProductMasterComponent implements OnInit {
   protypeid = undefined;
   protypesubid = undefined;
   Uomid = undefined;
+  
+  VendorInput: CompacctFinancialDetailsComponent;
   CheckifService = false;
   check =undefined
   ObjGstandCustonDuty : any;
@@ -131,7 +132,6 @@ TabClick(e) {
     
   }
 
-
 getBrowseProduct(){
     const obj = {
       "SP_String":"SP_Master_Product_New",
@@ -144,7 +144,6 @@ getBrowseProduct(){
       });
 }
 
-ChangeValue(){
   //console.log("check",this.CheckifService)
  if(this.CheckifService){
    this.check ="Service"
@@ -767,6 +766,7 @@ saveData(valid:any){
      const obj = {
          "SP_String": "SP_Master_Product_New",
          "Report_Name_String": this.productCode ? 'Update_Master_Product' : 'Create_Master_Product',
+         "Json_Param_String": JSON.stringify([this.Objproduct]) 
          "Json_Param_String": JSON.stringify([{...this.Objproduct,...this.ObjGstandCustonDuty}]) 
         }
        this.GlobalAPI.getData(obj)
@@ -853,6 +853,52 @@ onConfirm(){
     });
   }
 
+// onConfirm2(){
+//   console.log(this.Objproduct.Product_ID)
+//     if(this.masterProductId){
+//       const obj = {
+//         "SP_String": "SP_Harbauer_Master_Product_Electrical",
+//         "Report_Name_String": "Active_Master_Product",
+//         "Json_Param_String": JSON.stringify([{Product_ID : this.masterProductId}])
+//       }
+//       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//         // console.log("del Data===", data[0].Column1)
+//         if (data[0].Column1 === "Done"){
+//           this.onReject();
+//           this.getBrowseProduct();
+//           this.getProductTyp();
+//           this.getProductSize();
+//           this.getCatgData();
+//           this.mfgName();
+//           this.act_popup = false;
+//           this.compacctToast.clear();
+//           this.compacctToast.add({
+//             key: "compacct-toast",
+//             severity: "success",
+//             summary: "Product Id: " + this.masterProductId.toString(),
+//             detail: "Succesfully Activated"
+//           });
+//         }
+//       })
+//     }
+    //this.ParamFlaghtml = undefined;
+//}
+// Active(masterProduct){ 
+//   this.Is_View = false; 
+//   this.masterProductId = undefined ;
+//    if(masterProduct.Product_ID){
+//     this.is_Active = true;
+//      this.masterProductId = masterProduct.Product_ID ;
+//      this.compacctToast.clear();
+//      this.compacctToast.add({
+//        key: "c",
+//        sticky: true,
+//        severity: "warn",
+//        summary: "Are you sure?",
+//        detail: "Confirm to proceed"
+//      });
+//    }
+//}
 onConfirm2(){
   console.log(this.Objproduct.Product_ID)
     if(this.masterProductId){
@@ -933,6 +979,7 @@ onReject(){
 class product{
 Material_ID:number;	
 Material_Type	:any;	
+Is_Service: any = "Y";		
 Is_Service: any = 1;		
 Product_Code:any;	
 Rack_NO	:any;		
@@ -946,6 +993,12 @@ UOM		:any;
 Alt_UOM	:any;		
 Billable:any;			
 Can_Purchase:any;	
+Reorder_Level:any;	
+Cust_Wrnty:any;		
+Vendor_Wrnty:any;
+BARCODE_COUNT	:any;
+Sale_rate:any;		
+Purchase_Rate:any;	
 Reorder_Level:number = 0;	
 Cust_Wrnty:number = 0;		
 Vendor_Wrnty:number = 0;
@@ -967,6 +1020,7 @@ Discount_Receive_Ledger_ID:number;
 Discount_Given_Ledger_ID:number;	
 Cess_Percentage	:any;
 HSN_Code:any;		
+SAC_Code:any;	
 SAC_Code:any;
 Product_ID :number;
 

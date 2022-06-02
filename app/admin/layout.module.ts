@@ -307,7 +307,10 @@ import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-categ
 import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
 import { CompacctgstandcustomdutyComponent } from './shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctProductDetailsComponent } from './shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
-
+import { CompacctFinancialDetailsComponent } from "./shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
+import { BSHPLAmeyoCustomerComponent } from './common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component';
+import { BSHPAmeyoKBComponent } from './common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component';
+import { BSHPLAppointmentPopupComponent } from './common/CRM/BSHPLameyo/bshpl-appointment-popup/bshpl-appointment-popup.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -533,8 +536,11 @@ import { CompacctProductDetailsComponent } from './shared/compacct.components/co
     TaxCategoryComponent,
     ProductMasterComponent,
     CompacctgstandcustomdutyComponent,
-    CompacctProductDetailsComponent
-    
+    CompacctProductDetailsComponent,
+    CompacctFinancialDetailsComponent,
+    BSHPLAmeyoCustomerComponent,
+    BSHPAmeyoKBComponent,
+    BSHPLAppointmentPopupComponent
   ],
   imports: [
     CommonModule,

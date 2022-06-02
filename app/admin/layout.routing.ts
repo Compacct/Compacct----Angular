@@ -217,6 +217,9 @@ import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
 import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-category.component';
 import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
+import { BSHPAmeyoKBComponent } from "./common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component";
+import { BSHPLAmeyoCustomerComponent } from "./common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component";
+import { BSHPLAppointmentPopupComponent } from "./common/CRM/BSHPLameyo/bshpl-appointment-popup/bshpl-appointment-popup.component";
 
 
 
@@ -1567,7 +1570,7 @@ data: {
   component: RdbComponent,
   data: {
     title: 'RDB Entry'
-}
+  }
 },
 {
   path: 'BDA_Wise_Target_Achievement',
@@ -1590,8 +1593,27 @@ data: {
     title: 'Product Master'
 }
 },
-
-  
+{
+  path: 'BSHPL_Ameyo_KB',
+  component: BSHPAmeyoKBComponent,
+  data: {
+    title: 'Follow UP'
+}
+},
+{
+  path: 'BSHPL_Ameyo_Customer',
+  component: BSHPLAmeyoCustomerComponent,
+  data: {
+    title: 'Customar Detalis'
+}
+},
+{
+  path: 'BSHPL_Appointment_Popup',
+  component: BSHPLAppointmentPopupComponent,
+  data: {
+    title: 'Appointment Detalis'
+}
+},
 
 
     /*{
