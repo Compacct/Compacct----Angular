@@ -252,7 +252,8 @@
                                             <thead>
                                                 <tr style="background-color:#4fa1d1;color:white;">
                                                     <th>Product Type</th>
-                                                    <th>Product</th>
+                                                    <th>Product Description</th>
+                                                    <th>Product Code</th>
                                                     <th>Required QTY</th>
                                                     <th>UOM</th>
                                                     <th>Remarks</th>
@@ -263,9 +264,10 @@
                                                 <tr *ngFor="let obj of AddMaterialsList; let ind = index;">
                                                     <td>{{obj.Product_Type}}</td>
                                                     <td>{{obj.Product_Description}}</td>
+                                                    <td>{{obj.Product_Code ? obj.Product_Code : '-'}}</td>
                                                     <td>{{obj.Req_Qty}}</td>
                                                     <td>{{obj.UOM}}</td>
-                                                    <td>{{obj.Remarks}}</td>
+                                                    <td>{{obj.Remarks ? obj.Remarks : '-'}}</td>
                                                     <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                 </tr>
                                             </tbody>

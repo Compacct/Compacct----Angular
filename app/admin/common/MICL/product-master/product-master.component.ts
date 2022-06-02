@@ -5,7 +5,6 @@ import { FileUpload, MessageService } from 'primeng/primeng';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
-import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
 
 @Component({
   selector: 'app-product-master',
@@ -72,14 +71,25 @@ export class ProductMasterComponent implements OnInit {
   productCode : number ;
   is_Active = false;
   Is_View = false;
+  masterProductId : number;
+  is_Active = false;
+  Is_View = false;
+  act_popup = false;
   mettypeid = undefined;
   protypeid = undefined;
   protypesubid = undefined;
   Uomid = undefined;
   
-  
-  
   VendorInput: CompacctFinancialDetailsComponent;
+  CheckifService = false;
+  check =undefined
+  ObjGstandCustonDuty : any;
+  GstAndCustomFormSubmit = false;
+
+
+  
+  
+ 
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor(
     private http: HttpClient,
@@ -100,6 +110,7 @@ ngOnInit() {
       Header: "Product Master",
       Link: " MICL ->Product-Master"
     })
+    this.check = "Product"
     this.getBrowseProduct();
     this.getMaterialTyp();
     this.getGSTTyp();
@@ -109,6 +120,7 @@ ngOnInit() {
     this.getPurchaseledger();
     this.getSalesledger();
     this.getPrReturn();
+    this.getSubLedger();
     this.getSalesReturn();
     this.getDiscountReceive();
     this.getDiscountGiven();
@@ -132,6 +144,14 @@ getBrowseProduct(){
       });
 }
 
+  //console.log("check",this.CheckifService)
+ if(this.CheckifService){
+   this.check ="Service"
+ }
+ else{
+   this.check = "Product"
+ }
+}
 //Material Type 
 getMaterialTyp(){
   this.MaterialData=[]; 
@@ -586,6 +606,28 @@ ChangeUom(){
   }
 }
 
+getSubLedger(){
+  this.AllVendorLedger=[]; 
+  this.VendorledgerList = [];
+  const obj = {
+    "SP_String": "SP_Master_Product_New",
+    "Report_Name_String":"Get_Sub_Ledger_Category",
+   }
+   this.GlobalAPI.getData(obj)
+   .subscribe((data : any)=>
+   {
+     this.AllVendorLedger = data;
+     console.log('AllVendorLedger=',this.AllVendorLedger);
+     this.AllVendorLedger.forEach(el => {
+      this.VendorledgerList.push({
+        label: el.Sub_Ledger_Cat_Name,
+        value: el.Sub_Ledger_Cat_ID
+      });
+    });
+    
+   });
+}
+
 getPurchaseledger(){
   this.PurchaseData=[]; 
    this.AllPurchaseData = [];
@@ -725,11 +767,13 @@ saveData(valid:any){
          "SP_String": "SP_Master_Product_New",
          "Report_Name_String": this.productCode ? 'Update_Master_Product' : 'Create_Master_Product',
          "Json_Param_String": JSON.stringify([this.Objproduct]) 
+         "Json_Param_String": JSON.stringify([{...this.Objproduct,...this.ObjGstandCustonDuty}]) 
         }
        this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{
         console.log("data ==",data);
          if (data[0].Column1){
+          this.SelectedVendorLedger = [];
            this.compacctToast.clear();
            this.compacctToast.add({
             key: "compacct-toast",
@@ -743,6 +787,7 @@ saveData(valid:any){
           this.productCode = undefined;
           this.tabIndexToView = 0;
           this.MaterialFormSubmit = false;
+          this.GstAndCustomFormSubmit = false;
           this.Objproduct = new product();
          });
      }
@@ -854,6 +899,60 @@ onConfirm(){
 //      });
 //    }
 //}
+onConfirm2(){
+  console.log(this.Objproduct.Product_ID)
+    if(this.masterProductId){
+      const obj = {
+        "SP_String": "SP_Master_Product_New",
+        "Report_Name_String": "Active_Master_Product",
+        "Json_Param_String": JSON.stringify([{Product_ID : this.masterProductId}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        // console.log("del Data===", data[0].Column1)
+        if (data[0].Column1 === "Done"){
+          this.onReject();
+          this.getBrowseProduct();
+          this.getMaterialTyp();
+          this.getGSTTyp();
+          this.getProductTyp();
+          this.getUOM();
+          this.getMfg();
+          this.getPurchaseledger();
+          this.getSalesledger();
+          this.getPrReturn();
+          this.getSubLedger();
+          this.getSalesReturn();
+          this.getDiscountReceive();
+          this.getDiscountGiven();
+          this.act_popup = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Product Id: " + this.masterProductId.toString(),
+            detail: "Succesfully Activated"
+          });
+        }
+      })
+    }
+    //this.ParamFlaghtml = undefined;
+}
+Active(masterProduct){ 
+  this.Is_View = false; 
+  this.masterProductId = undefined ;
+   if(masterProduct.Product_ID){
+    this.is_Active = true;
+     this.masterProductId = masterProduct.Product_ID ;
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+   }
+}
 
 // File Upload
   FetchPDFFile(event) {
@@ -870,7 +969,7 @@ clearData(){
   this.MaterialFormSubmit = false;
    this.Objproduct = new product();
    this.materialId = undefined;
-   
+   this.SelectedVendorLedger = [];  
 }
 
 onReject(){
@@ -881,6 +980,7 @@ class product{
 Material_ID:number;	
 Material_Type	:any;	
 Is_Service: any = "Y";		
+Is_Service: any = 1;		
 Product_Code:any;	
 Rack_NO	:any;		
 Product_Description:any;	
@@ -899,6 +999,12 @@ Vendor_Wrnty:any;
 BARCODE_COUNT	:any;
 Sale_rate:any;		
 Purchase_Rate:any;	
+Reorder_Level:number = 0;	
+Cust_Wrnty:number = 0;		
+Vendor_Wrnty:number = 0;
+BARCODE_COUNT	:number = 0;
+Sale_rate:number = 0;		
+Purchase_Rate:number = 0;	
 Rate_Form_Quote:any;	
 Sale_Rate_Form_Quote:any;
 Mfg_Product_Code:any;		
@@ -915,5 +1021,7 @@ Discount_Given_Ledger_ID:number;
 Cess_Percentage	:any;
 HSN_Code:any;		
 SAC_Code:any;	
+SAC_Code:any;
+Product_ID :number;
 
 }
