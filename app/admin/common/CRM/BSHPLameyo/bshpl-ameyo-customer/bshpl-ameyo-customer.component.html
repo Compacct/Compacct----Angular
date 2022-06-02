@@ -205,7 +205,131 @@
                             </form>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-blackboard" >
-                            
+                            <form name="Followuppartient" #Followuppartient="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Mobile No.
+                                            <sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="Mobile" 
+                                            #Mobile="ngModel"
+                                            maxlength = "10"
+                                            minlength = "10"
+                                            [(ngModel)]="objpartient.Mobile" 
+                                            placeholder="Mobile No" 
+                                           disabled
+                                            >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Name.
+                                            <sup class="text-danger">*</sup></label>
+                                        <div class="input-group" style="width: 100%;">
+                                            <select class="form-control"
+                                            name="Prefix" 
+                                            #Prefix="ngModel"
+                                           [(ngModel)]="objpartient.Prefix"
+                                           [ngClass]="{'clearance': FollowuppartientSubmit && Prefix?.errors?.required }" 
+                                           required
+                                          >
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option value="Mr">Mr</option>
+                                              <option value="Mrs">Mrs</option>
+                                              <option value="Miss">Miss</option>
+                                              <option value="Ms">Ms</option>
+                                              <option value="Sir">Sir</option>
+                                              <option value="Dr">Dr</option>
+                                              <option value="Master">Master</option>
+                                              <option value="Srimati">Srimati</option>
+                                              <option value="Baby">Baby</option>
+                                              <option value="Baby of">Baby of</option>
+                                            </select>
+                                            <span class="input-group-addon" style="border-color: #ffffff; padding:0px"></span>
+                                            <input type="text" 
+                                            class="form-control" 
+                                            name="Contact_Name" 
+                                            #Contact_Name="ngModel"
+                                           [(ngModel)]="objpartient.Contact_Name"
+                                           placeholder="Name" 
+                                           [ngClass]="{'clearance': FollowuppartientSubmit && Contact_Name?.errors?.required }" 
+                                           required
+                                            >
+                                          </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Age<sup class="text-danger"></sup></label>
+                                        <div class="input-group" style="width:100%">
+                                          <input class="form-control" 
+                                          name="Age" 
+                                          #Age="ngModel"
+                                         [(ngModel)]="objpartient.Age"
+                                          [ngClass]="{'clearance': FollowuppartientSubmit && Age?.errors?.required }" 
+                                         placeholder="Age" 
+                                          required>
+            
+                                          <span class="input-group-addon" style="border-color: #ffffff; padding:0px"></span>
+                                          <select class="form-control"
+                                          name="Age_Unit" 
+                                          #Age_Unit="ngModel"
+                                         [(ngModel)]="objpartient.Age_Unit"
+                                          [ngClass]="{'clearance': FollowuppartientSubmit && Age_Unit?.errors?.required }"
+                                          required>
+                                            <option value="Years">Years </option>
+                                            <option value="Months">Months</option>
+                                            <option value="Days">Days</option>
+                                          </select>
+                                        </div>
+                                       
+                                      </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Date of Birth</label>
+                                        <ejs-datepicker [(value)]="DOB" 
+                                         [format]="'dd/MMM/yyyy'" 
+                                       ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Gender<span class="text-danger">*</span></label>
+                                        <select class="form-control " 
+                                        name="Gender" 
+                                        #Gender="ngModel"
+                                        [(ngModel)]="objpartient.Gender"
+                                        [ngClass]="{'clearance': FollowuppartientSubmit && Gender?.errors?.required }" 
+                                        required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                          <option value="Male">Male</option>
+                                          <option value="Female">Female</option>
+                                          <option value="Other">Other</option>
+                                        </select>
+                                      </div>
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Enquiry Source <span class="text-danger">*</span></label>
+                                        <select class="form-control " 
+                                        name="Enq_Source_ID" 
+                                        #Enq_Source_ID="ngModel"
+                                        [(ngModel)]="objpartient.Enq_Source_ID"
+                                        [ngClass]="{'clearance': FollowuppartientSubmit && Enq_Source_ID?.errors?.required }" 
+                                        required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                          <option *ngFor="let option of EnqSourceList" value="{{option.Enq_Source_ID}}">
+                                            {{option.Enq_Source_Name}}
+                                            </option>
+                                        </select>
+                                      </div>
+                                      <div class="col-sm-3">
+                                        <label class="control-label">Next Followup</label>
+                                        <ejs-datepicker [(value)]="FollowupDate" 
+                                         [format]="'dd/MMM/yyyy'" 
+                                       ></ejs-datepicker>
+                                      </div>
+                                    </div>
+                                </form>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="SavenewPatient(Followuppartient.form.valid)" id="load1" [disabled]="Spinner">
+                                       <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
+                                       </button>
+                                </div>
                         </p-tabPanel>
                     </p-tabView>
                 </div>

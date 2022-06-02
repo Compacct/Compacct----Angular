@@ -28,12 +28,19 @@ export class BSHPLAmeyoCustomerComponent implements OnInit {
   followUpLists = [];
   distinctDateArray = [];
   objFollowUpCreation = new Followup();
+  objpartient = new partient()
   folloupFormSubmit = false;
   ActionList = [];
   bckActionList = [];
   NxtFollowupDate = new Date();
   TodayDate = new Date();
-  followupSpinner = false
+  followupSpinner = false;
+  FollowuppartientSubmit = false;
+  DOB = new Date()
+  FollowupDate = new Date()
+  Spinner = false
+  EnqSourceList = [];
+ 
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -46,12 +53,13 @@ export class BSHPLAmeyoCustomerComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       console.log(params);
       this.Parammobile = params['phone'];
+      this.objpartient.Mobile = this.Parammobile;
  
      })
   }
 
   ngOnInit() {
-    this.items = ["FOLLOWUP DETALIS","CREATE LEAD"];
+    this.items = ["FOLLOWUP DETALIS","NEW PARTIENT"];
     this.Header.pushHeader({
       Header: "FOLLOW UP",
       Link: "CRM -> FOLLOW UP"
@@ -70,10 +78,11 @@ export class BSHPLAmeyoCustomerComponent implements OnInit {
       'display' :'none'
     })
     this.GetAction();
+    this.GetEnqSource()
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["FOLLOWUP DETALIS","CREATE LEAD"];
+    this.items = ["FOLLOWUP DETALIS","NEW PARTIENT"];
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -123,7 +132,7 @@ export class BSHPLAmeyoCustomerComponent implements OnInit {
 
   }
   Appointment(valid){
-
+    // window.open("BSHPL_Appointment_Popup");
   }
   getFollowupByDate(dateStr) {
     return this.followUpLists.filter((item) => item.Posted_On_C === dateStr);
@@ -183,6 +192,48 @@ export class BSHPLAmeyoCustomerComponent implements OnInit {
      }
    }
   }
+  SavenewPatient(valid){
+   this.FollowuppartientSubmit = true;
+   if(valid){
+     this.objpartient.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+     this.objpartient.User_ID = this.$CompacctAPI.CompacctCookies.User_ID
+     this.objpartient.Date_Of_Birth = this.DateService.dateConvert(this.DOB)
+     this.objpartient.Status = "Information Only"
+     this.objpartient.Next_Followup = this.DateService.dateConvert(this.FollowupDate)
+   }
+   const obj = {
+    "SP_String": "BSHPL_Call_Centre",
+    "Report_Name_String":"Save_Lead",
+    "Json_Param_String": JSON.stringify([this.objpartient]) 
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     console.log("Save",data);
+     if(data[0].Column1){
+      this.FollowuppartientSubmit = false
+      this.objpartient = new partient()
+      this.DOB = new Date();
+      this.FollowupDate = new Date()
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: " ",
+        detail: "Succesfully Save"
+      });
+     }
+   })
+  }
+  GetEnqSource(){
+    const obj = {
+      "SP_String": "BSHPL_Call_Centre",
+      "Report_Name_String":"Get_Enq_Source",
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.EnqSourceList = data;
+     console.log("EnqSourceList==",this.EnqSourceList);
+   
+    })
+  }
   ngOnDestroy() {
     $('header.main-header').css({
       'display' :'block'
@@ -205,4 +256,18 @@ class Followup{
   User_ID:any
   Next_Followup2:any
   CallID :any
+}
+class partient{
+  Cost_Cen_ID:any
+  User_ID:any
+  Mobile:any
+  Prefix:any
+  Contact_Name:any
+  Gender:any
+  Date_Of_Birth:any
+  Age:any
+  Age_Unit:any = "Years"
+  Status:any
+  Next_Followup:any
+  Enq_Source_ID:any
 }
