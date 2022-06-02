@@ -215,9 +215,10 @@ import { HarbaTaskListComponent } from "./common/TenderManagement/harba-task-lis
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
-
-
-
+import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
+import { BSHPAmeyoKBComponent } from "./common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component";
+import { BSHPLAmeyoCustomerComponent } from "./common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component";
+import { BSHPLAppointmentPopupComponent } from "./common/CRM/BSHPLameyo/bshpl-appointment-popup/bshpl-appointment-popup.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1565,17 +1566,37 @@ data: {
   component: RdbComponent,
   data: {
     title: 'RDB Entry'
+  }
+},
+{
+  path: 'Product_Master',
+  component: ProductMasterComponent,
+  data: {
+    title: 'Product Master'
 }
 },
 {
-  path: 'BDA_Wise_Target_Achievement',
-  component: BdaWiseTargetAchievementComponent,
+  path: 'BSHPL_Ameyo_KB',
+  component: BSHPAmeyoKBComponent,
   data: {
-    title: 'BDA Wise Target Achievement'
+    title: 'Follow UP'
 }
 },
 
-  
+{
+  path: 'BSHPL_Ameyo_Customer',
+  component: BSHPLAmeyoCustomerComponent,
+  data: {
+    title: 'Customar Detalis'
+}
+},
+{
+  path: 'BSHPL_Appointment_Popup',
+  component: BSHPLAppointmentPopupComponent,
+  data: {
+    title: 'Appointment Detalis'
+}
+},
 
 
     /*{

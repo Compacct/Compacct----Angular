@@ -304,6 +304,11 @@ import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
 
+import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
+import { CompacctFinancialDetailsComponent } from "./shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
+import { BSHPLAmeyoCustomerComponent } from './common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component';
+import { BSHPAmeyoKBComponent } from './common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component';
+import { BSHPLAppointmentPopupComponent } from './common/CRM/BSHPLameyo/bshpl-appointment-popup/bshpl-appointment-popup.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -525,8 +530,11 @@ import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-
     HarbaTaskListComponent,
     RdbComponent,
     PurchaseBillFromGrnComponent,
-    BdaWiseTargetAchievementComponent
-    
+    ProductMasterComponent,
+    CompacctFinancialDetailsComponent,
+    BSHPLAmeyoCustomerComponent,
+    BSHPAmeyoKBComponent,
+    BSHPLAppointmentPopupComponent
   ],
   imports: [
     CommonModule,
