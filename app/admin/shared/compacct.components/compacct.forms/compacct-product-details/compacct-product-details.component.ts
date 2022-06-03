@@ -11,12 +11,12 @@ declare var $: any;
   providers: [MessageService],
 })
 export class CompacctProductDetailsComponent implements OnInit {
-  Objproduct = new product();
+  ObjproductDetails = new product();
   productData = [];
   AllproductData = [];
   productSubData = [];
   AllproductSubData = [];
-  MaterialFormSubmit = false;
+  ProDetailsFormSubmit = false;
   ProductTypeFormSubmitted = false;
   ProductSubTypeFormSubmitted = false;
   UOMTypeFormSubmitted = false;
@@ -34,13 +34,13 @@ export class CompacctProductDetailsComponent implements OnInit {
   Spinner = false;
   private _required: boolean;
 
-  @Output() productobj = new EventEmitter <product>();
+  @Output() ProDetailsObj = new EventEmitter <product>();
   @Input()  set required(value: boolean) {
     this._required = value;
     if (this._required) {
-      this.MaterialFormSubmit = this.Objproduct.Product_Type_ID ? true : false;
+      this.ProDetailsFormSubmit = this.ObjproductDetails.Product_Type_ID ? true : false;
     } else {
-      this.MaterialFormSubmit = this.Objproduct.Product_Type_ID ? true : false;
+      this.ProDetailsFormSubmit = this.ObjproductDetails.Product_Type_ID ? true : false;
     }
   }
 
@@ -150,13 +150,13 @@ deleteProductType(protype){
 }
 //Product Sub Type
 getProductSubTyp(){
-  if(this.Objproduct.Product_Type_ID){
+  if(this.ObjproductDetails.Product_Type_ID){
   this.productSubData=[]; 
    this.AllproductSubData = [];
     const obj = {
       "SP_String": "SP_Master_Product_New",
       "Report_Name_String":"Master_Product_Sub_Type_Dropdown",
-      "Json_Param_String": JSON.stringify([{Product_Type_ID:this.Objproduct.Product_Type_ID}]) 
+      "Json_Param_String": JSON.stringify([{Product_Type_ID:this.ObjproductDetails.Product_Type_ID}]) 
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.productSubData = data;
@@ -168,10 +168,11 @@ getProductSubTyp(){
         });
      });
     })
+    this.ProDetailsObj.emit(this.ObjproductDetails);
    }
    else{
     this.productSubData = [];
-    this.Objproduct.Product_Sub_Type_ID = undefined;
+    this.ObjproductDetails.Product_Sub_Type_ID = undefined;
 
   }      
 }
@@ -188,7 +189,7 @@ CreateProductSubType(valid){
     this.Spinner = true;
     const Obj = {
       Product_Sub_Type : this.ProductSubTypeName,
-      Product_Type_ID : this.Objproduct.Product_Type_ID
+      Product_Type_ID : this.ObjproductDetails.Product_Type_ID
     }
     if(valid){
        const obj = {
@@ -253,6 +254,9 @@ ProSubTypePopup(){
   this.ProductSubTypeName = undefined;
   this.ProTypeSubModal = true;
   this.Spinner = false;
+}
+EventEmitDefault(){
+  this.ProDetailsObj.emit(this.ObjproductDetails);
 }
 //common Delete
 onConfirm(){
