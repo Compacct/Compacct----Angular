@@ -35,7 +35,7 @@
     <p-dropdown 
     [options]="AllproductData" 
     name="Product_Type"
-    [(ngModel)]="Objproduct.Product_Type_ID"
+    [(ngModel)]="ObjproductDetails.Product_Type_ID"
     #Product_Type="ngModel" 
     [showClear]="true" 
     [emptyFilterMessage]="' No Product Found'" 
@@ -45,7 +45,8 @@
     [virtualScroll]="true" 
     itemSize="30"
     (onChange)="getProductSubTyp()"
-    [ngClass]="{'clearance': MaterialFormSubmit && Product_Type.errors?.required}"required>
+    [styleClass]="ProDetailsFormSubmit && !ObjproductDetails.Product_Type_ID ? 'clearance' : ''"
+    [required]="true">
     </p-dropdown>
 </div>
 <div class="col-sm-4">
@@ -53,16 +54,16 @@
         <sup class="text-danger">*</sup>
     </label>
     <div class="pull-right">
-        <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!Objproduct.Product_Type_ID">
+        <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!ObjproductDetails.Product_Type_ID">
         <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
-        <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!Objproduct.Product_Type_ID"><i class="fa fa-fw  fa-plus">
+        <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!ObjproductDetails.Product_Type_ID"><i class="fa fa-fw  fa-plus">
         </i> Create
         </button>
     </div>
     <p-dropdown 
     [options]="AllproductSubData" 
     name="Product_Sub_Type"
-    [(ngModel)]="Objproduct.Product_Sub_Type_ID"
+    [(ngModel)]="ObjproductDetails.Product_Sub_Type_ID"
     #Product_Sub_Type="ngModel" 
     [showClear]="true" 
     [emptyFilterMessage]="' No Item Found'" 
@@ -71,7 +72,8 @@
     [placeholder]="'Select Product Sub Type'" 
     [virtualScroll]="true" 
     itemSize="30"
-    [ngClass]="{'clearance': MaterialFormSubmit && Product_Sub_Type.errors?.required}"required>
+    (onChange)="EventEmitDefault()"
+    [styleClass]="ProDetailsFormSubmit && !ObjproductDetails.Product_Sub_Type_ID ? 'clearance' : ''" [required]="true">
     </p-dropdown>  
 </div>
 <div class="col-sm-4">
@@ -79,7 +81,8 @@
     <input CompacctDigitonly="true"  class="form-control" placeholder="Product Code"
         name="Product_Code"
         #Product_Code ="ngModel"
-        [(ngModel)]="Objproduct.Product_Code">
+        [(ngModel)]="ObjproductDetails.Product_Code"
+        (change)="EventEmitDefault()">
 </div>
 </div>
 <div class="form-group"> 
@@ -91,14 +94,17 @@
     <input class="form-control" type="text" placeholder="Description/Mode"
         name="Product_Description"
         #Product_Description ="ngModel"
-        [(ngModel)]="Objproduct.Product_Description">
+        [(ngModel)]="ObjproductDetails.Product_Description"
+        (change)="EventEmitDefault()"
+        [ngClass]="{'clearance': ProDetailsFormSubmit && !ObjproductDetails.Product_Description}"required>
 </div> 
 <div class="col-sm-4">
         <label class="control-label">Rack No.</label> 
         <input type="text" class="form-control" placeholder="Rack No."
         name="Rack_NO"
         #Rack_NO ="ngModel"
-        [(ngModel)]="Objproduct.Rack_NO">    
+        [(ngModel)]="ObjproductDetails.Rack_NO"
+        (change)="EventEmitDefault()">    
 </div>
 </div>
 

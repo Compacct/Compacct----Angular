@@ -15,14 +15,16 @@
                                 [placeholder]="'Select TAX Category'" 
                                 [virtualScroll]="true" 
                                 itemSize="30"
-                                [ngClass]="{'clearance': GstAndCustomFormSubmit && !ObjGstandCustonDuty.Cat_ID}"required>
+                                (onChange)="EventEmitDefault()"
+                                [styleClass]="GstAndCustomFormSubmit && !ObjGstandCustonDuty.Cat_ID ? 'clearance' : ''"
+                                [required]="true">
                         </p-dropdown>
         </div>
         <div class="col-sm-4">
                 <label class="control-label"> HSN/SAC Code
                     <sup class="text-danger">*</sup></label>
                 <input type="text" name="hansaccode" #hansaccode ="ngModel"
-                [(ngModel)]="ObjGstandCustonDuty.HSN_SAC_Code" class="form-control" placeholder="HSN/SAC Code"
+                [(ngModel)]="ObjGstandCustonDuty.HSN_SAC_Code" class="form-control" placeholder="HSN/SAC Code" (change)="EventEmitDefault()"
                 [ngClass]="{'clearance': GstAndCustomFormSubmit  && !ObjGstandCustonDuty.HSN_SAC_Code}"required>
         </div>
         <div class="col-sm-4">
@@ -30,6 +32,7 @@
             <input type="number" value="0" class="form-control"
             name="Custom_Duty"
             #Custom_Duty ="ngModel"
+            (change)="EventEmitDefault()"
             [(ngModel)]="ObjGstandCustonDuty.Custom_Duty">
         </div>
     <!-- </div>
@@ -39,6 +42,7 @@
             <label class="control-label">Remarks</label>
                 <textarea class="form-control"name="Remarks"
                 #Remarks ="ngModel"
+                (change)="EventEmitDefault()"
                 [(ngModel)]="ObjGstandCustonDuty.Remarks"placeholder="Remarks"
                  ></textarea>
         </div>   

@@ -5,6 +5,10 @@ import { FileUpload, MessageService } from 'primeng/primeng';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
+declare var $: any;
+import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
+import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-product-master',
@@ -84,11 +88,13 @@ export class ProductMasterComponent implements OnInit {
   check =undefined
   ObjGstandCustonDuty : any;
   GstAndCustomFormSubmit = false;
+  ObjproductDetails : any;
 
+  @ViewChild("Product", { static: false })
+  ProductDetailsInput: CompacctProductDetailsComponent;
+  @ViewChild("GstAndCustomDuty", { static: false })
+  GstAndCustDutyInput: CompacctgstandcustomdutyComponent;
 
-  
-  
- 
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor(
     private http: HttpClient,
@@ -129,6 +135,38 @@ TabClick(e) {
     this.items = ["BROWSE", "CREATE","REPORT"];
     this.buttonname = "Create";
     
+  }
+  getProDetailsData(e) {
+    console.log(e)
+    this.ObjproductDetails = undefined;
+    this.Objproduct.Product_Type_ID = undefined;
+    this.Objproduct.Product_Sub_Type_ID = undefined;
+    this.Objproduct.Product_Code = undefined;
+    this.Objproduct.Product_Description = undefined;
+    this.Objproduct.Rack_NO = undefined;
+    if (e.Product_Type_ID) {
+      this.ObjproductDetails = e;
+      this.Objproduct.Product_Type_ID = e.Product_Type_ID;
+      this.Objproduct.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.Objproduct.Product_Code = e.Product_Code;
+      this.Objproduct.Product_Description = e.Product_Description;
+      this.Objproduct.Rack_NO = e.Rack_NO;
+    }
+  }
+  getGstAndCustDutyData(e) {
+    console.log(e)
+    this.ObjGstandCustonDuty = undefined;
+    this.Objproduct.Cat_ID = undefined;
+    this.Objproduct.HSN_Code = undefined;
+    this.Objproduct.Custom_Duty = undefined;
+    this.Objproduct.Remarks = undefined;
+    if (e.Cat_ID) {
+      this.ObjGstandCustonDuty = e;
+      this.Objproduct.Cat_ID = e.Product_Type_ID;
+      this.Objproduct.HSN_Code = e.Product_Sub_Type_ID;
+      this.Objproduct.Custom_Duty = e.Product_Code;
+      this.Objproduct.Remarks = e.Product_Description;
+    }
   }
 
 
@@ -767,7 +805,7 @@ saveData(valid:any){
      const obj = {
          "SP_String": "SP_Master_Product_New",
          "Report_Name_String": this.productCode ? 'Update_Master_Product' : 'Create_Master_Product',
-         "Json_Param_String": JSON.stringify([{...this.Objproduct,...this.ObjGstandCustonDuty}]) 
+         "Json_Param_String": JSON.stringify([{...this.Objproduct}]) 
         }
        this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{

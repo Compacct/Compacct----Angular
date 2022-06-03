@@ -52,6 +52,9 @@ getGSTTyp(){
        });
      })
 }
+EventEmitDefault(){
+  this.GstandCustonDutyObj.emit(this.ObjGstandCustonDuty);
+}
 
 }
 class GstandCustonDuty {
