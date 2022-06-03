@@ -303,12 +303,16 @@ import { HarbaTaskListComponent } from './common/TenderManagement/harba-task-lis
 import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
-import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-category.component';
+// import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-category.component';
+import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
 import { CompacctgstandcustomdutyComponent } from './shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctProductDetailsComponent } from './shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
 import { CompacctFinancialDetailsComponent } from "./shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
 import { BSHPLAmeyoCustomerComponent } from './common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component';
 import { BSHPAmeyoKBComponent } from './common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component';
+import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledger/sub-ledger.component';
+import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
+
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -531,12 +535,14 @@ import { BSHPAmeyoKBComponent } from './common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp
     RdbComponent,
     PurchaseBillFromGrnComponent,
     BdaWiseTargetAchievementComponent,
-    TaxCategoryComponent,
+    ProductMasterComponent,
     CompacctgstandcustomdutyComponent,
     CompacctProductDetailsComponent,
     CompacctFinancialDetailsComponent,
     BSHPLAmeyoCustomerComponent,
-    BSHPAmeyoKBComponent
+    BSHPAmeyoKBComponent,
+    SubLedgerComponent,
+    TaxCategoryComponent
   ],
   imports: [
     CommonModule,

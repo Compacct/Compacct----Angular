@@ -215,10 +215,13 @@ import { HarbaTaskListComponent } from "./common/TenderManagement/harba-task-lis
 import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
 import { RdbComponent } from "./common/MICL/rdb/rdb.component";
 import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
-import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-category.component';
 import { BSHPAmeyoKBComponent } from "./common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component";
 import { BSHPLAmeyoCustomerComponent } from "./common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component";
-
+import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
+import { BSHPAmeyoKBComponent } from "./common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component";
+import { BSHPLAmeyoCustomerComponent } from "./common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component";
+import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledger/sub-ledger.component';
+import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
 
 
 
@@ -1579,13 +1582,12 @@ data: {
 }
 },
 {
-  path: 'Tax_Category',
-  component: TaxCategoryComponent,
+  path: 'Product_Master',
+  component: ProductMasterComponent,
   data: {
-    title: 'Tax Category'
+    title: 'Product Master'
 }
 },
-
 {
   path: 'BSHPL_Ameyo_KB',
   component: BSHPAmeyoKBComponent,
@@ -1600,8 +1602,20 @@ data: {
     title: 'Customar Detalis'
 }
 },
-
-
+{
+  path: 'Sub_Ledger',
+  component: SubLedgerComponent,
+  data: {
+    title: 'Sub Ledger'
+}
+},
+{
+  path: 'Tax_Category',
+  component: TaxCategoryComponent,
+  data: {
+    title: 'Tax Category'
+}
+},
 
     /*{
 
