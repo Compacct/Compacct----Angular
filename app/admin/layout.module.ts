@@ -310,7 +310,6 @@ import { CompacctProductDetailsComponent } from './shared/compacct.components/co
 import { CompacctFinancialDetailsComponent } from "./shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
 import { BSHPLAmeyoCustomerComponent } from './common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component';
 import { BSHPAmeyoKBComponent } from './common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component';
-import { BSHPLAppointmentPopupComponent } from './common/CRM/BSHPLameyo/bshpl-appointment-popup/bshpl-appointment-popup.component';
 import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledger/sub-ledger.component';
 import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
 
@@ -542,7 +541,6 @@ import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.co
     CompacctFinancialDetailsComponent,
     BSHPLAmeyoCustomerComponent,
     BSHPAmeyoKBComponent,
-    BSHPLAppointmentPopupComponent,
     SubLedgerComponent,
     TaxCategoryComponent
   ],
