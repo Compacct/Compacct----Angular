@@ -62,6 +62,14 @@ export class PurchaseOrderComponent implements OnInit {
   disAmtBackUpAMT:number = 0
   disAmtBackUpPer:number = 0
   objaddPurchacse : addPurchacse = new addPurchacse();
+  openProject = "N"
+  projectMand = "N";
+  objSize = undefined;
+  falg = false;
+  validatation = {
+    required : false,
+    projectMand : 'N'
+  }
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -71,7 +79,14 @@ export class PurchaseOrderComponent implements OnInit {
     private router: Router,
     private $CompacctAPI: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    ) {
+      this.route.queryParams.subscribe(params => {
+        console.log(params);
+        this.openProject = params['proj'];
+        this.projectMand = params['mand'];
+       })
+     }
 
   ngOnInit() {
     this.items = [ 'BROWSE', 'CREATE'];
@@ -512,6 +527,7 @@ export class PurchaseOrderComponent implements OnInit {
  }
  savePurchase(valid){
    this.purchaseFormSubmitted = true
+   this.falg = true
    if(valid){
      this.Spinner = true
      let msg = "";
@@ -693,6 +709,13 @@ getcompany(){
    this.companyList = data
    console.log("companyList",this.companyList)
   })
+}
+getProjectData(e){
+ console.log("Project Data",e);
+ var size = Object.keys(e).length;
+ if(!size){
+   this.purChaseAddFormSubmit = true
+ }
 }
 }
 class purchase {

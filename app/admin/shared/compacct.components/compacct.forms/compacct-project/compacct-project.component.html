@@ -1,0 +1,86 @@
+<h5 style="
+padding: 0.5em 1em;
+background: #c1c1c185;
+border-top: 5px solid #3c8dbc;
+border-bottom: 1px solid #c6c6c6;
+margin-top: 15px;
+">
+<i class="fa fa-fw fa-fax">
+</i> &nbsp;<strong>Project Detalis :</strong>
+</h5>
+<div class="form-group" style="margin-left:3px;margin-right: 0px;">
+    <div class="col-sm-4">
+        <label class="control-label">Project<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="PROJECT_ID" 
+        #PROJECT_ID="ngModel" 
+        [(ngModel)]="objproject.PROJECT_ID"
+        [ngClass]="{'clearance': projectFromSubmit && PROJECT_ID?.errors?.required }"
+        [required]="requField">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of ProjectList" [value] ="option.PROJECT_ID">
+              {{option.Txn_Type}}
+            </option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Site<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="SITE_ID" 
+        #SITE_ID="ngModel" 
+        [(ngModel)]="objproject.SITE_ID"
+        [ngClass]="{'clearance': projectFromSubmit && SITE_ID?.errors?.required }"
+        [required]="requField">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of ProjectList" [value] ="option.SITE_ID">
+              {{option.Txn_Type}}
+            </option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Group<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="Budget_Group_ID" 
+        #Budget_Group_ID="ngModel" 
+        [(ngModel)]="objproject.Budget_Group_ID"
+        [ngClass]="{'clearance': projectFromSubmit && Budget_Group_ID?.errors?.required }"
+        [required]="requField">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of ProjectList" [value] ="option.Budget_Group_ID">
+              {{option.Txn_Type}}
+            </option>
+      </select>
+    </div>
+</div>
+<div class="form-group" style="margin-left:3px;margin-right: 0px;">
+    <div class="col-sm-4">
+        <label class="control-label">Sub Group<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="Budget_Sub_Group_ID" 
+        #Budget_Sub_Group_ID="ngModel" 
+        [(ngModel)]="objproject.Budget_Sub_Group_ID"
+        [ngClass]="{'clearance': projectFromSubmit && Budget_Sub_Group_ID?.errors?.required }"
+        [required]="requField">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of ProjectList" [value] ="option.Budget_Sub_Group_ID">
+              {{option.Txn_Type}}
+            </option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Work Detalis<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="Work_Details_ID" 
+        #Work_Details_ID="ngModel" 
+        [(ngModel)]="objproject.Work_Details_ID"
+        [ngClass]="{'clearance': projectFromSubmit && Work_Details_ID?.errors?.required }"
+        [required]="requField">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of ProjectList" [value] ="option.Work_Details_ID">
+              {{option.Txn_Type}}
+            </option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+    </div>
+</div>

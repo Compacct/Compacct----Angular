@@ -330,6 +330,7 @@
                                     </div>
                                     <div class="col-sm-3"></div>
                                 </div>
+                                <app-compacct-project *ngIf="openProject === 'Y'" [field]="projectMand" [requir]="purchaseFormSubmitted" (projectObj)="getProjectData($event)"></app-compacct-project>
                                 <hr class="box boxboxDivide-primary">
                                <form name="purChaseAddForm" #purChaseAddForm="ngForm" novalidate>
                                     <div class="form-group">
@@ -677,11 +678,11 @@
                             </form>
                         </p-tabPanel>
                     </p-tabView>
-                    </div>
-                    </div>
-                    </div>
-                    </div>
-                    </div>
+                </div>
+            </div>
+         </div>
+    </div>
+</div>
         <p-dialog
         [header]="viewHeader"
         [appendTo]="'body'"
