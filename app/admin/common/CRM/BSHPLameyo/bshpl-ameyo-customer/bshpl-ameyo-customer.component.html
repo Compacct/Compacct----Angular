@@ -66,7 +66,7 @@
                                         <button class="btn btn-primary" 
                                         style="margin-top: 28px" 
                                         data-toggle="modal" 
-                                        (click)="Appointment(ameyoCustomarForm.form.valid)" 
+                                        (click)="redirectPatientDetails()" 
                                         >
                                          <span class="fa fa-fw fa fa-clone"></span>&nbsp;Details
                                          </button>
@@ -204,7 +204,7 @@
                                 </div>
                             </form>
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-blackboard" >
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-blackboard" >
                             <form name="Followuppartient" #Followuppartient="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
@@ -338,3 +338,5 @@
     </div>
 </div>
 <!-- 9007716803 -->
+
+<!-- http://localhost:50063/BSHPL_Ameyo_KB?sessionId=10&campaignId=5&crtObjectId=10&userCrtObjectId=11&userId=61397&customerId=10&phone=9007716803&crmSessionId=61397 -->

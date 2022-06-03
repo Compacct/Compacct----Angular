@@ -73,7 +73,7 @@
                                         <button class="btn btn-primary" 
                                         style="margin-top: 28px" 
                                         data-toggle="modal" 
-                                        (click)="GetSearchedList(ameyoKBForm.form.valid)" 
+                                        (click)="Appointment()" 
                                         id="load" 
                                         [disabled]="seachSpinner">
                                         <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
@@ -81,15 +81,7 @@
                                          </button>
                                     </div>
                                     <div class="col-sm-2">
-                                        <button class="btn btn-primary" 
-                                        style="margin-top: 28px" 
-                                        data-toggle="modal" 
-                                        (click)="GetSearchedList(ameyoKBForm.form.valid)" 
-                                        id="load" 
-                                        [disabled]="seachSpinner">
-                                        <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                        <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search Patient
-                                         </button>
+                                      
                                     </div>
                                 </div>
                             </form>
@@ -132,24 +124,16 @@
                                                                 <span class="caret"></span>
                                                             </button>
                                                             <ul class="dropdown-menu">
-                                                                <li>
-                                                                <a>
-                                                                    <i class="fa fa-fw fa-pencil"></i>
-                                                                    Edit
-                                                                </a>
-                                                                </li>
-                                                                <li  *ngIf="Param_Flag != 'N'"><a> <i class="fa fa-phone"> </i>Call</a></li>
-                                                                <li><a> <i class="fa fa-commenting-o"> </i>Followup</a></li>
-                                                                <li><a><i class="fa fa-fw fa fa-clone"></i>View Details</a></li>
-                                                                <li ><a><i class="fa fa-fw fa fa-exchange"></i>Lead Transfer</a></li>
-                                                                <li><a><i class="fa fa-fw fa-calendar-times-o"></i>Appointment</a></li>
-                                                                <li><a ><i class="fa fa-fw fa fa-close"></i>Lead Close</a></li>
-                                                            </ul>
+                                                                <li  *ngIf="Param_Flag != 'N'"><a (click)="call(col.Mobile)" > <i class="fa fa-phone"> </i>Call</a></li>
+                                                                <li ><a (click)="followup(col.Foot_Fall_ID,col.Sent_To,col.Mobile)"> <i class="fa fa-commenting-o"> </i>Followup</a></li>
+                                                                <li><a (click)="redirectPatientDetails(col)"><i class="fa fa-fw fa fa-clone"></i>View Details</a></li>
+                                                                <li><a (click)="Appointment()"><i class="fa fa-fw fa-calendar-times-o"></i>Appointment</a></li>
+                                                             </ul>
                                                         </div>
                                                     </td>
                                                     <td>{{col.Contact_Name}}</td>
-                                                    <td nowrap="nowrap"><a href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"></i>{{col.Mobile}}</a></td>
-                                                    <td nowrap="nowrap"><a href="{{'tel:+91'+col.Mobile_2}}"><i class="fa fa-fw fa-phone-square" ng-show="obj.Mobile_2"></i>{{col.Mobile_2}}</a></td>
+                                                    <td nowrap="nowrap"><a (click)="call(col.Mobile)" href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square" *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td>
+                                                    <td nowrap="nowrap"><a  (click)="call(col.Mobile_2)" href="{{'tel:+91'+col.Mobile_2}}"><i class="fa fa-fw fa-phone-square" *ngIf="col.Mobile_2"></i>{{col.Mobile_2}}</a></td>
                                                     <td>{{col.Mobile_3_WP}}</td>
                                                     <td>{{col.Followup_Action }}</td>
                                                     <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>

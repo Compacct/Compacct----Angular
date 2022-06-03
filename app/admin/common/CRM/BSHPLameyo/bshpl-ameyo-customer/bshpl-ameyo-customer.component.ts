@@ -107,6 +107,10 @@ export class BSHPLAmeyoCustomerComponent implements OnInit {
             value: el.Foot_Fall_ID,
           });
        });
+       setTimeout(() => {
+         this.PatientName = data[0].Foot_Fall_ID;
+         this.PatientChange(this.PatientName)
+       }, 1000);
       })
   }
   PatientChange(footFallID){
@@ -133,6 +137,7 @@ export class BSHPLAmeyoCustomerComponent implements OnInit {
   }
   Appointment(valid){
     // window.open("BSHPL_Appointment_Popup");
+    window.open("/BSHPL_Appointment_Popup", "Appointment", 'fullscreen=yes, scrollbars=auto,width=950,height=500');
   }
   getFollowupByDate(dateStr) {
     return this.followUpLists.filter((item) => item.Posted_On_C === dateStr);
@@ -234,6 +239,11 @@ export class BSHPLAmeyoCustomerComponent implements OnInit {
    
     })
   }
+  redirectPatientDetails() {
+    if (this.PatientName) {
+        window.open('/BSHPL_CRM_Lead_Search_Popup?recordid=' + window.btoa(this.PatientName) , "View Details", 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    }
+}
   ngOnDestroy() {
     $('header.main-header').css({
       'display' :'block'

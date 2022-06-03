@@ -8,6 +8,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
 import { MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
 import { flatMap } from 'rxjs/operators';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 declare var $: any;
 @Component({
   selector: 'app-bshp-ameyo-kb',
@@ -39,6 +40,7 @@ export class BSHPAmeyoKBComponent implements OnInit {
     private compacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
+    private ngxService: NgxUiLoaderService
   ) {
     this.route.queryParams.subscribe(params => {
       console.log(params);
@@ -102,6 +104,9 @@ export class BSHPAmeyoKBComponent implements OnInit {
        })
      }
   }
+  Appointment(){
+    window.open("/BSHPL_Appointment_Popup", "Appointment", 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  }
   openDial(){
     this.PhoneNo = "";
     this.DialFormSubmit = false;
@@ -110,6 +115,7 @@ export class BSHPAmeyoKBComponent implements OnInit {
   SaveDial(valid){
     this.DialFormSubmit = false
    if(valid){
+    this.ngxService.start();
     var obj = { 
       campaignId: this.campaignId, 
       sessionId: this.$CompacctAPI.CompacctCookies.Amyo_sessionId, 
@@ -118,12 +124,40 @@ export class BSHPAmeyoKBComponent implements OnInit {
       .post(this.url.apiAmeyoDialAPI,{LinkString: JSON.stringify(obj) })
       .subscribe((data: any) => {
         if (data.data.result == "success") {
-          this.displayDial = false
+          this.displayDial = false;
           this.PhoneNo = undefined;
-          this.DialFormSubmit = false
+          this.DialFormSubmit = false;
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "",
+           detail: "Calling.."
+         });
       }
+      this.ngxService.stop();
       })
    }
+  }
+  call(Number){
+   if(Number && this.campaignId){
+     this.PhoneNo = undefined;
+     this.PhoneNo = Number
+     this.SaveDial(true)
+   }
+  }
+  followup(footFallID,userId?,PhoneNo?){
+   if(footFallID){
+     let usId = userId ? userId : 61397;
+     let phone = PhoneNo ? PhoneNo : 9007716803
+    window.open("/BSHPL_Ameyo_Customer?sessionId=10&campaignId=5&crtObjectId=10&userCrtObjectId=11&userId="+usId+"&customerId=10&phone="+phone+"&crmSessionId="+usId);
+   }
+  }
+  redirectPatientDetails(obj) {
+      if (obj) {
+          window.open('/BSHPL_CRM_Lead_Search_Popup?recordid=' + window.btoa(obj.Foot_Fall_ID));
+      }
   }
   ngOnDestroy() {
     $('header.main-header').css({
