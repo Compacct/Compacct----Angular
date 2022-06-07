@@ -496,10 +496,10 @@
       <div class="form-group">
         <div class="col-sm-12">
           <label class="control-label">Work Details<sup class="text-danger">*</sup></label>
-          <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="workdetalisName"
+          <textarea rows="2" class="form-control" name="name" #name="ngModel" [(ngModel)]="workdetalisName"
             placeholder="Work Details" allow-pattern="([a-z ]|\.)" [ngClass]="{
         clearance: workdetalisSubmitted && name?.errors?.required
-      }" required />
+      }" required ></textarea>
         </div>
       </div>
 
