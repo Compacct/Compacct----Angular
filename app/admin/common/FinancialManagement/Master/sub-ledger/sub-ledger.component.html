@@ -242,7 +242,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">GST No.<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" placeholder="GST NO." (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
+                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" placeholder="GST NO." (onChange)='checkGSTvalid(objSubLedger.GST_NO)' minlength="15" maxlength="15" [ngClass]="{
                                             clearance:
                                               (GSTvalidFlag) ||
                                               (GST_NO.errors?.minlength && GST_NO.touched)

@@ -51,12 +51,12 @@ export class TaxCategoryComponent implements OnInit {
   TagIGSTOutputData =[];
   TagCGSTOutputData =[];
   TagSGSTOutputData =[];
-  IGST_Check = undefined;
-  CGST_inputckeck = undefined;
-  SGST_inputckeck =undefined;
-  IGST_outputckeck = undefined;
-  CGST_outputckeck = undefined;
-  SGST_outputckeck = undefined;
+  IGST_Check = false;
+  CGST_inputckeck = false;
+  SGST_inputckeck = false;
+  IGST_outputckeck = false;
+  CGST_outputckeck = false;
+  SGST_outputckeck = false;
   EditList = [];
   
   constructor(
@@ -378,11 +378,11 @@ saveData(valid:any){
   console.log("savedata==",this.ObjTax);
   this.TaxFormSubmitted = true;
   if(valid){
-    console.log("cat id",this.taxId);
-    let msg = this.taxId ? "Update" : "Create"
+    console.log("cat id",this.TaxCode);
+    let msg = this.TaxCode ? "Update" : "Create"
       const obj = {
         "SP_String": "SP_TAX_Catagory",
-        "Report_Name_String": this.taxId ? 'Update_TAX_Catagory' : 'Create_TAX_Catagory',
+        "Report_Name_String": this.TaxCode ? 'Update_TAX_Catagory' : 'Create_TAX_Catagory',
         "Json_Param_String": JSON.stringify([this.ObjTax]) 
        }
        this.GlobalAPI.getData(obj)
@@ -399,10 +399,16 @@ saveData(valid:any){
           }
           this.Spinner = false;
           this.getBrowseTax();
-          this.taxId = undefined;
+          this.TaxCode = undefined;
           this.tabIndexToView = 0;
           this.TaxFormSubmitted = false;
           this.ObjTax = new Tax();
+          this.IGST_Check = false;
+          this.CGST_inputckeck = false;
+          this.SGST_inputckeck = false;
+          this.IGST_outputckeck = false;
+          this.CGST_outputckeck = false;
+          this.SGST_outputckeck = false;
         });
     }
     else{

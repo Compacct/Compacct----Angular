@@ -83,7 +83,10 @@
     .EL,
     .CL,
     .AL,
-    .CO {
+    .CO,
+    .PL,
+    .LWP,
+    .COMM OFF {
         background-color: #ff4141;
         color: #ffff;
         text-align: center;
@@ -98,7 +101,11 @@
     }
     
     .P,
-    .HL {
+    .WO,
+    .PH,
+    .L,
+    .HL,
+    .OF {
         background-color: rgb(67 162 47);
         color: #ffff;
         text-align: center;

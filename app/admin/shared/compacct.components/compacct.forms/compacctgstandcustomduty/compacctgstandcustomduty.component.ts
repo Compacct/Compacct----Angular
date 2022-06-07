@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { CompacctCommonApi } from "../../../compacct.services/common.api.service";
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 declare var $: any;
@@ -8,22 +8,26 @@ declare var $: any;
   templateUrl: './compacctgstandcustomduty.component.html',
   styleUrls: ['./compacctgstandcustomduty.component.css']
 })
-export class CompacctgstandcustomdutyComponent implements OnInit {
+export class CompacctgstandcustomdutyComponent implements OnInit,OnChanges{
   ObjGstandCustonDuty = new GstandCustonDuty();
   gstData = [];
   AllgstlData = [];
   GstAndCustomFormSubmit:any = false;
-  private _required: boolean;
+  _ServiceCheck = false
 
   @Output() GstandCustonDutyObj = new EventEmitter <GstandCustonDuty>();
-  @Input()  set required(value: boolean) {
-    this._required = value;
-    if (this._required) {
-      this.GstAndCustomFormSubmit = this.ObjGstandCustonDuty.Cat_ID ? true : false;
+  @Input() requirGst :any
+  @Input() labelChange = "";
+  // @Input() ServiceCheck : boolean;
+  
+  @Input() set ServiceCheck(value: boolean) {
+    this._ServiceCheck = value;
+    if (this._ServiceCheck) {
+      this.labelChange = "SAC Code";
     } else {
-      this.GstAndCustomFormSubmit = this.ObjGstandCustonDuty.Cat_ID ? true : false;
+      this.labelChange = "HSN Code";
     }
- }
+  }
 
   constructor(
     private $CompacctAPI: CompacctCommonApi,
@@ -55,7 +59,31 @@ getGSTTyp(){
 EventEmitDefault(){
   this.GstandCustonDutyObj.emit(this.ObjGstandCustonDuty);
 }
-
+clear() {
+  // this.VendorAddressLists = [];
+  this.ObjGstandCustonDuty = new GstandCustonDuty();
+}
+ngOnChanges(changes: SimpleChanges) {
+        
+  //this.doSomething(changes.categoryId.currentValue);
+  // You can also use categoryId.previousValue and 
+  // categoryId.firstChange for comparing old and new values
+ 
+  if( changes.requirGst){
+    this.GstAndCustomFormSubmit = changes.requirGst.currentValue
+    console.log("changes >>",changes);
+  }
+  else if(changes.ServiceCheck){
+    console.log("changes Check>>",changes);
+    if(changes.ServiceCheck.currentValue){
+      this.labelChange = "SAC Code";
+    }
+    else{
+      this.labelChange = "HSN Code";
+    }
+  }
+  
+}
 }
 class GstandCustonDuty {
   Cat_ID: number;

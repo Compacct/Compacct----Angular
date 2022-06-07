@@ -16,17 +16,24 @@
                                 [virtualScroll]="true" 
                                 itemSize="30"
                                 (onChange)="EventEmitDefault()"
-                                [styleClass]="GstAndCustomFormSubmit && !ObjGstandCustonDuty.Cat_ID ? 'clearance' : ''"
+                                [ngClass]="{'clearance': GstAndCustomFormSubmit && Cat_Name.errors?.required}"
                                 [required]="true">
                         </p-dropdown>
         </div>
-        <div class="col-sm-4">
-                <label class="control-label"> HSN/SAC Code
+        <div class="col-sm-4" >
+                <label class="control-label" > {{labelChange}}
                     <sup class="text-danger">*</sup></label>
                 <input type="text" name="hansaccode" #hansaccode ="ngModel"
-                [(ngModel)]="ObjGstandCustonDuty.HSN_SAC_Code" class="form-control" placeholder="HSN/SAC Code" (change)="EventEmitDefault()"
-                [ngClass]="{'clearance': GstAndCustomFormSubmit  && !ObjGstandCustonDuty.HSN_SAC_Code}"required>
+                [(ngModel)]="ObjGstandCustonDuty.HSN_SAC_Code" class="form-control" placeholder={{labelChange}} (change)="EventEmitDefault()"
+                [ngClass]="{'clearance': GstAndCustomFormSubmit && hansaccode.errors?.required}"required>
         </div>
+        <!-- <div class="col-sm-4" *ngIf="Hide['SAC_Code'] === true">
+            <label class="control-label" > SAC Code
+                <sup class="text-danger">*</sup></label>
+            <input type="text" name="hansaccode" #hansaccode ="ngModel"
+            [(ngModel)]="ObjGstandCustonDuty.SAC_Code" class="form-control" placeholder="HSN/SAC Code" (change)="EventEmitDefault()"
+            [ngClass]="{'clearance': GstAndCustomFormSubmit  && !ObjGstandCustonDuty.HSN_SAC_Code}"required>
+    </div> -->
         <div class="col-sm-4">
             <label class="control-label">Custom Duty</label>
             <input type="number" value="0" class="form-control"

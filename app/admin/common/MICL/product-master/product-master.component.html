@@ -8,11 +8,17 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6" *ngIf="Is_View && !is_Active">
+            <div class="ui-g-6" *ngIf="Is_View && !is_Active && !can_popup && !act_popup">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
-            <div class="ui-g-6" *ngIf="is_Active && !Is_View">
+            <div class="ui-g-6" *ngIf="is_Active && !Is_View && !can_popup && act_popup!">
                 <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6"*ngIf="can_popup && !act_popup && !Is_View && !is_Active">
+                <button type="button" pButton (click)="onConfirm3()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6"  *ngIf="act_popup && !can_popup && !Is_View && !is_Active">
+                <button type="button" pButton (click)="onConfirm4()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -49,18 +55,19 @@
                                                     <tr>
                                                         <th style="width:5em">Action</th>
                                                         <th>Material Type</th>
-                                                        <th>IS Service (Yes/No)</th>
+                                                        <!-- <th>IS Service (Yes/No)</th> -->
+                                                        <th>Product Code</th>
                                                         <th>Product Type</th>
                                                         <th>Product Sub Type</th>
                                                         <th>Manufacturer</th>
-                                                        <th>Product Code</th>
                                                         <th>Product Description</th>
                                                         <th>GST Gateory</th>
-                                                        <th>HSN/SAC</th>
+                                                        <th>HSN Code</th>
+                                                        <th>SAC Code</th>
                                                     </tr>
                                                 </ng-template> 
                                                 <ng-template pTemplate="body" let-col>
-                                                    <tr>
+                                                    <tr [class]='col.Is_Visiable === "N" ? "text-red-active" : ""'>
                                                         <td>
                                                             <div class="dropdown">
                                                                 <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
@@ -69,17 +76,17 @@
                                                                                     <span class="caret"></span>
                                                                                 </button>
                                                                 <ul class="dropdown-menu">
-                                                                <li  >
+                                                                <li  *ngIf="col.Is_Visiable == 'Y'">
                                                                         <a (click)="EditProduct(col)">
                                                                             <i class="fa fa-fw fa-pencil"></i> Edit
                                                                         </a>
                                                                     </li>
-                                                                    <li >
-                                                                        <a (click)="DeleteProduct(col)">
+                                                                    <li *ngIf="col.Is_Visiable === 'Y'">
+                                                                        <a (click)="Deactivate(col)">
                                                                             <i class="fa fa-fw fa-trash"></i> Inactive
                                                                         </a>
                                                                     </li>
-                                                                    <li  >
+                                                                    <li  *ngIf="col.Is_Visiable === 'N'">
                                                                         <a (click)="Active(col)">
                                                                             <i class="fa fa-power-off"></i> Active
                                                                         </a>
@@ -88,14 +95,15 @@
                                                             </div>
                                                         </td> 
                                                     <td>{{col.Material_Type ? col.Material_Type:"-"}}</td>
-                                                    <td>{{col.Is_Service ? col.Is_Service:"-"}}</td>
+                                                    <!-- <td>{{col.Is_Service ? col.Is_Service:"-"}}</td> -->
+                                                    <td>{{col.Product_Code ? col.Product_Code:"-"}}</td>
                                                     <td>{{col.Product_Type ? col.Product_Type:"-"}}</td>
                                                     <td>{{col.Product_Sub_Type ? col.Product_Sub_Type:"-"}}</td>
                                                     <td>{{col.Product_Manufacturing_Group ? col.Product_Manufacturing_Group:"-"}}</td>
-                                                    <td>{{col.Product_Code ? col.Product_Code:"-"}}</td>
                                                     <td>{{col.Product_Description ? col.Product_Description:"-"}}</td>
                                                     <td>{{col.GST_Tax_Per ? col.GST_Tax_Per:"-"}}</td>
-                                                    <td>{{col.HSN_Code ? col.HSN_Code:"-"}}</td>
+                                                    <td>{{col.HSN_Code ? col.HSN_Code : '-'}}</td>
+                                                    <td>{{col.SAC_Code ? col.SAC_Code : '-'}}</td>
                                                     </tr>
                                                 </ng-template>
                                                 <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->
@@ -111,7 +119,7 @@
                                                                     <sup class="text-danger">*</sup>
                                                                 </label>
                                                                 <div class="checkBox">
-                                                                    <p-checkbox  name="Pr5"[(ngModel)]="CheckifService" (click)="ChangeValue()" binary="true"></p-checkbox> &nbsp; <b>Check if Service</b> 
+                                                                    <p-checkbox  name="Pr5" [(ngModel)]="CheckifService" (click)="ChangeValue()" binary="true"></p-checkbox> &nbsp; <b>Check if Service</b> 
                                                                 </div>
                                                             </div>
                                                             <div class="col-sm-6">
@@ -130,6 +138,7 @@
                                                                 #Material_Type="ngModel" 
                                                                 [showClear]="true" 
                                                                 [emptyFilterMessage]="' No Item Found'" 
+                                                                (onChange)="MaterialChange()"
                                                                 [filter]="true" filterBy="label,value.name" 
                                                                 [resetFilterOnHide]="true" 
                                                                 [placeholder]="'Select Material Type'" 
@@ -140,7 +149,7 @@
                                                             </div>                        
                                         </div>  
 
-                                        <!-- <div class="form-group" style="padding: 1em;"> -->
+                                        <div class="form-group" style="padding: 1em;">
                                             <h5 style="
                                                 padding: 0.5em 1em;
                                                 background: #c1c1c185;
@@ -152,90 +161,13 @@
                                                 </i> &nbsp;<strong>{{check}} Details :</strong></h5>
 
                                                 <app-compacct-product-details
-                                                 [required]="true"
-                                                 (ProDetailsObj)="getProDetailsData($event)"
+                                                 [requirPro]="MaterialFormSubmit"
+                                                 (ProDetailsObj)="getProDetailsData($event,FinacialDetailsInput)"
                                                  #Product
                                                 >
                                                 </app-compacct-product-details>
-                                                     <!-- <div class="col-sm-4">
-                                                        <label class="control-label">Product Type
-                                                            <sup class="text-danger">*</sup>
-                                                        </label>
-                                                        <div class="pull-right">
-                                                            <button (click)="ViewProductType()" class="btn btn-primary  createPatient">
-                                                            <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
-                                                            <button (click)="ProTypePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus">
-                                                            </i> Create
-                                                            </button>
-                                                        </div>
-                                                        <p-dropdown 
-                                                        [options]="AllproductData" 
-                                                        name="Product_Type"
-                                                        [(ngModel)]="Objproduct.Product_Type_ID"
-                                                        #Product_Type="ngModel" 
-                                                        [showClear]="true" 
-                                                        [emptyFilterMessage]="' No Product Found'" 
-                                                        [filter]="true" filterBy="label,value.name" 
-                                                        [resetFilterOnHide]="true" 
-                                                        [placeholder]="'Select Product Type'" 
-                                                        [virtualScroll]="true" 
-                                                        itemSize="30"
-                                                        (onChange)="getProductSubTyp()"
-                                                        [ngClass]="{'clearance': MaterialFormSubmit && Product_Type.errors?.required}"required>
-                                                        </p-dropdown>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <label class="control-label">Product Sub Type
-                                                            <sup class="text-danger">*</sup>
-                                                        </label>
-                                                        <div class="pull-right">
-                                                            <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!Objproduct.Product_Type_ID">
-                                                            <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
-                                                            <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!Objproduct.Product_Type_ID"><i class="fa fa-fw  fa-plus">
-                                                            </i> Create
-                                                            </button>
-                                                        </div>
-                                                        <p-dropdown 
-                                                        [options]="AllproductSubData" 
-                                                        name="Product_Sub_Type"
-                                                        [(ngModel)]="Objproduct.Product_Sub_Type_ID"
-                                                        #Product_Sub_Type="ngModel" 
-                                                        [showClear]="true" 
-                                                        [emptyFilterMessage]="' No Item Found'" 
-                                                        [filter]="true" filterBy="label,value.name" 
-                                                        [resetFilterOnHide]="true" 
-                                                        [placeholder]="'Select Product Sub Type'" 
-                                                        [virtualScroll]="true" 
-                                                        itemSize="30"
-                                                        [ngClass]="{'clearance': MaterialFormSubmit && Product_Sub_Type.errors?.required}"required>
-                                                        </p-dropdown>  
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <label class="control-label">Product Code</label>
-                                                        <input CompacctDigitonly="true"  class="form-control" placeholder="Product Code"
-                                                            name="Product_Code"
-                                                            #Product_Code ="ngModel"
-                                                            [(ngModel)]="Objproduct.Product_Code">
-                                                    </div>
-                                                    <div class="clearfix"></div>
-                                                    <div class="col-sm-4">
-                                                        <label class="control-label">Description/Model
-                                                            <sup class="text-danger">*</sup>
-                                                        </label>
-                                                        <input class="form-control" type="text" placeholder="Description/Mode"
-                                                            name="Product_Description"
-                                                            #Product_Description ="ngModel"
-                                                            [(ngModel)]="Objproduct.Product_Description">
-                                                   </div> 
-                                                    <div class="col-sm-4">
-                                                            <label class="control-label">Rack No.</label> 
-                                                            <input type="text" class="form-control" placeholder="Rack No."
-                                                            name="Rack_NO"
-                                                            #Rack_NO ="ngModel"
-                                                            [(ngModel)]="Objproduct.Rack_NO">    
-                                                    </div>
                                                    
-                                        </div>   -->
+                                        </div>   
                                          
                                         <div class="form-group" style="padding: 1em;">
                                             <h5 style="
@@ -254,7 +186,7 @@
                                                                         <p-dropdown 
                                                                                 [options]="AllMfgData" 
                                                                                 name="Mfg_Company"
-                                                                                [(ngModel)]="Objproduct.Mfg_Product_Code"
+                                                                                [(ngModel)]="Objproduct.Product_Mfg_Comp_ID"
                                                                                 #Mfg_Company="ngModel" 
                                                                                 [showClear]="true" 
                                                                                 [emptyFilterMessage]="' No Item Found'" 
@@ -263,6 +195,7 @@
                                                                                 [placeholder]="'Select Mfg Category'" 
                                                                                 [virtualScroll]="true" 
                                                                                 itemSize="30"
+                                                                                (onChange)="GetMfgProCode()"
                                                                                 [ngClass]="{'clearance': MaterialFormSubmit && Mfg_Company.errors?.required}"required>
                                                                         </p-dropdown>
                                                         </div>
@@ -288,7 +221,7 @@
                                                                 <div class="col-sm-3">
                                                                     <label class="control-label">Maintain Serial No</label>
                                                                     <div class="checkBox">
-                                                                        <p-checkbox  name="Product_Expiry5" binary="true"></p-checkbox> &nbsp; <b>Check if Yes</b> 
+                                                                        <p-checkbox  name="Product_Expiry5" [(ngModel)]="Objproduct.Maintain_Serial_No" binary="true"></p-checkbox> &nbsp; <b>Check if Yes</b> 
                                                                     </div>
                                                                 </div> 
                                                                 <div class="col-sm-3">
@@ -301,7 +234,7 @@
                                                                         </button>
                                                                     </div>
                                                                     <p-dropdown 
-                                                                    [options]="AllUomData" 
+                                                                    [options]="UomDataList" 
                                                                     name="MainUOM"
                                                                     [(ngModel)]="Objproduct.UOM"
                                                                     #MainUOM="ngModel" 
@@ -318,9 +251,22 @@
                                                                 </div>
                                                                 <div class="col-sm-3">
                                                                     <label class="control-label">All UOM</label>
-                                                                    <input  class="form-control" placeholder="All UOM"
+                                                                    <p-dropdown 
+                                                                    [options]="AllUomDataList" 
+                                                                    name="AllUOM"
+                                                                    [(ngModel)]="Objproduct.Alt_UOM"
+                                                                    #AllUOM="ngModel" 
+                                                                    [showClear]="true" 
+                                                                    [emptyFilterMessage]="' No UOM Found'" 
+                                                                    [filter]="true" filterBy="label,value.name" 
+                                                                    [resetFilterOnHide]="true" 
+                                                                    [placeholder]="'Select All UOM'" 
+                                                                    [virtualScroll]="true" 
+                                                                    itemSize="30">
+                                                                    </p-dropdown>
+                                                                    <!-- <input  class="form-control" placeholder="All UOM"
                                                                                 name="AllUOM"  #AllUOM="ngModel"
-                                                                                [(ngModel)]="Objproduct.Alt_UOM">
+                                                                                [(ngModel)]="Objproduct.Alt_UOM"> -->
                                                                 </div>     
                                                                 <div class="col-sm-3">
                                                                     <label class="control-label">Where</label>
@@ -392,7 +338,7 @@
                                                     name="Rate_Form_Quote"
                                                     #Rate_Form_Quote ="ngModel"
                                                     [(ngModel)]="Objproduct.Rate_Form_Quote">
-                                                        <option>No</option>
+                                                        <option value="No">No</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -401,7 +347,7 @@
                                                     name="Sale_Rate_Form_Quote"
                                                     #Sale_Rate_Form_Quote ="ngModel"
                                                     [(ngModel)]="Objproduct.Sale_Rate_Form_Quote">
-                                                         <option>No</option>
+                                                         <option value="No">No</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -419,7 +365,7 @@
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Has Expiry Date</label>
                                                     <div class="checkBox">
-                                                        <p-checkbox  name="Product_Expiry5" binary="true"></p-checkbox> &nbsp;<b> Check if Yes</b> 
+                                                        <p-checkbox  name="Product_Expiry5" [(ngModel)]=Objproduct.Product_Expiry binary="true"></p-checkbox> &nbsp;<b> Check if Yes</b> 
                                                     </div>
                                                 </div>
                                         </div>
@@ -442,145 +388,15 @@
                                             ">
                                             <i class="fa fa-fw fa-fax">
                                             </i> &nbsp;<strong>Financial Details:</strong></h5>
-                                            <div class="col-sm-6">
-                                                <label class="control-label">Purchaseable Product
-                                                    <sup class="text-danger">*</sup>
-                                                </label>
-                                                <div class="checkBox">
-                                                    <p-checkbox  name="Product_Expiry5" binary="true" ></p-checkbox> &nbsp;<b>Check to Make it Purchaseable</b> 
-                                                </div> 
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <label class="control-label">Billable Product
-                                                    <sup class="text-danger">*</sup>
-                                                </label>
-                                                <div class="checkBox">
-                                                    <p-checkbox  name="Product_Expiry5" binary="true"></p-checkbox> &nbsp;<b>Check to Make it Billable</b> 
-                                                </div> 
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <label class="control-label">Purchase ledger</label>
-                                                <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
-                                                    <input type="checkbox"
-                                                    ng-model="PurchaseACFlag" 
-                                                    style="margin: 10px 3px;" 
-                                                    ng-change="PurchaseACLedgerFlag()" 
-                                                    class="ng-valid ng-dirty ng-valid-parse ng-touched" 
-                                                    aria-invalid="false">
-                                                    <label for="vehicle1"><small>All Ledgers</small></label>
-                                                </div>
-                                                    <p-dropdown 
-                                                    [options]="AllPurchaseData" 
-                                                    name="Ledger_Name"
-                                                    [(ngModel)]="Objproduct.Purchase_Ac_Ledger"
-                                                    #Ledger_Name="ngModel" 
-                                                    [showClear]="true" 
-                                                    [emptyFilterMessage]="' No Item Found'" 
-                                                    [filter]="true" filterBy="label,value.name" 
-                                                    [resetFilterOnHide]="true" 
-                                                    [placeholder]="'Select Item'" 
-                                                    [virtualScroll]="true" 
-                                                    itemSize="30"
-                                                    [ngClass]="{'clearance': MaterialFormSubmit && Ledger_Name.errors?.required}"required>
-                                                    </p-dropdown>
-                                            </div> 
-                                            <div class="col-sm-6">
-                                                <label class="control-label">Sales ledger</label>
-                                                <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
-                                                    <input type="checkbox" 
-                                                    ng-model="SalesACFlag" 
-                                                    style="margin: 10px 3px;" 
-                                                    ng-change="SalesACLedgerFlag()" 
-                                                    class="ng-valid ng-dirty ng-valid-parse ng-touched" 
-                                                    aria-invalid="false">
-                                                    <label for="vehicle1"><small>All Ledgers</small></label>
-                                                </div>
-                                                    <p-dropdown 
-                                                    [options]="AllSalesData" 
-                                                    name="Ledger_Name"
-                                                    [(ngModel)]="Objproduct.Sales_Ac_Ledger"
-                                                    #Ledger_Name="ngModel" 
-                                                    [showClear]="true" 
-                                                    [emptyFilterMessage]="' No Item Found'" 
-                                                    [filter]="true" filterBy="label,value.name" 
-                                                    [resetFilterOnHide]="true" 
-                                                    [placeholder]="'Select Item'" 
-                                                    [virtualScroll]="true" 
-                                                    itemSize="30"
-                                                    [ngClass]="{'clearance': MaterialFormSubmit && Ledger_Name.errors?.required}"required>
-                                                    </p-dropdown>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <label class="control-label">Purchase Return</label>
-                                                    <p-dropdown 
-                                                    [options]="AllPr" 
-                                                    name="Ledger_Name"
-                                                    [(ngModel)]="Objproduct.Purchase_Return_Ledger_ID"
-                                                    #Ledger_Name="ngModel" 
-                                                    [showClear]="true" 
-                                                    [emptyFilterMessage]="' No Item Found'" 
-                                                    [filter]="true" filterBy="label,value.name" 
-                                                    [resetFilterOnHide]="true" 
-                                                    [placeholder]="'Select Item'" 
-                                                    [virtualScroll]="true" 
-                                                    itemSize="30"
-                                                    [ngClass]="{'clearance': MaterialFormSubmit && Ledger_Name.errors?.required}"required>
-                                                    </p-dropdown>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <label class="control-label">Sales Return</label>
-                                                    <p-dropdown 
-                                                    [options]="AllSalesR" 
-                                                    name="Ledger_Name"
-                                                    [(ngModel)]="Objproduct.Sales_Return_Ledger_ID"
-                                                    #Ledger_Name="ngModel" 
-                                                    [showClear]="true" 
-                                                    [emptyFilterMessage]="' No Item Found'" 
-                                                    [filter]="true" filterBy="label,value.name" 
-                                                    [resetFilterOnHide]="true" 
-                                                    [placeholder]="'Select Item'" 
-                                                    [virtualScroll]="true" 
-                                                    itemSize="30"
-                                                    [ngClass]="{'clearance': MaterialFormSubmit && Ledger_Name.errors?.required}"required>
-                                                    </p-dropdown>
-                                            </div>
-                                             <div class="col-sm-6">
-                                                <label class="control-label">Discount Receive</label>
-                                                    <p-dropdown 
-                                                    [options]="AllReceiveData" 
-                                                    name="Ledger_Name"
-                                                    [(ngModel)]="Objproduct.Discount_Receive_Ledger_ID"
-                                                    #Ledger_Name="ngModel" 
-                                                    [showClear]="true" 
-                                                    [emptyFilterMessage]="' No Item Found'" 
-                                                    [filter]="true" filterBy="label,value.name" 
-                                                    [resetFilterOnHide]="true" 
-                                                    [placeholder]="'Select Item'" 
-                                                    [virtualScroll]="true" 
-                                                    itemSize="30"
-                                                    [ngClass]="{'clearance': MaterialFormSubmit && Ledger_Name.errors?.required}"required>
-                                                    </p-dropdown>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <label class="control-label">Discount Given</label>
-                                                    <p-dropdown 
-                                                    [options]="AllDiscountData" 
-                                                    name="Ledger_Name"
-                                                    [(ngModel)]="Objproduct.Discount_Given_Ledger_ID"
-                                                    #Ledger_Name="ngModel" 
-                                                    [showClear]="true" 
-                                                    [emptyFilterMessage]="' No Item Found'" 
-                                                    [filter]="true" filterBy="label,value.name" 
-                                                    [resetFilterOnHide]="true" 
-                                                    [placeholder]="'Select Item'" 
-                                                    [virtualScroll]="true" 
-                                                    itemSize="30"
-                                                    [ngClass]="{'clearance': MaterialFormSubmit && Ledger_Name.errors?.required}"required>
-                                                    </p-dropdown>
-                                            </div>
+                                            <app-compacct-financial-details
+                                            [requirFinancial]="MaterialFormSubmit"
+                                            (FinacialDetailsObj)="FinancialDetailsData($event)"
+                                            #FinacialDetails
+                                             >
+                                        </app-compacct-financial-details>
                                         </div>
 
-                                         <!-- <div class="form-group"style="padding: 1em;"> -->
+                                         <div class="form-group"style="padding: 1em;">
                                             <h5 style="
                                             padding: 0.5em 1em;
                                             background: #c1c1c185;
@@ -589,54 +405,17 @@
                                             margin-top: 15px;
                                             ">
                                             <i class="fa fa-fw fa-fax">
-                                            </i> &nbsp;<strong>TAX & Custom Duty:</strong></h5>                                      
-                                              <!-- <div class="col-sm-4">
-                                                    <label class="control-label">TAX Category 
-                                                        <sup class="text-danger">*</sup>
-                                                    </label>
-                                                                <p-dropdown 
-                                                                        [options]="AllgstlData" 
-                                                                        name="Cat_Name"
-                                                                        [(ngModel)]="Objproduct.Cat_ID"
-                                                                        #Cat_Name="ngModel" 
-                                                                        [showClear]="true" 
-                                                                        [emptyFilterMessage]="' No Item Found'" 
-                                                                        [filter]="true" filterBy="label,value.name" 
-                                                                        [resetFilterOnHide]="true" 
-                                                                        [placeholder]="'Select TAX Category'" 
-                                                                        [virtualScroll]="true" 
-                                                                        itemSize="30"
-                                                                        [ngClass]="{'clearance': MaterialFormSubmit && Cat_Name.errors?.required}"required>
-                                                                </p-dropdown>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                        <label class="control-label"> HSN/SAC Code
-                                                            <sup class="text-danger">*</sup></label>
-                                                        <input type="text" name="hansaccode" #hansaccode ="ngModel"
-                                                        [(ngModel)]="Objproduct.HSN_Code" class="form-control" placeholder="HSN/SAC Code">
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <label class="control-label">Custom Duty</label>
-                                                    <input type="number" value="0" class="form-control"
-                                                    name="Custom_Duty"
-                                                    #Custom_Duty ="ngModel"
-                                                    [(ngModel)]="Objproduct.Custom_Duty">
-                                                </div>
-                                                <div class="clearfix"></div>
-                                                <div class="col-sm-4">
-                                                    <label class="control-label">Remarks</label>
-                                                        <textarea class="form-control"name="Remarks"
-                                                        #Remarks ="ngModel"
-                                                        [(ngModel)]="Objproduct.Remarks"placeholder="Remarks"
-                                                         ></textarea>
-                                                </div>                                                
-                                        </div> -->
+                                            </i> &nbsp;<strong>TAX & Custom Duty:</strong></h5> 
                                         <app-compacctgstandcustomduty
-                                        [required]="true"
+                                        [requirGst]="MaterialFormSubmit"
                                         (GstandCustonDutyObj)="getGstAndCustDutyData($event)"
                                         #GstAndCustomDuty
+                                        [ServiceCheck]="CheckifService"
+                                        [labelChange]="LAbelName"
                                         >
+                                        <!-- [Hide]="CheckifService ? '!HSN_Code' : 'SAC_Code'}" -->
                                         </app-compacctgstandcustomduty>
+                                        </div>
                                                     <div class="box-footer">
                                                         <button class="btn btn-primary pull-right"  id="load" (click)="saveData(MaterialForm.form.valid)"   [disabled]="Spinner">
                                                                         <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
