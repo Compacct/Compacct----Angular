@@ -147,7 +147,7 @@
                                         name="Cost_Cen_ID_te" 
                                         #Cost_Cen_ID_te="ngModel"
                                          [(ngModel)]='objreqi.Cost_Cen_ID' 
-                                         [ngClass]="{'clearance': reqiFormSubmitted && Cost_Cen_ID_te?.errors?.required}" 
+                                         [ngClass]="{'clearance': validatation?.required && Cost_Cen_ID_te?.errors?.required}" 
                                          (change)="Getgodown(objreqi.Cost_Cen_ID)"
                                          disabled
                                          required>
@@ -161,7 +161,7 @@
                                         name="Godown_ID" 
                                         #Godown_ID="ngModel" 
                                         [(ngModel)]="objreqi.Godown_ID" 
-                                        [ngClass]="{'clearance': reqiFormSubmitted && Godown_ID?.errors?.required}" 
+                                        [ngClass]="{'clearance': validatation?.required && Godown_ID?.errors?.required}" 
                                         required >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
@@ -169,6 +169,10 @@
                                     </div>
                                     </div>
                                 </form>
+                                <app-compacct-project *ngIf="openProject === 'Y'" 
+                                                        #project  
+                                                         [requir]="whateverCopy(validatation)"
+                                                         (projectObj)="getProjectData($event)"></app-compacct-project>
                                 <hr class="box boxboxDivide-primary">
                                 <form name="requisitionmaterialForm" #requisitionmaterialForm="ngForm" novalidate>
                                     <div class="form-group">

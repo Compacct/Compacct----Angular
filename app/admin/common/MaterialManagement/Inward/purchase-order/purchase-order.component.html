@@ -197,8 +197,8 @@
                                     <select class="form-control" 
                                     name="company" 
                                     #company="ngModel" 
-                                    [(ngModel)]="objpurchase.company"
-                                    [ngClass]="{'clearance': purchaseFormSubmitted && company?.errors?.required }"
+                                    [(ngModel)]="objpurchase.Company_ID"
+                                    [ngClass]="{'clearance': validatation?.required && company?.errors?.required }"
                                     required>
                                     <option  [ngValue]="undefined">Select</option>
                                        <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
@@ -223,7 +223,7 @@
                                     itemSize="30" 
                                     #Sub_Ledger_ID="ngModel"
                                     (onChange)="getSubLedgerDetalis()"
-                                    [styleClass]="purchaseFormSubmitted && Sub_Ledger_ID.errors?.required ? 'clearance': ''" [required] = "true">
+                                    [styleClass]="validatation?.required && Sub_Ledger_ID.errors?.required ? 'clearance': ''" [required] = "true">
                                 </p-dropdown>
                                 </div>
                                 <div class="col-sm-3">
@@ -232,7 +232,7 @@
                                     name="Billing_To" 
                                     #Billing_To="ngModel" 
                                     [(ngModel)]="objpurchase.Billing_To"
-                                    [ngClass]="{'clearance': purchaseFormSubmitted && Billing_To?.errors?.required }"
+                                    [ngClass]="{'clearance': validatation?.required && Billing_To?.errors?.required }"
                                     required>
                                     <option  [ngValue]="undefined">Select</option>
                                        <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
@@ -266,7 +266,7 @@
                                         name="Currency_ID" 
                                         #Currency_ID="ngModel" 
                                         [(ngModel)]="objpurchase.Currency_ID"
-                                        [ngClass]="{'clearance': purchaseFormSubmitted && Currency_ID?.errors?.required }"
+                                        [ngClass]="{'clearance': validatation?.required && Currency_ID?.errors?.required }"
                                         required>
                                         <option  [ngValue]="undefined">Select</option>
                                            <option *ngFor = "let option of currencyList" [value] ="option.Currency_ID">
@@ -286,21 +286,6 @@
                                         >
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">Project</label>
-                                        <select class="form-control" 
-                                        name="Project_ID" 
-                                        #Project_ID="ngModel" 
-                                        [(ngModel)]="objpurchase.Project_ID"
-                                        >
-                                        <option  [ngValue]="undefined">Select</option>
-                                           <option *ngFor = "let option of projectList" [value] ="option.Project_ID">
-                                              {{option.Project_Name}}
-                                            </option>
-                                      </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-3">
                                         <label class="control-label">Supplier Ref No</label>
                                         <input type="text" 
                                         class="form-control"
@@ -310,6 +295,8 @@
                                         placeholder="Supplier Ref No"
                                        >
                                     </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Ref. Date</label>
                                         <ejs-datepicker  [(value)]="RefDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
@@ -320,7 +307,7 @@
                                         name="Type_ID" 
                                         #Type_ID="ngModel" 
                                         [(ngModel)]="objpurchase.Type_ID"
-                                        [ngClass]="{'clearance': purchaseFormSubmitted && Type_ID?.errors?.required }"
+                                        [ngClass]="{'clearance': validatation?.required && Type_ID?.errors?.required }"
                                         required>
                                         <option  [ngValue]="undefined">Select</option>
                                            <option *ngFor = "let option of OrderTypeList" [value] ="option.Type_ID">
@@ -330,7 +317,10 @@
                                     </div>
                                     <div class="col-sm-3"></div>
                                 </div>
-                                <app-compacct-project *ngIf="openProject === 'Y'" [field]="projectMand" [requir]="purchaseFormSubmitted" (projectObj)="getProjectData($event)"></app-compacct-project>
+                                <app-compacct-project *ngIf="openProject === 'Y'" 
+                                                        #project  
+                                                         [requir]="whateverCopy(validatation)"
+                                                         (projectObj)="getProjectData($event)"></app-compacct-project>
                                 <hr class="box boxboxDivide-primary">
                                <form name="purChaseAddForm" #purChaseAddForm="ngForm" novalidate>
                                     <div class="form-group">
@@ -371,7 +361,9 @@
                                             [(ngModel)]="objaddPurchacse.AO_No"
                                             >
                                             <option  [ngValue]="undefined">Select</option>
-                                            
+                                            <option *ngFor = "let option of Aolist" [value] ="option.Doc_No">
+                                                {{option.DOC_Text}}
+                                              </option>
                                           </select>
                                        </div>
                                     </div>
@@ -637,14 +629,14 @@
                                 margin-top: 15px;
                                 ">
                                 <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Remarks :</strong>
+                                </i> &nbsp;<strong>Payment Terms :</strong>
                               </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Remarks"
-                                    #Remarks="ngModel"
-                                    [(ngModel)]="objpurchase.Remarks"
+                                    <p-editor name= "Payment_Terms"
+                                    #Payment_Terms="ngModel"
+                                    [(ngModel)]="objpurchase.Payment_Terms"
                                     [style]="{'height':'200px'}"
-                                    [ngClass]="{'clearance': purchaseFormSubmitted && Remarks?.errors?.required}" required>
+                                   >
                                       
                                     </p-editor>
                                 </div>
@@ -656,14 +648,109 @@
                                 margin-top: 15px;
                                 ">
                                 <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Terms Condition :</strong>
-                              </h5>
+                                </i> &nbsp;<strong>Delivery Terms :</strong>
+                               </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Terms_Condition"
-                                    #Terms_Condition="ngModel"
-                                    [(ngModel)]="objpurchase.Terms_Condition"
+                                    <p-editor name= "Delivery_Terms"
+                                    #Delivery_Terms="ngModel"
+                                    [(ngModel)]="objpurchase.Delivery_Terms"
                                     [style]="{'height':'200px'}"
-                                    [ngClass]="{'clearance': purchaseFormSubmitted && Terms_Condition?.errors?.required}" required>
+                                    >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Warranty :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Warranty"
+                                    #Warranty="ngModel"
+                                    [(ngModel)]="objpurchase.Warranty"
+                                    [style]="{'height':'200px'}"
+                                    >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Certifivates :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Certifivates"
+                                    #Certifivates="ngModel"
+                                    [(ngModel)]="objpurchase.Certificates"
+                                    [style]="{'height':'200px'}"
+                                   >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Installation Commissionning :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Installation_Commissionning"
+                                    #Installation_Commissionning="ngModel"
+                                    [(ngModel)]="objpurchase.Installation_and_Commission"
+                                    [style]="{'height':'200px'}"
+                                    >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Delivery Location :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Delivery_Location"
+                                    #Delivery_Location="ngModel"
+                                    [(ngModel)]="objpurchase.Delivery_Location"
+                                    [style]="{'height':'200px'}"
+                                   >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Remarks :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Remarks" 
+                                    #Remarks="ngModel"
+                                    [(ngModel)]="objpurchase.Remarks"
+                                    [style]="{'height':'200px'}"
+                                    >
                                       
                                     </p-editor>
                                 </div>

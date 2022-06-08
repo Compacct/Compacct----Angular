@@ -16,10 +16,12 @@ margin-top: 15px;
         #PROJECT_ID="ngModel" 
         [(ngModel)]="objproject.PROJECT_ID"
         [ngClass]="{'clearance': projectFromSubmit && PROJECT_ID?.errors?.required }"
-        [required]="requField">
+        (change)="getSite(objproject.PROJECT_ID)"
+        [required]="requField"
+        [disabled]="fieldDis">
         <option  [ngValue]="undefined">Select</option>
-           <option *ngFor = "let option of ProjectList" [value] ="option.PROJECT_ID">
-              {{option.Txn_Type}}
+           <option *ngFor = "let option of ProjectList" [value] ="option.Project_ID">
+              {{option.Project_Description}}
             </option>
       </select>
     </div>
@@ -29,11 +31,13 @@ margin-top: 15px;
         name="SITE_ID" 
         #SITE_ID="ngModel" 
         [(ngModel)]="objproject.SITE_ID"
+        (change)="getGroup()"
         [ngClass]="{'clearance': projectFromSubmit && SITE_ID?.errors?.required }"
-        [required]="requField">
+        [required]="requField"
+        [disabled]="fieldDis">
         <option  [ngValue]="undefined">Select</option>
-           <option *ngFor = "let option of ProjectList" [value] ="option.SITE_ID">
-              {{option.Txn_Type}}
+           <option *ngFor = "let option of SiteList" [value] ="option.Site_ID">
+              {{option.Site_Description}}
             </option>
       </select>
     </div>
@@ -43,11 +47,13 @@ margin-top: 15px;
         name="Budget_Group_ID" 
         #Budget_Group_ID="ngModel" 
         [(ngModel)]="objproject.Budget_Group_ID"
+        (change)="getSubGroup()"
         [ngClass]="{'clearance': projectFromSubmit && Budget_Group_ID?.errors?.required }"
-        [required]="requField">
+        [required]="requField"
+        [disabled]="fieldDis">
         <option  [ngValue]="undefined">Select</option>
-           <option *ngFor = "let option of ProjectList" [value] ="option.Budget_Group_ID">
-              {{option.Txn_Type}}
+           <option *ngFor = "let option of groupList" [value] ="option.Budget_Group_ID">
+              {{option.Budget_Group_Name}}
             </option>
       </select>
     </div>
@@ -59,28 +65,28 @@ margin-top: 15px;
         name="Budget_Sub_Group_ID" 
         #Budget_Sub_Group_ID="ngModel" 
         [(ngModel)]="objproject.Budget_Sub_Group_ID"
+        (onChange)="EmitOnDataInit()"
         [ngClass]="{'clearance': projectFromSubmit && Budget_Sub_Group_ID?.errors?.required }"
-        [required]="requField">
+        [required]="requField"
+        [disabled]="fieldDis">
         <option  [ngValue]="undefined">Select</option>
-           <option *ngFor = "let option of ProjectList" [value] ="option.Budget_Sub_Group_ID">
-              {{option.Txn_Type}}
+           <option *ngFor = "let option of subGorupList" [value] ="option.Budget_Sub_Group_ID">
+              {{option.Budget_Sub_Group_Name}}
             </option>
       </select>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-8">
         <label class="control-label">Work Detalis<sup *ngIf="requField" class="text-danger">*</sup></label>
-        <select class="form-control" 
-        name="Work_Details_ID" 
-        #Work_Details_ID="ngModel" 
-        [(ngModel)]="objproject.Work_Details_ID"
-        [ngClass]="{'clearance': projectFromSubmit && Work_Details_ID?.errors?.required }"
-        [required]="requField">
-        <option  [ngValue]="undefined">Select</option>
-           <option *ngFor = "let option of ProjectList" [value] ="option.Work_Details_ID">
-              {{option.Txn_Type}}
-            </option>
-      </select>
+      <p-dropdown [options]="workList" name="Work_Details"
+      [(ngModel)]="objproject.Work_Details_ID" [showClear]="true"
+      [emptyFilterMessage]="' No Work Details Found'"
+      (onChange)="EmitOnDataInit()" [filter]="true"
+      filterBy="label,value.name" [placeholder]="'Select Work Details'" [virtualScroll]="true"
+      itemSize="30" #Work_Details="ngModel" [styleClass]="
+      projectFromSubmit && Work_Details.errors?.required? 'clearance': ''"
+      [required]="true"
+      [disabled]="fieldDis">
+    </p-dropdown>
     </div>
-    <div class="col-sm-4">
-    </div>
+   
 </div>
