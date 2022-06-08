@@ -1,0 +1,12 @@
+.custombutton {
+    margin-top: 25px;
+  }
+  .optionStyle{
+    width: 50px;
+  }
+  .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label{
+    padding-right: 4em !important;
+    margin-top: 7px !important;
+    margin-left: 0px !important;
+    display: inline-block !important;
+  }

@@ -312,7 +312,7 @@ import { BSHPLAmeyoCustomerComponent } from './common/CRM/BSHPLameyo/bshpl-ameyo
 import { BSHPAmeyoKBComponent } from './common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component';
 import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledger/sub-ledger.component';
 import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
-
+import { CompacctProjectComponent } from './shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -542,7 +542,8 @@ import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.co
     BSHPLAmeyoCustomerComponent,
     BSHPAmeyoKBComponent,
     SubLedgerComponent,
-    TaxCategoryComponent
+    TaxCategoryComponent,
+    CompacctProjectComponent
   ],
   imports: [
     CommonModule,

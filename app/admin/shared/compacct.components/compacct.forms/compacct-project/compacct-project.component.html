@@ -1,0 +1,92 @@
+<h5 style="
+padding: 0.5em 1em;
+background: #c1c1c185;
+border-top: 5px solid #3c8dbc;
+border-bottom: 1px solid #c6c6c6;
+margin-top: 15px;
+">
+<i class="fa fa-fw fa-fax">
+</i> &nbsp;<strong>Project Detalis :</strong>
+</h5>
+<div class="form-group" style="margin-left:3px;margin-right: 0px;">
+    <div class="col-sm-4">
+        <label class="control-label">Project<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="PROJECT_ID" 
+        #PROJECT_ID="ngModel" 
+        [(ngModel)]="objproject.PROJECT_ID"
+        [ngClass]="{'clearance': projectFromSubmit && PROJECT_ID?.errors?.required }"
+        (change)="getSite(objproject.PROJECT_ID)"
+        [required]="requField"
+        [disabled]="fieldDis">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of ProjectList" [value] ="option.Project_ID">
+              {{option.Project_Description}}
+            </option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Site<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="SITE_ID" 
+        #SITE_ID="ngModel" 
+        [(ngModel)]="objproject.SITE_ID"
+        (change)="getGroup()"
+        [ngClass]="{'clearance': projectFromSubmit && SITE_ID?.errors?.required }"
+        [required]="requField"
+        [disabled]="fieldDis">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of SiteList" [value] ="option.Site_ID">
+              {{option.Site_Description}}
+            </option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+        <label class="control-label">Group<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="Budget_Group_ID" 
+        #Budget_Group_ID="ngModel" 
+        [(ngModel)]="objproject.Budget_Group_ID"
+        (change)="getSubGroup()"
+        [ngClass]="{'clearance': projectFromSubmit && Budget_Group_ID?.errors?.required }"
+        [required]="requField"
+        [disabled]="fieldDis">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of groupList" [value] ="option.Budget_Group_ID">
+              {{option.Budget_Group_Name}}
+            </option>
+      </select>
+    </div>
+</div>
+<div class="form-group" style="margin-left:3px;margin-right: 0px;">
+    <div class="col-sm-4">
+        <label class="control-label">Sub Group<sup *ngIf="requField" class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="Budget_Sub_Group_ID" 
+        #Budget_Sub_Group_ID="ngModel" 
+        [(ngModel)]="objproject.Budget_Sub_Group_ID"
+        (onChange)="EmitOnDataInit()"
+        [ngClass]="{'clearance': projectFromSubmit && Budget_Sub_Group_ID?.errors?.required }"
+        [required]="requField"
+        [disabled]="fieldDis">
+        <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of subGorupList" [value] ="option.Budget_Sub_Group_ID">
+              {{option.Budget_Sub_Group_Name}}
+            </option>
+      </select>
+    </div>
+    <div class="col-sm-8">
+        <label class="control-label">Work Detalis<sup *ngIf="requField" class="text-danger">*</sup></label>
+      <p-dropdown [options]="workList" name="Work_Details"
+      [(ngModel)]="objproject.Work_Details_ID" [showClear]="true"
+      [emptyFilterMessage]="' No Work Details Found'"
+      (onChange)="EmitOnDataInit()" [filter]="true"
+      filterBy="label,value.name" [placeholder]="'Select Work Details'" [virtualScroll]="true"
+      itemSize="30" #Work_Details="ngModel" [styleClass]="
+      projectFromSubmit && Work_Details.errors?.required? 'clearance': ''"
+      [required]="true"
+      [disabled]="fieldDis">
+    </p-dropdown>
+    </div>
+   
+</div>

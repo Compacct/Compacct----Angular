@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, SimpleChanges } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AbstractControl } from '@angular/forms'; 
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { identity } from 'rxjs';
+import { CompacctProjectComponent } from '../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 
 @Component({
   selector: 'app-purchase-order',
@@ -41,6 +42,7 @@ export class PurchaseOrderComponent implements OnInit {
   purChaseAddFormSubmit = false;
   ExpectedDeliverydate = new Date;
   objpurchase : purchase = new purchase();
+  objproject : project = new project();
   addPurchaseList = [];
   AcceptanceOrderList = [];
   rate = undefined;
@@ -62,6 +64,18 @@ export class PurchaseOrderComponent implements OnInit {
   disAmtBackUpAMT:number = 0
   disAmtBackUpPer:number = 0
   objaddPurchacse : addPurchacse = new addPurchacse();
+  openProject = "N"
+  projectMand = "N";
+  objSize = undefined;
+  falg = false;
+  Aolist= [];
+  validatation = {
+    required : false,
+    projectMand : 'N'
+  }
+  projectEditData =[]
+  @ViewChild("project", { static: false })
+  ProjectInput: CompacctProjectComponent;
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -71,7 +85,15 @@ export class PurchaseOrderComponent implements OnInit {
     private router: Router,
     private $CompacctAPI: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    ) {
+      this.route.queryParams.subscribe(params => {
+        console.log(params);
+        this.openProject = params['proj'];
+        this.projectMand = params['mand'];
+        this.validatation.projectMand = params['mand']
+       })
+     }
 
   ngOnInit() {
     this.items = [ 'BROWSE', 'CREATE'];
@@ -91,13 +113,15 @@ export class PurchaseOrderComponent implements OnInit {
       this.getProduct();
       this.getAllData();
       this.getcompany();
-  }
+     
+  } 
   TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
-    this.GetCostCenter();
     this.clearData();
+    this.clearProject()
+    this.GetCostCenter();
   }
   clearData(){
     this.viewHeader = "";
@@ -107,6 +131,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.Spinner = false;
     this.purChaseAddFormSubmit = false;
     this.purchaseFormSubmitted = false;
+    this.validatation.required = false;
     this.addPurchaseList = []; 
     this.rate = undefined;
     this.totalRate = undefined;
@@ -265,11 +290,28 @@ export class PurchaseOrderComponent implements OnInit {
    if(this.objaddPurchacse.Product_ID){
     let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID));
     this.objaddPurchacse.Product_Spec = tempVal[0].Product_Spec;
+    this.getProductDetalis()
+    this.getAo(this.objaddPurchacse.Product_ID)
    }
+   else {
+    this.Aolist = []
+    this.objaddPurchacse.AO_No = undefined;
+   } 
+  }
+  
+  getAo(ProductID){
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Get_Product_Wise_Ao",
+      "Json_Param_String": JSON.stringify([{ProductID : Number(ProductID)}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Aolist",this.Aolist);
+       this.Aolist = data
+    })
   }
   getProductDetalis(){
-    if(this.objaddPurchacse.Qty){
-      if(this.objaddPurchacse.Product_ID){
+     if(this.objaddPurchacse.Product_ID){
         let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
          this.objaddPurchacse.Unit = tempVal[0].UOM
          console.log("tempVal",tempVal);
@@ -287,8 +329,10 @@ export class PurchaseOrderComponent implements OnInit {
         this.objaddPurchacse.Unit = undefined;
         this.objaddPurchacse.Product_Spec = undefined;
       }
-    }
-    else {
+    
+   
+  }
+  changeQTY(){
       this.objaddPurchacse.Rate = undefined;
       this.objaddPurchacse.Gross_Amt = undefined;
       this.objaddPurchacse.Excise_Tax_Percentage = undefined;
@@ -301,9 +345,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.objaddPurchacse.GST_AMT = undefined;
       this.objaddPurchacse.Total_Amount = undefined;
       this.objaddPurchacse.Unit = undefined;
-    }
   }
- 
   GetRateY(){
     if(this.objpurchase.Sub_Ledger_ID && this.objaddPurchacse.Product_ID){
       let sendData = {
@@ -500,7 +542,7 @@ export class PurchaseOrderComponent implements OnInit {
         UOM: this.objaddPurchacse.Unit,
         Net_Amount:  Number(this.objaddPurchacse.Total_Amount),
         GST_Percentage: Number( this.objaddPurchacse.Gst),
-        GST_Amount: (this.objaddPurchacse.GST_AMT)
+        GST_Amount: Number(this.objaddPurchacse.GST_AMT)
      }
       this.addPurchaseList.push(saveData);
       
@@ -510,8 +552,10 @@ export class PurchaseOrderComponent implements OnInit {
       this.getAllTotal();
    }
  }
- savePurchase(valid){
+ async savePurchase(valid){
    this.purchaseFormSubmitted = true
+   this.validatation.required = true
+    this.falg = true
    if(valid){
      this.Spinner = true
      let msg = "";
@@ -524,6 +568,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.objpurchase.Currency_Symbol = tempCurr[0].Currency_Symbol;
     this.objpurchase.Project_ID = Number(this.objpurchase.Project_ID) ? Number(this.objpurchase.Project_ID) : null
     this.objpurchase.Currency_ID = this.objpurchase.Currency_ID ? Number(this.objpurchase.Currency_ID) : null
+    this.objpurchase.Company_ID = this.objpurchase.Company_ID ? Number(this.objpurchase.Company_ID) : undefined
      let save = []
      if(this.addPurchaseList.length){
      if(this.DocNo){
@@ -546,14 +591,32 @@ export class PurchaseOrderComponent implements OnInit {
   
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      if(data[0].Column1 === "Done"){
-        this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "success",
-        summary: "Journal",
-        detail: "Succesfully "+msg
-      });
+      this.validatation.required = false;
+      if(data[0].Column1){
+        if(this.objproject.PROJECT_ID && !this.DocNo){ 
+          const projectSaveData = this.SaveProject(data[0].Column1);
+          if(projectSaveData){
+            this.showTost(msg,"Purchase order")
+            this.Spinner = false;
+            this.getAllData()
+          }
+          else {
+            this.Spinner = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+          }
+         }
+        else{
+          this.Spinner = false;
+          this.showTost(msg,"Purchase order")
+          this.getAllData()
+        }
+      
       if(this.DocNo){
         this.tabIndexToView = 0;
         this.items = ["BROWSE", "CREATE"];
@@ -561,6 +624,7 @@ export class PurchaseOrderComponent implements OnInit {
       }
       this.clearData();
       this.getAllData();
+      this.clearProject()
       }
       else {
         this.Spinner = false;
@@ -607,8 +671,10 @@ export class PurchaseOrderComponent implements OnInit {
     this.tabIndexToView = 1;
     this.items = ["BROWSE", "UPDATE"];
     this.buttonname = "Update";
+    this.clearProject()
     this.geteditmaster(col.Doc_No);
-  }
+    this.getEditProject(col.Doc_No);
+   }
  }
  geteditmaster(Dno){
   const obj = {
@@ -629,6 +695,20 @@ export class PurchaseOrderComponent implements OnInit {
       this.getAllTotal()
     }
   })
+ }
+ getEditProject(DocNo){
+  if(DocNo){
+    const obj = {
+      "SP_String": "SP_BL_CRM_TXN_Project_Doc",
+      "Report_Name_String": "Get_BL_CRM_TXN_Project_Doc",
+      "Json_Param_String": JSON.stringify([{DOC_NO : DocNo}]) 
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.projectEditData = data
+       console.log("this.projectEditData",this.projectEditData);
+       this.ProjectInput.ProjectEdit(this.projectEditData)
+     })
+  }
  }
  Delete(col){
   console.log("Delete Col",col);
@@ -694,6 +774,42 @@ getcompany(){
    console.log("companyList",this.companyList)
   })
 }
+getProjectData(e){
+ console.log("Project Data",e);
+ this.objproject = e
+ this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
+ this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
+}
+clearProject(){
+  this.ProjectInput.clearData()
+}
+async SaveProject(docNo){
+ if(docNo){
+  this.objproject.DOC_NO = docNo,
+  this.objproject.DOC_TYPE = "PURCHASE ORDER",
+  this.objproject.DOC_DATE = this.DateService.dateConvert(this.DocDate)
+ }
+ const obj = {
+  "SP_String": "SP_BL_CRM_TXN_Project_Doc",
+  "Report_Name_String": "Create_BL_CRM_TXN_Project_Doc",
+  "Json_Param_String": JSON.stringify([this.objproject]) 
+ }
+ const projectData = await  this.GlobalAPI.getData(obj).toPromise();
+ console.log("projectData",projectData);
+ return projectData
+}
+showTost(msg,summary){
+  this.compacctToast.clear();
+  this.compacctToast.add({
+    key: "compacct-toast",
+    severity: "success",
+    summary: summary,
+    detail: "Succesfully "+msg
+  });
+}
+whateverCopy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
 }
 class purchase {
         Doc_No:any;
@@ -743,8 +859,13 @@ class purchase {
         Currency_ID:any;
         Currency_Symbol:any;
         L_element:any;
-        company:any
-       
+        Company_ID:any;
+        Payment_Terms:any
+        Delivery_Terms:any
+        Warranty:any
+        Certificates:any
+        Installation_and_Commission:any
+        Delivery_Location:any
 }
 class addPurchacse{
       Product_ID:any;
@@ -769,4 +890,14 @@ class addPurchacse{
       GST_AMT:any;
       Gst:any;
       Taxable_Amount:any;
+}
+class project{
+    DOC_NO:any
+    DOC_DATE:any
+    DOC_TYPE:any
+    PROJECT_ID:any
+    SITE_ID:any
+    Budget_Group_ID:any
+    Budget_Sub_Group_ID:any
+    Work_Details_ID:any
 }

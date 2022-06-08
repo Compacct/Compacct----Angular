@@ -11,6 +11,8 @@ import { CompacctCommonApi } from "../../../../shared/compacct.services/common.a
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { CompacctHeader } from "../../../../shared/compacct.services/common.header.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
+import { CompacctProjectComponent } from "../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-micl-requisition',
@@ -50,6 +52,13 @@ export class MiclRequisitionComponent implements OnInit {
   seachSpinner = false;
   productTypeList = [];
   docno : any;
+  openProject = "N"
+  validatation = {
+    required : false,
+    projectMand : 'N'
+  }
+  @ViewChild("project", { static: false })
+  ProjectInput: CompacctProjectComponent;
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -57,7 +66,14 @@ export class MiclRequisitionComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-    private ngxService: NgxUiLoaderService) { }
+    private route: ActivatedRoute,
+    private ngxService: NgxUiLoaderService) {
+      this.route.queryParams.subscribe(params => {
+        console.log(params);
+        this.openProject = params['proj'];
+        this.validatation.projectMand = params['mand']
+       })
+     }
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
@@ -438,6 +454,12 @@ export class MiclRequisitionComponent implements OnInit {
     window.open('/Report/Crystal_Files/MICL/Txn_Requisition_Print.aspx?DocNo=' + obj.Req_No,
       'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');   
 }
+}
+getProjectData(e){
+  console.log("e",e)
+}
+whateverCopy(obj) {
+  return JSON.parse(JSON.stringify(obj))
 }
 }
 
