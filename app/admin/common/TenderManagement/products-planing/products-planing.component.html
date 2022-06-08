@@ -134,7 +134,8 @@
                             <div class="form-group">
                                 <div class="col-sm-5">
                                     <label class="control-label">Project Name&nbsp;<span class="text-danger">*</span></label>
-                                 
+                                    <span *ngIf='ObjProdPlan.Tender_Doc_ID' (click)="GetEditSingleScheme()" class="btn-vk  pull-right createPatient"><i
+                                        class="fa fa-fw  fa-list"></i> Product Details</span>
                                     <p-dropdown [options]="ProjectList" name="ProjectName" [(ngModel)]="ObjProdPlan.Tender_Doc_ID"
                                       [showClear]="true" [emptyFilterMessage]="' No Project Found'"
                                       (onChange)="ProjectChange()" [filter]="true" filterBy="label,value.name"
@@ -290,6 +291,63 @@
       <p-progressSpinner *ngIf="Spinnersite" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
         animationDuration=".5s"></p-progressSpinner>
       <span *ngIf="!Spinnersite" class="glyphicon glyphicon-save"></span>&nbsp;{{ buttonname }}
+    </button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'Product Details'" [appendTo]="'body'" [visible]="ProductsModal" [closeOnEscape]="true" [closable]="false"
+  [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '200px' }" style="text-align: center;"
+  [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <div class="table-responsive no-padding" style="margin-top: 15px;">
+
+        <p-table [value]="ShowAddedEstimateProductList" sortField="Budget_Group_Name" sortMode="single"
+          [rowHover]="true" [autoLayout]="true" (onSort)="onSort()">
+          <ng-template pTemplate="header">
+            <tr>
+              <th *ngFor="let col of cols">
+                {{col.header}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td>{{rowData.SL_No}}</td>
+              <td *ngIf="rowGroupMetadata[rowData.Budget_Group_Name].index === rowIndex"
+                [attr.rowspan]="rowGroupMetadata[rowData.Budget_Group_Name].size">
+                {{rowData.Budget_Group_Name}}
+              </td>
+              <td>{{rowData.Budget_Sub_Group_Name}}</td>
+              <td>{{rowData.Work_Details}}</td>
+              <td>{{rowData.Site_Description}}</td>
+              <td>{{rowData.Product_Description}}</td>
+              <td>{{rowData.unit}}</td>
+              <td>{{rowData.Qty}}</td>
+              <td>{{rowData.Nos}}</td>
+              <td>{{rowData.TQty}}</td>
+              <td>{{rowData.UOM}}</td>
+            </tr>
+            <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+              <td colspan="9" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+            </tr>
+            <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+              <td colspan="9" class="text-bold text-right"> Sale  Amount : {{getSaleAmt()}}</td>
+            </tr>
+            <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+              <td colspan="9" class="text-bold text-right"> No of Site :
+                {{ShowAddedEstimateProductList.length ? ShowAddedEstimateProductList[0].No_of_Site : '-'}}</td>
+            </tr>
+            <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+              <td colspan="9" class="text-bold text-right"> Total Purchase Amount :
+                {{getTotalPurchaseAmt()}}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+  </div>
+  <p-footer>
+    <button type="button" (click)="ProductsModal = false" class="btn btn-default">
+      CANCEL
     </button>
   </p-footer>
 </p-dialog>

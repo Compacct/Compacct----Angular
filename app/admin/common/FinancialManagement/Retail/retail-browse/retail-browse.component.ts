@@ -37,12 +37,23 @@ export class RetailBrowseComponent implements OnInit {
   ObjSearchHearingForm = new Search();
   aspxFileName:any;
   BillDocId = undefined;
+  RedirectUrlList:any;
   constructor(private $http: HttpClient,
     private Header: CompacctHeader,
     public $CompacctAPI: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
-    private compacctToast: MessageService) { }
+    private compacctToast: MessageService) {
+      this.$CompacctAPI.getClientData().then((data: any) => {
+        let returnedObj:any = {};
+        data.countryInformation.forEach(el => {
+          if (el.CompanyName === this.$CompacctAPI.CompacctCookies.Company_Name) {
+            returnedObj = el;
+          }
+        });
+        this.RedirectUrlList = returnedObj.Details[15].BillingType[0];
+      });
+     }
 
   ngOnInit() {
     this.items =  ['Hearing Bill'];
@@ -52,6 +63,7 @@ export class RetailBrowseComponent implements OnInit {
     });
     this.GetAllCostCenter();
     this.GetaspxFileName();
+    console.log(this.RedirectUrlList);
   }
   TabClick(e){}
   GetAllCostCenter() {
@@ -140,11 +152,11 @@ export class RetailBrowseComponent implements OnInit {
   saleBillUpdate(obj){
     let url;
     if (obj.Bill_Type === 'Hearing Aid') {
-      url= '/Retail_Txn_SALE_Bill_cum_challan_GST?subledger_id=14899&salesman=Y&checkAppo=N&cat_id=121,122,123,125,127,128,129,130,131,132,133,152,155&salesman_type=Doctor&salesRefCap=Audiologist&Bill_Type=Hearing Aid'
+      url= this.RedirectUrlList.HearingAidBill;
     } else if (obj.Bill_Type === 'Hearing Accessories') {
-      url ='/Retail_Txn_SALE_Bill_cum_challan_GST?subledger_id=14899&salesman=N&checkAppo=N&cat_id=125,128,129,130,131,132,155&salesman_type=Doctor&salesRefCap=Audiologist&Bill_Type=Hearing%20Accessories'     
+      url =this.RedirectUrlList.AccessoriesBill;
     } else {
-      url = '/Retail_Txn_SALE_Bill_cum_challan_GST?subledger_id=14899&salesman=S&checkAppo=N&cat_id=126,154,156&salesman_type=Doctor&salesRefCap=Audiologist&Bill_Type=Service Bill'
+      url = this.RedirectUrlList.ServiceBill;
     }
     window.open(url+'&FmBrowseDoc='+obj.Doc_No, '_blank').focus();
   }
