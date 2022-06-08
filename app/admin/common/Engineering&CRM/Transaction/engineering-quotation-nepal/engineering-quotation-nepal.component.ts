@@ -105,6 +105,8 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   CustomerBrowseList = [];
   LeadBrowseList = [];
   cols =[];
+  Quodocid = undefined;
+  emailmsg: any;
  
 
   constructor(
@@ -810,7 +812,9 @@ export class EngineeringQuotationNepalComponent implements OnInit {
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
           console.log(data);
           //var msg = data[0].Column1;
+          this.Quodocid = data[0].Column1;
           if (data[0].Column1) {
+            this.SendEmail();
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
@@ -852,6 +856,15 @@ export class EngineeringQuotationNepalComponent implements OnInit {
         });
       }
     //}
+  }
+  SendEmail() {
+      const QuertString = '?Quotation_Doc_ID=' + this.Quodocid;
+      this.$http.get('/BL_CRM_Engineering_Quotation_Nepal/Send_Email_Quotation'+QuertString).subscribe((data: any) => {
+        // this.DueCustomerList = data ? JSON.parse(data) : [];
+        // this.emailmsg = data;
+        this.Quodocid = undefined;
+        console.log(this.emailmsg);
+      });
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {

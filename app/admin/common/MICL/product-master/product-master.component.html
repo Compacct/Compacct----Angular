@@ -162,7 +162,7 @@
 
                                                 <app-compacct-product-details
                                                  [requirPro]="MaterialFormSubmit"
-                                                 (ProDetailsObj)="getProDetailsData($event,FinacialDetailsInput)"
+                                                 (ProDetailsObj)="getProDetailsData($event)"
                                                  #Product
                                                 >
                                                 </app-compacct-product-details>
@@ -338,7 +338,7 @@
                                                     name="Rate_Form_Quote"
                                                     #Rate_Form_Quote ="ngModel"
                                                     [(ngModel)]="Objproduct.Rate_Form_Quote">
-                                                        <option value="No">No</option>
+                                                        <option value="N">No</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -347,7 +347,7 @@
                                                     name="Sale_Rate_Form_Quote"
                                                     #Sale_Rate_Form_Quote ="ngModel"
                                                     [(ngModel)]="Objproduct.Sale_Rate_Form_Quote">
-                                                         <option value="No">No</option>
+                                                         <option value="N">No</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-4">

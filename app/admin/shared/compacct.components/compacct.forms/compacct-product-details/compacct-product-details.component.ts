@@ -35,7 +35,7 @@ export class CompacctProductDetailsComponent implements OnInit,OnChanges {
   private _required: boolean;
 
   @Output() ProDetailsObj = new EventEmitter <product>();
-  @Input() requirPro :any
+  @Input() requirPro :any;
 
   constructor(
     private $CompacctAPI: CompacctCommonApi,

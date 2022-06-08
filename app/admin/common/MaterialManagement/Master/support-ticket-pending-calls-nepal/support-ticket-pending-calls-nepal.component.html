@@ -27,6 +27,30 @@
                             leftIcon="glyphicon glyphicon-list-alt">
                             <form name="SearchForm" #SearchForm="ngForm" novalidate>
                                 <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">From Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="BSdate" name="BSdate"
+                                            Class="form-control" (ngModelChange)="BrowseStartDate= $event"
+                                            [(ngModel)]="BrowseStartDate"/>
+                                            <!-- <np-datepicker language="en"  id='BSdate' name="BSdate" inputClass="form-control" [(ngModel)]="BrowseStartDate"></np-datepicker> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">To Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="BEdate" name="BEdate"
+                                             Class="form-control" (ngModelChange)="BrowseEndDate= $event"
+                                             [(ngModel)]="BrowseEndDate"/>
+                                            <!-- <np-datepicker language="en"  id='BEdate' name="BEdate" inputClass="form-control" [(ngModel)]="BrowseEndDate"></np-datepicker> -->
+                                        </div>
+                                    </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Engineer Name<span
                                                 class="text-danger">*</span></label>
@@ -54,7 +78,7 @@
                                 </div>
                             </form>
                             <div class="table-responsive no-padding">
-                                <p-table #dtm [value]="GetallData"
+                                <p-table #dtm [value]="GetallData" [columns]="cols"
                                     [globalFilterFields]="['Engineer','Location_Name','Main_Status','Serial_No','Sub_Ledger_Name','Support_Ticket_Date','Support_Ticket_Date_Nepali','Support_Ticket_No','Support_Ticket_Status','last_updated_on','model']"
                                     [paginator]="GetallData.length ? true:false" [rows]="10" [rowHover]="true"
                                     [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50]"
@@ -69,17 +93,21 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Customer Name</th>
+                                            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                                                {{col.header}}
+                                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <!-- <th>Customer Name</th>
                                             <th>Engineer Name</th>
                                             <th>Location</th>
                                             <th>Ticket Creation Date</th>
                                             <th>Model</th>
                                             <th>Serial No</th>
                                             <th>Ticket Status</th>
-                                            <th>Present Ststus</th>
+                                            <th>Present Ststus</th> -->
                                             <!-- <th>Last Update On</th> -->
 
                                         </tr>

@@ -109,6 +109,7 @@ export class ProductMasterComponent implements OnInit {
   can_popup = false;
   activeid = undefined;
   act_popup = false;
+  SubCatFilter = [];
 
 
   constructor(
@@ -145,14 +146,16 @@ ngOnInit() {
     // this.getSalesReturn();
     // this.getDiscountReceive();
     // this.getDiscountGiven();
-    this.Objproduct.Rate_Form_Quote = "No";
-    this.Objproduct.Sale_Rate_Form_Quote = "No";
+    this.Objproduct.Rate_Form_Quote = "N";
+    this.Objproduct.Sale_Rate_Form_Quote = "N";
     }
 TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE","REPORT"];
     this.buttonname = "Create";
     this.destroyChild();
+    this.productid = undefined;
+    this.clearData();
   }
   destroyChild() {
     if (this.ProductDetailsInput) {
@@ -173,6 +176,13 @@ TabClick(e) {
     this.Objproduct.Product_Code = undefined;
     this.Objproduct.Product_Description = undefined;
     this.Objproduct.Rack_NO = undefined;
+
+    this.ObjproductDetails.Product_Type_ID = undefined;
+    this.ObjproductDetails.Product_Sub_Type_ID = undefined;
+    this.ObjproductDetails.Product_Code = undefined;
+    this.ObjproductDetails.Product_Description = undefined;
+    this.ObjproductDetails.Rack_NO = undefined;
+
     if (e.Product_Type_ID) {
       this.ObjproductDetails = e;
       this.Objproduct.Product_Type_ID = e.Product_Type_ID;
@@ -1104,6 +1114,14 @@ GetEditData(){
     this.CheckifService = data[0].Is_Service;
     this.Objproduct.Material_ID = data[0].Material_ID;
     this.Objproduct.Material_Type = data[0].Material_Type;
+
+    this.Objproduct.Product_Type_ID = data[0].Product_Type_ID;
+    // this.ProductDetailsInput.getProductSubTyp();
+    this.Objproduct.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
+    this.Objproduct.Product_Code = data[0].Product_Code;
+    this.Objproduct.Product_Description = data[0].Product_Description;
+    this.Objproduct.Rack_NO = data[0].Rack_NO;
+
     this.Objproduct.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
     this.Objproduct.Mfg_Product_Code = data[0].Mfg_Product_Code;
     this.Objproduct.UOM = data[0].UOM;
@@ -1117,9 +1135,31 @@ GetEditData(){
     this.Objproduct.Rate_Form_Quote = data[0].Rate_Form_Quote;
     this.Objproduct.Sale_Rate_Form_Quote = data[0].Sale_Rate_Form_Quote;
 
-    this.SelectedVendorLedger.push(data[0].Sub_Ledger_Cat_IDS);
-
+    setTimeout(() => {
+      var subCatids = data[0].Sub_Ledger_Cat_IDS;
+    var SubCatArray = subCatids.split(',');
+    console.log("SubCatArray",SubCatArray)
+    let DSubCat = [];
+    SubCatArray.forEach((item) => {
+      const subcat = this.AllVendorLedger.filter(el => el.Sub_Ledger_Cat_ID === Number(item))
+      if (DSubCat.indexOf(subcat) === -1) {
+        DSubCat.push(subcat[0].Sub_Ledger_Cat_ID);
+        this.SelectedVendorLedger = [...DSubCat]
+        //  this.SelectedVendorLedger.push(subcat[0].Sub_Ledger_Cat_ID);
+      }
+    });
+    }, 200);
+    
     this.Objproduct.Product_Expiry = data[0].Product_Expiry;
+
+    this.Objproduct.Can_Purchase = data[0].Can_Purchase;
+    this.Objproduct.Billable = data[0].Billable;
+    this.Objproduct.Purchase_Ac_Ledger = data[0].Purchase_Ac_Ledger;
+    this.Objproduct.Sales_Ac_Ledger = data[0].Sales_Ac_Ledger;
+    this.Objproduct.Purchase_Return_Ledger_ID = data[0].Purchase_Return_Ledger_ID;
+    this.Objproduct.Sales_Return_Ledger_ID = data[0].Sales_Return_Ledger_ID;
+    this.Objproduct.Discount_Receive_Ledger_ID = data[0].Discount_Receive_Ledger_ID;
+    this.Objproduct.Discount_Given_Ledger_ID = data[0].Discount_Given_Ledger_ID;
 
     });
 }
