@@ -128,6 +128,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.DetalisObj = {};
     this.objpurchase = new purchase();
     this.objaddPurchacse = new addPurchacse();
+    this.objproject = new project()
     this.Spinner = false;
     this.purChaseAddFormSubmit = false;
     this.purchaseFormSubmitted = false;
@@ -590,11 +591,11 @@ export class PurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify(save)
   
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
       this.validatation.required = false;
       if(data[0].Column1){
         if(this.objproject.PROJECT_ID && !this.DocNo){ 
-          const projectSaveData = this.SaveProject(data[0].Column1);
+          const projectSaveData = await this.SaveProject(data[0].Column1);
           if(projectSaveData){
             this.showTost(msg,"Purchase order")
             this.Spinner = false;
@@ -809,6 +810,20 @@ showTost(msg,summary){
 }
 whateverCopy(obj) {
   return JSON.parse(JSON.stringify(obj))
+}
+taxlabelChange(){
+ let country = this.$CompacctAPI.CompacctCookies.Country;
+ let labelFlg = "Tax"
+ if(country === "India"){
+  labelFlg = "GST"
+ }
+ else if(country === "Nepal"){
+  labelFlg = "VAT"
+ }
+ else {
+   console.error("country Not Found")
+ }
+ return labelFlg
 }
 }
 class purchase {
