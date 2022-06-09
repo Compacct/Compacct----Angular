@@ -84,7 +84,7 @@ margin-top: 15px;
       filterBy="label,value.name" [placeholder]="'Select Work Details'" [virtualScroll]="true"
       itemSize="30" #Work_Details="ngModel" [styleClass]="
       projectFromSubmit && Work_Details.errors?.required? 'clearance': ''"
-      [required]="true"
+      [required]="requField"
       [disabled]="fieldDis">
     </p-dropdown>
     </div>

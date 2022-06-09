@@ -497,7 +497,7 @@
                                     >
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">GST(%)<sup class="text-danger"></sup></label>
+                                        <label class="control-label">{{taxlabelChange()}}(%)<sup class="text-danger"></sup></label>
                                         <input type="text"
                                         class="form-control"
                                         name="Gst"
@@ -508,7 +508,7 @@
                                         disabled>
                                     </div>
                                     <div class="col-sm-2">
-                                        <label class="control-label">GST Amount<sup class="text-danger"></sup></label>
+                                        <label class="control-label">{{taxlabelChange()}} Amount<sup class="text-danger"></sup></label>
                                         <input type="text"
                                         class="form-control"
                                         name="GST_AMT"
@@ -559,7 +559,7 @@
                                         <th nowrap="" colspan="2" style="vertical-align:middle">Excise Tax</th>
                                         <th nowrap="" colspan="3" style="vertical-align:middle">Discount </th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
-                                        <th  nowrap="" colspan="2" style="vertical-align:middle">GST</th>
+                                        <th  nowrap="" colspan="2" style="vertical-align:middle">{{taxlabelChange()}}</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Net Amount</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Delete</th>
                                          </tr>
@@ -569,8 +569,8 @@
                                             <th nowrap="" style="vertical-align:middle">Disc Type</th>
                                             <th nowrap="" style="vertical-align:middle">Disc %</th>
                                             <th nowrap="" style="vertical-align:middle">Disc Amt</th>
-                                            <th nowrap="" style="vertical-align:middle">GST(%)</th>
-                                            <th nowrap="" style="vertical-align:middle">GST Amt</th>
+                                            <th nowrap="" style="vertical-align:middle">{{taxlabelChange()}}(%)</th>
+                                            <th nowrap="" style="vertical-align:middle">{{taxlabelChange()}} Amt</th>
                                            
                                             
                                             </tr>
@@ -613,7 +613,7 @@
                                         <tr>
                                           <th>Excise Amount:</th>
                                           <td class="amt-td">{{getTofix(ExciTotal) ? getTofix(ExciTotal) : 0}}</td>
-                                          <th>GST Amount :</th>
+                                          <th>{{taxlabelChange()}} Amount :</th>
                                           <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td>
                                           <th>Net Amount : </th>
                                           <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td>

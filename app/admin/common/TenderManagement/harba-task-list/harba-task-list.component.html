@@ -7,6 +7,11 @@
                     <p-tabView [activeIndex]="tabIndexToView" >
                         <form name="taskListForm" #taskListForm="ngForm" novalidate>
                             <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getConfirmDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Project <sup class="text-danger">*</sup> &nbsp;
                                        </label>
@@ -59,6 +64,8 @@
                                         class="glyphicon glyphicon-search"></span>&nbsp;Search
                                 </button>
                                 </div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-sm-3">
                                     <label class="control-label">Filter By Status <span class="text-danger"></span></label>
                                     <p-multiSelect [options]="DistStatus" [(ngModel)]="SelectedStatus" [virtualScroll]="true"
@@ -84,7 +91,7 @@
                                      [paginator]="taskData.length ? true : false" [rows]="100" [rowHover]="true"
                                      [autoLayout]="true" sortMode="multiple"
                                      [rowsPerPageOptions]="[100,200,300]"
-                                     [globalFilterFields]="['Job_Name','Planned_Start_Date','Planned_End_Date','Task_Name','Task_Status']"
+                                     [globalFilterFields]="['Job_Name','Planned_Start_Date','Planned_End_Date','Task_Name','Task_Status','Responsible_Person']"
                                      [rowHover]="true"
                                      #dt>
                                        <ng-template pTemplate="caption">
@@ -103,6 +110,7 @@
                                                 <th>Planned End Date</th>
                                                 <th>No Of Days</th>
                                                 <th>Task Name</th>
+                                                <th>Responsible Person</th>
                                                 <th>Task Status</th>
                                             </tr>
                                         </ng-template>
@@ -131,6 +139,7 @@
                                                 <td>{{col.Planned_End_Date | date : "dd/MMM/yyyy"}}</td>
                                                 <td>{{col.No_Of_Days}}</td>
                                                 <td>{{col.Task_Name}}</td>
+                                                <td>{{col.Responsible_Person}}</td>
                                                 <td><span [ngClass]="'badge bg-'+ getStatusWiseColor(col.Task_Status)">{{col.Task_Status}}</span></td>
                                              </tr>
                                         </ng-template>

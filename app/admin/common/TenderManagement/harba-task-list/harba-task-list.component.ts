@@ -38,7 +38,10 @@ export class HarbaTaskListComponent implements OnInit {
   DistStatus:any = [];
   SelectedStatus:any = [];
   BackUptaskData:any = [];
-  SpinnerRefresh = false
+  SpinnerRefresh = false;
+  req_date_B = undefined;
+  req_date2 = undefined;
+  initDate = [];
   constructor(
     private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
@@ -54,6 +57,7 @@ export class HarbaTaskListComponent implements OnInit {
       Link: "Project Management -> Task List"
     });
     this.GetProject();
+    this.initDate = [new Date(), new Date()];
   }
   GetProject(){
     this.projectList = [];
@@ -112,15 +116,22 @@ export class HarbaTaskListComponent implements OnInit {
      else if(btn === "SpinnerRefresh") {
        this.SpinnerRefresh = true
      }
-     
+     const start = this.req_date_B
+     ? this.DateService.dateConvert(new Date(this.req_date_B))
+     : this.DateService.dateConvert(new Date());
+   const end = this.req_date2
+     ? this.DateService.dateConvert(new Date(this.req_date2))
+     : this.DateService.dateConvert(new Date());
      const tempData = {
       Project_ID : Number(this.ProjectID),
       Site_ID : Number(this.SiteID),
-      User_ID : this.commonApi.CompacctCookies.User_ID
+      User_ID : this.commonApi.CompacctCookies.User_ID,
+      Start_Date : start,
+      End_Date : end
      }
      const obj = {
       "SP_String": "SP_Task_GNATT",
-      "Report_Name_String": "Get_GNATT_TASK_Browse",
+      "Report_Name_String": "Get_GNATT_TASK_Browse_Datewise",
       "Json_Param_String": JSON.stringify([tempData])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -254,6 +265,12 @@ export class HarbaTaskListComponent implements OnInit {
       this.taskData = LeadArr.length ? LeadArr : [];
     } else {
       this.taskData = this.BackUptaskData;
+    }
+  }
+  getConfirmDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.req_date_B = dateRangeObj[0];
+      this.req_date2 = dateRangeObj[1];
     }
   }
 }

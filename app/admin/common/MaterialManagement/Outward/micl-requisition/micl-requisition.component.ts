@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { FileUpload } from "primeng/primeng";
 declare var $: any;
-import { THIS_EXPR, ThrowStmt } from "@angular/compiler/src/output/output_ast";
+import { IfStmt, THIS_EXPR, ThrowStmt } from "@angular/compiler/src/output/output_ast";
 
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import * as XLSX from 'xlsx';
@@ -35,6 +35,7 @@ export class MiclRequisitionComponent implements OnInit {
   objreqi:reqi = new reqi();
   DepartmentList = [];
   objmaterial:material = new material()
+  objproject : project = new project()
   AddMaterialsList = []
   requisitionmaterialFormSubmit = false;
   allRequDataList = [];
@@ -96,8 +97,10 @@ export class MiclRequisitionComponent implements OnInit {
     this.clearData();
   }
   clearData(){
+    this.ProjectInput.clearData()
     this.requisitionmaterialFormSubmit = false;
     this.objmaterial = new material()
+    this.objproject = new project()
     this.objreqi = new reqi();
     this.objreqi.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.reqiFormSubmitted = false;
@@ -108,6 +111,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.productListview = [];
     this.productList = [];
     this.requi_Date = new Date();
+    this.validatation.required = false;
    }
   addMaterials(valid){
   console.log("valid",valid);
@@ -137,9 +141,10 @@ export class MiclRequisitionComponent implements OnInit {
   
   }
   }
-  SaveRequi(valid){
+  SaveRequi(valid){ 
    console.log("valid",valid);
    this.reqiFormSubmitted = true;
+   this.validatation.required = true;
    if(valid){
      if(this.AddMaterialsList.length){
       let saveData = [];
@@ -175,18 +180,32 @@ export class MiclRequisitionComponent implements OnInit {
          "Json_Param_String": JSON.stringify(saveData)
    
        }
-       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
          console.log("After Data",data)
          this.docno = data[0].Column1;
          if(data[0].Column1){
-           this.ngxService.stop();
-           this.compacctToast.clear();
-            this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Requisition No: " +data[0].Column1,
-            detail: "Succesfully " + mgs
-          });
+            if(this.objproject.PROJECT_ID){
+              const projectSaveData = await this.SaveProject(data[0].Column1);
+              if(projectSaveData){
+                this.ngxService.stop();
+                this.compacctToast.clear();
+                 this.compacctToast.add({
+                 key: "compacct-toast",
+                 severity: "success",
+                 summary: "Requisition No: " +data[0].Column1,
+                 detail: "Succesfully " + mgs
+               });
+              }
+            }
+            this.ngxService.stop();
+            this.compacctToast.clear();
+             this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Requisition No: " +data[0].Column1,
+             detail: "Succesfully " + mgs
+           });
+          
             this.SaveNPrintBill();
             this.clearData();
             this.searchData(true);
@@ -457,10 +476,37 @@ export class MiclRequisitionComponent implements OnInit {
 }
 getProjectData(e){
   console.log("e",e)
+  this.objproject = e
+  this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
+  this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
 }
 whateverCopy(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
+showTost(msg,summary){
+  this.compacctToast.clear();
+  this.compacctToast.add({
+    key: "compacct-toast",
+    severity: "success",
+    summary: summary,
+    detail: "Succesfully "+msg
+  });
+}
+async SaveProject(docNo){
+  if(docNo){
+   this.objproject.DOC_NO = docNo,
+   this.objproject.DOC_TYPE = "REQUISITION",
+   this.objproject.DOC_DATE = this.DateService.dateConvert(this.requi_Date)
+  }
+  const obj = {
+   "SP_String": "SP_BL_CRM_TXN_Project_Doc",
+   "Report_Name_String": "Create_BL_CRM_TXN_Project_Doc",
+   "Json_Param_String": JSON.stringify([this.objproject]) 
+  }
+  const projectData = await  this.GlobalAPI.getData(obj).toPromise();
+  console.log("projectData",projectData);
+  return projectData
+ }
 }
 
 class reqi{
@@ -487,3 +533,13 @@ class BrowseData {
   Cost_Cen_ID : any;
   Godown_ID : any;
   }
+class project{
+  DOC_NO:any
+  DOC_DATE:any
+  DOC_TYPE:any
+  PROJECT_ID:any
+  SITE_ID:any
+  Budget_Group_ID:any
+  Budget_Sub_Group_ID:any
+  Work_Details_ID:any
+}
