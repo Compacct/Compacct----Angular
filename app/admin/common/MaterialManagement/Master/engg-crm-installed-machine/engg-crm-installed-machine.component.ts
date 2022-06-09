@@ -45,6 +45,7 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
   // delmemberid = undefined;
   CurrentDateNepal = undefined;
   DateOfInstallation : any = {};
+  cols = [];
 
   constructor(
     private $http: HttpClient,
@@ -69,6 +70,14 @@ export class EnggCrmInstalledMachineComponent implements OnInit {
       this.GetCustomer();
       this.GetEngineer();
       this.getStatus();
+
+      this.cols = [
+        { field: 'Mfg_Company', header: 'Manufacturer' },
+        { field: 'Machine', header: 'Machine' },
+        { field: 'Serial_No', header: 'Serial No' },
+        { field: 'Location_Name', header: 'Location' },
+        { field: 'Status', header: 'Status' }
+      ];
   }
   // Clear & Tab
   TabClick(e) {

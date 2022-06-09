@@ -40,6 +40,7 @@ export class EnggNepalSparePartsComponent implements OnInit {
   MachineList = [];
   MachineMfadd = [];
   editprList = [];
+  colum = [];
 
   constructor(
     private $http: HttpClient,
@@ -63,6 +64,13 @@ export class EnggNepalSparePartsComponent implements OnInit {
      this.GetManufacturer();
      this.GetBrowseList();
      //this.GetMachine();
+
+     this.colum = [
+      { field: 'Spare_Part_Model_No', header: 'Spare Part Model No' },
+      { field: 'Spare_Part_Description', header: 'Spare Part Description' },
+      { field: 'Product_Type', header: 'Spare Part Group' },
+      { field: 'Mfg_Company', header: 'Spare Part Manufacturer' }
+    ];
   }
   // Clear & Tab
   TabClick(e) {

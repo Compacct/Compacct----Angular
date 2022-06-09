@@ -27,7 +27,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
 
                             <div class="table-responsive no-padding productTable">
-                                <p-table #dt [value]="BrowseList" [globalFilterFields]="['Spare_Part_Model_No','Spare_Part_Description','Product_Type','Mfg_Company']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
+                                <p-table #dt [columns]="colum" [value]="BrowseList" [globalFilterFields]="['Spare_Part_Model_No','Spare_Part_Description','Product_Type','Mfg_Company']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
                                     [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -37,13 +37,17 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Spare Part Model No</th>
+                                            <th *ngFor="let colum of columns" [pSortableColumn]="colum.field">
+                                                {{colum.header}}
+                                                <p-sortIcon [field]="colum.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <!-- <th>Spare Part Model No</th>
                                             <th>Spare Part Description</th>
                                             <th>Spare Part Group</th>
-                                            <th>Spare Part Manufacturer</th>
+                                            <th>Spare Part Manufacturer</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>

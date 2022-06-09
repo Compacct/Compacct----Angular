@@ -30,6 +30,7 @@ export class BlCrmEnggMasterNepalComponent implements OnInit {
   memberid = undefined;
   deluserid = undefined;
   delmemberid = undefined;
+  colms = [];
 
   constructor(
     private $http: HttpClient,
@@ -48,6 +49,13 @@ export class BlCrmEnggMasterNepalComponent implements OnInit {
       this.GetCoordinator();
       this.GetBrowseList();
     // this.GetMaterialType();
+
+    this.colms = [
+      { field: 'User_Name', header: 'User Name' },
+      { field: 'Name', header: 'Engineer Name' },
+      { field: 'User_Email', header: 'Email' },
+      { field: 'User_Mobile', header: 'Mobile No' }
+    ];
   }
   // Clear & Tab
   TabClick(e) {

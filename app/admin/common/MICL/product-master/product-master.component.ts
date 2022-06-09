@@ -177,12 +177,6 @@ TabClick(e) {
     this.Objproduct.Product_Description = undefined;
     this.Objproduct.Rack_NO = undefined;
 
-    this.ObjproductDetails.Product_Type_ID = undefined;
-    this.ObjproductDetails.Product_Sub_Type_ID = undefined;
-    this.ObjproductDetails.Product_Code = undefined;
-    this.ObjproductDetails.Product_Description = undefined;
-    this.ObjproductDetails.Rack_NO = undefined;
-
     if (e.Product_Type_ID) {
       this.ObjproductDetails = e;
       this.Objproduct.Product_Type_ID = e.Product_Type_ID;

@@ -863,7 +863,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
         // this.DueCustomerList = data ? JSON.parse(data) : [];
         // this.emailmsg = data;
         this.Quodocid = undefined;
-        console.log(this.emailmsg);
+        // console.log(this.emailmsg);
       });
   }
   getDateRange(dateRangeObj) {
@@ -999,6 +999,15 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   
       );
     }
+  }
+  EmailBrowse(quotid){
+    const QuertString = '?Quotation_Doc_ID=' + quotid.Quotation_Doc_ID;
+      this.$http.get('/BL_CRM_Engineering_Quotation_Nepal/Send_Email_Quotation'+QuertString).subscribe((data: any) => {
+        // this.DueCustomerList = data ? JSON.parse(data) : [];
+        // this.emailmsg = data;
+        // this.Quodocid = undefined;
+        console.log('email',true);
+      });
   }
   onConfirm(){}
   onReject(){}

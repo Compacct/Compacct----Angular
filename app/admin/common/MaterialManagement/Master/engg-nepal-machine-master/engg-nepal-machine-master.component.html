@@ -27,7 +27,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
 
                             <div class="table-responsive no-padding productTable">
-                                <p-table #dt [value]="BrowseList" [globalFilterFields]="['Product_Code','Product_Description','Mfg_Company']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
+                                <p-table #dt [columns]="column" [value]="BrowseList" [globalFilterFields]="['Product_Code','Product_Description','Mfg_Company']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
                                     [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -37,12 +37,16 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Product Model</th>
+                                            <th *ngFor="let column of columns" [pSortableColumn]="column.field">
+                                                {{column.header}}
+                                                <p-sortIcon [field]="column.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <!-- <th>Product Model</th>
                                             <th>Product Description</th>
-                                            <th>Manufacturer</th>
+                                            <th>Manufacturer</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>

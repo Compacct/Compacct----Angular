@@ -89,6 +89,7 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
   PDFFlag = false;
   ProductPDFFile:any = {};
   ProductPDFLink = undefined;
+  colu = [];
 
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
 
@@ -121,6 +122,19 @@ export class EnggCrmInstalledMachineServiceContractComponent implements OnInit {
     //this.GetSerialNo();
     this.gettypeofservice();
     this.getStatus();
+
+    this.colu = [
+      { field: 'Location_Name', header: 'Location' },
+      { field: 'Mfg_Company', header: 'Manufacturer' },
+      { field: 'Machine', header: 'Machine' },
+      { field: 'Serial_No', header: 'Serial No' },
+      { field: 'Service_Type', header: 'Type of Service' },
+      { field: 'Service_Start_Date_nepali', header: 'Service Start Date' },
+      { field: 'Service_End_Date_nepali', header: 'Service End Date' },
+      { field: 'Payment_Status', header: 'Payment Status' },
+      { field: 'Payment_Date_nepali', header: 'Payment Date' },
+      { field: 'Status', header: 'Status' }
+    ];
   }
   // Clear & Tab
   TabClick(e) {

@@ -33,6 +33,7 @@ export class EnggNepalMachineMasterComponent implements OnInit {
   BrowseList = [];
   editList = [];
   productid: any;
+  column = [];
 
   constructor(
     private $http: HttpClient,
@@ -55,6 +56,12 @@ export class EnggNepalMachineMasterComponent implements OnInit {
      this.GetManufacturer();
      this.GetBrowseList();
     // this.GetMaterialType();
+
+    this.column = [
+      { field: 'Product_Code', header: 'Product Model' },
+      { field: 'Product_Description', header: 'Product Description' },
+      { field: 'Mfg_Company', header: 'Manufacturer' }
+    ];
   }
   // Clear & Tab
   TabClick(e) {
