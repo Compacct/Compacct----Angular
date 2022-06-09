@@ -36,7 +36,6 @@ export class CompacctProductDetailsComponent implements OnInit,OnChanges {
 
   @Output() ProDetailsObj = new EventEmitter <product>();
   @Input() requirPro :any;
-
   constructor(
     private $CompacctAPI: CompacctCommonApi,
     private GlobalAPI:CompacctGlobalApiService,
@@ -142,14 +141,14 @@ deleteProductType(protype){
   }
 }
 //Product Sub Type
-getProductSubTyp(){
-  if(this.ObjproductDetails.Product_Type_ID){
+getProductSubTyp(ProductTypeID){
+  if(ProductTypeID){
   this.productSubData=[]; 
    this.AllproductSubData = [];
     const obj = {
       "SP_String": "SP_Master_Product_New",
       "Report_Name_String":"Master_Product_Sub_Type_Dropdown",
-      "Json_Param_String": JSON.stringify([{Product_Type_ID:this.ObjproductDetails.Product_Type_ID}]) 
+      "Json_Param_String": JSON.stringify([{Product_Type_ID:ProductTypeID}]) 
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.productSubData = data;
@@ -163,15 +162,10 @@ getProductSubTyp(){
     })
     this.ProDetailsObj.emit(this.ObjproductDetails);
    }
-   else{
-    this.productSubData = [];
-    this.ObjproductDetails.Product_Sub_Type_ID = undefined;
-
-  }      
 }
 ViewProductSubType(){
   this.productSubData = [];
-  this.getProductSubTyp();
+  this.getProductSubTyp(this.ObjproductDetails.Product_Type_ID);
   setTimeout(() => {
     this.ViewSubProTypeModal = true;
     }, 200);
@@ -207,7 +201,7 @@ CreateProductSubType(valid){
          this.ProductSubTypeName = undefined;
          this.ProTypeSubModal = false;
          this.Spinner = false;
-         this.getProductSubTyp();
+         this.getProductSubTyp(this.ObjproductDetails.Product_Type_ID);
      
          } else{
            this.Spinner = false;
@@ -282,7 +276,13 @@ onConfirm(){
       if (data[0].Column1 || data[0].Column1==="Done") {
       this.onReject();
       //this.GetTenderOrgList();
-      this[FunctionRefresh]();
+      
+      if(FunctionRefresh === "getProductTyp"){
+        this.getProductTyp();
+      }
+      else if(FunctionRefresh === "getProductTyp"){
+        this.getProductSubTyp(this.ObjproductDetails.Product_Type_ID);
+      }
        this.compacctToast.clear();
        this.compacctToast.add({
           key: "compacct-toast",
@@ -301,14 +301,28 @@ clear() {
   // this.VendorAddressLists = [];
   this.ObjproductDetails = new product();
 }
+EditProductDetalis(ProductTypeID,sub_Id,DescriptionModel,ProductCode?,RackNo?){
+
+ this.ObjproductDetails.Product_Type_ID = ProductTypeID
+ this.getProductSubTyp(ProductTypeID)
+ setTimeout(() => {
+  this.ObjproductDetails.Product_Sub_Type_ID = sub_Id
+ }, 1000);
+ this.ObjproductDetails.Product_Code = ProductCode ? ProductCode :undefined
+ this.ObjproductDetails.Product_Description = DescriptionModel
+ this.ObjproductDetails.Rack_NO = RackNo ? RackNo : undefined
+ this.EventEmitDefault()
+}
+
+
+
 ngOnChanges(changes: SimpleChanges) {
         
   //this.doSomething(changes.categoryId.currentValue);
   // You can also use categoryId.previousValue and 
   // categoryId.firstChange for comparing old and new values
-  console.log("changes >>",changes);
-  this.ProDetailsFormSubmit = changes.requirPro.currentValue
-}
+   this.ProDetailsFormSubmit = changes.requirPro.currentValue
+ }
 }
 class product{
   Product_Type_ID	:number;	

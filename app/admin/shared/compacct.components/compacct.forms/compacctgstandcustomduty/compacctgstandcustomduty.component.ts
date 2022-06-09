@@ -63,6 +63,20 @@ clear() {
   // this.VendorAddressLists = [];
   this.ObjGstandCustonDuty = new GstandCustonDuty();
 }
+GetEdit(arr:any){
+ console.log("GST",JSON.parse(arr))
+ let data = JSON.parse(arr)
+ const Editdata = data[0]
+ this.ObjGstandCustonDuty = Editdata
+ setTimeout(() => {
+  this.ObjGstandCustonDuty.Cat_ID = Editdata.Cat_ID
+  this.ObjGstandCustonDuty.Custom_Duty = Editdata.Custom_Duty
+  this.ObjGstandCustonDuty.HSN_SAC_Code = Editdata.HSN_SAC_Code ? Editdata.HSN_SAC_Code : Editdata.HSN_Code 
+  this.ObjGstandCustonDuty.Remarks = Editdata.Remarks
+ }, 1000);
+ this.EventEmitDefault()
+ console.log("ObjGstandCustonDuty",this.ObjGstandCustonDuty)
+}
 ngOnChanges(changes: SimpleChanges) {
         
   //this.doSomething(changes.categoryId.currentValue);
