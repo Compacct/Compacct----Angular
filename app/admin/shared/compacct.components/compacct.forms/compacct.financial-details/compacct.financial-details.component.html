@@ -38,7 +38,8 @@
         [virtualScroll]="true" 
         itemSize="30"
         (onChange)="EventEmitDefault()"
-        [ngClass]="{'clearance': FinancialFormSubmit && purchaseledger.errors?.required}"required>
+        [ngClass]="{'clearance': FinancialFormSubmit && purchaseledger.errors?.required}" required
+        [disabled]="!ObjFinancial.Can_Purchase" >
         </p-dropdown>
 </div> 
 <div class="col-sm-6">
@@ -65,7 +66,7 @@
         [virtualScroll]="true" 
         itemSize="30"
         (onChange)="EventEmitDefault()"
-        [ngClass]="{'clearance': FinancialFormSubmit && salesledger.errors?.required}"required>
+        [ngClass]="{'clearance': FinancialFormSubmit && salesledger.errors?.required}" required  [disabled]="!ObjFinancial.Billable">
         </p-dropdown>
 </div>
 <div class="col-sm-6">
@@ -83,7 +84,8 @@
         [virtualScroll]="true" 
         itemSize="30"
         (onChange)="EventEmitDefault()"
-        [ngClass]="{'clearance': FinancialFormSubmit && purchasereturn.errors?.required}"required>
+        [ngClass]="{'clearance': FinancialFormSubmit && purchasereturn.errors?.required}" required
+        [disabled]="!ObjFinancial.Can_Purchase">
         </p-dropdown>
 </div>
 <div class="col-sm-6">
@@ -101,7 +103,8 @@
         [virtualScroll]="true" 
         itemSize="30"
         (onChange)="EventEmitDefault()"
-        [ngClass]="{'clearance': FinancialFormSubmit && salesreturn.errors?.required}"required>
+        [ngClass]="{'clearance': FinancialFormSubmit && salesreturn.errors?.required}"required
+        [disabled]=" !ObjFinancial.Billable">
         </p-dropdown>
 </div>
  <div class="col-sm-6">
@@ -119,7 +122,7 @@
         [virtualScroll]="true" 
         itemSize="30"
         (onChange)="EventEmitDefault()"
-        [ngClass]="{'clearance': FinancialFormSubmit && discountrec.errors?.required}">
+        [ngClass]="{'clearance': FinancialFormSubmit && discountrec.errors?.required}" required [disabled]="!ObjFinancial.Can_Purchase">
         </p-dropdown>
 </div>
 <div class="col-sm-6">
@@ -137,6 +140,7 @@
         [virtualScroll]="true" 
         itemSize="30"
         (onChange)="EventEmitDefault()"
-        [ngClass]="{'clearance': FinancialFormSubmit && discountgiven.errors?.required}"required>
+        [ngClass]="{'clearance': FinancialFormSubmit && discountgiven.errors?.required}"required
+        [disabled]=" !ObjFinancial.Billable">
         </p-dropdown>
 </div>

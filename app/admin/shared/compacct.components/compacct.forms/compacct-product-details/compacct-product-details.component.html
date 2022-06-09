@@ -44,7 +44,7 @@
     [placeholder]="'Select Product Type'" 
     [virtualScroll]="true" 
     itemSize="30"
-    (onChange)="getProductSubTyp()"
+    (onChange)="getProductSubTyp(ObjproductDetails.Product_Type_ID)"
     [ngClass]="{'clearance': ProDetailsFormSubmit && Product_Type.errors?.required}"
     [required]="true">
     </p-dropdown>

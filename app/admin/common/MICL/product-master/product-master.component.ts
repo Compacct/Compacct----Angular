@@ -891,7 +891,7 @@ saveData(valid:any){
   // console.log("this.Objproduct",this.Objproduct)
   // this.destroyChild();
   if(valid){
-    console.log("productCode==",this.productCode);
+    console.log("buttonname==",this.buttonname);
     
     // var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
     // const productFeatureFilter = this.productFetr.filter(el=>Number(el.Product_Feature_ID) === Number(this.Objproduct.Product_Feature_ID))
@@ -902,10 +902,10 @@ saveData(valid:any){
     this.Objproduct.Is_Service = this.CheckifService;
     this.Objproduct.Sub_Ledger_Cat_IDS = this.SelectedVendorLedger.toString();
     
-     let msg = this.productCode ? "Update" : "Create"
+     let msg = this.buttonname === "Update" ? "Update" : "Create"
      const obj = {
          "SP_String": "SP_Master_Product_New",
-         "Report_Name_String": this.productCode ? 'Update_Master_Product' : 'Create_Master_Product',
+         "Report_Name_String": this.buttonname === "Update" ? 'Update_Master_Product' : 'Create_Master_Product',
          "Json_Param_String": JSON.stringify([{...this.Objproduct}]) 
         }
        this.GlobalAPI.getData(obj)
@@ -1104,6 +1104,10 @@ GetEditData(){
    .subscribe((data:any)=>{
     this.EditList = data;
     this.Objproduct = data[0];
+    this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
+    this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
+    this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
+    console.log("data",data)
     console.log("EditList data==",this.EditList);
     this.CheckifService = data[0].Is_Service;
     this.Objproduct.Material_ID = data[0].Material_ID;
@@ -1249,6 +1253,9 @@ onConfirm4(){
 onReject(){
   this.compacctToast.clear("c");
 }
+sendJson(data){
+  return JSON.parse(JSON.stringify(data))
+ }
 }
 class product{
 Material_ID:number;	

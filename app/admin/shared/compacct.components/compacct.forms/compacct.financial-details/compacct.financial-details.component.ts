@@ -47,7 +47,7 @@ export class CompacctFinancialDetailsComponent implements OnInit,OnChanges {
     // this.EventEmitDefault();
     this.clear()
   }
-  getPurchaseledger(){
+  getPurchaseledger(edit?){
     this.PurchaseData=[]; 
      this.AllPurchaseData = [];
      if (this.PurchaseACFlag) {
@@ -66,8 +66,14 @@ export class CompacctFinancialDetailsComponent implements OnInit,OnChanges {
             
           });
         });
-        this.ObjFinancial.Purchase_Ac_Ledger = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
-        this.ObjFinancial.Purchase_Return_Ledger_ID = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
+        if(edit){
+          
+        }
+        else{
+          this.ObjFinancial.Purchase_Ac_Ledger = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
+          this.ObjFinancial.Purchase_Return_Ledger_ID = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
+        }
+  
         this.EventEmitDefault();
       })
      }
@@ -86,13 +92,19 @@ export class CompacctFinancialDetailsComponent implements OnInit,OnChanges {
              
            });
          });
-         this.ObjFinancial.Purchase_Ac_Ledger = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
+         if(edit){
+
+         }
+         else{
+          this.ObjFinancial.Purchase_Ac_Ledger = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
          this.ObjFinancial.Purchase_Return_Ledger_ID = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
+         }
+        
          this.EventEmitDefault();
        })
       }
   }
-  getSalesledger(){
+  getSalesledger(edit?){
     this.SalesData=[]; 
      this.AllSalesData = [];
      if (this.SalesACFlag) {
@@ -110,6 +122,13 @@ export class CompacctFinancialDetailsComponent implements OnInit,OnChanges {
             
           });
         });
+
+        if(edit){
+
+        }
+        else{
+
+        }
         this.ObjFinancial.Sales_Ac_Ledger = this.SalesData.length ? data[0].Ledger_ID : undefined;
         this.ObjFinancial.Sales_Return_Ledger_ID = this.SalesData.length ? data[0].Ledger_ID : undefined;
         this.EventEmitDefault();
@@ -130,8 +149,14 @@ export class CompacctFinancialDetailsComponent implements OnInit,OnChanges {
              
            });
           });
-          this.ObjFinancial.Sales_Ac_Ledger = this.SalesData.length ? data[0].Ledger_ID : undefined;
-          this.ObjFinancial.Sales_Return_Ledger_ID = this.SalesData.length ? data[0].Ledger_ID : undefined;
+          if(edit){
+
+          }
+          else {
+            this.ObjFinancial.Sales_Ac_Ledger = this.SalesData.length ? data[0].Ledger_ID : undefined;
+            this.ObjFinancial.Sales_Return_Ledger_ID = this.SalesData.length ? data[0].Ledger_ID : undefined;
+          }
+          
           this.EventEmitDefault();
        })
       }
@@ -174,7 +199,7 @@ export class CompacctFinancialDetailsComponent implements OnInit,OnChanges {
           });
        })
   }
-  getDiscountReceive(){
+  getDiscountReceive(edit?){
     this.DiscountData=[]; 
      this.DiscountReceiveList = [];
         const obj = {
@@ -191,10 +216,16 @@ export class CompacctFinancialDetailsComponent implements OnInit,OnChanges {
              
            });
           });
-          this.ObjFinancial.Discount_Receive_Ledger_ID = data[0].Ledger_ID;
+          if(edit){
+
+          }
+          else {
+            this.ObjFinancial.Discount_Receive_Ledger_ID = data[0].Ledger_ID;
+          }
+          
        })
   }
-  getDiscountGiven(){
+  getDiscountGiven(edit?){
     this.GivenData=[]; 
      this.DiscountGivenList = [];
         const obj = {
@@ -211,12 +242,49 @@ export class CompacctFinancialDetailsComponent implements OnInit,OnChanges {
              
            });
           });
-          this.ObjFinancial.Discount_Given_Ledger_ID = data[0].Ledger_ID;
+          if(edit){
+
+          }
+          else {
+            this.ObjFinancial.Discount_Given_Ledger_ID = data[0].Ledger_ID;
+          }
+          
           this.EventEmitDefault();
        })
   }
   EventEmitDefault(){
     this.FinacialDetailsObj.emit(this.ObjFinancial);
+  }
+  EditFinalcial(arr){
+    console.log("Financial",JSON.parse(arr))
+    let data = JSON.parse(arr)
+    const EditData = data[0]
+    this.ObjFinancial.Can_Purchase = EditData.Can_Purchase
+    this.ObjFinancial.Billable = EditData.Billable
+     if(EditData.Can_Purchase){
+      this.getPurchaseledger(true)
+      this.getDiscountReceive(true)
+      this.getDiscountGiven(true)
+      setTimeout(() => {
+      this.ObjFinancial.Discount_Receive_Ledger_ID = EditData.Discount_Receive_Ledger_ID
+      this.ObjFinancial.Discount_Given_Ledger_ID = EditData.Discount_Given_Ledger_ID
+      this.ObjFinancial.Purchase_Ac_Ledger = EditData.Purchase_Ac_Ledger
+      this.ObjFinancial.Purchase_Return_Ledger_ID = EditData.Purchase_Return_Ledger_ID
+      }, 1000);
+    }
+    if(EditData.Billable){
+     this.getSalesledger()
+     this.getDiscountReceive(true)
+     this.getDiscountGiven(true)
+     setTimeout(() => {
+      this.ObjFinancial.Discount_Receive_Ledger_ID = EditData.Discount_Receive_Ledger_ID
+      this.ObjFinancial.Discount_Given_Ledger_ID = EditData.Discount_Given_Ledger_ID
+      this.ObjFinancial.Sales_Return_Ledger_ID = EditData.Sales_Return_Ledger_ID
+      this.ObjFinancial.Sales_Ac_Ledger = EditData.Sales_Ac_Ledger
+     }, 1000);
+  
+    }
+    
   }
   clear() {
     // this.VendorAddressLists = [];
