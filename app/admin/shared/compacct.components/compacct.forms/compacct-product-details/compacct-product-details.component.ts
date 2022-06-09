@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { CompacctCommonApi } from "../../../compacct.services/common.api.service";
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { MessageService } from 'primeng/primeng';
@@ -10,7 +10,7 @@ declare var $: any;
   styleUrls: ['./compacct-product-details.component.css'],
   providers: [MessageService],
 })
-export class CompacctProductDetailsComponent implements OnInit {
+export class CompacctProductDetailsComponent implements OnInit,OnChanges {
   ObjproductDetails = new product();
   productData = [];
   AllproductData = [];
@@ -35,14 +35,7 @@ export class CompacctProductDetailsComponent implements OnInit {
   private _required: boolean;
 
   @Output() ProDetailsObj = new EventEmitter <product>();
-  @Input()  set required(value: boolean) {
-    this._required = value;
-    if (this._required) {
-      this.ProDetailsFormSubmit = this.ObjproductDetails.Product_Type_ID ? true : false;
-    } else {
-      this.ProDetailsFormSubmit = this.ObjproductDetails.Product_Type_ID ? true : false;
-    }
-  }
+  @Input() requirPro :any;
 
   constructor(
     private $CompacctAPI: CompacctCommonApi,
@@ -301,10 +294,21 @@ onConfirm(){
       }
     });
   }
-  onReject(){
-    this.compacctToast.clear("c");
-  }
-
+onReject(){
+  this.compacctToast.clear("c");
+}
+clear() {
+  // this.VendorAddressLists = [];
+  this.ObjproductDetails = new product();
+}
+ngOnChanges(changes: SimpleChanges) {
+        
+  //this.doSomething(changes.categoryId.currentValue);
+  // You can also use categoryId.previousValue and 
+  // categoryId.firstChange for comparing old and new values
+  console.log("changes >>",changes);
+  this.ProDetailsFormSubmit = changes.requirPro.currentValue
+}
 }
 class product{
   Product_Type_ID	:number;	

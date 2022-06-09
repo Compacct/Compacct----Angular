@@ -59,6 +59,56 @@ export class ProductsPlaningComponent implements OnInit {
   GroupNameList = [];
   ProductList = [];
   ExsitData = [];
+
+  
+  ShowAddedEstimateProductList = [];
+  rowGroupMetadata: any;
+  cols = [{
+      field: 'SL_No',
+      header: 'SL No.'
+    },
+    {
+      field: 'Budget_Group_Name',
+      header: 'Group Name'
+    },
+    {
+      field: 'Budget_Sub_Group_Name',
+      header: 'Sub Group Name'
+    },
+    {
+      field: 'Work_Details',
+      header: 'Work Details'
+    },
+    {
+      field: 'Site_Description',
+      header: 'Site'
+    },
+    {
+      field: 'Product_Description',
+      header: 'Product'
+    },
+    {
+      field: 'unit',
+      header: 'Unit'
+    },
+    {
+      field: 'Qty',
+      header: 'Qty'
+    },
+    {
+      field: 'Nos',
+      header: 'Nos'
+    },
+    {
+      field: 'TQty',
+      header: 'Total Qty'
+    },
+    {
+      field: 'UOM',
+      header: 'UOM'
+    }
+  ];
+  ProductsModal =  false;
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -489,7 +539,69 @@ export class ProductsPlaningComponent implements OnInit {
   onReject() {
     this.compacctToast.clear("c");
   }
-
+  //Product Details
+  onSort() {
+    this.updateRowGroupMetaData();
+  }
+  updateRowGroupMetaData() {
+    this.rowGroupMetadata = {};
+    if (this.ShowAddedEstimateProductList) {
+      for (let i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+        let rowData = this.ShowAddedEstimateProductList[i];
+        let brand = rowData.Budget_Group_Name;
+        if (i == 0) {
+          this.rowGroupMetadata[brand] = {
+            index: 0,
+            size: 1
+          };
+        } else {
+          let previousRowData = this.ShowAddedEstimateProductList[i - 1];
+          let previousRowGroup = previousRowData.Budget_Group_Name;
+          if (brand === previousRowGroup)
+            this.rowGroupMetadata[brand].size++;
+          else
+            this.rowGroupMetadata[brand] = {
+              index: i,
+              size: 1
+            };
+        }
+      }
+    }
+  }
+  GetEditSingleScheme() {
+    this.ShowAddedEstimateProductList = [];
+    if (this.ObjProdPlan.Tender_Doc_ID) {
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Get Data Tender Estimate_With_Changed_Amount",
+        "Json_Param_String": JSON.stringify([{
+          'Tender_Doc_ID': this.ObjProdPlan.Tender_Doc_ID
+        }])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          if (data.length) {
+            this.ShowAddedEstimateProductList = data;
+            console.log(data)
+            this.ProductsModal =  true;
+          }
+        });
+    }
+  }
+  getPurchaseAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Amount
+    }) => n + Number(Amount), 0)
+  }
+  getSaleAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Sale_Amount
+    }) => n + Number(Sale_Amount), 0)
+  }
+  getTotalPurchaseAmt() {
+    return this.ShowAddedEstimateProductList.length ? Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt() : '-';
+  }
 }
 class ProdPlan {
   Tender_Doc_ID: String;

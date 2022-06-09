@@ -135,6 +135,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   siteModal = false;
   Spinnersite = false;
   labelSettings:any;
+  dayWorkingTime:any;
   @ViewChild('gantt', {
     static: true
   })
@@ -162,6 +163,8 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   }
 
   ngOnInit() {
+    
+    this.dayWorkingTime = [{ from: 0, to: 24 }]; 
     this.gridLines = 'Both';
     this.columns = [{
         field: 'Task_ID',
@@ -386,7 +389,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       console.log("Site Save Data", temp);
       const obj = {
         "SP_String": "SP_Tender_Management_All",
-        "Report_Name_String": "Add Site",
+        "Report_Name_String": "Add Site For Project Planning",
         "Json_Param_String": JSON.stringify([temp])
       }
       this.GlobalAPI
@@ -474,6 +477,8 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
           Budget_Group_Name: list[i].Budget_Group_Name,
           Summary_Task: list[i].Summary_Task,
           Job_Name: list[i].Job_Name,
+          Task_Start_Date: new Date(list[i].Planned_Start_Date),
+          Task_Target_Date: new Date(list[i].Planned_End_Date),
           StartDate: new Date(list[i].Planned_Start_Date),
           EndDate: new Date(list[i].Planned_End_Date),
           Task_Txn_ID: list[i].Task_Txn_ID,
@@ -495,8 +500,10 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         U_id: row.U_id,
         Task_ID: row.SL_ID,
         Doc_ID: row.Doc_ID,
-        Task_Start_Date: row.Planned_Start_Date,
-        Task_Target_Date: row.Planned_End_Date,
+        Task_Start_Date:  new Date(row.Planned_Start_Date),
+        Task_Target_Date:  new Date(row.Planned_End_Date),
+        StartDate: new Date(row.Planned_Start_Date),
+        EndDate: new Date(row.Planned_End_Date),
         Work_Type_Name: row.Work_Type_Name,
         No_Of_Days: row.No_Of_Days,
         Budget_Group_Name: row.Budget_Group_Name,

@@ -45,7 +45,7 @@
     [virtualScroll]="true" 
     itemSize="30"
     (onChange)="getProductSubTyp()"
-    [styleClass]="ProDetailsFormSubmit && !ObjproductDetails.Product_Type_ID ? 'clearance' : ''"
+    [ngClass]="{'clearance': ProDetailsFormSubmit && Product_Type.errors?.required}"
     [required]="true">
     </p-dropdown>
 </div>
@@ -73,7 +73,7 @@
     [virtualScroll]="true" 
     itemSize="30"
     (onChange)="EventEmitDefault()"
-    [styleClass]="ProDetailsFormSubmit && !ObjproductDetails.Product_Sub_Type_ID ? 'clearance' : ''" [required]="true">
+    [ngClass]="{'clearance': ProDetailsFormSubmit && Product_Sub_Type.errors?.required}" [required]="true">
     </p-dropdown>  
 </div>
 <div class="col-sm-4">
@@ -96,7 +96,7 @@
         #Product_Description ="ngModel"
         [(ngModel)]="ObjproductDetails.Product_Description"
         (change)="EventEmitDefault()"
-        [ngClass]="{'clearance': ProDetailsFormSubmit && !ObjproductDetails.Product_Description}"required>
+        [ngClass]="{'clearance': ProDetailsFormSubmit && Product_Description.errors?.required}"required>
 </div> 
 <div class="col-sm-4">
         <label class="control-label">Rack No.</label> 

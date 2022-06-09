@@ -71,6 +71,7 @@ export class SupportTicketNepalComponent implements OnInit {
   alignedengineer = undefined;
   AlEngineerList = [];
   NewBrowseEndDate:any;
+  column =[];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -107,6 +108,20 @@ export class SupportTicketNepalComponent implements OnInit {
        this.GetEngineer();
        this.GetContractStatus();
        this.GetSymptom();
+
+       this.column = [
+        { field: 'Support_Ticket_No', header: 'Support Ticket No' },
+        { field: 'Support_Ticket_Date_Nepali', header: 'Support Ticket Date' },
+        { field: 'Call_Type', header: 'Call Type' },
+        { field: 'Sub_Ledger_Name', header: 'Customer Name' },
+        { field: 'Location_Name', header: 'Location' },
+        { field: 'Mfg_Company', header: 'Machine Make' },
+        { field: 'Machine', header: 'Machine' },
+        { field: 'Serial_No', header: 'Machine Serial No' },
+        { field: 'Member_Name', header: 'Engineer' },
+        { field: 'Contract_Status', header: 'Contract Status' },
+        { field: 'Remarks', header: 'Remarks' }
+      ];
   }
  
   

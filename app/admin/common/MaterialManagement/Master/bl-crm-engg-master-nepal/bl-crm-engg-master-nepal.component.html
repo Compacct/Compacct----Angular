@@ -27,7 +27,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
 
                             <div class="table-responsive no-padding productTable">
-                                <p-table #dt [value]="BrowseList" [globalFilterFields]="['User_Name','Name','User_Email','User_Mobile']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
+                                <p-table #dt [columns]="colms" [value]="BrowseList" [globalFilterFields]="['User_Name','Name','User_Email','User_Mobile']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
                                     [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -37,13 +37,17 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>User Name</th>
+                                            <th *ngFor="let colms of columns" [pSortableColumn]="colms.field">
+                                                {{colms.header}}
+                                                <p-sortIcon [field]="colms.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <!-- <th>User Name</th>
                                             <th>Engineer Name</th>
                                             <th>Email</th>
-                                            <th>Mobile No</th>
+                                            <th>Mobile No</th> -->
                                             <!-- <th>Under Co-ordinate</th> -->
                                         </tr>
                                     </ng-template>

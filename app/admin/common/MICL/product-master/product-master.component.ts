@@ -1,6 +1,6 @@
 import { Dropdown } from 'primeng/components/dropdown/dropdown';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component,Input, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { FileUpload, MessageService } from 'primeng/primeng';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
@@ -8,7 +8,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 declare var $: any;
 import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
-import { Console } from 'console';
+import { CompacctFinancialDetailsComponent } from "../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
 
 @Component({
   selector: 'app-product-master',
@@ -34,7 +34,9 @@ export class ProductMasterComponent implements OnInit {
   productSubData = [];
   AllproductSubData = [];
   UOMData =[];
-  AllUomData = [];
+  UomDataList = [];
+  AllUOMData = [];
+  AllUomDataList = [];
   PurchaseData=[]; 
   AllPurchaseData = [];
   SalesData=[]; 
@@ -79,7 +81,6 @@ export class ProductMasterComponent implements OnInit {
   masterProductId : number;
   is_Active = false;
   Is_View = false;
-  act_popup = false;
   mettypeid = undefined;
   protypeid = undefined;
   protypesubid = undefined;
@@ -89,13 +90,28 @@ export class ProductMasterComponent implements OnInit {
   ObjGstandCustonDuty : any;
   GstAndCustomFormSubmit = false;
   ObjproductDetails : any;
-
+  ObjFinancial: any;
+  hsnSac = "HSN"
   @ViewChild("Product", { static: false })
   ProductDetailsInput: CompacctProductDetailsComponent;
   @ViewChild("GstAndCustomDuty", { static: false })
   GstAndCustDutyInput: CompacctgstandcustomdutyComponent;
+  @ViewChild("FinacialDetails", { static: false })
+  FinacialDetailsInput: CompacctFinancialDetailsComponent;
+  LAbelName = 'HSN Code';
 
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
+  PurchaseACFlag: any;
+  SalesACFlag: any;
+  productid = undefined;
+  EditList = [];
+  deactivateid = undefined;
+  can_popup = false;
+  activeid = undefined;
+  act_popup = false;
+  SubCatFilter = [];
+
+
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -103,7 +119,7 @@ export class ProductMasterComponent implements OnInit {
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
     public $CompacctAPI: CompacctCommonApi,
-  ) { }
+  ) {}
 
 ngOnInit() {
     this.items = ["BROWSE", "CREATE","REPORT"];
@@ -121,20 +137,36 @@ ngOnInit() {
     this.getGSTTyp();
     this.getProductTyp();
     this.getUOM();
+    this.getAllUOM();
     this.getMfg();
-    this.getPurchaseledger();
-    this.getSalesledger();
-    this.getPrReturn();
+    // this.getPurchaseledger();
+    // this.getSalesledger();
+    // this.getPrReturn();
     this.getSubLedger();
-    this.getSalesReturn();
-    this.getDiscountReceive();
-    this.getDiscountGiven();
+    // this.getSalesReturn();
+    // this.getDiscountReceive();
+    // this.getDiscountGiven();
+    this.Objproduct.Rate_Form_Quote = "N";
+    this.Objproduct.Sale_Rate_Form_Quote = "N";
     }
 TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE","REPORT"];
     this.buttonname = "Create";
-    
+    this.destroyChild();
+    this.productid = undefined;
+    this.clearData();
+  }
+  destroyChild() {
+    if (this.ProductDetailsInput) {
+      this.ProductDetailsInput.clear();
+    }
+    if (this.GstAndCustDutyInput) {
+      this.GstAndCustDutyInput.clear();
+    }
+    if (this.FinacialDetailsInput) {
+      this.FinacialDetailsInput.clear();
+    }
   }
   getProDetailsData(e) {
     console.log(e)
@@ -144,6 +176,7 @@ TabClick(e) {
     this.Objproduct.Product_Code = undefined;
     this.Objproduct.Product_Description = undefined;
     this.Objproduct.Rack_NO = undefined;
+
     if (e.Product_Type_ID) {
       this.ObjproductDetails = e;
       this.Objproduct.Product_Type_ID = e.Product_Type_ID;
@@ -162,33 +195,54 @@ TabClick(e) {
     this.Objproduct.Remarks = undefined;
     if (e.Cat_ID) {
       this.ObjGstandCustonDuty = e;
-      this.Objproduct.Cat_ID = e.Product_Type_ID;
-      this.Objproduct.HSN_Code = e.Product_Sub_Type_ID;
-      this.Objproduct.Custom_Duty = e.Product_Code;
-      this.Objproduct.Remarks = e.Product_Description;
+      this.Objproduct.Cat_ID = e.Cat_ID;
+      if (this.CheckifService) {
+      this.Objproduct.SAC_Code = e.HSN_SAC_Code;
+      }
+      else {
+        this.Objproduct.HSN_Code = e.HSN_SAC_Code;
+      }
+      this.Objproduct.Custom_Duty = e.Custom_Duty;
+      this.Objproduct.Remarks = e.Remarks;
     }
   }
-
-
-getBrowseProduct(){
-    const obj = {
-      "SP_String":"SP_Master_Product_New",
-      "Report_Name_String":"Browse_Master_Product"
+  FinancialDetailsData(e) {
+    console.log(e)
+    this.Objproduct.Can_Purchase = undefined;
+    this.Objproduct.Billable = undefined;
+    this.ObjFinancial = undefined;
+    // this.PurchaseACFlag = undefined;
+    this.Objproduct.Purchase_Ac_Ledger = undefined;
+    // this.SalesACFlag = undefined;
+    this.Objproduct.Sales_Ac_Ledger = undefined;
+    this.Objproduct.Purchase_Return_Ledger_ID = undefined;
+    this.Objproduct.Sales_Return_Ledger_ID = undefined;
+    this.Objproduct.Discount_Receive_Ledger_ID = undefined;
+    this.Objproduct.Discount_Given_Ledger_ID = undefined;
+    if (e.Purchase_Ac_Ledger) {
+      this.ObjFinancial = e;
+      this.Objproduct.Can_Purchase = e.Can_Purchase;
+      this.Objproduct.Billable = e.Billable;
+      // this.PurchaseACFlag = e.PurchaseACFlag;
+      this.Objproduct.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      // this.SalesACFlag = e.SalesACFlag;
+      this.Objproduct.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.Objproduct.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.Objproduct.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.Objproduct.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.Objproduct.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
     }
-     this.GlobalAPI.getData(obj)
-     .subscribe((data:any)=>{
-      this.AllData = data;
-      console.log("Browse data==",this.AllData);
-      });
-}
+  }
 
 ChangeValue(){
   //console.log("check",this.CheckifService)
  if(this.CheckifService){
    this.check ="Service"
+   this.hsnSac = "SAC"
  }
  else{
    this.check = "Product"
+   this.hsnSac = "HSN"
  }
 }
 //Material Type 
@@ -209,6 +263,16 @@ getMaterialTyp(){
          });
        });
      })
+}
+MaterialChange() {
+  this.Objproduct.Material_Type =undefined;
+if(this.Objproduct.Material_ID) {
+  const ctrl = this;
+  const MaterialObj = $.grep(ctrl.MaterialData,function(item) {return item.Material_ID == ctrl.Objproduct.Material_ID})[0];
+  // console.log(MaterialObj);
+  this.Objproduct.Material_Type = MaterialObj.Material_Type;
+
+}
 }
 MatTypePopup (){
   this.MaterialTypeFormSubmitted = false;
@@ -326,6 +390,17 @@ getMfg(){
          });
       });
      })
+}
+GetMfgProCode(){
+  this.Objproduct.Mfg_Product_Code = undefined;
+  if(this.Objproduct.Product_Mfg_Comp_ID){
+    var mfgproductcode = this.MfgData.filter(item => item.Product_Mfg_Comp_ID === this.Objproduct.Product_Mfg_Comp_ID)
+  this.Objproduct.Mfg_Product_Code = mfgproductcode[0].Product_Mfg_Comp_ID ;
+  }
+  else 
+  {
+    this.Objproduct.Mfg_Product_Code = undefined;
+  }
 }
 //Product Type
 getProductTyp(){
@@ -535,7 +610,7 @@ ProSubTypePopup(){
 //Uom
 getUOM(){
   this.UOMData=[]; 
-   this.AllUomData = [];
+   this.UomDataList = [];
       const obj = {
        "SP_String": "SP_Master_Product_New",
        "Report_Name_String":"Get_Master_UOM_Data",
@@ -544,13 +619,43 @@ getUOM(){
        this.UOMData = data;
       console.log("UOMData==",this.UOMData);
        this.UOMData.forEach((el : any) => {
-         this.AllUomData.push({
+         this.UomDataList.push({
            label: el.UOM,
            value: el.UOM_Id
            
          });
        });
      })
+}
+getAllUOM(){
+  this.AllUOMData=[]; 
+   this.AllUomDataList = [];
+      const obj = {
+       "SP_String": "SP_Master_Product_New",
+       "Report_Name_String":"Get_Master_UOM_Data",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.AllUOMData = data;
+      console.log("AllUOMData==",this.AllUOMData);
+       this.AllUOMData.forEach((el : any) => {
+         this.AllUomDataList.push({
+           label: el.UOM,
+           value: el.UOM_Id
+           
+         });
+       });
+     })
+}
+ChangeUom(){
+  this.Objproduct.Alt_UOM = undefined;
+  if(this.Objproduct.UOM){
+    var uomname = this.AllUOMData.filter(item => item.UOM_Id === this.Objproduct.UOM)
+  this.Objproduct.Alt_UOM = uomname[0].UOM_Id ;
+  }
+  else 
+  {
+    this.Objproduct.Alt_UOM = undefined;
+  }
 }
 ViewUomType(){
   this.UOMData = [];
@@ -561,7 +666,6 @@ ViewUomType(){
 }
 CreateUomType(valid){
   this.UOMTypeFormSubmitted = true;
-  if(valid){
     this.Spinner = true;
    
     if(valid){
@@ -592,6 +696,7 @@ CreateUomType(valid){
          this.UOMTypeModal = false;
          this.Spinner = false;
          this.getUOM();
+         this.getAllUOM();
      
          } else{
            this.Spinner = false;
@@ -605,7 +710,9 @@ CreateUomType(valid){
          }
        })
      
-      }
+    }
+    else {
+      this.Spinner = false;
     }
 }
 deleteProUom(uom){
@@ -634,16 +741,6 @@ ProUomPopup(){
    this.UOMTypeModal = true;
    this.Spinner = false;
 }
-ChangeUom(){
-  if(this.Objproduct.UOM){
-    var uomname = this.UOMData.filter(item => item.UOM_Id === this.Objproduct.UOM)
-  this.Objproduct.Alt_UOM = uomname[0].UOM ;
-  }
-  else 
-  {
-    this.Objproduct.Alt_UOM = undefined;
-  }
-}
 
 getSubLedger(){
   this.AllVendorLedger=[]; 
@@ -667,25 +764,25 @@ getSubLedger(){
    });
 }
 
-getPurchaseledger(){
-  this.PurchaseData=[]; 
-   this.AllPurchaseData = [];
-      const obj = {
-       "SP_String": "SP_Master_Product_New",
-       "Report_Name_String":"Get_Purchase_AC_Ledger",
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.PurchaseData = data;
-      console.log("PurchaseData==",this.PurchaseData);
-       this.PurchaseData.forEach((el : any) => {
-         this.AllPurchaseData.push({
-           label: el.Ledger_Name,
-           value: el.Ledger_ID,
+// getPurchaseledger(){
+//   this.PurchaseData=[]; 
+//    this.AllPurchaseData = [];
+//       const obj = {
+//        "SP_String": "SP_Master_Product_New",
+//        "Report_Name_String":"Get_Purchase_AC_Ledger",
+//       }
+//       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//        this.PurchaseData = data;
+//       console.log("PurchaseData==",this.PurchaseData);
+//        this.PurchaseData.forEach((el : any) => {
+//          this.AllPurchaseData.push({
+//            label: el.Ledger_Name,
+//            value: el.Ledger_ID,
            
-         });
-       });
-     })
-}
+//          });
+//        });
+//      })
+// }
 
 getSalesledger(){
   this.SalesData=[]; 
@@ -791,6 +888,8 @@ saveData(valid:any){
   console.log("savedata==",this.Objproduct);
   console.log("valid",valid)
   this.MaterialFormSubmit = true;
+  // console.log("this.Objproduct",this.Objproduct)
+  // this.destroyChild();
   if(valid){
     console.log("productCode==",this.productCode);
     
@@ -800,6 +899,8 @@ saveData(valid:any){
     // this.Objproduct.Product_Feature_Desc = Number(this.Objproduct.Product_Feature_ID)
     // this.Objproduct.MOC_Description = mocdes.length ? mocdes[0].MOC_Description : 0;
     // this.Objproduct.Product_ID = this.productCode ? this.productCode : 0
+    this.Objproduct.Is_Service = this.CheckifService;
+    this.Objproduct.Sub_Ledger_Cat_IDS = this.SelectedVendorLedger.toString();
     
      let msg = this.productCode ? "Update" : "Create"
      const obj = {
@@ -821,13 +922,16 @@ saveData(valid:any){
           });
            }
          this.Spinner = false;
+         this.destroyChild();
           this.getBrowseProduct();
           this.productCode = undefined;
-          this.tabIndexToView = 0;
+          // this.tabIndexToView = 0;
           this.MaterialFormSubmit = false;
           this.GstAndCustomFormSubmit = false;
           this.Objproduct = new product();
+          this.CheckifService = false;
          });
+   
      }
      else{
        console.error("Somthing Wrong")
@@ -840,6 +944,7 @@ onConfirm(){
   let ReportName = '';
   let ObjTemp;
   let FunctionRefresh;
+  let secondfuntionrefresh;
   if (this.mettypeid) {
     ReportName = "Delete_Product_Material_Type"
     ObjTemp = {
@@ -847,26 +952,27 @@ onConfirm(){
     }
     FunctionRefresh = 'getMaterialTyp'
   }
-  if (this.protypeid) {
-    ReportName = "Delete_Master_Product_Type"
-    ObjTemp = {
-      Product_Type_ID: this.protypeid
-    }
-    FunctionRefresh = 'getProductTyp';
-  }
-   if (this.protypesubid) {
-    ReportName = "Delete_Product_Sub_Type"
-    ObjTemp = {
-      Product_Sub_Type_ID: this.protypesubid
-    }
-    FunctionRefresh = 'getProductSubTyp';
-  }
+  // if (this.protypeid) {
+  //   ReportName = "Delete_Master_Product_Type"
+  //   ObjTemp = {
+  //     Product_Type_ID: this.protypeid
+  //   }
+  //   FunctionRefresh = 'getProductTyp';
+  // }
+  //  if (this.protypesubid) {
+  //   ReportName = "Delete_Product_Sub_Type"
+  //   ObjTemp = {
+  //     Product_Sub_Type_ID: this.protypesubid
+  //   }
+  //   FunctionRefresh = 'getProductSubTyp';
+  // }
   if (this.Uomid) {
     ReportName = "Delete_Master_UOM"
     ObjTemp = {
       UOM: this.Uomid
    }
     FunctionRefresh = 'getUOM'
+    secondfuntionrefresh = 'getAllUOM'
  }
     const obj = {
       "SP_String": "SP_Master_Product_New",
@@ -879,6 +985,7 @@ onConfirm(){
       this.onReject();
       //this.GetTenderOrgList();
       this[FunctionRefresh]();
+      secondfuntionrefresh = secondfuntionrefresh ? this[secondfuntionrefresh]() : null;
        this.compacctToast.clear();
        this.compacctToast.add({
           key: "compacct-toast",
@@ -909,7 +1016,7 @@ onConfirm2(){
           this.getProductTyp();
           this.getUOM();
           this.getMfg();
-          this.getPurchaseledger();
+         // this.getPurchaseledger();
           this.getSalesledger();
           this.getPrReturn();
           this.getSubLedger();
@@ -929,22 +1036,22 @@ onConfirm2(){
     }
     //this.ParamFlaghtml = undefined;
 }
-Active(masterProduct){ 
-  this.Is_View = false; 
-  this.masterProductId = undefined ;
-   if(masterProduct.Product_ID){
-    this.is_Active = true;
-     this.masterProductId = masterProduct.Product_ID ;
-     this.compacctToast.clear();
-     this.compacctToast.add({
-       key: "c",
-       sticky: true,
-       severity: "warn",
-       summary: "Are you sure?",
-       detail: "Confirm to proceed"
-     });
-   }
-}
+// Active(masterProduct){ 
+//   this.Is_View = false; 
+//   this.masterProductId = undefined ;
+//    if(masterProduct.Product_ID){
+//     this.is_Active = true;
+//      this.masterProductId = masterProduct.Product_ID ;
+//      this.compacctToast.clear();
+//      this.compacctToast.add({
+//        key: "c",
+//        sticky: true,
+//        severity: "warn",
+//        summary: "Are you sure?",
+//        detail: "Confirm to proceed"
+//      });
+//    }
+// }
 
 // File Upload
   FetchPDFFile(event) {
@@ -964,6 +1071,181 @@ clearData(){
    this.SelectedVendorLedger = [];  
 }
 
+getBrowseProduct(){
+  const obj = {
+    "SP_String":"SP_Master_Product_New",
+    "Report_Name_String":"Browse_Master_Product"
+  }
+   this.GlobalAPI.getData(obj)
+   .subscribe((data:any)=>{
+    this.AllData = data;
+    console.log("Browse data==",this.AllData);
+    });
+}
+EditProduct(data){
+  this.clearData();
+  this.productid = undefined;
+  if (data.Product_ID) {
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "UPDATE","REPORT"];
+    this.buttonname = "Update";
+    this.productid = data.Product_ID;
+    this.GetEditData();
+  }
+}
+GetEditData(){
+  this.EditList = [];
+  const obj = {
+    "SP_String":"SP_Master_Product_New",
+    "Report_Name_String":"Get_Master_Product",
+    "Json_Param_String": JSON.stringify([{Product_ID : this.productid}])
+  }
+   this.GlobalAPI.getData(obj)
+   .subscribe((data:any)=>{
+    this.EditList = data;
+    this.Objproduct = data[0];
+    console.log("EditList data==",this.EditList);
+    this.CheckifService = data[0].Is_Service;
+    this.Objproduct.Material_ID = data[0].Material_ID;
+    this.Objproduct.Material_Type = data[0].Material_Type;
+
+    this.Objproduct.Product_Type_ID = data[0].Product_Type_ID;
+    // this.ProductDetailsInput.getProductSubTyp();
+    this.Objproduct.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
+    this.Objproduct.Product_Code = data[0].Product_Code;
+    this.Objproduct.Product_Description = data[0].Product_Description;
+    this.Objproduct.Rack_NO = data[0].Rack_NO;
+
+    this.Objproduct.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
+    this.Objproduct.Mfg_Product_Code = data[0].Mfg_Product_Code;
+    this.Objproduct.UOM = data[0].UOM;
+    this.Objproduct.Alt_UOM = data[0].Alt_UOM;
+    this.Objproduct.Reorder_Level = data[0].Reorder_Level;
+    this.Objproduct.Cust_Wrnty = data[0].Cust_Wrnty;
+    this.Objproduct.Vendor_Wrnty = data[0].Vendor_Wrnty;
+    this.Objproduct.BARCODE_COUNT = data[0].BARCODE_COUNT;
+    this.Objproduct.Purchase_Rate = data[0].Purchase_Rate;
+    this.Objproduct.Sale_rate = data[0].Sale_rate;
+    this.Objproduct.Rate_Form_Quote = data[0].Rate_Form_Quote;
+    this.Objproduct.Sale_Rate_Form_Quote = data[0].Sale_Rate_Form_Quote;
+
+    setTimeout(() => {
+      var subCatids = data[0].Sub_Ledger_Cat_IDS;
+    var SubCatArray = subCatids.split(',');
+    console.log("SubCatArray",SubCatArray)
+    let DSubCat = [];
+    SubCatArray.forEach((item) => {
+      const subcat = this.AllVendorLedger.filter(el => el.Sub_Ledger_Cat_ID === Number(item))
+      if (DSubCat.indexOf(subcat) === -1) {
+        DSubCat.push(subcat[0].Sub_Ledger_Cat_ID);
+        this.SelectedVendorLedger = [...DSubCat]
+        //  this.SelectedVendorLedger.push(subcat[0].Sub_Ledger_Cat_ID);
+      }
+    });
+    }, 200);
+    
+    this.Objproduct.Product_Expiry = data[0].Product_Expiry;
+
+    this.Objproduct.Can_Purchase = data[0].Can_Purchase;
+    this.Objproduct.Billable = data[0].Billable;
+    this.Objproduct.Purchase_Ac_Ledger = data[0].Purchase_Ac_Ledger;
+    this.Objproduct.Sales_Ac_Ledger = data[0].Sales_Ac_Ledger;
+    this.Objproduct.Purchase_Return_Ledger_ID = data[0].Purchase_Return_Ledger_ID;
+    this.Objproduct.Sales_Return_Ledger_ID = data[0].Sales_Return_Ledger_ID;
+    this.Objproduct.Discount_Receive_Ledger_ID = data[0].Discount_Receive_Ledger_ID;
+    this.Objproduct.Discount_Given_Ledger_ID = data[0].Discount_Given_Ledger_ID;
+
+    });
+}
+Deactivate(deactive){
+  this.act_popup = false;
+  this.Is_View = false;
+  this.is_Active = false;
+  this.deactivateid = undefined ;
+  if(deactive.Product_ID){
+    this.can_popup = true;
+    this.deactivateid = deactive.Product_ID ;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+  }
+}
+onConfirm3(){ 
+  if(this.deactivateid){
+    const obj = {
+      "SP_String": "SP_Master_Product_New",
+      "Report_Name_String": "Deactive_Master_Product",
+      "Json_Param_String": JSON.stringify([{Product_ID : this.deactivateid}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // console.log("del Data===", data[0].Column1)
+      if (data[0].Column1 === "Done"){
+
+        this.onReject();
+        this.getBrowseProduct();
+       this.can_popup = false;
+       this.deactivateid = undefined ;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Tax Id: " + this.deactivateid.toString(),
+          detail: "Succesfully Deactivated"
+        });
+       }
+    })
+  }
+ // this.ParamFlaghtml = undefined;
+}
+Active(masterTax){
+this.can_popup = false;
+this.Is_View = false;
+this.is_Active = false;
+this.activeid = undefined ;
+ if(masterTax.Product_ID){
+  this.act_popup = true;
+   this.activeid = masterTax.Product_ID ;
+   this.compacctToast.clear();
+   this.compacctToast.add({
+     key: "c",
+     sticky: true,
+     severity: "warn",
+     summary: "Are you sure?",
+     detail: "Confirm to proceed"
+   });
+ }
+}
+onConfirm4(){
+  if(this.activeid){
+    const obj = {
+      "SP_String": "SP_Master_Product_New",
+      "Report_Name_String": "Active_Master_Product",
+      "Json_Param_String": JSON.stringify([{Product_ID : this.activeid}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // console.log("del Data===", data[0].Column1)
+      if (data[0].Column1 === "Done"){
+        this.onReject();
+        this.getBrowseProduct();
+        this.act_popup = false;
+        this.activeid = undefined ;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Tax Id: " + this.activeid.toString(),
+          detail: "Succesfully Activated"
+        });
+      }
+    })
+  }
+  //this.ParamFlaghtml = undefined;
+}
 onReject(){
   this.compacctToast.clear("c");
 }
@@ -971,10 +1253,10 @@ onReject(){
 class product{
 Material_ID:number;	
 Material_Type	:any;	
-Is_Service: any = 1;		
+Is_Service: any;		
 Product_Code:any;	
-Rack_NO	:any;		
-Product_Description:any;	
+Product_Description:string;
+Rack_NO	:any;			
 Cat_ID:number;	
 Product_Mfg_Comp_ID:number;	
 Product_Type_ID	:number;	
@@ -982,8 +1264,8 @@ Product_Sub_Type_ID	:number;
 Maintain_Serial_No:any;
 UOM		:any;	
 Alt_UOM	:any;		
-Billable:any;			
-Can_Purchase:any;	
+Billable:boolean;			
+Can_Purchase:boolean;	
 Reorder_Level:number = 0;	
 Cust_Wrnty:number = 0;		
 Vendor_Wrnty:number = 0;
@@ -1007,5 +1289,5 @@ Cess_Percentage	:any;
 HSN_Code:any;		
 SAC_Code:any;
 Product_ID :number;
-
+Sub_Ledger_Cat_IDS:any;
 }

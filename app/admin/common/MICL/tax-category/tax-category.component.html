@@ -186,7 +186,7 @@
                                                             </div> 
                                        </div>                           
                                         <div class="form-group">
-                                                            <div class="col-sm-4">
+                                                            <div class="col-sm-6">
                                                                 <label class="control-label">IGST Output<sup class="text-danger">*</sup></label>
                                                                 <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
                                                                     <p-checkbox name="IGSToutputckeck" #IGSToutputckeck="ngModel" [(ngModel)]="IGST_outputckeck" [style]="{'margin':'4px 3px'}" (onChange)="allLedger('IGSToutput')" aria-invalid="false" binary="true"></p-checkbox>
@@ -207,7 +207,7 @@
                                                                     [ngClass]="{'clearance': TaxFormSubmitted && IGST_Output_Ledger_ID.errors?.required}"required>
                                                                     </p-dropdown>
                                                             </div> 
-                                                            <div class="col-sm-4">
+                                                            <div class="col-sm-6">
                                                             <label class="control-label">CGST Output<sup class="text-danger">*</sup></label>
                                                             <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
                                                                 <p-checkbox name="CGSToutputckeck" #CGSToutputckeck="ngModel" [(ngModel)]="CGST_outputckeck" [style]="{'margin':'4px 3px'}" (onChange)="allLedger('CGSToutput')" aria-invalid="false" binary="true"></p-checkbox>
@@ -228,7 +228,9 @@
                                                                 [ngClass]="{'clearance': TaxFormSubmitted && CGST_Output_Ledger_ID.errors?.required}"required>
                                                                 </p-dropdown>
                                                             </div> 
-                                                            <div class="col-sm-4">
+                                        </div>
+                                        <div class="form-group">
+                                                            <div class="col-sm-6">
                                                         <label class="control-label">SGST Output<sup class="text-danger">*</sup></label>
                                                         <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
                                                             <p-checkbox name="SGSToutputckeck" #SGSToutputckeck="ngModel" [(ngModel)]="SGST_outputckeck" [style]="{'margin':'4px 3px'}" (onChange)="allLedger('SGSToutput')" aria-invalid="false" binary="true"></p-checkbox>

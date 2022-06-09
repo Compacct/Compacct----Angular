@@ -70,7 +70,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive no-padding productTable">
-                                <p-table #dt [value]="BrowseList" [globalFilterFields]="['Mfg_Company','Machine','Serial_No','Location_Name','Status']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
+                                <p-table #dt [columns]="cols" [value]="BrowseList" [globalFilterFields]="['Mfg_Company','Machine','Serial_No','Location_Name','Status']" [paginator]="BrowseList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
                                     [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -80,14 +80,18 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Manufacturer</th>
+                                            <th *ngFor="let cols of columns" [pSortableColumn]="cols.field">
+                                                {{cols.header}}
+                                                <p-sortIcon [field]="cols.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <!-- <th>Manufacturer</th>
                                             <th>Machine</th>
                                             <th>Serial No</th>
                                             <th>Location</th>
-                                            <th>Status</th>
+                                            <th>Status</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>

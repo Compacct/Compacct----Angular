@@ -81,6 +81,18 @@ export class TutoBdaAttendanceComponent implements OnInit {
    // this.Month_Name = new Date();
     this.getmonthdaydate();
   }
+  clearData(){
+    //this.getAttendanceType();
+    const d = new Date();
+    let month = d.getMonth() + 1;
+    console.log('month',month)
+    let year = d.getFullYear();
+    this.Month_Name = month < 10 ? year+'-'+0+month : year+'-'+month
+    //this.startdate = this.Month_Name+'-'+'01'
+    console.log('Month_Name',this.Month_Name)
+   // this.Month_Name = new Date();
+    this.getmonthdaydate();
+  }
   GetISM(){
     const obj = {
       "SP_String": "SP_Tutopia_Txn_BDA_Attendance",

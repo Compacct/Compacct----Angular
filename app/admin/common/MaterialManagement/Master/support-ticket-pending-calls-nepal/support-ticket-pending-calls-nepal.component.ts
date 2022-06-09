@@ -12,6 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { getLocaleTimeFormat } from '@angular/common';
 declare var NepaliFunctions: any;
 const NepaliDate = require('nepali-date');
+declare var nepaliDatePicker: any;
+declare var $: any;
 @Component({
   selector: 'app-support-ticket-pending-calls-nepal',
   templateUrl: './support-ticket-pending-calls-nepal.component.html',
@@ -63,6 +65,9 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   BScallStartTime = new Date();
   requiredSpare = false;
   CurrentDateNepal:any;
+  BrowseStartDate : any = {};
+  BrowseEndDate : any = {};
+  cols =[];
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -113,7 +118,20 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
     this.mainItems = ["BROWSE", "CALL SHEET"];
     this.StartDatecall = this.CurrentDateNepal;
     this.EndDatecall = this.CurrentDateNepal;
+    this.BrowseStartDate = this.CurrentDateNepal;
+    this.BrowseEndDate = this.CurrentDateNepal;
     this.GetEngineerName();
+
+    this.cols = [
+      { field: 'Sub_Ledger_Name', header: 'Customer Name' },
+      { field: 'Engineer', header: 'Engineer Name' },
+      { field: 'Location_Name', header: 'Location' },
+      { field: 'Support_Ticket_Date', header: 'Ticket Creation Date' },
+      { field: 'model', header: 'Model' },
+      { field: 'Serial_No', header: 'Serial No' },
+      { field: 'Support_Ticket_Status', header: 'Ticket Status' },
+      { field: 'Serial_Main_StatusNo', header: 'Present Status' }
+    ];
   }
   onConfirm(){}
   onReject() {
@@ -133,10 +151,15 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   GetSearchedList(valid){
    this.searchFormSubmit = true;
    if(valid){
+    const tempobj = {
+      User_ID: this.EngineerName,
+      From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
+      To_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
+    }
     const obj = {
       "SP_String": "SP_Support_Ticket_Nepal",
-      "Report_Name_String": "Get_Pending_Support_Ticket",
-      "Json_Param_String": JSON.stringify([{User_ID : this.EngineerName}])
+      "Report_Name_String": "Get_Pending_Support_Ticket_Date_Range",
+      "Json_Param_String": JSON.stringify([tempobj])
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         console.log("GetallData",data);

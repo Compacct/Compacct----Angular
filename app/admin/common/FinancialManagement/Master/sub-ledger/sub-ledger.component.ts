@@ -66,11 +66,13 @@ export class SubLedgerComponent implements OnInit {
   TagledgerList = [];
   AccountTypeList = [];
   //AddressListAdd : any[];
-  AddressListAdd  = []
+  AddressListAdd  = [];
   contactListAdd = [];
   DepartmentList = [];
   DocumentListAdd = [];
   bankListAdd = [];
+  frequency = 0
+  
   tabIndex = 0;
   TabSpinner = false;
   Tabbuttonname = "Save"
@@ -530,28 +532,28 @@ export class SubLedgerComponent implements OnInit {
   }
 
   SaveTabCommon(valid,value){
+   
     this.AddressFormSubmit = true;
     this.ContactFormSubmit = true;
     this.DocumentFormSubmit = true;
     this.BankFormSubmit = true;
     console.log("valid2", valid);
      if(valid){
-    //   let tempArrAdd  = []
-    //   let tempArrcon = []
-    //   let tempArrdoc = []
-    //   let tempArrbank = []
-    //  tempArrAdd = this.AddressListAdd
-    //  tempArrcon = this.contactListAdd
-    //  tempArrdoc = this.DocumentListAdd
-    // //  tempArrbank = this.bankListAdd
-    //   this.AddressListAdd = [];
-    //   this.contactListAdd = [];
-    //   this.DocumentListAdd = [];
-    //   this.bankListAdd = [];
-       if(value === "address"){
-         //this.AddressListAdd = [];
-        // tempArrAdd.push(this.objAddress);
-        // this.AddressListAdd = tempArrAdd
+      console.log("this.AddressListAdd",this.AddressListAdd)
+      if(value === "address"){
+          this.frequency++;
+     
+          if(this.frequency == 1)
+          {
+        //  //this.AddressListAdd.push(tempArrAdd)
+        //  this.AddressListAdd = JSON.parse(JSON.stringify(tempArrAdd));
+         
+         }
+        //  else
+        //  {
+        //    this.AddressListAdd.push(tempArrAdd);
+        //  }
+         
        this.AddressListAdd.push(this.objAddress);
         console.log("AddressListAdd",this.AddressListAdd);
         this.objAddress = new Address()
@@ -658,10 +660,10 @@ export class SubLedgerComponent implements OnInit {
         this.getTagLedger();
          
           this.stateDistrictChange(data[0].Pin)
-        this.AddressListAdd = data[0].Address_Details;
-        this.contactListAdd = data[0].Contact_Persons;
-        this.DocumentListAdd = data[0].Document_Vault;
-        this.bankListAdd = data[0].Bank_Details;
+        this.AddressListAdd = data[0].Address_Details ? data[0].Address_Details : [];
+        this.contactListAdd = data[0].Contact_Persons ? data[0].Contact_Persons : [];
+        this.DocumentListAdd = data[0].Document_Vault ? data[0].Document_Vault : [];
+        this.bankListAdd = data[0].Bank_Details ?  data[0].Bank_Details : [];
         //this.SelectedTagLedger = data[0].Tagged_Ledger;
         const SubArr = data[0].Sub_Ledger_Cat_ID ?  data[0].Sub_Ledger_Cat_ID.split(",").map(Number) : [];
         const call = await this.changeSubledrType();
@@ -926,7 +928,7 @@ class SubLedger{
   Tagged_Ledger:any;
   Sub_Ledger_ID : any
   EXID_NO : any;
-  Is_Visiable : any
+  Is_Visiable : any;
 } 
 
 class Address{

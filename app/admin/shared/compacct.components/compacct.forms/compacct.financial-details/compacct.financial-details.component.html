@@ -3,7 +3,7 @@
         <sup class="text-danger">*</sup>
     </label>
     <div class="checkBox">
-        <p-checkbox  name="Product_Expiry5" binary="true"></p-checkbox> &nbsp;<b>Check to Make it Purchaseable</b> 
+        <p-checkbox  name="Product_Expiry5" binary="true" [(ngModel)]="ObjFinancial.Can_Purchase" (ngModelChange)="EventEmitDefault()"></p-checkbox> &nbsp;<b>Check to Make it Purchaseable</b> 
     </div> 
 </div>
 <div class="col-sm-6">
@@ -11,25 +11,25 @@
         <sup class="text-danger">*</sup>
     </label>
     <div class="checkBox">
-        <p-checkbox  name="Product_Expiry5" binary="true"></p-checkbox> &nbsp;<b>Check to Make it Billable</b> 
+        <p-checkbox  name="Product_Expiry5" binary="true" [(ngModel)]="ObjFinancial.Billable" (ngModelChange)="EventEmitDefault()"></p-checkbox> &nbsp;<b>Check to Make it Billable</b> 
     </div> 
 </div>
 <div class="col-sm-6">
-    <label class="control-label">Purchase ledger</label>
+    <label class="control-label">Purchase ledger <sup class="text-danger">*</sup></label>
     <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
         <input type="checkbox"
-        ng-model="PurchaseACFlag" 
+        [(ngModel)]="PurchaseACFlag" 
         style="margin: 10px 3px;" 
-        ng-change="PurchaseACLedgerFlag()" 
-        class="ng-valid ng-dirty ng-valid-parse ng-touched" 
+        (change)="getPurchaseledger()" 
+        class="ng-valid ng-dirty ng-valid-parse ng-touched"
         aria-invalid="false">
         <label for="vehicle1"><small>All Ledgers</small></label>
     </div>
         <p-dropdown 
         [options]="AllPurchaseData" 
-        name="Ledger_Name"
+        name="purchaseledger"
         [(ngModel)]="ObjFinancial.Purchase_Ac_Ledger"
-        #Ledger_Name="ngModel" 
+        #purchaseledger="ngModel" 
         [showClear]="true" 
         [emptyFilterMessage]="' No Item Found'" 
         [filter]="true" filterBy="label,value.name" 
@@ -37,25 +37,26 @@
         [placeholder]="'Select Item'" 
         [virtualScroll]="true" 
         itemSize="30"
-        [ngClass]="{'clearance': FinancialFormSubmit && Ledger_Name.errors?.required}"required>
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && purchaseledger.errors?.required}"required>
         </p-dropdown>
 </div> 
 <div class="col-sm-6">
-    <label class="control-label">Sales ledger</label>
+    <label class="control-label">Sales ledger <sup class="text-danger">*</sup></label>
     <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
         <input type="checkbox" 
-        ng-model="SalesACFlag" 
+        [(ngModel)]="SalesACFlag" 
         style="margin: 10px 3px;" 
-        ng-change="SalesACLedgerFlag()" 
+        (change)="getSalesledger()" 
         class="ng-valid ng-dirty ng-valid-parse ng-touched" 
         aria-invalid="false">
         <label for="vehicle1"><small>All Ledgers</small></label>
     </div>
         <p-dropdown 
         [options]="AllSalesData" 
-        name="Ledger_Name"
+        name="salesledger"
         [(ngModel)]="ObjFinancial.Sales_Ac_Ledger"
-        #Ledger_Name="ngModel" 
+        #salesledger="ngModel" 
         [showClear]="true" 
         [emptyFilterMessage]="' No Item Found'" 
         [filter]="true" filterBy="label,value.name" 
@@ -63,16 +64,17 @@
         [placeholder]="'Select Item'" 
         [virtualScroll]="true" 
         itemSize="30"
-        [ngClass]="{'clearance': FinancialFormSubmit && Ledger_Name.errors?.required}"required>
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && salesledger.errors?.required}"required>
         </p-dropdown>
 </div>
 <div class="col-sm-6">
-    <label class="control-label">Purchase Return</label>
+    <label class="control-label">Purchase Return <sup class="text-danger">*</sup></label>
         <p-dropdown 
-        [options]="PurchaseReturnList" 
-        name="Ledger_Name"
+        [options]="AllPurchaseData" 
+        name="purchasereturn"
         [(ngModel)]="ObjFinancial.Purchase_Return_Ledger_ID"
-        #Ledger_Name="ngModel" 
+        #purchasereturn="ngModel" 
         [showClear]="true" 
         [emptyFilterMessage]="' No Item Found'" 
         [filter]="true" filterBy="label,value.name" 
@@ -80,16 +82,17 @@
         [placeholder]="'Select Item'" 
         [virtualScroll]="true" 
         itemSize="30"
-        [ngClass]="{'clearance': FinancialFormSubmit && Ledger_Name.errors?.required}"required>
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && purchasereturn.errors?.required}"required>
         </p-dropdown>
 </div>
 <div class="col-sm-6">
-    <label class="control-label">Sales Return</label>
+    <label class="control-label">Sales Return <sup class="text-danger">*</sup></label>
         <p-dropdown 
-        [options]="SalesReturnList" 
-        name="Ledger_Name"
+        [options]="AllSalesData" 
+        name="salesreturn"
         [(ngModel)]="ObjFinancial.Sales_Return_Ledger_ID"
-        #Ledger_Name="ngModel" 
+        #salesreturn="ngModel" 
         [showClear]="true" 
         [emptyFilterMessage]="' No Item Found'" 
         [filter]="true" filterBy="label,value.name" 
@@ -97,16 +100,17 @@
         [placeholder]="'Select Item'" 
         [virtualScroll]="true" 
         itemSize="30"
-        [ngClass]="{'clearance': FinancialFormSubmit && Ledger_Name.errors?.required}"required>
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && salesreturn.errors?.required}"required>
         </p-dropdown>
 </div>
  <div class="col-sm-6">
-    <label class="control-label">Discount Receive</label>
+    <label class="control-label">Discount Receive <sup class="text-danger">*</sup></label>
         <p-dropdown 
         [options]="DiscountReceiveList" 
-        name="Ledger_Name"
+        name="discountrec"
         [(ngModel)]="ObjFinancial.Discount_Receive_Ledger_ID"
-        #Ledger_Name="ngModel" 
+        #discountrec="ngModel" 
         [showClear]="true" 
         [emptyFilterMessage]="' No Item Found'" 
         [filter]="true" filterBy="label,value.name" 
@@ -114,16 +118,17 @@
         [placeholder]="'Select Item'" 
         [virtualScroll]="true" 
         itemSize="30"
-        [ngClass]="{'clearance': FinancialFormSubmit && Ledger_Name.errors?.required}"required>
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && discountrec.errors?.required}">
         </p-dropdown>
 </div>
 <div class="col-sm-6">
-    <label class="control-label">Discount Given</label>
+    <label class="control-label">Discount Given <sup class="text-danger">*</sup></label>
         <p-dropdown 
         [options]="DiscountGivenList" 
-        name="Ledger_Name"
+        name="discountgiven"
         [(ngModel)]="ObjFinancial.Discount_Given_Ledger_ID"
-        #Ledger_Name="ngModel" 
+        #discountgiven="ngModel" 
         [showClear]="true" 
         [emptyFilterMessage]="' No Item Found'" 
         [filter]="true" filterBy="label,value.name" 
@@ -131,6 +136,7 @@
         [placeholder]="'Select Item'" 
         [virtualScroll]="true" 
         itemSize="30"
-        [ngClass]="{'clearance': FinancialFormSubmit && Ledger_Name.errors?.required}"required>
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && discountgiven.errors?.required}"required>
         </p-dropdown>
 </div>
