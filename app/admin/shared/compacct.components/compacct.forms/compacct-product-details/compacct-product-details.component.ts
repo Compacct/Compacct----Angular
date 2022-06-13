@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChange
 import { CompacctCommonApi } from "../../../compacct.services/common.api.service";
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { MessageService } from 'primeng/primeng';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 declare var $: any;
 
 @Component({
@@ -40,6 +41,7 @@ export class CompacctProductDetailsComponent implements OnInit,OnChanges {
     private $CompacctAPI: CompacctCommonApi,
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -141,7 +143,7 @@ deleteProductType(protype){
   }
 }
 //Product Sub Type
-getProductSubTyp(ProductTypeID){
+getProductSubTyp(ProductTypeID,sub_Id?){
   if(ProductTypeID){
   this.productSubData=[]; 
    this.AllproductSubData = [];
@@ -158,9 +160,17 @@ getProductSubTyp(ProductTypeID){
           label: el.Product_Sub_Type,
           value: el.Product_Sub_Type_ID ,
         });
-     });
+     });  
+     if(sub_Id) {
+      setTimeout(() => {
+       this.ObjproductDetails.Product_Sub_Type_ID = Number(sub_Id)
+       console.log("this.ObjproductDetails.Product_Sub_Type_ID",this.ObjproductDetails.Product_Sub_Type_ID)
+       this.ProDetailsObj.emit(this.ObjproductDetails);
+       this.ngxService.stop();
+      }, 3000);
+     }
     })
-    this.ProDetailsObj.emit(this.ObjproductDetails);
+    
    }
 }
 ViewProductSubType(){
@@ -302,12 +312,11 @@ clear() {
   this.ObjproductDetails = new product();
 }
 EditProductDetalis(ProductTypeID,sub_Id,DescriptionModel,ProductCode?,RackNo?){
-
+  this.ngxService.start();
+console.log("sub_Id",sub_Id)
  this.ObjproductDetails.Product_Type_ID = ProductTypeID
- this.getProductSubTyp(ProductTypeID)
- setTimeout(() => {
-  this.ObjproductDetails.Product_Sub_Type_ID = sub_Id
- }, 1000);
+ this.getProductSubTyp(ProductTypeID,sub_Id)
+
  this.ObjproductDetails.Product_Code = ProductCode ? ProductCode :undefined
  this.ObjproductDetails.Product_Description = DescriptionModel
  this.ObjproductDetails.Rack_NO = RackNo ? RackNo : undefined
@@ -326,7 +335,7 @@ ngOnChanges(changes: SimpleChanges) {
 }
 class product{
   Product_Type_ID	:number;	
-  Product_Sub_Type_ID	:number;
+  Product_Sub_Type_ID	:any;
   Product_Code : any;
   Product_Description : string;
   Rack_NO : any;

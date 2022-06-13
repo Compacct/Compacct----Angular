@@ -115,70 +115,33 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                         <form name="ProductForm" #ProductForm="ngForm" novalidate >
-                    <div class="form-group">
-                                     <div class="col-sm-4">
-                                    <label class="control-label">Product Type
-                                        <sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
-                                            <button (click)="ViewProductType()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-eye"></i> View</button>
-                                             &nbsp; 
-                                             <button (click)="ProTypePopup()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-plus">
-                                             </i> Create</button>
-                                        </div>
-                                        <select class="form-control ng-dirty ng-valid ng-touched" name="Product_Type_ID"
-                                        #Product_Type_ID ="ngModel"
-                                        [(ngModel)]="Objproduct.Product_Type_ID"
-                                        (change)="getProductSubTyp()"
-                                        [ngClass]="{'clearance': ProductFormSubmitted && Product_Type_ID?.errors?.required}" 
-                                        required>
-                                        <option [ngValue]="undefined">Select</option> 
-                                        <option *ngFor="let type of productData" value="{{type.Product_Type_ID}}" class="ng-star-inserted">{{type.Product_Type}}</option>
-                                    </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Sub Type
-                                            <sup class="text-danger">*</sup></label>
-                                            <div class="pull-right">
-                                                <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!Objproduct.Product_Type_ID"><i class="fa fa-fw  fa-eye"></i> View</button>
-                                                 &nbsp; 
-                                                 <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!Objproduct.Product_Type_ID"><i class="fa fa-fw  fa-plus">
-                                                 </i> Create</button>
-                                            </div>
-                                            <select class="form-control ng-dirty ng-valid ng-touched" name="Product_Sub_Type_ID"
-                                            #Product_Sub_Type_ID ="ngModel"
-                                            [(ngModel)]="Objproduct.Product_Sub_Type_ID"
-                                            [ngClass]="{'clearance': ProductFormSubmitted && Product_Sub_Type_ID?.errors?.required}" 
-                                            required>
-                                            <option [ngValue]="undefined">Select</option> 
-                                            <option *ngFor="let Data of productSubData" value="{{Data.Product_Sub_Type_ID}}" class="ng-star-inserted">{{Data.Product_Sub_Type}}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Category
-                                            <sup class="text-danger">*</sup></label>
-                                            <select class="form-control ng-pristine ng-invalid ng-touched"
-                                            name="Cat_Name"
-                                            #Cat_Name ="ngModel"
-                                            [(ngModel)]="Objproduct.Cat_ID"
-                                            [ngClass]="{'clearance': ProductFormSubmitted && Cat_Name?.errors?.required}" 
-                                            required>
-                                            <option [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let cat of catgData" value="{{cat.Cat_ID}}" class="ng-star-inserted">{{cat.Cat_Name}}</option>
-                                        </select>
-                                        </div>    
+                    <div class="form-group"style="padding: 1em;">
+                        <h5 style="
+                            padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: 15px;
+                            ">
+                            <i class="fa fa-fw fa-fax">
+                            </i> &nbsp;<strong>Product Details :</strong></h5>
+                            <app-compacct-product-details
+                            [requirPro]="ProductFormSubmitted"
+                            (ProDetailsObj)="getProDetailsData($event)"
+                            #Product>
+                           </app-compacct-product-details>
+                
                     </div>      
-                    <div class="form-group">
-                              <div class="col-sm-4">
-                            <label class="control-label">Product Description
-                                <sup class="text-danger">*</sup>
-                            </label>
-                            <input class="form-control ng-pristine ng-invalid ng-touched" placeholder="Product Description" 
-                            name="Product_Description"
-                        #Product_Description ="ngModel"
-                        [(ngModel)]="Objproduct.Product_Description"
-                        [ngClass]="{'clearance': ProductFormSubmitted && Product_Description?.errors?.required}" 
-                        required>
-                             </div> 
+                    <div class="form-group"style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: 15px;
+                        ">
+                        <i class="fa fa-fw fa-fax">
+                        </i> &nbsp;<strong>Additional Info.</strong></h5> 
                                <div class="col-sm-4">
                                          <label class="control-label">Material of Cons.</label>
                               <div class="pull-right">
@@ -211,26 +174,69 @@
                                 <option *ngFor="let size of sizeData" value="{{size.Capacity_Size_ID}}" class="ng-star-inserted">{{size.Capacity_Size_Desc}}</option>
                             </select>
                               </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Product Feature
+                                    <sup class="text-danger">*</sup></label>
+                                    <div class="pull-right">
+                                        <button (click)="ViewProFeature()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-eye"></i> View</button>
+                                         &nbsp; 
+                                         <button (click)="ProFeaturePopup()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-plus">
+                                         </i> Create</button>
+                                    </div>
+                                    <select class="form-control ng-dirty ng-valid ng-touched" name="Product_Feature_Desc"
+                                    #Product_Feature_Desc ="ngModel"
+                                    [(ngModel)]="Objproduct.Product_Feature_ID"
+                                    [ngClass]="{'clearance': ProductFormSubmitted && Product_Feature_Desc?.errors?.required}" 
+                                    required>
+                                    <option [ngValue]="undefined">Select</option> 
+                                    <option *ngFor="let feature of productFetr" value="{{feature.Product_Feature_ID}}" class="ng-star-inserted">{{feature.Product_Feature_Desc}}</option>
+                                </select>
+                              </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-4">
-                            <label class="control-label">Product Feature
-                                <sup class="text-danger">*</sup></label>
-                                <div class="pull-right">
-                                    <button (click)="ViewProFeature()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-eye"></i> View</button>
-                                     &nbsp; 
-                                     <button (click)="ProFeaturePopup()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-plus">
-                                     </i> Create</button>
-                                </div>
-                                <select class="form-control ng-dirty ng-valid ng-touched" name="Product_Feature_Desc"
-                                #Product_Feature_Desc ="ngModel"
-                                [(ngModel)]="Objproduct.Product_Feature_ID"
-                                [ngClass]="{'clearance': ProductFormSubmitted && Product_Feature_Desc?.errors?.required}" 
-                                required>
-                                <option [ngValue]="undefined">Select</option> 
-                                <option *ngFor="let feature of productFetr" value="{{feature.Product_Feature_ID}}" class="ng-star-inserted">{{feature.Product_Feature_Desc}}</option>
-                            </select>
-                            </div>
+                    <div class="form-group"style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: 15px;
+                        ">
+                        <i class="fa fa-fw fa-fax">
+                        </i> &nbsp;<strong>Financial Details:</strong></h5>
+                        <app-compacct-financial-details
+                                [requirFinancial]="ProductFormSubmitted"
+                                [Edit]="ObjFinancialComponentData"
+                                (FinacialDetailsObj)="FinancialDetailsData($event)"
+                                #FinacialDetails>
+                        </app-compacct-financial-details>
+                    </div>
+                    <div class="form-group"style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: 15px;
+                        ">
+                        <i class="fa fa-fw fa-fax">
+                        </i> &nbsp;<strong>TAX & Custom Duty:</strong></h5> 
+                        <app-compacctgstandcustomduty
+                        [requirGst]="ProductFormSubmitted"
+                        (GstandCustonDutyObj)="getGstAndCustDutyData($event)"
+                        #GstAndCustomDuty
+                        [labelChange]="LAbelName">
+                        </app-compacctgstandcustomduty>
+                    </div>
+                    <div class="form-group"style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: 15px;
+                        ">
+                        <i class="fa fa-fw fa-fax">
+                        </i> &nbsp;<strong>UOM</strong></h5>
                             <div class="col-sm-4">
                                 <label class="control-label">Grade</label>
                                 <div class="pull-right">
@@ -242,69 +248,35 @@
                                 </div>
                                 <select class="form-control ng-pristine ng-valid ng-touched"  name="Grade_Description"
                                 #Grade_Description ="ngModel"
-                                [(ngModel)]="Objproduct.Grade_ID">
+                                [(ngModel)]="Objproduct.Grade_Description">
                                     <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let grade of gradeTyp" value="{{grade.Grade_ID}}" class="ng-star-inserted">{{grade.Grade_Description}}</option>
+                                    <option *ngFor="let grade of gradeTyp" value="{{grade.Grade_Description}}" class="ng-star-inserted">{{grade.Grade_Description}}</option>
                                 </select>
                             </div>
                             <div class="col-sm-4">
-                                <label class="control-label">Remarks
-                                </label>
-                                <input class="form-control ng-pristine ng-invalid ng-touched" placeholder="Remarks"  
-                                name="Remarks"
-                                #Remarks ="ngModel"
-                                [(ngModel)]="Objproduct.Remarks">   
-                           </div>
-                    </div>
-                    <div class="form-group">       
-                                <div class="col-sm-4">
-                                    <label class="control-label">HSN Code
-                                        <sup class="text-danger">*</sup>
-                                    </label>
-                                    <input class="form-control ng-pristine ng-invalid ng-touched" placeholder="HSN Code"  
-                                    name="HSN_NO"
-                                    #HSN_NO ="ngModel"
-                                    [(ngModel)]="Objproduct.HSN_NO"
-                                    [ngClass]="{'clearance': ProductFormSubmitted && HSN_NO?.errors?.required}" 
-                                    required>
-                               </div>
-                               <div class="col-sm-4">
-                                <label class="control-label">GST Percentage
+                                <label class="control-label">UOM
                                     <sup class="text-danger">*</sup>
                                 </label>
-                                <input class="form-control ng-pristine ng-invalid ng-touched" placeholder="GST Percentage"  
-                                name="GST_Percentage"
-                                #GST_Percentage ="ngModel"
-                                [(ngModel)]="Objproduct.GST_Percentage"
-                                [ngClass]="{'clearance': ProductFormSubmitted && GST_Percentage?.errors?.required}" 
+                                <input class="form-control ng-pristine ng-invalid ng-touched"  placeholder="UOM"  
+                                name="UOM"
+                                #UOM ="ngModel"
+                                [(ngModel)]="Objproduct.UOM"
+                                [ngClass]="{'clearance': ProductFormSubmitted && UOM?.errors?.required}" 
                                 required>
-                               </div> 
-                               <div class="col-sm-4">
-                            <label class="control-label">UOM
-                                <sup class="text-danger">*</sup>
-                            </label>
-                            <input class="form-control ng-pristine ng-invalid ng-touched"  placeholder="UOM"  
-                            name="UOM"
-                            #UOM ="ngModel"
-                            [(ngModel)]="Objproduct.UOM"
-                            [ngClass]="{'clearance': ProductFormSubmitted && UOM?.errors?.required}" 
-                            required>
-                              </div>     
-                    </div>       
-                    <div class="form-group">
-                    <div class="col-sm-4">
+                           </div>
+                           <div class="col-sm-4">
                             <label class="control-label">Manufacture Name (Optional)</label>
                             <select class="form-control ng-pristine ng-invalid ng-touched"
                             name="Mfg_Company"
                             #Mfg_Company ="ngModel"
-                            [(ngModel)]="Objproduct.Product_Mfg_Comp_ID"> 
+                            [(ngModel)]="Objproduct.Mfg_Company"> 
                                 <option [ngValue]="undefined">Select</option>
-                                <option *ngFor="let mfg of mfgData" value="{{mfg.Product_Mfg_Comp_ID}}"class="ng-star-inserted">{{mfg.Mfg_Company}}</option>
+                                <option *ngFor="let mfg of mfgData" value="{{mfg.Mfg_Company}}"class="ng-star-inserted">{{mfg.Mfg_Company}}</option>
                             </select>
-                                        </div>
-                        </div>
-                                   
-                             <div class="box-footer">
+                           </div>
+                    </div>
+                    
+                    <div class="box-footer">
                                 <button class="btn btn-primary pull-right"  id="load" (click)="saveData(ProductForm.form.valid)"   [disabled]="Spinner">
                                                 <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>

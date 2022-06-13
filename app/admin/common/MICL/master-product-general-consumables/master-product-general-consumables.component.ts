@@ -3,7 +3,10 @@ import { CompacctGlobalApiService } from './../../../shared/compacct.services/co
 import { CompacctHeader } from './../../../shared/compacct.services/common.header.service';
 import { CompacctCommonApi } from './../../../shared/compacct.services/common.api.service';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
+import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
+import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
 
 @Component({
   selector: 'app-master-product-general-consumables',
@@ -27,6 +30,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   productFetr =[];
   gradeTyp =[];
   Objproduct: product =new product();
+  ObjFinancialComponentData = new Financial();
   ProductFormSubmitted = false;
   isvisible =undefined
   Spinner = false;
@@ -68,6 +72,19 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   Profeatureid = undefined;
   gradeid = undefined;
   
+ 
+  GstAndCustomFormSubmit = false;
+  LAbelName = 'HSN Code';
+  ObjproductDetails : any;
+  ObjGstandCustonDuty : any;
+  ObjFinancial: any;
+ 
+  @ViewChild("Product", { static: false })
+  ProductDetailsInput: CompacctProductDetailsComponent;
+  @ViewChild("GstAndCustomDuty", { static: false })
+  GstAndCustDutyInput: CompacctgstandcustomdutyComponent;
+  @ViewChild("FinacialDetails", { static: false })
+  FinacialDetailsInput: CompacctFinancialDetailsComponent;
 
   constructor(
     private http: HttpClient,
@@ -85,7 +102,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
     this.getBrowseProduct();
-    this.getProductTyp();
+    //this.getProductTyp();
     this.getProductSize();
     this.getCatgData();
     this.mfgName();
@@ -105,6 +122,78 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     this.clearData();
     
    
+  }
+  destroyChild() {
+    if (this.ProductDetailsInput) {
+      this.ProductDetailsInput.clear();
+    }
+    if (this.GstAndCustDutyInput) {
+      this.GstAndCustDutyInput.clear();
+    }
+    if (this.FinacialDetailsInput) {
+      this.FinacialDetailsInput.clear();
+    }
+  }
+  getProDetailsData(e) {
+    console.log(e)
+    this.ObjproductDetails = undefined;
+    this.Objproduct.Product_Type_ID = undefined;
+    this.Objproduct.Product_Sub_Type_ID = undefined;
+    this.Objproduct.Product_Code = undefined;
+    this.Objproduct.Product_Description = undefined;
+    this.Objproduct.Rack_NO = undefined;
+
+    if (e.Product_Type_ID) {
+      this.ObjproductDetails = e;
+      this.Objproduct.Product_Type_ID = e.Product_Type_ID;
+      this.Objproduct.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.Objproduct.Product_Code = e.Product_Code;
+      this.Objproduct.Product_Description = e.Product_Description;
+      this.Objproduct.Rack_NO = e.Rack_NO;
+    }
+  }
+  getGstAndCustDutyData(e) {
+    console.log(e)
+    this.ObjGstandCustonDuty = undefined;
+    this.Objproduct.Cat_ID = undefined;
+    this.Objproduct.HSN_Code = undefined;
+    this.Objproduct.Custom_Duty = undefined;
+    this.Objproduct.Remarks = undefined;
+    if (e.Cat_ID) {
+      this.ObjGstandCustonDuty = e;
+      this.Objproduct.Cat_ID = e.Cat_ID;
+      this.Objproduct.HSN_Code = e.HSN_Code
+      this.Objproduct.Custom_Duty = e.Custom_Duty;
+      this.Objproduct.Remarks = e.Remarks;
+    }
+  }
+  FinancialDetailsData(e) {
+    console.log("FinancialDetailsData",e)
+    // this.Objproduct.Can_Purchase = undefined;
+    // this.Objproduct.Billable = undefined;
+    // this.ObjFinancial = undefined;
+   
+    // this.Objproduct.Purchase_Ac_Ledger = undefined;
+   
+    // this.Objproduct.Sales_Ac_Ledger = undefined;
+    // this.Objproduct.Purchase_Return_Ledger_ID = undefined;
+    // this.Objproduct.Sales_Return_Ledger_ID = undefined;
+    // this.Objproduct.Discount_Receive_Ledger_ID = undefined;
+    // this.Objproduct.Discount_Given_Ledger_ID = undefined;
+    // if (e.Purchase_Ac_Ledger) {
+    //   this.ObjFinancial = e;
+    //   this.Objproduct.Can_Purchase = e.Can_Purchase;
+    //   this.Objproduct.Billable = e.Billable;
+    //   // this.PurchaseACFlag = e.PurchaseACFlag;
+    //   this.Objproduct.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+    //   // this.SalesACFlag = e.SalesACFlag;
+    //   this.Objproduct.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+    //   this.Objproduct.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+    //   this.Objproduct.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+    //   this.Objproduct.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+    //   this.Objproduct.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+    // }
+  
   }
   //Browse Api Data
   getBrowseProduct(){
@@ -721,28 +810,23 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     this.ProductFormSubmitted = false;
     this.Objproduct = new product();
     this.productCode = undefined;
+    this.destroyChild();
    }
+  
    //Save Data
-   saveData(valid:any){
+saveData(valid:any){
     console.log("savedata==",this.Objproduct);
     console.log("valid",valid)
     this.ProductFormSubmitted = true;
     if(valid){
       console.log("productCode==",this.productCode);
       
-      var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
-      const productFeatureFilter = this.productFetr.filter(el=>Number(el.Product_Feature_ID) === Number(this.Objproduct.Product_Feature_ID))
-      this.Objproduct.Product_Feature_Desc = productFeatureFilter.length ? productFeatureFilter[0].Product_Feature_Desc : undefined;
-      this.Objproduct.Product_Feature_Desc = Number(this.Objproduct.Product_Feature_ID)
-      
-      var gradedes = this.gradeTyp.filter(item => item.Grade_ID === Number(this.Objproduct.Grade_ID))
-      this.Objproduct.Grade_Description = gradedes[0].Grade_Description;
-
-      var mfgdes = this.mfgData.filter(item => item.Product_Mfg_Comp_ID === Number(this.Objproduct.Product_Mfg_Comp_ID))
-      this.Objproduct.Mfg_Company = mfgdes[0].Mfg_Company;
-
-      this.Objproduct.MOC_Description = mocdes.length ? mocdes[0].MOC_Description : 0;
-      this.Objproduct.Product_ID = this.productCode ? this.productCode : 0
+      // var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
+      // const productFeatureFilter = this.productFetr.filter(el=>Number(el.Product_Feature_ID) === Number(this.Objproduct.Product_Feature_ID))
+      // this.Objproduct.Product_Feature_Desc = productFeatureFilter.length ? productFeatureFilter[0].Product_Feature_Desc : undefined;
+      // this.Objproduct.Product_Feature_Desc = Number(this.Objproduct.Product_Feature_ID)
+      // this.Objproduct.MOC_Description = mocdes.length ? mocdes[0].MOC_Description : 0;
+      // this.Objproduct.Product_ID = this.productCode ? this.productCode : 0
       
        let msg = this.productCode ? "Update" : "Create"
        const obj = {
@@ -763,9 +847,11 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
             });
              }
            this.Spinner = false;
-             this.getBrowseProduct();
+           this.destroyChild();
+           this.getBrowseProduct();  
             this.productCode = undefined;
             this.tabIndexToView = 0;
+            this.GstAndCustomFormSubmit = false;
             this.ProductFormSubmitted = false;
             this.Objproduct = new product();
            });
@@ -786,7 +872,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       this.items = ["BROWSE", "UPDATE"];
       this.buttonname = "Update";
       this.clearData();
-      this.getProductTyp();
+     // this.getProductTyp();
       this.getProductSize();
       this.getCatgData();
       this.mfgName();
@@ -808,10 +894,24 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        console.log("Edit data==",data);
-      this.Objproduct = data[0];
-      this.getProductSubTyp()
-     })
-  }
+       this.Objproduct = data[0];
+       this.ObjFinancialComponentData = data[0];
+       this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
+
+       //this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
+       this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
+       console.log("data",data)
+       this.Objproduct.Product_Type_ID = data[0].Product_Type_ID;
+       // this.ProductDetailsInput.getProductSubTyp();
+       this.Objproduct.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
+       this.Objproduct.Product_Code = data[0].Product_Code;
+       this.Objproduct.Product_Description = data[0].Product_Description;
+       this.Objproduct.Rack_NO = data[0].Rack_NO;
+       this.Objproduct.UOM = data[0].UOM;
+       
+       
+       });
+   }
   //Delete
   DeleteProduct(masterProduct){
     this.is_Active = false; 
@@ -960,6 +1060,7 @@ class product{
   Product_Code:any;			
   Product_Description	:any;	
   Cat_ID:number;				
+  Product_Mfg_Comp_ID:number;
   UOM:any;					
   MOC_ID:number;	
   MOC_Description : any;	
@@ -972,9 +1073,21 @@ class product{
   Capacity_Size_ID:any;
   Product_ID:number; 
   Product_Feature_Desc:any;
-  Grade_ID : number;
-  Grade_Description:any;
+  Grade_ID:any;
   GST_Percentage:any;
-  Product_Mfg_Comp_ID: number;
   Mfg_Company:any;
+   Rack_NO :any;
+   HSN_Code:any;	
+   Custom_Duty:any;
+  
+}
+class Financial{
+  Can_Purchase : boolean;
+  Billable : boolean;
+  Purchase_Ac_Ledger:any;
+  Sales_Ac_Ledger:any;
+  Purchase_Return_Ledger_ID:any;
+  Sales_Return_Ledger_ID:any;
+  Discount_Receive_Ledger_ID:any;
+  Discount_Given_Ledger_ID:any;
 }
