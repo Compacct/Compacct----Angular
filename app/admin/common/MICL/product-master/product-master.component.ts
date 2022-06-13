@@ -25,6 +25,7 @@ export class ProductMasterComponent implements OnInit {
   AllData =[];
   buttonname = "Create";
   Objproduct: product =new product();
+  ObjFinancialComponentData = new Financial();
   MaterialData = [];
   AllMaterialData = [];
   gstData = [];
@@ -169,15 +170,8 @@ TabClick(e) {
     }
   }
   getProDetailsData(e) {
-    console.log(e)
-    this.ObjproductDetails = undefined;
-    this.Objproduct.Product_Type_ID = undefined;
-    this.Objproduct.Product_Sub_Type_ID = undefined;
-    this.Objproduct.Product_Code = undefined;
-    this.Objproduct.Product_Description = undefined;
-    this.Objproduct.Rack_NO = undefined;
-
-    if (e.Product_Type_ID) {
+    console.log("Product Detalis",e)
+   if (e.Product_Type_ID) {
       this.ObjproductDetails = e;
       this.Objproduct.Product_Type_ID = e.Product_Type_ID;
       this.Objproduct.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
@@ -185,6 +179,7 @@ TabClick(e) {
       this.Objproduct.Product_Description = e.Product_Description;
       this.Objproduct.Rack_NO = e.Rack_NO;
     }
+    console.log("Product Detalis In master",this.Objproduct)
   }
   getGstAndCustDutyData(e) {
     console.log(e)
@@ -207,18 +202,18 @@ TabClick(e) {
     }
   }
   FinancialDetailsData(e) {
-    console.log(e)
-    this.Objproduct.Can_Purchase = undefined;
-    this.Objproduct.Billable = undefined;
-    this.ObjFinancial = undefined;
-    // this.PurchaseACFlag = undefined;
-    this.Objproduct.Purchase_Ac_Ledger = undefined;
-    // this.SalesACFlag = undefined;
-    this.Objproduct.Sales_Ac_Ledger = undefined;
-    this.Objproduct.Purchase_Return_Ledger_ID = undefined;
-    this.Objproduct.Sales_Return_Ledger_ID = undefined;
-    this.Objproduct.Discount_Receive_Ledger_ID = undefined;
-    this.Objproduct.Discount_Given_Ledger_ID = undefined;
+    console.log("FinancialDetailsData",e)
+    // this.Objproduct.Can_Purchase = undefined;
+    // this.Objproduct.Billable = undefined;
+    // this.ObjFinancial = undefined;
+   
+    // this.Objproduct.Purchase_Ac_Ledger = undefined;
+   
+    // this.Objproduct.Sales_Ac_Ledger = undefined;
+    // this.Objproduct.Purchase_Return_Ledger_ID = undefined;
+    // this.Objproduct.Sales_Return_Ledger_ID = undefined;
+    // this.Objproduct.Discount_Receive_Ledger_ID = undefined;
+    // this.Objproduct.Discount_Given_Ledger_ID = undefined;
     if (e.Purchase_Ac_Ledger) {
       this.ObjFinancial = e;
       this.Objproduct.Can_Purchase = e.Can_Purchase;
@@ -232,6 +227,7 @@ TabClick(e) {
       this.Objproduct.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
       this.Objproduct.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
     }
+  
   }
 
 ChangeValue(){
@@ -913,6 +909,7 @@ saveData(valid:any){
         console.log("data ==",data);
          if (data[0].Column1){
           this.SelectedVendorLedger = [];
+          this.items = ["BROWSE", "CREATE","REPORT"];
            this.compacctToast.clear();
            this.compacctToast.add({
             key: "compacct-toast",
@@ -1104,8 +1101,10 @@ GetEditData(){
    .subscribe((data:any)=>{
     this.EditList = data;
     this.Objproduct = data[0];
+    this.ObjFinancialComponentData = data[0];
     this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
-    this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
+     
+    //this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
     this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
     console.log("data",data)
     console.log("EditList data==",this.EditList);
@@ -1297,4 +1296,14 @@ HSN_Code:any;
 SAC_Code:any;
 Product_ID :number;
 Sub_Ledger_Cat_IDS:any;
+}
+class Financial{
+  Can_Purchase : boolean;
+  Billable : boolean;
+  Purchase_Ac_Ledger:any;
+  Sales_Ac_Ledger:any;
+  Purchase_Return_Ledger_ID:any;
+  Sales_Return_Ledger_ID:any;
+  Discount_Receive_Ledger_ID:any;
+  Discount_Given_Ledger_ID:any;
 }

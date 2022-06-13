@@ -12,6 +12,9 @@ import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
 import { Console } from 'console';
+import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
+import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
+import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
 
 
 @Component({
@@ -32,7 +35,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   Spinner = false;
   MasterProductmFormSubmitted = false;
   ObjMasterProductm = new MasterProductm();
-
+  ObjFinancialComponentData = new Financial();
   ProductTypeList = [];
   ProductSubTypeList = [];
   ProductCategoryList = [];
@@ -111,8 +114,19 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   Browseproid = undefined;
   isvisible = undefined;
 
- // ObjSearch = new Search();
 
+  LAbelName = 'HSN Code';
+  ObjproductDetails : any;
+  ObjGstandCustonDuty : any;
+  ObjFinancial: any;
+ 
+  @ViewChild("Product", { static: false })
+  ProductDetailsInput: CompacctProductDetailsComponent;
+  @ViewChild("GstAndCustomDuty", { static: false })
+  GstAndCustDutyInput: CompacctgstandcustomdutyComponent;
+  @ViewChild("FinacialDetails", { static: false })
+  FinacialDetailsInput: CompacctFinancialDetailsComponent;
+  // ObjSearch = new Search();
   @ViewChild("location", { static: false }) locationInput: ElementRef;
 
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
@@ -158,12 +172,80 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
      this.MasterProductmFormSubmitted = false;
      this.Product_Mfg_Comp_ID = undefined;
      this.makedisabled = false;
+     this.destroyChild();
      this.GetBrowseList();
      this.PDFViewFlag = false;
      if (this.PDFViewFlag === false) {
       this.fileInput.clear();
     }
   
+  }
+  destroyChild() {
+    if (this.ProductDetailsInput) {
+      this.ProductDetailsInput.clear();
+    }
+    if (this.GstAndCustDutyInput) {
+      this.GstAndCustDutyInput.clear();
+    }
+    if (this.FinacialDetailsInput) {
+      this.FinacialDetailsInput.clear();
+    }
+  }
+  getProDetailsData(e) {
+    console.log(e)
+    this.ObjMasterProductm = e
+    //console.log("ObjMasterProductel",this.ObjMasterProductm)
+
+    if (e.Product_Type_ID) {
+      this.ObjproductDetails = e;
+      this.ObjMasterProductm.Product_Type_ID = e.Product_Type_ID;
+      this.ObjMasterProductm.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.ObjMasterProductm.Product_Code = e.Product_Code;
+      this.ObjMasterProductm.Product_Description = e.Product_Description;
+      this.ObjMasterProductm.Rack_NO = e.Rack_NO;
+    }
+  }
+  getGstAndCustDutyData(e) {
+    console.log(e)
+    this.ObjGstandCustonDuty = undefined;
+    this.ObjMasterProductm.Cat_ID = undefined;
+    this.ObjMasterProductm.HSN_Code = undefined;
+    this.ObjMasterProductm.Custom_Duty = undefined;
+    this.ObjMasterProductm.Remarks = undefined;
+    if (e.Cat_ID) {
+      this.ObjGstandCustonDuty = e;
+      this.ObjMasterProductm.Cat_ID = e.Cat_ID;
+      this.ObjMasterProductm.HSN_Code = e.HSN_Code;
+      this.ObjMasterProductm.Custom_Duty = e.Custom_Duty;
+      this.ObjMasterProductm.Remarks = e.Remarks;
+    }
+  }
+  FinancialDetailsData(e) {
+    console.log(e)
+    this.ObjMasterProductm.Can_Purchase = undefined;
+    this.ObjMasterProductm.Billable = undefined;
+    this.ObjFinancial = undefined;
+    // this.PurchaseACFlag = undefined;
+    this.ObjMasterProductm.Purchase_Ac_Ledger = undefined;
+    // this.SalesACFlag = undefined;
+    this.ObjMasterProductm.Sales_Ac_Ledger = undefined;
+    this.ObjMasterProductm.Purchase_Return_Ledger_ID = undefined;
+    this.ObjMasterProductm.Sales_Return_Ledger_ID = undefined;
+    this.ObjMasterProductm.Discount_Receive_Ledger_ID = undefined;
+    this.ObjMasterProductm.Discount_Given_Ledger_ID = undefined;
+    if (e.Purchase_Ac_Ledger) {
+      this.ObjFinancial = e;
+      this.ObjMasterProductm.Can_Purchase = e.Can_Purchase;
+      this.ObjMasterProductm.Billable = e.Billable;
+      // this.PurchaseACFlag = e.PurchaseACFlag;
+      this.ObjMasterProductm.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      // this.SalesACFlag = e.SalesACFlag;
+      this.ObjMasterProductm.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.ObjMasterProductm.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.ObjMasterProductm.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.ObjMasterProductm.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.ObjMasterProductm.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+    }
   }
   GetProductType(){
     const obj = {
@@ -1040,6 +1122,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       
       } else {
       this.Spinner = false;
+      this.destroyChild();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -1097,6 +1180,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
            } else{
             // this.ngxService.stop();
              this.Spinner = false;
+             this.destroyChild();
              this.compacctToast.clear();
              this.compacctToast.add({
                key: "compacct-toast",
@@ -1217,7 +1301,12 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.editList = data;
+      this.ObjMasterProductm = data[0];
        //this.myDate = data[0].Date;
+       this.ObjFinancialComponentData = data[0];
+       this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
+       this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
+       this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
        this.ObjMasterProductm.Product_Type_ID = data[0].Product_Type_ID;
        this.GetProductSubType();
        this.ObjMasterProductm.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
@@ -1388,4 +1477,27 @@ class MasterProductm{
    UOM:string;
   // Product_Mfg_Comp_ID:any;
    Product_Image:any;
+
+   Product_Code:any;
+   Rack_NO :any;
+   HSN_Code:any;	
+   Custom_Duty:any;
+   Billable:boolean;			
+   Can_Purchase:boolean;
+   Purchase_Ac_Ledger:any;
+   Sales_Ac_Ledger:any;	
+   Purchase_Return_Ledger_ID:number;
+   Discount_Receive_Ledger_ID:number;	
+   Discount_Given_Ledger_ID:number;	
+   Sales_Return_Ledger_ID:number;	
  }
+ class Financial{
+  Can_Purchase : boolean;
+  Billable : boolean;
+  Purchase_Ac_Ledger:any;
+  Sales_Ac_Ledger:any;
+  Purchase_Return_Ledger_ID:any;
+  Sales_Return_Ledger_ID:any;
+  Discount_Receive_Ledger_ID:any;
+  Discount_Given_Ledger_ID:any;
+}

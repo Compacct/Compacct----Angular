@@ -69,7 +69,7 @@
                                                                                 <span class="caret"></span>
                                                                             </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="col.Is_Visiable == 'Y'">
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
@@ -103,8 +103,8 @@
                                             <td>{{col.Product_Feature_Desc}}</td>
                                             <td>{{col.Grade_Description ? col.Grade_Description : '-'}}</td>
                                             <td>{{col.Remarks ? col.Remarks : '-'}}</td>
-                                            <td>{{col.HSN_NO}}</td>
-                                            <td>{{col.GST_Percentage}}</td>
+                                            <td>{{col.HSN_NO ? col.HSN_NO : '-'}}</td>
+                                            <td>{{col.Cat_Name}}</td>
                                             <td>{{col.UOM}}</td>
                                             <!-- <td>{{col.Mfg_Company ? col.Mfg_Company : '-' }}</td> -->
                                         </tr>
@@ -117,49 +117,34 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="MasterProductmForm" #MasterProductmForm="ngForm" novalidate>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
-                                            <button (click)="ViewProductType()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="ProTypePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                        </div>
-                                        <select class="form-control" name="producttype" #producttype="ngModel" [(ngModel)]="ObjMasterProductm.Product_Type_ID" (change)="GetProductSubType()" [ngClass]="{'clearance': MasterProductmFormSubmitted && producttype.errors?.required}" required>
-                                                <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of ProductTypeList" [ngValue]="option.Product_Type_ID">
-                                                {{option.Product_Type}}
-                                                </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Sub Type<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
-                                            <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductm.Product_Type_ID"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductm.Product_Type_ID"><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                        </div>
-                                        <select class="form-control" name="productsubtype" #productsubtype="ngModel" [(ngModel)]="ObjMasterProductm.Product_Sub_Type_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && productsubtype.errors?.required}" required>
-                                                                    <option  [ngValue]="undefined">Select</option>
-                                                                <option *ngFor="let option of ProductSubTypeList" [ngValue]="option.Product_Sub_Type_ID">
-                                                                    {{option.Product_Sub_Type}}
-                                                                    </option>
-                                                            </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">GST Category<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="productcategory" #productcategory="ngModel" [(ngModel)]="ObjMasterProductm.Cat_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && productcategory.errors?.required}" required>
-                                                                    <option  [ngValue]="undefined">Select</option>
-                                                                <option *ngFor="let option of ProductCategoryList" [ngValue]="option.Cat_ID">
-                                                                    {{option.Cat_Name}}
-                                                                    </option>
-                                                            </select>
-                                    </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                        padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+                                        <i class="fa fa-fw fa-fax">
+                                        </i> &nbsp;<strong>Product Details :</strong></h5>
+                                        <app-compacct-product-details
+                                        [requirPro]="MaterialFormSubmit"
+                                        (ProDetailsObj)="getProDetailsData($event)"
+                                        #Product>
+                                       </app-compacct-product-details>
+                            
                                 </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="prodescription" #prodescription="ngModel" [(ngModel)]="ObjMasterProductm.Product_Description" placeholder="Product Description" [ngClass]="{'clearance': MasterProductmFormSubmitted && prodescription.errors?.required}"
-                                            required>
-                                    </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Additional Info.</strong></h5> 
+                                    
                                     <div class="col-sm-4">
                                         <label class="control-label">Material of Cons.</label>
                                         <div class="pull-right">
@@ -186,9 +171,6 @@
                                                     </option>
                                             </select>
                                     </div>
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Product Feature<sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
@@ -202,6 +184,51 @@
                                                     </option>
                                         </select>
                                     </div>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Financial Details:</strong></h5>
+                                    <app-compacct-financial-details
+                                            [requirFinancial]="MaterialFormSubmit"
+                                            [Edit]="ObjFinancialComponentData"
+                                            (FinacialDetailsObj)="FinancialDetailsData($event)"
+                                            #FinacialDetails>
+                                    </app-compacct-financial-details>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>TAX & Custom Duty:</strong></h5> 
+                                    <app-compacctgstandcustomduty
+                                    [requirGst]="MaterialFormSubmit"
+                                    (GstandCustonDutyObj)="getGstAndCustDutyData($event)"
+                                    #GstAndCustomDuty
+                                    [labelChange]="LAbelName">
+                                    </app-compacctgstandcustomduty>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>UOM</strong></h5> 
                                     <div class="col-sm-4">
                                         <label class="control-label">Grade</label>
                                         <div class="pull-right">
@@ -217,26 +244,9 @@
                                                       </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Remarks</label>
-                                        <input class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="ObjMasterProductm.Remarks" placeholder="Remarks" [ngClass]="{'clearance': MasterProductmFormSubmitted && remarks.errors?.required}" >
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">HSN Code<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="hsncode" #hsncode="ngModel" [(ngModel)]="ObjMasterProductm.HSN_NO" placeholder="HSN Code" [ngClass]="{'clearance': MasterProductmFormSubmitted && hsncode.errors?.required}" required>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">GST Percentage<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="gstper" #gstper="ngModel" [(ngModel)]="ObjMasterProductm.GST_Percentage" CompacctDigitonly="true" placeholder="GST %" [ngClass]="{'clearance': MasterProductmFormSubmitted && gstper.errors?.required}" required>
-                                    </div>
-                                    <div class="col-sm-4">
                                         <label class="control-label">UOM<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]="ObjMasterProductm.UOM" placeholder="UOM" [ngClass]="{'clearance': MasterProductmFormSubmitted && uom.errors?.required}" required>
                                     </div>
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label" *ngIf="buttonname === 'Create'">Make (Multiple)<sup class="text-danger">*</sup></label>
                                         <label class="control-label" *ngIf="buttonname != 'Create'">Make <sup class="text-danger">*</sup></label>
@@ -254,7 +264,9 @@
                                                 </option>
                                             </select>
                                     </div>
-                                    <div class="col-sm-6">
+                                </div> 
+                                <div class="form-group">
+                                    <div class="col-sm-6" style="margin-left:15px;">
                                         <label class="control-label">File Upload</label>
                                         <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" url="/Harbauer_Master_Product_mechanical/Upload_Doc">
                                             <!-- <ng-template let-aFile pTemplate='aFile'>

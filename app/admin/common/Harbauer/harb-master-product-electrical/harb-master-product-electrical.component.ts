@@ -6,12 +6,16 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import {CompacctGetDistinctService } from "../../../shared/compacct.services/compacct-get-distinct.service"
 import * as moment from "moment";
+
 declare var $:any;
 import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
 import { Console } from 'console';
+import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
+import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
+import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
 
 @Component({
   selector: 'app-harb-master-product-electrical',
@@ -31,7 +35,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   Spinner = false;
   MasterProductelFormSubmitted = false;
   ObjMasterProductel = new MasterProductel();
-
+  ObjFinancialComponentData = new Financial();
   ProductTypeList = [];
   ProductSubTypeList = [];
   ProductCategoryList = [];
@@ -121,6 +125,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   // hcode = undefined;
   // per = undefined;
   // uom = undefined;
+  ObjproductDetails : any;
+  ObjGstandCustonDuty : any;
+  ObjFinancial: any;
 
   makedisabled = false;
 
@@ -128,6 +135,14 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   Is_View = false;
   Browseproid = undefined;
   isvisible = undefined;
+  LAbelName = 'HSN Code';
+  objproduct : product = new product()
+  @ViewChild("Product", { static: false })
+  ProductDetailsInput: CompacctProductDetailsComponent;
+  @ViewChild("GstAndCustomDuty", { static: false })
+  GstAndCustDutyInput: CompacctgstandcustomdutyComponent;
+  @ViewChild("FinacialDetails", { static: false })
+  FinacialDetailsInput: CompacctFinancialDetailsComponent;
 
  // ObjSearch = new Search();
 
@@ -152,7 +167,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       Link: " Tender Management -> Master -> Master Product Electrical"
     });
     
-     this.GetProductType();
+    //  this.GetProductType();
      //this.GetProductSubType();
      this.GetProductCategory();
      this.GetMOC();
@@ -169,8 +184,52 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE","CREATE"];
     this.buttonname = "Create";
+    this.destroyChild();
     this.clearData();
     this.productid = undefined;
+  }
+  destroyChild() {
+    if (this.ProductDetailsInput) {
+      this.ProductDetailsInput.clear();
+    }
+    if (this.GstAndCustDutyInput) {
+      this.GstAndCustDutyInput.clear();
+    }
+    if (this.FinacialDetailsInput) {
+      this.FinacialDetailsInput.clear();
+    }
+  }
+  getProDetailsData(e) {
+    console.log("Product Detalis",e)
+    this.ObjMasterProductel = e
+    if (e.Product_Type_ID) {
+      this.ObjproductDetails = e;
+      this.ObjMasterProductel.Product_Type_ID = e.Product_Type_ID;
+      this.ObjMasterProductel.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.ObjMasterProductel.Product_Code = e.Product_Code;
+      this.ObjMasterProductel.Product_Description = e.Product_Description;
+      this.ObjMasterProductel.Rack_NO = e.Rack_NO;
+    }
+  }
+  getGstAndCustDutyData(e) {
+    console.log(e)
+    this.ObjGstandCustonDuty = undefined;
+    this.ObjMasterProductel.Cat_ID = undefined;
+    this.ObjMasterProductel.HSN_Code = undefined;
+    this.ObjMasterProductel.Custom_Duty = undefined;
+    this.ObjMasterProductel.Remarks = undefined;
+    if (e.Cat_ID) {
+      this.ObjGstandCustonDuty = e;
+      this.ObjMasterProductel.Cat_ID = e.Cat_ID;
+      this.ObjMasterProductel.HSN_Code = e.HSN_Code;
+      this.ObjMasterProductel.Custom_Duty = e.Custom_Duty;
+      this.ObjMasterProductel.Remarks = e.Remarks;
+    }
+  }
+  FinancialDetailsData(e) {
+    console.log(e)
+    console.log("FinancialDetailsData",e)
+    this.ObjMasterProductel = e
   }
   clearData() {
      this.Spinner = false;
@@ -187,6 +246,8 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   
   //PRODUCT TYPE
   }
+
+  
   GetProductType(){
     const obj = {
       "SP_String": "SP_Harbauer_Master_Product_mechanical",
@@ -1224,22 +1285,22 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     let ReportName = '';
     let ObjTemp;
     let FunctionRefresh;
-    if (this.protypeid) {
-      SpName = "SP_Harbauer_Master_Product_mechanical"
-      ReportName = "Delete_Master_Product_Type"
-      ObjTemp = {
-        Product_Type_ID: this.protypeid
-      }
-      FunctionRefresh = 'GetProductType'
-    }
-    if (this.protypesubid) {
-      SpName = "SP_Harbauer_Master_Product_mechanical"
-      ReportName = "Delete_Product_Sub_Type"
-      ObjTemp = {
-        Product_Sub_Type_ID: this.protypesubid
-      }
-      FunctionRefresh = 'GetProductSubType';
-    }
+    // if (this.protypeid) {
+    //   SpName = "SP_Harbauer_Master_Product_mechanical"
+    //   ReportName = "Delete_Master_Product_Type"
+    //   ObjTemp = {
+    //     Product_Type_ID: this.protypeid
+    //   }
+    //   FunctionRefresh = 'GetProductType'
+    // }
+    // if (this.protypesubid) {
+    //   SpName = "SP_Harbauer_Master_Product_mechanical"
+    //   ReportName = "Delete_Product_Sub_Type"
+    //   ObjTemp = {
+    //     Product_Sub_Type_ID: this.protypesubid
+    //   }
+    //   FunctionRefresh = 'GetProductSubType';
+    // }
     if (this.mocid) {
       SpName = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_MOC_Data"
@@ -1429,6 +1490,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       
       } else {
       this.Spinner = false;
+      this.destroyChild();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -1486,6 +1548,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
            } else{
             // this.ngxService.stop();
              this.Spinner = false;
+             this.destroyChild();
              this.compacctToast.clear();
              this.compacctToast.add({
                key: "compacct-toast",
@@ -1586,6 +1649,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       this.buttonname = "Update";
       this.clearData();
       this.GetEdit(this.productid);
+      
       this.makedisabled = true;
     }
   }
@@ -1616,6 +1680,12 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.editList = data;
+      this.ObjMasterProductel = data[0];
+      this.ObjFinancialComponentData = data[0];
+      this.objproduct = data[0]
+      this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
+      // this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
+      this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
        //this.myDate = data[0].Date;
        this.ObjMasterProductel.Product_Type_ID = data[0].Product_Type_ID;
        this.GetProductSubType();
@@ -1787,10 +1857,41 @@ class MasterProductel{
    Additional_Feature_ID_4 :number;
    Product_ID:number;
    Grade_ID	:number;
-   Remarks	:string;
+   Remarks	:any;
    HSN_NO:number;
    GST_Percentage:number;
    UOM:string;
   // Product_Mfg_Comp_ID:any;
    Product_Image:any;
+
+
+   Product_Code:any;
+   Rack_NO :any;
+   HSN_Code:any;	
+   Custom_Duty:any;
+   Billable:boolean;			
+   Can_Purchase:boolean;
+   Purchase_Ac_Ledger:any;
+   Sales_Ac_Ledger:any;	
+   Purchase_Return_Ledger_ID:number;
+   Discount_Receive_Ledger_ID:number;	
+   Discount_Given_Ledger_ID:number;	
+   Sales_Return_Ledger_ID:number;	
  }
+ class Financial{
+  Can_Purchase : boolean;
+  Billable : boolean;
+  Purchase_Ac_Ledger:any;
+  Sales_Ac_Ledger:any;
+  Purchase_Return_Ledger_ID:any;
+  Sales_Return_Ledger_ID:any;
+  Discount_Receive_Ledger_ID:any;
+  Discount_Given_Ledger_ID:any;
+}
+class product{
+  Product_Type_ID	:number;	
+  Product_Sub_Type_ID	:number;
+  Product_Code : any;
+  Product_Description : string;
+  Rack_NO : any;
+  }
