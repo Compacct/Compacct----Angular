@@ -79,6 +79,7 @@ export class TenderMultipleSchBudgetComponent implements OnInit {
   Spinnersite = false;
   editData = [];
   Final_Create_Flag = false;
+
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   cols = [
     { field: 'SL_No', header: 'SL No.' },
@@ -133,6 +134,14 @@ PDFFlag = false;
   EditSiteFlag = false;
   Created = true;
   ShowDetailsModalFlag = false;
+  ViewSiteModal = false;
+  Siteid = undefined;
+  ViewEstimateGrpModal = false;
+  EstGrpeid = undefined;
+  ViewEstimateSubGrpModal = false;
+  EstSubGrpeid = undefined;
+  ViewWorkDetailsModal = false;
+  WorkDetlsid = undefined;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -225,10 +234,6 @@ ngOnInit() {
      console.log("SUB",data);
     })
   }
-  onReject() {
-    this.compacctToast.clear("c");
-  }
-  onConfirm(){}
   TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["Multiple Scheme", "Create Multiple Scheme","Created Budget"];
@@ -532,6 +537,32 @@ ngOnInit() {
         this.GetExcelGroupDetails();
       });
   }
+  // View Estimate Group
+  ViewEstimateGrp(){
+    this.EstimateGroupList = [];
+    this.GetEstimateGroup();
+    setTimeout(() => {
+      this.ViewEstimateGrpModal = true;
+    }, 300);
+  }
+  deleteEstimateGrp(EstimateGrpeid){
+    this.Siteid = undefined;
+    this.EstGrpeid = undefined;
+    this.EstSubGrpeid = undefined;
+    this.WorkDetlsid = undefined;
+    if(EstimateGrpeid.Budget_Group_ID){
+      this.EstGrpeid = EstimateGrpeid.Budget_Group_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
 
   GetProject() {
     if(this.TenderDocID){
@@ -585,6 +616,33 @@ ngOnInit() {
         });
     }
   }
+  
+  // View Site
+  ViewSite(){
+    this.siteList = [];
+    this.getSiteList();
+    setTimeout(() => {
+      this.ViewSiteModal = true;
+    }, 300);
+  }
+  deleteSite(siteid){
+    this.Siteid = undefined;
+    this.EstGrpeid = undefined;
+    this.EstSubGrpeid = undefined;
+    this.WorkDetlsid = undefined;
+    if(siteid.Site_ID){
+      this.Siteid = siteid.Site_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
   EstimateGroupChange(id) {
     this.EstimateSubGroupList = [];
     this.ObjEstimate.Budget_Group_Name = undefined;
@@ -609,6 +667,32 @@ ngOnInit() {
         });
     }
 
+  }
+  // View Estimate Sub Group
+  ViewEstimateSubGrp(){
+    this.EstimateSubGroupList = [];
+    this.EstimateGroupChange(this.ObjEstimate.Budget_Group_ID);
+    setTimeout(() => {
+      this.ViewEstimateSubGrpModal = true;
+    }, 300);
+  }
+  deleteEstimateSubGrp(EstimateSubGrpeid){
+    this.Siteid = undefined;
+    this.EstGrpeid = undefined;
+    this.EstSubGrpeid = undefined;
+    this.WorkDetlsid = undefined;
+    if(EstimateSubGrpeid.Budget_Sub_Group_ID){
+      this.EstSubGrpeid = EstimateSubGrpeid.Budget_Sub_Group_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
   }
   CreateEstimateGrp(valid) {
     this.EstimateGrpSubmitted = true;
@@ -668,6 +752,32 @@ ngOnInit() {
 
         this.workdetalisList = data;
       });
+  }
+  // View Work Details
+  ViewWorkDetails(){
+    this.workdetalisList = [];
+    this.getworkDetails();
+    setTimeout(() => {
+      this.ViewWorkDetailsModal = true;
+    }, 300);
+  }
+  deleteWorkDetails(WorkDetailseid){
+    this.Siteid = undefined;
+    this.EstGrpeid = undefined;
+    this.EstSubGrpeid = undefined;
+    this.WorkDetlsid = undefined;
+    if(WorkDetailseid.Work_Details_ID){
+      this.WorkDetlsid = WorkDetailseid.Work_Details_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
   }
   ToggleEstimateSubGrp() {
     this.EstimateSubGrpSubmitted = false;
@@ -1339,6 +1449,71 @@ exportexcelDummy(): void {
       queryParams: obj,
     };
     this.router.navigate([Redirect_To], navigationExtras);
+  }
+
+  //Common Delete for view Popup
+  onConfirm() {
+    let ReportName = '';
+    let ObjTemp;
+    let FunctionRefresh;
+    if (this.Siteid) {
+      ReportName = "Delete_Site"
+      ObjTemp = {
+        Site_ID: this.Siteid
+      }
+      FunctionRefresh = 'getSiteList'
+    }
+    if (this.EstGrpeid) {
+      ReportName = "Delete_Budget_Group"
+      ObjTemp = {
+        Budget_Group_ID: this.EstGrpeid
+      }
+      FunctionRefresh = 'GetEstimateGroup';
+    }
+    if (this.EstSubGrpeid) {
+      ReportName = "Delete_Budget_Sub_Group"
+      ObjTemp = {
+        Budget_Sub_Group_ID: this.EstSubGrpeid
+      }
+      FunctionRefresh = 'EstimateGroupChange';
+    }
+    if (this.WorkDetlsid) {
+      ReportName = "Delete_Work_Details"
+      ObjTemp = {
+        Work_Details_ID: this.WorkDetlsid
+      }
+      FunctionRefresh = 'getworkDetails';
+    }
+      const obj = {
+        "SP_String": "SP_Tender_Management_All_Delete_Dropdown",
+        "Report_Name_String" : ReportName,
+        "Json_Param_String": JSON.stringify(ObjTemp),
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        var msg = data[0].Column1;
+        if (data[0].Column1) {
+        // this.onReject();
+        //this.GetTenderOrgList();
+        // this[FunctionRefresh]();
+          if (this.EstSubGrpeid) {
+            this[FunctionRefresh](this.ObjEstimate.Budget_Group_ID);
+          } else {
+          this[FunctionRefresh]();
+          }
+         this.compacctToast.clear();
+         this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: msg
+          });
+            //this.SearchTender(true);
+        }
+      });
+    //}
+  }
+  onReject() {
+    this.compacctToast.clear("c");
   }
 
 

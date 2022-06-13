@@ -5,3 +5,10 @@ div.pac-container.pac-logo {
 .ui-tree.ui-widget.ui-widget-content.ui-corner-all.ui-tree-selectable {
     width: 100%;
 }
+.ui-dialog .ui-dialog-content {
+    position: relative !important;
+    border: 0;
+    padding: 2.5em 0.75em !important;
+    background: 0;
+    zoom: 1;
+}

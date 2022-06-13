@@ -72,6 +72,15 @@ export class TutoSalesTreeComponent implements OnInit {
   BDAname = undefined;
   changeName = undefined;
   updateMemNameFormSubmitted = false;
+  IsmNameForBda = [];
+  SelectSrManagerFormSubmitted = false;
+  Select_Sr_Manager :any;
+  SrManagerList = [];
+
+  ISMPopup = false;
+  changeISMMemberName : any;
+  updateISMMemNameFormSubmitted = false;
+  ISMmemberidforsave = undefined;
 
   constructor(
     private $http: HttpClient,
@@ -190,13 +199,16 @@ export class TutoSalesTreeComponent implements OnInit {
     console.log(event.node.label);
     this.EditFlag = false;
     this.BDAinactivePopup = false;
+    this.ISMPopup = false;
     this.EditDistributorObj = {};
     if(event.node.Sub_Dept === "DISTRIBUTOR") {
       this.BDAinactivePopup = false;
+      this.ISMPopup = false;
       event.node.Sub_Dept = "TELE SALES"
     }
     if(event.node.Sub_Dept === "TELE SALES"){
       this.BDAinactivePopup = false;
+      this.ISMPopup = false;
       this.EditFlag = true;
       this.EditDistributorObj ={...event.node};
       this.compacctToast.clear();
@@ -212,6 +224,7 @@ export class TutoSalesTreeComponent implements OnInit {
     }
     if(event.node.Sub_Dept === "ZONAL HEAD"){
       this.BDAinactivePopup = false;
+      this.ISMPopup = false;
       this.EditDistributorObj ={...event.node};
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -225,6 +238,7 @@ export class TutoSalesTreeComponent implements OnInit {
     }
     if(event.node.Sub_Dept === "SCHOOL"){
       this.BDAinactivePopup = false;
+      this.ISMPopup = false;
       const TempObj  ={...event.node};
       const obj = {
         "SP_String": "Tutopia_Sales_Tree_Edit_SP",
@@ -240,6 +254,7 @@ export class TutoSalesTreeComponent implements OnInit {
     }
     if(event.node.Sub_Dept === "ASP"){
       this.BDAinactivePopup = false;
+      this.ISMPopup = false;
       const TempObj  ={...event.node};
       const obj = {
         "SP_String": "Tutopia_Sales_Tree_Edit_SP",
@@ -258,10 +273,25 @@ export class TutoSalesTreeComponent implements OnInit {
       this.SelectISMFormSubmitted = false;
       this.updateMemNameFormSubmitted = false;
       this.BDAinactivePopup = true;
+      this.ISMPopup = false;
       this.BDAname = event.node.label;
       this.GetISMBDAIntroducer(event.node.Sub_Dept);
+      this.GetSrManagerIntroducer();
     console.log(event.node);
+    this.Intro_Member_ID = undefined;
     if(event.node.Member_ID) {
+      const TempObj = {
+        "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
+        "Report_Name_String": "Select_ISM_Name",
+        "Json_Param_String": JSON.stringify([{Member_ID : event.node.Member_ID}])
+      }
+      this.GlobalAPI.getData(TempObj).subscribe((data:any)=>{
+        this.IsmNameForBda = data;
+        console.log('IsmNameForBda===',this.IsmNameForBda)
+        const ismname = this.ISMIntroducerList.filter(item => Number(item.Member_ID) === Number(data[0].Intro_Member_ID))
+        this.Intro_Member_ID = ismname[0].Member_ID;
+      });
+
       this.Bdamemberidforsave = event.node.Member_ID;
      this.ngxService.start();
      const obj = {
@@ -272,6 +302,33 @@ export class TutoSalesTreeComponent implements OnInit {
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        if(data.length) {
         this.changeName = data[0].Member_Name;
+         const type = data[0].Sub_Dept_Name;
+         const openField = type.includes('TELE SALES') ? true : type.includes('SALES HEAD') ? true : false;
+         openField ? this.OpenSaleFieldModal2(type,event.node) : this.ngxService.stop(); 
+       } else{
+         this.ngxService.stop();
+       }
+     });
+    }
+    } 
+
+    if(event.node.Sub_Dept === "ISM (SALES HEAD)"){
+      // this.updateMemNameFormSubmitted = false;
+      // this.ISMPopup = true;
+      // this.BDAname = event.node.label;
+    console.log(event.node);
+    this.Intro_Member_ID = undefined;
+    if(event.node.Member_ID) {
+      this.ISMmemberidforsave = event.node.Member_ID;
+     this.ngxService.start();
+     const obj = {
+       "SP_String": "Tutopia_Inside_sales_Team_Update_SP",
+       "Report_Name_String": "Retrieve_Sales_Head_OR_Tele_Sales",
+       "Json_1_String": JSON.stringify([{Member_ID : event.node.Member_ID}])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       if(data.length) {
+        this.changeISMMemberName = data[0].Member_Name;
          const type = data[0].Sub_Dept_Name;
          const openField = type.includes('TELE SALES') ? true : type.includes('SALES HEAD') ? true : false;
          openField ? this.OpenSaleFieldModal2(type,event.node) : this.ngxService.stop(); 
@@ -342,6 +399,28 @@ export class TutoSalesTreeComponent implements OnInit {
         element['value'] = element.Member_ID;
       });
       this.ISMIntroducerList = data;
+      // this.CreateFieldModal2 = edit && edit.Member_ID ? false : true;
+      // this.SaleTree = false;
+      // edit && edit.Member_ID ? this.GetEditData(edit) : null;
+    });
+   }
+   GetSrManagerIntroducer(){
+    this.SrManagerList = [];
+    // if (SupDeptName === "ISM (SALES HEAD)"){
+    //   SupDeptName = "SALES HEAD"
+    // }
+    // SupDeptName = SupDeptName.includes('- GROUP') ? 'TELE SALES' : SupDeptName;
+    const obj = {
+      "SP_String": "Tutopia_Sales_Tree_Field_And_Inside_SP",
+      "Report_Name_String": "Get_Introducer_Dropdown",
+      "Json_1_String": JSON.stringify([{Sub_Dept_Name : "SALES HEAD"}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      data.forEach(element => {
+        element['label'] = element.Member_Name;
+        element['value'] = element.Member_ID;
+      });
+      this.SrManagerList = data;
       // this.CreateFieldModal2 = edit && edit.Member_ID ? false : true;
       // this.SaleTree = false;
       // edit && edit.Member_ID ? this.GetEditData(edit) : null;
@@ -456,6 +535,73 @@ export class TutoSalesTreeComponent implements OnInit {
              severity: "success",
              // summary: '' + Type,
              detail:  "Succesfully Updated"
+           });
+           // this.onReject();
+ 
+         } else {
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: "Error Occured "
+           });
+         }
+ 
+       })
+     // }else {
+     //   this.compacctToast.clear();
+     //     this.compacctToast.add({
+     //       key: "compacct-toast",
+     //       severity: "error",
+     //       summary: "Validation Message",
+     //       detail: "This User Name Already Exits."
+     //     });
+     // }
+    }
+
+  }
+  SaveSrManager(valid){
+    this.SelectSrManagerFormSubmitted = true;
+    if(valid){
+     // const reportName = this.EditFlag ? 'Edit_Distributor_Introducer' : 'Create_Sales_Tree';
+     // let UserNameCheck = true;
+     // if(this.CreateFieldModalTitle === 'ASP') {
+     //  let responseData = await this.CheckASPname(); 
+     //  console.log(responseData)
+     //  if(responseData[0].Column1.toString() === 'YES') { 
+     //   UserNameCheck = false;
+     //  }
+     // }
+     // if(UserNameCheck) {
+       const objsave = {
+         Member_ID : this.Bdamemberidforsave,
+         Intro_Member_ID : this.Select_Sr_Manager
+       }
+       const obj = {
+         "SP_String": "SP_Tutopia_Txn_BDA_Attendance",
+         "Report_Name_String": "Upgrade_To_ISM",
+         "Json_Param_String": JSON.stringify(objsave)
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         console.log(data);
+         if(data[0].Column1) {
+           this.EditDistributorObj = {};
+           this.ClearData();
+           this.loading = true;
+           this.GetTreeData();
+           this.ClearData2();
+           this.BDAinactivePopup = false;
+           this.Bdamemberidforsave = undefined;
+           this.Intro_Member_ID = undefined;
+           this.BDAname = undefined;
+           this.SelectISMFormSubmitted = false;
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             // summary: '' + Type,
+             detail:  "Succesfully Created"
            });
            // this.onReject();
  

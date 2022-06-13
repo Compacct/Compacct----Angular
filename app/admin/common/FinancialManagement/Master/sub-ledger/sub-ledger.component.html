@@ -242,10 +242,10 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">GST No.<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="GSTNO" #GSTNO="ngModel" [(ngModel)]="objSubLedger.GST" placeholder="GST NO." (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
+                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" placeholder="GST NO." (onChange)='checkGSTvalid(objSubLedger.GST_NO)' minlength="15" maxlength="15" [ngClass]="{
                                             clearance:
                                               (GSTvalidFlag) ||
-                                              (GSTNO.errors?.minlength && GSTNO.touched)
+                                              (GST_NO.errors?.minlength && GST_NO.touched)
                                           }" required>
                                         <!---pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"-->
                                     </div>
@@ -890,8 +890,8 @@
                                                 <tr>
                                                     <td>{{col.Bank_Name ? col.Bank_Name : '-'}}</td>
                                                     <td>{{col.Branch ? col.Branch : '-'}}</td>
-                                                    <td>{{col.Ac_No ? col.Ac_No : '-'}}</td>
                                                     <td>{{col.Bank_Ac_Type ? col.Bank_Ac_Type : '-'}}</td>
+                                                    <td>{{col.Ac_No ? col.Ac_No : '-'}}</td>
                                                     <td>{{col.MICR_Code ? col.MICR_Code : '-'}}</td>
                                                     <td>{{col.IFSC_Code ? col.IFSC_Code : '-'}}</td>
                                                     <td align="center"><button (click)="commondelete(rowIndex,'bank')" class="btn danger"><i class="fa fa-trash"></i></button></td>

@@ -136,6 +136,10 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   Spinnersite = false;
   labelSettings:any;
   dayWorkingTime:any;
+
+  ViewSiteModal = false;
+  Siteid = undefined;
+
   @ViewChild('gantt', {
     static: true
   })
@@ -318,6 +322,56 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
           this.SiteList = data;
         });
     }
+  }
+  // View Site
+  ViewSite(){
+    this.SiteList = [];
+    this.GetSiteList();
+    setTimeout(() => {
+      this.ViewSiteModal = true;
+    }, 300);
+  }
+  deleteSite(siteid){
+    this.Siteid = undefined;
+    if(siteid.Site_ID){
+      this.Siteid = siteid.Site_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirm() {
+      const obj = {
+        "SP_String": "SP_Tender_Management_All_Delete_Dropdown",
+        "Report_Name_String" : "Delete_Site_FOR_Project_Planing",
+        "Json_Param_String": JSON.stringify([{Site_ID: this.Siteid}]),
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        var msg = data[0].Column1;
+        if (data[0].Column1) {
+        // this.onReject();
+        //this.GetTenderOrgList();
+        this.GetSiteList();
+         this.compacctToast.clear();
+         this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "",
+            detail: msg
+          });
+            //this.SearchTender(true);
+        }
+      });
+    //}
+  }
+  onReject() {
+    this.compacctToast.clear("c");
   }
   DynamicRedirectTo() {
     window.open("/Project_Estimate?from=tenderESTIMATE", "_blank")

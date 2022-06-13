@@ -928,7 +928,7 @@ class SubLedger{
   Tagged_Ledger:any;
   Sub_Ledger_ID : any
   EXID_NO : any;
-  Is_Visiable : any;
+  Is_Visiable : any
 } 
 
 class Address{
