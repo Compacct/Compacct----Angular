@@ -128,7 +128,7 @@
                                         <i class="fa fa-fw fa-fax">
                                         </i> &nbsp;<strong>Product Details :</strong></h5>
                                         <app-compacct-product-details
-                                        [requirPro]="MaterialFormSubmit"
+                                        [requirPro]="MasterProductmFormSubmitted"
                                         (ProDetailsObj)="getProDetailsData($event)"
                                         #Product>
                                        </app-compacct-product-details>
@@ -196,7 +196,7 @@
                                     <i class="fa fa-fw fa-fax">
                                     </i> &nbsp;<strong>Financial Details:</strong></h5>
                                     <app-compacct-financial-details
-                                            [requirFinancial]="MaterialFormSubmit"
+                                            [requirFinancial]="MasterProductmFormSubmitted"
                                             [Edit]="ObjFinancialComponentData"
                                             (FinacialDetailsObj)="FinancialDetailsData($event)"
                                             #FinacialDetails>
@@ -213,7 +213,7 @@
                                     <i class="fa fa-fw fa-fax">
                                     </i> &nbsp;<strong>TAX & Custom Duty:</strong></h5> 
                                     <app-compacctgstandcustomduty
-                                    [requirGst]="MaterialFormSubmit"
+                                    [requirGst]="MasterProductmFormSubmitted"
                                     (GstandCustonDutyObj)="getGstAndCustDutyData($event)"
                                     #GstAndCustomDuty
                                     [labelChange]="LAbelName">

@@ -201,6 +201,7 @@
                                                 <th scope="col">Product Type</th>
                                                 <th scope="col">Product Description</th>
                                                 <th scope="col">Rate</th>
+                                                <th scope="col">Recommended Qty</th>
                                                 <th scope="col">Qty</th>
                                                 <th scope="col">UOM</th>
                                                 <th scope="col">Amount</th>
@@ -208,7 +209,7 @@
                                         </ng-template>
                                         <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
                                             <tr class="ui-widget-header" *ngIf="rowGroupMetadata[rowData.Product_Type].index === rowIndex">
-                                                <td colspan="6">
+                                                <td colspan="7">
                                                     <a href="#" [pRowToggler]="rowData">
                                                         <i [ngClass]="expanded ? 'fa fa-fw fa-chevron-circle-down' : 'fa fa-fw fa-chevron-circle-right'"></i>
                                                         <span>{{rowData.Product_Type}}</span>
@@ -221,6 +222,7 @@
                                                 <td>{{rowData.Product_Type}}</td>
                                                 <td>{{rowData.Product_Description}}</td>
                                                 <td>{{rowData.Sale_rate}}</td>
+                                                <td>{{rowData.Recom_Qty}}</td>
                                                 <td><input type="text" [name]="rowData.Product_ID" [(ngModel)]='rowData.Req_Qty' (ngModelChange)='QtyChanged(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                                 <td>{{rowData.UOM}}</td>
                                                 <td>{{rowData.Amount ? rowData.Amount : '-'}}</td>

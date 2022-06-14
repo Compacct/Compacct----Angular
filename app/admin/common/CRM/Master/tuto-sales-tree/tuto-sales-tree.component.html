@@ -435,14 +435,14 @@
         <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveUpdateFieldinsidesales(CreateSalesUpdate2.form.valid)">
       SAVE
     </button>
-    <button type="button" *ngIf='!SaveFlag && !ShowDisabled' class="btn btn-primary" (click)="UpdateField2(CreateSalesUpdate2.form.valid)">
+    <button type="button" *ngIf='!SaveFlag && !ShowDisabled' class="btn btn-primary" (click)="UpdateField(CreateSalesUpdate2.form.valid)">
       UPDATE
     </button>
     </p-footer>
 </p-dialog>
 
 <!-- BDA POPUP -->
-<p-dialog  header={{BDAname}} [appendTo]="'body'" [(visible)]="BDAinactivePopup" [closeOnEscape]="true"  [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '400px' }" style="text-align: center;"
+<p-dialog  header={{BDAname}} [appendTo]="'body'" [(visible)]="BDAinactivePopup" [closeOnEscape]="true"  [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '400px' }" style="text-align: center;"
     [minY]="70" [maximizable]="true" [baseZIndex]="10000">
     <div class="form-group" style="margin-left:15px">
       <button (click)="InactiveBDA()" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button>
@@ -474,7 +474,7 @@
                 </p-dropdown>
               </div> 
             <div class="col-sm-3" style="margin-top:25px;">
-              <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveSelectISM(SelectISMForm.form.valid)">
+              <button type="button" class="btn btn-primary" (click)="SaveSelectISM(SelectISMForm.form.valid)">
                 SAVE
               </button>
             </div>
@@ -487,12 +487,45 @@
               <input type="text" class="form-control" placeholder=Name name="changename" #changename="ngModel" [(ngModel)]="changeName" [ngClass]="{clearance:updateMemNameFormSubmitted && changename.errors?.required}" required>
           </div>
           <div class="col-sm-3" style="margin-top:25px;">
-            <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="UpdateMemberName(updateMemNameForm.form.valid)">
+            <button type="button" class="btn btn-primary" (click)="UpdateMemberName(updateMemNameForm.form.valid)">
               Update Name
             </button>
           </div>
         </form>
     </div>
+    <form name="SelectSrManagerForm"  #SelectSrManagerForm="ngForm" style="margin:1.5em 0" novalidate>
+      <div class="form-group">
+          <div class="col-sm-9">
+              <label class="control-label">Select Sr Manager &nbsp;<span class="text-danger" >*</span></label>
+              <p-dropdown
+                [options]="SrManagerList"
+                name="srmanager"
+                [(ngModel)]="Select_Sr_Manager"
+                [showClear]="true"
+                [emptyFilterMessage]="' No Data Found'"
+                [filter]="true"
+                filterBy="label,value.name"
+                [resetFilterOnHide]="true"
+                [placeholder]="'Select Sr Manager'"
+                [virtualScroll]="true"
+                itemSize="30"
+                #srmanager="ngModel"
+                [styleClass]="
+                SelectSrManagerFormSubmitted && srmanager.errors?.required
+                    ? 'clearance'
+                    : ''
+                "
+                [required]="true"
+              >
+              </p-dropdown>
+            </div> 
+          <div class="col-sm-3" style="margin-top:25px;">
+            <button type="button" class="btn btn-primary" (click)="SaveSrManager(SelectSrManagerForm.form.valid)">
+              Upgrade to ISM
+            </button>
+          </div>
+      </div>
+  </form>
       
     <p-footer>
         <button type="button" (click)="BDAinactivePopup = false" class="btn btn-default">

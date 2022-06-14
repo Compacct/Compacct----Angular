@@ -220,6 +220,7 @@ import { BSHPAmeyoKBComponent } from "./common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp
 import { BSHPLAmeyoCustomerComponent } from "./common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component";
 import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledger/sub-ledger.component';
 import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
+import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
 
 
 
@@ -1612,6 +1613,13 @@ data: {
   component: TaxCategoryComponent,
   data: {
     title: 'Tax Category'
+}
+},
+{
+  path: 'Conversion_of_Product',
+  component: K4cConversionOfProductComponent,
+  data: {
+    title: 'Conversion of Product'
 }
 },
 

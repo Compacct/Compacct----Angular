@@ -313,6 +313,8 @@ import { BSHPAmeyoKBComponent } from './common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp
 import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledger/sub-ledger.component';
 import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
 import { CompacctProjectComponent } from './shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
+import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
+
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -543,7 +545,8 @@ import { CompacctProjectComponent } from './shared/compacct.components/compacct.
     BSHPAmeyoKBComponent,
     SubLedgerComponent,
     TaxCategoryComponent,
-    CompacctProjectComponent
+    CompacctProjectComponent,
+    K4cConversionOfProductComponent
   ],
   imports: [
     CommonModule,
