@@ -9,6 +9,7 @@ declare var $: any;
 import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctFinancialDetailsComponent } from "../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-product-master',
@@ -111,7 +112,7 @@ export class ProductMasterComponent implements OnInit {
   activeid = undefined;
   act_popup = false;
   SubCatFilter = [];
-
+  headerData = ""
 
   constructor(
     private http: HttpClient,
@@ -120,7 +121,13 @@ export class ProductMasterComponent implements OnInit {
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
     public $CompacctAPI: CompacctCommonApi,
-  ) {}
+    private route: ActivatedRoute, ) {
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+     this.headerData = params['header'];
+      console.log ("headerData",this.headerData);
+     })
+  }
 
 ngOnInit() {
     this.items = ["BROWSE", "CREATE","REPORT"];
@@ -129,8 +136,8 @@ ngOnInit() {
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
     this.header.pushHeader({
-      Header: "Product Master",
-      Link: " MICL ->Product-Master"
+      Header: this.headerData,
+      Link: " MICL ->"+this.headerData
     })
     this.check = "Product"
     this.getBrowseProduct();
@@ -192,10 +199,10 @@ TabClick(e) {
       this.ObjGstandCustonDuty = e;
       this.Objproduct.Cat_ID = e.Cat_ID;
       if (this.CheckifService) {
-      this.Objproduct.SAC_Code = e.HSN_SAC_Code;
+      this.Objproduct.HSN_NO = e.HSN_NO;
       }
       else {
-        this.Objproduct.HSN_Code = e.HSN_SAC_Code;
+        this.Objproduct.HSN_NO = e.HSN_NO;
       }
       this.Objproduct.Custom_Duty = e.Custom_Duty;
       this.Objproduct.Remarks = e.Remarks;
@@ -203,24 +210,12 @@ TabClick(e) {
   }
   FinancialDetailsData(e) {
     console.log("FinancialDetailsData",e)
-    // this.Objproduct.Can_Purchase = undefined;
-    // this.Objproduct.Billable = undefined;
-    // this.ObjFinancial = undefined;
-   
-    // this.Objproduct.Purchase_Ac_Ledger = undefined;
-   
-    // this.Objproduct.Sales_Ac_Ledger = undefined;
-    // this.Objproduct.Purchase_Return_Ledger_ID = undefined;
-    // this.Objproduct.Sales_Return_Ledger_ID = undefined;
-    // this.Objproduct.Discount_Receive_Ledger_ID = undefined;
-    // this.Objproduct.Discount_Given_Ledger_ID = undefined;
+  
     if (e.Purchase_Ac_Ledger) {
       this.ObjFinancial = e;
       this.Objproduct.Can_Purchase = e.Can_Purchase;
       this.Objproduct.Billable = e.Billable;
-      // this.PurchaseACFlag = e.PurchaseACFlag;
       this.Objproduct.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
-      // this.SalesACFlag = e.SalesACFlag;
       this.Objproduct.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
       this.Objproduct.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
       this.Objproduct.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
@@ -1296,6 +1291,7 @@ HSN_Code:any;
 SAC_Code:any;
 Product_ID :number;
 Sub_Ledger_Cat_IDS:any;
+HSN_NO:any
 }
 class Financial{
   Can_Purchase : boolean;

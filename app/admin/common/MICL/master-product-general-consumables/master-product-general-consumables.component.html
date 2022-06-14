@@ -192,6 +192,22 @@
                                     <option *ngFor="let feature of productFetr" value="{{feature.Product_Feature_ID}}" class="ng-star-inserted">{{feature.Product_Feature_Desc}}</option>
                                 </select>
                               </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Grade</label>
+                                <div class="pull-right">
+                                    <button (click)="ViewGrade()" class="btn btn-primary  createPatient">
+                                    <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                    <button (click)="GradePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus">
+                                       </i> Create
+                                    </button>
+                                </div>
+                                <select class="form-control ng-pristine ng-valid ng-touched"  name="Grade_Description"
+                                #Grade_Description ="ngModel"
+                                [(ngModel)]="Objproduct.Grade_Description">
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let grade of gradeTyp" value="{{grade.Grade_Description}}" class="ng-star-inserted">{{grade.Grade_Description}}</option>
+                                </select>
+                            </div>
                     </div>
                     <div class="form-group"style="padding: 1em;">
                         <h5 style="
@@ -237,23 +253,7 @@
                         ">
                         <i class="fa fa-fw fa-fax">
                         </i> &nbsp;<strong>UOM</strong></h5>
-                            <div class="col-sm-4">
-                                <label class="control-label">Grade</label>
-                                <div class="pull-right">
-                                    <button (click)="ViewGrade()" class="btn btn-primary  createPatient">
-                                    <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
-                                    <button (click)="GradePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus">
-                                       </i> Create
-                                    </button>
-                                </div>
-                                <select class="form-control ng-pristine ng-valid ng-touched"  name="Grade_Description"
-                                #Grade_Description ="ngModel"
-                                [(ngModel)]="Objproduct.Grade_Description">
-                                    <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let grade of gradeTyp" value="{{grade.Grade_Description}}" class="ng-star-inserted">{{grade.Grade_Description}}</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-4">
+                         <div class="col-sm-4">
                                 <label class="control-label">UOM
                                     <sup class="text-danger">*</sup>
                                 </label>
@@ -274,6 +274,7 @@
                                 <option *ngFor="let mfg of mfgData" value="{{mfg.Mfg_Company}}"class="ng-star-inserted">{{mfg.Mfg_Company}}</option>
                             </select>
                            </div>
+                           <div class="col-sm-4"></div>
                     </div>
                     
                     <div class="box-footer">

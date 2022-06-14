@@ -51,10 +51,6 @@ get Edit() {
     // this.getSalesReturn();
     this.getDiscountReceive();
     this.getDiscountGiven();
-
-    // this.ObjFinancial.Purchasable_Product = true;
-    // this.ObjFinancial.Billable_Product = true;
-    // this.EventEmitDefault();
     this.clear()
   }
   async synApiCall(apiData) {
@@ -101,9 +97,10 @@ get Edit() {
         if(!edit){
           this.ObjFinancial.Purchase_Ac_Ledger = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
           this.ObjFinancial.Purchase_Return_Ledger_ID = this.PurchaseData.length ? data[0].Ledger_ID : undefined;
+          this.EventEmitDefault();
         }
       }
-      this.EventEmitDefault();
+      
   }
   async  getSalesledger(edit?){
     this.SalesData=[]; 
@@ -128,10 +125,11 @@ get Edit() {
         if(!edit){
           this.ObjFinancial.Sales_Ac_Ledger = this.SalesData.length ? data[0].Ledger_ID : undefined;
           this.ObjFinancial.Sales_Return_Ledger_ID = this.SalesData.length ? data[0].Ledger_ID : undefined;
+          this.EventEmitDefault();
         }
       }
         
-        this.EventEmitDefault();
+        
      }
      else {
         const obj = {
@@ -155,9 +153,10 @@ get Edit() {
           else {
             this.ObjFinancial.Sales_Ac_Ledger = this.SalesData.length ? data[0].Ledger_ID : undefined;
             this.ObjFinancial.Sales_Return_Ledger_ID = this.SalesData.length ? data[0].Ledger_ID : undefined;
+            this.EventEmitDefault();
           }
           
-          this.EventEmitDefault();
+          
         }
       }
   }
@@ -242,17 +241,19 @@ get Edit() {
           });
           if(!edit){
             this.ObjFinancial.Discount_Given_Ledger_ID = data[0].Ledger_ID;
+            this.EventEmitDefault();
           }
           
-          this.EventEmitDefault();
+          
         }
   }
   EventEmitDefault(){
-  //  this.FinacialDetailsObj.emit(this.ObjFinancial);
+ this.FinacialDetailsObj.emit(this.ObjFinancial);
   }
  async EditFinalcial(arr){
   this.ngxService.start();
     let data = arr;
+    this.ObjFinancial = new Financial();
     const EditData = await data;
     this.ObjFinancial.Can_Purchase = await EditData.Can_Purchase;
     this.ObjFinancial.Billable = await EditData.Billable;
@@ -276,10 +277,10 @@ get Edit() {
         this.ObjFinancial.Sales_Return_Ledger_ID = EditData.Sales_Return_Ledger_ID ?  Number(EditData.Sales_Return_Ledger_ID) : undefined;
         this.ObjFinancial.Sales_Ac_Ledger = EditData.Sales_Ac_Ledger ?  Number(EditData.Sales_Ac_Ledger) : undefined;
         console.log("Billable ObjFinancial",this.ObjFinancial);
-    
-      }
+     }
+     this.EventEmitDefault();
       this.ngxService.stop();
-    }, 2000);
+    }, 3000);
     
     
   }

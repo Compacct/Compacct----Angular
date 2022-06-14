@@ -12,6 +12,9 @@ import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
 import { Console } from 'console';
+import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
+import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
+import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
 
 @Component({
   selector: 'app-harb-master-product-civil',
@@ -31,6 +34,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
   Spinner = false;
   MasterProductCivilFormSubmitted = false;
   ObjMasterProductCivil = new MasterProductCivil();
+  ObjFinancialComponentData = new Financial();
 
   ProductTypeList = [];
   ProductSubTypeList = [];
@@ -103,12 +107,24 @@ export class HarbMasterProductCivilComponent implements OnInit {
   hcode = undefined;
   per = undefined;
   uom = undefined;
-
+  headerData = ""
   makedisabled = false;
   is_Active = false;
   Is_View = false;
   Browseproid = undefined;
   isvisible = undefined;
+
+  LAbelName = 'HSN Code';
+  ObjproductDetails : any;
+  ObjGstandCustonDuty : any;
+  ObjFinancial: any;
+ 
+  @ViewChild("Product", { static: false })
+  ProductDetailsInput: CompacctProductDetailsComponent;
+  @ViewChild("GstAndCustomDuty", { static: false })
+  GstAndCustDutyInput: CompacctgstandcustomdutyComponent;
+  @ViewChild("FinacialDetails", { static: false })
+  FinacialDetailsInput: CompacctFinancialDetailsComponent;
 
  // ObjSearch = new Search();
 
@@ -125,15 +141,21 @@ export class HarbMasterProductCivilComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
     private GetDistinctItems :CompacctGetDistinctService
-  ) { }
+  ) { 
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+     this.headerData = params['header'];
+      console.log ("headerData",this.headerData);
+     })
+  }
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Master Product Civil",
-      Link: " Tender Management -> Master -> Master Product Civil"
+      Header: this.headerData,
+      Link: " Tender Management -> Master -> "+this.headerData
     });
     
-     this.GetProductType();
+    // this.GetProductType();
      //this.GetProductSubType();
      this.GetProductCategory();
      this.GetMOC();
@@ -155,14 +177,71 @@ export class HarbMasterProductCivilComponent implements OnInit {
     // this.TenderSearchForm = false;
      this.ObjMasterProductCivil = new MasterProductCivil();
      this.MasterProductCivilFormSubmitted = false;
-     this.Product_Mfg_Comp_ID = undefined;
+     //this.Product_Mfg_Comp_ID = undefined;
      this.makedisabled = false;
+     this.destroyChild();
      this.GetBrowseList();
      this.PDFViewFlag = false;
      if (this.PDFViewFlag === false) {
       this.fileInput.clear();
     }
   
+  }
+  destroyChild() {
+    if (this.ProductDetailsInput) {
+      this.ProductDetailsInput.clear();
+    }
+    if (this.GstAndCustDutyInput) {
+      this.GstAndCustDutyInput.clear();
+    }
+    if (this.FinacialDetailsInput) {
+      this.FinacialDetailsInput.clear();
+    }
+  }
+  getProDetailsData(e) {
+    console.log(e)
+    this.ObjproductDetails = undefined;
+    //console.log("ObjMasterProductel",this.ObjMasterProductm)
+    console.log(e)
+    if (e.Product_Type_ID) {
+      this.ObjproductDetails = e;
+      this.ObjMasterProductCivil.Product_Type_ID = e.Product_Type_ID;
+      this.ObjMasterProductCivil.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.ObjMasterProductCivil.Product_ID = e.Product_Code;
+      this.ObjMasterProductCivil.Product_Description = e.Product_Description;
+      this.ObjMasterProductCivil.Rack_NO = e.Rack_NO;
+    }
+  }
+  getGstAndCustDutyData(e) {
+    console.log(e)
+    this.ObjGstandCustonDuty = undefined;
+    this.ObjMasterProductCivil.Cat_ID = undefined;
+    this.ObjMasterProductCivil.HSN_Code = undefined;
+    this.ObjMasterProductCivil.Custom_Duty = undefined;
+    this.ObjMasterProductCivil.Remarks = undefined;
+    if (e.Cat_ID) {
+      this.ObjGstandCustonDuty = e;
+      this.ObjMasterProductCivil.Cat_ID = e.Cat_ID;
+      this.ObjMasterProductCivil.HSN_Code = e.HSN_Code;
+      this.ObjMasterProductCivil.Custom_Duty = e.Custom_Duty;
+      this.ObjMasterProductCivil.Remarks = e.Remarks;
+    }
+  }
+  FinancialDetailsData(e) {
+    this.ObjFinancial = undefined;
+    if (e.Purchase_Ac_Ledger) {
+      this.ObjFinancial = e;
+      this.ObjMasterProductCivil.Can_Purchase = e.Can_Purchase;
+      this.ObjMasterProductCivil.Billable = e.Billable;
+      // this.PurchaseACFlag = e.PurchaseACFlag;
+      this.ObjMasterProductCivil.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      // this.SalesACFlag = e.SalesACFlag;
+      this.ObjMasterProductCivil.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.ObjMasterProductCivil.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.ObjMasterProductCivil.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.ObjMasterProductCivil.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.ObjMasterProductCivil.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+    }
   }
   // PRODUCT TYPE
   GetProductType(){
@@ -1021,6 +1100,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
        // }
       } else {
         this.Spinner = false;
+        this.destroyChild();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -1090,6 +1170,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
         else {
       //  if(!this.ProductPDFFile['size']) {
           this.Spinner = false;
+          this.destroyChild();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -1198,8 +1279,12 @@ export class HarbMasterProductCivilComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.editList = data;
        //this.myDate = data[0].Date;
+       this.ObjFinancialComponentData = data[0];
+       this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
+       this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
+       this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
        this.ObjMasterProductCivil.Product_Type_ID = data[0].Product_Type_ID;
-       this.GetProductSubType();
+      // this.GetProductSubType();
        this.ObjMasterProductCivil.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
        this.ObjMasterProductCivil.Cat_ID = data[0].Cat_ID;
        this.ObjMasterProductCivil.Product_Description = data[0].Product_Description;
@@ -1209,10 +1294,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
        this.ObjMasterProductCivil.Grade_ID = data[0].Grade_ID ? data[0].Grade_ID : undefined;
        this.ObjMasterProductCivil.Remarks = data[0].Remarks ? data[0].Remarks : undefined;
        this.ObjMasterProductCivil.HSN_NO = data[0].HSN_NO;
-       this.ObjMasterProductCivil.GST_Percentage = data[0].GST_Percentage;
        this.ObjMasterProductCivil.UOM = data[0].UOM;
-       this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
-      //  this.GetMakedist();
        this.makedisabled = true;
        this.PDFViewFlag = data[0].Product_Image ? true : false;
        this.ProductPDFLink = data[0].Product_Image
@@ -1368,5 +1450,27 @@ class MasterProductCivil{
    UOM:string;
   // Product_Mfg_Comp_ID:any;
    Product_Image:any;
- }
 
+   Product_Code:any;
+   Rack_NO :any;
+   HSN_Code:any;	
+   Custom_Duty:any;
+   Billable:boolean;			
+   Can_Purchase:boolean;
+   Purchase_Ac_Ledger:any;
+   Sales_Ac_Ledger:any;	
+   Purchase_Return_Ledger_ID:number;
+   Discount_Receive_Ledger_ID:number;	
+   Discount_Given_Ledger_ID:number;	
+   Sales_Return_Ledger_ID:number;	
+ }
+ class Financial{
+  Can_Purchase : boolean;
+  Billable : boolean;
+  Purchase_Ac_Ledger:any;
+  Sales_Ac_Ledger:any;
+  Purchase_Return_Ledger_ID:any;
+  Sales_Return_Ledger_ID:any;
+  Discount_Receive_Ledger_ID:any;
+  Discount_Given_Ledger_ID:any;
+}

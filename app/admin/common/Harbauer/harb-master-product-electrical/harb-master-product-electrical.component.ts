@@ -128,7 +128,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   ObjproductDetails : any;
   ObjGstandCustonDuty : any;
   ObjFinancial: any;
-
+  headerData = ""
   makedisabled = false;
 
   is_Active = false;
@@ -159,12 +159,18 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
     private GetDistinctItems :CompacctGetDistinctService
-  ) { }
+  ) { 
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+     this.headerData = params['header'];
+      console.log ("headerData",this.headerData);
+     })
+  }
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Master Product Electrical",
-      Link: " Tender Management -> Master -> Master Product Electrical"
+      Header: this.headerData,
+      Link: " Tender Management -> Master -> "+this.headerData
     });
     
     //  this.GetProductType();
@@ -201,7 +207,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   getProDetailsData(e) {
     console.log("Product Detalis",e)
-    this.ObjMasterProductel = e
+   // this.ObjMasterProductel = e
     if (e.Product_Type_ID) {
       this.ObjproductDetails = e;
       this.ObjMasterProductel.Product_Type_ID = e.Product_Type_ID;
@@ -226,10 +232,38 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       this.ObjMasterProductel.Remarks = e.Remarks;
     }
   }
+  // FinancialDetailsData(e) {
+  //   console.log(e)
+  //   console.log("FinancialDetailsData",e)
+  //   this.ObjMasterProductel = e
+    
+  // }
   FinancialDetailsData(e) {
     console.log(e)
-    console.log("FinancialDetailsData",e)
-    this.ObjMasterProductel = e
+    this.ObjMasterProductel.Can_Purchase = undefined;
+    this.ObjMasterProductel.Billable = undefined;
+    this.ObjFinancial = undefined;
+    // this.PurchaseACFlag = undefined;
+    this.ObjMasterProductel.Purchase_Ac_Ledger = undefined;
+    // this.SalesACFlag = undefined;
+    this.ObjMasterProductel.Sales_Ac_Ledger = undefined;
+    this.ObjMasterProductel.Purchase_Return_Ledger_ID = undefined;
+    this.ObjMasterProductel.Sales_Return_Ledger_ID = undefined;
+    this.ObjMasterProductel.Discount_Receive_Ledger_ID = undefined;
+    this.ObjMasterProductel.Discount_Given_Ledger_ID = undefined;
+    if (e.Purchase_Ac_Ledger) {
+      this.ObjFinancial = e;
+      this.ObjMasterProductel.Can_Purchase = e.Can_Purchase;
+      this.ObjMasterProductel.Billable = e.Billable;
+      // this.PurchaseACFlag = e.PurchaseACFlag;
+      this.ObjMasterProductel.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      // this.SalesACFlag = e.SalesACFlag;
+      this.ObjMasterProductel.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.ObjMasterProductel.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.ObjMasterProductel.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.ObjMasterProductel.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.ObjMasterProductel.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+    }
   }
   clearData() {
      this.Spinner = false;

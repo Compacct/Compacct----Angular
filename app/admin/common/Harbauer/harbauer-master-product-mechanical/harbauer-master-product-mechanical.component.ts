@@ -107,13 +107,13 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   hcode = undefined;
   per = undefined;
   uom = undefined;
-
+  MakeEdit = undefined;
   makedisabled = false;
   is_Active = false;
   Is_View = false;
   Browseproid = undefined;
   isvisible = undefined;
-
+  headerData = ""
 
   LAbelName = 'HSN Code';
   ObjproductDetails : any;
@@ -140,12 +140,18 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
     private GetDistinctItems :CompacctGetDistinctService
-  ) { }
+  ) {
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+     this.headerData = params['header'];
+      console.log ("headerData",this.headerData);
+     })
+   }
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Master Product Mechanical",
-      Link: " Tender Management -> Master -> Master Product Mechanical"
+      Header: this.headerData,
+      Link: " Tender Management -> Master -> "+this.headerData
     });
     
      this.GetProductType();
@@ -171,6 +177,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
      this.ObjMasterProductm = new MasterProductm();
      this.MasterProductmFormSubmitted = false;
      this.Product_Mfg_Comp_ID = undefined;
+     this.MakeEdit = undefined
      this.makedisabled = false;
      this.destroyChild();
      this.GetBrowseList();
@@ -193,9 +200,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   }
   getProDetailsData(e) {
     console.log(e)
-    this.ObjMasterProductm = e
-    //console.log("ObjMasterProductel",this.ObjMasterProductm)
-
+   // this.ObjMasterProductm = e
     if (e.Product_Type_ID) {
       this.ObjproductDetails = e;
       this.ObjMasterProductm.Product_Type_ID = e.Product_Type_ID;
@@ -207,15 +212,11 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   }
   getGstAndCustDutyData(e) {
     console.log(e)
-    this.ObjGstandCustonDuty = undefined;
-    this.ObjMasterProductm.Cat_ID = undefined;
-    this.ObjMasterProductm.HSN_Code = undefined;
-    this.ObjMasterProductm.Custom_Duty = undefined;
-    this.ObjMasterProductm.Remarks = undefined;
+ 
     if (e.Cat_ID) {
       this.ObjGstandCustonDuty = e;
       this.ObjMasterProductm.Cat_ID = e.Cat_ID;
-      this.ObjMasterProductm.HSN_Code = e.HSN_Code;
+      this.ObjMasterProductm.HSN_NO = e.HSN_NO;
       this.ObjMasterProductm.Custom_Duty = e.Custom_Duty;
       this.ObjMasterProductm.Remarks = e.Remarks;
     }
@@ -1061,54 +1062,35 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   //   }
   // }
   SaveMasterProductM(valid){
-    //if(this.Product_Mfg_Comp_ID.length) {
+
       if (this.productid) {
         this.Spinner = true;
         this.MasterProductmFormSubmitted = true;
       if(valid){
       let UpdateArr =[]
-      // this.Product_Mfg_Comp_ID.forEach(item => {
+     
         const Obj = {
             Product_ID : this.productid,
-            Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
-           // Mfg_Company : item.label
+            Product_Mfg_Comp_ID : this.MakeEdit
         }
         UpdateArr.push({...Obj,...this.ObjMasterProductm})
-    // });
-    console.log("Update =" , UpdateArr)
-    // if(valid && this.productid){
-      // const Obj = {
-      //   Product_ID  : this.productid,
-      //   Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
-      // }
-         const obj = {
+    
+         console.log("Update =" , UpdateArr)
+        const obj = {
            "SP_String": "SP_Harbauer_Master_Product_mechanical",
            "Report_Name_String" : "Master_Product_Mech_Update",
            "Json_Param_String": JSON.stringify(UpdateArr)
-       
-         }
+        }
          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
            console.log(data);
            var tempID = data[0].Column1;
            if(data[0].Column1){
             this.upload(data[0].Product_Manufacturing_Group);
-          //   this.compacctToast.clear();
-          //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-          //   this.compacctToast.add({
-          //    key: "compacct-toast",
-          //    severity: "success",
-          //    summary: "Return_ID  " + tempID,
-          //    detail: "Succesfully Updated" //+ mgs
-          //  });
-          //  this.clearData();
-           this.productid = undefined;
+            this.productid = undefined;
            this.tabIndexToView = 0;
            this.items = ["BROWSE", "CREATE"];
-          //  this.buttonname = "Save";
-            // this.testchips =[];
-       
            } else{
-            // this.ngxService.stop();
+          
              this.compacctToast.clear();
              this.compacctToast.add({
                key: "compacct-toast",
@@ -1118,12 +1100,11 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
              });
            }
          })
-       // }
+     
       
       } else {
       this.Spinner = false;
-      this.destroyChild();
-        this.compacctToast.clear();
+      this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "error",
@@ -1132,23 +1113,16 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
           detail: "Error Occured "
         });
       }
-    }
-        else {
+      }
+      else {
       this.Spinner = true;
       this.MasterProductmFormSubmitted = true;
-      // const Obj = {
-      //   Product_Code : this.ObjMachineMaster.Product_Model,
-      //   Product_Description : this.ObjMachineMaster.Product_Description,
-      //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
-      // }
-      if(valid && this.Product_Mfg_Comp_ID.length){
-      // if(this.Product_Mfg_Comp_ID.length) {
-        let tempArr =[]
+       if(valid && this.Product_Mfg_Comp_ID.length){
+         let tempArr =[]
         this.Product_Mfg_Comp_ID.forEach(item => {
           const obj = {
               Product_ID : 0,
               Product_Mfg_Comp_ID : item
-             // Mfg_Company : item.label
           }
         tempArr.push({...obj,...this.ObjMasterProductm})
       });
@@ -1266,6 +1240,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       // this.hcode = masterproducrM.HSN_NO;
       // this.per = masterproducrM.GST_Percentage;
       // this.uom = masterproducrM.UOM;
+
       this.tabIndexToView = 1;
       this.items = ["BROWSE", "UPDATE"];
       this.buttonname = "Update";
@@ -1279,20 +1254,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     //this.ProductionFormSubmitted = false;
     const temobj = {
       Product_ID  : this.productid,
-      // Product_Type_ID : this.protyid,
-      // Product_Sub_Type_ID : this.pstypeid,
-      // Cat_ID : this.pcatid,
-      // Product_Description : this.prodes,
-      // MOC_Description : this.matocid,
-      // Capacity_Size_ID : this.sizeid,
-      // Product_Feature_ID : this.pfetureid,
-      // Grade_ID : this.grdid,
-      // Remarks : this.rmrk,
-      // HSN_NO : this.hcode,
-      // GST_Percentage : this.per,
-      // UOM : this.uom
-
-    }
+     }
     const obj = {
       "SP_String": "SP_Harbauer_Master_Product_mechanical",
       "Report_Name_String": "Get_Master_Product_Mech",
@@ -1300,34 +1262,28 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("mechanical",data);
       this.editList = data;
-      this.ObjMasterProductm = data[0];
-       //this.myDate = data[0].Date;
-       this.ObjFinancialComponentData = data[0];
-       this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
-       this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
+         this.ObjMasterProductm = data[0];
+     //  this.myDate = data[0].Date;
+      this.ObjFinancialComponentData = data[0];
+      //  console.log("ObjFinancialComponentData",this.ObjFinancialComponentData)
+      this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
        this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
-       this.ObjMasterProductm.Product_Type_ID = data[0].Product_Type_ID;
-       this.GetProductSubType();
-       this.ObjMasterProductm.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
-       this.ObjMasterProductm.Cat_ID = data[0].Cat_ID;
-       this.ObjMasterProductm.Product_Description = data[0].Product_Description;
-       this.ObjMasterProductm.MOC_ID = data[0].MOC_ID ? data[0].MOC_ID : undefined;
-       this.ObjMasterProductm.Capacity_Size_ID = data[0].Capacity_Size_ID ? data[0].Capacity_Size_ID : undefined;
-       this.ObjMasterProductm.Product_Feature_ID = data[0].Product_Feature_ID;
-       this.ObjMasterProductm.Grade_ID = data[0].Grade_ID ? data[0].Grade_ID : undefined;
-       this.ObjMasterProductm.Remarks = data[0].Remarks ? data[0].Remarks : undefined;
-       this.ObjMasterProductm.HSN_NO = data[0].HSN_NO;
-       this.ObjMasterProductm.GST_Percentage = data[0].GST_Percentage;
-       this.ObjMasterProductm.UOM = data[0].UOM;
-       this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
-      //  this.GetMakedist();
+      this.GetProductSubType();
+      this.ObjMasterProductm.MOC_ID = data[0].MOC_ID ? data[0].MOC_ID : undefined;
+      this.ObjMasterProductm.Capacity_Size_ID = data[0].Capacity_Size_ID ? data[0].Capacity_Size_ID : undefined;
+      this.ObjMasterProductm.Product_Feature_ID = data[0].Product_Feature_ID;
+      this.ObjMasterProductm.Grade_ID = data[0].Grade_ID ? data[0].Grade_ID : undefined;
+      this.ObjMasterProductm.UOM = data[0].UOM;
+      this.MakeEdit = data[0].Product_Mfg_Comp_ID;
+    //  this.GetMakedist();
        this.makedisabled = true;
        this.PDFViewFlag = data[0].Product_Image ? true : false;
        this.ProductPDFLink = data[0].Product_Image
       ? data[0].Product_Image
       : undefined;
-      console.log("this.editList  ===",this.editList);
+      // console.log("this.editList  ===",this.editList);
   
   })
   }
