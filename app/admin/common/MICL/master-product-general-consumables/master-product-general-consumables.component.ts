@@ -7,6 +7,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-master-product-general-consumables',
@@ -71,7 +72,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   capacityid = undefined;
   Profeatureid = undefined;
   gradeid = undefined;
-  
+  headerData = ""
  
   GstAndCustomFormSubmit = false;
   LAbelName = 'HSN Code';
@@ -93,7 +94,14 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
     public $CompacctAPI: CompacctCommonApi,
-  ) { }
+    private route: ActivatedRoute,
+  ) {
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+     this.headerData = params['header'];
+      console.log ("headerData",this.headerData);
+     })
+   }
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
@@ -110,8 +118,8 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     this.getProductFetr();
     this.getgradeTyp()
     this.header.pushHeader({
-      Header: "Master Product General Consumables",
-      Link: " MICL -> Master-Product-General-Consumables"
+      Header: this.headerData,
+      Link: " MICL -> "+this.headerData
     })
  
   }
@@ -147,7 +155,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       this.ObjproductDetails = e;
       this.Objproduct.Product_Type_ID = e.Product_Type_ID;
       this.Objproduct.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
-      this.Objproduct.Product_Code = e.Product_Code;
+      this.Objproduct.Product_Code = Number(e.Product_Code);
       this.Objproduct.Product_Description = e.Product_Description;
       this.Objproduct.Rack_NO = e.Rack_NO;
     }
@@ -180,19 +188,19 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     // this.Objproduct.Sales_Return_Ledger_ID = undefined;
     // this.Objproduct.Discount_Receive_Ledger_ID = undefined;
     // this.Objproduct.Discount_Given_Ledger_ID = undefined;
-    // if (e.Purchase_Ac_Ledger) {
-    //   this.ObjFinancial = e;
-    //   this.Objproduct.Can_Purchase = e.Can_Purchase;
-    //   this.Objproduct.Billable = e.Billable;
-    //   // this.PurchaseACFlag = e.PurchaseACFlag;
-    //   this.Objproduct.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
-    //   // this.SalesACFlag = e.SalesACFlag;
-    //   this.Objproduct.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
-    //   this.Objproduct.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
-    //   this.Objproduct.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
-    //   this.Objproduct.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
-    //   this.Objproduct.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
-    // }
+    if (e.Purchase_Ac_Ledger) {
+      this.ObjFinancial = e;
+      this.Objproduct.Can_Purchase = e.Can_Purchase;
+      this.Objproduct.Billable = e.Billable;
+      // this.PurchaseACFlag = e.PurchaseACFlag;
+      this.Objproduct.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      // this.SalesACFlag = e.SalesACFlag;
+      this.Objproduct.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.Objproduct.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.Objproduct.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.Objproduct.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.Objproduct.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+    }
   
   }
   //Browse Api Data
@@ -1077,9 +1085,17 @@ class product{
   Grade_Description:any;
   GST_Percentage:any;
   Mfg_Company:any;
-   Rack_NO :any;
-   HSN_Code:any;	
-   Custom_Duty:any;
+  Rack_NO :any;
+  HSN_Code:any;	
+  Custom_Duty:any;
+  Can_Purchase : boolean;
+  Billable : boolean;
+  Purchase_Ac_Ledger:any;
+  Sales_Ac_Ledger:any;
+  Purchase_Return_Ledger_ID:any;
+  Sales_Return_Ledger_ID:any;
+  Discount_Receive_Ledger_ID:any;
+  Discount_Given_Ledger_ID:any;
   
 }
 class Financial{

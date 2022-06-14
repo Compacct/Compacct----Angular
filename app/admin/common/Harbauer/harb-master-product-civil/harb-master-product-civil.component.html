@@ -117,49 +117,33 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="MasterProductCivilForm" #MasterProductCivilForm="ngForm" novalidate>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
-                                            <button (click)="ViewProductType()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="ProTypePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                        </div>
-                                        <select class="form-control" name="producttype" #producttype="ngModel" [(ngModel)]="ObjMasterProductCivil.Product_Type_ID" (change)="GetProductSubType()" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && producttype.errors?.required}" required>
-                                                <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of ProductTypeList" [ngValue]="option.Product_Type_ID">
-                                                {{option.Product_Type}}
-                                                </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Sub Type<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
-                                            <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductCivil.Product_Type_ID"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductCivil.Product_Type_ID"><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                        </div>
-                                        <select class="form-control" name="productsubtype" #productsubtype="ngModel" [(ngModel)]="ObjMasterProductCivil.Product_Sub_Type_ID" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && productsubtype.errors?.required}" required>
-                                                                    <option  [ngValue]="undefined">Select</option>
-                                                                <option *ngFor="let option of ProductSubTypeList" [ngValue]="option.Product_Sub_Type_ID">
-                                                                    {{option.Product_Sub_Type}}
-                                                                    </option>
-                                                            </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">GST Category<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="productcategory" #productcategory="ngModel" [(ngModel)]="ObjMasterProductCivil.Cat_ID" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && productcategory.errors?.required}" required>
-                                                                    <option  [ngValue]="undefined">Select</option>
-                                                                <option *ngFor="let option of ProductCategoryList" [ngValue]="option.Cat_ID">
-                                                                    {{option.Cat_Name}}
-                                                                    </option>
-                                                            </select>
-                                    </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                        padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+                                        <i class="fa fa-fw fa-fax">
+                                        </i> &nbsp;<strong>Product Details :</strong></h5>
+                                        <app-compacct-product-details
+                                        [requirPro]="MasterProductCivilFormSubmitted"
+                                        (ProDetailsObj)="getProDetailsData($event)"
+                                        #Product>
+                                       </app-compacct-product-details>
+                            
                                 </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="prodescription" #prodescription="ngModel" [(ngModel)]="ObjMasterProductCivil.Product_Description" placeholder="Product Description" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && prodescription.errors?.required}"
-                                            required>
-                                    </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Additional Info.</strong></h5> 
                                     <div class="col-sm-4">
                                         <label class="control-label">Material of Cons.</label>
                                         <div class="pull-right">
@@ -186,9 +170,6 @@
                                                     </option>
                                             </select>
                                     </div>
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Product Feature<sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
@@ -202,6 +183,51 @@
                                                     </option>
                                         </select>
                                     </div>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Financial Details:</strong></h5>
+                                    <app-compacct-financial-details
+                                            [requirFinancial]="MasterProductCivilFormSubmitted"
+                                            [Edit]="ObjFinancialComponentData"
+                                            (FinacialDetailsObj)="FinancialDetailsData($event)"
+                                            #FinacialDetails>
+                                    </app-compacct-financial-details>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>TAX & Custom Duty:</strong></h5> 
+                                    <app-compacctgstandcustomduty
+                                    [requirGst]="MasterProductCivilFormSubmitted"
+                                    (GstandCustonDutyObj)="getGstAndCustDutyData($event)"
+                                    #GstAndCustomDuty
+                                    [labelChange]="LAbelName">
+                                    </app-compacctgstandcustomduty>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>UOM:</strong></h5> 
                                     <div class="col-sm-4">
                                         <label class="control-label">Grade</label>
                                         <div class="pull-right">
@@ -217,26 +243,9 @@
                                                       </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Remarks</label>
-                                        <input class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="ObjMasterProductCivil.Remarks" placeholder="Remarks" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && remarks.errors?.required}" >
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">HSN Code<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="hsncode" #hsncode="ngModel" [(ngModel)]="ObjMasterProductCivil.HSN_NO" placeholder="HSN Code" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && hsncode.errors?.required}" required>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">GST Percentage<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="gstper" #gstper="ngModel" [(ngModel)]="ObjMasterProductCivil.GST_Percentage" CompacctDigitonly="true" placeholder="GST %" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && gstper.errors?.required}" required>
-                                    </div>
-                                    <div class="col-sm-4">
                                         <label class="control-label">UOM<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]="ObjMasterProductCivil.UOM" placeholder="UOM" [ngClass]="{'clearance': MasterProductCivilFormSubmitted && uom.errors?.required}" required>
                                     </div>
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label" *ngIf="buttonname === 'Create'">Make (Multiple)<sup class="text-danger">*</sup></label>
                                         <label class="control-label" *ngIf="buttonname != 'Create'">Make <sup class="text-danger">*</sup></label>
@@ -254,7 +263,7 @@
                                                 </option>
                                         </select>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
                                         <label class="control-label">File Upload</label>
                                         <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" url="/Harbauer_Master_Product_mechanical/Upload_Doc">
                                             <!-- <ng-template let-aFile pTemplate='aFile'>
@@ -271,8 +280,7 @@
                                         <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
                                         <!-- <p-fileUpload name="myfile[]" customUpload="true" multiple="multiple" (uploadHandler)="onUpload($event)" accept=""image/*,.csv,.xml,.doc,.docx,.pdf""></p-fileUpload> -->
                                     </div>
-                                </div>
-
+                                </div>          
                                 <div class="box-footer">
                                     <button class="btn btn-primary pull-right" type="button" (click)="SaveMasterProductCivil(MasterProductCivilForm.form.valid)" id="load" [disabled]="Spinner">
                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
