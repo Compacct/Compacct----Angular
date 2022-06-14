@@ -1074,6 +1074,7 @@ class product{
   Product_ID:number; 
   Product_Feature_Desc:any;
   Grade_ID:any;
+  Grade_Description:any;
   GST_Percentage:any;
   Mfg_Company:any;
    Rack_NO :any;
