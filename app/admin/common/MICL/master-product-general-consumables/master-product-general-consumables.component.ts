@@ -79,7 +79,8 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   ObjproductDetails : any;
   ObjGstandCustonDuty : any;
   ObjFinancial: any;
- 
+  UOMData=[]; 
+  UomDataList = [];
   @ViewChild("Product", { static: false })
   ProductDetailsInput: CompacctProductDetailsComponent;
   @ViewChild("GstAndCustomDuty", { static: false })
@@ -116,7 +117,8 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     this.mfgName();
     this.getMaterialCon();
     this.getProductFetr();
-    this.getgradeTyp()
+    this.getgradeTyp();
+    this.getUOM()
     this.header.pushHeader({
       Header: this.headerData,
       Link: " MICL -> "+this.headerData
@@ -1062,6 +1064,25 @@ Active(masterProduct){
      });
    }
    }
+getUOM(){
+this.UOMData=[]; 
+  this.UomDataList = [];
+    const obj = {
+      "SP_String": "SP_Master_Product_New",
+      "Report_Name_String":"Get_Master_UOM_Data",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.UOMData = data;
+    console.log("UOMData==",this.UOMData);
+      this.UOMData.forEach((el : any) => {
+        this.UomDataList.push({
+          label: el.UOM,
+          value: el.UOM
+          
+        });
+      });
+    })
+}
 }
 
 class product{

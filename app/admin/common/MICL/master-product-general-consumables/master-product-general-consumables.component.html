@@ -257,12 +257,26 @@
                                 <label class="control-label">UOM
                                     <sup class="text-danger">*</sup>
                                 </label>
-                                <input class="form-control ng-pristine ng-invalid ng-touched"  placeholder="UOM"  
+                                <!-- <input class="form-control ng-pristine ng-invalid ng-touched"  placeholder="UOM"  
                                 name="UOM"
                                 #UOM ="ngModel"
                                 [(ngModel)]="Objproduct.UOM"
                                 [ngClass]="{'clearance': ProductFormSubmitted && UOM?.errors?.required}" 
-                                required>
+                                required> -->
+                                <p-dropdown 
+                                [options]="UomDataList" 
+                                name="MainUOM"
+                                [(ngModel)]="Objproduct.UOM"
+                                #MainUOM="ngModel" 
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No UOM Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select UOM'" 
+                                [virtualScroll]="true" 
+                                itemSize="30"
+                                [ngClass]="{'clearance': ProductFormSubmitted && MainUOM.errors?.required}"required>
+                                </p-dropdown>
                            </div>
                            <div class="col-sm-4">
                             <label class="control-label">Manufacture Name (Optional)</label>

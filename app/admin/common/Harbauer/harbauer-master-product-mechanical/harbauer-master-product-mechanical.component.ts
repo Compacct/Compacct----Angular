@@ -114,7 +114,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   Browseproid = undefined;
   isvisible = undefined;
   headerData = ""
-
+  UOMData=[]; 
+  UomDataList = [];
   LAbelName = 'HSN Code';
   ObjproductDetails : any;
   ObjGstandCustonDuty : any;
@@ -163,6 +164,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
      this.GetGrade();
      this.GetMake();
      this.GetBrowseList();
+     this.getUOM()
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -1405,7 +1407,25 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       })
       }
   }
-
+  getUOM(){
+    this.UOMData=[]; 
+      this.UomDataList = [];
+        const obj = {
+          "SP_String": "SP_Master_Product_New",
+          "Report_Name_String":"Get_Master_UOM_Data",
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.UOMData = data;
+        console.log("UOMData==",this.UOMData);
+          this.UOMData.forEach((el : any) => {
+            this.UomDataList.push({
+              label: el.UOM,
+              value: el.UOM
+              
+            });
+          });
+        })
+    }
   // onClear(e,file){
   //   for(let k=0;k < this.ProductPDFFile.length;k++){
   //     if(this.ProductPDFFile[k].name === file.name){
