@@ -285,6 +285,7 @@ GetEditMasterTax(Uid){
     this.ObjTax.IGST_Output_Ledger_ID = data[0].IGST_Output_Ledger_ID;
     this.ObjTax.CGST_Output_Ledger_ID = data[0].CGST_Output_Ledger_ID;
     this.ObjTax.SGST_Output_Ledger_ID = data[0].SGST_Output_Ledger_ID;
+    this.ObjTax.GST_Tax_Per = data[0].GST_Tax_Per;
    //this.pass = data[0].Password;
    })
 }
@@ -587,5 +588,6 @@ class Tax{
 	IGST_Output_Ledger_ID:number;		 					
 	CGST_Output_Ledger_ID:number;		 					 
 	SGST_Output_Ledger_ID:number;
+  GST_Tax_Per:any
   
   }

@@ -25,14 +25,28 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="RDBSearchForm" #RDBSearchForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                            <select class="form-control" 
+                                            name="browsecompany" 
+                                            #browsecompany="ngModel" 
+                                            [(ngModel)]="ObjBrowse.Company_ID"
+                                            [ngClass]="{'clearance': RDBSearchFormSubmitted && browsecompany?.errors?.required}"
+                                            required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                                  {{option.Company_Name}}
+                                                </option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-3">
                                         <label class="control-label">Date</label>
                                         <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="col-sm-3">
-                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAllData()" id="load" [disabled]="seachSpinner">
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAllData(RDBSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                    </button>
@@ -126,13 +140,28 @@
                                     <div class="panel-body">
                                         <form name="RDBForm" #RDBForm="ngForm" novalidate>
                                             <div class="form-group">
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-4">
                                                     <label class="control-label">RDB Date<sup class="text-danger">*</sup></label>
-                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="RDB_Date" name="RDB_Date" required></ejs-datepicker>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="RDB_Date" name="RDB_Date" required [enabled]= "!RDBListAdd.length"></ejs-datepicker>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" 
+                                                    name="company" 
+                                                    #company="ngModel" 
+                                                    [(ngModel)]="ObjRdb.Company_ID"
+                                                    [disabled]="RDBListAdd.length"
+                                                    [ngClass]="{'clearance': RDBFormSubmit && LR_No.errors?.required}"
+                                                    required>
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                                          {{option.Company_Name}}
+                                                        </option>
+                                                  </select>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Supplier<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="SupplierList" name="Supplier" [(ngModel)]="ObjRdb.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                    <p-dropdown [options]="SupplierList" name="Supplier" [(ngModel)]="ObjRdb.Sub_Ledger_ID" [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
                                                         itemSize="30" #Supplier="ngModel" [styleClass]="
                                                         RDBFormSubmit && Supplier.errors?.required
                                                               ? 'clearance'
@@ -140,9 +169,11 @@
                                                           " [required]="true" (onChange)="getPoOrder(ObjRdb.Sub_Ledger_ID)">
                                                     </p-dropdown>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="CostList" name="Cost_Center" [(ngModel)]="ObjRdb.Cost_Cen_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                    <p-dropdown [options]="CostList" name="Cost_Center" [(ngModel)]="ObjRdb.Cost_Cen_ID" [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
                                                         itemSize="30" #Cost_Center="ngModel" [styleClass]="
                                                         RDBFormSubmit && Cost_Center.errors?.required
                                                               ? 'clearance'
@@ -152,23 +183,20 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Stack Point<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="StockList" name="Stack_Point" [(ngModel)]="ObjRdb.godown_id" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                    <p-dropdown [options]="StockList" name="Stack_Point" [(ngModel)]="ObjRdb.godown_id" [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
                                                         itemSize="30" #Stack_Point="ngModel" [styleClass]="RDBFormSubmit && Stack_Point.errors?.required ? 'clearance' : '' " 
                                                         [required]="true">
                                                     </p-dropdown>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                               
                                                 <div class="col-sm-2">
                                                     <label class="control-label">SE No<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="SE_NO" #SE_NO="ngModel" [(ngModel)]="ObjRdb.SE_No" placeholder="SE NO" [ngClass]="{'clearance': RDBFormSubmit && SE_NO.errors?.required}" required>
+                                                    <input class="form-control" name="SE_NO" #SE_NO="ngModel" [(ngModel)]="ObjRdb.SE_No" [disabled]="RDBListAdd.length" placeholder="SE NO" [ngClass]="{'clearance': RDBFormSubmit && SE_NO.errors?.required}" required>
                                                  </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">SE Date<sup class="text-danger">*</sup></label>
-                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="SE_Date" name="SE_Date" required></ejs-datepicker>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="SE_Date" name="SE_Date" [enabled]= "!RDBListAdd.length" required></ejs-datepicker>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">PO Number<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="PoOrderList" 
                                                     name="Po_Order" 
@@ -185,72 +213,80 @@
                                                     [styleClass]="RDBFormSubmit && Po_Order.errors?.required ? 'clearance': ''" 
                                                     [required]="true" 
                                                     (onChange)="getProductDetails(ObjRdb.PO_Doc_No)"
+                                                    [disabled]="RDBListAdd.length"
                                                    >
                                                     
                                                     </p-dropdown>
                                                 </div>
-                                               <div class="col-sm-2">
-                                                <label class="control-label">PO Date<sup class="text-danger">*</sup></label>
-                                                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="PO_Doc_Date" name="Po_date" [enabled]= "dateDis" required></ejs-datepicker>
-                                               </div>
-                                               <div class="col-sm-3">
-                                                <label class="control-label">Mode Of Transport<sup class="text-danger">*</sup></label>
-                                                <input class="form-control" name="Transport" #Transport="ngModel" [(ngModel)]="ObjRdb.Mode_Of_transport" placeholder="Mode Of Transport" [ngClass]="{'clearance': RDBFormSubmit && Transport.errors?.required}" required>
-                                            </div>
                                             </div>
                                             <div class="form-group">
+                                                <div class="col-sm-4">
+                                                 <label class="control-label">PO Date<sup class="text-danger">*</sup></label>
+                                                 <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="PO_Doc_Date" name="Po_date" [enabled]= "dateDis" required></ejs-datepicker>
+                                                </div>
+                                               <div class="col-sm-4">
+                                                <label class="control-label">Mode Of Transport<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Transport" #Transport="ngModel" [(ngModel)]="ObjRdb.Mode_Of_transport" [disabled]="RDBListAdd.length" placeholder="Mode Of Transport" [ngClass]="{'clearance': RDBFormSubmit && Transport.errors?.required}" required>
+                                            </div>
                                                <div class="col-sm-2">
                                                     <label class="control-label">LR No. & Date<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="LR_No" #LR_No="ngModel" [(ngModel)]="ObjRdb.LR_No_Date" placeholder="LR No. & Date" [ngClass]="{'clearance': RDBFormSubmit && LR_No.errors?.required}" required>
+                                                    <input class="form-control" name="LR_No" #LR_No="ngModel" [(ngModel)]="ObjRdb.LR_No_Date" [disabled]="RDBListAdd.length" placeholder="LR No. & Date" [ngClass]="{'clearance': RDBFormSubmit && LR_No.errors?.required}" required>
             
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Vehicle No.<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Vehicle_No" #Vehicle_No="ngModel" [(ngModel)]="ObjRdb.Vehicle_No" placeholder="Vehicle No" [ngClass]="{'clearance': RDBFormSubmit && Vehicle_No.errors?.required}" required>
+                                                    <input class="form-control" name="Vehicle_No" #Vehicle_No="ngModel" [(ngModel)]="ObjRdb.Vehicle_No" [disabled]="RDBListAdd.length" placeholder="Vehicle No" [ngClass]="{'clearance': RDBFormSubmit && Vehicle_No.errors?.required}" required>
                                                 </div>
+                                             </div>
+                                       
+                                            <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Product details<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="ProductList" 
-                                                    name="Product_details" [(ngModel)]="ObjRdb.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
+                                                    name="Product_details" [(ngModel)]="ObjRdb1.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
                                                         [virtualScroll]="true" itemSize="30" #Product_details="ngModel" [styleClass]="
                                                         RDBFormSubmit && Product_details.errors?.required? 'clearance': ''" [required]="true"
-                                                        (onChange)="ProductDetailsChange(ObjRdb.Product_ID)">
+                                                        (onChange)="ProductDetailsChange(ObjRdb1.Product_ID)">
                                                     </p-dropdown>
                                                 </div>
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">Unit<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Unit" #Unit="ngModel" [(ngModel)]="ObjRdb.UOM" placeholder="Unit" [ngClass]="{'clearance': RDBFormSubmit && Unit.errors?.required}" required>
+                                                    <input class="form-control" name="Unit" #Unit="ngModel" [(ngModel)]="ObjRdb1.UOM" placeholder="Unit" [ngClass]="{'clearance': RDBFormSubmit && Unit.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">HSN code<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" 
                                                     name="HSN_code"
                                                      #HSN_code="ngModel" 
-                                                     [(ngModel)]="ObjRdb.HSN_Code" 
+                                                     [(ngModel)]="ObjRdb1.HSN_Code" 
                                                      placeholder="HSN code" 
                                                      disabled>
                                                 </div>
+
                                              </div>
                                             <div class="form-group">
+
                                                <div class="col-sm-2">
                                                     <label class="control-label">PO QTY<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" 
                                                     name="PO_QTY" 
                                                     #PO_QTY="ngModel" 
-                                                    [(ngModel)]="ObjRdb.PO_QTY" 
+                                                    [(ngModel)]="ObjRdb1.PO_QTY" 
                                                     placeholder="PO QTY"
                                                     disabled>
                                                 </div>
+                                            </div>
+                                                <div class="form-group">
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Challan Qty<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Challan_Qty" #Challan_Qty="ngModel" [(ngModel)]="ObjRdb.Challan_Qty" placeholder="Challan Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Challan_Qty.errors?.required}" required>
+                                                    <input class="form-control" name="Challan_Qty" #Challan_Qty="ngModel" [(ngModel)]="ObjRdb1.Challan_Qty" placeholder="Challan Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Challan_Qty.errors?.required}" required>
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Received Qty<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Received_Qty" #Received_Qty="ngModel" [(ngModel)]="ObjRdb.Received_Qty" placeholder="Received Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Received_Qty.errors?.required}" required>
+                                                    <input class="form-control" name="Received_Qty" #Received_Qty="ngModel" [(ngModel)]="ObjRdb1.Received_Qty" placeholder="Received Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Received_Qty.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-6">
-                                                    <button class="btn btn-primary pull-left custombutton" (click)="SaveTabCommon(RDBForm.form.valid ,'add')">
+                                                <div class="col-sm-2">
+                                                    <button class="btn btn-primary pull-left custombutton" (click)="Add(RDBForm.form.valid)">
                                                         <span class="glyphicon glyphicon-plus"> </span>Add
                                                         </button>
                                                 </div>
@@ -307,7 +343,7 @@
                                     </div>
                                  </div>
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" (click)="SaveTabCommon(RDBForm2.form.valid , 'save')" id="load" [disabled]="Spinner">
+                                    <button class="btn btn-primary pull-right" (click)="SaveRDB(RDBForm2.form.valid)" id="load" [disabled]="Spinner">
                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                     </button>

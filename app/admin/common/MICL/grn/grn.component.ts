@@ -45,6 +45,9 @@ export class GrnComponent implements OnInit {
   EditList = [];
   doc_no: any;
 
+  disabledflaguom = false;
+  disabledflaghsn = false;
+
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -84,6 +87,9 @@ export class GrnComponent implements OnInit {
      this.Godownlist = [];
      this.POorderlist = [];
      this.ProductDetailslist = [];
+     this.disabledflaguom = false;
+     this.disabledflaghsn = false;
+     this.ObjGRN = new GRN;
    }
    GetSupplier(){
       this.Supplierlist = [];
@@ -160,6 +166,8 @@ export class GrnComponent implements OnInit {
  GetRate(){
 
   console.log(this.ObjGRN.Rate)
+  this.disabledflaguom = false;
+  this.disabledflaghsn = false;
   if(this.ObjGRN.Product_ID) {
     const ctrl = this;
     const RateObj = $.grep(ctrl.ProductDetailslist,function(item: any) {return item.Product_ID == ctrl.ObjGRN.Product_ID})[0];
@@ -167,7 +175,14 @@ export class GrnComponent implements OnInit {
     this.ObjGRN.Rate = RateObj.Rate;
     this.ObjGRN.Product_Details = RateObj.Product_Description;
     this.ObjGRN.GST_Tax_Per = RateObj.GST_Tax_Per;
- 
+    this.ObjGRN.Unit = RateObj.UOM,
+    this.ObjGRN.HSN_Code = RateObj.HSN_Code
+    if(RateObj.UOM) {
+    this.disabledflaguom = true;
+    }
+    if(RateObj.HSN_Code) {
+      this.disabledflaghsn = true;
+      }
    }
 }
  GetPODate(){
@@ -249,6 +264,8 @@ export class GrnComponent implements OnInit {
     this.ObjGRN.Rate = undefined;
     this.ObjGRN.Product_Details = undefined;
     this.ObjGRN.GST_Tax_Per = undefined;
+    this.disabledflaguom = false;
+    this.disabledflaghsn = false;
     //this.localpurchaseFLag = false;
         }
          else {

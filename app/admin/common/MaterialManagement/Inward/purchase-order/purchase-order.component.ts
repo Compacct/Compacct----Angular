@@ -23,6 +23,7 @@ export class PurchaseOrderComponent implements OnInit {
   tabIndexToView = 0;
   buttonname = 'Create';
   Spinner = false;
+  seachSpinner = false;
   items = [];
   menuList = [];
   purchaseFormSubmitted = false;
@@ -43,6 +44,7 @@ export class PurchaseOrderComponent implements OnInit {
   ExpectedDeliverydate = new Date;
   objpurchase : purchase = new purchase();
   objproject : project = new project();
+  ObjBrowse : Browse = new Browse ();
   addPurchaseList = [];
   AcceptanceOrderList = [];
   rate = undefined;
@@ -76,6 +78,13 @@ export class PurchaseOrderComponent implements OnInit {
   projectEditData =[]
   @ViewChild("project", { static: false })
   ProjectInput: CompacctProjectComponent;
+  BackupSearchedlist = [];
+  DistSubledgerName = [];
+  SelectedDistSubledgerName = [];
+  DistCostCentreName = [];
+  SelectedDistCentreName = [];
+  SearchFields = [];
+  SearchFormSubmitted = false;
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -105,13 +114,14 @@ export class PurchaseOrderComponent implements OnInit {
         'Header' : 'Purchase Order',
         'Link' : 'Material Management -> Inward -> Purchase Order'
       });
+      this.objpurchase.Credit_Days = 0;
       this.getsubLedger();
       this.GetCostCenter();
       this.GetCurrency();
       this.GetOrderType();
       this.GetProject();
       this.getProduct();
-      this.getAllData();
+      this.getAllData(true);
       this.getcompany();
      
   } 
@@ -150,6 +160,13 @@ export class PurchaseOrderComponent implements OnInit {
     this.GSTTotal  = 0;
     this.NetTotal  = 0;
     this.disAmtBackUpAMT = 0
+    this.objpurchase.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    this.objpurchase.Billing_To  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.objpurchase.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.objpurchase.Credit_Days = 0;
+    this.objpurchase.Currency_ID = 1;
+    this.objpurchase.Type_ID = 1;
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -172,7 +189,7 @@ export class PurchaseOrderComponent implements OnInit {
           detail: "Succesfully Delete"
         });
         }
-        this.getAllData();
+        this.getAllData(true);
        });
    }
   }
@@ -245,6 +262,7 @@ export class PurchaseOrderComponent implements OnInit {
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.currencyList = data;
+        this.objpurchase.Currency_ID = 1;
       console.log("currencyList",this.currencyList);
     })
   }
@@ -255,6 +273,7 @@ export class PurchaseOrderComponent implements OnInit {
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.OrderTypeList = data;
+        this.objpurchase.Type_ID = 1;
       console.log("OrderTypeList",this.OrderTypeList);
     })
   }
@@ -599,7 +618,7 @@ export class PurchaseOrderComponent implements OnInit {
           if(projectSaveData){
             this.showTost(msg,"Purchase order")
             this.Spinner = false;
-            this.getAllData()
+            this.getAllData(true)
           }
           else {
             this.Spinner = false;
@@ -615,7 +634,7 @@ export class PurchaseOrderComponent implements OnInit {
         else{
           this.Spinner = false;
           this.showTost(msg,"Purchase order")
-          this.getAllData()
+          this.getAllData(true)
         }
       
       if(this.DocNo){
@@ -624,7 +643,7 @@ export class PurchaseOrderComponent implements OnInit {
         this.buttonname = "Create";
       }
       this.clearData();
-      this.getAllData();
+      this.getAllData(true);
       this.clearProject()
       }
       else {
@@ -651,20 +670,88 @@ export class PurchaseOrderComponent implements OnInit {
   }
    }
  }
- getAllData(){
+ getDateRange(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.ObjBrowse.start_date = dateRangeObj[0];
+    this.ObjBrowse.end_date = dateRangeObj[1];
+  }
+  }
+ getAllData(valid){
+  this.SearchFormSubmitted = true;
+  const start = this.ObjBrowse.start_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
+  : this.DateService.dateConvert(new Date());
+const end = this.ObjBrowse.end_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
+  : this.DateService.dateConvert(new Date());
+const tempobj = {
+  From_Date : start,
+  To_Date : end,
+  Company_ID : this.ObjBrowse.Company_ID
+}
+if (valid) {
   const obj = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Purchase_Order_Browse",
+    "Json_Param_String": JSON.stringify([tempobj])
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     this.getAllDataList = data;
+    this.BackupSearchedlist = data;
+    this.GetDistinct();
     if(this.getAllDataList.length){
       this.DynamicHeader = Object.keys(data[0]);
     }
-   
+    this.seachSpinner = false;
+    this.SearchFormSubmitted = false;
     console.log("Get All Data",this.getAllDataList);
   })
+}
  }
+ // DISTINCT & FILTER
+ GetDistinct() {
+  let DSubledgerName = [];
+  let DCostCentreName = [];
+  this.DistSubledgerName =[];
+  this.SelectedDistSubledgerName =[];
+  this.DistCostCentreName =[];
+  this.SelectedDistCentreName =[];
+  this.SearchFields =[];
+  this.getAllDataList.forEach((item) => {
+ if (DSubledgerName.indexOf(item.Sub_Ledger_Name) === -1) {
+  DSubledgerName.push(item.Sub_Ledger_Name);
+ this.DistSubledgerName.push({ label: item.Sub_Ledger_Name, value: item.Sub_Ledger_Name });
+ }
+if (DCostCentreName.indexOf(item.Cost_Cen_Name) === -1) {
+  DCostCentreName.push(item.Cost_Cen_Name);
+  this.DistCostCentreName.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+  }
+});
+   this.BackupSearchedlist = [...this.getAllDataList];
+}
+FilterDist() {
+  let DSubledgerName = [];
+  let DCostCentreName = [];
+  this.SearchFields =[];
+if (this.SelectedDistSubledgerName.length) {
+  this.SearchFields.push('Sub_Ledger_Name');
+  DSubledgerName = this.SelectedDistSubledgerName;
+}
+if (this.SelectedDistCentreName.length) {
+  this.SearchFields.push('Cost_Cen_Name');
+  DCostCentreName = this.SelectedDistCentreName;
+}
+this.getAllDataList = [];
+if (this.SearchFields.length) {
+  let LeadArr = this.BackupSearchedlist.filter(function (e) {
+    return (DSubledgerName.length ? DSubledgerName.includes(e['Sub_Ledger_Name']) : true)
+    && (DCostCentreName.length ? DCostCentreName.includes(e['Cost_Cen_Name']) : true)
+  });
+this.getAllDataList = LeadArr.length ? LeadArr : [];
+} else {
+this.getAllDataList = [...this.BackupSearchedlist] ;
+}
+}
  Edit(col){
   if(col.Doc_No){
     this.DocNo = undefined;
@@ -711,6 +798,18 @@ export class PurchaseOrderComponent implements OnInit {
      })
   }
  }
+ Print(obj) {
+  if (obj.Doc_No) {
+  const objtemp = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Purchase_Order_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    window.open(printlink+"?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  })
+  }
+}
  Delete(col){
   console.log("Delete Col",col);
   if(col.Doc_No){
@@ -773,6 +872,8 @@ getcompany(){
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.companyList = data
    console.log("companyList",this.companyList)
+   this.objpurchase.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+   this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
   })
 }
 getProjectData(e){
@@ -915,4 +1016,13 @@ class project{
     Budget_Group_ID:any
     Budget_Sub_Group_ID:any
     Work_Details_ID:any
+}
+class Browse {
+  Company_ID:any;
+  start_date : Date ;
+  end_date : Date;
+  Cost_Cen_ID : 0;
+  Product_Type_ID : 0;
+
+
 }

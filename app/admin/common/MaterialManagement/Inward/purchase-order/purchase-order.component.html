@@ -25,6 +25,45 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="browsecompany" 
+                                    #browsecompany="ngModel" 
+                                    [(ngModel)]="ObjBrowse.Company_ID"
+                                    [ngClass]="{'clearance': SearchFormSubmitted && browsecompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAllData(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                    </div>
+                                </div>
+                                            <div class="col-sm-2">
+                                                <label class="control-label">Sub Ledger Name <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistSubledgerName" [(ngModel)]="SelectedDistSubledgerName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="subledgername"></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="control-label">Cost Centre Name <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistCostCentreName" [(ngModel)]="SelectedDistCentreName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="costledgername"></p-multiSelect>
+                                            </div>
+                            </div>
+                            </form>
                             <div class="no-padding">
                                 <p-table [value]="getAllDataList"
                                 [paginator]="getAllDataList.length ? true : false"
@@ -66,11 +105,11 @@
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
                                                             </li>
-                                                        <!-- <li>
-                                                            <a (click)="PrintBill(col)">
+                                                        <li>
+                                                            <a (click)="Print(col)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
-                                                        </li> -->
+                                                        </li>
                                                         <li>
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete

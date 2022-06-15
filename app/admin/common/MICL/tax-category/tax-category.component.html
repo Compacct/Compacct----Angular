@@ -48,7 +48,8 @@
                                                 <ng-template pTemplate="header">
                                                     <tr>
                                                         <th style="width:5em">Action</th>
-                                                        <th>GST Category Name</th>
+                                                        <th>Tax Category</th>
+                                                        <th>Tax %</th>
                                                         <th>IGST Input</th>
                                                         <th>CGST Input</th>
                                                         <th>SGST Input</th>
@@ -88,6 +89,7 @@
                                                             </div>
                                                         </td> 
                                                     <td>{{col.Cat_Name ? col.Cat_Name:"-"}}</td>
+                                                    <td>{{col.GST_Tax_Per}}</td>
                                                     <td>{{col.IGST_Input_ledger_Name ? col.IGST_Input_ledger_Name:"-"}}</td>
                                                     <td>{{col.CGST_Input_Ledger_Name ? col.CGST_Input_Ledger_Name:"-"}}</td>
                                                     <td>{{col.SGST_Input_Ledger_Name ? col.SGST_Input_Ledger_Name:"-"}}</td>
@@ -251,6 +253,21 @@
                                                             [ngClass]="{'clearance': TaxFormSubmitted && SGST_Output_Ledger_ID.errors?.required}"required>
                                                             </p-dropdown>
                                                             </div> 
+                                                            <div class="col-sm-2">
+                                                                <label class="control-label">Tax %
+                                                                    <sup class="text-danger">*</sup></label>
+                                                                    <div class="input-group">
+                                                                        <input  class="form-control" placeholder="Tax %" CompacctDigitonly="true"
+                                                                        name="GST_Tax_Per"
+                                                                        #GST_Tax_Per ="ngModel"
+                                                                        [(ngModel)]="ObjTax.GST_Tax_Per"
+                                                                        [ngClass]="{'clearance': TaxFormSubmitted && GST_Tax_Per?.errors?.required}"
+                                                                        required>
+                                                                        <span class="input-group-addon">%</span>
+                                                                    </div>
+                                                              
+
+                                                            </div>
                                         </div>  
                                     </div>
                                 </div>                  
