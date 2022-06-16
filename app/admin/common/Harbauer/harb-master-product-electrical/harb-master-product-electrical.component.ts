@@ -130,7 +130,8 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   ObjFinancial: any;
   headerData = ""
   makedisabled = false;
-
+  UOMData=[]; 
+  UomDataList = [];
   is_Active = false;
   Is_View = false;
   Browseproid = undefined;
@@ -185,6 +186,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
      this.GetGrade();
      this.GetMake();
      this.GetBrowseList();
+     this.getUOM();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -1866,7 +1868,25 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       })
       }
   }
-
+  getUOM(){
+    this.UOMData=[]; 
+      this.UomDataList = [];
+        const obj = {
+          "SP_String": "SP_Master_Product_New",
+          "Report_Name_String":"Get_Master_UOM_Data",
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.UOMData = data;
+        console.log("UOMData==",this.UOMData);
+          this.UOMData.forEach((el : any) => {
+            this.UomDataList.push({
+              label: el.UOM,
+              value: el.UOM
+              
+            });
+          });
+        })
+    }
   // onClear(e,file){
   //   for(let k=0;k < this.ProductPDFFile.length;k++){
   //     if(this.ProductPDFFile[k].name === file.name){
