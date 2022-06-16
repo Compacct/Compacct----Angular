@@ -30,3 +30,9 @@
     border: 0;
     box-shadow: 0 10px 10px -10px #8c8b8b inset;
 }
+.col-sm-3 {
+  position: relative;
+  min-height: 63px;
+  padding-right: 15px;
+  padding-left: 15px;
+}

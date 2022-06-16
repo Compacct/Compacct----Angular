@@ -26,36 +26,17 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
-                            <!-- <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
-                                        <label class="control-label">Transaction Date</label>
-
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
                                         <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
                                         </app-compacct-daterangepicker>
 
                                     </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">From Outlet <sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Bfromoutlet" #Bfromoutlet="ngModel" [attr.disabled]="Bfromoutletdisableflag ? true : null" [(ngModel)]="ObjBrowse.From_Cost_Cen_ID" (change)="getBFromGodown()" [ngClass]="{'clearance':SearchFormSubmitted && Bfromoutlet?.errors?.required}">
-                                                  <option  [ngValue]="undefined">Select</option>
-                                           <option *ngFor = "let option of BFromOutletList" [value] ="option.Cost_Cen_ID">
-                                              {{option.Cost_Cen_Name}}
-                                            </option>
-                                      </select>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">From Stock Point <sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Bfromgodown" #Bfromgodown="ngModel" [disabled]="Bfromstockdisableflag" [(ngModel)]="ObjBrowse.From_Godown_Id" [ngClass]="{'clearance':SearchFormSubmitted && Bfromgodown?.errors?.required}" required>
-                                                      <option  [ngValue]="undefined">Select</option>
-                                                <option *ngFor = "let option of BFromGodownList" [value] ="option.godown_id">
-                                                  {{option.godown_name}}
-                                                </option>
-                                          </select>
-                                    </div>
 
                                     <div class="col-sm-3">
-                                        <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="GetSearchedList(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                        <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="GetBrowseData()" id="load" [disabled]="seachSpinner">
                                 <p-progressSpinner
                                   *ngIf="seachSpinner"
                                   [style]="{ width: '15px', height: '15px' }"
@@ -78,7 +59,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="Searchedlist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Txn_ID","Transfer_To","Date","Amount","Bank_Name","Slip_No"]'>
+                                <p-table [value]="AllData" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["To_Product","Doc_Date","Doc_No","Location","godown_name","From_Product"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -91,11 +72,11 @@
                                         <tr>
                                             <th style="width:5em">Action</th>
                                             <th>Doc No</th>
-                                            <th>Transaction Date</th>
-                                            <th>From Outlet</th>
-                                            <th>To Outlet</th>
-                                            <th>Crate</th>
-                                            <th>Accepted Crate</th>
+                                            <th>Doc Date</th>
+                                            <th>Costcenter Name</th>
+                                            <th>Godown Name</th>
+                                            <th>From Product</th>
+                                            <th>To Product</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-i="rowIndex">
@@ -105,37 +86,38 @@
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                       <i class="fa fa-fw fa-bars"></i>
                                                       <span class="caret"></span>
-                                                  </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li>
+                                                  </button> 
+                                                     <ul class="dropdown-menu">
+                                                        <!-- <li>
                                                             <a (click)="View(col)">
                                                                 <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Crate_IN != col.Accepted_Crate && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.F_Cost_Cen_ID">
+                                                        <li >
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Crate_IN != col.Accepted_Crate && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.To_Cost_Cen_ID">
+                                                        <li >
                                                             <a (click)="AcceptChallan(col)">
                                                                 <i class="fa fa-check"></i> Accepted Crate
                                                             </a>
-                                                        </li>
-                                                        <li *ngIf="col.Accepted_Crate === 0 && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.F_Cost_Cen_ID">
+                                                        </li> -->
+                                                        <li >
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>
                                                         </li>
-                                                    </ul>
+                                                    </ul> 
                                                 </div>
                                             </td>
                                             <td>{{col.Doc_No}}</td>
-                                            <td>{{col.Transaction_Date | date : 'dd/MMM/yyyy'}}</td>
-                                            <td>{{col.F_Cost_Cen_Name}}</td>
-                                            <td>{{col.To_Cost_Cen_Name}}</td>
-                                            <td>{{col.Crate_IN}}</td>
-                                            <td>{{col.Accepted_Crate}}</td>
+                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Location}}</td>
+                                            <td>{{col.godown_name}}</td>
+                                            <td>{{col.From_Product}}</td>
+                                            <td>{{col.To_Product}}</td>
+                                            
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -143,25 +125,24 @@
                                     </ng-template>
                                 </p-table>
 
-                            </div> -->
+                            </div>
 
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="ConversionProForm" #ConversionProForm="ngForm" novalidate>
-                            <div class="col-lg-12">
-                                <div class="panel-group">
-                                    <div class="panel panel-primary">
+                                 <!-- <div class="col-lg-12"> -->
+                                     <!-- <div class="panel-group"> -->
+                                    <!-- <div class="panel panel-primary"> -->
                                         <!-- <div class="panel-heading">Select Outlet</div> -->
-                                        <div class="panel-body">
+                                        <!-- <div class="panel-body"> -->
                                                 <div class="form-group">
                                                     <div class="col-sm-4">
-                                                        <label class="control-label">Date</label>
+                                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
                                                         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='todayDate'></ejs-datepicker>
                                                     </div>
-
                                                     <div class="col-sm-4">
-                                                        <label class="control-label">Cost Cemtre <sup class="text-danger">*</sup></label>
-                                                        <select class="form-control" name="costcentre" #costcentre="ngModel" [attr.disabled]="fromoutletdisableflag ? true : null" [(ngModel)]="ObjConversionpro.Cost_Cen_ID" (change)="GetGodown()" [ngClass]="{'clearance':ConversionProFormSubmitted && costcentre?.errors?.required}">
+                                                        <label class="control-label">Cost Center <sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="costcentre" #costcentre="ngModel" [attr.disabled]="fromoutletdisableflag ? true : null" [(ngModel)]="ObjConversionpro.Cost_Cen_ID" (change)="GetGodown()" [ngClass]="{'clearance':ConversionProFormSubmitted && costcentre?.errors?.required}"required>
                                                                   <option  [ngValue]="undefined">Select</option>
                                                            <option *ngFor = "let option of CostCentreList" [value] ="option.Cost_Cen_ID">
                                                               {{option.Location}}
@@ -170,7 +151,7 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">Godown <sup class="text-danger">*</sup></label>
-                                                        <select class="form-control" name="fromgodown" #fromgodown="ngModel" [(ngModel)]="ObjConversionpro.Godown_Id" [disabled]="fromstockdisableflag" [ngClass]="{'clearance':ConversionProFormSubmitted && fromgodown?.errors?.required}" required>
+                                                        <select class="form-control" name="fromgodown" #fromgodown="ngModel" [(ngModel)]="ObjConversionpro.godown_id" [disabled]="fromstockdisableflag"[ngClass]="{'clearance':ConversionProFormSubmitted && fromgodown?.errors?.required}" required>
                                                                       <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor = "let option of GodownList" [value] ="option.godown_id">
                                                                   {{option.godown_name}}
@@ -178,111 +159,118 @@
                                                           </select>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
+                                
+                                <!-- <div class="col-lg-6">
                                     <div class="panel-group">
                                         <div class="panel panel-primary">
-                                            <div class="panel-body">
+                                            <div class="panel-body"> -->
                                                 <div class="form-group">
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-4">
                                                         <label class="control-label">From Product <sup class="text-danger">*</sup> &nbsp;</label>
                                                         <p-dropdown [options]="FromProductList" name="fromproduct" [(ngModel)]="ObjConversionpro.From_Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                                            [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #fromproduct="ngModel" [required]="true" [ngClass]="{'clearance':ConversionProFormSubmitted && fromproduct?.errors?.required}"
+                                                            [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #fromproduct="ngModel" [required]="true" [ngClass]="{'clearance':ConversionProFormSubmitted && fromproduct?.errors?.required}" (onChange)="GetFromBatch()"
                                                             required>
                                                         </p-dropdown>
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">Batch <sup class="text-danger">*</sup></label>
-                                                        <input class="form-control" name="frombatch" #frombatch="ngModel" [(ngModel)]="ObjConversionpro.From_Batch" [ngClass]="{'clearance':ConversionProFormSubmitted && frombatch?.errors?.required}"
-                                                            required>
+                                                        <select class="form-control" 
+                                                        name="frombatch" 
+                                                        #frombatch="ngModel"
+                                                        [(ngModel)]="ObjConversionpro.From_Batch" 
+                                                        (change)="FromBatch()"
+                                                        [ngClass]="{'clearance':ConversionProFormSubmitted && frombatch?.errors?.required}"required>
+                                                          <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor = "let batch of FromBatchList" [value] ="batch.Batch_No">{{batch.Batch_No}}</option>
+                                                </select>
                                                     </div>
                                                     <div class="col-sm-2">
                                                         <label class="control-label">Qty <sup class="text-danger">*</sup></label>
-                                                        <input class="form-control" name="fromqty" #fromqty="ngModel" [(ngModel)]="ObjConversionpro.From_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':ConversionProFormSubmitted && fromqty?.errors?.required}"
-                                                            required>
+                                                        <input class="form-control" name="fromqty" #fromqty="ngModel" [(ngModel)]="ObjConversionpro.From_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':ConversionProFormSubmitted && fromqty?.errors?.required}"placeholder ="Type Qty"required>
+                                                    </div>
+                                                    <div class="col-sm-2" style=" margin-top: 28px;">
+                                                        <input class="form-control" name="From_UOM" #From_UOM="ngModel" [(ngModel)]="ObjConversionpro.From_UOM"placeholder ="UOM" disabled>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                             <!--                                    
                                 <div class="col-lg-6">
                                     <div class="panel-group">
                                         <div class="panel panel-primary">
-                                            <div class="panel-body">
+                                            <div class="panel-body"> -->
                                                 <div class="form-group">
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-4">
                                                         <label class="control-label">To Product <sup class="text-danger">*</sup> &nbsp;</label>
                                                         <p-dropdown [options]="ToProductList" name="toproduct" [(ngModel)]="ObjConversionpro.To_Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                                            [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #toproduct="ngModel" [required]="true" [ngClass]="{'clearance':ConversionProFormSubmitted && toproduct?.errors?.required}"
+                                                            [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #toproduct="ngModel" [required]="true" [ngClass]="{'clearance':ConversionProFormSubmitted && toproduct?.errors?.required}" (onChange)="GetUOMTo()"
                                                             required>
                                                         </p-dropdown>
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">Batch <sup class="text-danger">*</sup></label>
-                                                        <input class="form-control" name="tobatch" #tobatch="ngModel" [(ngModel)]="ObjConversionpro.To_Batch" [ngClass]="{'clearance':ConversionProFormSubmitted && tobatch?.errors?.required}"
-                                                            required>
+                                                        <input class="form-control" name="tobatch" #tobatch="ngModel" [(ngModel)]="ObjConversionpro.To_Batch" [ngClass]="{'clearance':ConversionProFormSubmitted && tobatch?.errors?.required}"placeholder ="Batch "
+                                                        required>
+                                                           
                                                     </div>
                                                     <div class="col-sm-2">
                                                         <label class="control-label">Qty <sup class="text-danger">*</sup></label>
-                                                        <input class="form-control" name="toqty" #toqty="ngModel" [(ngModel)]="ObjConversionpro.To_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':ConversionProFormSubmitted && toqty?.errors?.required}"
-                                                            required>
+                                                        <input class="form-control" name="toqty" #toqty="ngModel" [(ngModel)]="ObjConversionpro.To_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':ConversionProFormSubmitted && toqty?.errors?.required}"placeholder ="Type Qty"
+                                                        required>
+                                                    </div>
+                                                    <div class="col-sm-2" style=" margin-top: 28px;">
+                                                        <input class="form-control" name="To_UOM" #To_UOM="ngModel" [(ngModel)]="ObjConversionpro.To_UOM"placeholder ="UOM" disabled>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            <!-- </div>
                                         </div>
                                     </div>
-                                </div>
-                        </form>
-                            <div class="panel-group">
-                              <button
-                                type="button"
-                                (click)="AddProduct(ConversionProForm.form.valid)"
-                                 class="btn btn-primary pull-right">
-                                 <span class="glyphicon glyphicon-plus"></span>  Add
-                              </button>
-                            </div>
-                            <br>
-                            <div class="clearfix"></div>
-                            <div class="table-responsive no-padding">
-                              <table class="table table-bordered">
-                                  <thead>
-                                      <tr style="background-color:#4fa1d1;color:white;" >
-                                          <th>From Product</th>
-                                          <th>From Batch </th>
-                                          <th>From Qty</th>
-                                          <th>To Product</th>
-                                          <th>To Batch </th>
-                                          <th>To Qty</th>
-                                          <th>Delete</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                        <tr *ngFor="let obj of AddProducts; let ind = index;" >
-                                          <td>{{obj.From_Product_Description}}</td>
-                                          <td>{{obj.From_Batch ? obj.From_Batch : '-'}}</td>
-                                          <td>{{obj.From_Qty}}</td>
-                                          <td>{{obj.To_Product_Description}}</td>
-                                          <td>{{obj.To_Batch ? obj.To_Batch : '-'}}</td>
-                                          <td>{{obj.To_Qty}}</td>
-                                          <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
-                                          <!-- <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
-                                      </tr>
-                                  </tbody>
-                              </table>
-                          </div>
+                                </div> -->
+                            </form>
+                                  <!--  <div class="panel-group">
+                                    <button
+                                        type="button"
+                                        (click)="AddProduct(ConversionProForm.form.valid)"
+                                        class="btn btn-primary pull-right">
+                                        <span class="glyphicon glyphicon-plus"></span>  Add
+                                    </button>
+                                    </div>
+                                    <br>
+                                    <div class="clearfix"></div>
+                                    <div class="table-responsive no-padding">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr style="background-color:#4fa1d1;color:white;" >
+                                                    <th>From Product</th>
+                                                    <th>From Batch </th>
+                                                    <th>From Qty</th>
+                                                    <th>To Product</th>
+                                                    <th>To Batch </th>
+                                                    <th>To Qty</th>
+                                                    <th>Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr *ngFor="let obj of AddProducts; let ind = index;" >
+                                                    <td>{{obj.From_Product_Description}}</td>
+                                                    <td>{{obj.From_Batch ? obj.From_Batch : '-'}}</td>
+                                                    <td>{{obj.From_Qty}}</td>
+                                                    <td>{{obj.To_Product_Description}}</td>
+                                                    <td>{{obj.To_Batch ? obj.To_Batch : '-'}}</td>
+                                                    <td>{{obj.To_Qty}}</td>
+                                                    <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                     <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> 
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                   </div>
 
                             <div class="row">
                                 <div class="col-sm-8">
                                     <h5><strong></strong></h5>
                                 </div>
-                            </div>
+                            </div>-->
 
                             <div class="box-footer">
-                                <button type="button" class="btn btn-primary pull-right" (click)="SaveConversion()" id="load" [disabled]="Spinner">
+                                <button type="button" class="btn btn-primary pull-right" (click)="SaveConversion(ConversionProForm.form.valid)" id="load" [disabled]="Spinner">
                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
                     </button>

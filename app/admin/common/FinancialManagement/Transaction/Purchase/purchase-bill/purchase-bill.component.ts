@@ -9,6 +9,7 @@ import { CompacctCommonApi } from '../../../../../shared/compacct.services/commo
 import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import { CompacctProjectComponent } from '../../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-purchase-bill',
@@ -44,12 +45,12 @@ export class PurchaseBillComponent implements OnInit {
   PurchaseBillFormSubmitted = false;
   ObjPurChaseBill = new PurChaseBill();
   // ObjGRN : GRN = new GRN ();
-  GRNDate = new Date();
+  // GRNDate = new Date();
   Supplierlist = [];
   CostCenterlist = [];
   Godownlist = [];
   POorderlist = [];
-  PODate : any = new Date();
+  // PODate : any = new Date();
   podatedisabled = true;
   ProductDetailslist = [];
 
@@ -77,6 +78,14 @@ export class PurchaseBillComponent implements OnInit {
   ProjectInput: CompacctProjectComponent;
   CurrencyList = [];
   GodownList = [];
+  PODate : Date;
+  PurOrderList = [];
+  ObjProductInfo = new ProductInfo();
+  ProductInfoSubmitted = false;
+  expiryDate : Date;
+  GRNDate : Date;
+  headerData = ""
+  GRNList = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -91,6 +100,7 @@ export class PurchaseBillComponent implements OnInit {
     ) {
       this.route.queryParams.subscribe(params => {
         console.log(params);
+        this.headerData = params['header'];
         this.openProject = params['proj'];
         this.projectMand = params['mand'];
         this.validatation.projectMand = params['mand']
@@ -98,23 +108,22 @@ export class PurchaseBillComponent implements OnInit {
      }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "REPORT"];
     this.Header.pushHeader({
-      Header: "Purchase Bill",
-      Link: " Financial Management -> Purchase -> Purchase Bill"
+      Header: this.headerData,
+      Link: " Financial Management -> Purchase -> this.headerData"
     });
     this.GetVendor();
     this.GetStateList();
     this.GetCostcenter();
     this.getcompany();
     this.GetCurrency();
-    // this.GetCostCenter();
     // this.GetSearchedlist();
   }
   TabClick(e){
     // console.log(e)
      this.tabIndexToView = e.index;
-     this.items = ["BROWSE", "CREATE"];
+     this.items = ["BROWSE", "CREATE", "REPORT"];
      this.buttonname = "Save";
      this.Spinner = false;
      this.clearData();
@@ -123,7 +132,7 @@ export class PurchaseBillComponent implements OnInit {
      this.productaddSubmit = [];
      this.ObjGRN2 = new GRN2;
      this.GRN2FormSubmitted = false;
-     this.PODate = new Date();
+    //  this.PODate = new Date();
     //  this.podatedisabled = true;
      this.Spinner = false;
      this.Godownlist = [];
@@ -133,13 +142,13 @@ export class PurchaseBillComponent implements OnInit {
    }
    onReject(){}
    clearData(){
-     this.ObjPurChaseBill = new PurChaseBill();
+    //  this.ObjPurChaseBill = new PurChaseBill();
      this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      this.ObjPurChaseBill.Revenue_Cost_Cent_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     //  this.GetCosCenAddress();
      this.DocDate = new Date();
-     this.ObjPurChaseBill.Currency_ID = 1;
      this.GRNnoList = [];
+     this.ObjPurChaseBill.Currency_ID = 1;
    }
    getcompany(){
     const obj = {
@@ -182,8 +191,8 @@ export class PurchaseBillComponent implements OnInit {
     const ctrl = this;
     const vendorObj = $.grep(ctrl.VendorList,function(item: any) {return item.Sub_Ledger_ID == ctrl.ObjPurChaseBill.Sub_Ledger_ID})[0];
     console.log(vendorObj);
-    this.ObjPurChaseBill.Sub_Ledger_Billing_Name = vendorObj.Billing_Name;
-    this.GetGRNnoList();
+    this.ObjPurChaseBill.Sub_Ledger_Billing_Name = vendorObj.Sub_Ledger_Billing_Name;
+    this.GetPurOrderNoList();
    }
    }
    GetChooseAddress(){
@@ -288,42 +297,92 @@ export class PurchaseBillComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("costcenterList  ===",data);
       this.CurrencyList = data;
+      // console.log("CurrencyList===",this.CurrencyList)
       // this.ObjPurChaseBill.Cost_Cen_ID = this.CostCenterList.length === 1 ? this.CostCenterList[0].Cost_Cen_ID : undefined;
       this.ObjPurChaseBill.Currency_ID = 1;
       // this.GetCosCenAddress();
       })
   }
-  GetGRNnoList(){
+  GetPurOrderNoList(){
      const TempObj = {
       //  Req_Date : this.DateService.dateConvert(new Date(this.ReqDate)),
        Sub_Ledger_ID : this.ObjPurChaseBill.Sub_Ledger_ID,
       }
     const obj = {
-     "SP_String": "SP_BL_Txn_Purchase_Bill_From_GRN",
-     "Report_Name_String" : "Get_Purchase_Challan_GRN_Nos",
+     "SP_String": "SP_Purchase_Bill",
+     "Report_Name_String" : "Get_PO_list",
     "Json_Param_String": JSON.stringify([TempObj])
 
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.GRNnoList = data;
-       this.BackupGRNnoList = data;
-    console.log("this.GRNnoList======",this.GRNnoList);
-    this.GetGRNno();
+       if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Pur_Order_No,
+            element['value'] = element.Pur_Order_No
+          });
+          this.PurOrderList = data;
+        } else {
+          this.PurOrderList = [];
+        }
+    // this.GetGRNno();
    })
    }
+   ChangePurchaseOrder(){
+    this.PODate = new Date();
+    // this.podatedisabled = true;
+    if(this.ObjProductInfo.Pur_Order_No) {
+      const ctrl = this;
+      const DateObj = $.grep(ctrl.PurOrderList,function(item: any) {return item.Pur_Order_No == ctrl.ObjProductInfo.Pur_Order_No})[0];
+      console.log(DateObj);
+      // this.ObjGRN1.RDB_Date = new Date(DateObj.RDB_Date);
+      this.PODate = new Date(DateObj.Doc_Date);
+      // this.podatedisabled = false;
+     }
+     else {
+       this.PODate = new Date();
+      //  this.podatedisabled = true;
+     }
+  }
    GetGRNno(){
-     let DGRN = [];
-     this.GRNFilter = [];
-     this.SelectedGRNno = [];
-     this.BackupGRNnoList.forEach((item) => {
-       if (DGRN.indexOf(item.GRN_No) === -1) {
-        DGRN.push(item.GRN_No);
-         this.GRNFilter.push({ label: item.GRN_No + '(' + this.DateService.dateConvert(new Date(item.GRN_Date)) + ')' , value: item.GRN_No });
-         console.log("this.GRNFilter", this.GRNFilter);
-       }
-     });
-     this.BackupGRNnoList = [...this.GRNnoList];
+    const TempObj = {
+      //  Req_Date : this.DateService.dateConvert(new Date(this.ReqDate)),
+       Sub_Ledger_ID : this.ObjPurChaseBill.Sub_Ledger_ID,
+      }
+    const obj = {
+     "SP_String": "SP_Purchase_Bill",
+     "Report_Name_String" : "Get_PO_list",
+    "Json_Param_String": JSON.stringify([TempObj])
+
    }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Pur_Order_No,
+            element['value'] = element.Pur_Order_No
+          });
+          this.GRNList = data;
+        } else {
+          this.GRNList = [];
+        }
+    // this.GetGRNno();
+   })
+   }
+   ChangeGRN(){
+    this.GRNDate = new Date();
+    // this.podatedisabled = true;
+    if(this.ObjProductInfo.GRN_No) {
+      const ctrl = this;
+      const GRNDateObj = $.grep(ctrl.PurOrderList,function(item: any) {return item.GRN_No == ctrl.ObjProductInfo.GRN_No})[0];
+      console.log(GRNDateObj);
+      // this.ObjGRN1.RDB_Date = new Date(DateObj.RDB_Date);
+      this.GRNDate = new Date(GRNDateObj.Doc_Date);
+      // this.podatedisabled = false;
+     }
+     else {
+       this.GRNDate = new Date();
+      //  this.podatedisabled = true;
+     }
+  }
    filterGRNnoList() {
      //console.log("SelectedTimeRange", this.SelectedTimeRange);
      let DGRN = [];
@@ -406,25 +465,26 @@ export class PurchaseBillComponent implements OnInit {
     // }
   
   }
-  DiscChange(obj){
-    if(!obj.Discount_Type){
-      obj.Discount = 0
-    } 
-    else {
-      obj.Discount = undefined;
-    }
-  }
-  AfterDiscCalChange(colobj){
-    if (colobj.Discount) {
-    if(colobj.Discount_Type == "%") {
-      colobj.Discount_Type_Amount = Number((Number(colobj.Total_Amount) * Number(colobj.Discount)) / 100).toFixed(2);
-    }
-    if(colobj.Discount_Type == "AMT") {
-      colobj.Discount_Type_Amount = Number(colobj.Discount);
-    }
-    colobj.Taxable_Amount = Number(Number(colobj.Total_Amount) - Number(colobj.Discount_Type_Amount)).toFixed(2);
-    }
-  }
+  ProductChange(){}
+  // DiscChange(obj){
+  //   if(!obj.Discount_Type){
+  //     obj.Discount = 0
+  //   } 
+  //   else {
+  //     obj.Discount = undefined;
+  //   }
+  // }
+  // AfterDiscCalChange(colobj){
+  //   if (colobj.Discount) {
+  //   if(colobj.Discount_Type == "%") {
+  //     colobj.Discount_Type_Amount = Number((Number(colobj.Total_Amount) * Number(colobj.Discount)) / 100).toFixed(2);
+  //   }
+  //   if(colobj.Discount_Type == "AMT") {
+  //     colobj.Discount_Type_Amount = Number(colobj.Discount);
+  //   }
+  //   colobj.Taxable_Amount = Number(Number(colobj.Total_Amount) - Number(colobj.Discount_Type_Amount)).toFixed(2);
+  //   }
+  // }
   // listofamount(){
   //   this.Amount = undefined;
   //   let count = 0;
@@ -499,6 +559,11 @@ export class PurchaseBillComponent implements OnInit {
     return JSON.parse(JSON.stringify(obj))
   }
    SaveGRN(){}
+   CalculateAmount(){}
+   CalculateTaxandNet(){}
+   DisClear(){}
+   getDis(){}
+   getTaxAble(){}
    
    GetIndentList(){}
 
@@ -578,4 +643,53 @@ class PurChaseBill {
   Doc_No : any;
   start_date : Date ;
   end_date : Date;
+}
+
+class ProductInfo {
+  Pur_Order_No: string;
+  Pur_Order_Date: string;
+  Product_ID: number;
+  Product_Name: string;
+  Product_Specification: string;
+  Batch_Number: string;
+  Serial_No: string;
+  HSN_No: string;
+  No_Of_Bag: number;
+  Gross_Wt: number; // new field
+  Qty: number;
+  UOM: string;
+  Rate: number;
+  MRP = 0;
+  Amount: number;
+  Discount_Type = undefined;
+  Discount = undefined;
+  Discount_AMT = undefined;
+  Taxable_Amount: number;
+  Godown_Id: 0;
+  CESS_Percentage: number;
+  GRN_No: any;
+
+  CGST_Rate: number;
+  CGST_Amount: number;
+  SGST_Rate: number;
+  SGST_Amount: number;
+  IGST_Rate: number;
+  IGST_Amount: number;
+  Total: number;
+
+  Cat_ID: string;
+  Cat_Name: string;
+  godown_id = 0;
+  godown_name: string;
+  Ledger_ID: string;
+  Excise_Tax: string;
+  Excise_Tax_Percentage: string;
+
+  CGST_Input_Ledger_ID: number;
+  SGST_Input_Ledger_Id: number;
+  IGST_Input_Ledger_ID: number;
+  Discount_Ledger_ID: number;
+
+  Product_Expiry: string;
+  Expiry_Date: string;
 }
