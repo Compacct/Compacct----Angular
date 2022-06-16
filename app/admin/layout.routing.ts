@@ -222,6 +222,7 @@ import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledg
 import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
 import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
 import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
+import { FinancialVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-voucher/financial-voucher.component";
 
 
 
@@ -1628,6 +1629,13 @@ data: {
   component: PurchaseBillComponent,
   data: {
     title: 'Purchase Bill'
+}
+},
+{
+  path: 'Financial_Voucher',
+  component: FinancialVoucherComponent,
+  data: {
+    title: 'Financial Voucher'
 }
 },
 

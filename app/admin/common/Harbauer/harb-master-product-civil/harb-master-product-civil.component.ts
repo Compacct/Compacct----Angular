@@ -113,7 +113,8 @@ export class HarbMasterProductCivilComponent implements OnInit {
   Is_View = false;
   Browseproid = undefined;
   isvisible = undefined;
-
+  UOMData=[]; 
+  UomDataList = [];
   LAbelName = 'HSN Code';
   ObjproductDetails : any;
   ObjGstandCustonDuty : any;
@@ -164,6 +165,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
      this.GetGrade();
      this.GetMake();
      this.GetBrowseList();
+     this.getUOM();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -1432,7 +1434,25 @@ export class HarbMasterProductCivilComponent implements OnInit {
   //     }
   //   }
   // }
-
+  getUOM(){
+    this.UOMData=[]; 
+      this.UomDataList = [];
+        const obj = {
+          "SP_String": "SP_Master_Product_New",
+          "Report_Name_String":"Get_Master_UOM_Data",
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.UOMData = data;
+        console.log("UOMData==",this.UOMData);
+          this.UOMData.forEach((el : any) => {
+            this.UomDataList.push({
+              label: el.UOM,
+              value: el.UOM
+              
+            });
+          });
+        })
+    }
 }
 class MasterProductCivil{
    Product_Type_ID:number;

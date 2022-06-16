@@ -229,6 +229,20 @@
                                                     </option>
                                         </select>
                                     </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Grade</label>
+                                        <div class="pull-right">
+                                            <button (click)="ViewGrade()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                            <button (click)="GradePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                        </div>
+
+                                        <select class="form-control" name="grade" #grade="ngModel" [(ngModel)]="ObjMasterProductel.Grade_ID" [ngClass]="{'clearance': MasterProductelFormSubmitted && grade.errors?.required}">
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor="let option of GradeList" [ngValue]="option.Grade_ID">
+                                                              {{option.Grade_Description}}
+                                                              </option>
+                                                      </select>
+                                    </div>
                                 </div>
                                 <div class="form-group"style="padding: 1em;">
                                     <h5 style="
@@ -275,23 +289,26 @@
                                     ">
                                     <i class="fa fa-fw fa-fax">
                                     </i> &nbsp;<strong>UOM</strong></h5> 
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Grade</label>
-                                        <div class="pull-right">
-                                            <button (click)="ViewGrade()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="GradePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                        </div>
-
-                                        <select class="form-control" name="grade" #grade="ngModel" [(ngModel)]="ObjMasterProductel.Grade_ID" [ngClass]="{'clearance': MasterProductelFormSubmitted && grade.errors?.required}">
-                                                              <option  [ngValue]="undefined">Select</option>
-                                                          <option *ngFor="let option of GradeList" [ngValue]="option.Grade_ID">
-                                                              {{option.Grade_Description}}
-                                                              </option>
-                                                      </select>
-                                    </div>
+                                   
                                     <div class="col-sm-4">
                                         <label class="control-label">UOM<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]="ObjMasterProductel.UOM" placeholder="UOM" [ngClass]="{'clearance': MasterProductelFormSubmitted && uom.errors?.required}" required>
+                                        <!-- <input class="form-control" name="uom" #uom="ngModel" 
+                                        [(ngModel)]="ObjMasterProductel.UOM" placeholder="UOM" 
+                                        [ngClass]="{'clearance': MasterProductelFormSubmitted && uom.errors?.required}" required> -->
+                                        <p-dropdown 
+                                        [options]="UomDataList" 
+                                        name="MainUOM"
+                                        [(ngModel)]="ObjMasterProductel.UOM"
+                                        #MainUOM="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No UOM Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select UOM'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        [ngClass]="{'clearance': MasterProductelFormSubmitted && MainUOM.errors?.required}"required>
+                                        </p-dropdown>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label" *ngIf="buttonname === 'Create'">Make (Multiple)<sup class="text-danger">*</sup></label>
@@ -310,6 +327,7 @@
                                                 </option>
                                         </select>
                                     </div>
+                                    <div class="col-sm-4"></div>
                                 </div>     
                                 <div class="form-group">
                                     <div class="col-sm-6" style="margin-left:15px;">

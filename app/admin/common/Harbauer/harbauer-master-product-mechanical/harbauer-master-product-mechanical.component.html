@@ -246,7 +246,23 @@
                                   
                                     <div class="col-sm-4">
                                         <label class="control-label">UOM<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]="ObjMasterProductm.UOM" placeholder="UOM" [ngClass]="{'clearance': MasterProductmFormSubmitted && uom.errors?.required}" required>
+                                        <!-- <input class="form-control" name="uom" #uom="ngModel" 
+                                        [(ngModel)]="ObjMasterProductm.UOM" placeholder="UOM" 
+                                        [ngClass]="{'clearance': MasterProductmFormSubmitted && uom.errors?.required}" required> -->
+                                        <p-dropdown 
+                                            [options]="UomDataList" 
+                                            name="MainUOM"
+                                            [(ngModel)]="ObjMasterProductm.UOM"
+                                            #MainUOM="ngModel" 
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No UOM Found'" 
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select UOM'" 
+                                            [virtualScroll]="true" 
+                                            itemSize="30"
+                                            [ngClass]="{'clearance': MasterProductmFormSubmitted && MainUOM.errors?.required}"required>
+                                            </p-dropdown>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label" *ngIf="buttonname === 'Create'">Make (Multiple)<sup class="text-danger">*</sup></label>

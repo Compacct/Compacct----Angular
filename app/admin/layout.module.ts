@@ -315,6 +315,7 @@ import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.co
 import { CompacctProjectComponent } from './shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
 import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
+import { FinancialVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/financial-voucher/financial-voucher.component';
 
 @NgModule({
   declarations: [
@@ -548,7 +549,8 @@ import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/
     TaxCategoryComponent,
     CompacctProjectComponent,
     K4cConversionOfProductComponent,
-    PurchaseBillComponent
+    PurchaseBillComponent,
+    FinancialVoucherComponent
   ],
   imports: [
     CommonModule,

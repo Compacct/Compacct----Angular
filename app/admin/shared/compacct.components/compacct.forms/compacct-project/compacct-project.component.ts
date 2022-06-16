@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChange
 import { CompacctCommonApi } from "../../../compacct.services/common.api.service";
 import { HttpParams, HttpClient } from "@angular/common/http";
 import { CompacctGlobalApiService } from "../../../compacct.services/compacct.global.api.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 declare var $: any;
 
 @Component({
@@ -29,6 +30,7 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
     private $http: HttpClient,
     private $CompacctAPI: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -47,36 +49,45 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         // console.log(data);
         this.ProjectList = data;
-        this.getGroup(this.objproject.Budget_Group_ID);
-        this.getSubGroup(this.objproject.Budget_Sub_Group_ID)
-        this.getWork(this.objproject.Work_Details_ID)
+        // this.getGroup(this.objproject.Budget_Group_ID);
+        // this.getSubGroup(this.objproject.Budget_Sub_Group_ID)
+        // this.getWork(this.objproject.Work_Details_ID)
         console.log("ProjectList",this.ProjectList);
-        this.EmitOnDataInit()
+        
+      // this.EmitOnDataInit()
       })
     }
   getSite(projectID){
       if(projectID){
+      this.EmitOnDataInit()
       this.SiteList = [];
       this.groupList = [];
       this.subGorupList = [];
       this.workList = [];
-      const obj = {
-        "SP_String": "SP_BL_CRM_TXN_Project_Doc",
-        "Report_Name_String": "Get_Site",
-        "Json_Param_String": JSON.stringify([{Project_ID : Number( projectID)}]) 
-       }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        this.SiteList = data;
-        this.getWork(this.objproject.Work_Details_ID)
-        this.EmitOnDataInit()
-        console.log("SiteList",this.SiteList);
-      })
+      let projectFilter:any = []
+      setTimeout(() => {
+        projectFilter = this.ProjectList.filter((el:any)=> Number(el.Project_ID) === Number(projectID))
+        console.log("projectFilter",projectFilter)
+        const obj = {
+          "SP_String": "SP_Tender_Management_All",
+          "Report_Name_String": "Get_Site_For_Project_Planning",
+          "Json_Param_String": JSON.stringify([{Project_ID : Number(projectID),Tender_Doc_ID : projectFilter[0].Tender_Doc_ID}]) 
+         }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.SiteList = data;
+          this.getWork(this.objproject.Work_Details_ID)
+          
+          console.log("SiteList",this.SiteList);
+        })
+      }, 100);
+       
+   
     }
   
   }
   getGroup(id?){
-    
     if(this.objproject.PROJECT_ID && this.objproject.SITE_ID){
+      this.EmitOnDataInit()
     this.groupList = [];
     this.subGorupList = [];
     this.workList = [];
@@ -86,13 +97,14 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
         "Json_Param_String": JSON.stringify([{Project_ID : Number(this.objproject.PROJECT_ID) , Site_ID : Number(this.objproject.SITE_ID)}]) 
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        // console.log(data);
+         console.log("getGroup",data);
         this.groupList = data;
-        this.objproject.Budget_Group_ID = id ? id : undefined
-        this.getSubGroup(this.objproject.Budget_Sub_Group_ID);
-        this.getWork(this.objproject.Work_Details_ID)
-        this.EmitOnDataInit()
-        console.log("groupList",this.groupList);
+        setTimeout(() => {
+          this.objproject.Budget_Group_ID = id ? id : undefined
+          this.getSubGroup(this.objproject.Budget_Sub_Group_ID);
+          this.getWork(this.objproject.Work_Details_ID)
+        }, 1000);
+       console.log("groupList",this.groupList);
       })
     }
    else {
@@ -104,6 +116,7 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
   }
   getSubGroup(id?){
     if(this.objproject.PROJECT_ID && this.objproject.SITE_ID & this.objproject.Budget_Group_ID){
+      this.EmitOnDataInit()
       this.subGorupList = [];
        const tampObj = {
         Project_ID : Number(this.objproject.PROJECT_ID),
@@ -130,7 +143,7 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
   getWork(id?){
     this.workList = []
     if(this.objproject.PROJECT_ID && this.objproject.SITE_ID){
-     
+      this.EmitOnDataInit()
       const obj = {
         "SP_String": "SP_BL_CRM_TXN_Project_Doc",
         "Report_Name_String": "Get_Work_Details",
@@ -151,6 +164,7 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
  
   clearData(){
     this.projectFromSubmit = false
+    this.fieldDis = false 
     this.objproject = new project()
   }
   ngOnChanges(changes: SimpleChanges) {
@@ -161,19 +175,22 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
 ProjectEdit(editData){
   console.log("edit",editData)
   if(editData){
-    this.objproject =  editData[0]
+    this.ngxService.start();
+   setTimeout(() => {
+    this.objproject = editData[0]
     this.getProject()
-   this.fieldDis = true
-   this.getSite( editData[0].PROJECT_ID)
-   this.getGroup( editData[0].Budget_Group_ID)
-   this.objproject.Budget_Group_ID =  editData[0].Budget_Group_ID
-   this.objproject.Budget_Sub_Group_ID =  editData[0].Budget_Sub_Group_ID
-   this.objproject.Work_Details_ID = editData[0].Work_Details_ID
-   this.getSubGroup( editData[0].Budget_Sub_Group_ID)
-   this.getWork(editData[0].Work_Details_ID)
-   console.log("objproject",this.objproject);
-
-  }
+    this.fieldDis = true
+    this.getSite( editData[0].PROJECT_ID)
+    this.getGroup( editData[0].Budget_Group_ID)
+    this.objproject.Budget_Group_ID =  editData[0].Budget_Group_ID
+    this.objproject.Budget_Sub_Group_ID =  editData[0].Budget_Sub_Group_ID
+    this.objproject.Work_Details_ID = editData[0].Work_Details_ID
+    this.getSubGroup( editData[0].Budget_Sub_Group_ID)
+    this.getWork(editData[0].Work_Details_ID)
+    console.log("objproject",this.objproject);
+    this.ngxService.stop();
+   }, 3000);
+ }
   else {
     this.fieldDis = false
   }
