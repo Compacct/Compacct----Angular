@@ -314,6 +314,7 @@ import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledg
 import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
 import { CompacctProjectComponent } from './shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
+import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
 
 @NgModule({
   declarations: [
@@ -546,7 +547,8 @@ import { K4cConversionOfProductComponent } from './common/MaterialManagement/Out
     SubLedgerComponent,
     TaxCategoryComponent,
     CompacctProjectComponent,
-    K4cConversionOfProductComponent
+    K4cConversionOfProductComponent,
+    PurchaseBillComponent
   ],
   imports: [
     CommonModule,

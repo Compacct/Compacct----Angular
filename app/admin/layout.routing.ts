@@ -221,6 +221,7 @@ import { BSHPLAmeyoCustomerComponent } from "./common/CRM/BSHPLameyo/bshpl-ameyo
 import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledger/sub-ledger.component';
 import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
 import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
+import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
 
 
 
@@ -1620,6 +1621,13 @@ data: {
   component: K4cConversionOfProductComponent,
   data: {
     title: 'Conversion of Product'
+}
+},
+{
+  path: 'Purchase_Bill',
+  component: PurchaseBillComponent,
+  data: {
+    title: 'Purchase Bill'
 }
 },
 
