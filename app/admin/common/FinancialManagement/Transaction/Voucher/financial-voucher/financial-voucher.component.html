@@ -75,7 +75,7 @@
                                         name="company" 
                                         #company="ngModel" 
                                         [(ngModel)]="objjournal.Company_ID"
-                                        [ngClass]="{'clearance': journalFormSubmitted?.required && company?.errors?.required }"
+                                        [ngClass]="{'clearance': journalFormSubmitted && company?.errors?.required }"
                                         required>
                                         <option  [ngValue]="undefined">Select</option>
                                            <option *ngFor = "let option of companyList" [value] ="option.Company_ID">

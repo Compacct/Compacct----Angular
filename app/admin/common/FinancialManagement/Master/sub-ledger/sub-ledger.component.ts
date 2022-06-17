@@ -648,6 +648,11 @@ export class SubLedgerComponent implements OnInit {
         
         this.objSubLedger = data[0];
         console.log("Edit Data",this.objSubLedger);
+        this.objSubLedger.Sales_Man_ID = data[0].Sales_Man_ID ? data[0].Sales_Man_ID : undefined;
+        this.objSubLedger.User_ID = data[0].User_ID ? data[0].User_ID : undefined;
+        this.objSubLedger.Route_ID = data[0].Route_ID ? data[0].Route_ID : undefined;
+        this.objSubLedger.Weekly_Closing = data[0].UseWeekly_Closingr_ID ? data[0].Weekly_Closing : undefined;
+        
         this.objSubLedger.IS_SEZ = Number(this.objSubLedger.IS_SEZ) == 1? "Yes" : "No";
         this.objSubLedger.Is_Sale_Bill_Enabled = this.objSubLedger.Is_Sale_Bill_Enabled === 'Y'? true: false;
         this.objSubLedger.Is_Purchase_Bill_Enabled = this.objSubLedger.Is_Purchase_Bill_Enabled === 'Y'? true : false;
@@ -810,7 +815,7 @@ export class SubLedgerComponent implements OnInit {
   this.objDocument = new Document()
  }
  SaveTab(){
-   if(this.AddressListAdd.length && this.contactListAdd.length && this.DocumentListAdd.length && this.bankListAdd.length && this.SubLedgerID){
+   if((this.AddressListAdd.length || this.contactListAdd.length || this.DocumentListAdd.length || this.bankListAdd.length) && (this.SubLedgerID)){
      this.TabSpinner = true
      this.DocumentListAdd.forEach(el=>{
        el.Upload_Date = this.DateService.dateConvert(el.Upload_Date);
@@ -841,6 +846,11 @@ export class SubLedgerComponent implements OnInit {
      summary: "Sub-ledger Updated Succesfully ",
      detail: "Succesfully Updated"
    });
+   this.TabSpinner = false;
+   this.GetAllData();
+   this.tabIndexToView = 0;
+   this.items = ["BROWSE", "CREATE", "REPORT"];
+   this.Tabbuttonname = "Create";
   }
    else{
     this.TabSpinner = false;
