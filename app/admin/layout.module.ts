@@ -316,6 +316,7 @@ import { CompacctProjectComponent } from './shared/compacct.components/compacct.
 import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
 import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
 import { FinancialVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/financial-voucher/financial-voucher.component';
+import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wastage.component";
 
 @NgModule({
   declarations: [
@@ -550,7 +551,8 @@ import { FinancialVoucherComponent } from './common/FinancialManagement/Transact
     CompacctProjectComponent,
     K4cConversionOfProductComponent,
     PurchaseBillComponent,
-    FinancialVoucherComponent
+    FinancialVoucherComponent,
+    WastageComponent
   ],
   imports: [
     CommonModule,

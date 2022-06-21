@@ -59,7 +59,8 @@ export class ProductsPlaningComponent implements OnInit {
   GroupNameList = [];
   ProductList = [];
   ExsitData = [];
-
+  WorkData = [];
+  SubGroupList = [];
   
   ShowAddedEstimateProductList = [];
   rowGroupMetadata: any;
@@ -136,6 +137,7 @@ export class ProductsPlaningComponent implements OnInit {
     });
     // this.GetPlanedProductList();
     this.GetProjectList();
+    this.GetWorkDetails();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -167,6 +169,22 @@ export class ProductsPlaningComponent implements OnInit {
       console.log("SUB", data);
     })
   }
+  GetWorkDetails() {
+    this.WorkData = [];
+    const obj = {
+      "SP_String": "SP_Tender_Management_All",
+      "Report_Name_String": "Get Work Details",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      data.forEach(el => {
+       // el['work_name'] = el.Project_Description;
+        el['label'] = el.Work_Details;
+        el['value'] = el.Work_Details_ID;
+      });
+      this.WorkData = data;
+     
+    })
+  }
   ProjectChange() {
     this.SiteList = [];
     this.GroupNameList = [];
@@ -177,6 +195,7 @@ export class ProductsPlaningComponent implements OnInit {
     if (this.ObjProdPlan.Tender_Doc_ID) {
       const arr = this.ProjectList.filter(o => o.Tender_Doc_ID == this.ObjProdPlan.Tender_Doc_ID);
       this.ObjProdPlan.work_name = arr.length ? arr[0].label : undefined;
+      console.log("arr",arr)
       this.GetGroupNameList();
       const obj = {
         "SP_String": "SP_Tender_Management_All",
@@ -215,8 +234,8 @@ export class ProductsPlaningComponent implements OnInit {
       const arr = this.ProjectList.filter(o => o.Budget_Group_ID == this.ObjProdPlan.Budget_Group_ID);
       this.ObjProdPlan.Budget_Group_Name = arr.length ? arr[0].Budget_Group_Name : undefined;
       const obj = {
-        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
-        "Report_Name_String": "Get_Group_with_Tender_Doc_ID",
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Get_Budget_Group_Name",
         "Json_Param_String": JSON.stringify([{
           'Tender_Doc_ID': this.ObjProdPlan.Tender_Doc_ID
         }])
@@ -224,21 +243,44 @@ export class ProductsPlaningComponent implements OnInit {
       this.GlobalAPI
         .getData(obj)
         .subscribe((data: any) => {
+          //console.log("Group list==",data)
           data.forEach(el => {
             el['label'] = el.Budget_Group_Name;
             el['value'] = el.Budget_Group_ID;
+            // el.label = el.Budget_Group_Name;
+            // el.value = el.Budget_Group_ID;
           });
           this.GroupNameList = data;
+          
 
         });
     }
   }
   ChangeGroupName() {
+    this.GetSubGroup();
     this.ObjProdPlan.Budget_Group_Name = undefined;
     if (this.ObjProdPlan.Budget_Group_ID) {
       const arr = this.GroupNameList.filter(o => o.Budget_Group_ID == this.ObjProdPlan.Budget_Group_ID);
       this.ObjProdPlan.Budget_Group_Name = arr.length ? arr[0].Budget_Group_Name : undefined;
     }
+  }
+  GetSubGroup() {
+    const obj = {
+      "SP_String": "SP_Tender_Management_All",
+      "Report_Name_String": "Get_Budget_Sub_Group_Name",
+      "Json_Param_String": JSON.stringify([{Budget_Group_ID:this.ObjProdPlan.Budget_Group_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("Sub group==",data)
+      data.forEach(el => {
+       // el['work_name'] = el.Project_Description;
+        el['label'] = el.Budget_Sub_Group_Name;
+        el['value'] = el.Budget_Sub_Group_ID;
+      });
+      this.SubGroupList = data;
+     
+    })
+   
   }
   GetProductList() {
     this.ProductList = [];
@@ -265,19 +307,25 @@ export class ProductsPlaningComponent implements OnInit {
   }
   ChangeProduct() {
     this.ObjProdPlan.Product_Description = undefined;
+    this.ObjProdPlan.UOM =undefined;
     this.ObjProdPlan.Qty = undefined;
     if (this.ObjProdPlan.Product_ID) {
       const arr = this.ProductList.filter(o => o.Product_ID == this.ObjProdPlan.Product_ID);
+      const Arry = this.ProductList.filter(el=> el.Product_ID == this.ObjProdPlan.Product_ID);
+      const price = this.ProductList.filter(El=> El.Product_ID == this.ObjProdPlan.Product_ID);
       this.ObjProdPlan.Product_Description = arr.length ? arr[0].Product_Description : undefined;
+      this.ObjProdPlan.UOM = Arry[0].UOM;
+      this.ObjProdPlan.Rate = price[0].Purchase_Rate;
     }
   }
 
-  validate3 (e) {
-    let input = e.target.value;
-    const reg = /^\d*(\.\d{0,2})?$/;
-  
-    if (!reg.test(input)) {
-      e.preventDefault();
+
+  dataChange(){
+    if(this.ObjProdPlan.Qty && this.ObjProdPlan.Rate){
+    this.ObjProdPlan.Amount = (Number(this.ObjProdPlan.Qty) * Number(this.ObjProdPlan.Rate));
+    }
+    else{
+      this.ObjProdPlan.Amount = 0
     }
   }
   // CHECK EDIT / UPDATE
@@ -354,7 +402,7 @@ export class ProductsPlaningComponent implements OnInit {
       console.log("Site Save Data", temp);
       const obj = {
         "SP_String": "SP_Tender_Management_All",
-        "Report_Name_String": "Add Site",
+        "Report_Name_String": "Add Site For Project Planning",
         "Json_Param_String": JSON.stringify([temp])
       }
       this.GlobalAPI
@@ -393,16 +441,21 @@ export class ProductsPlaningComponent implements OnInit {
     this.PlanedProductFormSubmit = true;
     if (valid) {
       this.PlanedProductFormSubmit = false;
-      this.AddedPlanedProductList.push(this.ObjProdPlan);
-      this.ObjProdPlan.Qty = Number(this.ObjProdPlan.Qty).toFixed(3);
-      const obj = {
-        ...this.ObjProdPlan
-      };
-      this.ObjProdPlan = new ProdPlan();
-      this.ObjProdPlan.Tender_Doc_ID = obj.Tender_Doc_ID;
-      this.ObjProdPlan.work_name = obj.work_name;
-      this.ObjProdPlan.Site_ID = obj.Site_ID;
-      this.ObjProdPlan.Site_Description = obj.Site_Description;
+      const subGroupFilter:any = this.SubGroupList.filter((el:any)=> Number(el.Budget_Sub_Group_ID) === Number(this.ObjProdPlan.Budget_Sub_Group_ID))[0]
+      if(subGroupFilter){
+        this.ObjProdPlan.Budget_Sub_Group_Name  = subGroupFilter.Budget_Sub_Group_Name
+        this.AddedPlanedProductList.push(this.ObjProdPlan);
+        this.ObjProdPlan.Qty = Number(this.ObjProdPlan.Qty).toFixed(3);
+        const obj = {
+          ...this.ObjProdPlan
+        };
+        this.ObjProdPlan = new ProdPlan();
+        this.ObjProdPlan.Tender_Doc_ID = obj.Tender_Doc_ID;
+        this.ObjProdPlan.work_name = obj.work_name;
+        this.ObjProdPlan.Site_ID = obj.Site_ID;
+        this.ObjProdPlan.Site_Description = obj.Site_Description;
+      }
+      
 
     }
 
@@ -416,28 +469,36 @@ export class ProductsPlaningComponent implements OnInit {
     if (this.AddedPlanedProductList.length) {
       this.Spinner = true;
       console.log("save", this.AddedPlanedProductList)
-      const obj = {
-        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
-        "Report_Name_String":  this.buttonname === "CREATE" ? "Project_Planning_Insert" : "Project_Planning_Edit",
-        "Json_Param_String": JSON.stringify(this.AddedPlanedProductList)
-      }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        if (data[0].Column1) {
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Tender Doc ID:" + this.ObjProdPlan.Tender_Doc_ID.toString(),
-            detail: "Succesfully  " + this.buttonname.toLowerCase() +'d.'
-          });
-          this.ObjSearch && this.ObjSearch.Tender_Doc_ID ? this.GetPlanedProductList(true) : null;
-          this.tabIndexToView = 0;
-          this.items = ["BROWSE", "CREATE"];
-          this.buttonname = "CREATE";
+      if(this.ObjProdPlan.Tender_Doc_ID){
+        const project:any = this.ProjectList.filter((el:any)=>Number(el.Tender_Doc_ID) === Number(this.ObjProdPlan.Tender_Doc_ID))[0]
+        this.AddedPlanedProductList.forEach((el:any)=>{
+          el['Project_ID'] = project.Project_ID
+        })
+        const obj = {
+          "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
+          "Report_Name_String":  this.buttonname === "CREATE" ? "Project_Planning_Insert" : "Project_Planning_Edit",
+          "Json_Param_String": JSON.stringify(this.AddedPlanedProductList)
         }
-        this.Spinner = false;
-        this.clearData();
-      })
+        this.GlobalAPI.getData(obj).subscribe((data: any) => {
+          if (data[0].Column1) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "Tender Doc ID:" + this.ObjProdPlan.Tender_Doc_ID.toString(),
+              detail: "Succesfully  " + this.buttonname.toLowerCase() +'d.'
+            });
+            this.ObjSearch && this.ObjSearch.Tender_Doc_ID ? this.GetPlanedProductList(true) : null;
+            this.tabIndexToView = 0;
+            this.items = ["BROWSE", "CREATE"];
+            this.buttonname = "CREATE";
+          }
+          this.Spinner = false;
+          this.clearData();
+        })
+      }
+
+   
     }
   }
   GetPlanedProductList(valid) {
@@ -484,13 +545,30 @@ export class ProductsPlaningComponent implements OnInit {
       this.GlobalAPI.getData(obj1).subscribe((data: any) => {
         console.log(data)
         if(data.length) {
-          this.AddedPlanedProductList = [...data];
+          this.AddedPlanedProductList = [...data,];
           this.ObjProdPlan = new ProdPlan();
           this.ObjProdPlan.Tender_Doc_ID = data[0].Tender_Doc_ID;
           this.ProjectChange();
+          
+          //this.ObjProdPlan.Budget_Group_ID = data[0].Budget_Group_ID
+          //this.ChangeGroupName();
+         // this.ObjProdPlan.Type_Of_Product = data[0].Type_Of_Product;
+         // this.ObjProdPlan.Budget_Sub_Group_ID = data[0].Budget_Sub_Group_ID
+         // this.GetProductList()
+          this.ObjProdPlan.Product_ID = data[0].Product_ID
           this.ObjProdPlan.work_name =  data[0].work_name;
           this.ObjProdPlan.Site_ID =  data[0].Site_ID;
           this.ObjProdPlan.Site_Description =  data[0].Site_Description;
+
+         
+         // this.ObjProdPlan.Work_Details_ID = data[0].Work_Details_ID;
+         // this.ObjProdPlan.Qty = data[0].Qty;
+          //this.ObjProdPlan.UOM = data[0].UOM;
+           //this.ObjProdPlan.Rate = data[0].Rate;
+          //this.ObjProdPlan.Amount = data[0].Amount;
+        
+
+         
         }
       })
     }
@@ -614,4 +692,11 @@ class ProdPlan {
   Product_ID: String;
   Product_Description: string;
   Qty: string;
+
+  UOM:any;
+  Rate:	String;			          	
+  Amount: number;					  	
+  Budget_Sub_Group_ID:string;	
+  Budget_Sub_Group_Name: any;		  		
+  Work_Details_ID:	any;	  		
 }
