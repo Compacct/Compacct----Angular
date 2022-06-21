@@ -63,7 +63,6 @@
                                                         <th>Product Description</th>
                                                         <th>GST Gateory</th>
                                                         <th>HSN Code</th>
-                                                        <th>SAC Code</th>
                                                     </tr>
                                                 </ng-template> 
                                                 <ng-template pTemplate="body" let-col>
@@ -103,8 +102,7 @@
                                                     <td>{{col.Product_Description ? col.Product_Description:"-"}}</td>
                                                     <td>{{col.GST_Tax_Per ? col.GST_Tax_Per:"-"}}</td>
                                                     <td>{{col.HSN_Code ? col.HSN_Code : '-'}}</td>
-                                                    <td>{{col.SAC_Code ? col.SAC_Code : '-'}}</td>
-                                                    </tr>
+                                                   </tr>
                                                 </ng-template>
                                                 <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->
                                             </p-table>

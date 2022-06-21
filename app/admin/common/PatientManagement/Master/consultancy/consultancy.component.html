@@ -46,7 +46,9 @@
                                                      [paginator]="searchBagProcessList.length ? true : false" [rows]="10" [rowHover]="true"
                                                      [autoLayout]="true" sortMode="multiple"
                                                      [rowsPerPageOptions]="[10,20,30]"
-                                                     [rowHover]="true">
+                                                     [rowHover]="true"
+                                                     #dt
+                                                     [globalFilterFields]='["Consultancy_Type","Chargeable","Consultancy_Descr","Duration","Price"] '>
                                                        <ng-template pTemplate="caption">
                                                            <div class="row">
                                                                 <div class="col-sm-3 pull-right" style="text-align: right">

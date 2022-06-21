@@ -87,7 +87,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeader">{{option.replace('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replace('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -119,7 +119,7 @@
                                                 </div>
                                             </td>
                                             <ng-container *ngFor="let option of DynamicHeader">
-                                                <td>{{col[option]}}</td>
+                                                <td nowrap="nowrap">{{col[option]}}</td>
                                             </ng-container>
                                             
                                         </tr>
@@ -272,7 +272,8 @@
                                     #Billing_To="ngModel" 
                                     [(ngModel)]="objpurchase.Billing_To"
                                     [ngClass]="{'clearance': validatation?.required && Billing_To?.errors?.required }"
-                                    required>
+                                    required
+                                    [disabled]="userType != 'A'">
                                     <option  [ngValue]="undefined">Select</option>
                                        <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
                                           {{option.Cost_Cen_Name}}
@@ -364,6 +365,22 @@
                                <form name="purChaseAddForm" #purChaseAddForm="ngForm" novalidate>
                                     <div class="form-group">
                                         <div class="col-sm-4">
+                                            <label class="control-label">Requisition<sup class="text-danger">*</sup></label>
+                                            <select class="form-control" 
+                                            name="Requisition" 
+                                            #Requisition="ngModel" 
+                                            [(ngModel)]="objaddPurchacse.Req_No"
+                                            (change)="getProduct()"
+                                            [ngClass]="{'clearance': purChaseAddFormSubmit && Requisition?.errors?.required }"
+                                            required
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor = "let option of Requlist" [value] ="option.Req_No">
+                                                {{option.Req_No}}
+                                              </option>
+                                          </select>
+                                       </div>
+                                        <div class="col-sm-4">
                                             <label class="control-label">Product Details<sup class="text-danger">*</sup></label>
                                             <p-dropdown 
                                             [options]="productList" 
@@ -375,7 +392,7 @@
                                             filterBy="label,value.name" 
                                             [resetFilterOnHide]="true"
                                             [placeholder]="'Product'" 
-                                            [virtualScroll]="true" 
+                                            [virtualScroll]="true"  
                                             itemSize="30" 
                                             #Product_ID="ngModel"
                                             (onChange)="GetProductSpecification()"
@@ -392,20 +409,7 @@
                                             placeholder="Product Specification"
                                             [(ngModel)]="objaddPurchacse.Product_Spec"></textarea>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Acceptance of Order</label>
-                                            <select class="form-control" 
-                                            name="AO_No" 
-                                            #AO_No="ngModel" 
-                                            [(ngModel)]="objaddPurchacse.AO_No"
-                                            >
-                                            <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor = "let option of Aolist" [value] ="option.Doc_No">
-                                                {{option.DOC_Text}}
-                                              </option>
-                                          </select>
-                                       </div>
-                                    </div>
+                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-3">
                                             <label class="control-label">Expected Delivery<sup class="text-danger">*</sup></label>
@@ -436,7 +440,7 @@
                                            disabled>
                                         </div>
                                         <div class="col-sm-2">
-                                            <label class="control-label">Rate<sup class="text-danger"></sup></label>
+                                            <label class="control-label">Rate<sup class="text-danger">*</sup></label>
                                             <input type="text"
                                             class="form-control"
                                             name="Rate"
@@ -445,6 +449,8 @@
                                             placeholder="Rate"
                                             CompacctDigitonly="true"
                                             (ngModelChange)="getGrsAmt()"
+                                            [ngClass]="{'clearance': purChaseAddFormSubmit && Rate?.errors?.required }"
+                                            required
                                             [disabled] = 'disable'>
                                         </div>
                                         <div class="col-sm-2">
@@ -589,6 +595,7 @@
                                         <thead>
                                             <tr style="background-color:#3c8dbc;color:white;">
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Sl. No.</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Requisition</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Product Details</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Product Spec</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Qty</th>
@@ -617,6 +624,7 @@
                                         <tbody>
                                             <tr *ngFor='let col of addPurchaseList let i = index' >
                                                 <td>{{i + 1}}</td>
+                                                <td>{{col.Req_No ? col.Req_No : '-'}}</td>
                                                 <td>{{col.Product_Name ? col.Product_Name : '-'}}</td>
                                                 <td>{{col.Product_Spec}}</td>
                                                 <td>{{col.Qty}}</td>
@@ -725,7 +733,7 @@
                                 margin-top: 15px;
                                 ">
                                 <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Certifivates :</strong>
+                                </i> &nbsp;<strong>Certificates :</strong>
                                </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Certifivates"
@@ -744,7 +752,7 @@
                                 margin-top: 15px;
                                 ">
                                 <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Installation Commissionning :</strong>
+                                </i> &nbsp;<strong>Installation & Commissioning:</strong>
                                </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Installation_Commissionning"

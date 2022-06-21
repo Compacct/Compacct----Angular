@@ -44,7 +44,7 @@ export class GrnComponent implements OnInit {
   Searchedlist = [];
   EditList = [];
   doc_no: any;
-
+  SENo:string = "-"
   disabledflaguom = false;
   disabledflaghsn = false;
 
@@ -90,6 +90,7 @@ export class GrnComponent implements OnInit {
      this.disabledflaguom = false;
      this.disabledflaghsn = false;
      this.ObjGRN = new GRN;
+     this.SENo = "";
    }
    GetSupplier(){
       this.Supplierlist = [];
@@ -147,6 +148,7 @@ export class GrnComponent implements OnInit {
     this.ObjGRN.Rate = undefined;
     this.ObjGRN.Product_Details = undefined;
     this.ObjGRN.GST_Tax_Per = undefined;
+    this.SENo = "-"
     this.ObjGRN = new GRN();
     const postobj = {
       Doc_No : this.ObjGRN1.RDB_No
@@ -160,6 +162,14 @@ export class GrnComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.ProductDetailslist = data;
      console.log("POorderlist======",this.ProductDetailslist);
+     this.ObjGRN1.SE_No_Date = new Date(data[0].SE_Date);
+     this.ObjGRN1.Mode_Of_transport = data[0].Mode_Of_transport;
+     this.ObjGRN1.LR_No_Date = data[0].LR_No_Date;
+     this.ObjGRN1.Vehicle_No = data[0].Vehicle_No;
+     this.ObjGRN.Challan_Qty = data[0].Challan_Qty;
+     this.ObjGRN.Received_Qty = data[0].Received_Qty;
+     this.SENo = data[0].SE_No+" & "
+
    });
    this.GetPODate();
  }
@@ -385,6 +395,7 @@ export class GrnComponent implements OnInit {
     })
     }
     else{
+      this.ngxService.stop();
       this.Spinner = false;
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -540,6 +551,10 @@ export class GrnComponent implements OnInit {
   onReject(){
    this.compacctToast.clear("c");
   }
+  getDateFormat(dateValue:any){
+    
+   return  dateValue ? this.DateService.dateConvert(dateValue) : "-"
+  }
   //  Order(pro_id){
     //  //this.clearData();
     // if(pro_id.Product_ID){
@@ -601,7 +616,7 @@ class GRN1 {
   Cost_Cen_ID : any;
   godown_id : any;
   RDB_No_Date : any;
-  SE_No_Date : any;
+  SE_No_Date : any ;
   RDB_No : any;
   RDB_Date : any;
   Mode_Of_transport : any;

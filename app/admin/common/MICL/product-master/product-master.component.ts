@@ -93,6 +93,9 @@ export class ProductMasterComponent implements OnInit {
   GstAndCustomFormSubmit = false;
   ObjproductDetails : any;
   ObjFinancial: any;
+  objCheckFinamcial:any = {};
+  objGst:any = {};
+  objProductrequ:any = {};
   hsnSac = "HSN"
   @ViewChild("Product", { static: false })
   ProductDetailsInput: CompacctProductDetailsComponent;
@@ -185,6 +188,9 @@ TabClick(e) {
       this.Objproduct.Product_Code = e.Product_Code;
       this.Objproduct.Product_Description = e.Product_Description;
       this.Objproduct.Rack_NO = e.Rack_NO;
+      this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
+      this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.objProductrequ.Product_Description = e.Product_Description;
     }
     console.log("Product Detalis In master",this.Objproduct)
   }
@@ -206,6 +212,9 @@ TabClick(e) {
       }
       this.Objproduct.Custom_Duty = e.Custom_Duty;
       this.Objproduct.Remarks = e.Remarks;
+      this.Objproduct.RCM_Per = Number(e.RCM_Per)
+      this.objGst.Cat_ID = e.Cat_ID;
+      this.objGst.HSN_NO = e.HSN_NO;
     }
   }
   FinancialDetailsData(e) {
@@ -221,6 +230,20 @@ TabClick(e) {
       this.Objproduct.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
       this.Objproduct.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
       this.Objproduct.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+      this.Objproduct.Input_RCM_Ledger_ID = e.Input_RCM_Ledger_ID;
+      this.Objproduct.Output_RCM_Ledger_ID = e.Output_RCM_Ledger_ID;
+      this.Objproduct.Input_CGST_RCM_Ledger_ID = e.Input_CGST_RCM_Ledger_ID;	
+      this.Objproduct.Input_SGST_RCM_Ledger_ID = e.Input_SGST_RCM_Ledger_ID;
+      this.Objproduct.Input_IGST_RCM_Ledger_ID = e.Input_IGST_RCM_Ledger_ID;
+      this.Objproduct.Output_CGST_RCM_Ledger_ID = e.Output_CGST_RCM_Ledger_ID;
+      this.Objproduct.Output_SGST_RCM_Ledger_ID = e.Output_SGST_RCM_Ledger_ID;
+      this.Objproduct.Output_IGST_RCM_Ledger_ID = e.Output_IGST_RCM_Ledger_ID;
+      this.objCheckFinamcial.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      this.objCheckFinamcial.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.objCheckFinamcial.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.objCheckFinamcial.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.objCheckFinamcial.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.objCheckFinamcial.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
     }
   
   }
@@ -315,6 +338,38 @@ CreateMaterialType(valid){
        })
      
       }
+}
+checkrequ(financial?,Gst?,product?){
+  let falg = false
+  if(financial){
+    let getArrValue = Object.values(financial);
+    if(getArrValue.length === 6){
+      falg = true
+    }
+    else {
+      falg = false
+    }
+
+  }
+ if(Gst){
+  let getArrValue = Object.values(Gst);
+  if(getArrValue.length === 2 && this.objGst.HSN_NO.length === 6){
+    falg = true
+  }
+  else {
+    falg = false
+  }
+ }
+ if(product){
+  let getArrValue = Object.values(product);
+  if(getArrValue.length === 3){
+    falg = true
+  }
+  else {
+    falg = false
+  }
+ }
+return falg
 }
 ViewMaterialType (){
   this.MaterialData = [];
@@ -612,7 +667,7 @@ getUOM(){
        this.UOMData.forEach((el : any) => {
          this.UomDataList.push({
            label: el.UOM,
-           value: el.UOM_Id
+           value: el.UOM
            
          });
        });
@@ -631,7 +686,7 @@ getAllUOM(){
        this.AllUOMData.forEach((el : any) => {
          this.AllUomDataList.push({
            label: el.UOM,
-           value: el.UOM_Id
+           value: el.UOM
            
          });
        });
@@ -640,8 +695,8 @@ getAllUOM(){
 ChangeUom(){
   this.Objproduct.Alt_UOM = undefined;
   if(this.Objproduct.UOM){
-    var uomname = this.AllUOMData.filter(item => item.UOM_Id === this.Objproduct.UOM)
-  this.Objproduct.Alt_UOM = uomname[0].UOM_Id ;
+    var uomname:any = this.AllUOMData.filter((item :any) => item.UOM === this.Objproduct.UOM)
+  this.Objproduct.Alt_UOM = uomname[0].UOM ;
   }
   else 
   {
@@ -881,7 +936,7 @@ saveData(valid:any){
   this.MaterialFormSubmit = true;
   // console.log("this.Objproduct",this.Objproduct)
   // this.destroyChild();
-  if(valid){
+  if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
     console.log("buttonname==",this.buttonname);
     
     // var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
@@ -1291,7 +1346,16 @@ HSN_Code:any;
 SAC_Code:any;
 Product_ID :number;
 Sub_Ledger_Cat_IDS:any;
-HSN_NO:any
+HSN_NO:any;
+Input_RCM_Ledger_ID:any;
+Output_RCM_Ledger_ID:any;
+RCM_Per:any;
+Input_CGST_RCM_Ledger_ID:any;	
+Input_SGST_RCM_Ledger_ID:any;
+Input_IGST_RCM_Ledger_ID:any;
+Output_CGST_RCM_Ledger_ID:any;
+Output_SGST_RCM_Ledger_ID:any;
+Output_IGST_RCM_Ledger_ID:any;
 }
 class Financial{
   Can_Purchase : boolean;
@@ -1302,4 +1366,13 @@ class Financial{
   Sales_Return_Ledger_ID:any;
   Discount_Receive_Ledger_ID:any;
   Discount_Given_Ledger_ID:any;
+  Input_RCM_Ledger_ID:any;
+  Output_RCM_Ledger_ID:any;
+  Input_CGST_RCM_Ledger_ID:any;	
+  Input_SGST_RCM_Ledger_ID:any;
+  Input_IGST_RCM_Ledger_ID:any;
+  Output_CGST_RCM_Ledger_ID:any;
+  Output_SGST_RCM_Ledger_ID:any;
+  Output_IGST_RCM_Ledger_ID:any;
+ 
 }

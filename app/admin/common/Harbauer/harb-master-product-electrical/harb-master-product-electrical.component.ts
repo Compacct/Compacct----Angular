@@ -232,6 +232,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       this.ObjMasterProductel.HSN_Code = e.HSN_Code;
       this.ObjMasterProductel.Custom_Duty = e.Custom_Duty;
       this.ObjMasterProductel.Remarks = e.Remarks;
+      this.ObjMasterProductel.RCM_Per = Number(e.RCM_Per)
     }
   }
   // FinancialDetailsData(e) {
@@ -265,6 +266,14 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       this.ObjMasterProductel.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
       this.ObjMasterProductel.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
       this.ObjMasterProductel.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+      this.ObjMasterProductel.Input_RCM_Ledger_ID = e.Input_RCM_Ledger_ID;
+      this.ObjMasterProductel.Output_RCM_Ledger_ID = e.Output_RCM_Ledger_ID;
+      this.ObjMasterProductel.Input_CGST_RCM_Ledger_ID = e.Input_CGST_RCM_Ledger_ID;	
+      this.ObjMasterProductel.Input_SGST_RCM_Ledger_ID = e.Input_SGST_RCM_Ledger_ID;
+      this.ObjMasterProductel.Input_IGST_RCM_Ledger_ID = e.Input_IGST_RCM_Ledger_ID;
+      this.ObjMasterProductel.Output_CGST_RCM_Ledger_ID = e.Output_CGST_RCM_Ledger_ID;
+      this.ObjMasterProductel.Output_SGST_RCM_Ledger_ID = e.Output_SGST_RCM_Ledger_ID;
+      this.ObjMasterProductel.Output_IGST_RCM_Ledger_ID = e.Output_IGST_RCM_Ledger_ID;
     }
   }
   clearData() {
@@ -1470,7 +1479,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
         this.Spinner = true;
         this.MasterProductelFormSubmitted = true;
       if(valid) {
-      let UpdateArr =[]
+      let UpdateArr:any =[]
       // this.Product_Mfg_Comp_ID.forEach(item => {
         const Obj = {
             Product_ID : this.productid,
@@ -1931,6 +1940,15 @@ class MasterProductel{
    Discount_Receive_Ledger_ID:number;	
    Discount_Given_Ledger_ID:number;	
    Sales_Return_Ledger_ID:number;	
+   RCM_Per:any;
+   Input_RCM_Ledger_ID:any;
+   Output_RCM_Ledger_ID:any;
+   Input_CGST_RCM_Ledger_ID:any;	
+   Input_SGST_RCM_Ledger_ID:any;
+   Input_IGST_RCM_Ledger_ID:any;
+   Output_CGST_RCM_Ledger_ID:any;
+   Output_SGST_RCM_Ledger_ID:any;
+   Output_IGST_RCM_Ledger_ID:any;
  }
  class Financial{
   Can_Purchase : boolean;
@@ -1941,6 +1959,14 @@ class MasterProductel{
   Sales_Return_Ledger_ID:any;
   Discount_Receive_Ledger_ID:any;
   Discount_Given_Ledger_ID:any;
+  Input_RCM_Ledger_ID:any;
+  Output_RCM_Ledger_ID:any;
+  Input_CGST_RCM_Ledger_ID:any;	
+  Input_SGST_RCM_Ledger_ID:any;
+  Input_IGST_RCM_Ledger_ID:any;
+  Output_CGST_RCM_Ledger_ID:any;
+  Output_SGST_RCM_Ledger_ID:any;
+  Output_IGST_RCM_Ledger_ID:any;
 }
 class product{
   Product_Type_ID	:number;	

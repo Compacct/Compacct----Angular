@@ -106,6 +106,7 @@ export class RdbComponent implements OnInit {
     this.RDB_Date = new Date();
     this.SE_Date = new Date();
     this.PO_Doc_Date = new Date();
+    this.ObjRdb1 = new RDB1()
     this.seachSpinner = false;
     this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
@@ -430,62 +431,62 @@ export class RdbComponent implements OnInit {
 //     }
 
 //   }
-Add(valid){
-  this.RDBFormSubmit = true;
-  if(valid){
-    if (Number(this.ObjRdb1.Received_Qty) && Number(this.ObjRdb1.Received_Qty) <= Number(this.ObjRdb1.Challan_Qty)){
-      const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(this.ObjRdb1.Product_ID))[0];
-      const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRdb.Sub_Ledger_ID))[0]
-      console.log("productFilter",productFilter);
-      if(Object.keys(productFilter).length){
-       var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
-       var taxsgstcgst =  (Number(Number(amount) * Number(productFilter.GST_Percentage)) / 100).toFixed(2);
-       var totalamount = (Number(amount) + Number(taxsgstcgst)).toFixed(2);
-       var productObj = {
-                  // RDB_Date : this.RDB_Date ? this.DateService.dateConvert(this.RDB_Date) : new Date(),
-                  // Sub_Ledger_ID	: Number(this.ObjRdb.Sub_Ledger_ID),
-                  // Cost_Cen_ID	: Number(this.ObjRdb.Cost_Cen_ID),
-                  // godown_id : Number(this.ObjRdb.godown_id),
-                  // SE_No : this.ObjRdb.SE_No,
-                  // SE_Date : this.SE_Date ? this.DateService.dateConvert(this.SE_Date) : new Date(),
-                  // PO_Doc_No : this.ObjRdb.PO_Doc_No,
-                  // PO_Doc_Date : this.PO_Doc_Date ? this.DateService.dateConvert(this.PO_Doc_Date) : new Date(),
-                  // Mode_Of_transport : this.ObjRdb.Mode_Of_transport,
-                  // LR_No_Date : this.ObjRdb.LR_No_Date,
-                  // Vehicle_No : this.ObjRdb.Vehicle_No,
-                  Product_ID : Number(this.ObjRdb1.Product_ID),
-                  Product_Name : productFilter.Product_Name,
-                  HSN_Code : productFilter.HSN_Code,
-                  UOM : productFilter.UOM,
-                  Challan_Qty : Number(this.ObjRdb1.Challan_Qty),
-                  Received_Qty : Number(this.ObjRdb1.Received_Qty),
-                  Rate : productFilter.Rate,
-                  Taxable_Value :  Number(amount).toFixed(2),
-                  Tax_Percentage : productFilter.GST_Percentage,
-                  Total_Tax_Amount : Number(taxsgstcgst).toFixed(2),
-                  Total_Amount : Number(totalamount).toFixed(2)
-       };
-          this.RDBListAdd.push(productObj);
-          console.log("Product Submit",this.RDBListAdd);
-          this.RDBFormSubmit = false;
-          this.ObjRdb1 = new RDB1();
-          // this.PO_Doc_Date = new Date();
-          // this.RDB_Date = new Date();
-          // this.SE_Date = new Date();
-          this.dateDis = true;
-      }
-      }
-      else {
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-          detail: "Received Qty is more than Challan Qty "
-        });
-      }
- }
- }
+  Add(valid){
+    this.RDBFormSubmit = true;
+    if(valid){
+      if (Number(this.ObjRdb1.Received_Qty) && Number(this.ObjRdb1.Received_Qty) <= Number(this.ObjRdb1.Challan_Qty)){
+        const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(this.ObjRdb1.Product_ID))[0];
+        const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRdb.Sub_Ledger_ID))[0]
+        console.log("productFilter",productFilter);
+        if(Object.keys(productFilter).length){
+        var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
+        var taxsgstcgst =  (Number(Number(amount) * Number(productFilter.GST_Percentage)) / 100).toFixed(2);
+        var totalamount = (Number(amount) + Number(taxsgstcgst)).toFixed(2);
+        var productObj = {
+                    // RDB_Date : this.RDB_Date ? this.DateService.dateConvert(this.RDB_Date) : new Date(),
+                    // Sub_Ledger_ID	: Number(this.ObjRdb.Sub_Ledger_ID),
+                    // Cost_Cen_ID	: Number(this.ObjRdb.Cost_Cen_ID),
+                    // godown_id : Number(this.ObjRdb.godown_id),
+                    // SE_No : this.ObjRdb.SE_No,
+                    // SE_Date : this.SE_Date ? this.DateService.dateConvert(this.SE_Date) : new Date(),
+                    // PO_Doc_No : this.ObjRdb.PO_Doc_No,
+                    // PO_Doc_Date : this.PO_Doc_Date ? this.DateService.dateConvert(this.PO_Doc_Date) : new Date(),
+                    // Mode_Of_transport : this.ObjRdb.Mode_Of_transport,
+                    // LR_No_Date : this.ObjRdb.LR_No_Date,
+                    // Vehicle_No : this.ObjRdb.Vehicle_No,
+                    Product_ID : Number(this.ObjRdb1.Product_ID),
+                    Product_Name : productFilter.Product_Name,
+                    HSN_Code : productFilter.HSN_Code,
+                    UOM : productFilter.UOM,
+                    Challan_Qty : Number(this.ObjRdb1.Challan_Qty),
+                    Received_Qty : Number(this.ObjRdb1.Received_Qty),
+                    Rate : productFilter.Rate,
+                    Taxable_Value :  Number(amount).toFixed(2),
+                    Tax_Percentage : productFilter.GST_Percentage,
+                    Total_Tax_Amount : Number(taxsgstcgst).toFixed(2),
+                    Total_Amount : Number(totalamount).toFixed(2)
+        };
+            this.RDBListAdd.push(productObj);
+            console.log("Product Submit",this.RDBListAdd);
+            this.RDBFormSubmit = false;
+            this.ObjRdb1 = new RDB1();
+            // this.PO_Doc_Date = new Date();
+            // this.RDB_Date = new Date();
+            // this.SE_Date = new Date();
+            this.dateDis = true;
+        }
+        }
+        else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Received Qty is more than Challan Qty "
+          });
+        }
+  }
+  }
   delete(index) {
     this.RDBListAdd.splice(index,1)
 
@@ -585,7 +586,7 @@ Add(valid){
           key: "compacct-toast",
           severity: "error",
           summary: "Warn Message",
-          detail: "Error Occured "
+          detail: "Something Wrong"
         });
       }
     })
@@ -598,7 +599,7 @@ Add(valid){
         key: "compacct-toast",
         severity: "error",
         summary: "Warn Message",
-        detail: "Error Occured "
+        detail: "Something Wrong"
       });
     }
 
@@ -670,7 +671,7 @@ Add(valid){
     const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(productID))[0];
     console.log(productFilter);
     this.ObjRdb1.UOM = productFilter.UOM ? productFilter.UOM : " ";
-    this.ObjRdb1.HSN_Code = productFilter.HSN_Code ? productFilter.HSN_Code : " ";
+    this.ObjRdb1.HSN_Code = productFilter.HSN_NO ? productFilter.HSN_NO : " ";
     this.ObjRdb1.PO_QTY = productFilter.Qty ? productFilter.Qty : " ";
     this.ObjRdb1.Challan_Qty = productFilter.Qty;
     this.ObjRdb1.Received_Qty = productFilter.Qty;

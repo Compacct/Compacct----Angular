@@ -151,7 +151,7 @@
                                                     #company="ngModel" 
                                                     [(ngModel)]="ObjRdb.Company_ID"
                                                     [disabled]="RDBListAdd.length"
-                                                    [ngClass]="{'clearance': RDBFormSubmit && LR_No.errors?.required}"
+                                                    [ngClass]="{'clearance': RDBFormSubmit && company.errors?.required}"
                                                     required>
                                                     <option  [ngValue]="undefined">Select</option>
                                                        <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
@@ -334,8 +334,8 @@
                             <form name="RDBForm2" #RDBForm2="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
-                                        <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="objRdb2.Remarks" rows="2" placeholder="Remarks" [ngClass]="{'clearance': RDBFormSubmit2 && Remarks.errors?.required}" required></textarea>
+                                        <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                                        <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="objRdb2.Remarks" rows="2" placeholder="Remarks"></textarea>
                                     </div>
                                  </div>
                                 <div class="box-footer">
