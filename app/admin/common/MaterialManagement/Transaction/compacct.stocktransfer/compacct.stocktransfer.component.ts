@@ -390,7 +390,7 @@ export class StocktransferComponent implements OnInit {
         }
         
         if(this.databaseName === 'BSHPL'){
-          this.ObjProductInfo.Rate = obj.MRP;
+          this.ObjProductInfo.Rate = obj.MRP_ST;
           this.CalculateAmount();
         }
       } else {
@@ -420,9 +420,9 @@ export class StocktransferComponent implements OnInit {
         })
         .subscribe((data: any) => {
           this.GodownLists = data ? JSON.parse(data) : [];
-          if (this.databaseName === "GN_Global_Coimbatore" && this.ObjCostCenterFROM.F_Cost_Cen_ID == 2 && this.$CompacctAPI.CompacctCookies.Menu_Ref_ID == 2) {
-            this.GodownLists = this.GodownLists.filter(item => item.godown_id != 13);
-          } 
+          // if (this.databaseName === "GN_Global_Coimbatore" && this.ObjCostCenterFROM.F_Cost_Cen_ID == 2 && this.$CompacctAPI.CompacctCookies.Menu_Ref_ID == 2) {
+          //   this.GodownLists = this.GodownLists.filter(item => item.godown_id != 13);
+          // } 
         });
     }
   }

@@ -203,9 +203,9 @@
                                 </div>
                                 <select class="form-control ng-pristine ng-valid ng-touched"  name="Grade_Description"
                                 #Grade_Description ="ngModel"
-                                [(ngModel)]="Objproduct.Grade_Description">
+                                [(ngModel)]="Objproduct.Grade_ID">
                                     <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let grade of gradeTyp" value="{{grade.Grade_Description}}" class="ng-star-inserted">{{grade.Grade_Description}}</option>
+                                    <option *ngFor="let grade of gradeTyp" value="{{grade.Grade_ID}}" class="ng-star-inserted">{{grade.Grade_Description}}</option>
                                 </select>
                             </div>
                     </div>
@@ -279,13 +279,13 @@
                                 </p-dropdown>
                            </div>
                            <div class="col-sm-4">
-                            <label class="control-label">Manufacture Name (Optional)</label>
+                            <label class="control-label">Manufacturer</label>
                             <select class="form-control ng-pristine ng-invalid ng-touched"
                             name="Mfg_Company"
                             #Mfg_Company ="ngModel"
-                            [(ngModel)]="Objproduct.Mfg_Company"> 
+                            [(ngModel)]="Objproduct.Product_Mfg_Comp_ID"> 
                                 <option [ngValue]="undefined">Select</option>
-                                <option *ngFor="let mfg of mfgData" value="{{mfg.Mfg_Company}}"class="ng-star-inserted">{{mfg.Mfg_Company}}</option>
+                                <option *ngFor="let mfg of mfgData" value="{{mfg.Product_Mfg_Comp_ID}}"class="ng-star-inserted">{{mfg.Mfg_Company}}</option>
                             </select>
                            </div>
                            <div class="col-sm-4"></div>

@@ -68,7 +68,7 @@ export class FinancialVoucherComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE","REPORT"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -86,7 +86,7 @@ export class FinancialVoucherComponent implements OnInit {
   onConfirm(){}
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE","REPORT"];
     this.buttonname = "Create";
     this.clearData();
   }

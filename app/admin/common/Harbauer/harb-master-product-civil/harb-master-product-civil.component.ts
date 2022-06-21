@@ -119,7 +119,10 @@ export class HarbMasterProductCivilComponent implements OnInit {
   ObjproductDetails : any;
   ObjGstandCustonDuty : any;
   ObjFinancial: any;
- 
+  objProductrequ:any = {};
+  objCheckFinamcial:any = {};
+  objGst:any = {};
+  Product_Mfg_Comp = [];
   @ViewChild("Product", { static: false })
   ProductDetailsInput: CompacctProductDetailsComponent;
   @ViewChild("GstAndCustomDuty", { static: false })
@@ -209,7 +212,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
       this.ObjproductDetails = e;
       this.ObjMasterProductCivil.Product_Type_ID = e.Product_Type_ID;
       this.ObjMasterProductCivil.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
-      this.ObjMasterProductCivil.Product_ID = e.Product_Code;
+      this.ObjMasterProductCivil.Product_Code = e.Product_Code;
       this.ObjMasterProductCivil.Product_Description = e.Product_Description;
       this.ObjMasterProductCivil.Rack_NO = e.Rack_NO;
     }
@@ -224,9 +227,15 @@ export class HarbMasterProductCivilComponent implements OnInit {
     if (e.Cat_ID) {
       this.ObjGstandCustonDuty = e;
       this.ObjMasterProductCivil.Cat_ID = e.Cat_ID;
-      this.ObjMasterProductCivil.HSN_Code = e.HSN_Code;
+      this.ObjMasterProductCivil.HSN_NO = e.HSN_NO;
       this.ObjMasterProductCivil.Custom_Duty = e.Custom_Duty;
       this.ObjMasterProductCivil.Remarks = e.Remarks;
+      this.ObjMasterProductCivil.RCM_Per = Number(e.RCM_Per);
+      this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
+      this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.objProductrequ.Product_Description = e.Product_Description;
+      this.objGst.Cat_ID = e.Cat_ID;
+      this.objGst.HSN_NO = e.HSN_NO;
     }
   }
   FinancialDetailsData(e) {
@@ -243,6 +252,20 @@ export class HarbMasterProductCivilComponent implements OnInit {
       this.ObjMasterProductCivil.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
       this.ObjMasterProductCivil.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
       this.ObjMasterProductCivil.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+      this.ObjMasterProductCivil.Input_RCM_Ledger_ID = e.Input_RCM_Ledger_ID;
+      this.ObjMasterProductCivil.Output_RCM_Ledger_ID = e.Output_RCM_Ledger_ID;
+      this.ObjMasterProductCivil.Input_CGST_RCM_Ledger_ID = e.Input_CGST_RCM_Ledger_ID;	
+      this.ObjMasterProductCivil.Input_SGST_RCM_Ledger_ID = e.Input_SGST_RCM_Ledger_ID;
+      this.ObjMasterProductCivil.Input_IGST_RCM_Ledger_ID = e.Input_IGST_RCM_Ledger_ID;
+      this.ObjMasterProductCivil.Output_CGST_RCM_Ledger_ID = e.Output_CGST_RCM_Ledger_ID;
+      this.ObjMasterProductCivil.Output_SGST_RCM_Ledger_ID = e.Output_SGST_RCM_Ledger_ID;
+      this.ObjMasterProductCivil.Output_IGST_RCM_Ledger_ID = e.Output_IGST_RCM_Ledger_ID;
+      this.objCheckFinamcial.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      this.objCheckFinamcial.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.objCheckFinamcial.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.objCheckFinamcial.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.objCheckFinamcial.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.objCheckFinamcial.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
     }
   }
   // PRODUCT TYPE
@@ -1046,21 +1069,15 @@ export class HarbMasterProductCivilComponent implements OnInit {
       if (this.productid) {
         this.Spinner = true;
         this.MasterProductCivilFormSubmitted = true;
-      if(valid){
+      if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
       let UpdateArr =[]
-      // this.Product_Mfg_Comp_ID.forEach(item => {
-        const Obj = {
+     const Obj = {
             Product_ID : this.productid,
-            Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
-           // Mfg_Company : item.label
         }
         UpdateArr.push({...Obj,...this.ObjMasterProductCivil})
-    // });
+
     console.log("Update =" , UpdateArr)
-      // const Obj = {
-      //   Product_ID  : this.productid,
-      //   Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
-      // }
+
          const obj = {
            "SP_String": "SP_Harbauer_Master_Product_Civil",
            "Report_Name_String" : "Master_Product_Civil_Update",
@@ -1099,7 +1116,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
              });
            }
          })
-       // }
+     
       } else {
         this.Spinner = false;
         this.destroyChild();
@@ -1114,63 +1131,57 @@ export class HarbMasterProductCivilComponent implements OnInit {
       }
       }
         else {
-      // const Obj = {
-      //   Product_Code : this.ObjMachineMaster.Product_Model,
-      //   Product_Description : this.ObjMachineMaster.Product_Description,
-      //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
-      // }
-     this.Spinner = true;
-     this.MasterProductCivilFormSubmitted = true;
-      if(valid && this.Product_Mfg_Comp_ID.length){
-      // if(this.Product_Mfg_Comp_ID.length) {
-        let tempArr =[]
-        this.Product_Mfg_Comp_ID.forEach(item => {
+        this.Spinner = true;
+        this.MasterProductCivilFormSubmitted = true;
+        if(valid && this.Product_Mfg_Comp.length && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+        
+          let tempArr =[]
+          this.Product_Mfg_Comp.forEach(item => {
+            const obj = {
+                Product_ID : 0,
+                Product_Mfg_Comp_ID : item
+            
+            }
+          tempArr.push({...obj,...this.ObjMasterProductCivil})
+        });
+        console.log("create =" , tempArr)
+    
           const obj = {
-              Product_ID : 0,
-              Product_Mfg_Comp_ID : item
-             // Mfg_Company : item.label
+            "SP_String": "SP_Harbauer_Master_Product_Civil",
+            "Report_Name_String" : "Master_Product_Civil_Create",
+            "Json_Param_String": JSON.stringify(tempArr)
+        
           }
-        tempArr.push({...obj,...this.ObjMasterProductCivil})
-      });
-      console.log("create =" , tempArr)
-     // return JSON.stringify(tempArr);
-      // if(valid && this.ProductPDFFile['size']){
-         const obj = {
-           "SP_String": "SP_Harbauer_Master_Product_Civil",
-           "Report_Name_String" : "Master_Product_Civil_Create",
-           "Json_Param_String": JSON.stringify(tempArr)
-       
-         }
-         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-           console.log(data);
-           this.ObjMasterProductCivil.Product_ID = data[0].Product_Manufacturing_Group;
-           if(data[0].Product_Manufacturing_Group){
-            this.upload(data[0].Product_Manufacturing_Group);
-          //   this.compacctToast.clear();
-          //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-          //   this.compacctToast.add({
-          //    key: "compacct-toast",
-          //    severity: "success",
-          //    summary: "", //"Return_ID  " + tempID,
-          //    detail: "Succesfully Saved" //+ mgs
-          //  });
-          //  this.clearData();
-       
-           } else{
-            // this.ngxService.stop();
-             this.Spinner = false;
-             this.compacctToast.clear();
-             this.compacctToast.add({
-               key: "compacct-toast",
-               severity: "error",
-               summary: "Warn Message",
-               detail: "Error Occured "
-             });
-           }
-         })
-        }
+          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+            console.log(data);
+            this.ObjMasterProductCivil.Product_ID = data[0].Product_Manufacturing_Group;
+            if(data[0].Product_Manufacturing_Group){
+              this.upload(data[0].Product_Manufacturing_Group);
+            //   this.compacctToast.clear();
+            //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            //   this.compacctToast.add({
+            //    key: "compacct-toast",
+            //    severity: "success",
+            //    summary: "", //"Return_ID  " + tempID,
+            //    detail: "Succesfully Saved" //+ mgs
+            //  });
+            //  this.clearData();
+        
+            } else{
+              // this.ngxService.stop();
+              this.Spinner = false;
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Warn Message",
+                detail: "Error Occured "
+              });
+            }
+          })
+          }
         else {
-      //  if(!this.ProductPDFFile['size']) {
+      
           this.Spinner = false;
           this.destroyChild();
           this.compacctToast.clear();
@@ -1181,9 +1192,41 @@ export class HarbMasterProductCivilComponent implements OnInit {
             // detail: "No Docs Selected"
             detail: "Error Occured "
           });
-      }
-    // }
+          }
+    
   }
+  }
+  checkrequ(financial?,Gst?,product?){
+    let falg = false
+    if(financial){
+      let getArrValue = Object.values(financial);
+      if(getArrValue.length === 6){
+        falg = true
+      }
+      else {
+        falg = false
+      }
+  
+    }
+   if(Gst){
+    let getArrValue = Object.values(Gst);
+    if(getArrValue.length === 2 && this.objGst.HSN_NO.length === 6){
+      falg = true
+    }
+    else {
+      falg = false
+    }
+   }
+   if(product){
+    let getArrValue = Object.values(product);
+    if(getArrValue.length === 3){
+      falg = true
+    }
+    else {
+      falg = false
+    }
+   }
+  return falg
   }
   async upload(id){
     const formData: FormData = new FormData();
@@ -1297,6 +1340,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
        this.ObjMasterProductCivil.Remarks = data[0].Remarks ? data[0].Remarks : undefined;
        this.ObjMasterProductCivil.HSN_NO = data[0].HSN_NO;
        this.ObjMasterProductCivil.UOM = data[0].UOM;
+      this.ObjMasterProductCivil.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
        this.makedisabled = true;
        this.PDFViewFlag = data[0].Product_Image ? true : false;
        this.ProductPDFLink = data[0].Product_Image
@@ -1468,7 +1512,7 @@ class MasterProductCivil{
    HSN_NO:number;
    GST_Percentage:number;
    UOM:string;
-  // Product_Mfg_Comp_ID:any;
+   Product_Mfg_Comp_ID:any;
    Product_Image:any;
 
    Product_Code:any;
@@ -1482,7 +1526,16 @@ class MasterProductCivil{
    Purchase_Return_Ledger_ID:number;
    Discount_Receive_Ledger_ID:number;	
    Discount_Given_Ledger_ID:number;	
-   Sales_Return_Ledger_ID:number;	
+   Sales_Return_Ledger_ID:number;
+   RCM_Per:number;
+   Input_RCM_Ledger_ID:any;
+   Output_RCM_Ledger_ID:any;
+   Input_CGST_RCM_Ledger_ID:any;	
+   Input_SGST_RCM_Ledger_ID:any;
+   Input_IGST_RCM_Ledger_ID:any;
+   Output_CGST_RCM_Ledger_ID:any;
+   Output_SGST_RCM_Ledger_ID:any;
+   Output_IGST_RCM_Ledger_ID:any;
  }
  class Financial{
   Can_Purchase : boolean;
@@ -1493,4 +1546,12 @@ class MasterProductCivil{
   Sales_Return_Ledger_ID:any;
   Discount_Receive_Ledger_ID:any;
   Discount_Given_Ledger_ID:any;
+  Input_RCM_Ledger_ID:any;
+  Output_RCM_Ledger_ID:any;
+  Input_CGST_RCM_Ledger_ID:any;	
+  Input_SGST_RCM_Ledger_ID:any;
+  Input_IGST_RCM_Ledger_ID:any;
+  Output_CGST_RCM_Ledger_ID:any;
+  Output_SGST_RCM_Ledger_ID:any;
+  Output_IGST_RCM_Ledger_ID:any;
 }

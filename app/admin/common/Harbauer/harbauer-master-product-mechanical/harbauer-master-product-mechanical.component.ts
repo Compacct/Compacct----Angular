@@ -221,6 +221,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       this.ObjMasterProductm.HSN_NO = e.HSN_NO;
       this.ObjMasterProductm.Custom_Duty = e.Custom_Duty;
       this.ObjMasterProductm.Remarks = e.Remarks;
+      this.ObjMasterProductm.RCM_Per = Number(e.RCM_Per)
     }
   }
   FinancialDetailsData(e) {
@@ -248,6 +249,14 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       this.ObjMasterProductm.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
       this.ObjMasterProductm.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
       this.ObjMasterProductm.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+      this.ObjMasterProductm.Input_RCM_Ledger_ID = e.Input_RCM_Ledger_ID;
+      this.ObjMasterProductm.Output_RCM_Ledger_ID = e.Output_RCM_Ledger_ID;
+      this.ObjMasterProductm.Input_CGST_RCM_Ledger_ID = e.Input_CGST_RCM_Ledger_ID;	
+      this.ObjMasterProductm.Input_SGST_RCM_Ledger_ID = e.Input_SGST_RCM_Ledger_ID;
+      this.ObjMasterProductm.Input_IGST_RCM_Ledger_ID = e.Input_IGST_RCM_Ledger_ID;
+      this.ObjMasterProductm.Output_CGST_RCM_Ledger_ID = e.Output_CGST_RCM_Ledger_ID;
+      this.ObjMasterProductm.Output_SGST_RCM_Ledger_ID = e.Output_SGST_RCM_Ledger_ID;
+      this.ObjMasterProductm.Output_IGST_RCM_Ledger_ID = e.Output_IGST_RCM_Ledger_ID;
     }
   }
   GetProductType(){
@@ -1465,7 +1474,16 @@ class MasterProductm{
    Purchase_Return_Ledger_ID:number;
    Discount_Receive_Ledger_ID:number;	
    Discount_Given_Ledger_ID:number;	
-   Sales_Return_Ledger_ID:number;	
+   Sales_Return_Ledger_ID:number;
+   Input_RCM_Ledger_ID:any;
+   Output_RCM_Ledger_ID:any; 
+   RCM_Per:any;
+   Input_CGST_RCM_Ledger_ID:any;	
+   Input_SGST_RCM_Ledger_ID:any;
+   Input_IGST_RCM_Ledger_ID:any;
+   Output_CGST_RCM_Ledger_ID:any;
+   Output_SGST_RCM_Ledger_ID:any;
+   Output_IGST_RCM_Ledger_ID:any;
  }
  class Financial{
   Can_Purchase : boolean;
@@ -1476,4 +1494,12 @@ class MasterProductm{
   Sales_Return_Ledger_ID:any;
   Discount_Receive_Ledger_ID:any;
   Discount_Given_Ledger_ID:any;
+  Input_RCM_Ledger_ID:any;
+  Output_RCM_Ledger_ID:any;
+  Input_CGST_RCM_Ledger_ID:any;	
+  Input_SGST_RCM_Ledger_ID:any;
+  Input_IGST_RCM_Ledger_ID:any;
+  Output_CGST_RCM_Ledger_ID:any;
+  Output_SGST_RCM_Ledger_ID:any;
+  Output_IGST_RCM_Ledger_ID:any;
 }

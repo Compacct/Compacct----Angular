@@ -52,8 +52,11 @@ export class MiclRequisitionComponent implements OnInit {
   RequistionSearchFormSubmit = false;
   seachSpinner = false;
   productTypeList = [];
+  objProjectRequi:any = {};
+  userType = "";
   docno : any;
-  openProject = "N"
+  openProject = "N";
+  minFromDate = new Date()
   validatation = {
     required : false,
     projectMand : 'N'
@@ -86,9 +89,13 @@ export class MiclRequisitionComponent implements OnInit {
       Header: "Requisition",
       Link: "Material Management -> Outward -> Requisition"
     });
+    this.ServerDate();
+    this.AllowedEntryDays();
     this.getCostcenter();
     this.GetProductsDetalis();
     this.getProductType();
+    this.userType = this.$CompacctAPI.CompacctCookies.User_Type
+    
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -97,12 +104,15 @@ export class MiclRequisitionComponent implements OnInit {
     this.clearData();
   }
   clearData(){
-    this.ProjectInput.clearData()
+    if(this.openProject === "Y"){
+      this.ProjectInput.clearData()
+    }
     this.requisitionmaterialFormSubmit = false;
     this.objmaterial = new material()
     this.objproject = new project()
     this.objreqi = new reqi();
     this.objreqi.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+    this.Getgodown(this.objreqi.Cost_Cen_ID)
     this.reqiFormSubmitted = false;
     this.AddMaterialsList = [];
     this.ReqNo = undefined;
@@ -145,7 +155,7 @@ export class MiclRequisitionComponent implements OnInit {
    console.log("valid",valid);
    this.reqiFormSubmitted = true;
    this.validatation.required = true;
-   if(valid){
+   if(valid && this.checkreq()){
      if(this.AddMaterialsList.length){
       let saveData = [];
       let mgs = "";
@@ -231,6 +241,23 @@ export class MiclRequisitionComponent implements OnInit {
      }
    }
   }
+  checkreq(){
+    let flg = false
+    if(this.openProject === "Y" && this.openProject === "Y"){
+      let getArrValue = Object.values(this.objProjectRequi);
+      console.log("getArrValue",getArrValue.length);
+      if(getArrValue.length === 5 || getArrValue.length > 5){
+        flg = true
+      }
+      else {
+        flg = false
+      }
+    }
+    else {
+      flg = true
+    }
+    return flg
+   }
   SaveNPrintBill() {
     if (this.docno) {
       window.open("/Report/Crystal_Files/MICL/Txn_Requisition_Print.aspx?DocNo=" + this.docno, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
@@ -269,6 +296,7 @@ export class MiclRequisitionComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownList = data;
+        this.objreqi.Godown_ID = this.GodownList[0].Godown_ID
         console.log("this.toGodownList",this.GodownList);
         })
     }
@@ -306,6 +334,11 @@ export class MiclRequisitionComponent implements OnInit {
       "Report_Name_String": "Get_product_Type_Details"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      data.forEach(el => {
+        el['label'] = el.Product_Type
+        el['value'] = el.Product_Type_ID
+      });
+       
       this.productTypeList = data;
      console.log("productTypeList",this.productTypeList);
      })
@@ -473,40 +506,64 @@ export class MiclRequisitionComponent implements OnInit {
     window.open('/Report/Crystal_Files/MICL/Txn_Requisition_Print.aspx?DocNo=' + obj.Req_No,
       'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');   
 }
-}
-getProjectData(e){
-  console.log("e",e)
-  this.objproject = e
-  this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
-  this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
-}
-whateverCopy(obj) {
-  return JSON.parse(JSON.stringify(obj))
-}
-showTost(msg,summary){
-  this.compacctToast.clear();
-  this.compacctToast.add({
-    key: "compacct-toast",
-    severity: "success",
-    summary: summary,
-    detail: "Succesfully "+msg
-  });
-}
-async SaveProject(docNo){
-  if(docNo){
-   this.objproject.DOC_NO = docNo,
-   this.objproject.DOC_TYPE = "REQUISITION",
-   this.objproject.DOC_DATE = this.DateService.dateConvert(this.requi_Date)
   }
-  const obj = {
-   "SP_String": "SP_BL_CRM_TXN_Project_Doc",
-   "Report_Name_String": "Create_BL_CRM_TXN_Project_Doc",
-   "Json_Param_String": JSON.stringify([this.objproject]) 
+  getProjectData(e){
+    console.log("e",e)
+    this.objproject = e
+    this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
+    this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
+    this.objProjectRequi = e
   }
-  const projectData = await  this.GlobalAPI.getData(obj).toPromise();
-  console.log("projectData",projectData);
-  return projectData
- }
+  whateverCopy(obj) {
+    return JSON.parse(JSON.stringify(obj))
+  }
+  showTost(msg,summary){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      summary: summary,
+      detail: "Succesfully "+msg
+    });
+  }
+  async SaveProject(docNo){
+    if(docNo){
+    this.objproject.DOC_NO = docNo,
+    this.objproject.DOC_TYPE = "REQUISITION",
+    this.objproject.DOC_DATE = this.DateService.dateConvert(this.requi_Date)
+    }
+    const obj = {
+    "SP_String": "SP_BL_CRM_TXN_Project_Doc",
+    "Report_Name_String": "Create_BL_CRM_TXN_Project_Doc",
+    "Json_Param_String": JSON.stringify([this.objproject]) 
+    }
+    const projectData = await  this.GlobalAPI.getData(obj).toPromise();
+    console.log("projectData",projectData);
+    return projectData
+  }
+
+  ServerDate(){
+    this.$http
+    .get("/common/Get_Server_Date")
+    .subscribe((data: any) => {
+     console.log("ServerDate",data)
+     this.requi_Date  = new Date(data)
+     
+    })
+  }
+  AllowedEntryDays(){
+    this.$http
+    .get("/Common/Get_Allowed_Entry_Days?User_ID=" + this.$CompacctAPI.CompacctCookies.User_ID)
+    .subscribe((rec: any) => {
+      console.log("AllowedEntryDays",rec)
+     let data = JSON.parse(rec)
+      let days = Number(data[0].Allowed_Entry_Day)
+      console.log("days",days)
+     this.minFromDate = new Date(this.requi_Date.getTime()-(days*24*60*60*1000));
+     console.log("minFromDate",this.minFromDate)
+      
+    })
+  }
 }
 
 class reqi{

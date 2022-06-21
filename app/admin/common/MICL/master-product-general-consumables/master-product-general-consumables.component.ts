@@ -73,7 +73,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   Profeatureid = undefined;
   gradeid = undefined;
   headerData = ""
- 
+  objCheckFinamcial:any = {};
   GstAndCustomFormSubmit = false;
   LAbelName = 'HSN Code';
   ObjproductDetails : any;
@@ -81,6 +81,8 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   ObjFinancial: any;
   UOMData=[]; 
   UomDataList = [];
+  objGst:any = {};
+  objProductrequ:any = {};
   @ViewChild("Product", { static: false })
   ProductDetailsInput: CompacctProductDetailsComponent;
   @ViewChild("GstAndCustomDuty", { static: false })
@@ -160,21 +162,27 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       this.Objproduct.Product_Code = Number(e.Product_Code);
       this.Objproduct.Product_Description = e.Product_Description;
       this.Objproduct.Rack_NO = e.Rack_NO;
+      this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
+      this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.objProductrequ.Product_Description = e.Product_Description;
     }
   }
   getGstAndCustDutyData(e) {
     console.log(e)
     this.ObjGstandCustonDuty = undefined;
     this.Objproduct.Cat_ID = undefined;
-    this.Objproduct.HSN_Code = undefined;
+    this.Objproduct.HSN_NO = undefined;
     this.Objproduct.Custom_Duty = undefined;
     this.Objproduct.Remarks = undefined;
     if (e.Cat_ID) {
       this.ObjGstandCustonDuty = e;
       this.Objproduct.Cat_ID = e.Cat_ID;
-      this.Objproduct.HSN_Code = e.HSN_Code
+      this.Objproduct.HSN_NO = e.HSN_NO
       this.Objproduct.Custom_Duty = e.Custom_Duty;
       this.Objproduct.Remarks = e.Remarks;
+      this.Objproduct.RCM_Per = Number(e.RCM_Per)
+      this.objGst.Cat_ID = e.Cat_ID;
+      this.objGst.HSN_NO = e.HSN_NO;
     }
   }
   FinancialDetailsData(e) {
@@ -202,6 +210,20 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       this.Objproduct.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
       this.Objproduct.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
       this.Objproduct.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+      this.Objproduct.Input_RCM_Ledger_ID = e.Input_RCM_Ledger_ID;
+      this.Objproduct.Output_RCM_Ledger_ID = e.Output_RCM_Ledger_ID;
+      this.Objproduct.Input_CGST_RCM_Ledger_ID = e.Input_CGST_RCM_Ledger_ID;	
+      this.Objproduct.Input_SGST_RCM_Ledger_ID = e.Input_SGST_RCM_Ledger_ID;
+      this.Objproduct.Input_IGST_RCM_Ledger_ID = e.Input_IGST_RCM_Ledger_ID;
+      this.Objproduct.Output_CGST_RCM_Ledger_ID = e.Output_CGST_RCM_Ledger_ID;
+      this.Objproduct.Output_SGST_RCM_Ledger_ID = e.Output_SGST_RCM_Ledger_ID;
+      this.Objproduct.Output_IGST_RCM_Ledger_ID = e.Output_IGST_RCM_Ledger_ID;
+      this.objCheckFinamcial.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      this.objCheckFinamcial.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.objCheckFinamcial.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.objCheckFinamcial.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.objCheckFinamcial.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.objCheckFinamcial.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
     }
   
   }
@@ -828,7 +850,7 @@ saveData(valid:any){
     console.log("savedata==",this.Objproduct);
     console.log("valid",valid)
     this.ProductFormSubmitted = true;
-    if(valid){
+    if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
       console.log("productCode==",this.productCode);
       
       // var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
@@ -870,6 +892,38 @@ saveData(valid:any){
          console.error("Somthing Wrong")
        }    
      }
+     checkrequ(financial?,Gst?,product?){
+      let falg = false
+      if(financial){
+        let getArrValue = Object.values(financial);
+        if(getArrValue.length === 6){
+          falg = true
+        }
+        else {
+          falg = false
+        }
+    
+      }
+     if(Gst){
+      let getArrValue = Object.values(Gst);
+      if(getArrValue.length === 2 && this.objGst.HSN_NO.length === 6){
+        falg = true
+      }
+      else {
+        falg = false
+      }
+     }
+     if(product){
+      let getArrValue = Object.values(product);
+      if(getArrValue.length === 3){
+        falg = true
+      }
+      else {
+        falg = false
+      }
+     }
+    return falg
+    }
   onReject(){
   this.compacctToast.clear("c");
 }
@@ -1117,7 +1171,15 @@ class product{
   Sales_Return_Ledger_ID:any;
   Discount_Receive_Ledger_ID:any;
   Discount_Given_Ledger_ID:any;
-  
+  Input_RCM_Ledger_ID:any
+  Output_RCM_Ledger_ID:any
+  RCM_Per:any;
+  Input_CGST_RCM_Ledger_ID:any;	
+  Input_SGST_RCM_Ledger_ID:any;
+  Input_IGST_RCM_Ledger_ID:any;
+  Output_CGST_RCM_Ledger_ID:any;
+  Output_SGST_RCM_Ledger_ID:any;
+  Output_IGST_RCM_Ledger_ID:any;
 }
 class Financial{
   Can_Purchase : boolean;
@@ -1128,4 +1190,12 @@ class Financial{
   Sales_Return_Ledger_ID:any;
   Discount_Receive_Ledger_ID:any;
   Discount_Given_Ledger_ID:any;
+  Input_RCM_Ledger_ID:any
+  Output_RCM_Ledger_ID:any
+  Input_CGST_RCM_Ledger_ID:any;	
+  Input_SGST_RCM_Ledger_ID:any;
+  Input_IGST_RCM_Ledger_ID:any;
+  Output_CGST_RCM_Ledger_ID:any;
+  Output_SGST_RCM_Ledger_ID:any;
+  Output_IGST_RCM_Ledger_ID:any;
 }

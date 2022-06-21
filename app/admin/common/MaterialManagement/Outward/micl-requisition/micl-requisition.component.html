@@ -44,7 +44,8 @@
                                         [(ngModel)]="ObjBrowseData.Cost_Cen_ID"
                                         (change)="GetgodownBrowse(ObjBrowseData.Cost_Cen_ID)"
                                         [ngClass]="{'clearance': RequistionSearchFormSubmit && Cost_Cen_ID_Browse?.errors?.required}" 
-                                        required>
+                                        required
+                                       >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of costcenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                                       </select>
@@ -139,7 +140,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Date</label>
-                                        <ejs-datepicker  [(value)]="requi_Date" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                        <ejs-datepicker  [(value)]="requi_Date" [min]='minFromDate' [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
                                     </div> 
                                    <div class="col-sm-4">
                                         <label class="control-label">Cost Center</label>
@@ -149,7 +150,7 @@
                                          [(ngModel)]='objreqi.Cost_Cen_ID' 
                                          [ngClass]="{'clearance': validatation?.required && Cost_Cen_ID_te?.errors?.required}" 
                                          (change)="Getgodown(objreqi.Cost_Cen_ID)"
-                                         disabled
+                                         [disabled]="userType != 'A'"
                                          required>
                                   <option  [ngValue]="undefined">Select</option>
                                   <option *ngFor="let option of costcenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
@@ -162,7 +163,8 @@
                                         #Godown_ID="ngModel" 
                                         [(ngModel)]="objreqi.Godown_ID" 
                                         [ngClass]="{'clearance': validatation?.required && Godown_ID?.errors?.required}" 
-                                        required >
+                                        required 
+                                        >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                                     </select>
@@ -178,7 +180,7 @@
                                     <div class="form-group">
                                         <div class="col-sm-4">
                                         <label class="control-label">Product Type</label>
-                                        <select class="form-control" 
+                                        <!-- <select class="form-control" 
                                         name="Product_Type_ID" 
                                         #Product_Type_ID="ngModel"
                                          [(ngModel)]='objmaterial.Product_Type_ID' 
@@ -187,7 +189,23 @@
                                           required>
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of productTypeList" [value]="option.Product_Type_ID">{{option.Product_Type}}</option>
-                                        </select>
+                                        </select> -->
+                                     
+                                            <p-dropdown [options]="productTypeList" 
+                                            name="Product_Type_ID" 
+                                            [(ngModel)]="objmaterial.Product_Type_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Product Type Found'" 
+                                            [filter]="true" 
+                                            filterBy="label,value" 
+                                            [resetFilterOnHide]="true"
+                                            [placeholder]="'Product Type'" 
+                                            [virtualScroll]="true" 
+                                            #Product_Type_ID="ngModel"
+                                            (ngModelChange) = "GetProductsDetalis()"
+                                            [styleClass]="requisitionmaterialFormSubmit && Product_Type_ID.errors?.required ? 'clearance': ''" 
+                                            required>
+                                        </p-dropdown>
                                         </div>
                                         <div class="col-sm-4">
                                             <label class="control-label">Product Description<sup class="text-danger">*</sup></label>

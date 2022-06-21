@@ -71,6 +71,9 @@ export class PurchaseOrderComponent implements OnInit {
   objSize = undefined;
   falg = false;
   Aolist= [];
+  userType = "";
+  Requlist:any = [];
+  objProjectRequi:any = {};
   validatation = {
     required : false,
     projectMand : 'N'
@@ -120,10 +123,11 @@ export class PurchaseOrderComponent implements OnInit {
       this.GetCurrency();
       this.GetOrderType();
       this.GetProject();
-      this.getProduct();
+     // this.getProduct();
       this.getAllData(true);
       this.getcompany();
-     
+      this.GetRequlist();
+     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
   } 
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -162,6 +166,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.disAmtBackUpAMT = 0
     this.objpurchase.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    
     this.objpurchase.Billing_To  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.objpurchase.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.objpurchase.Credit_Days = 0;
@@ -223,6 +228,7 @@ export class PurchaseOrderComponent implements OnInit {
       if(this.objpurchase.Cost_Cen_ID){
         this.getCostCenterDetalis();
       }
+
       console.log("Cost Center",this.costCenterList);
       console.log("compacct Cookies",this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
   })
@@ -288,34 +294,43 @@ export class PurchaseOrderComponent implements OnInit {
     })
   }
   getProduct(){
-    this.SubLedgerList = [];
+   this.productList = [];
+    if(this.objaddPurchacse.Req_No){
+      this.productList = [];
       const obj = {
-        "SP_String": "sp_Comm_Controller",
-        "Report_Name_String": "Get_Product_Dropdown",
+        "SP_String": "Sp_Purchase_Order",
+        "Report_Name_String": "Get_Product_Against_Requisition_No",
+        "Json_Param_String": JSON.stringify([{Req_No : this.objaddPurchacse.Req_No}]) 
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         // console.log(data);
         this.productDataList = data;
        
         console.log("productDataList",this.productDataList);
-        this.productDataList.forEach(el => {
+        this.productDataList.forEach((el:any) => {
           this.productList.push({
-              label: el.Product_Name,
+              label: el.Product_Description,
               value: el.Product_ID
             });
            });
         })
     }
+    else {
+      this.productList = [];
+      this.objaddPurchacse.Product_ID =undefined
+      this.objaddPurchacse.Product_Spec = ""
+    }
+    }
   GetProductSpecification(){
    if(this.objaddPurchacse.Product_ID){
     let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID));
-    this.objaddPurchacse.Product_Spec = tempVal[0].Product_Spec;
+    this.objaddPurchacse.Product_Spec = tempVal[0].Product_Description;
     this.getProductDetalis()
-    this.getAo(this.objaddPurchacse.Product_ID)
    }
    else {
-    this.Aolist = []
-    this.objaddPurchacse.AO_No = undefined;
+    this.objaddPurchacse.Unit = undefined;
+    this.objaddPurchacse.Product_Spec = undefined;
+    
    } 
   }
   
@@ -336,14 +351,21 @@ export class PurchaseOrderComponent implements OnInit {
          this.objaddPurchacse.Unit = tempVal[0].UOM
          console.log("tempVal",tempVal);
          this.GetTaxDetalis(this.objaddPurchacse.Product_ID);
-         if(tempVal[0].Rate_Form_Quote === 'Y'){
-         this.disable = true;
-           this.GetRateY()
+         if(this.objaddPurchacse.Rate){
+          this.getGrsAmt();
          }
-         else {
-          this.disable = false
-          this.getRateN(this.objaddPurchacse.Product_ID);
+         else{
+          if(tempVal[0].Rate_Form_Quote === 'Y'){
+            this.disable = true;
+              this.GetRateY()
+            }
+            else {
+             this.disable = false
+             this.getRateN(this.objaddPurchacse.Product_ID);
+            }
          }
+       
+        
        }
       else{
         this.objaddPurchacse.Unit = undefined;
@@ -420,6 +442,7 @@ export class PurchaseOrderComponent implements OnInit {
   }
   getGrsAmt(){
     if(this.rate || this.objaddPurchacse.Rate){
+      this.objaddPurchacse.Qty = this.objaddPurchacse.Qty ? this.objaddPurchacse.Qty : 0
       if(this.objaddPurchacse.Qty){
         this.rate = this.objaddPurchacse.Rate
         this.objaddPurchacse.Rate = undefined;
@@ -435,7 +458,7 @@ export class PurchaseOrderComponent implements OnInit {
        
       }
       else {
-        this.objaddPurchacse.Rate = undefined;
+        this.objaddPurchacse.Rate = this.objaddPurchacse.Rate ? this.objaddPurchacse.Rate : undefined;
         this.objaddPurchacse.Gross_Amt = undefined;
         this.objaddPurchacse.taxable_AMT = undefined;
         this.GetGSTAmt();
@@ -543,12 +566,13 @@ export class PurchaseOrderComponent implements OnInit {
     this.purChaseAddFormSubmit = true
     console.log("valid",valid);
    if(valid){
-     const productFilter = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
+     const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
      console.log("productFilter",productFilter[0])
      let saveData = {
         Product_ID: Number(this.objaddPurchacse.Product_ID),
-        Product_Name:  productFilter[0].Product_Name,
-        Product_Spec: productFilter[0].Product_Spec,
+        Req_No: this.objaddPurchacse.Req_No,
+        Product_Name:  productFilter[0].Product_Description,
+        Product_Spec: this.objaddPurchacse.Product_Spec,
         Exp_Delivery: this.DateService.dateConvert(new Date(this.ExpectedDeliverydate)),
         Qty: Number(this.objaddPurchacse.Qty),
         Rate: Number(this.objaddPurchacse.Rate),
@@ -562,7 +586,7 @@ export class PurchaseOrderComponent implements OnInit {
         UOM: this.objaddPurchacse.Unit,
         Net_Amount:  Number(this.objaddPurchacse.Total_Amount),
         GST_Percentage: Number( this.objaddPurchacse.Gst),
-        GST_Amount: Number(this.objaddPurchacse.GST_AMT)
+        GST_Amount: Number(this.objaddPurchacse.GST_AMT),
      }
       this.addPurchaseList.push(saveData);
       
@@ -576,7 +600,7 @@ export class PurchaseOrderComponent implements OnInit {
    this.purchaseFormSubmitted = true
    this.validatation.required = true
     this.falg = true
-   if(valid){
+   if(valid && this.checkreq()){
      this.Spinner = true
      let msg = "";
       let rept = ""
@@ -670,6 +694,24 @@ export class PurchaseOrderComponent implements OnInit {
   }
    }
  }
+
+ checkreq(){
+  let flg = false
+  if(this.openProject === "Y" && this.projectMand === "Y"){
+    let getArrValue = Object.values(this.objProjectRequi);
+    console.log("getArrValue",getArrValue.length);
+    if(getArrValue.length === 5 || getArrValue.length > 5){
+      flg = true
+    }
+    else {
+      flg = false
+    }
+  }
+  else {
+    flg = true
+  }
+  return flg
+ }
  getDateRange(dateRangeObj) {
   if (dateRangeObj.length) {
     this.ObjBrowse.start_date = dateRangeObj[0];
@@ -761,7 +803,10 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.buttonname = "Update";
     this.clearProject()
     this.geteditmaster(col.Doc_No);
-    this.getEditProject(col.Doc_No);
+    if(this.openProject === "Y"){
+      this.getEditProject(col.Doc_No);
+    }
+   
    }
  }
  geteditmaster(Dno){
@@ -779,6 +824,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocDate = new Date(data[0].Doc_Date);
     this.RefDate = new Date(data[0].Supp_Ref_Date)
     this.addPurchaseList = data[0].L_element;
+    console.log("addPurchaseList",this.addPurchaseList)
     if(this.addPurchaseList.length){
       this.getAllTotal()
     }
@@ -794,8 +840,10 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.projectEditData = data
        console.log("this.projectEditData",this.projectEditData);
-       this.ProjectInput.ProjectEdit(this.projectEditData)
-     })
+       
+        this.ProjectInput.ProjectEdit(this.projectEditData)
+       
+        })
   }
  }
  Print(obj) {
@@ -837,7 +885,7 @@ GetGSTAmt(){
   else {
     this.objaddPurchacse.Total_Amount = undefined;
     this.objaddPurchacse.taxable_AMT = this.totalAmtBackUp;
-    this.objaddPurchacse.GST_AMT = (Number(this.objaddPurchacse.taxable_AMT) * (Number(this.objaddPurchacse.Gst)/100)).toFixed(2);
+    this.objaddPurchacse.GST_AMT = this.objaddPurchacse.taxable_AMT && this.objaddPurchacse.Gst ?(Number(this.objaddPurchacse.taxable_AMT) * (Number(this.objaddPurchacse.Gst)/100)).toFixed(2) : undefined;
   }
 }
 getAllTotal(){
@@ -881,9 +929,15 @@ getProjectData(e){
  this.objproject = e
  this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
  this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
+ this.objProjectRequi = e
+ console.log("objProjectRequi",this.objProjectRequi)
+ 
 }
 clearProject(){
-  this.ProjectInput.clearData()
+  if(this.openProject === "Y"){
+    this.ProjectInput.clearData()
+  }
+ 
 }
 async SaveProject(docNo){
  if(docNo){
@@ -925,6 +979,16 @@ taxlabelChange(){
    console.error("country Not Found")
  }
  return labelFlg
+}
+GetRequlist(){
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Get_Requisition_No",
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("data",data)
+    this.Requlist = data
+  })
 }
 }
 class purchase {
@@ -1006,6 +1070,7 @@ class addPurchacse{
       GST_AMT:any;
       Gst:any;
       Taxable_Amount:any;
+      Req_No:any
 }
 class project{
     DOC_NO:any

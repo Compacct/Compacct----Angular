@@ -71,8 +71,9 @@ GetEdit(arr:any){
  setTimeout(() => {
   this.ObjGstandCustonDuty.Cat_ID = Editdata.Cat_ID
   this.ObjGstandCustonDuty.Custom_Duty = Editdata.Custom_Duty
-  this.ObjGstandCustonDuty.HSN_NO = Editdata.HSN_NO ? Editdata.HSN_NO : Editdata.HSN_Code 
+  this.ObjGstandCustonDuty.HSN_NO = Editdata.HSN_NO 
   this.ObjGstandCustonDuty.Remarks = Editdata.Remarks
+  this.ObjGstandCustonDuty.RCM_Per = Editdata.RCM_Per
  }, 1000);
  this.EventEmitDefault()
  console.log("ObjGstandCustonDuty",this.ObjGstandCustonDuty)
@@ -102,6 +103,7 @@ ngOnChanges(changes: SimpleChanges) {
 class GstandCustonDuty {
   Cat_ID: number;
   HSN_NO: string;
-  Custom_Duty: number;
+  Custom_Duty: number = 0;
   Remarks: string;
+  RCM_Per:any;
 }

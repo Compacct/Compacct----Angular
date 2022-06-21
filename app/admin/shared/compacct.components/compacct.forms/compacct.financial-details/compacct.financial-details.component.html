@@ -20,7 +20,7 @@
         <input type="checkbox"
         [(ngModel)]="PurchaseACFlag" 
         style="margin: 10px 3px;" 
-        (change)="getPurchaseledger()" 
+        (change)="PurchaseCheckChange()" 
         class="ng-valid ng-dirty ng-valid-parse ng-touched"
         aria-invalid="false">
         <label for="vehicle1"><small>All Ledgers</small></label>
@@ -48,7 +48,7 @@
         <input type="checkbox" 
         [(ngModel)]="SalesACFlag" 
         style="margin: 10px 3px;" 
-        (change)="getSalesledger()" 
+        (change)="SaleCheckChange()" 
         class="ng-valid ng-dirty ng-valid-parse ng-touched" 
         aria-invalid="false">
         <label for="vehicle1"><small>All Ledgers</small></label>
@@ -141,6 +141,120 @@
         itemSize="30"
         (onChange)="EventEmitDefault()"
         [ngClass]="{'clearance': FinancialFormSubmit && discountgiven.errors?.required}"required
+        [disabled]=" !ObjFinancial.Billable">
+        </p-dropdown>
+</div>
+<div class="col-sm-6">
+    <label class="control-label">RCM Input CGST<sup class="text-danger"></sup></label>
+        <p-dropdown 
+        [options]="RCMDataListInput" 
+        name="Input_CGST_RCM_Ledger_ID"
+        [(ngModel)]="ObjFinancial.Input_CGST_RCM_Ledger_ID"
+        #Input_CGST_RCM_Ledger_ID="ngModel" 
+        [showClear]="true" 
+        [emptyFilterMessage]="' No Data Found'" 
+        [filter]="true" filterBy="label,value.name" 
+        [resetFilterOnHide]="true" 
+        [placeholder]="'Select Item'" 
+        [virtualScroll]="true" 
+        itemSize="30"
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && Input_CGST_RCM_Ledger_ID.errors?.required}" required
+        [disabled]="!ObjFinancial.Can_Purchase">
+        </p-dropdown>
+</div>
+<div class="col-sm-6">
+    <label class="control-label">RCM Output CGST<sup class="text-danger"></sup></label>
+        <p-dropdown 
+        [options]="RCMDataListOutput" 
+        name="Output_CGST_RCM_Ledger_ID"
+        [(ngModel)]="ObjFinancial.Output_CGST_RCM_Ledger_ID"
+        #Output_CGST_RCM_Ledger_ID="ngModel" 
+        [showClear]="true" 
+        [emptyFilterMessage]="' No Data Found'" 
+        [filter]="true" filterBy="label,value.name" 
+        [resetFilterOnHide]="true" 
+        [placeholder]="'Select Item'" 
+        [virtualScroll]="true" 
+        itemSize="30"
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && Output_CGST_RCM_Ledger_ID.errors?.required}"required
+        [disabled]=" !ObjFinancial.Billable">
+        </p-dropdown>
+</div>
+<div class="col-sm-6">
+    <label class="control-label">RCM Input SGST<sup class="text-danger"></sup></label>
+        <p-dropdown 
+        [options]="RCMDataListInput" 
+        name="Input_SGST_RCM_Ledger_ID"
+        [(ngModel)]="ObjFinancial.Input_SGST_RCM_Ledger_ID"
+        #Input_SGST_RCM_Ledger_ID="ngModel" 
+        [showClear]="true" 
+        [emptyFilterMessage]="' No Data Found'" 
+        [filter]="true" filterBy="label,value.name" 
+        [resetFilterOnHide]="true" 
+        [placeholder]="'Select Item'" 
+        [virtualScroll]="true" 
+        itemSize="30"
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && Input_SGST_RCM_Ledger_ID.errors?.required}" required
+        [disabled]="!ObjFinancial.Can_Purchase">
+        </p-dropdown>
+</div>
+<div class="col-sm-6">
+    <label class="control-label">RCM Output SGST<sup class="text-danger"></sup></label>
+        <p-dropdown 
+        [options]="RCMDataListOutput" 
+        name="Output_SGST_RCM_Ledger_ID"
+        [(ngModel)]="ObjFinancial.Output_SGST_RCM_Ledger_ID"
+        #Output_SGST_RCM_Ledger_ID="ngModel" 
+        [showClear]="true" 
+        [emptyFilterMessage]="' No Data Found'" 
+        [filter]="true" filterBy="label,value.name" 
+        [resetFilterOnHide]="true" 
+        [placeholder]="'Select Item'" 
+        [virtualScroll]="true" 
+        itemSize="30"
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && Output_SGST_RCM_Ledger_ID.errors?.required}"required
+        [disabled]=" !ObjFinancial.Billable">
+        </p-dropdown>
+</div>
+<div class="col-sm-6">
+    <label class="control-label">RCM Input IGST<sup class="text-danger"></sup></label>
+        <p-dropdown 
+        [options]="RCMDataListInput" 
+        name="Input_IGST_RCM_Ledger_ID"
+        [(ngModel)]="ObjFinancial.Input_IGST_RCM_Ledger_ID"
+        #Input_IGST_RCM_Ledger_ID="ngModel" 
+        [showClear]="true" 
+        [emptyFilterMessage]="' No Data Found'" 
+        [filter]="true" filterBy="label,value.name" 
+        [resetFilterOnHide]="true" 
+        [placeholder]="'Select Item'" 
+        [virtualScroll]="true" 
+        itemSize="30"
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && Input_IGST_RCM_Ledger_ID.errors?.required}" required
+        [disabled]="!ObjFinancial.Can_Purchase">
+        </p-dropdown>
+</div>
+<div class="col-sm-6">
+    <label class="control-label">RCM Output IGST<sup class="text-danger"></sup></label>
+        <p-dropdown 
+        [options]="RCMDataListOutput" 
+        name="Output_IGST_RCM_Ledger_ID"
+        [(ngModel)]="ObjFinancial.Output_IGST_RCM_Ledger_ID"
+        #Output_IGST_RCM_Ledger_ID="ngModel" 
+        [showClear]="true" 
+        [emptyFilterMessage]="' No Data Found'" 
+        [filter]="true" filterBy="label,value.name" 
+        [resetFilterOnHide]="true" 
+        [placeholder]="'Select Item'" 
+        [virtualScroll]="true" 
+        itemSize="30"
+        (onChange)="EventEmitDefault()"
+        [ngClass]="{'clearance': FinancialFormSubmit && Output_IGST_RCM_Ledger_ID.errors?.required}"required
         [disabled]=" !ObjFinancial.Billable">
         </p-dropdown>
 </div>
