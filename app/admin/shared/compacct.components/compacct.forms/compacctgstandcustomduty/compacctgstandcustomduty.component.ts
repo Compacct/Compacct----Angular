@@ -105,5 +105,5 @@ class GstandCustonDuty {
   HSN_NO: string;
   Custom_Duty: number = 0;
   Remarks: string;
-  RCM_Per:any;
+  RCM_Per:any = 0;
 }

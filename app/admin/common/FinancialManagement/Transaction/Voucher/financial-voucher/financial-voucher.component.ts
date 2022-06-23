@@ -33,6 +33,7 @@ export class FinancialVoucherComponent implements OnInit {
   journalFormSubmitted:boolean = false;
   costHeadList:any = [];
   LedgerList:any = [];
+  LedgerListLow:any = [];
   SubLedgerList:any = [];
   costHeadDataList:any = [];
   projectDataList:any = [];
@@ -46,10 +47,14 @@ export class FinancialVoucherComponent implements OnInit {
   headerText:string = "";
   initDate:any = [];
   VoucherTypeList:any = [];
+  costTrnList:any = [];
   seachSpinner:boolean = false
   JournalSearchFormSubmit:boolean = false;
   journallowerFormSubmitted:boolean = false;
-  
+  userType = "";
+  BankTransactionTypeList:any = [];
+  voucherminDate = new Date();
+  vouchermaxDate = new Date();
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -63,7 +68,17 @@ export class FinancialVoucherComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       console.log("params",params.Voucher_Type_ID);
       this.VoucherTypeID = params.Voucher_Type_ID
-      this.headerText = Number(this.VoucherTypeID) === 1 ? "Receive Voucher" : Number(this.VoucherTypeID) === 2 ? "Payment Voucher" : Number(this.VoucherTypeID) === 4 ? "Journal Voucher" : "" 
+      this.headerText = Number(this.VoucherTypeID) === 1 ? "Receive Voucher" : Number(this.VoucherTypeID) === 2 ? "Payment Voucher" : Number(this.VoucherTypeID) === 4 ? "Journal Voucher" : ""
+      this.objjournal.DrCrdata = Number(this.VoucherTypeID) === 1 ? "DR" : Number(this.VoucherTypeID) === 2 ? "CR" : Number(this.VoucherTypeID) === 4 ? "DR" : "" 
+      this.objjournalloweer.DrCrdataLower = this.objjournal.DrCrdata === "DR" ? "CR" : "DR" 
+      if(this.VoucherTypeID){
+        this.GetLedgerTop()
+        this.GetLedgerlow()
+      }
+      if(Number(this.VoucherTypeID) == 4){
+         this.GestCostHead();
+      }
+   
      })
   }
 
@@ -77,8 +92,11 @@ export class FinancialVoucherComponent implements OnInit {
       Header: this.headerText,
       Link: "Financial Management --> Transaction -> "+this.headerText
     });
-    this.objjournal.DrCrdata = Number(this.VoucherTypeID) === 1 ? "DR" : Number(this.VoucherTypeID) === 2 ? "CR" : Number(this.VoucherTypeID) === 4 ? "DR" : "" 
-    this.objjournalloweer.DrCrdataLower = this.objjournal.DrCrdata === "DR" ? "CR" : "DR"
+    
+    this.getcompany()
+    this.GetCostCenter()
+    this.Finyear()
+    this.userType = this.$CompacctAPI.CompacctCookies.User_Type
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -91,16 +109,65 @@ export class FinancialVoucherComponent implements OnInit {
     this.clearData();
   }
   clearData(){
-
+    this.journalFormSubmitted = false
+    let backupobjjournal = {...this.objjournal}
+    this.objjournal = new journalTopper()
+    this.objjournal.DrCrdata = backupobjjournal.DrCrdata
+    this.objjournal.Cost_Cen_ID_Trn  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.objjournal.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
   }
-  getsubLedgertop(Ledger:any){
-
+  GetLedgerTop(){
+    const obj = {
+      "SP_String": "SP_Financial_Voucher",
+      "Report_Name_String": "Get_Ledger",
+      "Json_Param_String": JSON.stringify({Topper : 'Y',Type_ID: Number(this.VoucherTypeID)})
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     console.log(data);
+    this.LedgerList = data
+    })
+  }
+  GetLedgerlow(){
+    const obj = {
+      "SP_String": "SP_Financial_Voucher",
+      "Report_Name_String": "Get_Ledger",
+      "Json_Param_String": JSON.stringify({Topper : 'N',Type_ID: Number(this.VoucherTypeID)})
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     console.log(data);
+    this.LedgerListLow = data
+    })
+  }
+  getsubLedgertop(LedgerId:any){
+    console.log("LedgerId",LedgerId)
+    this.GetBankTransactionType(LedgerId)
+    if(LedgerId && Number(this.VoucherTypeID) == 4){
+      const obj = {
+        "SP_String": "SP_Financial_Voucher",
+        "Report_Name_String": "Get_Subledger_with_Ledger_ID",
+        "Json_Param_String": JSON.stringify({ledger_id: Number(LedgerId)})
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.SubLedgerList = data
+       console.log("SubLedgerList",this.SubLedgerList)
+      })
+    }
   }
   getTotalDRCR(){
 
   }
-  getsubLedger(ledger:any){
-
+  getsubLedgerLow(LedgerId:any){
+    if(LedgerId ){
+      const obj = {
+        "SP_String": "SP_Financial_Voucher",
+        "Report_Name_String": "Get_Subledger_with_Ledger_ID",
+        "Json_Param_String": JSON.stringify({ledger_id: Number(LedgerId)})
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.SubLedgerListlow = data
+       console.log("SubLedgerListlow",this.SubLedgerListlow)
+      })
+    }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -110,13 +177,67 @@ export class FinancialVoucherComponent implements OnInit {
     }
   }
   ShowSearchData(valid){
-
-  }
+ }
   getToFix(number){
     if(number){
      return Number(Number(number).toFixed(2))
     }
    }
+   getcompany(){
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Dropdown_Company",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.companyList = data
+     console.log("companyList",this.companyList)
+     this.objjournal.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    })
+  }
+  GetCostCenter(){
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Get_Cost_Center_Details_Dropdown",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.costTrnList = data;
+        this.objjournal.Cost_Cen_ID_Trn  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     })
+    }
+  GestCostHead(){
+    const obj = {
+      "SP_String": "SP_Financial_Voucher",
+      "Report_Name_String": "Cost_Head_Dropdown",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Cost Head",data);
+      this.costHeadDataList = data
+    })
+  }
+  GetBankTransactionType(LedgerId:any){
+    if(LedgerId ){
+      const obj = {
+        "SP_String": "SP_Financial_Voucher",
+        "Report_Name_String": "Get_Bank_Transaction_Type",
+        "Json_Param_String": JSON.stringify({ledger_id: Number(LedgerId)})
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.BankTransactionTypeList = data
+       console.log("BankTransactionTypeList",this.BankTransactionTypeList)
+      })
+    }
+  }
+  Finyear() {
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+      this.voucherminDate = new Date(data[0].Fin_Year_Start)
+      this.vouchermaxDate = new Date(data[0].Fin_Year_End)
+      console.log("voucherminDate",this.voucherminDate)
+      
+      });
+  }
 }
 class journalTopper{
   User_ID:any;
@@ -137,10 +258,12 @@ class journalTopper{
   HSN_NO:any;
   GST_Per	:any;
   ITC_Eligibility	:any;
-  DrCrdata = "DR"
+  DrCrdata:string = "DR"
   DrCrdataLower = "CR"
   Amount:any
   Company_ID:any
+  Ref_Doc_Type:any
+  Txn_Type_Name:any
 }
 class search{
   Voucher_Type_ID:any

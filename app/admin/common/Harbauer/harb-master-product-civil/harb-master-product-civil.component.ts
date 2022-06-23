@@ -115,6 +115,14 @@ export class HarbMasterProductCivilComponent implements OnInit {
   isvisible = undefined;
   UOMData=[]; 
   UomDataList = [];
+  ViewUomModal = false;
+  UOMTypeFormSubmitted = false;
+  UOMTypeName = undefined;
+  UOMTypeModal = false;
+  mettypeid = undefined;
+  Uomid = undefined;
+  AllUOMData = [];
+  AllUomDataList = [];
   LAbelName = 'HSN Code';
   ObjproductDetails : any;
   ObjGstandCustonDuty : any;
@@ -169,6 +177,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
      this.GetMake();
      this.GetBrowseList();
      this.getUOM();
+     this.getAllUOM();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -976,23 +985,26 @@ export class HarbMasterProductCivilComponent implements OnInit {
     this.is_Active = false;
     this.Is_View = true;
     let ReportName = '';
+    let SPString = '';
     let ObjTemp;
+    let secondfuntionrefresh;
     let FunctionRefresh;
-    if (this.protypeid) {
-      ReportName = "Delete_Master_Product_Type"
-      ObjTemp = {
-        Product_Type_ID: this.protypeid
-      }
-      FunctionRefresh = 'GetProductType'
-    }
-    if (this.protypesubid) {
-      ReportName = "Delete_Product_Sub_Type"
-      ObjTemp = {
-        Product_Sub_Type_ID: this.protypesubid
-      }
-      FunctionRefresh = 'GetProductSubType';
-    }
+    // if (this.protypeid) {
+    //   ReportName = "Delete_Master_Product_Type"
+    //   ObjTemp = {
+    //     Product_Type_ID: this.protypeid
+    //   }
+    //   FunctionRefresh = 'GetProductType'
+    // }
+    // if (this.protypesubid) {
+    //   ReportName = "Delete_Product_Sub_Type"
+    //   ObjTemp = {
+    //     Product_Sub_Type_ID: this.protypesubid
+    //   }
+    //   FunctionRefresh = 'GetProductSubType';
+    // }
     if (this.mocid) {
+      SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_MOC_Data"
       ObjTemp = {
         MOC_ID: this.mocid
@@ -1000,6 +1012,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
       FunctionRefresh = 'GetMOC';
     }
     if (this.capacityid) {
+      SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_Capacity_Size_Data"
       ObjTemp = {
         Capacity_Size_ID: this.capacityid
@@ -1007,6 +1020,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
       FunctionRefresh = 'GetCapacity'
     }
     if (this.Profeatureid) {
+      SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_Product_Feature_Data"
       ObjTemp = {
         Product_Feature_ID: this.Profeatureid
@@ -1014,6 +1028,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
       FunctionRefresh = 'GetProductFeature';
     }
     if (this.gradeid) {
+      SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_Grade_Data"
       ObjTemp = {
         Grade_ID: this.gradeid
@@ -1021,14 +1036,24 @@ export class HarbMasterProductCivilComponent implements OnInit {
       FunctionRefresh = 'GetGrade';
     }
     if (this.makemultipleid) {
+      SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Manufacture_Data"
       ObjTemp = {
         Product_Mfg_Comp_ID: this.makemultipleid
       }
       FunctionRefresh = 'GetMake';
     }
+    if (this.Uomid) {
+      SPString = "SP_Master_Product_New"
+      ReportName = "Delete_Master_UOM"
+      ObjTemp = {
+        UOM: this.Uomid
+     }
+      FunctionRefresh = 'getUOM'
+      secondfuntionrefresh = 'getAllUOM'
+    }
       const obj = {
-        "SP_String": "SP_Harbauer_Master_Product_mechanical",
+        "SP_String": SPString,
         "Report_Name_String" : ReportName,
         "Json_Param_String": JSON.stringify(ObjTemp),
       }
@@ -1038,6 +1063,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
         // this.onReject();
         //this.GetTenderOrgList();
         this[FunctionRefresh]();
+        secondfuntionrefresh = secondfuntionrefresh ? this[secondfuntionrefresh]() : null;
          this.compacctToast.clear();
          this.compacctToast.add({
             key: "compacct-toast",
@@ -1497,6 +1523,109 @@ export class HarbMasterProductCivilComponent implements OnInit {
           });
         })
     }
+    getAllUOM(){
+      this.AllUOMData=[]; 
+       this.AllUomDataList = [];
+          const obj = {
+           "SP_String": "SP_Master_Product_New",
+           "Report_Name_String":"Get_Master_UOM_Data",
+          }
+          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+           this.AllUOMData = data;
+          console.log("AllUOMData==",this.AllUOMData);
+           this.AllUOMData.forEach((el : any) => {
+             this.AllUomDataList.push({
+               label: el.UOM,
+               value: el.UOM
+               
+             });
+           });
+         })
+    }
+    ViewUomType(){
+      this.UOMData = [];
+      this.getUOM();
+      setTimeout(() => {
+        this.ViewUomModal = true;
+        }, 200);
+    }
+    ProUomPopup(){
+      this.UOMTypeFormSubmitted = false;
+      this.UOMTypeName = undefined;
+      this.UOMTypeModal = true;
+      this.Spinner = false;
+    }
+    CreateUomType(valid){
+      this.UOMTypeFormSubmitted = true;
+        this.Spinner = true;
+       
+        if(valid){
+           const tempSave = {
+            UOM : this.UOMTypeName,
+          }
+         console.log(tempSave)
+           const obj = {
+             "SP_String": "SP_Master_Product_New",
+             "Report_Name_String" : "Add_Master_UOM",
+             "Json_Param_String": JSON.stringify([tempSave])
+         
+           }
+           this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+             console.log(data);
+             var tempID = data[0].Column1;
+             if(data[0].Column1){
+              this.compacctToast.clear();
+              //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+              this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "success",
+               summary: "UOM" + tempID,
+               detail: "Succesfully Created" //+ mgs
+             });
+             this.UOMTypeFormSubmitted = false;
+             this.UOMTypeName = undefined;
+             this.UOMTypeModal = false;
+             this.Spinner = false;
+             this.getUOM();
+             this.getAllUOM();
+         
+             } else{
+               this.Spinner = false;
+               this.compacctToast.clear();
+               this.compacctToast.add({
+                 key: "compacct-toast",
+                 severity: "error",
+                 summary: "Warn Message",
+                 detail: "Error Occured "
+               });
+             }
+           })
+         
+        }
+        else {
+          this.Spinner = false;
+        }
+    }
+    deleteProUom(uom){
+      this.protypesubid = undefined;
+      this.mettypeid = undefined;
+      this.protypeid = undefined
+      this.Uomid = undefined;
+      if(uom.UOM){
+        this.is_Active = false;
+        this.Is_View = true;
+        this.Uomid = uom.UOM;
+       // this.cnfrm2_popup = true;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "c",
+          sticky: true,
+          severity: "warn",
+          summary: "Are you sure?",
+          detail: "Confirm to proceed"
+        });
+      }
+    }  
 }
 class MasterProductCivil{
    Product_Type_ID:number;

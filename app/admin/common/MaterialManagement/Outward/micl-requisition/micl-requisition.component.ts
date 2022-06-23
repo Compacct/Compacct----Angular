@@ -93,8 +93,10 @@ export class MiclRequisitionComponent implements OnInit {
     this.AllowedEntryDays();
     this.getCostcenter();
     this.GetProductsDetalis();
-    this.getProductType();
     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
+    if(this.openProject !== "Y"){
+      this.getProductType()
+    }
     
   }
   TabClick(e) {
@@ -331,7 +333,8 @@ export class MiclRequisitionComponent implements OnInit {
   getProductType(){
     const obj = {
       "SP_String": "SP_Txn_Requisition",
-      "Report_Name_String": "Get_product_Type_Details"
+      "Report_Name_String": "Get_product_Type_Details",
+      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([this.objProjectRequi]) : JSON.stringify([{PROJECT_ID : 0}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach(el => {
@@ -513,6 +516,14 @@ export class MiclRequisitionComponent implements OnInit {
     this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
     this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
     this.objProjectRequi = e
+    let temparr = Object.keys(this.objProjectRequi)
+    if(temparr.indexOf("PROJECT_ID") != -1 && temparr.indexOf("Budget_Group_ID") != -1 && temparr.indexOf("Budget_Sub_Group_ID") != -1 && temparr.indexOf("SITE_ID") != -1 && temparr.indexOf("Work_Details_ID") != -1){
+      this.getProductType();
+     }
+     else{
+      this.objmaterial.Product_Type_ID = undefined;
+      this.objmaterial.Product_ID = undefined;
+     }
   }
   whateverCopy(obj) {
     return JSON.parse(JSON.stringify(obj))
