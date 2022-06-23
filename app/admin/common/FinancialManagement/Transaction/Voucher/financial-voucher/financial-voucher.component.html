@@ -75,7 +75,7 @@
                                         name="company" 
                                         #company="ngModel" 
                                         [(ngModel)]="objjournal.Company_ID"
-                                        [ngClass]="{'clearance': journalFormSubmitted?.required && company?.errors?.required }"
+                                        [ngClass]="{'clearance': journalFormSubmitted && company?.errors?.required }"
                                         required>
                                         <option  [ngValue]="undefined">Select</option>
                                            <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
@@ -94,11 +94,11 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Voucher Date<sup class="text-danger">*</sup></label>
-                                         <ejs-datepicker  [(value)]="voucherdata" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                         <ejs-datepicker  [(value)]="voucherdata" [format]="'dd/MMM/yyyy'" [min]='voucherminDate' [max]='vouchermaxDate'></ejs-datepicker>
                                     </div>
                                     </div>
                                     <div class="form-group">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-4" >
                                             <label class="control-label">Cost Cent Trn<sup class="text-danger">*</sup></label>
                                             <select class="form-control"
                                             name="Cost_Cen_ID_Trn"
@@ -106,9 +106,10 @@
                                            [(ngModel)]="objjournal.Cost_Cen_ID_Trn"
                                            [ngClass]="{'clearance': journalFormSubmitted && Cost_Cen_ID_Trn?.errors?.required}"
                                             required
+                                            [disabled]="userType != 'A'"
                                             >
                                             <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of costHeadList" value="{{option.Cost_Cen_ID}}">
+                                            <option *ngFor="let option of costTrnList" value="{{option.Cost_Cen_ID}}">
                                                 {{option.Cost_Cen_Name}}
                                                 </option>
                                     </select>
@@ -122,24 +123,21 @@
                                             [styleClass]="journalFormSubmitted && Ledger_ID.errors?.required ? 'clearance': ''" required>
                                         </p-dropdown>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Sub Ledger &nbsp;<span class="text-danger">*</span></label>
+                                        <div class="col-sm-4" *ngIf="headerText === 'Journal Voucher'">
+                                            <label class="control-label">Sub Ledger &nbsp;<span class="text-danger" *ngIf="SubLedgerList.length">*</span></label>
                                             <p-dropdown [options]="SubLedgerList" name="Sub_Ledger_ID" [(ngModel)]="objjournal.Sub_Ledger_ID"
                                             [showClear]="true" [emptyFilterMessage]="' No Ledger Found'"
                                             [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                             [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Sub_Ledger_ID="ngModel"
-                                            [styleClass]="journalFormSubmitted && Sub_Ledger_ID.errors?.required  &&  Sub_Ledger_ID? 'clearance': ''" required>
+                                            [styleClass]="journalFormSubmitted && Sub_Ledger_ID.errors?.required  &&  Sub_Ledger_ID? 'clearance': ''" [required]="SubLedgerList.length">
                                         </p-dropdown>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-4" *ngIf="headerText === 'Journal Voucher'">
                                             <label class="control-label">Cost Head</label>
                                             <select class="form-control"
                                             name="Cost_Head_ID"
                                             #Cost_Head_ID="ngModel"
                                            [(ngModel)]="objjournal.Cost_Head_ID"
-                                           
                                             >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
@@ -149,7 +147,7 @@
                                     </select>
                                         </div>
                                         <div class="col-sm-2">
-                                            <label class="control-label">Amount DR/CR<sup class="text-danger">*</sup></label>
+                                            <label class="control-label">Amount<sup class="text-danger">*</sup></label>
                                                 <input class="form-control"
                                                         name="Amount"
                                                         #Amount="ngModel"
@@ -169,84 +167,81 @@
                                                     [(ngModel)]="objjournal.DrCrdata"
                                                     (change)="getTotalDRCR()"
                                                     >
-                                                <option *ngIf="headerText === 'Receive Voucher' || headerText === 'Journal Voucher'"  value= "DR">
+                                                <option *ngIf="headerText === 'Receive Voucher' || headerText === 'Journal Voucher'"  value="DR">
                                                     DR
                                                     </option>
-                                                    <option *ngIf="headerText === 'Payment Voucher' || headerText === 'Journal Voucher'"  value= "CR">
+                                                    <option *ngIf="headerText === 'Payment Voucher' || headerText === 'Journal Voucher'"  value="CR">
                                                     CR
                                                     </option>
                                             </select>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-4" *ngIf="headerText === 'Journal Voucher'">
                                             <label class="control-label">Naration<sup class="text-danger"></sup></label>
-                                            <input class="form-control"
+                                             <textarea class="form-control" 
                                                     name="Naration"
                                                     #Naration="ngModel"
-                                                    [(ngModel)]="objjournal.Naration"
-                                                    placeholder="Naration"
-                                                    >
+                                                    [(ngModel)]="objjournal.Naration" rows="2" 
+                                                    placeholder="Naration"></textarea>
                                         </div>
-                                     
-                                    </div>
+                                   </div>
                                     <div class="form-group">
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Project
-                                            </label>
-                                           <select class="form-control"
-                                                    name="Project_ID"
-                                                    #Project_ID="ngModel"
-                                                    [(ngModel)]="objjournal.Project_ID"
-                                                  >
-                                                   <option  [ngValue]="undefined">Select</option>
-                                                   <option *ngFor="let option of projectDataList" value="{{option.Project_ID}}">
-                                                    {{option.Project_Name}}
-                                                    </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-3">
                                             <label class="control-label">Bank TRN Type
                                             </label>
                                            <select class="form-control"
                                                    name="Bank_TRN_Type"
-                                                   disabled
+                                                    #Bank_TRN_Type="ngModel" 
+                                                    [(ngModel)]="objjournal.Txn_Type_Name"
                                                   >
                                                    <option  [ngValue]="undefined">Select</option>
+                                                   <option *ngFor = "let option of BankTransactionTypeList" [value] ="option.Txn_Type_Name">
+                                                    {{option.Txn_Type_Name}}
+                                                  </option>
                                             </select>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">NEFT Date
-                                            </label>
-                                            <ejs-datepicker [(value)]="NEFTDate"  [format]="'dd/MMM/yyyy'" [enabled]="false"></ejs-datepicker>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-2">
                                             <label class="control-label">Bank Name
                                             </label>
                                             <input class="form-control"
                                             name="Bank_Name"
                                             placeholder="Bank Name"
-                                            disabled
+                                            
                                             >
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-3">
                                             <label class="control-label">Bank Branch Name
                                             </label>
                                             <input class="form-control"
                                             name="Bank_Branch_Name"
                                             placeholder="Bank Branch Name"
-                                            disabled
+                                            
                                             >
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-2">
+                                            <label class="control-label">NEFT Date
+                                            </label>
+                                            <ejs-datepicker [(value)]="NEFTDate"  [format]="'dd/MMM/yyyy'" [enabled]="true"></ejs-datepicker>
+                                        </div>
+                                        <div class="col-sm-2">
                                             <label class="control-label">NEFT No
                                             </label>
                                             <input class="form-control"
                                             name="NEFT_No"
                                             placeholder="NEFT No"
-                                            disabled
+                                            
                                             >
                                         </div>
+                                    </div>
+                                    <div class="form-group" *ngIf="headerText === 'Receive Voucher' || headerText === 'Payment Voucher'">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Naration<sup class="text-danger"></sup></label>
+                                             <textarea class="form-control" 
+                                                    name="Naration"
+                                                    #Naration="ngModel"
+                                                    [(ngModel)]="objjournal.Naration" rows="2" 
+                                                    placeholder="Naration"></textarea>
+                                        </div>
+                                    
                                     </div>
                                     
                             </form>
@@ -255,8 +250,8 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Ledger &nbsp;<span class="text-danger">*</span></label>
-                                        <p-dropdown [options]="LedgerList" name="Ledger_ID_lower" [(ngModel)]="objjournalloweer.Ledger_ID"
-                                        [showClear]="true" [emptyFilterMessage]="' No Ledger Found'" (onChange)="getsubLedger(objjournalloweer.Ledger_ID)"
+                                        <p-dropdown [options]="LedgerListLow" name="Ledger_ID_lower" [(ngModel)]="objjournalloweer.Ledger_ID"
+                                        [showClear]="true" [emptyFilterMessage]="' No Ledger Found'" (onChange)="getsubLedgerLow(objjournalloweer.Ledger_ID)"
                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                         [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Ledger_ID_lower="ngModel"
                                         [styleClass]="journallowerFormSubmitted && Ledger_ID_lower.errors?.required ? 'clearance': ''" required>
@@ -287,16 +282,43 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Ref Doc Type</label>
+                                        <!-- <input class="form-control"
+                                                name="Ref_Doc_No"
+                                                #Ref_Doc_No="ngModel"
+                                                [(ngModel)]="objjournalloweer.Ref_Doc_Type"
+                                                placeholder="Ref Doc No"
+                                               > -->
+                                               <select class="form-control"
+                                               name="Ref_Doc_Type"
+                                               #Ref_Doc_Type="ngModel"
+                                              [(ngModel)]="objjournalloweer.Ref_Doc_Type" >
+                                               <option  [ngValue]="undefined">Select</option>
+                                               <!-- <option *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
+                                                   {{option.Cost_Head_Name}}
+                                                   </option> -->
+                                       </select>
+                                        </div>
+                                    <div class="col-sm-3">
                                      <label class="control-label">Ref Doc No</label>
-                                     <input class="form-control"
+                                     <!-- <input class="form-control"
                                              name="Ref_Doc_No"
                                              #Ref_Doc_No="ngModel"
                                              [(ngModel)]="objjournalloweer.Ref_Doc_No"
                                              placeholder="Ref Doc No"
-                                            >
+                                            > -->
+                                        <select class="form-control"
+                                        name="Ref_Doc_No"
+                                        #Ref_Doc_No="ngModel"
+                                       [(ngModel)]="objjournalloweer.Ref_Doc_No" >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <!-- <option *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
+                                            {{option.Cost_Head_Name}}
+                                            </option> -->
+                                </select>
                                      </div>
-                                     <div class="col-sm-4">
+                                     <div class="col-sm-2">
                                      <label class="control-label">Ref Doc Date<sup class="text-danger">*</sup></label>
                                      <ejs-datepicker  [(value)]="RefDocDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
                                      </div>
@@ -319,12 +341,8 @@
                                                 #DrCrdatalow="ngModel"
                                                 [(ngModel)]="objjournalloweer.DrCrdataLower"
                                                >
-                                             <option *ngIf="headerText === 'Payment Voucher' || headerText === 'Journal Voucher'"  value= "DR">
-                                                DR
-                                                </option>
-                                                <option *ngIf="headerText === 'Receive Voucher' || headerText === 'Journal Voucher'"  value= "CR">
-                                                 CR
-                                                 </option>
+                                             <option value= "DR"> DR</option>
+                                             <option value= "CR"> CR </option>
                                         </select>
                                      </div>
                                   

@@ -243,26 +243,29 @@
                                     ">
                                     <i class="fa fa-fw fa-fax">
                                     </i> &nbsp;<strong>UOM</strong></h5> 
-                                  
                                     <div class="col-sm-4">
                                         <label class="control-label">UOM<sup class="text-danger">*</sup></label>
-                                        <!-- <input class="form-control" name="uom" #uom="ngModel" 
-                                        [(ngModel)]="ObjMasterProductm.UOM" placeholder="UOM" 
-                                        [ngClass]="{'clearance': MasterProductmFormSubmitted && uom.errors?.required}" required> -->
+                                        <div class="pull-right">
+                                            <button (click)="ViewUomType()" class="btn btn-primary  createPatient">
+                                            <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                            <button (click)="ProUomPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus">
+                                            </i> Create
+                                            </button>
+                                        </div>
                                         <p-dropdown 
-                                            [options]="UomDataList" 
-                                            name="MainUOM"
-                                            [(ngModel)]="ObjMasterProductm.UOM"
-                                            #MainUOM="ngModel" 
-                                            [showClear]="true" 
-                                            [emptyFilterMessage]="' No UOM Found'" 
-                                            [filter]="true" filterBy="label,value.name" 
-                                            [resetFilterOnHide]="true" 
-                                            [placeholder]="'Select UOM'" 
-                                            [virtualScroll]="true" 
-                                            itemSize="30"
-                                            [ngClass]="{'clearance': MasterProductmFormSubmitted && MainUOM.errors?.required}"required>
-                                            </p-dropdown>
+                                        [options]="AllUomDataList" 
+                                        name="MainUOM"
+                                        [(ngModel)]="ObjMasterProductm.UOM"
+                                        #MainUOM="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No UOM Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select UOM'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        [ngClass]="{'clearance': MasterProductmFormSubmitted && MainUOM.errors?.required}"required>
+                                        </p-dropdown>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label" *ngIf="buttonname === 'Create'">Manufacturer<sup class="text-danger">*</sup></label>
@@ -569,6 +572,57 @@
     </p-footer>
 </p-dialog>
 
+<!--UOM-->
+<p-dialog 
+[header]="'Create UOM Type'" 
+[appendTo]="'body'" 
+[visible]="UOMTypeModal" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true"
+[style]="{ width: '40%', minWidth: '200px' }" 
+style="text-align: center;" 
+[minY]="70"
+[maximizable]="true" 
+[baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="UomTypeForm" #UomTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+                    <input type="text" 
+                    class="form-control" 
+                    name="UOM" #UOM="ngModel" 
+                    [(ngModel)]="UOMTypeName" 
+                    placeholder="UOM" 
+                    allow-pattern="([a-z ]|\.)" 
+                    [ngClass]="{clearance: UOMTypeFormSubmitted && UOM?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="UOMTypeModal = false" class="btn btn-default">
+        CANCEL
+        </button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateUomType(UomTypeForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+
 <!-- VIEWS -->
 <!-- Product Type -->
 <p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewProTypeModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
@@ -760,3 +814,29 @@
 </button>
     </p-footer>
 </p-dialog>
+
+<!--UOM-->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewUomModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="UOMData">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>UOM</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{col.UOM}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteProUom(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewUomModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog> 
