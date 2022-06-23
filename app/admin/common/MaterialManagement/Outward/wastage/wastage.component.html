@@ -34,7 +34,7 @@
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">To Cost Cent</label>
+                                        <label class="control-label">From Cost Cent</label>
                                         <select class="form-control" name="BTo_Cost_Cen_ID" #BTo_Cost_Cen_ID="ngModel" [(ngModel)]="ObjBrowse.To_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_Cost_Cen_ID?.errors?.required}" (change)="GetBToGodown()" [attr.disabled]="TBCdisableflag? true: null">
                               <option  [ngValue]="undefined">Select</option>
                               <option  *ngFor="let option of ToBcostcenlist" value="{{option.Cost_Cen_ID}}">
@@ -43,7 +43,7 @@
                         </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">To Stock Point</label>
+                                        <label class="control-label">From Stock Point</label>
                                         <select class="form-control" name="BTo_godown_id" #BTo_godown_id="ngModel" [(ngModel)]="ObjBrowse.To_godown_id" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_godown_id?.errors?.required}" [attr.disabled]="TBGdisableflag? true: null">
                             <option  [ngValue]="undefined">Select</option>
                             <option  *ngFor="let option of ToBGodownList" value="{{option.godown_id}}">
