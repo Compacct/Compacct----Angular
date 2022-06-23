@@ -231,7 +231,8 @@ get Edit() {
            });
         });
           if(!edit){
-            this.ObjFinancial.Discount_Receive_Ledger_ID = data[0].Ledger_ID;
+             this.ObjFinancial.Discount_Receive_Ledger_ID = data[0].Ledger_ID;
+            this.EventEmitDefault();
           }
         }
   }
@@ -254,7 +255,7 @@ get Edit() {
            });
           });
           if(!edit){
-            this.ObjFinancial.Discount_Given_Ledger_ID = data[0].Ledger_ID;
+           this.ObjFinancial.Discount_Given_Ledger_ID = data[0].Ledger_ID;
             this.EventEmitDefault();
           }
           
@@ -278,10 +279,10 @@ get Edit() {
        });
        this.RCMDataListInput = tempRCmDataList;
        if(!edit){
-         this.ObjFinancial.Input_RCM_Ledger_ID = data[0].Ledger_ID;
-         this.ObjFinancial.Input_IGST_RCM_Ledger_ID = data[0].Ledger_ID;
-         this.ObjFinancial.Input_SGST_RCM_Ledger_ID = data[0].Ledger_ID;
-         this.ObjFinancial.Input_CGST_RCM_Ledger_ID = data[0].Ledger_ID;
+        //  this.ObjFinancial.Input_RCM_Ledger_ID = data[0].Ledger_ID;
+        //  this.ObjFinancial.Input_IGST_RCM_Ledger_ID = data[0].Ledger_ID;
+        //  this.ObjFinancial.Input_SGST_RCM_Ledger_ID = data[0].Ledger_ID;
+        //  this.ObjFinancial.Input_CGST_RCM_Ledger_ID = data[0].Ledger_ID;
          this.EventEmitDefault();
        }
      }
@@ -311,10 +312,10 @@ get Edit() {
        });
       this.RCMDataListOutput = tempRCmDataList;
        if(!edit){
-         this.ObjFinancial.Output_RCM_Ledger_ID = data[0].Ledger_ID;
-         this.ObjFinancial.Output_CGST_RCM_Ledger_ID = data[0].Ledger_ID;
-         this.ObjFinancial.Output_IGST_RCM_Ledger_ID = data[0].Ledger_ID;
-         this.ObjFinancial.Output_SGST_RCM_Ledger_ID = data[0].Ledger_ID;
+        //  this.ObjFinancial.Output_RCM_Ledger_ID = data[0].Ledger_ID;
+        //  this.ObjFinancial.Output_CGST_RCM_Ledger_ID = data[0].Ledger_ID;
+        //  this.ObjFinancial.Output_IGST_RCM_Ledger_ID = data[0].Ledger_ID;
+        //  this.ObjFinancial.Output_SGST_RCM_Ledger_ID = data[0].Ledger_ID;
          this.EventEmitDefault();
        }
        

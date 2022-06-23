@@ -33,3 +33,6 @@
 .text-red-active>td {
   color: red;
 }
+/* #ej2-datepicker_296 > div .e-invalid-input{
+  border: 2px red solid;
+} */

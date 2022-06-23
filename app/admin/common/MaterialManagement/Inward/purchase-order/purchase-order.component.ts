@@ -11,6 +11,7 @@ import { AbstractControl } from '@angular/forms';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { identity } from 'rxjs';
 import { CompacctProjectComponent } from '../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
+import { timeStamp } from 'console';
 
 @Component({
   selector: 'app-purchase-order',
@@ -74,6 +75,7 @@ export class PurchaseOrderComponent implements OnInit {
   userType = "";
   Requlist:any = [];
   objProjectRequi:any = {};
+  productTypeList = [];
   validatation = {
     required : false,
     projectMand : 'N'
@@ -128,6 +130,11 @@ export class PurchaseOrderComponent implements OnInit {
       this.getcompany();
       this.GetRequlist();
      this.userType = this.$CompacctAPI.CompacctCookies.User_Type
+     console.log("proj",this.openProject);
+     if(this.openProject !== "Y"){
+       this.getProductType()
+       this.GetRequlist()
+     }
   } 
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -172,6 +179,11 @@ export class PurchaseOrderComponent implements OnInit {
     this.objpurchase.Credit_Days = 0;
     this.objpurchase.Currency_ID = 1;
     this.objpurchase.Type_ID = 1;
+    if(this.openProject === "Y"){
+      this.Requlist = [];
+      this.productTypeList = []; 
+    }
+    this.productList = [];
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -294,13 +306,20 @@ export class PurchaseOrderComponent implements OnInit {
     })
   }
   getProduct(){
-   this.productList = [];
+  
     if(this.objaddPurchacse.Req_No){
+      this.objaddPurchacse.Product_Type_ID = undefined;
+      this.productDataList = [];
       this.productList = [];
+      this.objaddPurchacse.Product_ID = undefined;
+      this.objaddPurchacse.Product_Spec = undefined;
+      this.objaddPurchacse.Unit = undefined
+      let tempData:any = {}
+      tempData = this.objaddPurchacse.Req_No ? {Req_No : this.objaddPurchacse.Req_No} : {Product_Type_ID : this.objaddPurchacse.Product_Type_ID}
       const obj = {
         "SP_String": "Sp_Purchase_Order",
         "Report_Name_String": "Get_Product_Against_Requisition_No",
-        "Json_Param_String": JSON.stringify([{Req_No : this.objaddPurchacse.Req_No}]) 
+        "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Req_No : this.objaddPurchacse.Req_No}}]) : JSON.stringify([{Req_No : this.objaddPurchacse.Req_No}])
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         // console.log(data);
@@ -316,10 +335,13 @@ export class PurchaseOrderComponent implements OnInit {
         })
     }
     else {
+      this.productDataList = [];
       this.productList = [];
-      this.objaddPurchacse.Product_ID =undefined
-      this.objaddPurchacse.Product_Spec = ""
+      this.objaddPurchacse.Product_ID = undefined;
+      this.objaddPurchacse.Product_Spec = undefined;
+      this.objaddPurchacse.Unit = undefined
     }
+ 
     }
   GetProductSpecification(){
    if(this.objaddPurchacse.Product_ID){
@@ -570,7 +592,7 @@ export class PurchaseOrderComponent implements OnInit {
      console.log("productFilter",productFilter[0])
      let saveData = {
         Product_ID: Number(this.objaddPurchacse.Product_ID),
-        Req_No: this.objaddPurchacse.Req_No,
+        Req_No: this.objaddPurchacse.Req_No ? this.objaddPurchacse.Req_No : "NA",
         Product_Name:  productFilter[0].Product_Description,
         Product_Spec: this.objaddPurchacse.Product_Spec,
         Exp_Delivery: this.DateService.dateConvert(new Date(this.ExpectedDeliverydate)),
@@ -931,7 +953,18 @@ getProjectData(e){
  this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
  this.objProjectRequi = e
  console.log("objProjectRequi",this.objProjectRequi)
- 
+ let temparr = Object.keys(this.objProjectRequi)
+ console.log(temparr)
+ if(temparr.indexOf("PROJECT_ID") != -1 && temparr.indexOf("Budget_Group_ID") != -1 && temparr.indexOf("Budget_Sub_Group_ID") != -1 && temparr.indexOf("SITE_ID") != -1 && temparr.indexOf("Work_Details_ID") != -1){
+  this.getProductType();
+  this.GetRequlist();
+ }
+ else{
+  this.objaddPurchacse.Product_Type_ID = undefined;
+  this.objaddPurchacse.Product_ID = undefined;
+  this.objaddPurchacse.Product_Spec = undefined;
+ }
+
 }
 clearProject(){
   if(this.openProject === "Y"){
@@ -984,11 +1017,63 @@ GetRequlist(){
   const obj = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Get_Requisition_No",
+    "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([this.objProjectRequi]) : JSON.stringify([{PROJECT_ID : 0}])
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("data",data)
     this.Requlist = data
   })
+}
+
+getProductType(){
+  let temparr = Object.keys(this.objProjectRequi)
+  const obj = {
+    "SP_String": "SP_Txn_Requisition",
+    "Report_Name_String": "Get_product_Type_Details",
+    "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([this.objProjectRequi]) : JSON.stringify([{PROJECT_ID : 0}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    data.forEach(el => {
+      el['label'] = el.Product_Type
+      el['value'] = el.Product_Type_ID
+    });
+     
+    this.productTypeList = data;
+   console.log("productTypeList",this.productTypeList);
+   })
+}
+GetProductsDetalis(){
+  if(this.objaddPurchacse.Product_Type_ID){
+    this.objaddPurchacse.Req_No = undefined;
+    this.productDataList = [];
+    this.productList = [];
+    this.objaddPurchacse.Product_ID = undefined;
+    this.objaddPurchacse.Product_Spec = undefined;
+    this.objaddPurchacse.Unit = undefined
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_product_Details",
+      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Product_Type_ID : Number(this.objaddPurchacse.Product_Type_ID)}}]) : JSON.stringify([{Product_Type_ID : Number(this.objaddPurchacse.Product_Type_ID)}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.productDataList = data;
+     console.log("productDataList",this.productDataList);
+     this.productDataList.forEach((el:any) => {
+      this.productList.push({
+          label: el.Product_Description,
+          value: el.Product_ID
+        });
+       });
+    })
+  }
+  else {
+    this.productDataList = [];
+    this.productList = [];
+    this.objaddPurchacse.Product_ID = undefined;
+    this.objaddPurchacse.Product_Spec = undefined;
+    this.objaddPurchacse.Unit = undefined
+  }
+
 }
 }
 class purchase {
@@ -1070,7 +1155,8 @@ class addPurchacse{
       GST_AMT:any;
       Gst:any;
       Taxable_Amount:any;
-      Req_No:any
+      Req_No:any;
+      Product_Type_ID:any
 }
 class project{
     DOC_NO:any
