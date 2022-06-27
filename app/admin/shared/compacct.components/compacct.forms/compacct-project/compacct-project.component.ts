@@ -23,9 +23,14 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
   workList = [];
   editData:any = [];
   fieldDis = false
+  public _DisableAllInput:boolean;
   @Output() projectObj = new EventEmitter<project>()
   @Input()  requir:any 
   @Input() edit:any
+  @Input() set DisableAllInput(value: boolean) {
+   this.fieldDis = value
+   console.log("Disable",value)
+  }
   constructor(
     private $http: HttpClient,
     private $CompacctAPI: CompacctCommonApi,

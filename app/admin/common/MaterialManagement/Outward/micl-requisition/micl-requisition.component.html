@@ -175,6 +175,7 @@
                                 <app-compacct-project *ngIf="openProject === 'Y'" 
                                                         #project  
                                                          [requir]="whateverCopy(validatation)"
+                                                         [DisableAllInput]="projectDisable"
                                                          (projectObj)="getProjectData($event)"></app-compacct-project>
                                 <hr class="box boxboxDivide-primary">
                                 <form name="requisitionmaterialForm" #requisitionmaterialForm="ngForm" novalidate>

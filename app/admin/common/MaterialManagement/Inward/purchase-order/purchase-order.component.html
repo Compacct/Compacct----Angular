@@ -106,7 +106,7 @@
                                                                 </a>
                                                             </li>
                                                         <li>
-                                                            <a (click)="Print(col)">
+                                                            <a (click)="Print(col.Doc_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
@@ -360,12 +360,13 @@
                                 <app-compacct-project *ngIf="openProject === 'Y'" 
                                                         #project  
                                                          [requir]="whateverCopy(validatation)"
+                                                         [DisableAllInput]="projectDisable"
                                                          (projectObj)="getProjectData($event)"></app-compacct-project>
                                 <hr class="box boxboxDivide-primary">
                                <form name="purChaseAddForm" #purChaseAddForm="ngForm" novalidate>
                                     <div class="form-group">
                                         <div class="col-sm-3">
-                                            <label class="control-label">Requisition<sup class="text-danger">*</sup></label>
+                                            <label class="control-label">Requisition<sup class="text-danger"></sup></label>
                                             <select class="form-control" 
                                             name="Requisition" 
                                             #Requisition="ngModel" 
