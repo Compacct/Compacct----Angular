@@ -56,7 +56,8 @@ export class MiclRequisitionComponent implements OnInit {
   userType = "";
   docno : any;
   openProject = "N";
-  minFromDate = new Date()
+  minFromDate = new Date();
+  projectDisable = false;
   validatation = {
     required : false,
     projectMand : 'N'
@@ -124,11 +125,13 @@ export class MiclRequisitionComponent implements OnInit {
     this.productList = [];
     this.requi_Date = new Date();
     this.validatation.required = false;
+    this.projectDisable = false;
    }
   addMaterials(valid){
   console.log("valid",valid);
   this.requisitionmaterialFormSubmit = true;
   if(valid){
+    
     const productFilter = this.productListview.filter(el=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
     const productTypeFilter = this.productTypeList.filter(el=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID))
      console.log("productFilter",productFilter);
@@ -148,6 +151,7 @@ export class MiclRequisitionComponent implements OnInit {
       this.objmaterial = new material();
       this.productList = [];
       this.productListview = [];
+      this.projectDisable = true;
 
     }
   
@@ -270,6 +274,7 @@ export class MiclRequisitionComponent implements OnInit {
   }
   delete(i){
     this.AddMaterialsList.splice(i,1);
+    this.projectDisable = this.AddMaterialsList.length ? true : false
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -355,7 +360,7 @@ export class MiclRequisitionComponent implements OnInit {
       const obj = {
         "SP_String": "SP_Txn_Requisition",
         "Report_Name_String": "Get_product_Details",
-        "Json_Param_String": JSON.stringify([{Product_Type_ID : Number(this.objmaterial.Product_Type_ID)}])
+        "Json_Param_String":  Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Product_Type_ID : Number(this.objmaterial.Product_Type_ID)}}]) : JSON.stringify([{Product_Type_ID : Number(this.objmaterial.Product_Type_ID)}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.productListview = data;
@@ -523,6 +528,8 @@ export class MiclRequisitionComponent implements OnInit {
      else{
       this.objmaterial.Product_Type_ID = undefined;
       this.objmaterial.Product_ID = undefined;
+      this.productTypeList = [];
+      this.productList = [];
      }
   }
   whateverCopy(obj) {

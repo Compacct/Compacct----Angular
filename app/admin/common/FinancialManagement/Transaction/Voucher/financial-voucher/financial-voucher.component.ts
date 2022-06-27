@@ -10,7 +10,7 @@ import { CompacctCommonApi } from '../../../../../shared/compacct.services/commo
 import { DateTimeConvertService } from '../../../../../shared/compacct.global/dateTime.service';
 import { ActivatedRoute } from '@angular/router';
 import { identity } from 'rxjs';
-import { NUMBER_TYPE } from '@angular/compiler/src/output/output_ast';
+import { NUMBER_TYPE, THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-financial-voucher',
@@ -97,6 +97,7 @@ export class FinancialVoucherComponent implements OnInit {
     this.GetCostCenter()
     this.Finyear()
     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
+    
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -235,7 +236,7 @@ export class FinancialVoucherComponent implements OnInit {
       this.voucherminDate = new Date(data[0].Fin_Year_Start)
       this.vouchermaxDate = new Date(data[0].Fin_Year_End)
       console.log("voucherminDate",this.voucherminDate)
-      
+
       });
   }
 }

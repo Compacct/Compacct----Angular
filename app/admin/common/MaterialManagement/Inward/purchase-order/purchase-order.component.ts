@@ -76,6 +76,7 @@ export class PurchaseOrderComponent implements OnInit {
   Requlist:any = [];
   objProjectRequi:any = {};
   productTypeList = [];
+  projectDisable = false
   validatation = {
     required : false,
     projectMand : 'N'
@@ -337,16 +338,20 @@ export class PurchaseOrderComponent implements OnInit {
     else {
       this.productDataList = [];
       this.productList = [];
-      this.objaddPurchacse.Product_ID = undefined;
-      this.objaddPurchacse.Product_Spec = undefined;
-      this.objaddPurchacse.Unit = undefined
+      let tempObj = {...this.objaddPurchacse}
+      this.objaddPurchacse = new addPurchacse()
+      this.objaddPurchacse.Req_No = tempObj.Req_No
     }
  
     }
   GetProductSpecification(){
    if(this.objaddPurchacse.Product_ID){
-    let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID));
+    let tempVal:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID));
     this.objaddPurchacse.Product_Spec = tempVal[0].Product_Description;
+    this.objaddPurchacse.Qty = tempVal[0].Qty
+    if(this.openProject === 'Y'){
+      this.objaddPurchacse.Rate = tempVal[0].Rate;
+    }
     this.getProductDetalis()
    }
    else {
@@ -459,6 +464,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.objaddPurchacse.Tax_Desc = data[0].Cat_Name;
         this.objaddPurchacse.Gst =  data[0].GST_Tax_Per;
+        this.getGrsAmt();
        // this.getTotalForTax();
      })
   }
@@ -611,7 +617,7 @@ export class PurchaseOrderComponent implements OnInit {
         GST_Amount: Number(this.objaddPurchacse.GST_AMT),
      }
       this.addPurchaseList.push(saveData);
-      
+      this.projectDisable = true
       this.objaddPurchacse = new addPurchacse();
       this.purChaseAddFormSubmit = false;
       console.log("addPurchaseList",this.addPurchaseList);
@@ -690,6 +696,7 @@ export class PurchaseOrderComponent implements OnInit {
       }
       this.clearData();
       this.getAllData(true);
+      this.Print(data[0].Column1)
       this.clearProject()
       }
       else {
@@ -868,15 +875,15 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
         })
   }
  }
- Print(obj) {
-  if (obj.Doc_No) {
+ Print(DocNo) {
+  if(DocNo) {
   const objtemp = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Purchase_Order_Print"
     }
   this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
     var printlink = data[0].Column1;
-    window.open(printlink+"?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
   })
   }
 }
@@ -897,6 +904,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
  }
  DeleteAddPurchase(index) {
   this.addPurchaseList.splice(index,1);
+  this.projectDisable = this.addPurchaseList.length ? true :false
   this.getAllTotal();
 }
 GetGSTAmt(){
@@ -1069,9 +1077,9 @@ GetProductsDetalis(){
   else {
     this.productDataList = [];
     this.productList = [];
-    this.objaddPurchacse.Product_ID = undefined;
-    this.objaddPurchacse.Product_Spec = undefined;
-    this.objaddPurchacse.Unit = undefined
+    let tempObj = {...this.objaddPurchacse}
+    this.objaddPurchacse = new addPurchacse()
+    this.objaddPurchacse.Product_Type_ID = tempObj.Product_Type_ID
   }
 
 }

@@ -1,4 +1,4 @@
-    <ejs-daterangepicker placeholder='Select a Date range'
+<ejs-daterangepicker  [min]='minDate' [max]='maxDate' placeholder='Select a Date range'
     [enabled]='EnabledFlag'
      (change)="rangeSelected(compactDaterange.value)" format="dd-MMM-yyyy"
       [startDate]="StartDate" [endDate]="EndDate" #compactDaterange>
