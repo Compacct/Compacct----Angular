@@ -317,6 +317,8 @@ import { K4cConversionOfProductComponent } from './common/MaterialManagement/Out
 import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
 import { FinancialVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/financial-voucher/financial-voucher.component';
 import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wastage.component";
+import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Transaction/Voucher/hipl-payment-requisition/hipl-payment-requisition.component";
+import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
 
 @NgModule({
   declarations: [
@@ -552,7 +554,9 @@ import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wa
     K4cConversionOfProductComponent,
     PurchaseBillComponent,
     FinancialVoucherComponent,
-    WastageComponent
+    WastageComponent,
+    HIPLPaymentRequisitionComponent,
+    CCSahaProfundComponent
   ],
   imports: [
     CommonModule,

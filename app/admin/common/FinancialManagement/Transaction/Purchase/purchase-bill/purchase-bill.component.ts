@@ -82,6 +82,7 @@ export class PurchaseBillComponent implements OnInit {
   ObjProductInfo = new ProductInfo();
   ProductInfoSubmitted = false;
   expiryDate : Date;
+  ProductExpirydisabled = false;
   GRNDate : Date;
   headerData = ""
   GRNList = [];
@@ -117,6 +118,10 @@ export class PurchaseBillComponent implements OnInit {
   ObjBrowsePurBill = new BrowsePurBill();
   SerarchPurBillList = [];
   SearchPurBillFormSubmitted = false;
+  initDateValid:any = [];
+  // Objsave = new save();
+  Cess_Ledger_ID = undefined;
+  cessdisabled = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -139,6 +144,7 @@ export class PurchaseBillComponent implements OnInit {
      }
 
   ngOnInit() {
+    console.log(this.$CompacctAPI.CompacctCookies.Fin_Year_Start)
     this.items = ["BROWSE", "CREATE", "REPORT"];
     this.Header.pushHeader({
       Header: this.headerData,
@@ -152,8 +158,6 @@ export class PurchaseBillComponent implements OnInit {
     this.ObjPurChaseBill.RCM = "N";
     this.GetProductdetails();
     this.GetLedger();
-    this.ObjBrowsePurBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
-    this.ObjBrowsePurBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // this.GetSearchedlist();
   }
   TabClick(e){
@@ -173,7 +177,7 @@ export class PurchaseBillComponent implements OnInit {
      this.Godownlist = [];
      this.POorderlist = [];
      this.ProductDetailslist = [];
-     this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    //  this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjProductInfo = new ProductInfo();
    }
    onReject(){}
@@ -182,6 +186,7 @@ export class PurchaseBillComponent implements OnInit {
      this.ObjPurChaseBill.Choose_Address = "MAIN";
      this.PurchaseBillFormSubmitted = false;
      this.maindisabled = false;
+     this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      this.ObjPurChaseBill.Revenue_Cost_Cent_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      this.GetCosCenAddress();
@@ -200,6 +205,7 @@ export class PurchaseBillComponent implements OnInit {
      this.AddProductDetails = [];
      this.clearlistamount();
      this.AddTdsDetails = [];
+     this.ObjTDS = new TDS();
    }
    getcompany(){
     const obj = {
@@ -209,6 +215,7 @@ export class PurchaseBillComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.companyList = data
      console.log("companyList",this.companyList)
+     this.ObjBrowsePurBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     })
   }
@@ -246,11 +253,23 @@ export class PurchaseBillComponent implements OnInit {
     this.ObjPurChaseBill.Sub_Ledger_Name = vendorObj.label;
     this.GetChooseAddress();
     this.GetPurOrderNoList();
+   } else{
+    this.PurOrderList = [];
+    this.PODate = new Date();
+    this.GRNList = [];
+    this.GRNDate = new Date();
+    this.GetProductdetails();
+    this.ObjProductInfo.Product_Specification = undefined;
    }
    }
    GetChooseAddress(){
     //this.ExpiredProductFLag = false;
   // if(this.ObjPurChaseBill.Sub_Ledger_ID) {
+    this.GetProductdetails();
+    this.PODate = new Date();
+    this.GRNList = [];
+    this.GRNDate = new Date();
+    this.ObjProductInfo.Product_Specification = undefined;
     if(this.ObjPurChaseBill.Choose_Address) {
    const ctrl = this;
    const MainObj = $.grep(ctrl.VendorList,function(item: any) {return item.value == ctrl.ObjPurChaseBill.Sub_Ledger_ID})[0];
@@ -306,6 +325,7 @@ export class PurchaseBillComponent implements OnInit {
       console.log("costcenterList  ===",data);
       this.CostCenterList = data;
       // this.ObjPurChaseBill.Cost_Cen_ID = this.CostCenterList.length === 1 ? this.CostCenterList[0].Cost_Cen_ID : undefined;
+      this.ObjBrowsePurBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       this.GetCosCenAddress();
       this.ObjPurChaseBill.Revenue_Cost_Cent_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
@@ -369,6 +389,8 @@ export class PurchaseBillComponent implements OnInit {
       })
   }
   GetPurOrderNoList(){
+    this.PurOrderList = [];
+    this.ObjProductInfo.Pur_Order_No = undefined;
      const TempObj = {
       //  Req_Date : this.DateService.dateConvert(new Date(this.ReqDate)),
        Sub_Ledger_ID : this.ObjPurChaseBill.Sub_Ledger_ID,
@@ -419,11 +441,13 @@ export class PurchaseBillComponent implements OnInit {
        this.GetProductdetails();
        this.ObjProductInfo.GRN_No = undefined;
        this.ObjProductInfo.Product_ID = undefined;
+       this.ObjProductInfo.Product_Specification = undefined;
       //  this.podatedisabled = true;
      }
   }
    GetGRNno(){
     this.GRNList = [];
+    this.ObjProductInfo.GRN_No = undefined;
     const tempobj = {
       PO_Doc_No : this.ObjProductInfo.Pur_Order_No,
       }
@@ -470,12 +494,15 @@ export class PurchaseBillComponent implements OnInit {
      else {
        this.GRNDate = new Date();
        this.ObjProductInfo.Product_ID = undefined;
+       this.PODate = new Date();
+       this.ObjProductInfo.Product_Specification = undefined;
       //  this.GetProductdetails();
       //  this.podatedisabled = true;
      }
   }
    GetProductdetails(){
     this.ProductDetails = [];
+    this.ObjProductInfo.Product_ID = undefined;
       const obj = {
         "SP_String": "SP_Purchase_Bill",
         "Report_Name_String": "Get_All_Products"
@@ -521,6 +548,7 @@ export class PurchaseBillComponent implements OnInit {
 }
 GetPONoProdetails2(){
   this.ProductDetails = [];
+  this.ObjProductInfo.Product_Specification = undefined;
   const obj = {
     "SP_String": "SP_Purchase_Bill",
     "Report_Name_String": "Get_PO_Products",
@@ -558,6 +586,7 @@ GetGRNNoProductdetails(){
 }
 GetGRNNoProlistdetails2(){
   this.ProductDetails = [];
+  this.ObjProductInfo.Product_Specification = undefined;
   const obj = {
     "SP_String": "SP_Purchase_Bill",
     "Report_Name_String": "Get_GRN_Product_list",
@@ -578,6 +607,7 @@ GetGRNNoProlistdetails2(){
     this.ObjProductInfo.Qty = 0;
     this.ObjProductInfo.UOM = undefined;
     this.ObjProductInfo.Rate = undefined;
+    this.Cess_Ledger_ID = undefined;
     if(this.ObjProductInfo.Product_ID) {
       const ctrl = this;
       const ProductObj = $.grep(ctrl.ProductDetails,function(item: any) {return item.value == ctrl.ObjProductInfo.Product_ID})[0];
@@ -594,6 +624,11 @@ GetGRNNoProlistdetails2(){
       this.Batch_No = ProductObj.Batch_No
       this.ObjProductInfo.Batch_Number = ProductObj.Batch_No;
       this.ObjProductInfo.Product_Expiry = ProductObj.Product_Expiry;
+      if (this.ObjProductInfo.Product_Expiry === 'true') {
+        this.ProductExpirydisabled = true;
+      } else {
+        this.ProductExpirydisabled = false;
+      }
       this.ObjProductInfo.HSN_No = ProductObj.HSN_No;
       this.ObjProductInfo.UOM = ProductObj.UOM;
       this.ObjProductInfo.Rate = ProductObj.MRP;
@@ -601,6 +636,11 @@ GetGRNNoProlistdetails2(){
       this.ObjProductInfo.CGST_Rate = ProductObj.CGST_Rate;
       this.ObjProductInfo.SGST_Rate = ProductObj.SGST_Rate;
       this.ObjProductInfo.IGST_Rate = ProductObj.IGST_Rate;
+      this.Cess_Ledger_ID = ProductObj.Cess_Ledger_ID;
+      if (this.Cess_Ledger_ID == 0)
+        this.cessdisabled = true;
+     } else {
+      this.cessdisabled = false;
      }
   }
   CalCulateTotalAmt(){
@@ -614,31 +654,31 @@ GetGRNNoProlistdetails2(){
   }
   DiscChange(){
     if(!this.ObjProductInfo.Discount_Type){
-      this.ObjProductInfo.Discount = 0
+      this.ObjProductInfo.Discount_Type_Amt = 0
     } 
     else {
-      this.ObjProductInfo.Discount = undefined;
+      this.ObjProductInfo.Discount_Type_Amt = undefined;
     }
   }
   AfterDiscCalChange(){
-    this.ObjProductInfo.Discount_AMT = 0;
+    this.ObjProductInfo.Discount = 0;
     this.ObjProductInfo.Taxable_Amount = 0;
-    if (this.ObjProductInfo.Discount) { 
+    if (this.ObjProductInfo.Discount_Type_Amt) { 
       var disamt;
       var taxamt;
     if(this.ObjProductInfo.Discount_Type == "%") {
-      disamt = Number((Number(this.ObjProductInfo.Amount) * Number(this.ObjProductInfo.Discount)) / 100).toFixed(2);
-      this.ObjProductInfo.Discount_AMT =Number(disamt);
+      disamt = Number((Number(this.ObjProductInfo.Amount) * Number(this.ObjProductInfo.Discount_Type_Amt)) / 100).toFixed(2);
+      this.ObjProductInfo.Discount =Number(disamt);
     }
     if(this.ObjProductInfo.Discount_Type == "AMT") {
-      this.ObjProductInfo.Discount_AMT = Number(this.ObjProductInfo.Discount);
+      this.ObjProductInfo.Discount = Number(this.ObjProductInfo.Discount_Type_Amt);
     }
-    taxamt = Number(Number(this.ObjProductInfo.Amount) - Number(this.ObjProductInfo.Discount_AMT)).toFixed(2);
+    taxamt = Number(Number(this.ObjProductInfo.Amount) - Number(this.ObjProductInfo.Discount)).toFixed(2);
     this.ObjProductInfo.Taxable_Amount = Number(taxamt);
     // this.ObjTDS.Taxable_Amount = Number(this.ObjProductInfo.Taxable_Amount);
     }
     else {
-      this.ObjProductInfo.Discount_AMT = 0;
+      this.ObjProductInfo.Discount = 0;
       this.ObjProductInfo.Taxable_Amount = Number(this.ObjProductInfo.Amount);
     }
   }
@@ -686,9 +726,8 @@ GetGRNNoProlistdetails2(){
 
       // var cessamount = this.ObjProductInfo.CESS_Percentage ? Number(((this.ObjProductInfo.Taxable_Amount * this.ObjProductInfo.CESS_Percentage) / 100).toFixed(2)) : 0;
       this.ObjProductInfo.CESS_AMT = this.ObjProductInfo.CESS_AMT ? Number(this.ObjProductInfo.CESS_AMT) : 0;
-      var netamount = Number(this.ObjProductInfo.CGST_Amount) + Number(this.ObjProductInfo.SGST_Amount) 
-                    + Number(this.ObjProductInfo.IGST_Amount) + Number(this.ObjProductInfo.IGST_Amount)
-                    + Number(this.ObjProductInfo.CESS_AMT)
+      var netamount = (Number(this.ObjProductInfo.CGST_Amount) + Number(this.ObjProductInfo.SGST_Amount) 
+                    + Number(this.ObjProductInfo.IGST_Amount) + Number(this.ObjProductInfo.CESS_AMT)).toFixed(2);
 
       var stockpoint = this.GodownList.filter(item=> Number(item.godown_id) === Number(this.ObjProductInfo.Godown_Id))
     var productObj = {
@@ -699,16 +738,16 @@ GetGRNNoProlistdetails2(){
       HSL_No : this.ObjProductInfo.HSN_No,
       Batch_Number : this.ObjProductInfo.Batch_Number,
       Serial_No : this.ObjProductInfo.Serial_No,
-      Product_Expiry : this.ObjProductInfo.Product_Expiry,
+      Product_Expiry : this.ObjProductInfo.Product_Expiry ? 1 : 0,
       Expiry_Date : this.ObjProductInfo.Expiry_Date,
       Qty : this.ObjProductInfo.Qty,
       UOM : this.ObjProductInfo.UOM,
       MRP : this.ObjProductInfo.Rate,
       Rate : this.ObjProductInfo.Rate,
-      Amount : this.ObjProductInfo.Amount,
+      Amount : Number(this.ObjProductInfo.Amount),
       Discount_Type : this.ObjProductInfo.Discount_Type,
+      Discount_Type_Amount : this.ObjProductInfo.Discount_Type_Amt ? Number(this.ObjProductInfo.Discount_Type_Amt) : 0,
       Discount : this.ObjProductInfo.Discount ? Number(this.ObjProductInfo.Discount) : 0,
-      Discount_Type_Amount : this.ObjProductInfo.Discount_AMT ? Number(this.ObjProductInfo.Discount_AMT) : 0,
       Taxable_Amount : Number(this.ObjProductInfo.Taxable_Amount),
       CGST_Rate : Number(this.ObjProductInfo.CGST_Rate),
       CGST_Amount : Number(this.ObjProductInfo.CGST_Amount),
@@ -719,8 +758,8 @@ GetGRNNoProlistdetails2(){
       CESS_Percentage : this.ObjProductInfo.CESS_Percentage ? Number(this.ObjProductInfo.CESS_Percentage) : 0,
       CESS_Amount : this.ObjProductInfo.CESS_AMT ? Number(this.ObjProductInfo.CESS_AMT) : 0,
 
-      Net_Value : Number(netamount).toFixed(2),
-      godown_id : this.ObjProductInfo.Godown_Id,
+      Net_Value : Number(netamount),
+      godown_id : this.ObjProductInfo.Godown_Id ? Number(this.ObjProductInfo.Godown_Id) : 0,
       Godown_Name : stockpoint.length ? stockpoint[0].godown_name : undefined,
       Pur_Order_No : this.ObjProductInfo.Pur_Order_No,
       Pur_Order_Date : this.DateService.dateConvert(new Date(this.PODate)),
@@ -785,7 +824,7 @@ GetGRNNoProlistdetails2(){
   
     this.AddProductDetails.forEach(item => {
       count = count + Number(item.Amount);
-      count1 = count1 + Number(item.Discount_Type_Amount);
+      count1 = count1 + Number(item.Discount);
       count2 = count2 + Number(item.Taxable_Amount);
       count3 = count3 + Number(item.CGST_Amount);
       count4 = count4 + Number(item.SGST_Amount);
@@ -851,8 +890,8 @@ GetGRNNoProlistdetails2(){
   CalculateTDSAmt(){
     this.ObjTDS.TDS_Amount = 0;
     var tdsamt;
-    if (this.ObjTDS.TDS_Per) { 
-      tdsamt = Number((Number(this.ObjTDS.Taxable_Amount) * Number(this.ObjTDS.TDS_Per)) / 100).toFixed(2);
+    if (this.ObjTDS.TDS_Percentage) { 
+      tdsamt = Number((Number(this.ObjTDS.Taxable_Amount) * Number(this.ObjTDS.TDS_Percentage)) / 100).toFixed(2);
       this.ObjTDS.TDS_Amount =Number(tdsamt);
     }
     else {
@@ -870,8 +909,8 @@ GetGRNNoProlistdetails2(){
       Sub_Ledger_Id : this.ObjTDS.Sub_Ledger_ID,
       Sub_Ledger_Name : subledgername[0].label,
       Taxable_Amount : Number(this.ObjTDS.Taxable_Amount),
-      TDS_Per : this.ObjTDS.TDS_Per ? Number(this.ObjTDS.TDS_Per) : 0,
-      TDS_Amt : this.ObjTDS.TDS_Amount ? Number(this.ObjTDS.TDS_Amount) : 0
+      TDS_Percentage : this.ObjTDS.TDS_Percentage ? Number(this.ObjTDS.TDS_Percentage) : 0,
+      TDS_Amount : this.ObjTDS.TDS_Amount ? Number(this.ObjTDS.TDS_Amount) : 0
       }
       this.AddTdsDetails.push(tdsobj);
       console.log('this.AddTdsDetails===',this.AddTdsDetails)
@@ -904,13 +943,15 @@ GetGRNNoProlistdetails2(){
     this.ObjPurChaseBill.Bill_Net_Amt = Number(this.Net_Amt);
     this.ObjPurChaseBill.Rounded_Off = Number(this.Round_off);
     this.ObjPurChaseBill.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
-    if(this.AddProductDetails.length && this.AddTdsDetails.length) {
+    this.ObjPurChaseBill.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID;
+    if(this.AddProductDetails.length) {
       // this.Spinner = true;
       // this.ngxService.start();
       // let tempArr = [];
       // tempArr = {...this.ObjPurChaseBill}
-      this.ObjPurChaseBill.Product_Details = this.AddProductDetails;
-      this.ObjPurChaseBill.TDS = this.AddTdsDetails;
+      // this.Objsave.T_Elemnts = this.ObjPurChaseBill;
+      this.ObjPurChaseBill.L_element = this.AddProductDetails;
+      this.ObjPurChaseBill.TDS_element = this.AddTdsDetails;
       console.log("Create ====>",this.ObjPurChaseBill)
   //   } else {
   //     setTimeout(()=>{
@@ -968,7 +1009,7 @@ GetGRNNoProlistdetails2(){
      //console.log(data);
      var tempID = data[0].Column1;
     //  this.Objcustomerdetail.Bill_No = data[0].Column1;
-     if(data[0].Column1){
+     if(data[0].Column1 != "Total Dr Amt And Cr Amt Not matched"){
       const mgs = this.buttonname === 'Create' ? "Created" : "updated";
       this.Spinner = false;
       this.ngxService.stop();
@@ -979,16 +1020,28 @@ GetGRNNoProlistdetails2(){
        summary: "Sale_Bill_ID  " + tempID,
        detail: "Succesfully " + mgs
      });
-     
+    //  if (tempID != "Total Dr Amt And Cr Amt Not matched") {
      this.PurchaseBillFormSubmitted = false;
-    //  this.productSubmit =[];
     //  this.clearlistamount();
     //  this.cleartotalamount();
-    //  this.SaveNPrintBill();
      this.clearData();
-    //  this.router.navigate(['./POS_BIll_Order']);
-
-    } else{
+    //  } else {
+    //   this.Spinner = false;
+    //   this.ngxService.stop();
+    //  }
+     }
+    else if (data[0].Column1 === "Total Dr Amt And Cr Amt Not matched") {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: tempID
+      });
+    }
+    else{
       this.Spinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
@@ -999,6 +1052,27 @@ GetGRNNoProlistdetails2(){
         detail: "Error Occured "
       });
     }
+    // if(data[0].MSG !="Save Sucessfully" && data[0].Column1){
+    //   this.Spinner = false;
+    //   this.ngxService.stop();
+    //   this.compacctToast.clear();
+    //   this.compacctToast.add({
+    //     key: "compacct-toast",
+    //     severity: "error",
+    //     summary: "Warn Message",
+    //     detail: errormsg
+    //   });
+    // } else {
+    //   this.Spinner = false;
+    //   this.ngxService.stop();
+    //   this.compacctToast.clear();
+    //   this.compacctToast.add({
+    //     key: "compacct-toast",
+    //     severity: "error",
+    //     summary: "Warn Message",
+    //     detail: "Error Occured "
+    //   });
+    // }
   })
     }
   }
@@ -1022,13 +1096,64 @@ GetGRNNoProlistdetails2(){
   //   console.log(this.DateService.dateConvert(new Date(this.expiryDate)))
   // }
   getDateRange(dateRangeObj) {
-    // if (dateRangeObj.length) {
-    //   this.ObjBrowse.start_date = dateRangeObj[0];
-    //   this.ObjBrowse.end_date = dateRangeObj[1];
-    // }
+    if (dateRangeObj.length) {
+      this.ObjBrowsePurBill.start_date = dateRangeObj[0];
+      this.ObjBrowsePurBill.end_date = dateRangeObj[1];
     }
-  GetSerarchPurBill(){}
-
+    }
+    // FilterPeriod(){
+    //   if(this.ObjCosdHead.Fin_Year_Name){
+    //    const FinancialYearFilter:any = this.FinancialDataList.find((el:any)=> el.Fin_Year_Name === this.ObjCosdHead.Fin_Year_Name)
+    //    console.log("FinancialYearFilter",FinancialYearFilter)
+    //     this.initDateValid = [new Date(FinancialYearFilter.Fin_Year_Start), new Date(FinancialYearFilter.Fin_Year_End)]
+    //    //console.log("initDate",this.initDate)
+    //   }
+    //   } 
+  GetSerarchPurBill(valid){
+  this.SearchPurBillFormSubmitted = true;
+  const start = this.ObjBrowsePurBill.start_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowsePurBill.start_date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.ObjBrowsePurBill.end_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowsePurBill.end_date))
+  : this.DateService.dateConvert(new Date());
+  const tempobj = {
+   From_Date : start,
+   To_Date : end,
+   Company_ID : this.ObjBrowsePurBill.Company_ID,
+   Cost_Cen_ID : this.ObjBrowsePurBill.Cost_Cen_ID
+  }
+  if (valid) {
+  const obj = {
+    "SP_String": "SP_Purchase_Bill",
+    "Report_Name_String": "Purchase_Bill_Browse",
+    "Json_Param_String": JSON.stringify([tempobj])
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.SerarchPurBillList = data;
+    // this.BackupSearchedlist = data;
+    // this.GetDistinct();
+    // if(this.getAllDataList.length){
+    //   this.DynamicHeader = Object.keys(data[0]);
+    // }
+    this.seachSpinner = false;
+    this.SearchPurBillFormSubmitted = false;
+    console.log("Get All Data",this.SerarchPurBillList);
+  })
+  }
+  }
+  Print(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_Purchase_Bill",
+      "Report_Name_String": "Purchase_Bill_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
 }
 class PurChaseBill {
   Choose_Address : any;
@@ -1089,13 +1214,19 @@ class PurChaseBill {
   Bill_Net_Amt : number;
   Rounded_Off : number;
   User_ID : number;
+  Fin_Year_ID : number;
 
   // HSN_No : any;
 
-  Product_Details : any;
-  TDS : any;
+  L_element : any;
+  TDS_element : any;
 
  }
+//  class save{
+//   T_Elemnts : any;
+//   L_element : any;
+//   TDS_element : any;
+//  }
  class GRN2 {
   Quantity_Remarks : string;
   Quality_Rejection_Remarks : string;
@@ -1136,8 +1267,8 @@ class ProductInfo {
   MRP = 0;
   Amount: number;
   Discount_Type = undefined;
+  Discount_Type_Amt : number;
   Discount : number;
-  Discount_AMT : number;
   Taxable_Amount : number;
   Godown_Id: 0;
   CESS_Percentage: number;
@@ -1164,7 +1295,7 @@ class ProductInfo {
   IGST_Input_Ledger_ID: number;
   Discount_Ledger_ID: number;
 
-  Product_Expiry = false;
+  Product_Expiry : any;
   Expiry_Date: string;
   CESS_AMT: number;
 
@@ -1174,7 +1305,7 @@ class TDS{
   Ledger_ID : number;
   Sub_Ledger_ID : number;
   Taxable_Amount : number;
-  TDS_Per : number;
+  TDS_Percentage : number;
   TDS_Amount : number;
 
 }

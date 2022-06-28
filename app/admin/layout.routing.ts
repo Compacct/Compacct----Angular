@@ -224,6 +224,8 @@ import { K4cConversionOfProductComponent } from './common/MaterialManagement/Out
 import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
 import { FinancialVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-voucher/financial-voucher.component";
 import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wastage.component";
+import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Transaction/Voucher/hipl-payment-requisition/hipl-payment-requisition.component";
+import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
 
 
 
@@ -1644,6 +1646,20 @@ data: {
   component: WastageComponent,
   data: {
     title: 'Wastage'
+}
+},
+{
+  path: 'HIPL_Payment_Requisition',
+  component: HIPLPaymentRequisitionComponent,
+  data: {
+    title: 'HIPL Payment Requisition'
+}
+},
+{
+  path: 'CC_Saha_Profund',
+  component: CCSahaProfundComponent,
+  data: {
+    title: 'CC Saha Profund'
 }
 },
 

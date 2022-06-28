@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Date</label>
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]= "initDateValid" required>
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
@@ -73,7 +73,7 @@
                                         <h5><strong></strong></h5>
                                     </div>
                                 </div>
-                                <div class="no-padding">
+                                <div class="table-responsive table-id">
                                     <p-table [value]="SerarchPurBillList"
                                     [paginator]="true" [rows]="100" 
                                     [loading]="seachSpinner" [rowHover]="true" 
@@ -113,34 +113,34 @@
                                                                         <span class="caret"></span>
                                                                     </button>
                                                         <ul class="dropdown-menu">
-                                                            <li>
+                                                            <!-- <li>
                                                                     <a (click)="Edit(col)">
                                                                         <i class="fa fa-fw fa-pencil"></i> Edit
                                                                     </a>
+                                                                </li> -->
+                                                                <li>
+                                                                    <a (click)="Print(col.Doc_No)">
+                                                                        <i class="fa fa-fw fa-print"></i> Print
+                                                                    </a>
                                                                 </li>
-                                                            <li>
-                                                                <a (click)="Print(col)">
-                                                                    <i class="fa fa-fw fa-print"></i> Print
-                                                                </a>
-                                                            </li>
-                                                            <li>
+                                                            <!-- <li>
                                                                 <a (click)="Delete(col)">
                                                                     <i class="fa fa-fw fa-trash"></i> Delete
                                                                 </a>
-                                                            </li>
+                                                            </li> -->
                                                         </ul>
                                                     </div>
                                                 </td>
                                                 <!-- <ng-container pTemplate="body" let-col> -->
                                                     <td>{{col.Doc_No}}</td>
-                                                    <td>{{col.Doc_Date}}</td>
+                                                    <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.Sub_Ledger_Name}}</td>
                                                     <td>{{col.Cost_Cen_Name}}</td>
-                                                    <td>{{col.Net_Amount}}</td>
-                                                    <td>{{col.Supplier_Ref_No}}</td>
-                                                    <td>{{col.Supplier_Ref_Date}}</td>
-                                                    <td>{{col.Document}}</td>
-                                                    <td>{{col.Fin_Year}}</td>
+                                                    <td>{{col.Bill_Net_Amt}}</td>
+                                                    <td>{{col.Supp_Ref_No}}</td>
+                                                    <td>{{col.Supp_Ref_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td>{{col.Document ? col.Document : '-'}}</td>
+                                                    <td>{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
                                                 <!-- </ng-container> -->
                                                 
                                             </tr>
@@ -410,7 +410,8 @@
                                                         <div class="input-group-addon">
                                                          <i class="fa fa-calendar"></i>
                                                     </div>
-                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='SupplierBillDate' placeholder="dd/MMM/yyyy" [cssClass]="PurchaseBillFormSubmitted?.required && !SupplierBillDate ? 'clearance': ''"></ejs-datepicker>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='SupplierBillDate' placeholder="dd/MMM/yyyy"></ejs-datepicker>
+                                                    <!--  [cssClass]="PurchaseBillFormSubmitted?.required && !SupplierBillDate ? 'clearance': ''" -->
                                                      <!-- <input
                                                       type="date"
                                                       name="supplierbilldate"
@@ -503,7 +504,7 @@
                                             <br>
                                             <hr class="box boxboxDivide-primary ng-scope">
                                                <div class="form-group">
-                                                <div class="col-sm-3">
+                                                <div [ngClass]="ProductExpirydisabled ? 'col-sm-3' : 'col-sm-6'">
                                                   <label class="control-label"
                                                     >Product Details&nbsp;<span class="text-danger">*</span></label>
                                                   <p-dropdown
@@ -528,7 +529,7 @@
                                                   >
                                                   </p-dropdown>
                                                 </div>
-                                                <div class="col-sm-3">  <!-- [ngClass]="productExpiryDateVisiable ? 'col-sm-3' : 'col-sm-6'" -->
+                                                <div Class="col-sm-3">
                                                   <label class="control-label">Product Specification<sup class="text-danger"></sup></label>
                                                   <input
                                                     class="form-control"
@@ -570,7 +571,7 @@
                                                     />
                                                   </div>
                                                   <!-- || (ObjProductInfo.Qty > tempQty) -->
-                                                 <div class="col-sm-3" ><!--*ngIf="productExpiryDateVisiable" -->
+                                                 <div class="col-sm-3" *ngIf="ProductExpirydisabled">
                                                   <label class="control-label"
                                                     >Expriy Date<sup class="text-danger">*</sup></label
                                                   >
@@ -578,8 +579,7 @@
                                                     <div class="input-group-addon">
                                                       <i class="fa fa-calendar"></i>
                                                     </div>
-                                                    <input style="width: 90%;" type="month" name="expdate" [(ngModel)]="expiryDate" [disabled]="!ObjProductInfo.Product_Expiry" [ngClass]="{clearance:ProductInfoSubmitted && expdate?.errors?.required}"
-                                                    [required]="ObjProductInfo.Product_Expiry">
+                                                    <input style="width: 90%;" type="month" name="exdate" [(ngModel)]="expiryDate" [ngClass]="{clearance:ProductInfoSubmitted && exdate?.errors?.required}" required>
                                                     <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='expiryDate' [enabled]="Product_Expiry" placeholder="dd/MMM/yyyy"></ejs-datepicker> -->
                                                     <!--  <input
                                                       type="date"
@@ -693,7 +693,7 @@
                                                     class="form-control"
                                                     name="Discount"
                                                     #Discount="ngModel"
-                                                    [(ngModel)]="ObjProductInfo.Discount"
+                                                    [(ngModel)]="ObjProductInfo.Discount_Type_Amt"
                                                     (ngModelChange)="AfterDiscCalChange()"
                                                     [disabled]="!ObjProductInfo.Discount_Type"
                                                     placeholder="Discount"
@@ -706,7 +706,7 @@
                                                 class="form-control"
                                                 name="Discount_AMT"
                                                 #Discount_AMT="ngModel"
-                                                [(ngModel)]="ObjProductInfo.Discount_AMT"
+                                                [(ngModel)]="ObjProductInfo.Discount"
                                                 (ngModelChange)="getTaxAble()"
                                                 placeholder="Discount AMT"
                                                 CompacctDigitonly="true"
@@ -730,7 +730,7 @@
                                             <label>CESS Percentage<sup class="text-danger"></sup></label>
                                             <div class="input-group">
                                               <input class="form-control" name="CESSPercentage" #CESSPercentage="ngModel" [(ngModel)]="ObjProductInfo.CESS_Percentage"
-                                               (ngModelChange)="CalculateCessAmt()" CompacctDigitonly="true" placeholder="CESS">
+                                               (ngModelChange)="CalculateCessAmt()" [disabled]="cessdisabled" CompacctDigitonly="true" placeholder="CESS">
                                               <span class="input-group-addon" id="basic-addon1">%</span>
                                             </div>
                                            
@@ -743,6 +743,7 @@
                                             name="cessamt"
                                             #cessamt="ngModel"
                                             [(ngModel)]="ObjProductInfo.CESS_AMT"
+                                            [disabled]="cessdisabled"
                                             placeholder="CESS"
                                             CompacctDigitonly="true"
                                             >
@@ -765,7 +766,7 @@
                                                   <button
                                                     id="row-Add"
                                                     class="btn btn-primary custombutton pull-right"
-                                                    (click)="AddProductInfo('ProductForm.form.valid','SerialNumber')"
+                                                    (click)="AddProductInfo(ProductForm.form.valid)"
                                                   >
                                                     <span class="glyphicon glyphicon-plus"></span
                                                     >&nbsp;Add
@@ -790,7 +791,7 @@
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Rate</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Total Amt</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount Type</th>
-                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount</th>
+                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount Type Amt</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount Amt</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Taxable Amt</th>
                                             <th nowrap colspan="2" class="text-center" style="vertical-align:middle">CGST</th>
@@ -826,9 +827,9 @@
                                             <td>{{obj.UOM}}</td>
                                             <td>{{obj.Rate}}</td>
                                             <td>{{obj.Amount}}</td>
-                                            <td>{{obj.Discount_Type}}</td>
-                                            <td>{{obj.Discount}}</td>
+                                            <td>{{obj.Discount_Type ? obj.Discount_Type : '-'}}</td>
                                             <td>{{obj.Discount_Type_Amount}}</td>
+                                            <td>{{obj.Discount}}</td>
                                             <td>{{obj.Taxable_Amount}}</td>
                                             <td>{{obj.CGST_Rate}}</td>
                                             <td>{{obj.CGST_Amount}}</td>
@@ -935,7 +936,7 @@
                                 </div>
                                 <div class="col-sm-1">
                                     <label class="control-label">TDS % </label>
-                                    <input class="form-control" name="tdsper" #tdsper="ngModel" [(ngModel)]="ObjTDS.TDS_Per" (ngModelChange)="CalculateTDSAmt()" placeholder="TDS %" CompacctDigitonly="true" [ngClass]="{'clearance':TDSFormSubmitted && tdsper?.errors?.required}" >
+                                    <input class="form-control" name="tdsper" #tdsper="ngModel" [(ngModel)]="ObjTDS.TDS_Percentage" (ngModelChange)="CalculateTDSAmt()" placeholder="TDS %" CompacctDigitonly="true" [ngClass]="{'clearance':TDSFormSubmitted && tdsper?.errors?.required}" >
                                 </div>
                                 <div class="col-sm-2">
                                     <label class="control-label">TDS Amount </label>
@@ -981,8 +982,8 @@
                                             <td>{{obj.Ledger_Name}}</td>
                                             <td>{{obj.Sub_Ledger_Name}}</td>
                                             <td>{{obj.Taxable_Amount}}</td>
-                                            <td>{{obj.TDS_Per}}</td>
-                                            <td>{{obj.TDS_Amt}}</td>
+                                            <td>{{obj.TDS_Percentage}}</td>
+                                            <td>{{obj.TDS_Amount}}</td>
                                             <!-- <td>{{obj.CGST_Rate}}</td>
                                             <td>{{obj.CGST_Amount}}</td>
                                             <td>{{obj.SGST_Rate}}</td>

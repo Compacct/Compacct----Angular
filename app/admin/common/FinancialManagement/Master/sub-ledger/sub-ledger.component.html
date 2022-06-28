@@ -209,10 +209,10 @@
 
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Parent Sub Ledger<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">Parent Sub Ledger</label>
                                         <select class="form-control" name="Parent_Sub_Ledger_Name" #Parent_Sub_Ledger_Name="ngModel" [(ngModel)]="objSubLedger.Parent_Sub_Ledger_ID">
                                <option  [ngValue]="undefined">Select</option>
-                    <option *ngFor="let option of AllparentLedger" [ngValue]="option.Parent_Sub_Ledger_ID">
+                    <option *ngFor="let option of AllparentLedger" [ngValue]="option.Sub_Ledger_ID">
                         {{option.Sub_Ledger_Name}}
                 </option>
                                         </select>
@@ -242,7 +242,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">GST No.<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" placeholder="GST NO." (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
+                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" placeholder="GST NO." [disabled]="gstdisabled" (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
                                             clearance:
                                               (GSTvalidFlag) ||
                                               (GST_NO.errors?.minlength && GST_NO.touched)
@@ -287,8 +287,8 @@
                                     <div class="col-sm-4">
                                         <label class="control-label">Composite GST / Unregistered</label>
                                         <div class="input-group" style="margin-top: 15px;">
-                                            <p-radioButton name="gst1" value="Yes" [(ngModel)]="objSubLedger.Composite_GST" label="Yes"></p-radioButton>&nbsp;&nbsp;
-                                            <p-radioButton name="gst2" value="No" [(ngModel)]="objSubLedger.Composite_GST" label="No"></p-radioButton>
+                                            <p-radioButton name="gst1" value="Yes" [(ngModel)]="objSubLedger.Composite_GST" label="Yes" (click)="changecompositegst()"></p-radioButton>&nbsp;&nbsp;
+                                            <p-radioButton name="gst2" value="No" [(ngModel)]="objSubLedger.Composite_GST" label="No" (click)="changecompositegst()"></p-radioButton>
 
                                         </div>
                                     </div>
@@ -425,7 +425,7 @@
                                     <div class="col-sm-4">
                                         <label class="control-label">Amount Business Expected</label>
                                         <div class="input-group" style="width:100%">
-                                            <input class="form-control" name="Amount_Business_Expected" #Amount_Business_Expected="ngModel" [(ngModel)]="objSubLedger.Amount_Business_Expected" placeholder="Amount Business Expected">
+                                            <input class="form-control" name="Amount_Business_Expected" #Amount_Business_Expected="ngModel" CompacctDigitonly="true" [(ngModel)]="objSubLedger.Amount_Business_Expected" placeholder="Amount Business Expected">
                                             <span class="input-group-addon" style="border-color: #ffffff; padding:0px"></span>
                                             <select class="form-control" name="PerYear_Onetime" #PerYear_Onetime="ngModel" [(ngModel)]="objSubLedger.PerYear_Onetime">
                                                 <option value="PerYear">Per Year</option>
