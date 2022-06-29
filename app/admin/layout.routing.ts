@@ -1251,13 +1251,6 @@ const layoutRoutes: Routes = [{
       }
     },
     {
-      path: 'Outlet_Group_Report',
-      component: OutletGroupReportComponent,
-      data: {
-        title: 'Group Report'
-      }
-    },
-    {
       path: 'BL_CRM_Txn_Enq_Tender_Harbauer_View_Actual',
       component: TenderHarbauerActualViewComponent,
       data: {
