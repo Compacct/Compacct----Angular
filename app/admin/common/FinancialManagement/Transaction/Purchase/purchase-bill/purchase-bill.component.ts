@@ -10,6 +10,7 @@ import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import { CompacctProjectComponent } from '../../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 import { Console } from 'console';
+import { runInThisContext } from 'vm';
 
 @Component({
   selector: 'app-purchase-bill',
@@ -123,6 +124,12 @@ export class PurchaseBillComponent implements OnInit {
   Cess_Ledger_ID = undefined;
   cessdisabled = false;
 
+  objProjectPurBillHarb:any = {};
+  ObjTerm = new Term();
+  TermFormSubmitted = false;
+  TermList = [];
+  AddTermList = [];
+
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -158,6 +165,7 @@ export class PurchaseBillComponent implements OnInit {
     this.ObjPurChaseBill.RCM = "N";
     this.GetProductdetails();
     this.GetLedger();
+    this.GetTerm();
     // this.GetSearchedlist();
   }
   TabClick(e){
@@ -928,6 +936,19 @@ GetGRNNoProlistdetails2(){
     this.objproject = e
     this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
     this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
+    this.objProjectPurBillHarb = e
+    console.log("objProjectRequi",this.objProjectPurBillHarb)
+    let temparr = Object.keys(this.objProjectPurBillHarb)
+    console.log(temparr)
+    // if(temparr.indexOf("PROJECT_ID") != -1 && temparr.indexOf("Budget_Group_ID") != -1 && temparr.indexOf("Budget_Sub_Group_ID") != -1 && temparr.indexOf("SITE_ID") != -1 && temparr.indexOf("Work_Details_ID") != -1){
+    //  this.getProductType();
+    //  this.GetRequlist();
+    // }
+    // else{
+    //  this.ObjProductInfo.Product_Type_ID = undefined;
+    //  this.ObjProductInfo.Product_ID = undefined;
+    //  this.ObjProductInfo.Product_Specification = undefined;
+    // }
    }
    clearProject(){
      this.ProjectInput.clearData()
@@ -935,10 +956,26 @@ GetGRNNoProlistdetails2(){
    whateverCopy(obj) {
     return JSON.parse(JSON.stringify(obj))
   }
+  async SaveProject(docNo){
+    if(docNo){
+     this.objproject.DOC_NO = docNo,
+     this.objproject.DOC_TYPE = "PURCHASE ORDER",
+     this.objproject.DOC_DATE = this.DateService.dateConvert(this.DocDate)
+    }
+    const obj = {
+     "SP_String": "SP_BL_CRM_TXN_Project_Doc",
+     "Report_Name_String": "Create_BL_CRM_TXN_Project_Doc",
+     "Json_Param_String": JSON.stringify([this.objproject]) 
+    }
+    const projectData = await  this.GlobalAPI.getData(obj).toPromise();
+    console.log("projectData",projectData);
+    return projectData
+   }
   DataForSavePurchaseBill(){
     this.ObjPurChaseBill.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate));
     this.ObjPurChaseBill.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.SupplierBillDate));
-    this.ObjPurChaseBill.CN_Date = this.DateService.dateConvert(new Date(this.CNDate));
+    this.ObjPurChaseBill.CN_Date = this.ObjPurChaseBill.CN_Date ? this.DateService.dateConvert(new Date(this.CNDate)) : "01/Jan/1900";
+    // this.ObjPurChaseBill.CN_Date = this.DateService.dateConvert(new Date(this.CNDate));
     this.ObjPurChaseBill.Bill_Gross_Amt = Number(this.Gross_Amount);
     this.ObjPurChaseBill.Bill_Net_Amt = Number(this.Net_Amt);
     this.ObjPurChaseBill.Rounded_Off = Number(this.Round_off);
@@ -1009,7 +1046,10 @@ GetGRNNoProlistdetails2(){
      //console.log(data);
      var tempID = data[0].Column1;
     //  this.Objcustomerdetail.Bill_No = data[0].Column1;
-     if(data[0].Column1 != "Total Dr Amt And Cr Amt Not matched"){
+     if(data[0].Column1 != "Total Dr Amt And Cr Amt Not matched" && data[0].Success != "False"){
+      // if(this.objproject.PROJECT_ID && !this.DocNo){ 
+      //  const projectSaveData = await this.SaveProject(data[0].Column1);
+      //  if(projectSaveData){
       const mgs = this.buttonname === 'Create' ? "Created" : "updated";
       this.Spinner = false;
       this.ngxService.stop();
@@ -1076,22 +1116,91 @@ GetGRNNoProlistdetails2(){
   })
     }
   }
-   CalculateTaxandNet(){}
-   getDis(){}
-   getTaxAble(){}
-   GetIndentList(){}
-   onKeydownMain(event,nextElemID): void {
-    if (event.key === "Enter" && nextElemID){
-      if (nextElemID === 'enter'){
-        console.log('Table Data last enter')
-        // const elem  = document.getElementById('row-Add');
-        // elem.click();
-        const elem  = document.getElementById('SerialNumber');
-        elem.focus();
-        event.preventDefault();
+  GetTerm() {
+    const obj = {
+      "SP_String": "SP_Purchase_Bill",
+      "Report_Name_String": "Get_Term",
       }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.TermList = data;
+          console.log('TermList',this.TermList)
+    })
+    // this.$http
+    //   .get("/Common/Get_Term_Tax_Pur_GST")
+    //   .subscribe((data: any) => {
+    //     this.StateList = data ? JSON.parse(data) : [];
+    //     // this.TermList = data;
+    //     console.log('TermList',this.TermList)
+    //   });
+  }
+  TermChange(){
+    this.GetProductdetails();
+    this.ObjTerm.HSN_No = undefined;
+    if(this.ObjTerm.Term_ID) {
+   const ctrl = this;
+   const termobj = $.grep(ctrl.TermList,function(item: any) {return item.Term_ID == ctrl.ObjTerm.Term_ID})[0];
+   console.log(termobj);
+   this.ObjTerm.Term_Name = termobj.Term_Name;
+   this.ObjTerm.HSN_No = termobj.HSN_No;
+   this.ObjTerm.CGST_Rate = termobj.CGST_Tax_Per;
+   this.ObjTerm.SGST_Rate = termobj.SGST_Tax_Per;
+   this.ObjTerm.IGST_Rate = termobj.IGST_Tax_Per;
+  }
+  }
+  AddTerm(valid){
+    //console.log(this.ObjaddbillForm.Product_ID)
+    this.TermFormSubmitted = true;
+    if(valid) {
+      const SubLedgerState = this.ObjPurChaseBill.Sub_Ledger_State
+        ? this.ObjPurChaseBill.Sub_Ledger_State.toUpperCase()
+        : undefined;
+      const CostCenterState = this.ObjPurChaseBill.Cost_Cen_State
+        ? this.ObjPurChaseBill.Cost_Cen_State.toUpperCase()
+        : undefined;
+    // this.ObjProductInfo.Taxable_Amount = Number(
+    //   this.ObjProductInfo.Amount ? this.ObjProductInfo.Amount : 0
+    // );
+    
+      if (SubLedgerState && CostCenterState) {
+        if (SubLedgerState === CostCenterState) {
+          this.ObjTerm.CGST_Amount = Number(((this.ObjTerm.Term_Amount * this.ObjTerm.CGST_Rate) / 100).toFixed(2));
+          this.ObjTerm.SGST_Amount = Number(((this.ObjTerm.Term_Amount * this.ObjTerm.SGST_Rate) / 100).toFixed(2));
+          this.ObjTerm.IGST_Amount = 0;
+          this.ObjTerm.IGST_Rate = 0;
+        }
+        else {
+          this.ObjTerm.IGST_Amount = Number(((this.ObjTerm.Term_Amount * this.ObjTerm.IGST_Rate) / 100).toFixed(2));
+          this.ObjTerm.CGST_Amount = 0;
+          this.ObjTerm.CGST_Rate = 0;
+          this.ObjTerm.SGST_Amount = 0;
+          this.ObjTerm.SGST_Rate = 0;
+        }
+      } 
+    var TERMobj = {
+      Term_ID : this.ObjTerm.Term_ID,
+      Term_Name : this.ObjTerm.Term_Name,
+      HSN_No : this.ObjTerm.HSN_No,
+      Term_Amount : this.ObjTerm.Term_Amount,
+      SGST_Rate : this.ObjTerm.SGST_Rate,
+      SGST_Amount : this.ObjTerm.SGST_Amount,
+      CGST_Rate : this.ObjTerm.CGST_Rate,
+      CGST_Amount : this.ObjTerm.CGST_Amount,
+      IGST_Rate : this.ObjTerm.IGST_Rate,
+      IGST_Amount : this.ObjTerm.IGST_Amount
+  
+    };
+    this.AddTermList.push(TERMobj);
+      console.log('this.AddProductDetails===',this.AddProductDetails)
+      this.ObjTerm = new Term();
+      this.GetProductdetails();
+      this.TermFormSubmitted = false;
+      // this.ListofTotalAmount();
     }
   }
+  DeteteTerm(index) {
+    this.AddTermList.splice(index,1)
+    // this.ListofTotalAmount();
+    }
   // datechange(){
   //   console.log(this.DateService.dateConvert(new Date(this.expiryDate)))
   // }
@@ -1222,17 +1331,6 @@ class PurChaseBill {
   TDS_element : any;
 
  }
-//  class save{
-//   T_Elemnts : any;
-//   L_element : any;
-//   TDS_element : any;
-//  }
- class GRN2 {
-  Quantity_Remarks : string;
-  Quality_Rejection_Remarks : string;
-  Deduction_For_Rejection : string;
-  Created_By : string;
- }
  class project{
   DOC_NO:any
   DOC_DATE:any
@@ -1299,6 +1397,26 @@ class ProductInfo {
   Expiry_Date: string;
   CESS_AMT: number;
 
+}
+class Term {
+  Txn_ID: string;
+  DOC_No: string;
+  Sale_Pur = 0;
+  Term_ID: number;
+  Term_Name: number;
+  Term_Amount: number;
+  SGST_Rate: number;
+  SGST_Amount: number;
+  CGST_Rate: number;
+  CGST_Amount: number;
+  IGST_Rate: number;
+  IGST_Amount: number;
+
+  CGST_Input_Ledger_ID: number;
+  SGST_Input_Ledger_Id: number;
+  IGST_Input_Ledger_ID: number;
+  Purchase_Ac_Ledger: number;
+  HSN_No: number;
 }
 
 class TDS{

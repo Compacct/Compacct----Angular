@@ -252,17 +252,33 @@ export class OutletGroupReportComponent implements OnInit {
       
     exportoexcel(Arr,fileName): void {
       let temp = [];
-     Arr.forEach(element => {
-       const obj = {
-        Cost_Cen_Name : element.Cost_Cen_Name,
-        Bill_Date : this.DateService.dateConvert(new Date(element.Bill_Date)),
-        Bill_No : element.Bill_No,
-        Product_Description : element.Product_Description,
-        Qty : element.Qty,
-        Order_Amount : element.Order_Amount
-       }
+      if (this.ObjBrowseStockView.Choose_Report === "Swiggy") {
+      Arr.forEach(element => {
+        const obj = {
+          Cost_Cen_Name : element.Cost_Cen_Name,
+          Bill_Date : this.DateService.dateConvert(new Date(element.Bill_Date)),
+          Bill_No : element.Bill_No,
+          Swiggy_Order_No : element.Online_Order_No,
+          Product_Description : element.Product_Description,
+          Qty : element.Qty,
+          Order_Amount : element.Order_Amount
+         }
+         temp.push(obj)
+       });
+      } else {
+        Arr.forEach(element => {
+        const obj = {
+          Cost_Cen_Name : element.Cost_Cen_Name,
+          Bill_Date : this.DateService.dateConvert(new Date(element.Bill_Date)),
+          Bill_No : element.Bill_No,
+          Zomato_Order_No : element.Online_Order_No,
+          Product_Description : element.Product_Description,
+          Qty : element.Qty,
+          Order_Amount : element.Order_Amount
+         }
        temp.push(obj)
      });
+    }
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
       const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
       XLSX.writeFile(workbook, fileName+'.xlsx');

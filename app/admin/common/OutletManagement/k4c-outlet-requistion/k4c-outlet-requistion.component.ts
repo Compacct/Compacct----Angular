@@ -67,6 +67,8 @@ export class K4cOutletRequistionComponent implements OnInit {
   Boutletdisableflag = false;
   outletdisableflag = false;
   excelList = [];
+  ShowRemarks: any;
+  CheckCreate: any;
 
   constructor(
     private $http: HttpClient,
@@ -94,6 +96,7 @@ export class K4cOutletRequistionComponent implements OnInit {
     });
  this.onload();
  this.GetOutletName();
+ this.CheckRequisitionForCreate();
   }
 
   async onload() {
@@ -770,6 +773,24 @@ exportoexcel(tempobj,fileName){
     
   })
 }
+CheckRequisitionForCreate() {
+  this.ShowRemarks = undefined;
+  this.CheckCreate = undefined;
+    const object = {
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    }
+      const objj = {
+        "SP_String": "SP_Add_ON",
+        "Report_Name_String": "Credit_Limit_Check",
+        "Json_Param_String": JSON.stringify([object])
+      }
+      this.GlobalAPI.getData(objj).subscribe((data:any)=>{
+        this.ShowRemarks = data[0].Remarks;
+        this.CheckCreate = data[0].Allow_Requisition;
+
+       console.log("ShowRemarks",this.ShowRemarks)
+      })
+  }
 }
 class Requistion {
   Cost_Cen_ID : any;
