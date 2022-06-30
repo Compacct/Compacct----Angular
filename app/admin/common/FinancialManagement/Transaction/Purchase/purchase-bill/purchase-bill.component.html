@@ -9,9 +9,12 @@
         </div>
 
         <div class="ui-g ui-fluid">
-          <div class="ui-g-6">
-              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          <div class="ui-g-6" *ngIf="Save && !Del">
+              <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
           </div>
+          <div class="ui-g-6" *ngIf="Del && !Save">
+            <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
+        </div>
           <div class="ui-g-6">
               <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
           </div>
@@ -123,11 +126,11 @@
                                                                         <i class="fa fa-fw fa-print"></i> Print
                                                                     </a>
                                                                 </li>
-                                                            <!-- <li>
+                                                            <li>
                                                                 <a (click)="Delete(col)">
                                                                     <i class="fa fa-fw fa-trash"></i> Delete
                                                                 </a>
-                                                            </li> -->
+                                                            </li>
                                                         </ul>
                                                     </div>
                                                 </td>
@@ -927,34 +930,39 @@
                                       <th>CGST Amount :</th>
                                       <td class="amt-td ng-binding">{{CGST_Amount}}</td>
 
-                                      <th>Total GST :</th>
-                                      <td class="amt-td ng-binding">{{Total_GST}}</td>
-                                      <th>Gross Amount : </th>
-                                      <td class="amt-td ng-binding">{{Gross_Amount}}</td>
+                                      <th>CESS Amount :</th>
+                                      <td class="amt-td ng-binding">{{CESS}}</td>
+                                      
                                       
                                       <!-- ngIf: ctrl.TCSflag -->
                                       <!-- ngIf: ctrl.TCSflag -->
                                     </tr>
                                     <tr>
-                                      <th>Discount Amount :</th>
-                                      <td class="amt-td ng-binding">{{Dis_Amount}}</td>
+                                      <th>Term Amount :</th>
+                                      <td class="amt-td ng-binding">{{Total_Term_Amount}}</td>
                                       <th>SGST Amount :</th>
                                       <td class="amt-td ng-binding">{{SGST_Amount}}</td>
 
-                                      <th>CESS Amount :</th>
-                                      <td class="amt-td ng-binding">{{CESS}}</td>
-                                      <th>Rounded Off :</th>
-                                      <td class="amt-td ng-binding">{{Round_off}}</td>
+                                      <th>Total TAX :</th>
+                                      <td class="amt-td ng-binding">{{Total_Tax}}</td>
                                     </tr>
                                     <tr>
-
-                                      <th>Taxable Amount :</th>
-                                      <td class="amt-td ng-binding">{{Total_Taxable}}</td>
+                                      <th>Discount Amount :</th>
+                                      <td class="amt-td ng-binding">{{Dis_Amount}}</td>
                                       <th>IGST Amount:</th>
                                       <td class="amt-td ng-binding">{{IGST_Amount}}</td>
 
-                                      <th>Total TAX :</th>
-                                      <td class="amt-td ng-binding">{{Total_Tax}}</td>
+                                      <th>Gross Amount : </th>
+                                      <td class="amt-td ng-binding">{{Gross_Amount}}</td>
+                                    </tr>
+                                    <tr>
+                                      <th>Taxable Amount :</th>
+                                      <td class="amt-td ng-binding">{{Taxable_Amount}}</td>
+                                      <th>Total GST :</th>
+                                      <td class="amt-td ng-binding">{{Total_GST}}</td>
+
+                                      <th>Rounded Off :</th>
+                                      <td class="amt-td ng-binding">{{Round_off}}</td>
                                       <th>Net Amount : </th>
                                       <td class="amt-td ng-binding">{{Net_Amt}}</td>
                                     </tr>

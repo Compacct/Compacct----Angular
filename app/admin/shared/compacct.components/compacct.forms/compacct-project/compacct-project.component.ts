@@ -120,7 +120,7 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
    }
   }
   getSubGroup(id?){
-    if(this.objproject.PROJECT_ID && this.objproject.SITE_ID & this.objproject.Budget_Group_ID){
+    if(this.objproject.PROJECT_ID && this.objproject.SITE_ID && this.objproject.Budget_Group_ID){
       this.EmitOnDataInit()
       this.subGorupList = [];
        const tampObj = {
