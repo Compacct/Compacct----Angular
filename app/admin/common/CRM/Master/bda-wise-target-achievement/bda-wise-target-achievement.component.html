@@ -53,7 +53,7 @@
                         <tbody data-spy="scroll" >
                                 <tr *ngFor="let col of MainList;let i = index;"> <!--let odd = odd;"[class.even]="odd" -->
                                 <!-- <td>{{ i + 1 }}</td> -->
-                                <ng-container *ngIf="CheckLengthMemberID(col.Member_ID) !== 1 && CheckIndexMemberID(col.Member_ID) === i;" >
+                                <ng-container *ngIf="CheckLengthMemberID(col.Member_ID)  && CheckIndexMemberID(col.Member_ID) === i;" >
                                     <td *ngIf="Report_Name === 'Main Report'" [attr.rowspan]="CheckLengthMemberID(col.Member_ID)"></td>
                                     <td *ngIf="Report_Name != 'Main Report'" style="vertical-align: middle;text-align: center;" [attr.rowspan]="CheckLengthMemberID(col.Member_ID)"><i class="fa fa-chevron-left" aria-hidden="true" (click)="Back(col)"> </i></td>
                                     <td class="group" style="vertical-align: middle;"  (click)="TableChange(col)" [attr.rowspan]="CheckLengthMemberID(col.Member_ID)">
@@ -61,7 +61,9 @@
                                         <!-- <i class="fa fa-arrow-left" aria-hidden="true" (click)="Back(col)"> </i> -->
                                             <!-- data-toggle="animation" data-animation-target="#animate-click" <i id="animate-click" data-animation="fade-in-right" data-animation-start="onClick" data-animation-reset="true"></i></td> -->
                                 </ng-container> 
-                                <!-- <td>{{ col.Member_Name }}</td> -->
+                                <!-- <ng-container>
+                                <td style="text-align:center" *ngIf="CheckLengthMemberID(col.Member_ID) !== 1;">{{ col.Member_Name }}</td>
+                                </ng-container> -->
                                 <td style="text-align:center">{{ col.Rem }}</td>
                                 <td style="text-align:center">{{ col.Target }}</td>
                                 <td style="text-align:center">{{ col.Achievement }}</td>

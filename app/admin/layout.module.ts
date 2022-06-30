@@ -314,7 +314,11 @@ import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledg
 import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
 import { CompacctProjectComponent } from './shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
+import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
 import { FinancialVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/financial-voucher/financial-voucher.component';
+import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wastage.component";
+import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Transaction/Voucher/hipl-payment-requisition/hipl-payment-requisition.component";
+import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
 
 @NgModule({
   declarations: [
@@ -548,7 +552,11 @@ import { FinancialVoucherComponent } from './common/FinancialManagement/Transact
     TaxCategoryComponent,
     CompacctProjectComponent,
     K4cConversionOfProductComponent,
-    FinancialVoucherComponent
+    PurchaseBillComponent,
+    FinancialVoucherComponent,
+    WastageComponent,
+    HIPLPaymentRequisitionComponent,
+    CCSahaProfundComponent
   ],
   imports: [
     CommonModule,

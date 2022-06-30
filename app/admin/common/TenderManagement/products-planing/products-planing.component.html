@@ -134,7 +134,7 @@
                             <div class="form-group">
                                 <div class="col-sm-5">
                                     <label class="control-label">Project Name&nbsp;<span class="text-danger">*</span></label>
-                                    <span *ngIf='ObjProdPlan.Tender_Doc_ID' (click)="GetEditSingleScheme()" class="btn-vk  pull-right createPatient"><i
+                                    <span *ngIf='ObjProdPlan.Tender_Doc_ID' (click)="GetEditSingleScheme()" class="btn-vk  pull-right createPatient"style="cursor: pointer;"><i
                                         class="fa fa-fw  fa-list"></i> Product Details</span>
                                     <p-dropdown [options]="ProjectList" name="ProjectName" [(ngModel)]="ObjProdPlan.Tender_Doc_ID"
                                       [showClear]="true" [emptyFilterMessage]="' No Project Found'"
@@ -147,7 +147,7 @@
                                 </div>
                                 <div class="col-sm-5">
                                     <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
-                                    <span *ngIf='ObjProdPlan.Tender_Doc_ID' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i
+                                    <span *ngIf='ObjProdPlan.Tender_Doc_ID' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"style="cursor: pointer"><i
                                         class="fa fa-fw  fa-plus"></i> Create</span>
                                     <p-dropdown [options]="SiteList" name="siteName" [(ngModel)]="ObjProdPlan.Site_ID"
                                       [showClear]="true" [emptyFilterMessage]="' No Site Found'"
@@ -181,6 +181,16 @@
                                     </p-dropdown>
                                 </div>
                                 <div class="col-sm-4">
+                                  <label class="control-label">Sub Group Name&nbsp;<span class="text-danger">*</span></label>
+                                  <p-dropdown [options]="SubGroupList" name="SubGroup" [(ngModel)]="ObjProdPlan.Budget_Sub_Group_ID"
+                                      [showClear]="true" [emptyFilterMessage]="' No Sub Group Found'"
+                                      [filter]="true" filterBy="label,value.name"
+                                      [placeholder]="'Select Sub Group Name'" [virtualScroll]="true" itemSize="30" #SubGroup="ngModel"
+                                      [styleClass]="PlanedProductFormSubmit && SubGroup.errors?.required? 'clearance': ''" [required]="true"
+                                      >
+                                  </p-dropdown>
+                              </div>
+                                <div class="col-sm-4">
                                 <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                         name="Type_Of_Product"
@@ -195,6 +205,7 @@
                                     <option Value="Others">Other Products</option>
                                 </select>
                                 </div>
+                                <div class="clearfix"></div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Product&nbsp;<span class="text-danger">*</span></label>
                                     <p-dropdown [options]="ProductList" name="Product" [(ngModel)]="ObjProdPlan.Product_ID"
@@ -206,13 +217,42 @@
                                         >
                                     </p-dropdown>
                                 </div>
+                                <div class="col-sm-8">
+                                  <label class="control-label">Work Details&nbsp;<span class="text-danger">*</span></label>
+                                  <p-dropdown [options]="WorkData" name="Work_Details" [(ngModel)]="ObjProdPlan.Work_Details_ID"
+                                      [showClear]="true" [emptyFilterMessage]="' No Work Details Found'"
+                                      [filter]="true" filterBy="label,value.name"
+                                      [placeholder]="'Select Group Name'" [virtualScroll]="true" itemSize="30" #Work_Details="ngModel"
+                                      [styleClass]="
+                                      PlanedProductFormSubmit && Work_Details.errors?.required? 'clearance': ''" [required]="true"
+                                      >
+                                  </p-dropdown>
+                              </div>
                                 <div class="col-sm-2">
                                 <label class="control-label">Qty<sup class="text-danger">*</sup></label>
                                 <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjProdPlan.Qty"
                                     CompacctDigitonly="true"
-                                    (keypress)="validate3($event)"
+                                    (ngModelChange)="dataChange()"
                                     [ngClass]="{'clearance': PlanedProductFormSubmit && Qty?.errors?.required}" placeholder="Qty"
                                     [required]="true" />
+                                </div>
+                                <div class="col-sm-2">
+                                  <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+                                  <input class="form-control" name="UOM" #UOM="ngModel" [(ngModel)]="ObjProdPlan.UOM" 
+                                  [ngClass]="{'clearance': PlanedProductFormSubmit && UOM?.errors?.required}"
+                                  placeholder="Unit"required>
+                                </div>
+                                <div class="col-sm-2">
+                                  <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                  <input class="form-control" name="Rate" #Rate="ngModel" 
+                                  [(ngModel)]="ObjProdPlan.Rate" 
+                                  [ngClass]="{'clearance': PlanedProductFormSubmit && Rate?.errors?.required}"
+                                  (ngModelChange)="dataChange()"
+                                  placeholder="Rate"required>
+                                </div> <div class="col-sm-2">
+                                  <label class="control-label">Amount</label>
+                                  <input class="form-control" name="Amount" #Amount="ngModel" [(ngModel)]="ObjProdPlan.Amount" placeholder="Amount" 
+                                  disabled>
                                 </div>
                                 <div class="col-sm-2">
                                     <button (click)="AddProductPlan(ProductForm.form.valid)" class="btn btn-primary custombutton"><i class="fa fa-plus"></i>&nbsp;ADD</button>
@@ -224,9 +264,12 @@
                                     <tr style="background-color:#3c8dbc;color:white;">
                                       <th>SL NO</th>
                                       <th>GROUP WORK</th>
+                                      <th>SUB GROUP</th>
                                       <th>MATERIAL TYPE</th>
                                       <th>PRODUCT</th>
                                       <th>QTY</th>
+                                      <th>RATE</th>
+                                      <th>AMOUNT</th>  
                                       <th>DELETE</th>
                           
                                     </tr>
@@ -235,9 +278,12 @@
                                     <tr *ngFor="let d of AddedPlanedProductList;let odd = odd;let index = index" [class.even]="odd">
                                       <td>{{ index + 1 }}</td>
                                       <td>{{d.Budget_Group_Name}}</td>
+                                      <td>{{d.Budget_Sub_Group_Name}}</td>
                                       <td>{{d.Type_Of_Product}}</td>
                                       <td>{{d.Product_Description}}</td>
                                       <td>{{d.Qty}}</td>
+                                      <td>{{d.Rate}}</td>
+                                      <td>{{d.Amount}}</td>
                                       <td class="text-center">
                                            <a (click)="DeleteProductPlan(d)"><div><i class="fa fa-fw fa-trash"> </i></div></a>
                                         </td>

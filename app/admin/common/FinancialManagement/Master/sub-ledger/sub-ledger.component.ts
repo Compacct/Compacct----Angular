@@ -77,6 +77,7 @@ export class SubLedgerComponent implements OnInit {
   TabSpinner = false;
   Tabbuttonname = "Save"
   GSTvalidFlag = false;
+  gstdisabled = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -102,6 +103,8 @@ export class SubLedgerComponent implements OnInit {
     this.DepartmentList = ['Owner', 'Accounts', 'Purchase', 'Operator', 'Godown'];
     this.RegionList = ['Asia'];
     this.AccountTypeList = ['Current Account', 'CC Account', 'Savings Account', 'OD Account', 'Other Account'];
+    this.objSubLedger.Composite_GST = "No";
+    this.changecompositegst();
     
     this.getLedger();
     this.getCountry();
@@ -119,7 +122,18 @@ export class SubLedgerComponent implements OnInit {
   //this.GetUser();
   //this.GetAllData();
   }
+  changecompositegst(){
+    if (this.objSubLedger.Composite_GST === "Yes") {
+       this.objSubLedger.GST = "NA"
+       this.gstdisabled = true;
+    }
+    else {
+      // this.objSubLedger.GST = undefined;
+      this.gstdisabled = false;
+    }
+  }
   checkGSTvalid(g){
+    // if (this.objSubLedger.Composite_GST === "No") {
     this.GSTvalidFlag = false;
     if(g) {
       let regTest = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(g)
@@ -133,6 +147,7 @@ export class SubLedgerComponent implements OnInit {
       }
       this.GSTvalidFlag = !regTest;
     }
+    // }
 
   }
   GetAllData(){
@@ -162,9 +177,11 @@ export class SubLedgerComponent implements OnInit {
     this.can_popup = false;
     this.objSubLedger = new SubLedger();
     this.SubLedgerID = undefined;
-    this.TabSpinner = undefined;
+    this.TabSpinner = false;
     this.SelectedCatagoryType = [];
     this.SelectedTagLedger =[];
+    this.objSubLedger.Composite_GST = "No";
+    this.changecompositegst();
   }
 
   getLedger(){
@@ -428,6 +445,8 @@ export class SubLedgerComponent implements OnInit {
     console.log("valid",valid)
     console.log("SelectedCatagoryType",this.SelectedCatagoryType);
     console.log("SelectedTagLedger",this.SelectedTagLedger);
+    if(this.objSubLedger.GST){
+    // if(!this.GSTvalidFlag){
    if(valid){
     this.Spinner = true;
     this.objSubLedger.Sub_Ledger_Cat_ID = this.SelectedCatagoryType.toString();
@@ -450,6 +469,7 @@ export class SubLedgerComponent implements OnInit {
       this.objSubLedger.Is_Purchase_Bill_Enabled = this.objSubLedger.Is_Purchase_Bill_Enabled ? 'Y' : 'N'
       this.objSubLedger.Is_Reciept_Enabled = this.objSubLedger.Is_Reciept_Enabled ? 'Y' : 'N'
       this.objSubLedger.Is_Sale_Bill_Enabled = this.objSubLedger.Is_Sale_Bill_Enabled ? 'Y' : 'N'
+      this.objSubLedger.Amount_Business_Expected = this.objSubLedger.Amount_Business_Expected ? this.objSubLedger.Amount_Business_Expected : 0;
       if(this.SubLedgerID)
        {
         console.log("Update");
@@ -514,8 +534,10 @@ export class SubLedgerComponent implements OnInit {
       });
       this.clearData();
       this.GetAllData();
+      this.Spinner = false;
       }
       else{
+        this.Spinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
         key: "compacct-toast",
@@ -528,7 +550,29 @@ export class SubLedgerComponent implements OnInit {
      
       
     }
+    }
   }
+  else {
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+    key: "compacct-toast",
+    severity: "error",
+    summary: "Error",
+    detail: "Invalid GST No."
+  });
+  // }
+// }
+// else {
+//   this.Spinner = false;
+//   this.compacctToast.clear();
+//   this.compacctToast.add({
+//   key: "compacct-toast",
+//   severity: "error",
+//   summary: "Error",
+//   detail: "Invalid GST No."
+// });
+}
   }
 
   SaveTabCommon(valid,value){
@@ -593,7 +637,7 @@ export class SubLedgerComponent implements OnInit {
        }
       }
     
-    }
+  }
 
   
 
@@ -634,7 +678,7 @@ export class SubLedgerComponent implements OnInit {
        this.getEditSubLedger(col.Sub_Ledger_ID);
        
      }
-   }
+  }
 
    getEditSubLedger(SubLedgerID){
     console.log('SubLedgerID=',SubLedgerID);
@@ -648,6 +692,19 @@ export class SubLedgerComponent implements OnInit {
         
         this.objSubLedger = data[0];
         console.log("Edit Data",this.objSubLedger);
+        this.objSubLedger.Parent_Sub_Ledger_ID = data[0].Parent_Sub_Ledger_ID ? data[0].Parent_Sub_Ledger_ID : undefined;
+        this.objSubLedger.Sales_Man_ID = data[0].Sales_Man_ID ? data[0].Sales_Man_ID : undefined;
+        this.objSubLedger.User_ID = data[0].User_ID ? data[0].User_ID : undefined;
+        this.objSubLedger.Route_ID = data[0].Route_ID ? data[0].Route_ID : undefined;
+        this.objSubLedger.Weekly_Closing = data[0].UseWeekly_Closingr_ID ? data[0].Weekly_Closing : undefined;
+
+        if (data[0].Composite_GST === "Yes") {
+          this.gstdisabled = true;
+        }
+        else {
+          this.gstdisabled = false;
+        }
+        
         this.objSubLedger.IS_SEZ = Number(this.objSubLedger.IS_SEZ) == 1? "Yes" : "No";
         this.objSubLedger.Is_Sale_Bill_Enabled = this.objSubLedger.Is_Sale_Bill_Enabled === 'Y'? true: false;
         this.objSubLedger.Is_Purchase_Bill_Enabled = this.objSubLedger.Is_Purchase_Bill_Enabled === 'Y'? true : false;
@@ -659,15 +716,21 @@ export class SubLedgerComponent implements OnInit {
         this.objSubLedger.Is_Adj_Enabled = this.objSubLedger.Is_Adj_Enabled === 'Y'? true : false;
         this.getTagLedger();
          
-          this.stateDistrictChange(data[0].Pin)
+        this.objSubLedger.Pin = data[0].Pin;
+        if (this.objSubLedger.Pin) {
+        this.stateDistrictChange(this.objSubLedger.Pin)
+        }
         this.AddressListAdd = data[0].Address_Details ? data[0].Address_Details : [];
         this.contactListAdd = data[0].Contact_Persons ? data[0].Contact_Persons : [];
         this.DocumentListAdd = data[0].Document_Vault ? data[0].Document_Vault : [];
         this.bankListAdd = data[0].Bank_Details ?  data[0].Bank_Details : [];
         //this.SelectedTagLedger = data[0].Tagged_Ledger;
+        this.objSubLedger.Subledger_Type = data[0].Subledger_Type;
+        await this.changeSubledrType();
         const SubArr = data[0].Sub_Ledger_Cat_ID ?  data[0].Sub_Ledger_Cat_ID.split(",").map(Number) : [];
-        const call = await this.changeSubledrType();
+        // const call = await this.changeSubledrType();
         this.SelectedCatagoryType = [...SubArr]
+        // this.SelectedCatagoryType = data[0].Sub_Ledger_Cat_ID ? Number(data[0].Sub_Ledger_Cat_ID) : [];
         this.getTagLedger()
         setTimeout(() => {
           let tagArr = [];
@@ -680,7 +743,7 @@ export class SubLedgerComponent implements OnInit {
         
           })
 
-  }
+   }
 
   DeleteSubLedger(col){
     this.act_popup = false;
@@ -772,13 +835,13 @@ export class SubLedgerComponent implements OnInit {
 
 
   }
-}
+  }
 
   filterCatagory(){
 
   }
   TagLedgerCatagory(){
-     }
+  }
 
   onReject(){
     this.compacctToast.clear("c");
@@ -810,17 +873,17 @@ export class SubLedgerComponent implements OnInit {
   this.objDocument = new Document()
  }
  SaveTab(){
-   if(this.AddressListAdd.length && this.contactListAdd.length && this.DocumentListAdd.length && this.bankListAdd.length && this.SubLedgerID){
+   if((this.AddressListAdd.length || this.contactListAdd.length || this.DocumentListAdd.length || this.bankListAdd.length) && (this.SubLedgerID)){
      this.TabSpinner = true
      this.DocumentListAdd.forEach(el=>{
        el.Upload_Date = this.DateService.dateConvert(el.Upload_Date);
      })
     const saveData= {
       Sub_Ledger_ID : this.SubLedgerID,
-      Address_Details : this.AddressListAdd,
-      Contact_Persons : this.contactListAdd,
-      Document_Vault : this.DocumentListAdd,
-      Bank_Details : this.bankListAdd
+      Address_Details : this.AddressListAdd.length ? this.AddressListAdd : [{}], 
+      Contact_Persons : this.contactListAdd.length ? this.contactListAdd : [{}],
+      Document_Vault : this.DocumentListAdd.length ? this.DocumentListAdd : [{}],
+      Bank_Details : this.bankListAdd.length ? this.bankListAdd : [{}]
     }
     const obj = {
       "SP_String": "Sp_Sub_Ledger",
@@ -841,6 +904,11 @@ export class SubLedgerComponent implements OnInit {
      summary: "Sub-ledger Updated Succesfully ",
      detail: "Succesfully Updated"
    });
+   this.TabSpinner = false;
+   this.GetAllData();
+   this.tabIndexToView = 0;
+   this.items = ["BROWSE", "CREATE", "REPORT"];
+   this.Tabbuttonname = "Create";
   }
    else{
     this.TabSpinner = false;

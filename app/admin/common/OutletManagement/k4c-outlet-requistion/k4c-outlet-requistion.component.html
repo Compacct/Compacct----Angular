@@ -178,11 +178,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group" *ngIf="ShowRemarks">
+                                 <div style="margin-left : 40px; color: #981616; font-size : 20px;">{{ShowRemarks}}</div> <!--class="blink_me" -->
+                            </div>
 
 
                             <form name="RequistionFormSave" #RequistionFormSave="ngForm" novalidate>
                                 <div class="box-footer" *ngIf='RequisitionList.length'>
-                                    <button class="btn btn-primary pull-left" id="load" (click)="showDialog()" [disabled]="Spinner" [disabled]="buttonDis" [disabled]="disabled">
+                                    <button class="btn btn-primary pull-left" id="load" (click)="showDialog()" [disabled]="Spinner" [disabled]="buttonDis" [disabled]="disabled" [disabled]="CheckCreate === 'N'">
                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                     </button>
