@@ -182,7 +182,7 @@
                                                     </p-dropdown>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">Stack Point<sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="StockList" name="Stack_Point" [(ngModel)]="ObjRdb.godown_id" [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
                                                         itemSize="30" #Stack_Point="ngModel" [styleClass]="RDBFormSubmit && Stack_Point.errors?.required ? 'clearance' : '' " 
                                                         [required]="true">

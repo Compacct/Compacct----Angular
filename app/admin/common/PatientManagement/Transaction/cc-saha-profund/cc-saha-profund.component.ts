@@ -25,6 +25,11 @@ export class CCSahaProfundComponent implements OnInit {
   seachSpinner: any= false
   initDate : any = [];
   Searchedlist : any = [];
+  cosCenterFilter:any = [];
+  SelectedcosCenter:any = [];
+  backUPSearchedlist:any = [];
+  AudiologistFilter:any = [];
+  SelectedAudiologist:any = [];
   constructor(
     private Header : CompacctHeader,
     private router : Router,
@@ -39,7 +44,7 @@ export class CCSahaProfundComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header:  " Patent with Profound & sensorineural or perceptive " ,
+      Header:  " Patient with Profound & sensorineural or perceptive " ,
       Link: " " 
     });
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
@@ -66,8 +71,6 @@ export class CCSahaProfundComponent implements OnInit {
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.End_Date))
   : this.DateService.dateConvert(new Date());
 
-  
-  
 const tempobj = {
   Start_Date : start,
   End_Date : end,
@@ -81,6 +84,11 @@ const obj = {
 }
  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.Searchedlist = data;
+   this.backUPSearchedlist = data;
+   if(this.Searchedlist.length){
+    this.GetDist1();
+    this.GetDist2();
+   }
    console.log('Search list=====',this.Searchedlist)
    this.seachSpinner = false;
    
@@ -122,6 +130,66 @@ exportoexcel(fileName){
     
     
 
+}
+GetDist1() {
+  let DOrderBy = [];
+  this.cosCenterFilter = [];
+  //this.SelectedDistOrderBy1 = [];
+  this.backUPSearchedlist.forEach((item:any) => {
+    if (DOrderBy.indexOf(item.Cost_Cen_Name) === -1) {
+      DOrderBy.push(item.Cost_Cen_Name);
+      this.cosCenterFilter.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+      console.log("this.cosCenterFilter", this.cosCenterFilter);
+    }
+  });
+}
+GetDist2() {
+  let DOrderBy = [];
+  this.AudiologistFilter = [];
+  //this.SelectedDistOrderBy1 = [];
+  this.backUPSearchedlist.forEach((item:any) => {
+    if (DOrderBy.indexOf(item.Doctor_Name) === -1) {
+      DOrderBy.push(item.Doctor_Name);
+      this.AudiologistFilter.push({ label: item.Doctor_Name, value: item.Doctor_Name });
+      console.log("this.AudiologistFilter", this.AudiologistFilter);
+    }
+  });
+}
+filterCoscenter() {
+  console.log("SelectedcosCenter", this.SelectedcosCenter);
+  let DOrderBy = [];
+  if (this.SelectedcosCenter.length) {
+    DOrderBy = this.SelectedcosCenter;
+  }
+  this.Searchedlist = [];
+  if (this.SelectedcosCenter.length) {
+    let LeadArr = this.backUPSearchedlist.filter(function (e) {
+      return (DOrderBy.length ? DOrderBy.includes(e['Cost_Cen_Name']) : true)
+    });
+    this.Searchedlist = LeadArr.length ? LeadArr : [];
+    console.log("if GetAllDataList", this.Searchedlist)
+  } else {
+    this.Searchedlist = this.backUPSearchedlist;
+    console.log("else GetAllDataList", this.Searchedlist)
+  }
+}
+filterAudiologist() {
+  console.log("SelectedcosCenter", this.SelectedcosCenter);
+  let DOrderBy = [];
+  if (this.SelectedAudiologist.length) {
+    DOrderBy = this.SelectedAudiologist;
+  }
+  this.Searchedlist = [];
+  if (this.SelectedAudiologist.length) {
+    let LeadArr = this.backUPSearchedlist.filter(function (e) {
+      return (DOrderBy.length ? DOrderBy.includes(e['Doctor_Name']) : true)
+    });
+    this.Searchedlist = LeadArr.length ? LeadArr : [];
+    console.log("if GetAllDataList", this.Searchedlist)
+  } else {
+    this.Searchedlist = this.backUPSearchedlist;
+    console.log("else GetAllDataList", this.Searchedlist)
+  }
 }
 }
 

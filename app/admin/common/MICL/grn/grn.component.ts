@@ -31,7 +31,7 @@ export class GrnComponent implements OnInit {
   Supplierlist = [];
   CostCenterlist = [];
   Godownlist = [];
-  POorderlist = [];
+  RDBNolist = [];
   PODate : any = new Date();
   podatedisabled = true;
   ProductDetailslist = [];
@@ -47,6 +47,10 @@ export class GrnComponent implements OnInit {
   SENo:string = "-"
   disabledflaguom = false;
   disabledflaghsn = false;
+  
+  companyList = [];
+  ObjBrowse : Browse = new Browse ();
+  GRNSearchFormSubmitted = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -67,7 +71,8 @@ export class GrnComponent implements OnInit {
     });
     this.GetSupplier();
     this.GetCostCenter();
-    this.GetSearchedlist();
+    // this.GetSearchedlist(true);
+    this.getcompany();
   }
   TabClick(e){
     // console.log(e)
@@ -85,13 +90,29 @@ export class GrnComponent implements OnInit {
      this.podatedisabled = true;
      this.Spinner = false;
      this.Godownlist = [];
-     this.POorderlist = [];
+     this.RDBNolist = [];
      this.ProductDetailslist = [];
      this.disabledflaguom = false;
      this.disabledflaghsn = false;
      this.ObjGRN = new GRN;
      this.SENo = "";
+     this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+     this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.GetGodown();
    }
+   getcompany(){
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Dropdown_Company",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.companyList = data
+     console.log("companyList",this.companyList)
+     this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    })
+  }
    GetSupplier(){
       this.Supplierlist = [];
       const obj = {
@@ -100,8 +121,18 @@ export class GrnComponent implements OnInit {
 
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Sub_Ledger_Name,
+            element['value'] = element.Sub_Ledger_ID
+          });
          this.Supplierlist = data;
        console.log("Supplierlist======",this.Supplierlist);
+        }
+         else {
+          this.Supplierlist = [];
+  
+        }
      });
    }
    GetCostCenter(){
@@ -114,6 +145,8 @@ export class GrnComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.CostCenterlist = data;
      console.log("CostCenterlist======",this.CostCenterlist);
+     this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.GetGodown();
    });
  }
  GetGodown(){
@@ -129,8 +162,8 @@ export class GrnComponent implements OnInit {
    console.log("Godownlist======",this.Godownlist);
  });
 }
-   GetPOorder(){
-    this.POorderlist = [];
+   GetRDBNo(){
+    this.RDBNolist = [];
     const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
       "Report_Name_String": "Get_Pending_RDB_Nos",
@@ -138,8 +171,8 @@ export class GrnComponent implements OnInit {
 
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.POorderlist = data;
-     console.log("POorderlist======",this.POorderlist);
+       this.RDBNolist = data;
+     console.log("RDBNolist======",this.RDBNolist);
    });
   }
 
@@ -161,7 +194,7 @@ export class GrnComponent implements OnInit {
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.ProductDetailslist = data;
-     console.log("POorderlist======",this.ProductDetailslist);
+     console.log("RDBNolist======",this.ProductDetailslist);
      this.ObjGRN1.SE_No_Date = new Date(data[0].SE_Date);
      this.ObjGRN1.Mode_Of_transport = data[0].Mode_Of_transport;
      this.ObjGRN1.LR_No_Date = data[0].LR_No_Date;
@@ -200,7 +233,7 @@ export class GrnComponent implements OnInit {
   this.podatedisabled = true;
   if(this.ObjGRN1.RDB_No) {
     const ctrl = this;
-    const DateObj = $.grep(ctrl.POorderlist,function(item: any) {return item.RDB_No == ctrl.ObjGRN1.RDB_No})[0];
+    const DateObj = $.grep(ctrl.RDBNolist,function(item: any) {return item.RDB_No == ctrl.ObjGRN1.RDB_No})[0];
     console.log(DateObj);
     this.ObjGRN1.RDB_Date = new Date(DateObj.RDB_Date);
     this.PODate = new Date(this.ObjGRN1.RDB_Date);
@@ -376,14 +409,19 @@ export class GrnComponent implements OnInit {
        this.podatedisabled = true;
        this.Spinner = false;
        this.Godownlist = [];
-       this.POorderlist = [];
+       this.RDBNolist = [];
        this.ProductDetailslist = [];
        this.ngxService.stop();
-       this.GetSearchedlist();
+       this.GetSearchedlist(true);
+       this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+       this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+       this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+       this.GetGodown();
 
       } 
       else{
         this.Spinner = false;
+        this.ngxService.stop();
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -469,40 +507,46 @@ export class GrnComponent implements OnInit {
 
    // CREATE TAB END
 
-  //  getDateRange(dateRangeObj) {
-  //   if (dateRangeObj.length) {
-  //     this.ObjBrowse.start_date = dateRangeObj[0];
-  //     this.ObjBrowse.end_date = dateRangeObj[1];
-  //   }
-  // }
-   GetSearchedlist(){
-    //this.SearchFactoryFormSubmit = true;
+   getDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjBrowse.From_date = dateRangeObj[0];
+      this.ObjBrowse.To_date = dateRangeObj[1];
+    }
+  }
+   GetSearchedlist(valid){
+    this.GRNSearchFormSubmitted = true;
     this.seachSpinner = true;
     this.Searchedlist = [];
-  //   const start = this.ObjBrowse.start_date
-  //   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
-  //   : this.DateService.dateConvert(new Date());
-  // const end = this.ObjBrowse.end_date
-  //   ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
-  //   : this.DateService.dateConvert(new Date());
-  //  // if(valid){
-  // const tempobj = {
-  //   From_Date : start,
-  //   To_Date : end
-  // }
+    this.ngxService.start();
+    const From_date = this.ObjBrowse.From_date
+    ? this.DateService.dateConvert(new Date(this.ObjBrowse.From_date))
+    : this.DateService.dateConvert(new Date());
+    const To_date = this.ObjBrowse.To_date
+    ? this.DateService.dateConvert(new Date(this.ObjBrowse.To_date))
+    : this.DateService.dateConvert(new Date());
+    const tempobj = {
+     From_date : From_date,
+     To_date : To_date,
+     Company_ID : this.ObjBrowse.Company_ID
+   }
+   if (valid) {
   const obj = {
     "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
     "Report_Name_String": "Browse_BL_Txn_Purchase_Challan_GRN",
-    // "Json_Param_String": JSON.stringify([tempobj])
+    "Json_Param_String": JSON.stringify([tempobj])
   }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.Searchedlist = data;
+     this.ngxService.stop();
     //  this.BackupSearchedlist = data;
      //console.log('Search list=====',this.Searchedlist)
      this.seachSpinner = false;
     // this.SearchFactoryFormSubmit = false;
    })
-  // }
+  }
+  else {
+    this.ngxService.stop();
+       }
    }
    Delete(data){
     this.doc_no = undefined;
@@ -535,7 +579,7 @@ export class GrnComponent implements OnInit {
             summary: "Doc No.: " + this.doc_no.toString(),
             detail: "Succefully Deleted"
           });
-          this.GetSearchedlist();
+          this.GetSearchedlist(true);
         }
         else {
           this.compacctToast.clear();
@@ -612,6 +656,7 @@ export class GrnComponent implements OnInit {
 
 class GRN1 {
   GRN_Date : any;
+  Company_ID : any;
   Sub_Ledger_ID : any;
   Cost_Cen_ID : any;
   godown_id : any;
@@ -643,10 +688,10 @@ class GRN {
   Created_By : string;
  }
  class Browse {
-  Doc_No : any;
-  start_date : Date ;
-  end_date : Date;
-}
+  Company_ID : any;
+  From_date : Date;
+  To_date : Date;
+ }
 
 
 
