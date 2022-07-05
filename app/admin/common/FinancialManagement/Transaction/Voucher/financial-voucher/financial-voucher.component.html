@@ -29,42 +29,107 @@
                                     <div class="col-sm-3">
                                         <label class="control-label">Date </label>
                                         <app-compacct-daterangepicker
-                                        (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        (DaterangeObj)="getDateRange($event)" [minmaxValid]="initDate">
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="companySearch" 
+                                        #companySearch="ngModel" 
+                                        [(ngModel)]="objsearch.Company_ID"
+                                        [ngClass]="{'clearance': JournalSearchFormSubmit && companySearch?.errors?.required }"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                              {{option.Company_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
                                         <label class="control-label">CostCentre <sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel" [(ngModel)]="objsearch.Cost_Cen_ID" [ngClass]="{'clearance': JournalSearchFormSubmit && Cost_Cen_ID?.errors?.required}" required>
+                                        <select class="form-control" name="CostCenIDSearch" #CostCenIDSearch="ngModel" 
+                                        [(ngModel)]="objsearch.Cost_Cen_ID" 
+                                        [ngClass]="{'clearance': JournalSearchFormSubmit && CostCenIDSearch?.errors?.required}" required>
                                                   <option  [ngValue]="undefined">Select</option>
-                                           <option *ngFor = "let option of costHeadList" [value] ="option.Cost_Cen_ID">
+                                           <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
                                               {{option.Cost_Cen_Name}}
                                             </option>
                                       </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">Voucher Type<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" 
-                                        name="VoucherType" 
-                                        #VoucherType="ngModel" 
-                                        [(ngModel)]="objsearch.Voucher_Type_ID">
-                                        <option  [ngValue]="undefined">Select</option>
-                                           <option *ngFor = "let option of VoucherTypeList" [value] ="option.Voucher_Type_ID">
-                                              {{option.Voucher_Type}}
-                                            </option>
-                                      </select>
-                                    </div>
-    
-                                    <!-- <div class="col-sm-3"> -->
-                                    <div>
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="ShowSearchData(JournalSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
-                                              <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                              <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span> Search
-                                           </button>
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span> Search
+                                         </button>
                                     </div>
-                                    <!-- </div> -->
                                 </div>
-            
-                            </form> 
+                             </form> 
+                             <div class="no-padding">
+                                <p-table [value]="getAllDataList"
+                                [paginator]="getAllDataList.length ? true : false"
+                                *ngIf='getAllDataList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeader'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                                <a (click)="EditVoucher(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                        <!-- <li>
+                                                            <a (click)="Print(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li> -->
+                                                        <li>
+                                                            <a (click)="DeleteVoucher(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeader">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="journalForm" #journalForm="ngForm" novalidate>
@@ -129,7 +194,7 @@
                                             [showClear]="true" [emptyFilterMessage]="' No Ledger Found'"
                                             [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                             [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Sub_Ledger_ID="ngModel"
-                                            [styleClass]="journalFormSubmitted && Sub_Ledger_ID.errors?.required  &&  Sub_Ledger_ID? 'clearance': ''" [required]="SubLedgerList.length">
+                                            [styleClass]="journalFormSubmitted && Sub_Ledger_ID.errors?.required  &&  Sub_Ledger_ID? 'clearance': ''" [required]="reqriredCheck(SubLedgerList)">
                                         </p-dropdown>
                                         </div>
                                         <div class="col-sm-4" *ngIf="headerText === 'Journal Voucher'">
@@ -153,7 +218,7 @@
                                                         #Amount="ngModel"
                                                         [(ngModel)]="objjournal.Amount"
                                                         placeholder="Amount"
-                                                        (change)="getTotalDRCR()"
+                                                        (ngModelChange)="getTotalDRCR()"
                                                         CompacctDigitonly="true"
                                                         [ngClass]="{'clearance': journalFormSubmitted && Amount?.errors?.required}"
                                                         required>
@@ -185,52 +250,53 @@
                                         </div>
                                    </div>
                                     <div class="form-group">
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-3" >
                                             <label class="control-label">Bank TRN Type
                                             </label>
                                            <select class="form-control"
-                                                   name="Bank_TRN_Type"
+                                                    name="Bank_TRN_Type"
                                                     #Bank_TRN_Type="ngModel" 
-                                                    [(ngModel)]="objjournal.Txn_Type_Name"
+                                                    [(ngModel)]="objjournal.Bank_Txn_Type"
+                                                    (change)="getBankTRNType(objjournal.Bank_Txn_Type)"
                                                   >
-                                                   <option  [ngValue]="undefined">Select</option>
-                                                   <option *ngFor = "let option of BankTransactionTypeList" [value] ="option.Txn_Type_Name">
+                                                   <option  [ngValue]="0">Select</option>
+                                                   <option *ngFor = "let option of BankTransactionTypeList" [value] ="option.Bank_Txn_Type_ID">
                                                     {{option.Txn_Type_Name}}
                                                   </option>
                                             </select>
                                         </div>
-                                        <div class="col-sm-2">
-                                            <label class="control-label">Bank Name
-                                            </label>
+                                        <div class="col-sm-2" *ngIf="convartNumber(objjournal.Bank_Txn_Type) === 1 || convartNumber(objjournal.Bank_Txn_Type) === 3 || convartNumber(objjournal.Bank_Txn_Type) === 4 ||convartNumber(objjournal.Bank_Txn_Type) === 6 ||convartNumber(objjournal.Bank_Txn_Type) === 7 ||convartNumber(objjournal.Bank_Txn_Type) === 5">
+                                            <label class="control-label">{{labelText1}}</label>
                                             <input class="form-control"
-                                            name="Bank_Name"
-                                            placeholder="Bank Name"
-                                            
-                                            >
+                                                    name="ChequeNo"
+                                                    name="ChequeNo"
+                                                    #ChequeNo="ngModel" 
+                                                    [(ngModel)]="objjournal.Cheque_No"
+                                                    [placeholder]=labelText1>
                                         </div>
-                                        <div class="col-sm-3">
-                                            <label class="control-label">Bank Branch Name
-                                            </label>
-                                            <input class="form-control"
-                                            name="Bank_Branch_Name"
-                                            placeholder="Bank Branch Name"
-                                            
-                                            >
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <label class="control-label">NEFT Date
-                                            </label>
+                                        <div class="col-sm-2" *ngIf="convartNumber(objjournal.Bank_Txn_Type) === 1 ||convartNumber(objjournal.Bank_Txn_Type) === 3 || convartNumber(objjournal.Bank_Txn_Type) === 4 || convartNumber(objjournal.Bank_Txn_Type) === 6 || convartNumber(objjournal.Bank_Txn_Type) === 7 || convartNumber(objjournal.Bank_Txn_Type) === 5">
+                                            <label class="control-label">{{labelText2}}</label>
                                             <ejs-datepicker [(value)]="NEFTDate"  [format]="'dd/MMM/yyyy'" [enabled]="true"></ejs-datepicker>
                                         </div>
-                                        <div class="col-sm-2">
-                                            <label class="control-label">NEFT No
-                                            </label>
+                                        <div class="col-sm-2" *ngIf="convartNumber(objjournal.Bank_Txn_Type) === 1 || convartNumber(objjournal.Bank_Txn_Type) === 3 || convartNumber(objjournal.Bank_Txn_Type) === 6 || convartNumber(objjournal.Bank_Txn_Type) === 5">
+                                            <label class="control-label">{{labelText3}}</label>
                                             <input class="form-control"
-                                            name="NEFT_No"
-                                            placeholder="NEFT No"
-                                            
+                                            name="BankName"
+                                            [placeholder]=labelText3
+                                            #BankName="ngModel"
+                                            [(ngModel)]="objjournal.Bank_Name"
                                             >
                                         </div>
+                                        <div class="col-sm-3" *ngIf="convartNumber(objjournal.Bank_Txn_Type) === 1 || convartNumber(objjournal.Bank_Txn_Type) === 3">
+                                            <label class="control-label">{{labelText4}}</label>
+                                            <input class="form-control"
+                                            name="BankBranchName"
+                                            [placeholder]=labelText4
+                                            #BankBranchName="ngModel"
+                                            [(ngModel)]="objjournal.Bank_Branch_Name"
+                                            >
+                                        </div>
+                                      
                                     </div>
                                     <div class="form-group" *ngIf="headerText === 'Receive Voucher' || headerText === 'Payment Voucher'">
                                         <div class="col-sm-12">
@@ -245,6 +311,11 @@
                                     </div>
                                     
                             </form>
+                            <app-compacct-project *ngIf="openProject === 'Y'" 
+                                                        #project  
+                                                         [requir]="whateverCopy(validatation)"
+                                                         [DisableAllInput]="projectDisable"
+                                                         (projectObj)="getProjectData($event)"></app-compacct-project>
                             <hr class="box boxboxDivide-primary">
                             <form name="journallowerForm" #journallowerForm="ngForm" novalidate>
                                 <div class="form-group">
@@ -258,12 +329,13 @@
                                     </p-dropdown>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Sub Ledger &nbsp;<span class="text-danger">*</span></label>
+                                        <label class="control-label">Sub Ledger &nbsp;<span class="text-danger" *ngIf="SubLedgerListlow.length">*</span></label>
                                         <p-dropdown [options]="SubLedgerListlow" name="Sub_Ledger_ID_Lower" [(ngModel)]="objjournalloweer.Sub_Ledger_ID"
                                         [showClear]="true" [emptyFilterMessage]="' No Ledger Found'" 
                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                        (onChange)="getDocType()"
                                         [placeholder]="'Select Ledger'" [virtualScroll]="true" itemSize="30" #Sub_Ledger_ID_Lower="ngModel"
-                                        [styleClass]="journallowerFormSubmitted && Sub_Ledger_ID_Lower.errors?.required && Sub_Ledger_ID_Lower? 'clearance': ''" required>
+                                        [styleClass]="journallowerFormSubmitted && Sub_Ledger_ID_Lower.errors?.required && Sub_Ledger_ID_Lower? 'clearance': ''" [required]="reqriredCheck(SubLedgerListlow)">
                                     </p-dropdown>
                                     </div>
                                     <div class="col-sm-4">
@@ -271,9 +343,7 @@
                                         <select class="form-control"
                                         name="cost_Head"
                                         #cost_Head="ngModel"
-                                       [(ngModel)]="objjournalloweer.Cost_Head_ID"
-                                      
-                                      >
+                                       [(ngModel)]="objjournalloweer.Cost_Head_ID">
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
                                             {{option.Cost_Head_Name}}
@@ -284,44 +354,38 @@
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Ref Doc Type</label>
-                                        <!-- <input class="form-control"
-                                                name="Ref_Doc_No"
-                                                #Ref_Doc_No="ngModel"
-                                                [(ngModel)]="objjournalloweer.Ref_Doc_Type"
-                                                placeholder="Ref Doc No"
-                                               > -->
-                                               <select class="form-control"
+                                        <select class="form-control"
                                                name="Ref_Doc_Type"
                                                #Ref_Doc_Type="ngModel"
-                                              [(ngModel)]="objjournalloweer.Ref_Doc_Type" >
+                                              [(ngModel)]="objjournalloweer.Voucher_Type_ID" 
+                                              (change)="getDocNo()">
                                                <option  [ngValue]="undefined">Select</option>
-                                               <!-- <option *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
-                                                   {{option.Cost_Head_Name}}
-                                                   </option> -->
+                                               <option *ngFor="let option of RefDocTypeList" value="{{option.Voucher_Type_ID}}">
+                                                   {{option.Voucher_Type}}
+                                                   </option>
                                        </select>
-                                        </div>
-                                    <div class="col-sm-3">
+                                     </div>
+                                    <div class="col-sm-5">
                                      <label class="control-label">Ref Doc No</label>
-                                     <!-- <input class="form-control"
-                                             name="Ref_Doc_No"
-                                             #Ref_Doc_No="ngModel"
-                                             [(ngModel)]="objjournalloweer.Ref_Doc_No"
-                                             placeholder="Ref Doc No"
-                                            > -->
+                                  
                                         <select class="form-control"
-                                        name="Ref_Doc_No"
-                                        #Ref_Doc_No="ngModel"
-                                       [(ngModel)]="objjournalloweer.Ref_Doc_No" >
+                                        name="Adjustment_Doc_No"
+                                        #Adjustment_Doc_No="ngModel"
+                                       [(ngModel)]="objjournalloweer.Adjustment_Doc_No" 
+                                       (change)="RefDocNoChange()">
+                                       <optgroup label={{optgroupL}}>
                                         <option  [ngValue]="undefined">Select</option>
-                                        <!-- <option *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
-                                            {{option.Cost_Head_Name}}
-                                            </option> -->
+                                        <option *ngFor="let option of VoucherNoList" value="{{option.Voucher_No}}">
+                                            {{option.Voucher_No+","}}&nbsp;&nbsp;<span>{{option.Voucher_Date | date : "dd/MMM/yyyy"+","}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{option.Balance_Amount+","}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{option.Amount}}
+                                        </option>
+                                       </optgroup>
+                                        
                                 </select>
                                      </div>
-                                     <div class="col-sm-2">
+                                     <!-- <div class="col-sm-2">
                                      <label class="control-label">Ref Doc Date<sup class="text-danger">*</sup></label>
                                      <ejs-datepicker  [(value)]="RefDocDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
-                                     </div>
+                                     </div> -->
                                      <div class="col-sm-2">
                                          <label class="control-label">Amount<sup class="text-danger">*</sup></label>
                                              <input class="form-control"
@@ -340,15 +404,43 @@
                                                 name="DrCrdatalow"
                                                 #DrCrdatalow="ngModel"
                                                 [(ngModel)]="objjournalloweer.DrCrdataLower"
+                                                
                                                >
                                              <option value= "DR"> DR</option>
                                              <option value= "CR"> CR </option>
                                         </select>
                                      </div>
-                                  
+                                 </div>
+                                 <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Reminder Req</label>
+                                          <select class="form-control"
+                                               name="Reminder_Req"
+                                               #Reminder_Req="ngModel"
+                                              [(ngModel)]="objjournalloweer.Reminder_Req" >
+                                               <option value="N">NO</option>
+                                               <option value="Y">YES</option>
+                                       </select>
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="objjournalloweer.Reminder_Req === 'Y'">
+                                        <label class="control-label">Reminder Date</label>
+                                        <ejs-datepicker  [(value)]="ReminderDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="objjournalloweer.Reminder_Req === 'Y'">
+                                        <label class="control-label">Reminder Type</label>
+                                        <select class="form-control"
+                                               name="Reminder_Type"
+                                               #Reminder_Type="ngModel"
+                                              [(ngModel)]="objjournalloweer.Reminder_Type" >
+                                               <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor="let option of ReminderTypeList" value="{{option.Reminder_Type}}">
+                                                   {{option.Reminder_Type}}
+                                                   </option>
+                                       </select>
+                                    </div>
                                  </div>
                                  <div class="box-footer">
-                                    <button class="btn btn-primary pull-right"  >
+                                    <button class="btn btn-primary pull-right" (click)="addFinancialVoucher(journallowerForm.form.valid)" >
                                         <span class="glyphicon glyphicon-plus">Add</span>
                                     </button>
                                 </div>
@@ -360,7 +452,7 @@
                                                 <th>Sl. No.</th>
                                                 <th>Ledger</th>
                                                 <th>SubLedger Name</th>
-                                                <th>Doc No</th>
+                                                <th>Ref Doc No</th>
                                                 <th>Amount (DR)</th>
                                                 <th>Amount (CR)</th>
                                                 <th>Cost Head</th>
@@ -372,16 +464,30 @@
                                                <td>{{obj.Slno ? obj.Slno : (i + 1)}}</td>
                                                <td>{{obj.Ledger_Name}}</td>
                                                <td>{{obj.Sub_Ledger_Name}}</td>
-                                               <td>{{obj.Cost_Head_Name}}</td>
+                                               <td>{{obj.Adjustment_Doc_No}}</td>
                                                <td>{{obj.DR_Amt ? obj.DR_Amt : ''}}</td>
                                                <td>{{obj.CR_Amt ? obj.CR_Amt : ''}}</td>
                                                <td>{{obj.Cost_Head_Name}}</td>
                                               <td><button (click)="DeleteProduct(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                            </tr>
+                                           <tr *ngIf="lowerList.length || totalDR || totalCR" >
+                                            <td colspan="5" style="text-align: right; font-weight: 700;" ><span >Total DR Amount : {{totalDR ? getToFix(totalDR) : ""}}</span></td>
+                                            <td colspan="2" style="text-align: left; font-weight: 700;"><span >Total CR Amount : {{totalCR ? getToFix(totalCR) : ""}}</span></td>
+                                            </tr>
+                                          
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="col-xs-6">
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right"
+                                    id="load1"
+                                    (click)="saveJournal(journalForm.form.valid)"
+                                   [disabled]="Spinner || (getToFix(totalDR) != getToFix(totalCR)) || !lowerList.length? true : false">
+                                   <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                               <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                           </button>
+                                </div>
+                                <!-- <div class="col-xs-6">
                                     <table class="table">
                                         <tbody><tr>
                                             <th style="width:30%">Total DR Amount:</th>
@@ -400,7 +506,7 @@
                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                 <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                             </button>
-                                </div>
+                                </div> -->
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-file">
                                     

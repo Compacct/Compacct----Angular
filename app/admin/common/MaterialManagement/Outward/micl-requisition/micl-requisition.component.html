@@ -37,7 +37,7 @@
 
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Cost Center &nbsp;</label>
+                                        <label class="control-label">From Cost Center &nbsp;</label>
                                         <select class="form-control" 
                                         name="Cost_Cen_ID_Browse" 
                                         #Cost_Cen_ID_Browse='ngModel' 
@@ -51,7 +51,7 @@
                                       </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">Stock Point&nbsp;<sup class="text-danger">*</sup>
+                                        <label class="control-label">From Stock Point&nbsp;<sup class="text-danger">*</sup>
                                         </label>
                                         <select class="form-control" name="Godown_ID_Browse" #Godown_ID_Browse="ngModel" [(ngModel)]="ObjBrowseData.Godown_ID" 
                                          [ngClass]="{'clearance': RequistionSearchFormSubmit && Godown_ID_Browse?.errors?.required}" required>
@@ -115,7 +115,7 @@
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a (click)="getPrint(col)">
+                                                            <a (click)="Print(col.Req_No)">
                                                                 <i class="fa fa-fw fa-file-pdf-o"></i> Print
                                                             </a>
                                                         </li>
@@ -144,7 +144,7 @@
                                         [class]="validatation?.required && !requi_Date ? 'clearance': ''" ></ejs-datepicker>
                                     </div> 
                                    <div class="col-sm-4">
-                                        <label class="control-label">Cost Center</label>
+                                        <label class="control-label">From Cost Center</label>
                                         <select class="form-control" 
                                         name="Cost_Cen_ID_te" 
                                         #Cost_Cen_ID_te="ngModel"
@@ -158,7 +158,7 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
                                         <select class="form-control" 
                                         name="Godown_ID" 
                                         #Godown_ID="ngModel" 

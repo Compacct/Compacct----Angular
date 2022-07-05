@@ -115,6 +115,7 @@ export class JournalVoucherComponent implements OnInit {
     this.getCostCenter();
     this.AlljournalData = [];
     this.objsearch.Voucher_Type_ID = undefined
+    this.Spinner = false;
   }
  
   lowerAdd(valid){
