@@ -47,21 +47,19 @@
                                     </app-compacct-daterangepicker>
                                 </div>
                                 <div class="col-sm-2">
-                                    <div class="col-sm-3">
-                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAllData(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAllData(SearchForm.form.valid)" id="load2" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                    </button>
-                                    </div>
                                 </div>
-                                            <div class="col-sm-2">
-                                                <label class="control-label">Sub Ledger Name <span class="text-danger"></span></label>
-                                                <p-multiSelect [options]="DistSubledgerName" [(ngModel)]="SelectedDistSubledgerName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="subledgername"></p-multiSelect>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <label class="control-label">Cost Centre Name <span class="text-danger"></span></label>
-                                                <p-multiSelect [options]="DistCostCentreName" [(ngModel)]="SelectedDistCentreName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="costledgername"></p-multiSelect>
-                                            </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Sub Ledger Name <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistSubledgerName" [(ngModel)]="SelectedDistSubledgerName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="subledgername"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Cost Centre Name <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistCostCentreName" [(ngModel)]="SelectedDistCentreName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="costledgername"></p-multiSelect>
+                                </div>
                             </div>
                             </form>
                             <div class="no-padding">
@@ -824,12 +822,99 @@
                                 <div class="box-footer">
                                     <button class="btn btn-primary pull-right" 
                                     (click)="savePurchase(purChaseForm.form.valid)" 
-                                    id="load" [disabled]="Spinner">
+                                    id="load3" [disabled]="Spinner">
                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                     </button>
                                 </div>
                             </form>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="	glyphicon glyphicon-hourglass">
+                            <form name="pendingReqForm" #pendingReqForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getConfirmDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Requisition For &nbsp;</label>
+                                        <select class="form-control" 
+                                        name="Cost_Cen_ID_Pending" 
+                                        #Cost_Cen_ID_Pending='ngModel' 
+                                        [(ngModel)]="objpendingreq.Cost_Cen_ID"
+                                        [ngClass]="{'clearance': RequistionPendingFormSubmit && Cost_Cen_ID_Pending?.errors?.required}" 
+                                        required
+                                        [disabled]="userType != 'A'"
+                                       >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of costcenterListPeding" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getPendingReq(pendingReqForm.form.valid)" id="load4" [disabled]="seachPendingReqSpinner">
+                                          <p-progressSpinner *ngIf="seachPendingReqSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachPendingReqSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                </div>
+                                </form>
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="pendingREQData" 
+                                    *ngIf='pendingREQData.length' #dt4 
+                                     [paginator]="pendingREQData.length ? true : false"
+                                     [rows]="10"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowHover]="true"
+                                     [globalFilterFields]='pendingREQDataDynamicHeader'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th *ngFor="let option of pendingREQDataDynamicHeader">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                           <li>
+                                                                <a (click)="PrintREQ(col.Req_No)">
+                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                    Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <ng-container *ngFor="let option of pendingREQDataDynamicHeader">
+                                                    <td>{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="pendingREQData.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
                         </p-tabPanel>
                     </p-tabView>
                 </div>
@@ -837,175 +922,175 @@
          </div>
     </div>
 </div>
-        <p-dialog
-        [header]="viewHeader"
-        [appendTo]="'body'"
-        [visible]="DetalisView"
-        [closeOnEscape]="true"
-        [closable]="false"
-        [modal]="true"
-        [responsive]="true"
-        [style]="{ width: '58%', minWidth: '200px' }"
-        style="text-align: center;"
-        [minY]="70"
-        [maximizable]="true"
-        [baseZIndex]="10000"
-        >
-        <div class="form-horizontal">
-            <div *ngIf="this.viewHeader === 'Vendor Detalis'">
-                <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">Billing Name</label>
-                        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Billing_Name ? this.DetalisObj.Sub_Ledger_Billing_Name : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">Email</label>
-                    <div class="label-t">{{this.DetalisObj.Sub_Ledger_Email ? this.DetalisObj.Sub_Ledger_Email :"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">Contact No</label>
-                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Mobile_No ? this.DetalisObj.Sub_Ledger_Mobile_No : "-"}}</div>
-           </div>
-                 </div>
-                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">Address</label>
-                        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Address_1 ? this.DetalisObj.Sub_Ledger_Address_1 : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">Land Mark</label>
-                    <div class="label-t">{{this.DetalisObj.Sub_Ledger_Land_Mark ? this.DetalisObj.Sub_Ledger_Land_Mark :"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">PIN</label>
-                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Pin ? this.DetalisObj.Sub_Ledger_Pin : "-"}}</div>
-           </div>
-                 </div>
-                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">District</label>
-                        <div class="label-t">{{this.DetalisObj.Sub_Ledger_District ? this.DetalisObj.Sub_Ledger_District : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">State</label>
-                    <div class="label-t">{{this.DetalisObj.Sub_Ledger_State ? this.DetalisObj.Sub_Ledger_State :"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">Country</label>
-                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Country ? this.DetalisObj.Sub_Ledger_Country : "-"}}</div>
-           </div>
-                 </div>
-                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">PAN ID</label>
-                        <div class="label-t">{{this.DetalisObj.Sub_Ledger_PAN_No ? this.DetalisObj.Sub_Ledger_PAN_No : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">TIN No</label>
-                    <div class="label-t">{{this.DetalisObj.Sub_Ledger_TIN_No ? this.DetalisObj.Sub_Ledger_TIN_No :"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">CST No</label>
-                <div class="label-t">{{this.DetalisObj.Sub_Ledger_CST_No ? this.DetalisObj.Sub_Ledger_CST_No : "-"}}</div>
-           </div>
-                 </div>
-                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">Srv. Tax</label>
-                        <div class="label-t">{{"-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">CIN</label>
-                    <div class="label-t">{{"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">Excise No</label>
-                <div class="label-t">{{this.DetalisObj.Sub_Ledger_EXID_NO ? this.DetalisObj.Sub_Ledger_EXID_NO : "-"}}</div>
-           </div>
-                 </div>
+<p-dialog
+[header]="viewHeader"
+[appendTo]="'body'"
+[visible]="DetalisView"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div *ngIf="this.viewHeader === 'Vendor Detalis'">
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Billing Name</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Billing_Name ? this.DetalisObj.Sub_Ledger_Billing_Name : "-"}}</div>
             </div>
-            <div *ngIf="this.viewHeader != 'Vendor Detalis'">
-                <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">Address</label>
-                        <div class="label-t">{{this.DetalisObj.Cost_Cen_Address1 ? this.DetalisObj.Cost_Cen_Address1 : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">Address</label>
-                    <div class="label-t">{{this.DetalisObj.Cost_Cen_Address2 ? this.DetalisObj.Cost_Cen_Address2 :"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">Location</label>
-                <div class="label-t">{{this.DetalisObj.Cost_Cen_Location ? this.DetalisObj.Cost_Cen_Location : "-"}}</div>
-           </div>
-                 </div>
-                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">PIN</label>
-                        <div class="label-t">{{this.DetalisObj.Cost_Cen_PIN ? this.DetalisObj.Cost_Cen_PIN : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">District</label>
-                    <div class="label-t">{{this.DetalisObj.Cost_Cen_District ? this.DetalisObj.Cost_Cen_District :"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">State</label>
-                <div class="label-t">{{this.DetalisObj.Cost_Cen_State ? this.DetalisObj.Cost_Cen_State : "-"}}</div>
-           </div>
-                 </div>
-                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">Country</label>
-                        <div class="label-t">{{this.DetalisObj.Cost_Cen_Country ? this.DetalisObj.Cost_Cen_Country : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">Mobile</label>
-                    <div class="label-t">{{this.DetalisObj.Cost_Cen_Mobile ? this.DetalisObj.Cost_Cen_Mobile :"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">Country</label>
-                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Country ? this.DetalisObj.Sub_Ledger_Country : "-"}}</div>
-           </div>
-                 </div>
-                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">Phone</label>
-                        <div class="label-t">{{this.DetalisObj.Cost_Cen_Phone ? this.DetalisObj.Cost_Cen_Phone : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">TIN No</label>
-                    <div class="label-t">{{this.DetalisObj.Sub_Ledger_TIN_No ? this.DetalisObj.Sub_Ledger_TIN_No :"-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">Email</label>
-                <div class="label-t">{{this.DetalisObj.Cost_Cen_Email1 ? this.DetalisObj.Cost_Cen_Email1 : "-"}}</div>
-           </div>
-                 </div>
-                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">VAT CST</label>
-                        <div class="label-t">{{this.DetalisObj.Cost_Cen_VAT_CST ? this.DetalisObj.Cost_Cen_VAT_CST : "-"}}</div>
-                   </div>
-                   <div class="col-sm-4">
-                    <label class="control-label">CST No.</label>
-                    <div class="label-t">{{this.DetalisObj.Cost_Cen_CST_NO ? this.DetalisObj.Cost_Cen_CST_NO : "-"}}</div>
-               </div>
-               <div class="col-sm-4">
-                <label class="control-label">Service Tax No</label>
-                <div class="label-t">{{this.DetalisObj.Cost_Cen_SRV_TAX_NO ? this.DetalisObj.Cost_Cen_SRV_TAX_NO : "-"}}</div>
-           </div>
-                 </div>
-            </div>
-           
+            <div class="col-sm-4">
+            <label class="control-label">Email</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_Email ? this.DetalisObj.Sub_Ledger_Email :"-"}}</div>
         </div>
-        <p-footer>
-            <button
-            type="button"
-            (click)="DetalisView = false"
-            class="btn btn-default"
-            >
-            CANCEL
-            </button>
-        
-        </p-footer>
-        </p-dialog>
+        <div class="col-sm-4">
+        <label class="control-label">Contact No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Mobile_No ? this.DetalisObj.Sub_Ledger_Mobile_No : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Address</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Address_1 ? this.DetalisObj.Sub_Ledger_Address_1 : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Land Mark</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_Land_Mark ? this.DetalisObj.Sub_Ledger_Land_Mark :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">PIN</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Pin ? this.DetalisObj.Sub_Ledger_Pin : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">District</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_District ? this.DetalisObj.Sub_Ledger_District : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">State</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_State ? this.DetalisObj.Sub_Ledger_State :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Country</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Country ? this.DetalisObj.Sub_Ledger_Country : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">PAN ID</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_PAN_No ? this.DetalisObj.Sub_Ledger_PAN_No : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">TIN No</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_TIN_No ? this.DetalisObj.Sub_Ledger_TIN_No :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">CST No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_CST_No ? this.DetalisObj.Sub_Ledger_CST_No : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Srv. Tax</label>
+                <div class="label-t">{{"-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">CIN</label>
+            <div class="label-t">{{"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Excise No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_EXID_NO ? this.DetalisObj.Sub_Ledger_EXID_NO : "-"}}</div>
+    </div>
+            </div>
+    </div>
+    <div *ngIf="this.viewHeader != 'Vendor Detalis'">
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Address</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Address1 ? this.DetalisObj.Cost_Cen_Address1 : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Address</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_Address2 ? this.DetalisObj.Cost_Cen_Address2 :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Location</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_Location ? this.DetalisObj.Cost_Cen_Location : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">PIN</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_PIN ? this.DetalisObj.Cost_Cen_PIN : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">District</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_District ? this.DetalisObj.Cost_Cen_District :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">State</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_State ? this.DetalisObj.Cost_Cen_State : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Country</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Country ? this.DetalisObj.Cost_Cen_Country : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Mobile</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_Mobile ? this.DetalisObj.Cost_Cen_Mobile :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Country</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Country ? this.DetalisObj.Sub_Ledger_Country : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Phone</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Phone ? this.DetalisObj.Cost_Cen_Phone : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">TIN No</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_TIN_No ? this.DetalisObj.Sub_Ledger_TIN_No :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Email</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_Email1 ? this.DetalisObj.Cost_Cen_Email1 : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">VAT CST</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_VAT_CST ? this.DetalisObj.Cost_Cen_VAT_CST : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">CST No.</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_CST_NO ? this.DetalisObj.Cost_Cen_CST_NO : "-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Service Tax No</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_SRV_TAX_NO ? this.DetalisObj.Cost_Cen_SRV_TAX_NO : "-"}}</div>
+    </div>
+            </div>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="DetalisView = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>

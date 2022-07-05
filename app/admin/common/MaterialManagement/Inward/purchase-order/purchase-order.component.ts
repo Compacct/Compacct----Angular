@@ -25,7 +25,7 @@ export class PurchaseOrderComponent implements OnInit {
   buttonname = 'Create';
   Spinner = false;
   seachSpinner = false;
-  items = [];
+  items:any = [];
   menuList = [];
   purchaseFormSubmitted = false;
   SubLedgerList = [];
@@ -45,7 +45,8 @@ export class PurchaseOrderComponent implements OnInit {
   ExpectedDeliverydate = new Date;
   objpurchase : purchase = new purchase();
   objproject : project = new project();
-  ObjBrowse : Browse = new Browse ();
+  ObjBrowse : Browse = new Browse();
+  objpendingreq :pendingreq = new pendingreq()
   addPurchaseList = [];
   AcceptanceOrderList = [];
   rate = undefined;
@@ -54,7 +55,8 @@ export class PurchaseOrderComponent implements OnInit {
   totalAmtBackUp = undefined;
   DocNo = undefined;
   getAllDataList = [];
-  DynamicHeader = [];
+  DynamicHeader:any = [];
+  pendingREQDataDynamicHeader:any = [];
   companyList = [];
   disable = true;
   DiscountTypeList = [{Dtype : '%'},{Dtype : "AMT"}]
@@ -77,11 +79,14 @@ export class PurchaseOrderComponent implements OnInit {
   objProjectRequi:any = {};
   productTypeList = [];
   projectDisable = false
+  headerText:string
+  initDate:any = [];
   validatation = {
     required : false,
     projectMand : 'N'
   }
   projectEditData =[]
+  seachPendingReqSpinner = false;
   @ViewChild("project", { static: false })
   ProjectInput: CompacctProjectComponent;
   BackupSearchedlist = [];
@@ -90,7 +95,11 @@ export class PurchaseOrderComponent implements OnInit {
   DistCostCentreName = [];
   SelectedDistCentreName = [];
   SearchFields = [];
+  RequistionPendingFormSubmit = false
   SearchFormSubmitted = false;
+  costcenterListPeding = [];
+  pendingREQData:any = [];
+
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -107,18 +116,20 @@ export class PurchaseOrderComponent implements OnInit {
         this.openProject = params['proj'];
         this.projectMand = params['mand'];
         this.validatation.projectMand = params['mand']
+        this.headerText = params['Caption']
        })
      }
 
   ngOnInit() {
-    this.items = [ 'BROWSE', 'CREATE'];
+    $(document).prop('title', this.headerText ? this.headerText : $('title').text());
+    this.items = [ 'BROWSE', 'CREATE','PENDING REQ'];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
     ];  
       this.Header.pushHeader({
-        'Header' : 'Purchase Order',
-        'Link' : 'Material Management -> Inward -> Purchase Order'
+        'Header' : this.headerText,
+        'Link' : this.headerText
       });
       this.objpurchase.Credit_Days = 0;
       this.getsubLedger();
@@ -130,6 +141,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.getAllData(true);
       this.getcompany();
       this.GetRequlist();
+      this.getCostcenter();
      this.userType = this.$CompacctAPI.CompacctCookies.User_Type
      console.log("proj",this.openProject);
      if(this.openProject !== "Y"){
@@ -139,7 +151,7 @@ export class PurchaseOrderComponent implements OnInit {
   } 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ['BROWSE', 'CREATE','PENDING REQ'];
     this.buttonname = "Create";
     this.clearData();
     this.clearProject()
@@ -174,17 +186,21 @@ export class PurchaseOrderComponent implements OnInit {
     this.disAmtBackUpAMT = 0
     this.objpurchase.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
-    
+    this.objpendingreq.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.objpurchase.Billing_To  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.objpurchase.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.objpurchase.Credit_Days = 0;
     this.objpurchase.Currency_ID = 1;
     this.objpurchase.Type_ID = 1;
+    this.seachPendingReqSpinner = false;
+    this.initDate = [new Date(),new Date()];
+    
     if(this.openProject === "Y"){
       this.Requlist = [];
       this.productTypeList = []; 
     }
     this.productList = [];
+    this.RequistionPendingFormSubmit =false
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -194,7 +210,7 @@ export class PurchaseOrderComponent implements OnInit {
     const obj = {
       "SP_String": "Sp_Purchase_Order",
       "Report_Name_String":"Purchase_Order_Delete",
-      "Json_Param_String": JSON.stringify([{Doc_No : this.DocNo}]) 
+      "Json_Param_String": JSON.stringify([{Doc_No : this.DocNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
       }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("data ==",data[0].Column1);
@@ -641,6 +657,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.objpurchase.Project_ID = Number(this.objpurchase.Project_ID) ? Number(this.objpurchase.Project_ID) : null
     this.objpurchase.Currency_ID = this.objpurchase.Currency_ID ? Number(this.objpurchase.Currency_ID) : null
     this.objpurchase.Company_ID = this.objpurchase.Company_ID ? Number(this.objpurchase.Company_ID) : undefined
+    this.objpurchase.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
      let save = []
      if(this.addPurchaseList.length){
      if(this.DocNo){
@@ -691,7 +708,7 @@ export class PurchaseOrderComponent implements OnInit {
       
       if(this.DocNo){
         this.tabIndexToView = 0;
-        this.items = ["BROWSE", "CREATE"];
+        this.items = ['BROWSE', 'CREATE','PENDING REQ'];
         this.buttonname = "Create";
       }
       this.clearData();
@@ -724,13 +741,35 @@ export class PurchaseOrderComponent implements OnInit {
    }
  }
 
+//  checkreq(){
+//   let flg = false
+//   if(this.openProject === "Y" && this.projectMand === "Y"){
+//     let getArrValue = Object.values(this.objProjectRequi);
+//     console.log("getArrValue",getArrValue.length);
+//     if(getArrValue.length === 5 || getArrValue.length > 5){
+//       flg = true
+//     }
+//     else {
+//       flg = false
+//     }
+//   }
+//   else {
+//     flg = true
+//   }
+//   return flg
+//  }
  checkreq(){
   let flg = false
   if(this.openProject === "Y" && this.projectMand === "Y"){
     let getArrValue = Object.values(this.objProjectRequi);
     console.log("getArrValue",getArrValue.length);
-    if(getArrValue.length === 5 || getArrValue.length > 5){
-      flg = true
+    if(getArrValue.indexOf(undefined) == -1){
+      if(getArrValue.length === 5 || getArrValue.length > 5){
+        flg = true
+      }
+      else {
+        flg = false
+      }
     }
     else {
       flg = false
@@ -758,7 +797,9 @@ const end = this.ObjBrowse.end_date
 const tempobj = {
   From_Date : start,
   To_Date : end,
-  Company_ID : this.ObjBrowse.Company_ID
+  Company_ID : this.ObjBrowse.Company_ID,
+  proj : this.openProject ? this.openProject : "N",
+  // User_ID: this.$CompacctAPI.CompacctCookies.User_ID
 }
 if (valid) {
   const obj = {
@@ -828,7 +869,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = ["BROWSE", "UPDATE"];
+    this.items = ['BROWSE', 'CREATE','PENDING REQ'];
     this.buttonname = "Update";
     this.clearProject()
     this.geteditmaster(col.Doc_No);
@@ -880,6 +921,18 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
   const objtemp = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Purchase_Order_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  })
+  }
+}
+PrintREQ(DocNo) {
+  if(DocNo) {
+  const objtemp = {
+    "SP_String": "SP_Txn_Requisition",
+    "Report_Name_String": "Requisition_Print"
     }
   this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
     var printlink = data[0].Column1;
@@ -1083,6 +1136,54 @@ GetProductsDetalis(){
   }
 
 }
+getConfirmDateRange(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.objpendingreq.From_Date = dateRangeObj[0];
+    this.objpendingreq.To_Date = dateRangeObj[1];
+  }
+}
+getCostcenter(){
+  const obj = {
+     "SP_String": "SP_Txn_Requisition",
+     "Report_Name_String": "Get_Cost_Center",
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     console.log("costcenterList  ===",data);
+    this.costcenterListPeding = data;
+    this.objpendingreq.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+  })
+ }
+getPendingReq(valid){
+  this.RequistionPendingFormSubmit = true;
+  const start = this.objpendingreq.From_Date
+  ? this.DateService.dateConvert(new Date(this.objpendingreq.From_Date))
+  : this.DateService.dateConvert(new Date());
+const end = this.objpendingreq.To_Date
+  ? this.DateService.dateConvert(new Date(this.objpendingreq.To_Date))
+  : this.DateService.dateConvert(new Date());
+const tempobj = {
+  From_Date : start,
+  To_Date : end,
+  To_Cost_Cen_ID : this.objpendingreq.Cost_Cen_ID,
+  proj : this.openProject
+}
+if (valid) {
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Browse_Pending_Requisition",
+    "Json_Param_String": JSON.stringify([tempobj])
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.pendingREQData = data;
+  if(this.pendingREQData.length){
+      this.pendingREQDataDynamicHeader = Object.keys(data[0]);
+    }
+    this.seachPendingReqSpinner = false
+    this.RequistionPendingFormSubmit = false;
+    
+  })
+}
+}
 }
 class purchase {
         Doc_No:any;
@@ -1139,6 +1240,7 @@ class purchase {
         Certificates:any
         Installation_and_Commission:any
         Delivery_Location:any
+        User_ID:any
 }
 class addPurchacse{
       Product_ID:any;
@@ -1185,3 +1287,9 @@ class Browse {
 
 
 }
+class pendingreq {
+  From_Date: string;
+  To_Date: string;
+  Cost_Cen_ID: number;
+  proj:string
+  }

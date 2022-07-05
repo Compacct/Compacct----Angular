@@ -58,6 +58,9 @@ export class MiclRequisitionComponent implements OnInit {
   openProject = "N";
   minFromDate = new Date();
   projectDisable = false;
+  projectMand = "N";
+  toCostCenter:number
+  headerText:string
   validatation = {
     required : false,
     projectMand : 'N'
@@ -77,18 +80,25 @@ export class MiclRequisitionComponent implements OnInit {
         console.log(params);
         this.openProject = params['proj'];
         this.validatation.projectMand = params['mand']
+        this.projectMand = params['mand'];
+        this.toCostCenter = Number(params['CostCenID']);
+        this.headerText = params['Caption']
+        
        })
      }
 
   ngOnInit() {
+    $(document).prop('title', this.headerText ? this.headerText : $('title').text());
     this.items = ["BROWSE", "CREATE"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
+    // console.log("1",$(document).attr('title'))
+    // console.log("2",)
     this.Header.pushHeader({
-      Header: "Requisition",
-      Link: "Material Management -> Outward -> Requisition"
+      Header: this.headerText,
+      Link: this.headerText
     });
     this.ServerDate();
     this.AllowedEntryDays();
@@ -101,6 +111,7 @@ export class MiclRequisitionComponent implements OnInit {
     
   }
   TabClick(e) {
+   
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
@@ -163,15 +174,15 @@ export class MiclRequisitionComponent implements OnInit {
    this.validatation.required = true;
    if(valid && this.checkreq()){
      if(this.AddMaterialsList.length){
-      let saveData = [];
+      let saveData:any = [];
       let mgs = "";
       if(this.ReqNo){
  
       }
       else{
        mgs = "Save"
-        const consCenterFilter = this.costcenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objreqi.Cost_Cen_ID))
-        this.AddMaterialsList.forEach(el=>{
+        const consCenterFilter:any = this.costcenterList.filter((el:any)=> Number(el.Cost_Cen_ID) === Number(this.objreqi.Cost_Cen_ID))
+        this.AddMaterialsList.forEach((el:any)=>{
         let save = {
          Req_No: "A",
          Req_Date: this.requi_Date ? this.DateService.dateConvert(new Date(this.requi_Date)) : new Date(),
@@ -185,7 +196,8 @@ export class MiclRequisitionComponent implements OnInit {
          Created_By: el.Created_By,
          Godown_ID: this.objreqi.Godown_ID,
          Product_Type_ID : Number(el.Product_Type_ID),
-         Product_Type : el.Product_Type
+         Product_Type : el.Product_Type,
+         To_Cost_Cen_ID : Number(this.toCostCenter)
         }
         saveData.push(save)
         })
@@ -222,7 +234,8 @@ export class MiclRequisitionComponent implements OnInit {
              detail: "Succesfully " + mgs
            });
           
-            this.SaveNPrintBill();
+           // this.SaveNPrintBill();
+           this.Print(data[0].Column1)
             this.clearData();
             this.searchData(true);
             this.tabIndexToView = 0;
@@ -247,13 +260,35 @@ export class MiclRequisitionComponent implements OnInit {
      }
    }
   }
-  checkreq(){
+  // checkreq(){
+  //   let flg = false
+  //   if(this.openProject === "Y" && this.openProject === "Y"){
+  //     let getArrValue = Object.values(this.objProjectRequi);
+  //     console.log("getArrValue",getArrValue.length);
+  //     if(getArrValue.length === 5 || getArrValue.length > 5){
+  //       flg = true
+  //     }
+  //     else {
+  //       flg = false
+  //     }
+  //   }
+  //   else {
+  //     flg = true
+  //   }
+  //   return flg
+  //  }
+   checkreq(){
     let flg = false
-    if(this.openProject === "Y" && this.openProject === "Y"){
+    if(this.openProject === "Y" && this.projectMand === "Y"){
       let getArrValue = Object.values(this.objProjectRequi);
       console.log("getArrValue",getArrValue.length);
-      if(getArrValue.length === 5 || getArrValue.length > 5){
-        flg = true
+      if(getArrValue.indexOf(undefined) == -1){
+        if(getArrValue.length === 5 || getArrValue.length > 5){
+          flg = true
+        }
+        else {
+          flg = false
+        }
       }
       else {
         flg = false
@@ -405,7 +440,8 @@ export class MiclRequisitionComponent implements OnInit {
         ? this.DateService.dateConvert(new Date(this.ObjBrowseData.To_Date))
         : this.DateService.dateConvert(new Date()),
         Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID ? this.ObjBrowseData.Cost_Cen_ID : 0,
-        Godown_ID : this.ObjBrowseData.Godown_ID ? this.ObjBrowseData.Godown_ID : 0
+        Godown_ID : this.ObjBrowseData.Godown_ID ? this.ObjBrowseData.Godown_ID : 0,
+        proj : this.openProject ? this.openProject : "N"
       }
       const obj = {
         "SP_String": "SP_Txn_Requisition",
@@ -581,6 +617,18 @@ export class MiclRequisitionComponent implements OnInit {
      console.log("minFromDate",this.minFromDate)
       
     })
+  }
+  Print(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Requisition_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
   }
 }
 
