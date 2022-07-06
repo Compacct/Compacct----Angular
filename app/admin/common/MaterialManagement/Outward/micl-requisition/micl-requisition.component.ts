@@ -41,7 +41,7 @@ export class MiclRequisitionComponent implements OnInit {
   allRequDataList = [];
   costcenterList = [];
   GodownList = [];
-  GodownBrowseList =[]
+  GodownBrowseList:any =[]
   productListview = []
   productList = []
   ReqNo = undefined;
@@ -61,10 +61,12 @@ export class MiclRequisitionComponent implements OnInit {
   projectMand = "N";
   toCostCenter:number
   headerText:string
+  productFilterObj:any = {};
   validatation = {
     required : false,
     projectMand : 'N'
   }
+  reqValid = false
   @ViewChild("project", { static: false })
   ProjectInput: CompacctProjectComponent;
   constructor(private $http: HttpClient,
@@ -137,14 +139,24 @@ export class MiclRequisitionComponent implements OnInit {
     this.requi_Date = new Date();
     this.validatation.required = false;
     this.projectDisable = false;
+    this.reqValid = false
    }
   addMaterials(valid){
   console.log("valid",valid);
   this.requisitionmaterialFormSubmit = true;
+  this.reqValid = true
   if(valid){
-    
-    const productFilter = this.productListview.filter(el=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
-    const productTypeFilter = this.productTypeList.filter(el=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID))
+     if(this.projectMand == 'Y' && (Number(this.productFilterObj.Can_Be_Used_Qty)< Number(this.objmaterial.Req_Qty) || 0 == Number(this.objmaterial.Req_Qty))){
+      console.log("done");
+      this.reqValid = true
+      return
+     }
+     else{
+      this.reqValid = false
+     }
+     
+    const productFilter = this.productListview.filter((el:any)=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
+    const productTypeFilter = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID))
      console.log("productFilter",productFilter);
     if(productFilter.length){
       this.AddMaterialsList.push({
@@ -163,7 +175,8 @@ export class MiclRequisitionComponent implements OnInit {
       this.productList = [];
       this.productListview = [];
       this.projectDisable = true;
-
+      this.reqValid = false
+      this.productFilterObj = {};
     }
   
   }
@@ -361,6 +374,7 @@ export class MiclRequisitionComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownBrowseList = data;
         console.log("this.GodownBrowseList",this.GodownBrowseList);
+        this.ObjBrowseData.Godown_ID = this.GodownBrowseList.length ? this.GodownBrowseList[0].Godown_ID : undefined
         })
     }
     else{
@@ -417,10 +431,27 @@ export class MiclRequisitionComponent implements OnInit {
   }
   getUOM(){
     if(this.objmaterial.Product_ID){
-      const ProductFilter = this.productListview.filter(el=> Number(el.Product_ID) === Number(this.objmaterial.Product_ID))
+      const ProductFilter = this.productListview.filter((el:any)=> Number(el.Product_ID) === Number(this.objmaterial.Product_ID))
       console.log("ProductFilter",ProductFilter);
+      this.productFilterObj = ProductFilter[0];
        this.objmaterial.UOM = ProductFilter[0].UOM
     }
+    else {
+      this.productFilterObj = {}
+    }
+  }
+  reqiValid(id:any){
+   if(id || Number(id) == 0){
+    if(this.projectMand == 'Y' && (Number(this.productFilterObj.Can_Be_Used_Qty)< Number(this.objmaterial.Req_Qty) || 0 == Number(this.objmaterial.Req_Qty))){
+      this.reqValid = true
+    }
+    else{
+      this.reqValid = false
+    }
+   }
+   else{
+    this.reqValid = true
+   }
   }
   getConfirmDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
