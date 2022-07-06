@@ -72,6 +72,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   outletListBro = [];
   data = "(Show All Products)";
   inputBoxDisabled = false;
+  docdateDisabled = true;
   indentdateDisabled = true;
   //adDisabled = true;
   RequistionSearchFormSubmit = false;
@@ -150,6 +151,16 @@ export class MiclDispatchChallanComponent implements OnInit {
   RegenerateBillNo = undefined;
   franchisechallandate: any = Date;
 
+  ObjPendingIndent = new PendingIndent();
+  PendingIndentFormSubmitted = false;
+  PendingIndentList = [];
+  DynamicHeaderforPIndent = [];
+  costcenterListPeding = [];
+
+  createchallandisabled = false;
+  createChallanflag = true;
+  indentlistdisabled = false;
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -162,7 +173,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "Pending Indent"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -177,10 +188,11 @@ export class MiclDispatchChallanComponent implements OnInit {
     // this.GetToGodown();
     this.GetBrowseCostcenter();
     // this.ObjBrowseData.Cost_Cen_ID = undefined;
+    this.getCostcenter();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "Pending Indent"];
     this.brandInput = false ;
     this.buttonname = "Save";
     //this.ObjBrowseData = new BrowseData ()
@@ -190,7 +202,10 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.productDetails = [];
     this.BackUpproductDetails = [];
     this.inputBoxDisabled = false;
+    this.createchallandisabled = false;
+    this.indentlistdisabled = false;
     this.indentdateDisabled = true;
+    this.docdateDisabled = true;
     // this.From_Godown_ID_Dis = false;
     // this.To_Godown_ID_Dis = false;
    // this.adDisabled = true;
@@ -200,14 +215,19 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.ReqDate = new Date();
     this.ChallanDate = new Date();
     //this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
-    this.SelectedIndent = [];
+    this.SelectedIndent = undefined;
     this.IndentFilter = [];
   }
   clearData(){
-  this.ObjBrowseData.Cost_Cen_ID = this.BrowseCostCenterList.length === 1 ? this.BrowseCostCenterList[0].Cost_Cen_ID : undefined;
-  this.Objdispatch.F_Cost_Cen_ID = this.FromCostCenterList.length === 1 ? this.FromCostCenterList[0].Cost_Cen_ID : undefined;
-  this.Objdispatch.To_Cost_Cen_ID = this.ToCostCenterList.length === 1 ? this.ToCostCenterList[0].Cost_Cen_ID : undefined;
-  // this.ObjBrowseData.Brand_ID = this.brandListBro.length === 1 ? this.brandListBro[0].Brand_ID : undefined;
+  // this.ObjBrowseData.Cost_Cen_ID = this.BrowseCostCenterList.length === 1 ? this.BrowseCostCenterList[0].Cost_Cen_ID : undefined;
+  // this.Objdispatch.F_Cost_Cen_ID = this.FromCostCenterList.length === 1 ? this.FromCostCenterList[0].Cost_Cen_ID : undefined;
+  // this.Objdispatch.To_Cost_Cen_ID = this.ToCostCenterList.length === 1 ? this.ToCostCenterList[0].Cost_Cen_ID : undefined;
+  this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  this.ObjBrowseData.Godown_ID = this.BrowseGodownList[0].Godown_ID;
+  this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  this.Objdispatch.F_Godown_ID = this.FromGodownList[0].Godown_ID;
+  this.Objdispatch.To_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  this.Objdispatch.To_Godown_ID = this.ToGodownList[0].Godown_ID;
   console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
   this.doc_no = undefined;
   this.DispatchFormSubmit = false;
@@ -224,6 +244,9 @@ export class MiclDispatchChallanComponent implements OnInit {
   // this.BackupIndentList = [];
   //this.IndentFilter = []
   this.ngxService.stop();
+  this.createchallandisabled = false;
+  this.indentlistdisabled = false;
+  this.createChallanflag = true;
   }
   GetFromCostcenter(){
     const obj = {
@@ -233,7 +256,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("costcenterList  ===",data);
       this.FromCostCenterList = data;
-      this.Objdispatch.F_Cost_Cen_ID = this.FromCostCenterList.length === 1 ? this.FromCostCenterList[0].Cost_Cen_ID : undefined;
+      this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // if(this.Objdispatch.F_Cost_Cen_ID){
       //   this.toutLetDis = true;
       // }
@@ -252,8 +275,8 @@ export class MiclDispatchChallanComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.FromGodownList = data;
-      console.log("this.toGodownList",this.toGodownList);
-      this.Objdispatch.F_Godown_ID= this.FromGodownList[0].godown_id ;
+      console.log("this.FromGodownList",this.FromGodownList);
+      this.Objdispatch.F_Godown_ID= this.FromGodownList[0].Godown_ID ;
       // if(this.Objdispatch.F_Godown_ID){
       //   this.To_Godown_ID_Dis = true;
       // }
@@ -267,7 +290,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ToCostCenterList = data;
       console.log("ToCostCenterList  ===",this.ToCostCenterList);
-      this.Objdispatch.To_Cost_Cen_ID = this.ToCostCenterList.length === 1 ? this.ToCostCenterList[0].Cost_Cen_ID : undefined;
+      this.Objdispatch.To_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // if(this.Objdispatch.To_Cost_Cen_ID){
       //   this.toutLetDis = true;
       // }
@@ -287,7 +310,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ToGodownList = data;
       console.log("this.toGodownList",this.ToGodownList);
-      this.Objdispatch.To_Godown_ID= this.ToGodownList[0].godown_id ;
+      this.Objdispatch.To_Godown_ID= this.ToGodownList[0].Godown_ID ;
       // if(this.Objdispatch.To_Godown_ID){
       //   this.To_Godown_ID_Dis = true;
       // }
@@ -296,6 +319,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   // FOR INDENT NUMBER
   GetIndentList(valid){
     // this.RawMaterialIssueFormSubmitted = true;
+    this.IndentNoList = [];
     this.DispatchFormSubmit = true;
      if(valid){
       this.SpinnerShow = true;
@@ -318,7 +342,12 @@ export class MiclDispatchChallanComponent implements OnInit {
        this.IndentNoList = data;
        this.BackupIndentList = data;
       // this.adDisabled = false;
+      if (!this.createchallandisabled) {
       this.inputBoxDisabled = true;
+      this.docdateDisabled = false;
+      this.indentlistdisabled = false;
+      }
+      this.createchallandisabled = true;
       this.indentdateDisabled = false;
       this.From_Godown_ID_Dis = true;
       this.To_Godown_ID_Dis = true;
@@ -337,7 +366,7 @@ export class MiclDispatchChallanComponent implements OnInit {
    GetIndent(){
      let DIndent = [];
      this.IndentFilter = [];
-     this.SelectedIndent = [];
+    //  this.SelectedIndent = [];
      this.BackupIndentList.forEach((item) => {
        if (DIndent.indexOf(item.Req_No) === -1) {
          DIndent.push(item.Req_No);
@@ -355,7 +384,7 @@ export class MiclDispatchChallanComponent implements OnInit {
      if (!this.EditList.length){
       this.BackUpproductDetails =[];
       this.productDetails = [];
-      this.GetshowProduct(true);
+      this.GetshowProduct();
       }
       // if(this.editIndentList.length){
       //   this.BackUpproductDetails =[];
@@ -389,23 +418,27 @@ export class MiclDispatchChallanComponent implements OnInit {
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.inputBoxDisabled = false;
+     this.createchallandisabled = false;
+     this.indentlistdisabled = false;
      this.indentdateDisabled = true;
+     this.docdateDisabled = true;
    //  this.adDisabled = true;
      this.clearData();
      this.ReqDate = new Date();
      this.ChallanDate = new Date();
      // this.todayDate = new Date();
      // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
-     this.SelectedIndent = [];
+     this.SelectedIndent = undefined;
      this.IndentFilter = [];
    }// TABLE DATA
   dataforShowproduct(){
-    if(this.SelectedIndent.length) {
+    if(this.SelectedIndent) {
       let Arr =[]
-      this.SelectedIndent.forEach(el => {
-        if(el){
+      // this.SelectedIndent.forEach(el => {
+        // if(el){
           const Dobj = {
-            Req_No : el,
+            // Req_No : el,
+            Req_No : this.SelectedIndent,
             F_Cost_Cen_ID: Number(this.Objdispatch.F_Cost_Cen_ID),
             F_Godown_ID : Number(this.Objdispatch.F_Godown_ID),
             To_Cost_Cen_ID: Number(this.Objdispatch.To_Cost_Cen_ID),
@@ -414,17 +447,17 @@ export class MiclDispatchChallanComponent implements OnInit {
             Req_Date : this.DateService.dateConvert(new Date(this.ReqDate))
             }
            Arr.push(Dobj)
-        }
+        // }
 
-    });
+    // });
       console.log("Table Data ===", Arr)
       return Arr.length ? JSON.stringify(Arr) : '';
     }
   }
-GetshowProduct(valid){
-  this.DispatchFormSubmit = true;
+GetshowProduct(){
+  // this.DispatchFormSubmit = true;
   if(this.dataforShowproduct()){
-  if(valid){
+  // if(valid){
     //this.SpinnerShow = true;
     // const tempObj = {
     //   Outlet_ID: Number(this.Objdispatch.Cost_Cen_ID),
@@ -434,7 +467,7 @@ GetshowProduct(valid){
     //   Indent_Date : this.DateService.dateConvert(new Date(this.todayDate)),
     // }
     const obj = {
-      "SP_String": "SP_MICL_Dispatch_Challan",
+      "SP_String": "REP_Stock_Report",
       "Report_Name_String": "Get_Product_Details",
       "Json_Param_String": this.dataforShowproduct()
     }
@@ -450,7 +483,7 @@ GetshowProduct(valid){
 
       //this.clearData();
     })
-  }
+  // }
  }
 
 }
@@ -525,7 +558,10 @@ saveqty(){
 //  }
 //  return flag;
 // }
-  showDialog() {
+  showDialog(valid) {
+    this.DispatchFormSubmit = true;
+    if (valid) {
+      this.DispatchFormSubmit = false;
     this.displaysavepopup = true;
     this.filteredData = [];
   //   this.BackUpproductDetails.forEach(obj => {
@@ -542,6 +578,7 @@ saveqty(){
      // console.log("this.filteredData===",this.filteredData);
   }
  })
+ }
   }
   getTotalIndValue(){
     let Indval = 0;
@@ -704,8 +741,8 @@ saveqty(){
     // else{
        console.log("create");
       this.saveData = [];
-      this.Objdispatch.Doc_Date = this.DateService.dateTimeConvert(new Date(this.ChallanDate));
-      this.Objdispatch.Req_Date = this.DateService.dateTimeConvert(new Date(this.ReqDate));
+      this.Objdispatch.Doc_Date = this.DateService.dateConvert(new Date(this.ChallanDate));
+      this.Objdispatch.Req_Date = this.DateService.dateConvert(new Date(this.ReqDate));
       this.Objdispatch.Created_By = this.$CompacctAPI.CompacctCookies.User_ID;
       this.BackUpproductDetails.forEach(el=>{
         if(el.Delivery_Qty){      //&& Number(el.Delivery_Qty) !== 0
@@ -747,7 +784,7 @@ saveqty(){
       "SP_String": "SP_MICL_Dispatch_Challan",
       "Report_Name_String": "Create_MICL_Dispatch_Challan",
       "Json_Param_String": JSON.stringify(this.saveData),
-      "Json_1_String" : this.getReqNo()
+      "Json_1_String" : JSON.stringify([{Req_No : this.SelectedIndent}]) //this.getReqNo()
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       var tempID = data[0].Column1;
@@ -759,7 +796,10 @@ saveqty(){
         this.clearData();
         // this.Print(tempID);
         this.inputBoxDisabled = false;
+        this.createchallandisabled = false;
+        this.indentlistdisabled = false;
         this.indentdateDisabled = true;
+        this.docdateDisabled = true;
         this.From_Godown_ID_Dis = false;
         this.To_Godown_ID_Dis = false;
         this.ngxService.stop();
@@ -781,7 +821,7 @@ saveqty(){
       // this.ObjBrowseData.Brand_ID = this.Objdispatch.Brand_ID;
       this.searchData(true);
       this.displaysavepopup = false;
-      this.SelectedIndent = [];
+      this.SelectedIndent = undefined;
       this.IndentFilter = [];
 
       //
@@ -833,7 +873,7 @@ saveqty(){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("costcenterList  ===",data);
       this.BrowseCostCenterList = data;
-      this.ObjBrowseData.Cost_Cen_ID = this.BrowseCostCenterList.length === 1 ? this.BrowseCostCenterList[0].Cost_Cen_ID : undefined;
+      this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // if(this.Objdispatch.F_Cost_Cen_ID){
       //   this.toutLetDis = true;
       // }
@@ -852,7 +892,7 @@ saveqty(){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.BrowseGodownList = data;
       console.log("this.BrowseGodownList",this.BrowseGodownList);
-      this.ObjBrowseData.Godown_ID= this.BrowseGodownList[0].godown_id ;
+      this.ObjBrowseData.Godown_ID= this.BrowseGodownList[0].Godown_ID ;
       // if(this.Objdispatch.F_Godown_ID){
       //   this.To_Godown_ID_Dis = true;
       // }
@@ -951,6 +991,110 @@ onConfirm(){
 onReject(){
   this.compacctToast.clear("c");
 }
+
+// PENDING INDENT
+getDateRange(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.ObjPendingIndent.start_date = dateRangeObj[0];
+    this.ObjPendingIndent.end_date = dateRangeObj[1];
+  }
+}
+getCostcenter(){
+  const obj = {
+     "SP_String": "SP_Txn_Requisition",
+     "Report_Name_String": "Get_Cost_Center",
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     console.log("costcenterList  ===",data);
+    this.costcenterListPeding = data;
+    this.ObjPendingIndent.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+  })
+ }
+GetPendingGRN(valid){
+    this.PendingIndentFormSubmitted = true;
+    const start = this.ObjPendingIndent.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjPendingIndent.start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.ObjPendingIndent.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjPendingIndent.end_date))
+    : this.DateService.dateConvert(new Date());
+    const tempobj = {
+     From_Date : start,
+     To_Date : end,
+     To_Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
+     proj : "N"
+    }
+    if (valid) {
+    const obj = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": "Browse_Pending_Requisition",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.PendingIndentList = data;
+      // this.BackupSearchedlist = data;
+      // this.GetDistinct();
+      if(this.PendingIndentList.length){
+        this.DynamicHeaderforPIndent = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforPIndent = [];
+      }
+      this.seachSpinner = false;
+      this.PendingIndentFormSubmitted = false;
+      console.log("DynamicHeaderforPIndent",this.DynamicHeaderforPIndent);
+    })
+    }
+}
+PrintIndent(DocNo) {
+  if(DocNo) {
+  const objtemp = {
+    "SP_String": "SP_Txn_Requisition",
+    "Report_Name_String": "Requisition_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  })
+  }
+}
+CreateChallan(obj){
+  this.clearData();
+  this.IndentNoList = [];
+  this.SelectedIndent = undefined;
+  this.inputBoxDisabled = false;
+  this.ReqDate = new Date();
+  if(obj.Req_No) {
+    // this.IndentFilter.push({ label: obj.Req_No , value: obj.Req_No });
+    // this.SelectedIndent.push(obj.Req_No);
+    this.tabIndexToView = 1;
+    this.inputBoxDisabled = false;
+    this.createchallandisabled = true;
+    this.indentlistdisabled = true;
+    this.indentdateDisabled = false;
+    this.createChallanflag = false;
+    this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.GetFromGodown();
+    var tocostcent = this.ToCostCenterList.filter(el=> el.Cost_Cen_Name === obj.Cost_Cen_Name)
+    this.Objdispatch.To_Cost_Cen_ID = tocostcent[0].Cost_Cen_ID;
+    this.GetToGodown();
+    // var togodown = this.ToGodownList.filter(el=> el.godown_name === obj.Stock_Point)
+    // this.Objdispatch.To_Godown_ID = togodown[0].Godown_ID;
+    // console.log("togodown==",this.Objdispatch.To_Godown_ID)
+    this.ReqDate = new Date(obj.Req_Date);
+    // console.log("ReqDate==",this.ReqDate)
+    this.GetIndentList(true);
+    this.SelectedIndent = obj.Req_No;
+    // console.log("obj.Req_No==",this.SelectedIndent)
+    this.GetshowProduct();
+    // this.SelectedIndent = obj.Req_No;
+          // obj.Req_No.forEach(ele => {
+            // this.IndentFilter.push({ label: obj.Req_No , value: obj.Req_No });
+            // this.BackupIndentList = [...this.IndentNoList];
+            // });
+          // this.SelectedIndent = obj.Req_No;
+  }
+}
 }
 
 class dispatch{
@@ -974,4 +1118,10 @@ class BrowseData {
   To_Date: string;
   Cost_Cen_ID : any;
   Godown_ID : any;
+  }
+  class PendingIndent{
+    Company_ID : any;
+    start_date : Date;
+    end_date : Date;
+    Cost_Cen_ID : any;
   }

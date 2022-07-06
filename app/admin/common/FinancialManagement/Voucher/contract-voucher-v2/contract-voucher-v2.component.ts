@@ -76,8 +76,8 @@ ngOnInit() {
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
     this.header.pushHeader({
-      Header: "Contract Voucher",
-      Link: " Financial Management ->Voucher -> Contract-Voucher-V2"
+      Header: "Contra Voucher",
+      Link: " Financial Management ->Voucher -> Contra Voucher V2"
     })
     this.companyData();
     this.costCenterData();

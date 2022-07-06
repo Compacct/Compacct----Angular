@@ -163,7 +163,7 @@ export class PurchaseBillComponent implements OnInit {
   ngOnInit() {
     // console.log(this.$CompacctAPI.CompacctCookies.Fin_Year_Start)
     $(document).prop('title', this.headerData ? this.headerData : $('title').text());
-    this.items = ["BROWSE", "CREATE", "Pending Purchase Order", "Pending GRN"];
+    this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "PENDING GRN"];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -185,7 +185,7 @@ export class PurchaseBillComponent implements OnInit {
   TabClick(e){
     // console.log(e)
      this.tabIndexToView = e.index;
-     this.items = ["BROWSE", "CREATE", "Pending Purchase Order", "Pending GRN"];
+     this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "PENDING GRN"];
      this.buttonname = "Create";
      this.Spinner = false;
      this.clearData();

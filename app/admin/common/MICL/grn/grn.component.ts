@@ -53,6 +53,11 @@ export class GrnComponent implements OnInit {
   GRNSearchFormSubmitted = false;
   SE_No_Date: Date;
 
+  ObjPendingRDB = new PendingRDB();
+  PendingRDBFormSubmitted = false;
+  PendingRDBList = [];
+  DynamicHeaderforPRDB = [];
+
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -65,7 +70,7 @@ export class GrnComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING RDB"];
     this.Header.pushHeader({
       Header: "GRN",
       Link: " Material Management -> Inward -> GRN"
@@ -78,7 +83,7 @@ export class GrnComponent implements OnInit {
   TabClick(e){
     // console.log(e)
      this.tabIndexToView = e.index;
-     this.items = ["BROWSE", "CREATE"];
+     this.items = ["BROWSE", "CREATE", "PENDING RDB"];
      this.buttonname = "Save";
      this.Spinner = false;
     //  this.clearData();
@@ -665,6 +670,62 @@ export class GrnComponent implements OnInit {
     //  })
   // }
 
+  // PENDING PURCHASE ORDER
+  // getDateRangeprdb(dateRangeObj) {
+  //   if (dateRangeObj.length) {
+  //     this.ObjPendingRDB.start_date = dateRangeObj[0];
+  //     this.ObjPendingRDB.end_date = dateRangeObj[1];
+  //   }
+  // }
+  // GetPendingRDB(valid){
+  //     this.PendingRDBFormSubmitted = true;
+  //     const start = this.ObjPendingRDB.start_date
+  //     ? this.DateService.dateConvert(new Date(this.ObjPendingRDB.start_date))
+  //     : this.DateService.dateConvert(new Date());
+  //     const end = this.ObjPendingRDB.end_date
+  //     ? this.DateService.dateConvert(new Date(this.ObjPendingRDB.end_date))
+  //     : this.DateService.dateConvert(new Date());
+  //     const tempobj = {
+  //      From_Date : start,
+  //      To_Date : end,
+  //      Company_ID : this.ObjPendingRDB.Company_ID,
+  //      proj : "N"
+  //     }
+  //     if (valid) {
+  //     const obj = {
+  //       "SP_String": "SP_Purchase_Bill",
+  //       "Report_Name_String": "PENDING_PURCHASE_ORDER_BROWSE",
+  //       "Json_Param_String": JSON.stringify([tempobj])
+  //       }
+  //     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //       this.PendingRDBList = data;
+  //       // this.BackupSearchedlist = data;
+  //       // this.GetDistinct();
+  //       if(this.PendingRDBList.length){
+  //         this.DynamicHeaderforPRDB = Object.keys(data[0]);
+  //       }
+  //       else {
+  //         this.DynamicHeaderforPRDB = [];
+  //       }
+  //       this.seachSpinner = false;
+  //       this.PendingRDBFormSubmitted = false;
+  //       console.log("PendingRDBList",this.PendingRDBList);
+  //     })
+  //     }
+  // }
+  // PrintPRDB(DocNo) {
+  //   if(DocNo) {
+  //   const objtemp = {
+  //     "SP_String": "Sp_Purchase_Order",
+  //     "Report_Name_String": "Purchase_Order_Print"
+  //     }
+  //   this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+  //     var printlink = data[0].Column1;
+  //     window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  //   })
+  //   }
+  // }
+
 
 }
 
@@ -706,6 +767,12 @@ class GRN {
   From_date : Date;
   To_date : Date;
  }
+ class PendingRDB{
+  Company_ID : any;
+  start_date : Date;
+  end_date : Date;
+  Cost_Cen_ID : any;
+}
 
 
 
