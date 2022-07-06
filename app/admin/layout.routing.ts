@@ -1657,10 +1657,10 @@ data: {
 }
 },
 {
-  path: 'Contract_Voucher_V2',
-    component: ContractVoucherV2Component,
+  path: 'Contra_Voucher',
+  component: ContractVoucherV2Component,
   data: {
-    title: 'Contract_Voucher_V2'
+    title: 'Contra Voucher'
   }
   },
 
