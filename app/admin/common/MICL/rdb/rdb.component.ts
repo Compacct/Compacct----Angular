@@ -652,10 +652,17 @@ export class RdbComponent implements OnInit {
   onReject() {
     this.compacctToast.clear("c");
   }
-  Printrdb(col){
-   if(col.RDB_No){
-    window.open("/Report/Crystal_Files/MICL/RDB_Challan.aspx?DocNo=" + col.RDB_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-   }
+  Printrdb(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "RDB_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {

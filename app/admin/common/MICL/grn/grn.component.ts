@@ -51,6 +51,7 @@ export class GrnComponent implements OnInit {
   companyList = [];
   ObjBrowse : Browse = new Browse ();
   GRNSearchFormSubmitted = false;
+  SE_No_Date: Date;
 
   constructor(
     private Header: CompacctHeader,
@@ -195,13 +196,14 @@ export class GrnComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.ProductDetailslist = data;
      console.log("RDBNolist======",this.ProductDetailslist);
-     this.ObjGRN1.SE_No_Date = new Date(data[0].SE_Date);
+     this.SE_No_Date = new Date(data[0].SE_Date);
      this.ObjGRN1.Mode_Of_transport = data[0].Mode_Of_transport;
      this.ObjGRN1.LR_No_Date = data[0].LR_No_Date;
      this.ObjGRN1.Vehicle_No = data[0].Vehicle_No;
      this.ObjGRN.Challan_Qty = data[0].Challan_Qty;
      this.ObjGRN.Received_Qty = data[0].Received_Qty;
      this.SENo = data[0].SE_No+" & "
+     this.ObjGRN1.SE_No_Date = this.SENo + this.DateService.dateConvert(this.SE_No_Date);
 
    });
    this.GetPODate();
@@ -339,6 +341,7 @@ export class GrnComponent implements OnInit {
   DataForSaveProduct(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.ObjGRN1.GRN_Date = this.DateService.dateConvert(new Date(this.GRNDate));
+     this.ObjGRN1.RDB_Date = this.DateService.dateConvert(new Date(this.PODate));
      this.ObjGRN2.Created_By = this.$CompacctAPI.CompacctCookies.User_ID;
     if(this.productaddSubmit.length) {
       let tempArr =[]
@@ -596,8 +599,19 @@ export class GrnComponent implements OnInit {
    this.compacctToast.clear("c");
   }
   getDateFormat(dateValue:any){
-    
    return  dateValue ? this.DateService.dateConvert(dateValue) : "-"
+  }
+  PrintPGRN(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "GRN_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var GRNprintlink = data[0].Column1;
+      window.open(GRNprintlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
   }
   //  Order(pro_id){
     //  //this.clearData();

@@ -21,6 +21,7 @@ import { runInThisContext } from 'vm';
 })
 export class PurchaseBillComponent implements OnInit {
   items = [];
+  menuList = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -129,6 +130,16 @@ export class PurchaseBillComponent implements OnInit {
   Save = false;
   Del = false;
 
+  ObjPendingPO = new PendingPO();
+  PendingPOFormSubmitted = false;
+  PendingPOList = [];
+  DynamicHeaderforPPO = [];
+
+  ObjPendingGRN = new PendingGRN();
+  PendingGRNFormSubmitted = false;
+  PendingGRNList = [];
+  DynamicHeaderforPGRN = [];
+
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -150,11 +161,16 @@ export class PurchaseBillComponent implements OnInit {
      }
 
   ngOnInit() {
-    console.log(this.$CompacctAPI.CompacctCookies.Fin_Year_Start)
-    this.items = ["BROWSE", "CREATE", "REPORT"];
+    // console.log(this.$CompacctAPI.CompacctCookies.Fin_Year_Start)
+    $(document).prop('title', this.headerData ? this.headerData : $('title').text());
+    this.items = ["BROWSE", "CREATE", "Pending Purchase Order", "Pending GRN"];
+    this.menuList = [
+      {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
+      {label: 'Delete', icon: 'fa fa-fw fa-trash'}
+    ];
     this.Header.pushHeader({
       Header: this.headerData,
-      Link: " Financial Management -> Purchase -> this.headerData"
+      Link: " Financial Management -> Purchase -> " + this.headerData
     });
     this.GetVendor();
     this.GetStateList();
@@ -169,7 +185,7 @@ export class PurchaseBillComponent implements OnInit {
   TabClick(e){
     // console.log(e)
      this.tabIndexToView = e.index;
-     this.items = ["BROWSE", "CREATE", "REPORT"];
+     this.items = ["BROWSE", "CREATE", "Pending Purchase Order", "Pending GRN"];
      this.buttonname = "Create";
      this.Spinner = false;
      this.clearData();
@@ -221,6 +237,8 @@ export class PurchaseBillComponent implements OnInit {
      console.log("companyList",this.companyList)
      this.ObjBrowsePurBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+     this.ObjPendingPO.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+     this.ObjPendingGRN.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     })
   }
    GetVendor(){
@@ -1063,9 +1081,11 @@ GetGRNNoProlistdetails2(){
     //  this.ObjProductInfo.Product_Specification = undefined;
     // }
    }
-   clearProject(){
-     this.ProjectInput.clearData()
-   }
+  clearProject(){
+    if(this.openProject === "Y"){
+      this.ProjectInput.clearData()
+    }
+  }
    whateverCopy(obj) {
     return JSON.parse(JSON.stringify(obj))
   }
@@ -1275,6 +1295,8 @@ GetGRNNoProlistdetails2(){
   // datechange(){
   //   console.log(this.DateService.dateConvert(new Date(this.expiryDate)))
   // }
+  
+  // BROWSE
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjBrowsePurBill.start_date = dateRangeObj[0];
@@ -1301,7 +1323,8 @@ GetGRNNoProlistdetails2(){
    From_Date : start,
    To_Date : end,
    Company_ID : this.ObjBrowsePurBill.Company_ID,
-   Cost_Cen_ID : this.ObjBrowsePurBill.Cost_Cen_ID
+   Cost_Cen_ID : this.ObjBrowsePurBill.Cost_Cen_ID,
+   proj : this.openProject
   }
   if (valid) {
   const obj = {
@@ -1379,6 +1402,118 @@ GetGRNNoProlistdetails2(){
     this.compacctToast.clear("c");
     this.Spinner = false;
     this.ngxService.stop();
+  }
+
+  // PENDING PURCHASE ORDER
+  getDateRangeppo(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjPendingPO.start_date = dateRangeObj[0];
+      this.ObjPendingPO.end_date = dateRangeObj[1];
+    }
+  }
+  GetPendingPO(valid){
+      this.PendingPOFormSubmitted = true;
+      const start = this.ObjPendingPO.start_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingPO.start_date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjPendingPO.end_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingPO.end_date))
+      : this.DateService.dateConvert(new Date());
+      const tempobj = {
+       From_Date : start,
+       To_Date : end,
+       Company_ID : this.ObjPendingPO.Company_ID,
+       proj : this.openProject
+      }
+      if (valid) {
+      const obj = {
+        "SP_String": "SP_Purchase_Bill",
+        "Report_Name_String": "PENDING_PURCHASE_ORDER_BROWSE",
+        "Json_Param_String": JSON.stringify([tempobj])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.PendingPOList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.PendingPOList.length){
+          this.DynamicHeaderforPPO = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforPPO = [];
+        }
+        this.seachSpinner = false;
+        this.PendingPOFormSubmitted = false;
+        console.log("PendingPOList",this.PendingPOList);
+      })
+      }
+  }
+  PrintPPO(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": "Purchase_Order_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
+
+  // PENDING GRN
+  getDateRangepgrn(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjPendingGRN.start_date = dateRangeObj[0];
+      this.ObjPendingGRN.end_date = dateRangeObj[1];
+    }
+  }
+  GetPendingGRN(valid){
+      this.PendingGRNFormSubmitted = true;
+      const start = this.ObjPendingGRN.start_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingGRN.start_date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjPendingGRN.end_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingGRN.end_date))
+      : this.DateService.dateConvert(new Date());
+      const tempobj = {
+       From_date : start,
+       To_date : end,
+       Company_ID : this.ObjPendingGRN.Company_ID
+      //  Cost_Cen_ID : this.ObjPendingGRN.Cost_Cen_ID
+      }
+      if (valid) {
+      const obj = {
+        "SP_String": "SP_Purchase_Bill",
+        "Report_Name_String": "Browse_pending_GRN",
+        "Json_Param_String": JSON.stringify([tempobj])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.PendingGRNList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.PendingGRNList.length){
+          this.DynamicHeaderforPGRN = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforPGRN = [];
+        }
+        this.seachSpinner = false;
+        this.PendingGRNFormSubmitted = false;
+        console.log("PendingGRNList",this.PendingGRNList);
+      })
+      }
+  }
+  PrintPGRN(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "GRN_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var GRNprintlink = data[0].Column1;
+      window.open(GRNprintlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
   }
 }
 class PurChaseBill {
@@ -1545,4 +1680,18 @@ class TDS{
   TDS_Percentage : number;
   TDS_Amount : number;
 
+}
+
+class PendingPO{
+  Company_ID : any;
+  start_date : Date;
+  end_date : Date;
+  Cost_Cen_ID : any;
+}
+
+class PendingGRN{
+  Company_ID : any;
+  start_date : Date;
+  end_date : Date;
+  Cost_Cen_ID : any;
 }

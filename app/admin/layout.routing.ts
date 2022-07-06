@@ -226,6 +226,7 @@ import { FinancialVoucherComponent } from "./common/FinancialManagement/Transact
 import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wastage.component";
 import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Transaction/Voucher/hipl-payment-requisition/hipl-payment-requisition.component";
 import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
+import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher/contract-voucher-v2/contract-voucher-v2.component";
 
 
 
@@ -1655,6 +1656,13 @@ data: {
     title: 'CC Saha Profund'
 }
 },
+{
+  path: 'Contract_Voucher_V2',
+    component: ContractVoucherV2Component,
+  data: {
+    title: 'Contract_Voucher_V2'
+  }
+  },
 
     /*{
 

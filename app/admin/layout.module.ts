@@ -319,6 +319,7 @@ import { FinancialVoucherComponent } from './common/FinancialManagement/Transact
 import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wastage.component";
 import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Transaction/Voucher/hipl-payment-requisition/hipl-payment-requisition.component";
 import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
+import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher/contract-voucher-v2/contract-voucher-v2.component";
 
 @NgModule({
   declarations: [
@@ -556,7 +557,8 @@ import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/c
     FinancialVoucherComponent,
     WastageComponent,
     HIPLPaymentRequisitionComponent,
-    CCSahaProfundComponent
+    CCSahaProfundComponent,
+    ContractVoucherV2Component
   ],
   imports: [
     CommonModule,

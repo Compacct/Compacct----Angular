@@ -1081,19 +1081,33 @@
                             </div>
                         </p-tabPanel>
 
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
-                            <!-- <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="PendingPOForm" #PendingPOForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="ppocompany" 
+                                    #ppocompany="ngModel" 
+                                    [(ngModel)]="ObjPendingPO.Company_ID"
+                                    [ngClass]="{'clearance': PendingPOFormSubmitted && ppocompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
                                     <label class="control-label">Date</label>
 
-                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeppo($event)">
                                     </app-compacct-daterangepicker>
 
                                 </div>
 
                                 <div class="col-sm-3">
-                                    <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="GetSearchedlist()" id="load" [disabled]="seachSpinner">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingPO(PendingPOForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
                                         [style]="{ width: '15px', height: '15px' }"
@@ -1107,95 +1121,183 @@
                                       >&nbsp;Search
                                     </button>
                                 </div>
-                                <div class="col-sm-2">
-                                    <label class="control-label"></label>
-
-                                    <div class="checkBox">
-                                        <label class="pullright2">
-                                       <p-checkbox  [(ngModel)]="ApprovedFLag"  name="Approved"  (onChange)="ApprovedCheckBox()"  binary="true" ></p-checkbox>
-                                       Approved
-                                   </label>
-                                    </div>
-                                </div>
                             </div>
-                            </form> -->
-                            <!-- <div class="row">
-                                <div class="col-sm-8">
-                                    <h5><strong></strong></h5>
-                                </div>
-                            </div> -->
-                            <!-- <div class="table-responsive table-id">
-                                <p-table [value]="Searchedlist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["GRN_No","GRN_Date","Sub_Ledger_Name","Cost_Cen_Name","godown_name","RDB_No_Date","SE_No_Date","PO_Doc_No","PO_Doc_Date","Mode_Of_transport",
-                                  "LR_No_Date","Vehicle_No","Remarks","Quantity_Remarks","Quality_Rejection_Remarks","Deduction_For_Rejection"] '>
+                            </form> 
+                            <div class="no-padding">
+                                <p-table [value]="PendingPOList"
+                                [paginator]="PendingPOList.length ? true : false"
+                                *ngIf='PendingPOList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforPPO'
+                                    [rowHover]="true" #dt2>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
-                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
-
+    
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>GRN No</th>
-                                            <th>GRN Date</th>
-                                            <th>Supplier</th>
-                                            <th>Cost Center</th>
-                                            <th>Godown</th>
-                                            <th>RDB No Date</th>
-                                            <th>SE No Date</th>
-                                            <th>PO Doc No</th>
-                                            <th>PO Doc Date</th>
-                                            <th>Mode Of Transport</th>
-                                            <th>LR No Date</th>
-                                            <th>Vehicle No</th>
-                                            <th>Quantity Remarks</th>
-                                            <th>Quality / Rejection Remarks</th>
-                                            <th>Deduction For Rejection</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO">{{option.replace('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
+    
                                             <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
-                                                            <i class="fa fa-fw fa-bars"></i>
-                                                            <span class="caret"></span>
-                                                        </button>
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
-                                                                <a (click)="Delete(col)">
-                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                                                    Delete
+                                                        <!-- <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
-                                                            </li>
+                                                            </li> -->
+                                                        <li>
+                                                            <a (click)="PrintPPO(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li> -->
                                                     </ul>
-                                                </div>      
+                                                </div>
                                             </td>
-                                            <td>{{col.GRN_No}}</td>
-                                            <td>{{col.GRN_Date | date : 'dd/MMM/yyyy'}}</td>
-                                            <td>{{col.Sub_Ledger_Name}}</td>
-                                            <td>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
-                                            <td>{{col.godown_name }}</td>
-                                            <td>{{col.RDB_No_Date }}</td>
-                                            <td>{{col.SE_No_Date }}</td>
-                                            <td>{{col.PO_Doc_No }}</td>
-                                            <td>{{col.PO_Doc_Date | date : 'dd/MMM/yyyy' }}</td>
-                                            <td>{{col.Mode_Of_transport }}</td>
-                                            <td>{{col.LR_No_Date }}</td>
-                                            <td>{{col.Vehicle_No }}</td>
-                                            <td>{{col.Quantity_Remarks }}</td>
-                                            <td>{{col.Quality_Rejection_Remarks }}</td>
-                                            <td>{{col.Deduction_For_Rejection }}</td>
+                                            <ng-container *ngFor="let option of DynamicHeaderforPPO">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
                                         Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
                                     </ng-template>
                                 </p-table>
+                            </div>
 
-                            </div> -->
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="PendingGRNForm" #PendingGRNForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="pgrncompany" 
+                                    #pgrncompany="ngModel" 
+                                    [(ngModel)]="ObjPendingGRN.Company_ID"
+                                    [ngClass]="{'clearance': PendingGRNFormSubmitted && pgrncompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangepgrn($event)">
+                                    </app-compacct-daterangepicker>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingGRN(PendingGRNForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="seachSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                </div>
+                            </div>
+                            </form> 
+                            <div class="no-padding">
+                                <p-table [value]="PendingGRNList"
+                                [paginator]="PendingGRNList.length ? true : false"
+                                *ngIf='PendingGRNList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforPGRN'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPGRN">{{option.replace('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <!-- <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li> -->
+                                                        <li>
+                                                            <a (click)="PrintPGRN(col.GRN_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li> -->
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeaderforPGRN">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
 
                         </p-tabPanel>
                     </p-tabView>

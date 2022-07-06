@@ -141,6 +141,11 @@
                                                             </a>
                                                         </li> -->
                                                         <li>
+                                                            <a (click)="PrintPGRN(col.GRN_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
                                                                 <a (click)="Delete(col)">
                                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                                     Delete
@@ -267,7 +272,7 @@
                                                     <label class="control-label">S.E No. & Date <sup class="text-danger">*</sup></label>
                                                     <!-- <input class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN1.SE_No_Date" placeholder="S.E No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required> -->
                                                     <!-- <div class="label-t">{{SENo+" &"}} {{ObjGRN1.SE_No_Date | date : 'dd/MMM/yyyy'}} </div> -->
-                                                    <div class="label-t">{{SENo}} {{getDateFormat(ObjGRN1.SE_No_Date)}} </div>
+                                                    <div class="label-t">{{SENo}} {{getDateFormat(SE_No_Date)}} </div>
                                                     <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
                                                 </div>
                                                 
