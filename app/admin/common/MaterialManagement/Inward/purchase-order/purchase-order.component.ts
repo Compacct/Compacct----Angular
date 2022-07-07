@@ -189,6 +189,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.objpendingreq.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.objpurchase.Billing_To  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.objpurchase.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.getreq();
     this.objpurchase.Credit_Days = 0;
     this.objpurchase.Currency_ID = 1;
     this.objpurchase.Type_ID = 1;
@@ -265,6 +266,7 @@ export class PurchaseOrderComponent implements OnInit {
   getCostCenterDetalis(){
     if(this.objpurchase.Cost_Cen_ID){
       this.DetalisObj = {};
+      this.getreq();
        const tempVal = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))
        this.DetalisObj = tempVal[0]
       console.log("DetalisObj",this.DetalisObj);
@@ -1074,11 +1076,23 @@ taxlabelChange(){
  }
  return labelFlg
 }
+getreq(){
+  if(this.openProject == 'N'){
+    if(this.objpurchase.Billing_To && this.objpurchase.Cost_Cen_ID){
+      this.GetRequlist();
+    }
+    else {
+      this.Requlist = []
+      this.objaddPurchacse.Req_No = undefined
+    }
+  }
+ 
+}
 GetRequlist(){
   const obj = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Get_Requisition_No",
-    "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([this.objProjectRequi]) : JSON.stringify([{PROJECT_ID : 0}])
+    "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([this.objProjectRequi]) : JSON.stringify([{PROJECT_ID : 0,To_Cost_Cen_ID : this.objpurchase.Billing_To,F_Cost_Cen_ID:this.objpurchase.Cost_Cen_ID}])
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("data",data)
