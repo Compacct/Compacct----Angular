@@ -1,0 +1,307 @@
+
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+
+    </ng-template>
+</p-toast>
+
+<form name="StockSearchForm" #StockSearchForm="ngForm" novalidate>
+    <div class="form-group">
+        <div class="col-sm-2">
+            <label class="control-label">Report Type<sup class="text-danger">*</sup></label>
+            <select class="form-control" 
+            name="ReportType" 
+            #ReportType="ngModel" 
+            [(ngModel)]="report_Type"
+            (change)="reportTypeChange()"
+            [ngClass]="{'clearance': StockSearchFormSubmitted && ReportType?.errors?.required}" required>
+                    <option  value="Cost_Center_Wise">Cost Center Wise</option>
+                    <option  value="Product_Wise">Product Wise</option>
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Date</label>
+            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]="initDate"></app-compacct-daterangepicker>
+        </div>
+        <div class="col-sm-4" *ngIf="report_Type == 'Cost_Center_Wise'">
+            <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+            <!-- <select class="form-control" 
+            name="browsecostcenter" 
+            #browsecostcenter="ngModel" 
+            [(ngModel)]="ObjBrowse.Cost_Cen_ID"
+            (change)="GetgodownBrowse(ObjBrowse.Cost_Cen_ID)"
+            [disabled]="userType != 'A'" 
+                    [ngClass]="{'clearance': StockSearchFormSubmitted && browsecostcenter?.errors?.required}" required>
+                    <option  [ngValue]="undefined">Select</option>
+                    <option  *ngFor="let option of costCenterList" value="{{option.Cost_Cen_ID}}">
+                    {{option.Cost_Cen_Name}}
+                    </option>
+            </select> -->
+            <p-dropdown [options]="costCenterList" 
+            name="browsecostcenter" 
+            [(ngModel)]="ObjBrowse.Cost_Cen_ID"
+            [showClear]="true" 
+            [emptyFilterMessage]="' No Product Type Found'" 
+            [filter]="true" 
+            filterBy="label,value" 
+            [resetFilterOnHide]="true"
+            [placeholder]="'Product Type'" 
+            [virtualScroll]="true" 
+            #browsecostcenter="ngModel"
+            (ngModelChange)="GetgodownBrowse(ObjBrowse.Cost_Cen_ID)"
+            [styleClass]="StockSearchFormSubmitted && browsecostcenter.errors?.required ? 'clearance': ''"
+            [disabled]="userType != 'A'" 
+            required>
+        </p-dropdown>
+        </div>
+        <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise'">
+            <label class="control-label">Stock Point&nbsp;<sup class="text-danger"></sup>
+            </label>
+            <select class="form-control" 
+            name="Godown_ID_Browse" 
+            #Godown_ID_Browse="ngModel" [(ngModel)]="ObjBrowse.Godown_ID" 
+             >
+                <option  [ngValue]="undefined">Select</option>
+                <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
+          </select>
+        </div>
+        <div class="col-sm-4" *ngIf="report_Type == 'Product_Wise'">
+            <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
+            <p-dropdown [options]="productTypeList" 
+            name="Product_Type_ID" 
+            [(ngModel)]="ObjBrowse.Product_Type_ID"
+            [showClear]="true" 
+            [emptyFilterMessage]="' No Product Type Found'" 
+            [filter]="true" 
+            filterBy="label,value" 
+            [resetFilterOnHide]="true"
+            [placeholder]="'Product Type'" 
+            [virtualScroll]="true" 
+            #Product_Type_ID="ngModel"
+            [styleClass]="StockSearchFormSubmitted && Product_Type_ID.errors?.required ? 'clearance': ''" 
+            required>
+        </p-dropdown>
+        </div>
+        <div class="col-sm-2" *ngIf="report_Type == 'Product_Wise'">
+            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData(StockSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+            </button>
+        </div>
+    </div>
+    <div class="box-footer" style="padding: 0px;" *ngIf="report_Type == 'Cost_Center_Wise'">
+        <button class="btn btn-primary pull-right"  data-toggle="modal" (click)="searchData(StockSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+        </button>
+    </div>
+</form>
+<div class="form-group" style="padding:15px" *ngIf="stockList.length">
+
+    <fieldset class="col-md-12">
+        <legend>Filter</legend>
+
+        <div class="form-group">
+            <div class="col-sm-3" *ngIf="report_Type == 'Product_Wise'">
+                <label class="control-label">Cost Center Name <span class="text-danger"></span></label>
+                <p-multiSelect [options]="DistCostCen" [(ngModel)]="SelectedDistCostCen" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Cost_Center_Name"></p-multiSelect>
+            </div>
+            <div class="col-sm-3" *ngIf="report_Type == 'Product_Wise'">
+                <label class="control-label">Stock Point <span class="text-danger"></span></label>
+                <p-multiSelect [options]="DistStockPoint" [(ngModel)]="SelectedDistStockPoint" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Stock_Point"></p-multiSelect>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Material Type <span class="text-danger"></span></label>
+                <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterial" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
+            </div>
+            <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise'">
+                <label class="control-label">Product Type <span class="text-danger"></span></label>
+                <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProduct" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+            </div>
+            <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise'">
+                <label class="control-label">Product Sub Type <span class="text-danger"></span></label>
+                <p-multiSelect [options]="DistProductSubType" [(ngModel)]="SelectedDistProductSubType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Sub_Type"></p-multiSelect>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Product Name <span class="text-danger"></span></label>
+                <p-multiSelect [options]="DistProductName" [(ngModel)]="SelectedDistProductName" [virtualScroll]="true" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Name"></p-multiSelect>
+            </div>
+        </div>
+
+    </fieldset>
+</div>
+
+<div class="table-responsive no-padding">
+    <p-table [value]="stockList" #dt1 
+    [paginator]="true" 
+    [rows]="100" 
+    [rowHover]="true" 
+    [autoLayout]="true" 
+    sortMode="multiple" 
+    [rowsPerPageOptions]="[100,200,300]" 
+    [rowHover]="true" 
+    [globalFilterFields]='["Stock_Point","Type_Of_Product","Product_Type","Product_Sub_Type","PRODUCT_DESCRIPTION","OPENING_QTY","RECV_QTY","ISSUE_QTY","CLOSING_QTY"]'>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-6 pull-right" style="text-align: right">
+                     <div class="col-sm-6">  
+                        <!-- <button class="btn btn-primary custombutton" data-toggle="modal" (click)="exportexcel(stockList)" id="load1">
+                        <span class="fa fa-fw  fa-download"></span>&nbsp;EXPORT TO EXCEL
+                     </button> -->
+                     <button *ngIf="stockList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel(stockList)" id="load1" [disabled]="EXCELSpinner">
+                        <p-progressSpinner *ngIf="EXCELSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                        <span *ngIf="!EXCELSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                    </button>
+                    </div>
+                     <div class="col-sm-6">
+                        <input type="text" 
+                        pInputText 
+                        size="50"
+                        style="margin-top:25px;"
+                        placeholder="Search" 
+                        (input)="dt1.filterGlobal($event.target.value, 'contains')" 
+                        class="searchInput form-control">
+                     </div>
+                   
+                </div>
+            </div>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngIf="report_Type == 'Product_Wise'">Cost Center Name</th>
+                <th>Stock Point</th>
+                <th>Material Type</th>
+                <th>Product Type</th>
+                <th>Product Sub Type</th>
+                <th>Product Name</th>
+                <th>Opening</th>
+                <th>Recieve</th>
+                <th>Issue/Used</th>
+                <th>Closing</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col>
+            <tr>
+                <td *ngIf="report_Type == 'Product_Wise'">{{col.Cost_Cen_Name}}</td>
+                <td>{{col.Stock_Point}}</td>
+                <td>{{col.Type_Of_Product}}</td>
+                <td>{{col.Product_Type }}</td>
+                <td>{{col.Product_Sub_Type}}</td>
+                <td>{{col.PRODUCT_DESCRIPTION}}</td>
+                <td style="text-align: center;">
+                    <a *ngIf="col.OPENING_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Opening')" >
+                        {{col.OPENING_QTY}}
+                    </a>
+                    <span *ngIf="!col.OPENING_QTY">
+                        {{col.OPENING_QTY}}
+                    </span>
+                </td>
+                <td style="text-align: center;">
+                    <a *ngIf="col.RECV_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Receive')" >
+                        {{col.RECV_QTY}}
+                    </a>
+                    <span *ngIf="!col.RECV_QTY">{{col.RECV_QTY}}</span>
+                </td>
+                <td style="text-align: center;">
+                    <a *ngIf="col.ISSUE_QTY" style="cursor: pointer;"  (click)="qtyDetalis(col,'Get_Issue')" >
+                        {{col.ISSUE_QTY}}
+                    </a>
+                    <span *ngIf="!col.ISSUE_QTY">
+                        {{col.ISSUE_QTY}}
+                    </span>
+                </td>
+                <td style="text-align: center;">
+                    <a *ngIf="col.CLOSING_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Closing')" >
+                        {{col.CLOSING_QTY}}
+                    </a>
+                    <span *ngIf="!col.CLOSING_QTY"> {{col.CLOSING_QTY}}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="paginatorright" let-state>
+            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog
+[header]="viewHeader"
+[appendTo]="'body'"
+[visible]="DetalisView"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="table-responsive no-padding">
+        <p-table [value]="popUpList" #dt2 
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [rowHover]="true" 
+        [globalFilterFields]='["Batch_No","Qty"]'>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div>
+
+        </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Batch No</th>
+                    <th>Qty</th>
+            
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <td>{{col.Batch_No}}</td>
+                    <td>{{col.Qty}}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="DetalisView = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
