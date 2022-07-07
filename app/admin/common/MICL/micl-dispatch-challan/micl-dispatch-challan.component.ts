@@ -499,6 +499,7 @@ qtyChq(col){
   this.flag = false;
   console.log("col",col);
   if(col.Delivery_Qty){
+    if(col.Delivery_Qty > col.Batch_Qty){
     if(col.Delivery_Qty <=  col.Batch_Qty){
       this.flag = false;
       return true;
@@ -514,6 +515,24 @@ qtyChq(col){
              });
 
            }
+          }
+           else if(col.Delivery_Qty > col.Req_Qty){
+           if(col.Delivery_Qty <=  col.Req_Qty){
+              this.flag = false;
+              return true;
+            }
+            else {
+              this.flag = true;
+              this.compacctToast.clear();
+                   this.compacctToast.add({
+                       key: "compacct-toast",
+                       severity: "error",
+                       summary: "Warn Message",
+                       detail: "Quantity can't be more than Requisition quantity "
+                     });
+        
+                   }
+            }
   }
  }
 //  qtyChqEdit(col){
@@ -823,6 +842,7 @@ saveqty(){
       this.displaysavepopup = false;
       this.SelectedIndent = undefined;
       this.IndentFilter = [];
+      this.GetPendingIndent(true);
 
       //
       
@@ -1010,7 +1030,7 @@ getCostcenter(){
     this.ObjPendingIndent.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
   })
  }
-GetPendingGRN(valid){
+GetPendingIndent(valid){
     this.PendingIndentFormSubmitted = true;
     const start = this.ObjPendingIndent.start_date
     ? this.DateService.dateConvert(new Date(this.ObjPendingIndent.start_date))
@@ -1026,7 +1046,7 @@ GetPendingGRN(valid){
     }
     if (valid) {
     const obj = {
-      "SP_String": "Sp_Purchase_Order",
+      "SP_String": "SP_MICL_Dispatch_Challan",
       "Report_Name_String": "Browse_Pending_Requisition",
       "Json_Param_String": JSON.stringify([tempobj])
       }

@@ -1664,6 +1664,7 @@ data: {
     title: 'Stock Report'
 }
 },
+{
   path: 'Contra_Voucher',
   component: ContractVoucherV2Component,
   data: {

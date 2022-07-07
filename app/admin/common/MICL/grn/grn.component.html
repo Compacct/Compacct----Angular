@@ -216,7 +216,7 @@
                                                 </div> -->
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Supplier<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="Supplierlist" name="Supplier" [(ngModel)]="ObjGRN1.Sub_Ledger_ID"  [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                    <p-dropdown [options]="Supplierlist" name="Supplier" [(ngModel)]="ObjGRN1.Sub_Ledger_ID"  [showClear]="true" [emptyFilterMessage]="' No Supplier Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Supplier Name'" [virtualScroll]="true"
                                                         itemSize="30" #Supplier="ngModel" [styleClass]="
                                                         GRNFormSubmitted && Supplier.errors?.required
                                                               ? 'clearance'
@@ -435,7 +435,7 @@
                         </p-tabPanel>
 
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
-                            <!-- <form name="PendingRDBForm" #PendingRDBForm="ngForm" novalidate>
+                            <form name="PendingRDBForm" #PendingRDBForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
                                     <label class="control-label">Company<sup class="text-danger">*</sup></label>
@@ -530,7 +530,7 @@
                                         Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
                                     </ng-template>
                                 </p-table>
-                            </div> -->
+                            </div>
 
                         </p-tabPanel>
                     </p-tabView>

@@ -35,7 +35,7 @@
 
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">To Cost Center<span class="text-danger">*</span></label>
+                                        <label class="control-label">From Cost Center<span class="text-danger">*</span></label>
                                         <select class="form-control" name="CostCent" #CostCent="ngModel" [(ngModel)]='ObjBrowseData.Cost_Cen_ID' [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" [ngClass]="{'clearance': DispatchSearchFormSubmit && CostCent?.errors?.required}" (change)="GetBrowseGodown()" 
                                                     >
                                               <option  [ngValue]="undefined">Select</option>
@@ -43,7 +43,7 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">To Stock Point<span class="text-danger">*</span></label>
+                                        <label class="control-label">From Stock Point<span class="text-danger">*</span></label>
                                         <select class="form-control" name="Godown" #Godown="ngModel" [(ngModel)]="ObjBrowseData.Godown_ID" [ngClass]="{'clearance' : DispatchSearchFormSubmit && Godown.errors?.required}" 
                                                           >
                                               <option  [ngValue]="undefined">Select</option>
@@ -221,7 +221,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                        <label class="control-label">Vehicle Details<span class="text-danger">*</span></label>
+                                                        <label class="control-label">Vehicle Details / Delivery By<span class="text-danger">*</span></label>
                                                         <input class="form-control" name="Vehicle_Details" #Vehicle_Details="ngModel" [(ngModel)]="Objdispatch.Vehicle_Details" [disabled]="inputBoxDisabled" placeholder="Vehicle Details" [ngClass]="{'clearance':DispatchFormSubmit && Vehicle_Details?.errors?.required}" required>
                                                     </div>
                                                 </div>
@@ -458,7 +458,7 @@
                                 </div>
 
                                 <div class="col-sm-3">
-                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingGRN(PendingIndentForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingIndent(PendingIndentForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
                                         [style]="{ width: '15px', height: '15px' }"
