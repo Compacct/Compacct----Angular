@@ -226,6 +226,7 @@ import { FinancialVoucherComponent } from "./common/FinancialManagement/Transact
 import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wastage.component";
 import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Transaction/Voucher/hipl-payment-requisition/hipl-payment-requisition.component";
 import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
+import { REPStockReportComponent } from "./common/MaterialManagement/Report/rep-stock-report/rep-stock-report.component";
 
 
 
@@ -1655,7 +1656,13 @@ data: {
     title: 'CC Saha Profund'
 }
 },
-
+{
+  path: 'REP_Stock_Report',
+  component: REPStockReportComponent,
+  data: {
+    title: 'Stock Report'
+}
+},
     /*{
 
 
