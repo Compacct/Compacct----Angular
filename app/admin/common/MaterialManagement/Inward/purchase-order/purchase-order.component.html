@@ -269,6 +269,7 @@
                                     name="Billing_To" 
                                     #Billing_To="ngModel" 
                                     [(ngModel)]="objpurchase.Billing_To"
+                                    (change)="getreq()"
                                     [ngClass]="{'clearance': validatation?.required && Billing_To?.errors?.required }"
                                     required
                                     [disabled]="userType != 'A'">

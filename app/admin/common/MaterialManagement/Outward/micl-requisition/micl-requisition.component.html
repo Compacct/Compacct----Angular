@@ -43,18 +43,21 @@
                                         #Cost_Cen_ID_Browse='ngModel' 
                                         [(ngModel)]="ObjBrowseData.Cost_Cen_ID"
                                         (change)="GetgodownBrowse(ObjBrowseData.Cost_Cen_ID)"
-                                        [ngClass]="{'clearance': RequistionSearchFormSubmit && Cost_Cen_ID_Browse?.errors?.required}" 
-                                        required
-                                       >
+                                        [disabled]="userType != 'A'"
+                                        >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of costcenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                                       </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">From Stock Point&nbsp;<sup class="text-danger">*</sup>
+                                        <label class="control-label">From Stock Point&nbsp;<sup class="text-danger"></sup>
                                         </label>
-                                        <select class="form-control" name="Godown_ID_Browse" #Godown_ID_Browse="ngModel" [(ngModel)]="ObjBrowseData.Godown_ID" 
-                                         [ngClass]="{'clearance': RequistionSearchFormSubmit && Godown_ID_Browse?.errors?.required}" required>
+                                        <select class="form-control" 
+                                        name="Godown_ID_Browse" 
+                                        #Godown_ID_Browse="ngModel" 
+                                        [(ngModel)]="ObjBrowseData.Godown_ID"
+                                        [disabled]="userType != 'A'"
+                                         >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of GodownBrowseList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                                       </select>
@@ -144,7 +147,7 @@
                                         [class]="validatation?.required && !requi_Date ? 'clearance': ''" ></ejs-datepicker>
                                     </div> 
                                    <div class="col-sm-4">
-                                        <label class="control-label">From Cost Center</label>
+                                        <label class="control-label">From Cost Center<sup class="text-danger">*</sup></label>
                                         <select class="form-control" 
                                         name="Cost_Cen_ID_te" 
                                         #Cost_Cen_ID_te="ngModel"

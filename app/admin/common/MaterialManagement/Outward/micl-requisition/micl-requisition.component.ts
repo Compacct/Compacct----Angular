@@ -472,7 +472,8 @@ export class MiclRequisitionComponent implements OnInit {
         : this.DateService.dateConvert(new Date()),
         Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID ? this.ObjBrowseData.Cost_Cen_ID : 0,
         Godown_ID : this.ObjBrowseData.Godown_ID ? this.ObjBrowseData.Godown_ID : 0,
-        proj : this.openProject ? this.openProject : "N"
+        proj : this.openProject ? this.openProject : "N",
+        To_Cost_Cen_ID : this.toCostCenter
       }
       const obj = {
         "SP_String": "SP_Txn_Requisition",
@@ -686,6 +687,7 @@ class BrowseData {
   To_Date: string;
   Cost_Cen_ID : any;
   Godown_ID : any;
+  To_Cost_Cen_ID :any
   }
 class project{
   DOC_NO:any
