@@ -161,7 +161,7 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Supplier<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="SupplierList" name="Supplier" [(ngModel)]="ObjRdb.Sub_Ledger_ID" [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                    <p-dropdown [options]="SupplierList" name="Supplier" [(ngModel)]="ObjRdb.Sub_Ledger_ID" [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Supplier Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Supplier Name'" [virtualScroll]="true"
                                                         itemSize="30" #Supplier="ngModel" [styleClass]="
                                                         RDBFormSubmit && Supplier.errors?.required
                                                               ? 'clearance'

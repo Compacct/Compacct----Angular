@@ -561,7 +561,7 @@ import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher
     HIPLPaymentRequisitionComponent,
     CCSahaProfundComponent,
     REPStockReportComponent,
-    StockReportComponent
+    StockReportComponent,
     ContractVoucherV2Component
   ],
   imports: [

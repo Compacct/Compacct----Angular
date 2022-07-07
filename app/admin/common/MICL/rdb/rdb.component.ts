@@ -730,7 +730,7 @@ export class RdbComponent implements OnInit {
       }
       if (valid) {
       const obj = {
-        "SP_String": "SP_Purchase_Bill",
+        "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
         "Report_Name_String": "PENDING_PURCHASE_ORDER_BROWSE",
         "Json_Param_String": JSON.stringify([tempobj])
         }

@@ -18,6 +18,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
 })
 export class GrnComponent implements OnInit {
   items = [];
+  menuList = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -71,6 +72,10 @@ export class GrnComponent implements OnInit {
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE", "PENDING RDB"];
+    this.menuList = [
+      {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
+      {label: 'Delete', icon: 'fa fa-fw fa-trash'}
+    ]; 
     this.Header.pushHeader({
       Header: "GRN",
       Link: " Material Management -> Inward -> GRN"
@@ -117,6 +122,7 @@ export class GrnComponent implements OnInit {
      console.log("companyList",this.companyList)
      this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+     this.ObjPendingRDB.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     })
   }
    GetSupplier(){
@@ -166,6 +172,7 @@ export class GrnComponent implements OnInit {
  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.Godownlist = data;
    console.log("Godownlist======",this.Godownlist);
+   this.ObjGRN1.godown_id = this.Godownlist.length ? this.Godownlist[0].godown_id : undefined;
  });
 }
    GetRDBNo(){
@@ -205,8 +212,8 @@ export class GrnComponent implements OnInit {
      this.ObjGRN1.Mode_Of_transport = data[0].Mode_Of_transport;
      this.ObjGRN1.LR_No_Date = data[0].LR_No_Date;
      this.ObjGRN1.Vehicle_No = data[0].Vehicle_No;
-     this.ObjGRN.Challan_Qty = data[0].Challan_Qty;
-     this.ObjGRN.Received_Qty = data[0].Received_Qty;
+    //  this.ObjGRN.Challan_Qty = data[0].Challan_Qty;
+    //  this.ObjGRN.Received_Qty = data[0].Received_Qty;
      this.SENo = data[0].SE_No+" & "
      this.ObjGRN1.SE_No_Date = this.SENo + this.DateService.dateConvert(this.SE_No_Date);
 
@@ -227,6 +234,8 @@ export class GrnComponent implements OnInit {
     this.ObjGRN.GST_Tax_Per = RateObj.GST_Tax_Per;
     this.ObjGRN.Unit = RateObj.UOM,
     this.ObjGRN.HSN_Code = RateObj.HSN_Code
+    this.ObjGRN.Challan_Qty = RateObj.Challan_Qty;
+    this.ObjGRN.Received_Qty = RateObj.Received_Qty;
     if(RateObj.UOM) {
     this.disabledflaguom = true;
     }
@@ -408,6 +417,7 @@ export class GrnComponent implements OnInit {
          summary: "Return_ID  " + tempID,
          detail: "Succesfully Saved" //+ mgs
        });
+       this.PrintPGRN(data[0].Column1);
        this.ObjGRN1 = new GRN1();
        this.GRNFormSubmitted = false;
        this.productaddSubmit = [];
@@ -670,61 +680,61 @@ export class GrnComponent implements OnInit {
     //  })
   // }
 
-  // PENDING PURCHASE ORDER
-  // getDateRangeprdb(dateRangeObj) {
-  //   if (dateRangeObj.length) {
-  //     this.ObjPendingRDB.start_date = dateRangeObj[0];
-  //     this.ObjPendingRDB.end_date = dateRangeObj[1];
-  //   }
-  // }
-  // GetPendingRDB(valid){
-  //     this.PendingRDBFormSubmitted = true;
-  //     const start = this.ObjPendingRDB.start_date
-  //     ? this.DateService.dateConvert(new Date(this.ObjPendingRDB.start_date))
-  //     : this.DateService.dateConvert(new Date());
-  //     const end = this.ObjPendingRDB.end_date
-  //     ? this.DateService.dateConvert(new Date(this.ObjPendingRDB.end_date))
-  //     : this.DateService.dateConvert(new Date());
-  //     const tempobj = {
-  //      From_Date : start,
-  //      To_Date : end,
-  //      Company_ID : this.ObjPendingRDB.Company_ID,
-  //      proj : "N"
-  //     }
-  //     if (valid) {
-  //     const obj = {
-  //       "SP_String": "SP_Purchase_Bill",
-  //       "Report_Name_String": "PENDING_PURCHASE_ORDER_BROWSE",
-  //       "Json_Param_String": JSON.stringify([tempobj])
-  //       }
-  //     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //       this.PendingRDBList = data;
-  //       // this.BackupSearchedlist = data;
-  //       // this.GetDistinct();
-  //       if(this.PendingRDBList.length){
-  //         this.DynamicHeaderforPRDB = Object.keys(data[0]);
-  //       }
-  //       else {
-  //         this.DynamicHeaderforPRDB = [];
-  //       }
-  //       this.seachSpinner = false;
-  //       this.PendingRDBFormSubmitted = false;
-  //       console.log("PendingRDBList",this.PendingRDBList);
-  //     })
-  //     }
-  // }
-  // PrintPRDB(DocNo) {
-  //   if(DocNo) {
-  //   const objtemp = {
-  //     "SP_String": "Sp_Purchase_Order",
-  //     "Report_Name_String": "Purchase_Order_Print"
-  //     }
-  //   this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
-  //     var printlink = data[0].Column1;
-  //     window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-  //   })
-  //   }
-  // }
+  // PENDING RDB
+  getDateRangeprdb(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjPendingRDB.start_date = dateRangeObj[0];
+      this.ObjPendingRDB.end_date = dateRangeObj[1];
+    }
+  }
+  GetPendingRDB(valid){
+      this.PendingRDBFormSubmitted = true;
+      const start = this.ObjPendingRDB.start_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingRDB.start_date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjPendingRDB.end_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingRDB.end_date))
+      : this.DateService.dateConvert(new Date());
+      const tempobj = {
+       From_Date : start,
+       To_Date : end,
+       Company_ID : this.ObjPendingRDB.Company_ID,
+       proj : "N"
+      }
+      if (valid) {
+      const obj = {
+        "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+        "Report_Name_String": "PENDING_RDB",
+        "Json_Param_String": JSON.stringify([tempobj])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.PendingRDBList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.PendingRDBList.length){
+          this.DynamicHeaderforPRDB = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforPRDB = [];
+        }
+        this.seachSpinner = false;
+        this.PendingRDBFormSubmitted = false;
+        console.log("PendingRDBList",this.PendingRDBList);
+      })
+      }
+  }
+  PrintPRDB(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "RDB_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
 
 
 }
