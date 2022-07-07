@@ -11,7 +11,7 @@
                                     <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
                                     </app-compacct-daterangepicker>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-1">
                                     <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSearchedList()" id="load" [disabled]="seachSpinner">
                                 <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                 <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
@@ -19,11 +19,23 @@
                                 </div>
                                 <div class="col-sm-2" *ngIf="Searchedlist.length">
                                     <button class="btn btn-success custombutton pull-left" data-toggle="modal" (click)="exportoexcel('perceptive')" id="load2">
-                           
-                            <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Export To Excel
-                        </button>
+                                   <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Export To Excel
+                                    </button>
                                 </div>
-                                <div class="col-sm-4"></div>
+
+                                <div class="col-sm-5"></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Cost Center Name
+                                        <sup class="text-danger"></sup></label>
+                                    <p-multiSelect [options]="cosCenterFilter" [(ngModel)]="SelectedcosCenter" [styleClass]="'compacct-multiselect'" name="filterCos" (onChange)="filterCoscenter()"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Audiologist Name
+                                        <sup class="text-danger"></sup></label>
+                                    <p-multiSelect [options]="AudiologistFilter" [(ngModel)]="SelectedAudiologist" [styleClass]="'compacct-multiselect'" name="filterAudio" (onChange)="filterAudiologist()"></p-multiSelect>
+                                </div>
                             </div>
                         </form>
                         <div class="table-responsive no-padding">
@@ -40,12 +52,13 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th style="width:5em">Action</th>
-                                        <th>Patient Name</th>
-                                        <th>Mobile</th>
-                                        <th>Appointment Date</th>
-                                        <th>Audiologist Name</th>
-                                        <th>Pure Tone Left</th>
-                                        <th>Pure Tone Right</th>
+                                        <th nowrap>Patient Name</th>
+                                        <th nowrap>Mobile</th>
+                                        <th nowrap>Appointment Date</th>
+                                        <th nowrap>Cost Center Name</th>
+                                        <th nowrap>Audiologist Name</th>
+                                        <th nowrap>Pure Tone Left</th>
+                                        <th nowrap>Pure Tone Right</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
@@ -76,12 +89,13 @@
                                                 </ul>
                                             </div>
                                         </td>
-                                        <td>{{col.Contact_Name ? col.Contact_Name : '-' }}</td>
-                                        <td>{{col.Mobile ? col.Mobile : '-'}}</td>
-                                        <td>{{col.Appo_Dt | date: "dd/MMM/yyyy"}}</td>
-                                        <td>{{col.Doctor_Name ? col.Doctor_Name : '-'}}</td>
-                                        <td>{{col.PT_LEFT ? col.PT_LEFT : '-'}}</td>
-                                        <td>{{col.PT_RIGHT ? col.PT_RIGHT : '-' }}</td>
+                                        <td nowrap>{{col.Contact_Name ? col.Contact_Name : '-' }}</td>
+                                        <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
+                                        <td nowrap>{{col.Appo_Dt | date: "dd/MMM/yyyy"}}</td>
+                                        <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                        <td nowrap>{{col.Doctor_Name ? col.Doctor_Name : '-'}}</td>
+                                        <td nowrap>{{col.PT_LEFT ? col.PT_LEFT : '-'}}</td>
+                                        <td nowrap>{{col.PT_RIGHT ? col.PT_RIGHT : '-' }}</td>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="paginatorright" let-state>

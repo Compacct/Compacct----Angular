@@ -321,6 +321,8 @@ import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Tr
 import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
 import { REPStockReportComponent } from './common/MaterialManagement/Report/rep-stock-report/rep-stock-report.component';
 import { StockReportComponent } from './shared/compacct.components/stock-report/stock-report.component'
+import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher/contract-voucher-v2/contract-voucher-v2.component";
+
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -560,6 +562,7 @@ import { StockReportComponent } from './shared/compacct.components/stock-report/
     CCSahaProfundComponent,
     REPStockReportComponent,
     StockReportComponent
+    ContractVoucherV2Component
   ],
   imports: [
     CommonModule,

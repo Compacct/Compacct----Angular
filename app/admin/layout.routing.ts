@@ -227,6 +227,7 @@ import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wa
 import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Transaction/Voucher/hipl-payment-requisition/hipl-payment-requisition.component";
 import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
 import { REPStockReportComponent } from "./common/MaterialManagement/Report/rep-stock-report/rep-stock-report.component";
+import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher/contract-voucher-v2/contract-voucher-v2.component";
 
 
 
@@ -1663,6 +1664,13 @@ data: {
     title: 'Stock Report'
 }
 },
+  path: 'Contra_Voucher',
+  component: ContractVoucherV2Component,
+  data: {
+    title: 'Contra Voucher'
+  }
+  },
+
     /*{
 
 

@@ -58,6 +58,12 @@ export class RdbComponent implements OnInit {
   initDate = [];
   companyList = [];
   RDBSearchFormSubmitted = false;
+
+  ObjPendingPO = new PendingPO();
+  PendingPOFormSubmitted = false;
+  PendingPOList = [];
+  DynamicHeaderforPPO = [];
+
    constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -70,7 +76,7 @@ export class RdbComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -87,7 +93,7 @@ export class RdbComponent implements OnInit {
 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER"];
     this.buttonname = "Create";
     this.clearData();
   }
@@ -111,6 +117,7 @@ export class RdbComponent implements OnInit {
     this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
   }
   GetAllData(valid){
     this.ngxService.start();
@@ -154,6 +161,7 @@ export class RdbComponent implements OnInit {
      console.log("companyList",this.companyList)
      this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+     this.ObjPendingPO.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     })
   }
   getSupplier(){
@@ -566,6 +574,7 @@ export class RdbComponent implements OnInit {
          summary: "Return_ID  " + tempID,
          detail: "Succesfully Saved" //+ mgs
        });
+              this.Printrdb(data[0].Column1);
               this.ObjRdb = new RDB();
               this.ObjRdb1 = new RDB1();
               this.RDBListAdd = [];
@@ -577,6 +586,11 @@ export class RdbComponent implements OnInit {
               this.PO_Doc_Date = new Date();
               this.GetAllData(true);
               this.ngxService.stop();
+              
+              this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+              this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+              this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+              this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;          
       } 
       else{
         this.Spinner = false;
@@ -652,10 +666,17 @@ export class RdbComponent implements OnInit {
   onReject() {
     this.compacctToast.clear("c");
   }
-  Printrdb(col){
-   if(col.RDB_No){
-    window.open("/Report/Crystal_Files/MICL/RDB_Challan.aspx?DocNo=" + col.RDB_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-   }
+  Printrdb(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "RDB_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -684,6 +705,62 @@ export class RdbComponent implements OnInit {
   }
   getTofix(number){
    return Number(Number(number).toFixed(2)).toFixed(2)
+  }
+
+  // PENDING PURCHASE ORDER
+  getDateRangeppo(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjPendingPO.start_date = dateRangeObj[0];
+      this.ObjPendingPO.end_date = dateRangeObj[1];
+    }
+  }
+  GetPendingPO(valid){
+      this.PendingPOFormSubmitted = true;
+      const start = this.ObjPendingPO.start_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingPO.start_date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjPendingPO.end_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingPO.end_date))
+      : this.DateService.dateConvert(new Date());
+      const tempobj = {
+       From_Date : start,
+       To_Date : end,
+       Company_ID : this.ObjPendingPO.Company_ID,
+       proj : "N"
+      }
+      if (valid) {
+      const obj = {
+        "SP_String": "SP_Purchase_Bill",
+        "Report_Name_String": "PENDING_PURCHASE_ORDER_BROWSE",
+        "Json_Param_String": JSON.stringify([tempobj])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.PendingPOList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.PendingPOList.length){
+          this.DynamicHeaderforPPO = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforPPO = [];
+        }
+        this.seachSpinner = false;
+        this.PendingPOFormSubmitted = false;
+        console.log("PendingPOList",this.PendingPOList);
+      })
+      }
+  }
+  PrintPPO(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": "Purchase_Order_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
   }
 }
   class RDB{
@@ -719,4 +796,10 @@ export class RdbComponent implements OnInit {
     From_date : Date;
     To_date : Date;
    }
+   class PendingPO{
+    Company_ID : any;
+    start_date : Date;
+    end_date : Date;
+    Cost_Cen_ID : any;
+  }
 
