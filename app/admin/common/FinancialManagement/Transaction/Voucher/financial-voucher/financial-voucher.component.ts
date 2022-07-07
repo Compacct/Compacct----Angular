@@ -150,6 +150,7 @@ export class FinancialVoucherComponent implements OnInit {
     this.objjournal.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
    
     this.objjournalloweer = new journalLower();
+    this.objjournalloweer.DrCrdataLower = this.objjournal.DrCrdata === "DR" ? "CR" : "DR" 
     this.lowerList = [];
     this.BankTransactionTypeList = [];
     this.SubLedgerList = [];
