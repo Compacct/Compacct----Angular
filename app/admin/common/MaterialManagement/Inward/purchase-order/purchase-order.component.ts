@@ -689,7 +689,8 @@ export class PurchaseOrderComponent implements OnInit {
           if(projectSaveData){
             this.showTost(msg,"Purchase order")
             this.Spinner = false;
-            this.getAllData(true)
+            this.getAllData(true);
+            this.getPendingReq(true);
           }
           else {
             this.Spinner = false;
@@ -705,7 +706,8 @@ export class PurchaseOrderComponent implements OnInit {
         else{
           this.Spinner = false;
           this.showTost(msg,"Purchase order")
-          this.getAllData(true)
+          this.getAllData(true);
+          this.getPendingReq(true);
         }
       
       if(this.DocNo){
@@ -715,6 +717,7 @@ export class PurchaseOrderComponent implements OnInit {
       }
       this.clearData();
       this.getAllData(true);
+      this.getPendingReq(true);
       this.Print(data[0].Column1)
       this.clearProject()
       }

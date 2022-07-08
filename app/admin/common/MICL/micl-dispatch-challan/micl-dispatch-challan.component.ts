@@ -809,18 +809,6 @@ saveqty(){
       var tempID = data[0].Column1;
       this.dispatchchallanno = data[0].Column1;
       if(data[0].Column1){
-        // if(this.FranchiseBill != "N" && Number(this.totaldelqty) == Number(this.totalaccpqty)) {
-        //   this.SaveFranchisechallan();
-        // }
-        this.clearData();
-        // this.Print(tempID);
-        this.inputBoxDisabled = false;
-        this.createchallandisabled = false;
-        this.indentlistdisabled = false;
-        this.indentdateDisabled = true;
-        this.docdateDisabled = true;
-        this.From_Godown_ID_Dis = false;
-        this.To_Godown_ID_Dis = false;
         this.ngxService.stop();
        this.compacctToast.clear();
        this.compacctToast.add({
@@ -833,7 +821,15 @@ saveqty(){
       // this.tabIndexToView = 0;
       // this.items = ["BROWSE", "CREATE"];
       // this.buttonname = "Create";
-     // this.clearData()
+      this.clearData();
+      this.PrintDispatch(data[0].Column1);
+      this.inputBoxDisabled = false;
+      this.createchallandisabled = false;
+      this.indentlistdisabled = false;
+      this.indentdateDisabled = true;
+      this.docdateDisabled = true;
+      this.From_Godown_ID_Dis = false;
+      this.To_Godown_ID_Dis = false;
       this.ReqDate = new Date();
       this.ChallanDate = new Date();
       // this.ObjBrowseData.Cost_Cen_ID = this.Objdispatch.Cost_Cen_ID;
@@ -849,7 +845,7 @@ saveqty(){
      this.Objdispatch = new dispatch();
      this.productDetails = [];
      this.BackUpproductDetails = [];
-     this.clearData();
+    //  this.clearData();
     //  this.ReqDate = new Date();
     //  this.ChallanDate = this.DateService.dateConvert(new Date(this.challanDate));
      }else{
@@ -959,6 +955,18 @@ saveqty(){
     });
   
     return Amtval ? Amtval.toFixed(2) : '-';
+  }
+  PrintDispatch(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_MICL_Dispatch_Challan",
+      "Report_Name_String": "Dispatch_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var GRNprintlink = data[0].Column1;
+      window.open(GRNprintlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
   }
 deleteDispatch(data){
  console.log("deleteCol",data)

@@ -53,6 +53,7 @@
                                             <label class="control-label">Costcenter<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="costCenterList" 
                                                             name="Costcenter" 
+                                                            #Costcenter = "ngModel"
                                                             [(ngModel)]="ObjBrowse.Cost_Cen_ID" 
                                                             [showClear]="true" 
                                                             [emptyFilterMessage]="' No Cost Cent Found'" 
@@ -167,7 +168,8 @@
                                 <div class="col-sm-4">
                                         <label class="control-label">From Cost Cent<sup class="text-danger">*</sup></label>
                                                 <p-dropdown [options]="costCenterList" 
-                                                        name="Costcenter" 
+                                                        name="FCostcenter" 
+                                                        #FCostcenter = "ngModel"
                                                         [(ngModel)]="ObjContract.Cost_Cen_ID" 
                                                         [showClear]="true" 
                                                         [emptyFilterMessage]="' No Cost Cent Found'" 
@@ -277,7 +279,8 @@
                                 <div class="col-sm-4">
                                     <label class="control-label">To Cost Cent<sup class="text-danger">*</sup></label>
                                             <p-dropdown [options]="costCenterList" 
-                                                    name="Costcenter" 
+                                                    name="ToCostcenter" 
+                                                    #ToCostcenter = "ngModel"
                                                     [(ngModel)]="ObjOther.Cost_Cen_ID" 
                                                     [showClear]="true" 
                                                     [emptyFilterMessage]="' No Cost Cent Found'" 
@@ -287,7 +290,7 @@
                                                     [virtualScroll]="true" 
                                                     itemSize="30" 
                                                     [required]="true"
-                                                    [ngClass]="{'clearance':ContractFormSubmittedAdd && Costcenter?.errors?.required}"
+                                                    [ngClass]="{'clearance':ContractFormSubmittedAdd && ToCostcenter?.errors?.required}"
                                                     required
                                                     [disabled] = "userType != 'A'">
                                             </p-dropdown>

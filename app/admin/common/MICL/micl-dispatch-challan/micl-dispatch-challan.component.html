@@ -115,16 +115,16 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <li>
-                                                            <a (click)="Print(col.Doc_No)">
-                                                                <i class="fa fa-print"></i> Print
-                                                            </a>
-                                                        </li>
                                                         <li *ngIf="col.Bill_No != 'NA'">
                                                             <a (click)="SaleBillPrint(col)">
                                                                 <i class="fa fa-print"></i> Sale Bill Print
                                                             </a>
                                                         </li> *ngIf="col.Total_Accepted_Qty === 0"-->
+                                                        <li>
+                                                            <a (click)="PrintDispatch(col.Doc_No)">
+                                                                <i class="fa fa-fw fa fa-print"></i> Print
+                                                            </a>
+                                                        </li>
                                                         <li>
                                                             <a (click)="deleteDispatch(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete

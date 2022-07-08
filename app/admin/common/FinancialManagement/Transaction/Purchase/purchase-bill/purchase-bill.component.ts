@@ -1210,6 +1210,8 @@ GetGRNNoProlistdetails2(){
     //  this.cleartotalamount();
      this.clearData();
      this.clearProject();
+     this.GetPendingPO(true);
+     this.GetPendingGRN(true);
     //  } else {
     //   this.Spinner = false;
     //   this.ngxService.stop();
@@ -1244,6 +1246,8 @@ GetGRNNoProlistdetails2(){
       //  this.cleartotalamount();
        this.clearData();
        this.clearProject();
+       this.GetPendingPO(true);
+       this.GetPendingGRN(true);
       }
      }
     else if (data[0].Column1 === "Total Dr Amt And Cr Amt Not matched") {

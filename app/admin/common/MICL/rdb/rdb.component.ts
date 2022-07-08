@@ -585,6 +585,7 @@ export class RdbComponent implements OnInit {
               this.SE_Date = new Date();
               this.PO_Doc_Date = new Date();
               this.GetAllData(true);
+              this.GetPendingPO(true);
               this.ngxService.stop();
               
               this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;

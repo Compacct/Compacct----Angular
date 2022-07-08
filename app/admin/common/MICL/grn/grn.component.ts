@@ -431,6 +431,7 @@ export class GrnComponent implements OnInit {
        this.ProductDetailslist = [];
        this.ngxService.stop();
        this.GetSearchedlist(true);
+       this.GetPendingRDB(true);
        this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
        this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
        this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
