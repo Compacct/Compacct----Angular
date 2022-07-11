@@ -348,16 +348,21 @@ checkrequ(financial?,Gst?,product?){
     }
     else {
       falg = false
+      return falg
     }
 
   }
  if(Gst){
   let getArrValue = Object.values(Gst);
-  if(getArrValue.length === 2 && this.objGst.HSN_NO.length === 6){
+  let tempHSN = this.objGst.HSN_NO
+  console.log("tempHSN",tempHSN.toString());
+  let tempHSNString = tempHSN.toString()
+  if(getArrValue.length === 2 && tempHSNString.length === 6){
     falg = true
   }
   else {
     falg = false
+    return falg
   }
  }
  if(product){
@@ -367,6 +372,7 @@ checkrequ(financial?,Gst?,product?){
   }
   else {
     falg = false
+    return falg
   }
  }
 return falg

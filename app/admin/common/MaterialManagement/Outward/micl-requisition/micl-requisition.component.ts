@@ -27,7 +27,7 @@ export class MiclRequisitionComponent implements OnInit {
   Spinner = false;
   SpinnerShow = false;
   itemList =[];
-  items = [];
+  items:any = [];
   tabIndexToView = 0;
   menuList = [];
   requi_Date = new Date();
@@ -67,6 +67,7 @@ export class MiclRequisitionComponent implements OnInit {
     projectMand : 'N'
   }
   reqValid = false
+  deleteError = false
   @ViewChild("project", { static: false })
   ProjectInput: CompacctProjectComponent;
   constructor(private $http: HttpClient,
@@ -91,7 +92,7 @@ export class MiclRequisitionComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items = ["BROWSE", "CREATE"];
+    this.items =  ["BROWSE", "CREATE", "STOCK"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -115,7 +116,7 @@ export class MiclRequisitionComponent implements OnInit {
   TabClick(e) {
    
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "STOCK"];
     this.buttonname = "Save";
     this.clearData();
   }
@@ -139,7 +140,8 @@ export class MiclRequisitionComponent implements OnInit {
     this.requi_Date = new Date();
     this.validatation.required = false;
     this.projectDisable = false;
-    this.reqValid = false
+    this.reqValid = false;
+    this.deleteError = false
    }
   addMaterials(valid){
   console.log("valid",valid);
@@ -326,6 +328,7 @@ export class MiclRequisitionComponent implements OnInit {
   }
   onReject(){
     this.compacctToast.clear("c");
+    this.deleteError = false;
   }
   getCostcenter(){
    const obj = {
@@ -526,23 +529,35 @@ export class MiclRequisitionComponent implements OnInit {
   }
   onConfirm2(){
    if(this.ReqNo){
-
-        const obj = {
+     const obj = {
           "SP_String": "SP_Txn_Requisition",
-          // "Report_Name_String": "Active_Requisition",
           "Report_Name_String": "Cancel_Requisition",
           "Json_Param_String": JSON.stringify([{Req_No : this.ReqNo,Created_By : this.$CompacctAPI.CompacctCookies.User_ID}])
         }
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         if (data[0].Column1 === "Done"){
            this.onReject();
-            this.act_popup = false;
+           this.act_popup = false;
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
               severity: "success",
               summary: "Requisition No: " + this.ReqNo.toString(),
               detail: "Succesfully Deleted"
+            });
+           this.ReqNo = undefined;
+           this.searchData(true)
+          }
+          else {
+            this.onReject();
+            this.deleteError = true;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "c",
+              sticky: true,
+              severity: "error",
+              summary: data[0].Column1,
+             // detail: "Confirm to proceed"
             });
            this.ReqNo = undefined;
            this.searchData(true)

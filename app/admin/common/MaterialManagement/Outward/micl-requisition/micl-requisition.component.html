@@ -7,7 +7,7 @@
             <p>{{message.detail}}</p>
         </div>
 
-        <div class="ui-g ui-fluid">
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
             <div class="ui-g-6" *ngIf="can_popup && !act_popup">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
@@ -17,6 +17,13 @@
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
             </div>
+        </div>
+        <div class="ui-g ui-fluid" *ngIf="deleteError">
+            <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-success"></button>
+            </div>
+         
+           
         </div>
     </ng-template>
 </p-toast>
@@ -77,7 +84,7 @@
                                 [rows]="100" [rowHover]="true" 
                                 [autoLayout]="true" sortMode="multiple" 
                                 [rowsPerPageOptions]="[100,200,300]" 
-                                [globalFilterFields]="['Req_No','Req_Date','Cost_Cen_Name','Stock_Point','Total_Requisition_Qty','Remarks']"
+                                [globalFilterFields]="['Req_No','Req_Date','To_Cost_Cen_Name','Stock_Point','Total_Requisition_Qty','Remarks']"
                                     [rowHover]="true" #dt2>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -90,11 +97,10 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Requisition No</th>
-                                            <th>Requisition Date</th>
-                                            <th>Cost Center</th>
-                                            <th>Stock Point</th>
-                                            <th>Total Requisition Qty</th>
+                                            <th>{{headerText}} No</th>
+                                            <th>Date</th>
+                                            <th>To Cost Center</th>
+                                            <th>Total Qty</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -127,8 +133,7 @@
                                             </td>
                                             <td>{{col.Req_No}}</td>
                                             <td>{{col.Req_Date | date: "dd/MMM/yyyy"}}</td>
-                                            <td>{{col.Cost_Cen_Name}}</td>
-                                            <td>{{col.Stock_Point}}</td>
+                                            <td>{{col.To_Cost_Cen_Name}}</td>
                                             <td>{{col.Total_Requisition_Qty}}</td>
                                         </tr>
                                     </ng-template>
@@ -325,6 +330,9 @@
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                         </button>
                                     </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-oil">
+                            <app-stock-report></app-stock-report>
                         </p-tabPanel>
                         </p-tabView>
                 </div>

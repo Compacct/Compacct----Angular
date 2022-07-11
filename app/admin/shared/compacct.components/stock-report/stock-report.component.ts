@@ -124,6 +124,7 @@ export class StockReportComponent implements OnInit {
   searchData(valid){
     this.StockSearchFormSubmitted = true
     if(valid){
+      this.ngxService.start();
       this.ObjBrowse.StDate = this.ObjBrowse.StDate ? this.DateService.dateConvert(new Date(this.ObjBrowse.StDate)) : this.DateService.dateConvert(new Date())
       this.ObjBrowse.EndDate = this.ObjBrowse.EndDate ? this.DateService.dateConvert(new Date(this.ObjBrowse.EndDate)) : this.DateService.dateConvert(new Date())
       this.ObjBrowse.Cost_Cen_ID = this.ObjBrowse.Cost_Cen_ID ? Number(this.ObjBrowse.Cost_Cen_ID) : 0
@@ -150,6 +151,7 @@ export class StockReportComponent implements OnInit {
          this.stockList = data;
          this.backUpstockList = data;
          this.GetDistinct();
+         this.ngxService.stop();
       })
     }
   }

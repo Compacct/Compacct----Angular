@@ -1231,6 +1231,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
       }
       else {
         falg = false
+        return falg
       }
   
     }
@@ -1241,6 +1242,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
     }
     else {
       falg = false
+      return falg
     }
    }
    if(product){
@@ -1250,6 +1252,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
     }
     else {
       falg = false
+      return falg
     }
    }
   return falg

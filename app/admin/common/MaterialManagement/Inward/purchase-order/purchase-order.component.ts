@@ -99,7 +99,9 @@ export class PurchaseOrderComponent implements OnInit {
   SearchFormSubmitted = false;
   costcenterListPeding = [];
   pendingREQData:any = [];
-
+  productDetalisView:boolean = false;
+  productDetalisViewList:any = false;
+  productDetalisViewListHeader:any = false;
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -122,7 +124,7 @@ export class PurchaseOrderComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items = [ 'BROWSE', 'CREATE','PENDING REQ'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -151,7 +153,7 @@ export class PurchaseOrderComponent implements OnInit {
   } 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ['BROWSE', 'CREATE','PENDING REQ'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
     this.buttonname = "Create";
     this.clearData();
     this.clearProject()
@@ -201,7 +203,9 @@ export class PurchaseOrderComponent implements OnInit {
       this.productTypeList = []; 
     }
     this.productList = [];
-    this.RequistionPendingFormSubmit =false
+    this.RequistionPendingFormSubmit =false;
+    this.productDetalisView = false;
+    this.productDetalisViewList = [];
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -710,7 +714,7 @@ export class PurchaseOrderComponent implements OnInit {
       
       if(this.DocNo){
         this.tabIndexToView = 0;
-        this.items = ['BROWSE', 'CREATE','PENDING REQ'];
+        this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
         this.buttonname = "Create";
       }
       this.clearData();
@@ -871,7 +875,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = ['BROWSE', 'CREATE','PENDING REQ'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
     this.buttonname = "Update";
     this.clearProject()
     this.geteditmaster(col.Doc_No);
@@ -1198,6 +1202,26 @@ if (valid) {
   })
 }
 }
+getProductPOPUPDetalis(){
+ if(this.objaddPurchacse.Product_ID){
+  this.productDetalisViewList = [];
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Last_Purchase_Details",
+    "Json_Param_String": JSON.stringify([{Product_ID : Number(this.objaddPurchacse.Product_ID)}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if(data.length){
+      this.productDetalisViewList = data
+      this.productDetalisViewListHeader = Object.keys(data[0]);
+    }
+    setTimeout(() => {
+      this.productDetalisView = true
+    }, 300);
+  })
+  }
+}
+
 }
 class purchase {
         Doc_No:any;
@@ -1298,12 +1322,10 @@ class Browse {
   end_date : Date;
   Cost_Cen_ID : 0;
   Product_Type_ID : 0;
-
-
 }
 class pendingreq {
   From_Date: string;
   To_Date: string;
   Cost_Cen_ID: number;
   proj:string
-  }
+}
