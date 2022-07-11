@@ -128,7 +128,9 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   AllUomDataList = [];
   mettypeid = undefined;
   Uomid = undefined;
- 
+  objCheckFinamcial:any = {};
+  objGst:any = {};
+  objProductrequ:any = {};
   @ViewChild("Product", { static: false })
   ProductDetailsInput: CompacctProductDetailsComponent;
   @ViewChild("GstAndCustomDuty", { static: false })
@@ -218,6 +220,9 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       this.ObjMasterProductm.Product_Code = e.Product_Code;
       this.ObjMasterProductm.Product_Description = e.Product_Description;
       this.ObjMasterProductm.Rack_NO = e.Rack_NO;
+      this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
+      this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.objProductrequ.Product_Description = e.Product_Description;
     }
   }
   getGstAndCustDutyData(e) {
@@ -230,6 +235,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       this.ObjMasterProductm.Custom_Duty = e.Custom_Duty;
       this.ObjMasterProductm.Remarks = e.Remarks;
       this.ObjMasterProductm.RCM_Per = Number(e.RCM_Per)
+      this.objGst.Cat_ID = e.Cat_ID;
+      this.objGst.HSN_NO = e.HSN_NO;
     }
   }
   FinancialDetailsData(e) {
@@ -265,6 +272,12 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       this.ObjMasterProductm.Output_CGST_RCM_Ledger_ID = e.Output_CGST_RCM_Ledger_ID;
       this.ObjMasterProductm.Output_SGST_RCM_Ledger_ID = e.Output_SGST_RCM_Ledger_ID;
       this.ObjMasterProductm.Output_IGST_RCM_Ledger_ID = e.Output_IGST_RCM_Ledger_ID;
+      this.objCheckFinamcial.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      this.objCheckFinamcial.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.objCheckFinamcial.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.objCheckFinamcial.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.objCheckFinamcial.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.objCheckFinamcial.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
     }
   }
   GetProductType(){
@@ -1098,11 +1111,11 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   //   }
   // }
   SaveMasterProductM(valid){
-
-      if (this.productid) {
+   if (this.productid) {
         this.Spinner = true;
         this.MasterProductmFormSubmitted = true;
-      if(valid){
+        console.log("this.checkrequ()",this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ))
+      if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
       let UpdateArr =[]
      
         const Obj = {
@@ -1215,6 +1228,45 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       }
     // }
   }
+  }
+  checkrequ(financial?,Gst?,product?){
+    let falg = false
+    if(financial){
+      let getArrValue = Object.values(financial);
+      if(getArrValue.length === 6){
+        falg = true
+      }
+      else {
+        falg = false
+        return falg
+      }
+  
+    }
+   if(Gst){
+    let getArrValue = Object.values(Gst);
+    let tempHSN = this.objGst.HSN_NO
+    console.log("tempHSN",tempHSN.toString());
+    let tempHSNString = tempHSN.toString()
+    if(getArrValue.length === 2 && tempHSNString.length === 6){
+      falg = true
+      
+    }
+    else {
+      falg = false
+      return falg
+    }
+   }
+   if(product){
+    let getArrValue = Object.values(product);
+    if(getArrValue.length === 3){
+      falg = true
+    }
+    else {
+      falg = false
+      return falg
+    }
+   }
+  return falg
   }
   async upload(id){
     const formData: FormData = new FormData();

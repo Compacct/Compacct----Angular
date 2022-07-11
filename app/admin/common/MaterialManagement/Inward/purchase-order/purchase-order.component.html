@@ -8,12 +8,17 @@
             <p>{{message.detail}}</p>
         </div>
 
-        <div class="ui-g ui-fluid">
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+        <div class="ui-g ui-fluid" *ngIf="deleteError">
+             <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="OK" class="ui-button-secondary"></button>
             </div>
         </div>
     </ng-template>
@@ -401,6 +406,7 @@
                                        </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Product Details<sup class="text-danger">*</sup></label>
+                                            <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "objaddPurchacse.Product_ID" (click)="getProductPOPUPDetalis()"><i class="fa fa-fw  fa-info-circle"></i></a></span>
                                             <p-dropdown 
                                             [options]="productList" 
                                             name="Product_ID" 
@@ -1091,6 +1097,72 @@ style="text-align: center;"
     class="btn btn-default"
     >
     CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
+<p-dialog
+[header]="'Product Detalis'"
+[appendTo]="'body'"
+[visible]="productDetalisView"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="no-padding">
+        <p-table [value]="productDetalisViewList"
+        [paginator]="productDetalisViewList.length ? true : false"
+        *ngIf='productDetalisViewList.length'
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [globalFilterFields]='productDetalisViewListHeader'
+            [rowHover]="true" #dtn>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dtn.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                <th nowrap="nowrap" *ngFor="let option of productDetalisViewListHeader;">{{option.replaceAll('_',' ')}}</th> 
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <ng-container *ngFor="let option of productDetalisViewListHeader; let i = index">
+                        <td nowrap="nowrap">{{col[option]}}</td>
+                    </ng-container>
+                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="productDetalisView = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
     </button>
 
 </p-footer>
