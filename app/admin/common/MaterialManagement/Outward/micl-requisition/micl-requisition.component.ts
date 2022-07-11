@@ -553,11 +553,11 @@ export class MiclRequisitionComponent implements OnInit {
             this.deleteError = true;
             this.compacctToast.clear();
             this.compacctToast.add({
-              key: "c",
+              key: "c", 
               sticky: true,
-              severity: "error",
-              summary: data[0].Column1,
-             // detail: "Confirm to proceed"
+              severity: "info",
+             // summary: data[0].Column1,
+              detail: data[0].Column1
             });
            this.ReqNo = undefined;
            this.searchData(true)

@@ -102,6 +102,7 @@ export class PurchaseOrderComponent implements OnInit {
   productDetalisView:boolean = false;
   productDetalisViewList:any = false;
   productDetalisViewListHeader:any = false;
+  deleteError:boolean = false;
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -209,6 +210,7 @@ export class PurchaseOrderComponent implements OnInit {
    }
   onReject() {
     this.compacctToast.clear("c");
+    this.deleteError = false
   }
   onConfirm(){
    if(this.DocNo){
@@ -227,6 +229,20 @@ export class PurchaseOrderComponent implements OnInit {
           summary: "Purchase Order Delete Succesfully",
           detail: "Succesfully Delete"
         });
+        }
+        else {
+          this.onReject();
+          this.deleteError = true;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "c",
+            sticky: true,
+            severity: "info",
+           // summary: data[0].Column1,
+            detail: data[0].Column1
+          });
+         this.DocNo = undefined;
+         
         }
         this.getAllData(true);
        });
@@ -642,6 +658,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.projectDisable = true
       this.objaddPurchacse = new addPurchacse();
       this.purChaseAddFormSubmit = false;
+      this.productList = [];
       console.log("addPurchaseList",this.addPurchaseList);
       this.getAllTotal();
    }
@@ -1185,7 +1202,9 @@ const tempobj = {
   To_Cost_Cen_ID : this.objpendingreq.Cost_Cen_ID,
   proj : this.openProject
 }
-if (valid) {
+console.log(this.objpendingreq.Cost_Cen_ID)
+console.log("valid",valid)
+if (valid || this.userType != 'A') {
   const obj = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Browse_Pending_Requisition",
