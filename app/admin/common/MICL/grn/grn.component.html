@@ -8,13 +8,23 @@
             <p>{{message.detail}}</p>
         </div>
 
-        <div class="ui-g ui-fluid">
-          <div class="ui-g-6">
-              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
+          <div class="ui-g-6" *ngIf="Save && !Del">
+              <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
           </div>
+          <div class="ui-g-6" *ngIf="Del && !Save">
+            <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
+        </div>
           <div class="ui-g-6">
               <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
           </div>
+      </div>
+      <div class="ui-g ui-fluid" *ngIf="deleteError">
+          <div class="ui-g-12">
+              <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+          </div>
+       
+         
       </div>
 
     </ng-template>
@@ -147,7 +157,7 @@
                                                         </li>
                                                         <li>
                                                                 <a (click)="Delete(col)">
-                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                    <i class="fa fa-fw fa fa-trash" aria-hidden="true"></i>
                                                                     Delete
                                                                 </a>
                                                             </li>

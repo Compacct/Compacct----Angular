@@ -8,10 +8,10 @@
         </div>
 
         <div class="ui-g ui-fluid" *ngIf="!deleteError">
-            <div class="ui-g-6" *ngIf="can_popup && !act_popup">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
             </div>
-            <div class="ui-g-6" *ngIf="act_popup && !can_popup">
+            <div class="ui-g-6" *ngIf="Del && !Save">
                 <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
@@ -20,7 +20,7 @@
         </div>
         <div class="ui-g ui-fluid" *ngIf="deleteError">
             <div class="ui-g-12">
-                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-secondary"></button>
+                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
             </div>
          
            
@@ -113,19 +113,19 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf="col.Cancel_Requisition == 'Y'">
+                                                        <!-- <li *ngIf="col.Cancel_Requisition == 'Y'">
                                                             <a (click)="Cancel(col)">
-                                                                <i class="fa fa-fw fa-trash"></i> Active
+                                                                <i class="fa fa-fw fa-power-off"></i> Active
                                                             </a>
-                                                        </li>
+                                                        </li> -->
                                                         <li *ngIf="col.Cancel_Requisition == 'N'">
                                                             <a (click)="Active(col)">
-                                                                <i class="fa fa-power-off"></i> Delete
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
                                                         <li>
                                                             <a (click)="Print(col.Req_No)">
-                                                                <i class="fa fa-fw fa-file-pdf-o"></i> Print
+                                                                <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
                                                     </ul>

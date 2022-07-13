@@ -12,6 +12,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
 import { identity } from 'rxjs';
 import { CompacctProjectComponent } from '../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 import { timeStamp } from 'console';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-purchase-order',
@@ -103,6 +104,9 @@ export class PurchaseOrderComponent implements OnInit {
   productDetalisViewList:any = false;
   productDetalisViewListHeader:any = false;
   deleteError:boolean = false;
+  Save = false;
+  Del = false;
+
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -113,6 +117,7 @@ export class PurchaseOrderComponent implements OnInit {
     private $CompacctAPI: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
     private fb: FormBuilder,
+    private ngxService: NgxUiLoaderService,
     ) {
       this.route.queryParams.subscribe(params => {
         console.log(params);
@@ -210,9 +215,11 @@ export class PurchaseOrderComponent implements OnInit {
    }
   onReject() {
     this.compacctToast.clear("c");
-    this.deleteError = false
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.deleteError = false;
   }
-  onConfirm(){
+  onConfirmDel(){
    if(this.DocNo){
     const obj = {
       "SP_String": "Sp_Purchase_Order",
@@ -237,9 +244,10 @@ export class PurchaseOrderComponent implements OnInit {
           this.compacctToast.add({
             key: "c",
             sticky: true,
-            severity: "info",
-           // summary: data[0].Column1,
-            detail: data[0].Column1
+            closable: false,
+            severity: "warn", // "info",
+            summary: data[0].Column1
+            // detail: data[0].Column1
           });
          this.DocNo = undefined;
          
@@ -667,79 +675,173 @@ export class PurchaseOrderComponent implements OnInit {
    this.purchaseFormSubmitted = true
    this.validatation.required = true
     this.falg = true
+    // this.ngxService.start();
+    this.Save = false;
+    this.Del = false;
    if(valid && this.checkreq()){
-     this.Spinner = true
-     let msg = "";
-      let rept = ""
-    const tempCost = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))[0]
-    const tempsub = this.SubLedgerDataList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.objpurchase.Sub_Ledger_ID))[0]
-    const tempCurr = this.currencyList.filter(el=> Number(el.Currency_ID) === Number(this.objpurchase.Currency_ID))
-    this.objpurchase.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate));
-    this.objpurchase.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.RefDate));
-    this.objpurchase.Currency_Symbol = tempCurr[0].Currency_Symbol;
-    this.objpurchase.Project_ID = Number(this.objpurchase.Project_ID) ? Number(this.objpurchase.Project_ID) : null
-    this.objpurchase.Currency_ID = this.objpurchase.Currency_ID ? Number(this.objpurchase.Currency_ID) : null
-    this.objpurchase.Company_ID = this.objpurchase.Company_ID ? Number(this.objpurchase.Company_ID) : undefined
-    this.objpurchase.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
-     let save = []
-     if(this.addPurchaseList.length){
-     if(this.DocNo){
-      msg = "Update"
-      rept = "Purchase_Order_Edit"
-       this.objpurchase.Doc_No = this.DocNo;
-      this.objpurchase.L_element = this.addPurchaseList
-      save = {...tempCost,...tempsub,...this.objpurchase}
-     }
-     else {
-      msg = "Create"
-      rept = "Purchase_Order_Create"
-      this.objpurchase.L_element = this.addPurchaseList
-      save = {...tempCost,...tempsub,...this.objpurchase}
-     }
-     const obj = {
-      "SP_String": "Sp_Purchase_Order",
-      "Report_Name_String": rept,
-      "Json_Param_String": JSON.stringify(save)
+    this.Save = true;
+    this.Del = false;
+    this.Spinner = true;
+    this.ngxService.start();
+   this.compacctToast.clear();
+   this.compacctToast.add({
+     key: "c",
+     sticky: true,
+     closable: false,
+     severity: "warn",
+     summary: "Are you sure?",
+     detail: "Confirm to proceed"
+   });
+  //    this.Spinner = true
+  //    let msg = "";
+  //     let rept = ""
+  //   const tempCost = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))[0]
+  //   const tempsub = this.SubLedgerDataList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.objpurchase.Sub_Ledger_ID))[0]
+  //   const tempCurr = this.currencyList.filter(el=> Number(el.Currency_ID) === Number(this.objpurchase.Currency_ID))
+  //   this.objpurchase.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate));
+  //   this.objpurchase.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.RefDate));
+  //   this.objpurchase.Currency_Symbol = tempCurr[0].Currency_Symbol;
+  //   this.objpurchase.Project_ID = Number(this.objpurchase.Project_ID) ? Number(this.objpurchase.Project_ID) : null
+  //   this.objpurchase.Currency_ID = this.objpurchase.Currency_ID ? Number(this.objpurchase.Currency_ID) : null
+  //   this.objpurchase.Company_ID = this.objpurchase.Company_ID ? Number(this.objpurchase.Company_ID) : undefined
+  //   this.objpurchase.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
+  //    let save = []
+  //    if(this.addPurchaseList.length){
+  //    if(this.DocNo){
+  //     msg = "Update"
+  //     rept = "Purchase_Order_Edit"
+  //      this.objpurchase.Doc_No = this.DocNo;
+  //     this.objpurchase.L_element = this.addPurchaseList
+  //     save = {...tempCost,...tempsub,...this.objpurchase}
+  //    }
+  //    else {
+  //     msg = "Create"
+  //     rept = "Purchase_Order_Create"
+  //     this.objpurchase.L_element = this.addPurchaseList
+  //     save = {...tempCost,...tempsub,...this.objpurchase}
+  //    }
+  //    const obj = {
+  //     "SP_String": "Sp_Purchase_Order",
+  //     "Report_Name_String": rept,
+  //     "Json_Param_String": JSON.stringify(save)
   
-    }
-    this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
-      this.validatation.required = false;
-      if(data[0].Column1){
-        if(this.objproject.PROJECT_ID && !this.DocNo){ 
-          const projectSaveData = await this.SaveProject(data[0].Column1);
-          if(projectSaveData){
-            this.showTost(msg,"Purchase order")
-            this.Spinner = false;
-            this.getAllData(true)
-          }
-          else {
-            this.Spinner = false;
-            this.compacctToast.clear();
-            this.compacctToast.add({
-              key: "compacct-toast",
-              severity: "error",
-              summary: "Warn Message",
-              detail: "Error Occured "
-            });
-          }
-         }
-        else{
-          this.Spinner = false;
-          this.showTost(msg,"Purchase order")
-          this.getAllData(true)
-        }
+  //   }
+  //   this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
+  //     this.validatation.required = false;
+  //     if(data[0].Column1){
+  //       if(this.objproject.PROJECT_ID && !this.DocNo){ 
+  //         const projectSaveData = await this.SaveProject(data[0].Column1);
+  //         if(projectSaveData){
+  //           this.showTost(msg,"Purchase order")
+  //           this.Spinner = false;
+  //           this.getAllData(true);
+  //           this.getPendingReq(true);
+  //         }
+  //         else {
+  //           this.Spinner = false;
+  //           this.compacctToast.clear();
+  //           this.compacctToast.add({
+  //             key: "compacct-toast",
+  //             severity: "error",
+  //             summary: "Warn Message",
+  //             detail: "Error Occured "
+  //           });
+  //         }
+  //        }
+  //       else{
+  //         this.Spinner = false;
+  //         this.showTost(msg,"Purchase order")
+  //         this.getAllData(true);
+  //         this.getPendingReq(true);
+  //       }
       
-      if(this.DocNo){
-        this.tabIndexToView = 0;
-        this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
-        this.buttonname = "Create";
-      }
-      this.clearData();
-      this.getAllData(true);
-      this.Print(data[0].Column1)
-      this.clearProject()
+  //     if(this.DocNo){
+  //       this.tabIndexToView = 0;
+  //       this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
+  //       this.buttonname = "Create";
+  //     }
+  //     this.clearData();
+  //     this.getAllData(true);
+  //     this.getPendingReq(true);
+  //     this.Print(data[0].Column1)
+  //     this.clearProject()
+  //     }
+  //     else {
+  //       this.Spinner = false;
+  //       this.compacctToast.clear();
+  //       this.compacctToast.add({
+  //         key: "compacct-toast",
+  //         severity: "error",
+  //         summary: "Warn Message",
+  //         detail: "Error Occured "
+  //       });
+  //     }
+  //   })
+  // }
+  // else {
+  //   this.Spinner = false;
+  //   this.compacctToast.clear();
+  //   this.compacctToast.add({
+  //     key: "compacct-toast",
+  //     severity: "error",
+  //     summary: "Warn Message",
+  //     detail: "Error Occured "
+  //   });
+  // }
+   }
+   else {
+
+   }
+ }
+ onConfirmSave(){
+ this.Spinner = true
+ let msg = "";
+  let rept = ""
+const tempCost = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))[0]
+const tempsub = this.SubLedgerDataList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.objpurchase.Sub_Ledger_ID))[0]
+const tempCurr = this.currencyList.filter(el=> Number(el.Currency_ID) === Number(this.objpurchase.Currency_ID))
+this.objpurchase.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate));
+this.objpurchase.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.RefDate));
+this.objpurchase.Currency_Symbol = tempCurr[0].Currency_Symbol;
+this.objpurchase.Project_ID = Number(this.objpurchase.Project_ID) ? Number(this.objpurchase.Project_ID) : null
+this.objpurchase.Currency_ID = this.objpurchase.Currency_ID ? Number(this.objpurchase.Currency_ID) : null
+this.objpurchase.Company_ID = this.objpurchase.Company_ID ? Number(this.objpurchase.Company_ID) : undefined
+this.objpurchase.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
+ let save = []
+ if(this.addPurchaseList.length){
+ if(this.DocNo){
+  msg = "Update"
+  rept = "Purchase_Order_Edit"
+   this.objpurchase.Doc_No = this.DocNo;
+  this.objpurchase.L_element = this.addPurchaseList
+  save = {...tempCost,...tempsub,...this.objpurchase}
+ }
+ else {
+  msg = "Create"
+  rept = "Purchase_Order_Create"
+  this.objpurchase.L_element = this.addPurchaseList
+  save = {...tempCost,...tempsub,...this.objpurchase}
+ }
+ const obj = {
+  "SP_String": "Sp_Purchase_Order",
+  "Report_Name_String": rept,
+  "Json_Param_String": JSON.stringify(save)
+
+}
+this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
+  this.validatation.required = false;
+  if(data[0].Column1){
+    if(this.objproject.PROJECT_ID && !this.DocNo){ 
+      const projectSaveData = await this.SaveProject(data[0].Column1);
+      if(projectSaveData){
+        this.showTost(msg,"Purchase order")
+        this.Spinner = false;
+        this.getAllData(true);
+        this.getPendingReq(true);
+        this.ngxService.stop();
       }
       else {
+        this.ngxService.stop();
         this.Spinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -749,9 +851,30 @@ export class PurchaseOrderComponent implements OnInit {
           detail: "Error Occured "
         });
       }
-    })
+     }
+    else{
+      this.ngxService.stop();
+      this.Spinner = false;
+      this.showTost(msg,"Purchase order")
+      this.getAllData(true);
+      this.getPendingReq(true);
+    }
+  
+  if(this.DocNo){
+    this.ngxService.stop();
+    this.tabIndexToView = 0;
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
+    this.buttonname = "Create";
+  }
+  this.ngxService.stop();
+  this.clearData();
+  this.getAllData(true);
+  this.getPendingReq(true);
+  this.Print(data[0].Column1)
+  this.clearProject()
   }
   else {
+    this.ngxService.stop();
     this.Spinner = false;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -761,8 +884,20 @@ export class PurchaseOrderComponent implements OnInit {
       detail: "Error Occured "
     });
   }
-   }
- }
+})
+}
+else {
+this.ngxService.stop();
+this.Spinner = false;
+this.compacctToast.clear();
+this.compacctToast.add({
+  key: "compacct-toast",
+  severity: "error",
+  summary: "Warn Message",
+  detail: "Error Occured "
+});
+}
+}
 
 //  checkreq(){
 //   let flg = false
@@ -965,8 +1100,12 @@ PrintREQ(DocNo) {
 }
  Delete(col){
   console.log("Delete Col",col);
+  this.DocNo = undefined;
+  this.Del = false;
+  this.Save = false;
   if(col.Doc_No){
-   this.DocNo = undefined;
+   this.Del = true;
+   this.Save = false;
    this.DocNo = col.Doc_No
    this.compacctToast.clear();
    this.compacctToast.add({

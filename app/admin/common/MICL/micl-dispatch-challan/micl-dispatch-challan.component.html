@@ -115,16 +115,16 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <li>
-                                                            <a (click)="Print(col.Doc_No)">
-                                                                <i class="fa fa-print"></i> Print
-                                                            </a>
-                                                        </li>
                                                         <li *ngIf="col.Bill_No != 'NA'">
                                                             <a (click)="SaleBillPrint(col)">
                                                                 <i class="fa fa-print"></i> Sale Bill Print
                                                             </a>
                                                         </li> *ngIf="col.Total_Accepted_Qty === 0"-->
+                                                        <li>
+                                                            <a (click)="PrintDispatch(col.Doc_No)">
+                                                                <i class="fa fa-fw fa fa-print"></i> Print
+                                                            </a>
+                                                        </li>
                                                         <li>
                                                             <a (click)="deleteDispatch(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
@@ -182,7 +182,7 @@
                                             <form name="DispatchForm" #DispatchForm="ngForm" novalidate>
                                                 <div class="form-group">
                                                     <div class="col-sm-4">
-                                                        <label class="control-label">Challan Date</label>
+                                                        <label class="control-label">Issue Date</label>
                                                         <!-- <div  class="label-t">{{myDate  | date :"dd/MMM/yyyy"}}</div> -->
                                                         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ChallanDate' [enabled]="docdateDisabled"></ejs-datepicker>
 
@@ -240,8 +240,8 @@
                                                              <span *ngIf="!SpinnerShow"></span> Get Indent List <!--class="glyphicon glyphicon-save" -->
                                                         </button>
                                                     </div>
-                                                    <div class="col-sm-1" *ngIf="createChallanflag">
-                                                        <button type="button" class="btn btn-primary pull-left" style="margin-top: 30px; margin-left: -50px;" (click)="clearbutton()" id="load" [disabled]="editDis">
+                                                    <div class="col-sm-2" *ngIf="createChallanflag">
+                                                        <button type="button" class="btn btn-primary pull-right1" (click)="clearbutton()" id="load" [disabled]="editDis">
                                                               <!-- <span class="glyphicon glyphicon glyphicon-remove"></span> --> Clear
                                                         </button>
                                                     </div>
@@ -512,7 +512,7 @@
                                                     <ul class="dropdown-menu">
                                                         <li>
                                                                 <a (click)="CreateChallan(col)">
-                                                                    <i class="fa fa-fw fa-pencil"></i> Create Challan 
+                                                                    <i class="fa fa-fw fa-pencil"></i> Issue Material 
                                                                 </a>
                                                             </li>
                                                         <li>
@@ -540,6 +540,10 @@
                                 </p-table>
                             </div>
 
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                            <app-stock-report></app-stock-report>
                         </p-tabPanel>
                     </p-tabView>
                 </div>
