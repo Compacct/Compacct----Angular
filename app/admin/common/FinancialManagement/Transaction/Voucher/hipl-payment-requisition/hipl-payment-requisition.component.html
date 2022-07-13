@@ -7,7 +7,7 @@
             <p>{{message.detail}}</p>
         </div>
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6" *ngIf="can_popup && !act_popup">
+            <div class="ui-g-6" *ngIf="Save">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6" *ngIf="act_popup && !can_popup">
@@ -28,88 +28,439 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="PaymentForm" #PaymentForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-4" *ngIf="progmgURL === 'y'">
                                         <label class="control-label">Project Name<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Project_Name" #Project_Name="ngModel" [(ngModel)]="objPayment.Project_ID" (ngModelChange)="GetAllSite(objPayment.Project_ID)" [ngClass]="{'clearance': PaymentFormSubmit && Project_Name.errors?.required}" required>
+                                        <select class="form-control" name="Project_Name" #Project_Name="ngModel" [(ngModel)]="objPayment.Project_ID" (ngModelChange)="GetAllSite(objPayment.Project_ID)" [ngClass]="{'clearance': PaymentFormSubmit && Project_Name.errors?.required}" [required]="progmgURL === 'Y'">
                                         <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of ProjectList" [ngValue]="option.Project_ID">
                                         {{option.Project_Description}}
                                         </option>
                                     </select>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-4" *ngIf="progmgURL === 'y'">
                                         <label class="control-label">Site Name<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Site_Name" #Site_Name="ngModel" [(ngModel)]="objPayment.Site_ID" [ngClass]="{'clearance': PaymentFormSubmit && Site_Name.errors?.required}" required>
+                                        <select class="form-control" name="Site_Name" #Site_Name="ngModel" [(ngModel)]="objPayment.Site_ID" (ngModelChange)="getAllTender()" [ngClass]="{'clearance': PaymentFormSubmit && Site_Name.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of SiteList" [ngValue]="option.Site_ID">
                                         {{option.Site_Description}}
                                         </option>
                                     </select>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-4" *ngIf="progmgURL === 'y'">
                                         <label class="control-label">Tender Group<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Tender_Group" #Tender_Group="ngModel" [(ngModel)]="objPayment" [ngClass]="{'clearance': PaymentFormSubmit && Tender_Group.errors?.required}" required>
-                                        <!-- <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of userList" [ngValue]="option.User_ID">
-                                        {{option.User_Name}}
-                                        </option> -->
+                                        <select class="form-control" name="Tender_Group" #Tender_Group="ngModel" [(ngModel)]="objPayment.Budget_Group_ID" [ngClass]="{'clearance': PaymentFormSubmit && Tender_Group.errors?.required}" (change)="getAmount()" required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of AllTenderList" [ngValue]="option.Budget_Group_ID">
+                                        {{option.Budget_Group_Name}}
+                                        </option>
                                     </select>
                                     </div>
                                 </div>
+
                                 <div class="form-group">
+
                                     <div class="col-sm-4">
                                         <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="" name="Vendor" [(ngModel)]="objPayment" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true" itemSize="30"
-                                            #Vendor="ngModel" [styleClass]="
-                                            PaymentFormSubmit && Vendor.errors?.required
-                                                  ? 'clearance'
-                                                  : ''
-                                              " [required]="true">
+                                        <p-dropdown [options]="VendorList" name="Vendor" [(ngModel)]="objPayment.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'" [virtualScroll]="true"
+                                            itemSize="30" #Vendor="ngModel" (onChange)="getPuschaseOrder()" [styleClass]="
+                                            PaymentFormSubmit && Vendor.errors?.required ? 'clearance' : '' " [required]="true">
                                         </p-dropdown>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Description</label>
-                                        <textarea class="form-control" name="Product_Description" [(ngModel)]="objPayment" rows="2" placeholder="Product Description"></textarea>
+
+                                    <div class="col-sm-2" *ngIf="progmgURL === 'y'">
+                                        <label class="control-label">Total BOM Amount  </label>
+                                        <input class="form-control" name="Total_BOM_Amount" #Total_BOM_Amount="ngModel" [(ngModel)]="objPayment.Total_BOM_Amount" placeholder="Total BOM Amount" CompacctDigitonly="true" disabled>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Previous Status</label>
-                                        <input class="form-control" name="Previous_Status" #Previous_Status="ngModel" [(ngModel)]="objPayment" placeholder="Previous Status">
+                                    <div class="col-sm-2" *ngIf="progmgURL === 'y'">
+                                        <label class="control-label"> Total Used Amount</label>
+                                        <input class="form-control" name="Total_Used_Amount" #Total_Used_Amount="ngModel" [(ngModel)]="objPayment.Total_Used_Amount" placeholder="Total Used Amount" CompacctDigitonly="true" disabled>
+
+                                    </div>
+
+                                    <div class="col-sm-4" *ngIf="progmgURL === 'y'">
+                                        <label class="control-label">Available Balance as per BOM</label>
+                                        <input class="form-control" name="Pending_Amount" #Pending_Amount="ngModel" [(ngModel)]="objPayment.Pending_Amount" placeholder="Available Balance as per BOM" CompacctDigitonly="true" disabled>
                                     </div>
 
                                 </div>
+
                                 <div class="form-group">
+
                                     <div class="col-sm-4">
+                                        <div class="checkBox" style="margin-top: 25px;">
+                                            <p-checkbox [(ngModel)]="Purchaseckeck" name="Purchckeck" #Purchckeck="ngModel" binary="true"></p-checkbox>&nbsp;
+                                            <label>Local Purchase</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4" *ngIf="Purchaseckeck">
+                                        <label class="control-label">Required Amount<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Required_Amount" #Required_Amount="ngModel" [(ngModel)]="objPayment.Required_Amount" CompacctDigitonly="true" (ngModelChange)="AmountCheck()" placeholder="Required Amount" [ngClass]="{'clearance': (PaymentFormSubmit || RequiredAmountValid) && (Required_Amount?.errors?.required || flag) }"
+                                            [required]="true">
+                                    </div>
+
+                                    <div class="col-sm-4" *ngIf="Purchaseckeck">
+                                        <label class="control-label">Product Description</label>
+                                        <textarea class="form-control" name="Product_Description" [(ngModel)]="objPayment.Payment_Product_Description" rows="2" placeholder="Product Description"></textarea>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4" *ngIf="Purchaseckeck">
+                                        <label class="control-label">Previous Status</label>
+                                        <input class="form-control" name="Previous_Status" #Previous_Status="ngModel" [(ngModel)]="objPayment.Previous_Status" placeholder="Previous Status">
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="Purchaseckeck">
                                         <label class="control-label">Present Status</label>
-                                        <input class="form-control" name="Present_Status" #Present_Status="ngModel" [(ngModel)]="objPayment" placeholder="Present Status">
+                                        <input class="form-control" name="Present_Status" #Present_Status="ngModel" [(ngModel)]="objPayment.Present_Status" placeholder="Present Status">
                                     </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Pending Amount</label>
-                                        <input class="form-control" name="Pending_Amount" #Pending_Amount="ngModel" [(ngModel)]="objPayment" placeholder="Pending Amount">
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Required Amount</label>
-                                        <input class="form-control" name="Required_Amount" #Required_Amount="ngModel" [(ngModel)]="objPayment" placeholder="Required Amount">
-                                    </div>
+
                                 </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
+                                <!-- <div class="col-sm-4">
                                         <label class="control-label">Purchase Order No.<sup class="text-danger">*</sup></label>
-                                        <p-multiSelect [options]="" [(ngModel)]="objPayment" [styleClass]="'compacct-multiselect'" name="Purchase_Order" #Purchase_Order="ngModel"></p-multiSelect>
-                                    </div>
-                                </div>
+                                        <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
+                                            <p-checkbox name="Purchckeck" #Purchckeck="ngModel" [(ngModel)]="Purchaseckeck" [style]="{'margin':'4px 3px'}" aria-invalid="false" binary="true" (onChange)="checkboxChange()"></p-checkbox>
+                                            <label><small>Local Purchase</small></label>
+                                        </div>
+                                        <p-multiSelect [options]="PurchaseList" [(ngModel)]="selectedPurchase" [styleClass]="'compacct-multiselect'" name="Purchase_Order" #Purchase_Order="ngModel" [ngClass]="{'clearance': PaymentFormSubmit && Purchase_Order.errors?.required}" required [disabled]="Purchaseckeck"></p-multiSelect>
+                                    </div> -->
+
+
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" (click)="SavePaymentMaster(PaymentForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <button class="btn btn-primary pull-right" *ngIf="Purchaseckeck" (click)="SavePaymentMaster(PaymentForm.form.valid)" id="load" [disabled]="Spinner">
                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                                                    </button>
+                                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save Payment Requisition
+                                        </button>
                                 </div>
                             </form>
-                        </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon glyphicon-file">
+                            <div class=" no-padding" *ngIf="!Purchaseckeck">
+                                <p-table [value]="GridList" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['PO_NO','PO_Date','PO_Value','Prev_Approved_Payment','Pay_Done_Amount', 'Pending_Approve', 'Current_Due', 'Total_Invoice', 'Total_Invoice_value']"
+                                    [rowHover]="true" #dt10>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt10.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
 
-                        </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon glyphicon-file">
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap>PO NO </th>
+                                            <th nowrap>PO Date</th>
+                                            <th nowrap>PO Value</th>
+                                            <th nowrap>Previous Approved Payment</th>
+                                            <th nowrap>Pay Done Amount</th>
+                                            <th nowrap>Pending Approve</th>
+                                            <th nowrap>Current Due</th>
+                                            <th nowrap>Total Invoice</th>
+                                            <th nowrap>Total Invoice value </th>
 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <button class="btn btn-info" (click)="PaymentRequisitionAction(col)" id="load34">Select</button>
+                                            </td>
+                                            <td nowrap>{{col.PO_NO == 0 ? 0 : col.PO_NO }}</td>
+                                            <td nowrap>{{col.PO_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Value == 0 ? 0 : col.Value}}</td>
+                                            <td nowrap><a (click)="PrePayment(col, 'Prev_Approved_Payment')" style="cursor:Pointer ;">{{col.Prev_Approved_Payment == 0 ? 0 : col.Prev_Approved_Payment}}</a></td>
+                                            <td nowrap><a (click)="PrePayment(col, 'Pay_Done_Amount')" style="cursor:Pointer ;">{{col.Pay_Done_Amount == 0 ? 0 : col.Pay_Done_Amount}}</a></td>
+                                            <td nowrap><a (click)="PrePayment(col, 'Pending_Approve')" style="cursor:Pointer ;">{{col.Pending_Approve == 0 ? 0 : col.Pending_Approve}}</a></td>
+                                            <td nowrap style="font-weight: 800;color: red;">{{col.Current_Due == 0 ? 0 : col.Current_Due}}</td>
+                                            <td nowrap>{{col.Total_Invoice == 0 ? 0 : col.Total_Invoice}}</td>
+                                            <td nowrap>{{col.Total_Invoice_value ? 0 : col.Total_Invoice_value }}</td>
+
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="PendingForm" #PendingForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event,'PENDING APPROVAL')" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingSearchedList('PENDING APPROVAL')" id="load" [disabled]="seachSpinner">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class=" no-padding">
+                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Payment_Requisition_ID','Project_Description','Site_Description','Budget_Group_Name','Sub_Ledger_Name', 'PR_Date', 'Status', 'Approver_One_Status', 'Approver_Two_Status', 'Created_By_Name', 'Payment_Voucher_No']"
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap> Requisition No</th>
+                                            <th nowrap> Date</th>
+                                            <th nowrap>Amount</th>
+                                            <th nowrap>Vendor</th>
+                                            <th nowrap>Project </th>
+                                            <th nowrap>Site </th>
+                                            <th nowrap>Budget Group Name</th>
+                                            <th nowrap>Status</th>
+                                            <th nowrap>Finance Approve Status</th>
+                                            <th nowrap> Management Approve Status</th>
+                                            <th nowrap>Created By </th>
+                                            <th nowrap>Payment Voucher No</th>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="view(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> view
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Action_Visible == 'Y'">
+                                                            <a (click)="Approve(col)">
+                                                                <i class="fa fa-check"></i> Approve/Disapprove
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td style="text-align: center ;" nowrap>{{col.Payment_Requisition_ID ? col.Payment_Requisition_ID : '-' }}</td>
+                                            <td nowrap>{{col.PR_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Required_Amount ? col.Required_Amount : '-'}}</td>
+                                            <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td nowrap>{{col.Project_Description ? col.Project_Description : '-'}}</td>
+                                            <td nowrap>{{col.Site_Description ? col.Site_Description : '-'}}</td>
+                                            <td nowrap>{{col.Budget_Group_Name ? col.Budget_Group_Name : '-'}}</td>
+                                            <td nowrap>{{col.Status ? col.Status : '-'}}</td>
+                                            <td nowrap>{{col.Approver_One_Status ? col.Approver_One_Status : '-'}}</td>
+                                            <td nowrap>{{col.Approver_Two_Status ? col.Approver_Two_Status : '-'}}</td>
+                                            <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
+                                            <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-check">
+                            <form name="ApprovedForm" #ApprovedForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event,'APPROVED')" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetApproveSearchedList('APPROVED')" id="load2" [disabled]="seachSpinner">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class=" no-padding">
+                                <p-table [value]="Searchedlist2" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Payment_Requisition_ID','Project_Description','Site_Description','Budget_Group_Name','Sub_Ledger_Name', 'PR_Date', 'Status', 'Approver_One_Status', 'Approver_Two_Status', 'Created_By_Name', 'Payment_Voucher_No']"
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap>Requisition No</th>
+                                            <th nowrap> Date</th>
+                                            <th nowrap>Amount</th>
+                                            <th nowrap>Vendor</th>
+                                            <th nowrap>Project</th>
+                                            <th nowrap>Site </th>
+                                            <th nowrap>Budget Group Name</th>
+                                            <th nowrap>Status</th>
+                                            <th nowrap>Finance Approve Status</th>
+                                            <th nowrap> Management Approve Status</th>
+                                            <th nowrap>Created By </th>
+                                            <th nowrap>Payment Voucher No</th>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="view(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> view
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li>
+                                                            <a (click)="PrintBill(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print Page1
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintBill2(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print Page2
+                                                            </a>
+                                                        </li> -->
+                                                    </ul>
+                                                </div>
+                                            </td>
+
+                                            <td nowrap style="text-align: center;">{{col.Payment_Requisition_ID ? col.Payment_Requisition_ID : '-' }}</td>
+                                            <td nowrap>{{col.PR_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Required_Amount ? col.Required_Amount : '-'}}</td>
+                                            <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td nowrap>{{col.Project_Description ? col.Project_Description : '-'}}</td>
+                                            <td nowrap>{{col.Site_Description ? col.Site_Description : '-'}}</td>
+                                            <td nowrap>{{col.Budget_Group_Name ? col.Budget_Group_Name : '-'}}</td>
+                                            <td nowrap>{{col.Status ? col.Status : '-'}}</td>
+                                            <td nowrap>{{col.Approver_One_Status ? col.Approver_One_Status : '-'}}</td>
+                                            <td nowrap>{{col.Approver_Two_Status ? col.Approver_Two_Status : '-'}}</td>
+                                            <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
+                                            <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-remove">
+                            <form name="DisapprovedForm" #DisapprovedForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event,'DISAPPROVED')" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetDisapproveSearchedList('DISAPPROVED')" id="load3" [disabled]="seachSpinner">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class=" no-padding">
+                                <p-table [value]="Searchedlist3" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Payment_Requisition_ID','Project_Description','Site_Description','Budget_Group_Name','Sub_Ledger_Name', 'PR_Date', 'Status', 'Approver_One_Status', 'Approver_Two_Status', 'Created_By_Name', 'Payment_Voucher_No']"
+                                    [rowHover]="true" #dt3>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap>Requisition No</th>
+                                            <th nowrap> Date</th>
+                                            <th nowrap>Amount</th>
+                                            <th nowrap>Vendor</th>
+                                            <th nowrap>Project </th>
+                                            <th nowrap>Site </th>
+                                            <th nowrap>Budget Group Name</th>
+                                            <th nowrap>Status</th>
+                                            <th nowrap>Finance Approve Status</th>
+                                            <th nowrap> Management Approve Statust</th>
+                                            <th nowrap>Created By </th>
+                                            <th nowrap>Payment Voucher No</th>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="view(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> view
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li>
+                                                            <a (click)="PrintBill(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print Page1
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintBill2(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print Page2
+                                                            </a>
+                                                        </li> -->
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td nowrap align="center">{{col.Payment_Requisition_ID ? col.Payment_Requisition_ID : '-' }}</td>
+                                            <td nowrap>{{col.PR_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Required_Amount ? col.Required_Amount : '-'}}</td>
+                                            <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td nowrap>{{col.Project_Description ? col.Project_Description : '-'}}</td>
+                                            <td nowrap>{{col.Site_Description ? col.Site_Description : '-'}}</td>
+                                            <td nowrap>{{col.Budget_Group_Name ? col.Budget_Group_Name : '-'}}</td>
+                                            <td nowrap>{{col.Status ? col.Status : '-'}}</td>
+                                            <td nowrap>{{col.Approver_One_Status ? col.Approver_One_Status : '-'}}</td>
+                                            <td nowrap>{{col.Approver_Two_Status ? col.Approver_Two_Status : '-'}}</td>
+                                            <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
+                                            <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
                         </p-tabPanel>
                     </p-tabView>
                 </div>
@@ -117,3 +468,310 @@
         </div>
     </div>
 </div>
+
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '400px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="ViewForm" #ViewForm="ngForm" novalidate>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Vendor</label>
+                <div class="label-t">{{ViewListObj?.Sub_Ledger_Name ? ViewListObj?.Sub_Ledger_Name : '-' }}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Payment Voucher No</label>
+                <div class="label-t">{{ViewListObj?.Payment_Voucher_No ? ViewListObj?.Payment_Voucher_No : '-' }}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Po No</label>
+                <div class="label-t">{{ViewListObj?.PO_NO ? ViewListObj?.PO_NO : '-' }}</div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Po Date</label>
+                <div class="label-t">{{ViewListObj?.PO_Date ? (ViewListObj?.PO_Date | date: "dd/MMM/yyyy"): '-' }}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Po Value</label>
+                <div class="label-t">{{ViewListObj?.PO_Value ? ViewListObj?.PO_Value : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Previous Approved Payment</label>
+                <div class="label-t">{{ViewListObj?.Prev_Approved_Payment ? ViewListObj?.Prev_Approved_Payment : 0}}</div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Pay Done Amount</label>
+                <div class="label-t">{{ViewListObj?.Pay_Done_Amount ? ViewListObj?.Pay_Done_Amount : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Pending Approve</label>
+                <div class="label-t">{{ViewListObj?.Pending_Approve ? ViewListObj?.Pending_Approve : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Current Due</label>
+                <div class="label-t">{{ViewListObj?.Current_Due ? ViewListObj?.Current_Due : 0}}</div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Total Invoice</label>
+                <div class="label-t">{{ViewListObj?.Total_Invoice ? ViewListObj?.Total_Invoice : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Total Invoice value</label>
+                <div class="label-t">{{ViewListObj?.Total_Invoice_value ? ViewListObj?.Total_Invoice_value : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Required Amount</label>
+                <div class="label-t">{{ViewListObj?.Required_Amount ? ViewListObj?.Required_Amount : 0}}</div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Total BOM Amount</label>
+                <div class="label-t">{{ViewListObj?.Total_BOM_Amount ? ViewListObj?.Total_BOM_Amount : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Total Used Amount</label>
+                <div class="label-t">{{ViewListObj?.Total_Used_Amount ? ViewListObj?.Total_Used_Amount : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Available Balance As Per BOM</label>
+                <div class="label-t">{{ViewListObj?.Pending_Amount ? ViewListObj?.Pending_Amount : 0}}</div>
+            </div>
+
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Project Description</label>
+                <div class="label-t">{{ViewListObj?.Project_Description ? ViewListObj?.Project_Description : '-'}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Site Description</label>
+                <div class="label-t">{{ViewListObj?.Site_Description ? ViewListObj?.Site_Description : '-'}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Budget Group Name</label>
+                <div class="label-t">{{ViewListObj?.Budget_Group_Name ? ViewListObj?.Budget_Group_Name : '-'}}</div>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="ViewProTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'Approve/Disapprove'" [appendTo]="'body'" [visible]="ViewProTypeModal2" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '400px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <form name="ApproveForm" #ApproveForm="ngForm" novalidate>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Vendor</label>
+                <div class="label-t">{{ApproveListobj?.Sub_Ledger_Name ? ApproveListobj?.Sub_Ledger_Name : '-' }}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Payment Voucher No</label>
+                <div class="label-t">{{ApproveListobj?.Payment_Voucher_No ? ApproveListobj?.Payment_Voucher_No : '-' }}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Po No</label>
+                <div class="label-t">{{ApproveListobj?.PO_NO ? ApproveListobj?.PO_NO : '-' }}</div>
+            </div>
+
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Po Date</label>
+                <div class="label-t">{{ApproveListobj?.PO_Date ? (ApproveListobj?.PO_Date | date: "dd/MMM/yyyy") : '-' }}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Po Value</label>
+                <div class="label-t">{{ApproveListobj?.PO_Value ? ApproveListobj?.PO_Value : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Previous Approved Payment</label>
+                <div class="label-t">{{ApproveListobj?.Prev_Approved_Payment ? ApproveListobj?.Prev_Approved_Payment : 0}}</div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Pay Done Amount</label>
+                <div class="label-t">{{ApproveListobj?.Pay_Done_Amount ? ApproveListobj?.Pay_Done_Amount : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Pending Approve</label>
+                <div class="label-t">{{ApproveListobj?.Pending_Approve ? ApproveListobj?.Pending_Approve : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Current Due</label>
+                <div class="label-t">{{ApproveListobj?.Current_Due ? ApproveListobj?.Current_Due : 0}}</div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Total Invoice</label>
+                <div class="label-t">{{ApproveListobj?.Total_Invoice ? ApproveListobj?.Total_Invoice : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Total Invoice value</label>
+                <div class="label-t">{{ApproveListobj?.Total_Invoice_value ? ApproveListobj?.Total_Invoice_value : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Required Amount</label>
+                <div class="label-t">{{ApproveListobj?.Required_Amount ? ApproveListobj?.Required_Amount : 0}}</div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Total BOM Amount</label>
+                <div class="label-t">{{ApproveListobj?.Total_BOM_Amount ? ApproveListobj?.Total_BOM_Amount : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Total Used Amount</label>
+                <div class="label-t">{{ApproveListobj?.Total_Used_Amount ? ApproveListobj?.Total_Used_Amount : 0}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Available Balance As Per BOM</label>
+                <div class="label-t">{{ApproveListobj?.Pending_Amount ? ApproveListobj?.Pending_Amount : 0}}</div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Project Description</label>
+                <div class="label-t">{{ApproveListobj?.Project_Description ? ApproveListobj?.Project_Description : '-'}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Site Description</label>
+                <div class="label-t">{{ApproveListobj?.Site_Description ? ApproveListobj?.Site_Description : '-'}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Budget Group Name</label>
+                <div class="label-t">{{ApproveListobj?.Budget_Group_Name ? ApproveListobj?.Budget_Group_Name : '-'}}</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary " (click)="GetApprove()" id="load11" style="margin-top:65px;" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-ok"></span>Approve
+                            </button>
+        <button class="btn btn-primary " (click)="GetDisApprove()" id="load12" style="margin-top:65px; margin-left: 55px;" [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!Spinner" class="glyphicon glyphicon-remove"></span>Disapprove
+                        </button>
+
+    </form>
+    <p-footer>
+        <button type="button" (click)="ViewProTypeModal2 = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog [header]="popupTitle" [appendTo]="'body'" [visible]="ViewProTypeModal3" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '58%', minWidth: '400px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="PrePaymentList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th nowrap>Payment Requisition No.</th>
+                    <th nowrap>Date</th>
+                    <th nowrap>Amount</th>
+                    <th nowrap>Status</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td nowrap>{{col.Payment_Requisition_ID == 0 ? 0 : col.Payment_Requisition_ID }}</td>
+                    <td nowrap>{{col.PR_Date | date: "dd/MMM/yyyy"}}</td>
+                    <td nowrap>{{col.Required_Amount == 0 ? 0 : col.Required_Amount }}</td>
+                    <td nowrap>{{col.Status ? col.Status : '-'}}</td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewProTypeModal3 = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'Required Amount'" [appendTo]="'body'" [visible]="PaymentRequisitionActionPOPUP" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '58%', minWidth: '400px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-3">
+                <label class="control-label">PO NO</label>
+                <div class="label-t">{{PaymentRequisitionObj?.PO_NO ? PaymentRequisitionObj?.PO_NO : 0 }}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">PO Date</label>
+                <div class="label-t">{{PaymentRequisitionObj?.PO_Date ? (PaymentRequisitionObj?.PO_Date | date: "dd/MMM/yyyy") : 0 }}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">PO Value</label>
+                <div class="label-t">{{PaymentRequisitionObj?.Value ? PaymentRequisitionObj?.Value : 0 }}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Previous Approved Payment</label>
+                <div class="label-t">{{PaymentRequisitionObj?.Prev_Approved_Payment ? PaymentRequisitionObj?.Prev_Approved_Payment : 0 }}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-3">
+                <label class="control-label">Pay Done Amount</label>
+                <div class="label-t">{{PaymentRequisitionObj?.Pay_Done_Amount ? PaymentRequisitionObj?.Pay_Done_Amount : 0 }}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Pending Approve</label>
+                <div class="label-t">{{PaymentRequisitionObj?.Pending_Approve ? PaymentRequisitionObj?.Pending_Approve : 0 }}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Current Due</label>
+                <div class="label-t">{{PaymentRequisitionObj?.Current_Due ? PaymentRequisitionObj?.Current_Due : 0 }}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Total Invoice</label>
+                <div class="label-t">{{PaymentRequisitionObj?.Total_Invoice ? PaymentRequisitionObj?.Total_Invoice : 0 }}</div>
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 5px;">
+            <div class="col-sm-3">
+                <label class="control-label">Total Invoice value</label>
+                <div class="label-t">{{PaymentRequisitionObj?.Total_Invoice_value ? PaymentRequisitionObj?.Total_Invoice_value : 0 }}</div>
+            </div>
+            <div class="col-sm-3"></div>
+            <div class="col-sm-3"></div>
+        </div>
+        <div style="margin: 5px;">
+            <hr class="box boxboxDivide-primary">
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Required Amount</label>
+                <input class="form-control" name="Required_Amount" #Required_Amount="ngModel" [(ngModel)]="RequiredAmount" placeholder="Required Amount" (ngModelChange)="ReqCheck()" [ngClass]="{'clearance': RequiredAmountSubmitted}">
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="saveReqPopUP(RequiredAmount)" label="Save Payment Requisition"></button>
+        <button type="button" (click)="PaymentRequisitionActionPOPUP = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>

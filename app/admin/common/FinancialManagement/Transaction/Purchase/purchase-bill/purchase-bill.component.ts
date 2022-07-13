@@ -139,6 +139,7 @@ export class PurchaseBillComponent implements OnInit {
   PendingGRNFormSubmitted = false;
   PendingGRNList = [];
   DynamicHeaderforPGRN = [];
+  deleteError = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -192,7 +193,7 @@ export class PurchaseBillComponent implements OnInit {
      this.clearProject();
      this.productaddSubmit = [];
      this.Spinner = false;
-     this.Godownlist = [];
+    //  this.Godownlist = [];
      this.POorderlist = [];
      this.ProductDetailslist = [];
      this.ObjProductInfo = new ProductInfo();
@@ -226,6 +227,7 @@ export class PurchaseBillComponent implements OnInit {
      this.AddTermList = [];
      this.ObjTerm = new Term();
     //  this.cleartotaltermamount();
+    this.deleteError = false;
    }
    getcompany(){
     const obj = {
@@ -366,7 +368,7 @@ export class PurchaseBillComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("costcenterList  ===",data);
       this.GodownList = data;
-      
+      this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
       // this.ObjPurChaseBill.Cost_Cen_ID = this.CostCenterList.length === 1 ? this.CostCenterList[0].Cost_Cen_ID : undefined;
       // this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // this.GetCosCenAddress();
@@ -1167,6 +1169,7 @@ GetGRNNoProlistdetails2(){
      this.compacctToast.add({
        key: "c",
        sticky: true,
+       closable: false,
        severity: "warn",
        summary: "Are you sure?",
        detail: "Confirm to proceed"
@@ -1397,8 +1400,25 @@ GetGRNNoProlistdetails2(){
            summary: "Purchase Bill ",
            detail: "Succesfully Delete"
          });
-         }
+         this.DocNo = undefined;
          this.GetSerarchPurBill(true);
+         }
+          
+        else {
+          this.onReject();
+          this.deleteError = true;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "c", 
+            sticky: true,
+            closable: false,
+            severity: "warn", // "info",
+            summary: data[0].Column1
+            // detail: data[0].Column1
+          });
+          this.DocNo = undefined;
+          this.GetSerarchPurBill(true);
+        }
         });
     }
    }
@@ -1406,6 +1426,7 @@ GetGRNNoProlistdetails2(){
     this.compacctToast.clear("c");
     this.Spinner = false;
     this.ngxService.stop();
+    this.deleteError = false;
   }
 
   // PENDING PURCHASE ORDER

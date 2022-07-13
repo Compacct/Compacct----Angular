@@ -70,6 +70,9 @@ export class MiclRequisitionComponent implements OnInit {
   deleteError = false
   @ViewChild("project", { static: false })
   ProjectInput: CompacctProjectComponent;
+  Save = false;
+  Del = false;
+
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -187,8 +190,111 @@ export class MiclRequisitionComponent implements OnInit {
    console.log("valid",valid);
    this.reqiFormSubmitted = true;
    this.validatation.required = true;
+   this.ngxService.start();
+   this.Save = false;
+   this.Del = false;
    if(valid && this.checkreq()){
      if(this.AddMaterialsList.length){
+      this.Save = true;
+      this.Del = false;
+      this.Spinner = true;
+      this.ngxService.start();
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+    //   let saveData:any = [];
+    //   let mgs = "";
+    //   if(this.ReqNo){
+ 
+    //   }
+    //   else{
+    //    mgs = "Save"
+    //     const consCenterFilter:any = this.costcenterList.filter((el:any)=> Number(el.Cost_Cen_ID) === Number(this.objreqi.Cost_Cen_ID))
+    //     this.AddMaterialsList.forEach((el:any)=>{
+    //     let save = {
+    //      Req_No: "A",
+    //      Req_Date: this.requi_Date ? this.DateService.dateConvert(new Date(this.requi_Date)) : new Date(),
+    //      Cost_Cen_ID: Number(this.objreqi.Cost_Cen_ID),
+    //      Cost_Cen_Name: consCenterFilter[0].Cost_Cen_Name,
+    //      Product_ID: Number(el.Product_ID),
+    //      Product_Description: el.Product_Description,
+    //      Req_Qty: Number(el.Req_Qty),
+    //      UOM: el.UOM,
+    //      Remarks: el.Remarks,
+    //      Created_By: el.Created_By,
+    //      Godown_ID: this.objreqi.Godown_ID,
+    //      Product_Type_ID : Number(el.Product_Type_ID),
+    //      Product_Type : el.Product_Type,
+    //      To_Cost_Cen_ID : Number(this.toCostCenter)
+    //     }
+    //     saveData.push(save)
+    //     })
+    //     console.log("Save Data",saveData);
+    //     const obj = {
+    //      "SP_String": "SP_Txn_Requisition",
+    //      "Report_Name_String": "Create_Requisition",
+    //      "Json_Param_String": JSON.stringify(saveData)
+   
+    //    }
+    //    this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
+    //      console.log("After Data",data)
+    //      this.docno = data[0].Column1;
+    //      if(data[0].Column1){
+    //         if(this.objproject.PROJECT_ID){
+    //           const projectSaveData = await this.SaveProject(data[0].Column1);
+    //           if(projectSaveData){
+    //             this.ngxService.stop();
+    //             this.compacctToast.clear();
+    //              this.compacctToast.add({
+    //              key: "compacct-toast",
+    //              severity: "success",
+    //              summary: "Requisition No: " +data[0].Column1,
+    //              detail: "Succesfully " + mgs
+    //            });
+    //           }
+    //         }
+    //         this.ngxService.stop();
+    //         this.compacctToast.clear();
+    //          this.compacctToast.add({
+    //          key: "compacct-toast",
+    //          severity: "success",
+    //          summary: "Requisition No: " +data[0].Column1,
+    //          detail: "Succesfully " + mgs
+    //        });
+          
+    //        // this.SaveNPrintBill();
+    //        this.Print(data[0].Column1)
+    //         this.clearData();
+    //         this.searchData(true);
+    //         this.tabIndexToView = 0;
+    //         } else{
+    //           this.compacctToast.add({
+    //           key: "compacct-toast",
+    //           severity: "error",
+    //           summary: "Warn Message",
+    //           detail: "Something Wrong"
+    //         });
+    //      }
+    //    })
+    //   }
+     }
+     else{
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+     }
+   }
+  }
+  onConfirmSave(){
       let saveData:any = [];
       let mgs = "";
       if(this.ReqNo){
@@ -264,16 +370,7 @@ export class MiclRequisitionComponent implements OnInit {
          }
        })
       }
-     }
-     else{
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-        summary: "Warn Message",
-        detail: "Error Occured "
-      });
-     }
-   }
+     
   }
   // checkreq(){
   //   let flg = false
@@ -328,6 +425,8 @@ export class MiclRequisitionComponent implements OnInit {
   }
   onReject(){
     this.compacctToast.clear("c");
+    this.Spinner = false;
+    this.ngxService.stop();
     this.deleteError = false;
   }
   getCostcenter(){
@@ -495,9 +594,13 @@ export class MiclRequisitionComponent implements OnInit {
   Active(col){
     console.log("col",col);
     this.can_popup = false;
+    this.Del = false;
+    this.Save = false;
      if(col.Req_No){
       this.act_popup = true;
       this.ReqNo = undefined;
+      this.Del = true;
+      this.Save = false;
        this.ReqNo = col.Req_No;
        this.compacctToast.clear();
        this.compacctToast.add({
@@ -510,23 +613,23 @@ export class MiclRequisitionComponent implements OnInit {
      }
 
   }
-  Cancel(col){
-    this.act_popup = false;
-     if(col.Req_No){
-      this.ReqNo = undefined;
-      this.ReqNo = col.Req_No;
-      this.can_popup = true;
-      this.compacctToast.clear();
-       this.compacctToast.add({
-         key: "c",
-         sticky: true,
-         severity: "warn",
-         summary: "Are you sure?",
-         detail: "Confirm to proceed"
-       });
+  // Cancel(col){
+  //   this.act_popup = false;
+  //    if(col.Req_No){
+  //     this.ReqNo = undefined;
+  //     this.ReqNo = col.Req_No;
+  //     this.can_popup = true;
+  //     this.compacctToast.clear();
+  //      this.compacctToast.add({
+  //        key: "c",
+  //        sticky: true,
+  //        severity: "warn",
+  //        summary: "Are you sure?",
+  //        detail: "Confirm to proceed"
+  //      });
        
-     }
-  }
+  //    }
+  // }
   onConfirm2(){
    if(this.ReqNo){
      const obj = {
@@ -555,9 +658,10 @@ export class MiclRequisitionComponent implements OnInit {
             this.compacctToast.add({
               key: "c", 
               sticky: true,
-              severity: "info",
-             // summary: data[0].Column1,
-              detail: data[0].Column1
+              closable: false,
+              severity: "warn", // "info",
+              summary: data[0].Column1,
+              // detail: data[0].Column1
             });
            this.ReqNo = undefined;
            this.searchData(true)
@@ -566,32 +670,32 @@ export class MiclRequisitionComponent implements OnInit {
       }
       //this.ParamFlaghtml = undefined;
   }
-  onConfirm(){
-     if(this.ReqNo){
-          const obj = {
-            "SP_String": "SP_Txn_Requisition",
-            "Report_Name_String": "Active_Requisition",
-            // "Report_Name_String": "Cancel_Requisition",
-            "Json_Param_String": JSON.stringify([{Req_No : this.ReqNo,Created_By : this.$CompacctAPI.CompacctCookies.User_ID}])
-          }
-          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-            // console.log("del Data===", data[0].Column1)
-            if (data[0].Column1 === "Done"){
-            this.onReject();
-            this.can_popup = false;
-              this.compacctToast.clear();
-              this.compacctToast.add({
-                key: "compacct-toast",
-                severity: "success",
-                summary: "Requisition No: " + this.ReqNo.toString(),
-                detail: "Succesfully Activated"  
-              });
-              this.ReqNo = undefined;   
-              this.searchData(true)
-            }
-          })
-        }
-    }
+  // onConfirm(){
+  //    if(this.ReqNo){
+  //         const obj = {
+  //           "SP_String": "SP_Txn_Requisition",
+  //           "Report_Name_String": "Active_Requisition",
+  //           // "Report_Name_String": "Cancel_Requisition",
+  //           "Json_Param_String": JSON.stringify([{Req_No : this.ReqNo,Created_By : this.$CompacctAPI.CompacctCookies.User_ID}])
+  //         }
+  //         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //           // console.log("del Data===", data[0].Column1)
+  //           if (data[0].Column1 === "Done"){
+  //           this.onReject();
+  //           this.can_popup = false;
+  //             this.compacctToast.clear();
+  //             this.compacctToast.add({
+  //               key: "compacct-toast",
+  //               severity: "success",
+  //               summary: "Requisition No: " + this.ReqNo.toString(),
+  //               detail: "Succesfully Activated"  
+  //             });
+  //             this.ReqNo = undefined;   
+  //             this.searchData(true)
+  //           }
+  //         })
+  //       }
+  //   }
   getPrint(obj) {  
     if (obj.Req_No) { 
     window.open('/Report/Crystal_Files/MICL/Txn_Requisition_Print.aspx?DocNo=' + obj.Req_No,

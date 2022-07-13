@@ -1,0 +1,523 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+          <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div> 
+            <div class="ui-g-6" >
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div> 
+             <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div> 
+        </div> 
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                             <form name="BrowseForm" #BrowseForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                             </div>
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]= "initDate">
+                                            </app-compacct-daterangepicker>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                            <label class="control-label">Cost center<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="costCenterList" 
+                                                            name="Costcenter" 
+                                                            [(ngModel)]="ObjBrowse.Cost_Cen_ID" 
+                                                            [showClear]="true" 
+                                                            [emptyFilterMessage]="' No Cost Cent Found'" 
+                                                            [filter]="true" filterBy="label,value.name" 
+                                                            [resetFilterOnHide]="true"
+                                                            [placeholder]="'Select Cost Cent'" 
+                                                            [virtualScroll]="true" 
+                                                            itemSize="30" 
+                                                            (onChange)="getStockPoint()" 
+                                                            [required]="true">
+                                                    </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="Stocklist" 
+                                                            name="Costcenter" 
+                                                            [(ngModel)]="ObjBrowse.Godown_ID" 
+                                                            [showClear]="true" 
+                                                            [emptyFilterMessage]="' No Stock Point Found'" 
+                                                            [filter]="true" filterBy="label,value.name" 
+                                                            [resetFilterOnHide]="true"
+                                                            [placeholder]="'Select Stock Point'" 
+                                                            [virtualScroll]="true" 
+                                                            itemSize="30" 
+                                                            [required]="true">
+                                                    </p-dropdown>
+                                        </div>
+                                  
+                                    <button class="btn btn-primary" (click)="GetSearchedList()" id="buttonserch"data-loading-text="<i class='fa fa-spinner fa-spin '></i> Searching">
+                                        <span class="glyphicon glyphicon-search"></span> Search
+                                    </button>
+                            </div>
+                               
+                            </form>
+                            <br>
+                               <div class="table-responsive no-padding">
+                                <p-table #dt [value]="Searchedlist"  
+                                [rows]="100" [rowHover]="true" 
+                                
+                                 [autoLayout]="true" sortMode="multiple" 
+                                 [rowsPerPageOptions]="[100,200,300]" 
+                                 [globalFilterFields]='DynamicHeader'
+                                [rowHover]="true">
+                                <ng-template pTemplate="caption">
+                                <div class="row">
+                                       <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div> 
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th *ngFor="let option of DynamicHeader | slice:2">{{option.replaceAll('_',' ')}}</th> 
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a (click)="EditVoucher(col)">
+                                                            <i class="fa fa-fw fa-pencil"></i> Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="DeleteVoucher(col)">
+                                                            <i class="fa fa-fw fa-trash"></i> Delete
+                                                        </a>
+                                                    </li>
+                                                  
+                                                </ul>
+                                            </div>
+                                        </td>
+                                         <ng-container *ngFor="let option of DynamicHeader | slice:2" data->
+                                            <td>{{col[option]}}</td>
+                                        </ng-container>
+                                    </tr>
+                                </ng-template>
+                                 <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                 </ng-template>
+                            </p-table>
+                               </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-hourglass">
+                            <form name="PandingForm" #PandingForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                             </div>
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]= "initDate">
+                                            </app-compacct-daterangepicker>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary" (click)="GetPandingSearch()" id="buttonserch"data-loading-text="<i class='fa fa-spinner fa-spin '></i> Searching">
+                                            <span class="glyphicon glyphicon-search"></span> Search
+                                        </button>
+                                    </div>
+                                </div>
+                                <div  class="form-group"*ngIf='SearchedlistPanding.length' style="padding:15px">
+                                    <fieldset class="col-md-12">
+                                        <legend>Filter</legend>
+                                        <div class="form-group" >
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Project Description<span class="text-danger"></span></label>
+                                              <p-multiSelect [options]="DistProject"  
+                                                itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                                [(ngModel)]="SelectedDistProject"
+                                                name="ProjectDescription"
+                                                (onChange)='FilterDist()'></p-multiSelect>
+                                            </div>
+                                             <div class="col-sm-4">
+                                              <label class="control-label">Site Description<span class="text-danger"></span></label>
+                                              <p-multiSelect [options]="DistSite"  
+                                                itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                                [(ngModel)]="SelectedDistSite"
+                                                name="SiteDescription"
+                                                (onChange)='FilterDist()'></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Budget Group Name<span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistBudgetGroup"  
+                                                  itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                                  [(ngModel)]="SelectedBudgetGroup" 
+                                                  name="BudgetGroupName"
+                                                  (onChange)='FilterDist()'></p-multiSelect>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Budget Sub Group Name<span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistBudgetSubGroup"  
+                                                  itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                                  [(ngModel)]="SelectedBudgetSubGroup"
+                                                  name="BudgetSubGroupName"
+                                                  (onChange)='FilterDist()'></p-multiSelect>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Work Details<span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistWorkDetails"  
+                                                  itemSize="30" [styleClass]="'compacct-multiselect'" 
+                                                  [(ngModel)]="SelectedDistWorkDetails"
+                                                  name="WorkDetails"
+                                                  (onChange)='FilterDist()'></p-multiSelect>
+                                              </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </form> 
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="SearchedlistPanding" [paginator]="SearchedlistPanding.length ? true : false"  
+                                [rows]="100" [rowHover]="true" 
+                                *ngIf='SearchedlistPanding.length'
+                                 [autoLayout]="true" sortMode="multiple" 
+                                 [rowsPerPageOptions]="[10,50,100,150]" 
+                                 [globalFilterFields]='DynamicHeader'
+                                [rowHover]="true">
+                                <ng-template pTemplate="caption">
+                                <div class="row">
+                                       <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div> 
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> 
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a (click)="createIssue(col)">
+                                                            <i class="fa fa-fw fa-pencil"></i> Create Issue
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="PrintBill(col)">
+                                                            <i class="fa fa-fw fa-print" aria-hidden="true"></i>Print
+                                                        </a>
+                                                    </li>
+                                                  
+                                                </ul>
+                                            </div>
+                                        </td>
+                                         <ng-container *ngFor="let option of DynamicHeader" data->
+                                            <td>{{col[option]}}</td>
+                                        </ng-container>
+                                    </tr>
+                                </ng-template>
+                                 <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                 </ng-template>
+                            </p-table>
+                               </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-floppy-save">
+                        <form name="creatChallan" #creatChallan="ngForm" novalidate >
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                            <label class="control-label">Issue Date<sup class="text-danger">*</sup></label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <ejs-datepicker 
+                                                [(value)]="DOC_Date"
+                                                [min]='voucherminDate'
+                                                [max] ='vouchermaxDate'
+                                                [format]="'dd/MMM/yyyy'"
+                                                [class]="validatation?.required && !DOC_Date ? 'clearance': ''" >
+                                                </ejs-datepicker>
+                                            </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="costCenterList" 
+                                                        name="Costcenter"
+                                                        #Costcenter="ngModel" 
+                                                        [(ngModel)]="objproject.Cost_Cen_ID" 
+                                                        [showClear]="true" 
+                                                        [emptyFilterMessage]="' No Cost Cent Found'" 
+                                                        [filter]="true" filterBy="label,value.name" 
+                                                        [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Cost Cent'" 
+                                                        [virtualScroll]="true"
+                                                        (onChange)="getStockPoint()" 
+                                                        itemSize="30" 
+                                                        [ngClass]="{'clearance':projectFromSubmit && Costcenter?.errors?.required}"
+                                                        required>
+                                                </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="Stocklist" 
+                                                        name="StockPoint" 
+                                                        #StockPoint="ngModel" 
+                                                        [(ngModel)]="objproject.Godown_ID" 
+                                                        [showClear]="true" 
+                                                        [emptyFilterMessage]="' No Cost Cent Found'" 
+                                                        [filter]="true" filterBy="label,value.name" 
+                                                        [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Stock Point'" 
+                                                        [virtualScroll]="true" 
+                                                        itemSize="30" 
+                                                        (onChange)="getButtomData()"
+                                                        [ngClass]="{'clearance':projectFromSubmit && StockPoint?.errors?.required}"
+                                                        required>
+                                                </p-dropdown>
+                                    </div>
+                                </div> 
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Project Details:</strong></h5>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Project<sup class="text-danger">*</sup></label>
+                                        <!-- <p-dropdown [options]="createList" 
+                                                        name="Project" 
+                                                        [(ngModel)]="objproject.Project_Description"
+                                                        [showClear]="true" 
+                                                        [emptyFilterMessage]="' No Project Found'" 
+                                                        [filter]="true" filterBy="label,value.name" 
+                                                        [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Project'" 
+                                                        [virtualScroll]="true" 
+                                                        itemSize="30" 
+                                                        [required]="true">
+                                                </p-dropdown> -->
+                                                <div class="label-t">{{createListObj?.Project_Description ? createListObj?.Project_Description : "-"}}</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Site<sup class="text-danger">*</sup></label>
+                                        <!-- <p-dropdown [options]="createList" 
+                                                        name="Site"
+                                                        [(ngModel)]="objproject.Site_Description" 
+                                                        [showClear]="true" 
+                                                        [emptyFilterMessage]="' No Site Found'" 
+                                                        [filter]="true" filterBy="label,value.name" 
+                                                        [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Site'" 
+                                                        [virtualScroll]="true" 
+                                                        itemSize="30" 
+                                                        [required]="true">
+                                                </p-dropdown> -->
+                                                <div class="label-t">{{createListObj.Site_Description ? createListObj.Site_Description : "-"}}</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Group<sup class="text-danger">*</sup></label>
+                                        <!-- <p-dropdown [options]="createList" 
+                                                        name="Group"
+                                                        [(ngModel)]="objproject.Budget_Group_Name" 
+                                                        [showClear]="true" 
+                                                        [emptyFilterMessage]="' No Group Found'" 
+                                                        [filter]="true" filterBy="label,value.name" 
+                                                        [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Group'" 
+                                                        [virtualScroll]="true" 
+                                                        itemSize="30" 
+                                                        [required]="true">
+                                                </p-dropdown> -->
+                                                <div class="label-t">{{createListObj.Budget_Group_Name ? createListObj.Budget_Group_Name : "-"}}</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Sub Group<sup class="text-danger">*</sup></label>
+                                        <!-- <p-dropdown [options]="createList" 
+                                                        name="SubGroup" 
+                                                        [(ngModel)]="objproject.Budget_Sub_Group_Name" 
+                                                        [showClear]="true" 
+                                                        [emptyFilterMessage]="' No Sub Group Found'" 
+                                                        [filter]="true" filterBy="label,value.name" 
+                                                        [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Sub Group'" 
+                                                        [virtualScroll]="true" 
+                                                        itemSize="30" 
+                                                        [required]="true">
+                                                </p-dropdown> -->
+                                                <div class="label-t">{{createListObj.Budget_Sub_Group_Name ? createListObj.Budget_Sub_Group_Name : "-"}}</div>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <label class="control-label">Work Detalis<sup class="text-danger">*</sup></label>
+                                      <!-- <p-dropdown [options]="createList" name="Work_Details"
+                                      [(ngModel)]="objproject.Work_Details" [showClear]="true"
+                                      [emptyFilterMessage]="' No Work Details Found'"
+                                      [filter]="true"
+                                      filterBy="label,value.name" [placeholder]="'Select Work Details'" [virtualScroll]="true"
+                                      itemSize="30" #Work_Details="ngModel" [styleClass]="
+                                      projectFromSubmit && Work_Details.errors?.required? 'clearance': ''"
+                                      [required]="requField"
+                                      >
+                                    </p-dropdown> -->
+                                    <div class="label-t">{{createListObj.Work_Details ? createListObj.Work_Details : "-"}}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Requisition Details:</strong></h5>
+                                    <div class="col-sm-5">
+                                        <label class="control-label">Requisition No.<sup class="text-danger">*</sup></label>
+                                                <!-- <p-dropdown [options]="createList" 
+                                                        name="Requisition" 
+                                                        [(ngModel)]="objproject.Req_No" 
+                                                        [showClear]="true" 
+                                                        [emptyFilterMessage]="' No Requisition No. Found'" 
+                                                        [filter]="true" filterBy="label,value.name" 
+                                                        [resetFilterOnHide]="true"
+                                                        [placeholder]="'Select Requisition No.'" 
+                                                        [virtualScroll]="true" 
+                                                        itemSize="30" 
+                                                        [required]="true">
+                                                </p-dropdown> -->
+                                                <div class="label-t">{{createListObj.Req_No ? createListObj.Req_No : "-"}}</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Requisition Date<sup class="text-danger">*</sup></label>
+                                        <!-- <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <ejs-datepicker 
+                                            [(value)]="requi_Date"
+                                            [min]='voucherminDate'
+                                            [max] ='vouchermaxDate'
+                                            [format]="'dd/MMM/yyyy'"
+                                            [class]="validatation?.required && !requi_Date ? 'clearance': ''" >
+                                            </ejs-datepicker>
+                                        </div> -->
+                                        <div class="label-t">{{createListObj.Req_Date ? createListObj.Req_Date : "-"}}</div>
+                                    </div>
+                                        <div class="col-sm-3"></div>
+                                
+                                </div>        
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Dispatch Details:</strong></h5>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Delivered By<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"placeholder="Delivered By"name="Delivered"
+                                        #Delivered ="ngModel"
+                                        [(ngModel)]="objproject.Delivery_By"
+                                        [ngClass]="{'clearance': projectFromSubmit && Delivered?.errors?.required}"
+                                        required>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                                        <textarea class="form-control"name="Remarks"
+                                        #Remarks ="ngModel"[(ngModel)]="objproject.Remarks"></textarea>
+                                    </div>
+                                </div>    
+                      </form>
+                        <br>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr style="background-color:#3c8dbc;color:white">
+                                            <th>Product Type</th>
+                                            <th>Product Description</th>
+                                            <th>UOM</th>
+                                            <th style="width: 12%;">Requisition QTY</th>
+                                            <th>Batch No</th>
+                                            <th style="width: 11%;">Batch QTY</th>
+                                            <th style="width: 15%;">Issue QTY</th>
+                                       </tr>
+                                  </thead>
+                                   <tbody>
+                                    <tr *ngFor="let optt of buttonList">
+                                        <td>{{optt.Product_Type}}</td>
+                                        <td>{{optt.Product_Description}}</td>
+                                        <td>{{optt.UOM}}</td>
+                                        <td>{{optt.Ori_Req_Qty}}</td>
+                                        <td>{{optt.Batch_No}}</td>
+                                        <td>{{getToFix(optt.Batch_Qty)}}</td>
+                                        <td>
+                                            <input class="form-control"  CompacctDigitonly="true" [name]="optt.Product_ID" CompacctDigitonly="true"
+                                            [(ngModel)]="optt.Del_Qty" (ngModelChange)="GetTotalIssue()">
+                                        </td>
+                                    </tr>
+                                   <tr *ngIf="buttonList.length" >
+                                        <td colspan="5"></td>
+                                        <td  nowrap colspan="1" style="text-align: left; font-weight: 600;"><span>Total Batch QTY :</span>{{GetTotalbatch()}}</td>
+                                        <td  nowrap colspan="1" style="text-align: left; font-weight: 600;"><span>Total Issue QTY :</span>{{DelQtyTotal}}</td>
+                                    </tr>
+                                  </tbody> 
+                                </table>
+                            </div>           
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right"  id="load" (click)="saveData(creatChallan.form.valid)"   [disabled]=" Spinner">
+                                                <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                        </button>
+                            </div>
+                        
+                        </p-tabPanel>
+                      
+             </p-tabView>  
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+

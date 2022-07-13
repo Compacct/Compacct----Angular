@@ -58,6 +58,10 @@ export class GrnComponent implements OnInit {
   PendingRDBFormSubmitted = false;
   PendingRDBList = [];
   DynamicHeaderforPRDB = [];
+  deleteError = false;
+  Save = false;
+  Del = false;
+
 
   constructor(
     private Header: CompacctHeader,
@@ -111,6 +115,9 @@ export class GrnComponent implements OnInit {
      this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      this.GetGodown();
+     this.deleteError = false;
+     this.SENo = undefined;
+     this.SE_No_Date = undefined;
    }
    getcompany(){
     const obj = {
@@ -398,7 +405,89 @@ export class GrnComponent implements OnInit {
     this.Spinner = true;
     this.GRN2FormSubmitted = true;
     this.ngxService.start();
+    this.Save = false;
+    this.Del = false;
     if (valid && this.productaddSubmit.length) {
+      this.Save = true;
+      this.Del = false;
+      this.Spinner = true;
+      this.ngxService.start();
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+    // const obj = {
+    //   "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+    //   "Report_Name_String" : "Create_BL_Txn_Purchase_Challan_GRN",
+    //  "Json_Param_String": this.DataForSaveProduct()
+
+    // }
+    // this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //   console.log(data);
+    //   var tempID = data[0].Column1;
+    //   if(data[0].Column1){
+    //     this.compacctToast.clear();
+    //     //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+    //     this.compacctToast.add({
+    //      key: "compacct-toast",
+    //      severity: "success",
+    //      summary: "Return_ID  " + tempID,
+    //      detail: "Succesfully Saved" //+ mgs
+    //    });
+    //    this.PrintPGRN(data[0].Column1);
+    //    this.ObjGRN1 = new GRN1();
+    //    this.GRNFormSubmitted = false;
+    //    this.productaddSubmit = [];
+    //    this.ObjGRN2 = new GRN2;
+    //    this.GRN2FormSubmitted = false;
+    //    this.PODate = new Date();
+    //    this.podatedisabled = true;
+    //    this.Spinner = false;
+    //    this.Godownlist = [];
+    //    this.RDBNolist = [];
+    //    this.ProductDetailslist = [];
+    //    this.ngxService.stop();
+    //    this.GetSearchedlist(true);
+    //    this.GetPendingRDB(true);
+    //    this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    //    this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    //    this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    //    this.GetGodown();
+    //    this.deleteError = false
+
+    //   } 
+    //   else{
+    //     this.Spinner = false;
+    //     this.ngxService.stop();
+    //     this.compacctToast.clear();
+    //     this.compacctToast.add({
+    //       key: "compacct-toast",
+    //       severity: "error",
+    //       summary: "Warn Message",
+    //       detail: "Error Occured "
+    //     });
+    //   }
+    // })
+    }
+    else{
+      this.ngxService.stop();
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+
+   }
+   onConfirmSave(){
     const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
       "Report_Name_String" : "Create_BL_Txn_Purchase_Challan_GRN",
@@ -436,6 +525,9 @@ export class GrnComponent implements OnInit {
        this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
        this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
        this.GetGodown();
+       this.deleteError = false;
+       this.SENo = undefined;
+       this.SE_No_Date = undefined;
 
       } 
       else{
@@ -450,19 +542,6 @@ export class GrnComponent implements OnInit {
         });
       }
     })
-    }
-    else{
-      this.ngxService.stop();
-      this.Spinner = false;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-        summary: "Warn Message",
-        detail: "Error Occured "
-      });
-    }
-
    }
    GetDataforUpdate(){
   //    this.EditList = [];
@@ -569,7 +648,11 @@ export class GrnComponent implements OnInit {
    }
    Delete(data){
     this.doc_no = undefined;
+    this.Del = false;
+    this.Save = false;
     if (data.GRN_No) {
+      this.Del = true;
+      this.Save = false;
      this.doc_no = data.GRN_No;
      this.compacctToast.clear();
      this.compacctToast.add({
@@ -581,7 +664,7 @@ export class GrnComponent implements OnInit {
      });
    }
    }
-   onConfirm(){
+   onConfirmDel(){
       const objj = {
        "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
        "Report_Name_String": "Delete_BL_Txn_Purchase_Challan_GRN",
@@ -589,7 +672,7 @@ export class GrnComponent implements OnInit {
       }
       this.GlobalAPI.getData(objj).subscribe((data:any)=>{
         //var msg = data[0].Column1;
-        if (data[0].Column1){
+        if (data[0].Column1 === 'Done'){
           //this.onReject();
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -598,21 +681,32 @@ export class GrnComponent implements OnInit {
             summary: "Doc No.: " + this.doc_no.toString(),
             detail: "Succefully Deleted"
           });
+          this.doc_no = undefined;
           this.GetSearchedlist(true);
         }
+        
         else {
+          this.onReject();
+          this.deleteError = true;
           this.compacctToast.clear();
           this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Error Occured "
+            key: "c", 
+            sticky: true,
+            closable: false,
+            severity: "warn", // "info",
+            summary: data[0].Column1,
+            // detail: data[0].Column1
           });
+          this.doc_no = undefined;
+          this.GetSearchedlist(true);
         }
       })
    }
   onReject(){
    this.compacctToast.clear("c");
+   this.Spinner = false;
+   this.ngxService.stop();
+   this.deleteError = false;
   }
   getDateFormat(dateValue:any){
    return  dateValue ? this.DateService.dateConvert(dateValue) : "-"

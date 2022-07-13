@@ -173,14 +173,14 @@ export class MiclDispatchChallanComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE", "Pending Indent"];
+    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
     this.Header.pushHeader({
-      Header: "Dispatch Challan",
-      Link: "Material Management -> Outward -> Dispatch Challan"
+      Header: "Issue Material",
+      Link: "Material Management -> Outward -> Issue Material"
     });
     this.GetFromCostcenter();
     // this.GetFromGodown();
@@ -192,7 +192,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "Pending Indent"];
+    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK"];
     this.brandInput = false ;
     this.buttonname = "Save";
     //this.ObjBrowseData = new BrowseData ()

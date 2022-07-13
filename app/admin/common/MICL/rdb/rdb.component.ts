@@ -63,6 +63,9 @@ export class RdbComponent implements OnInit {
   PendingPOFormSubmitted = false;
   PendingPOList = [];
   DynamicHeaderforPPO = [];
+  deleteError = false;
+  Save = false;
+  Del = false;
 
    constructor(
     private $http: HttpClient,
@@ -118,6 +121,7 @@ export class RdbComponent implements OnInit {
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+    this.deleteError = false
   }
   GetAllData(valid){
     this.ngxService.start();
@@ -555,7 +559,87 @@ export class RdbComponent implements OnInit {
     this.Spinner = true;
     this.RDBFormSubmit2 = true;
     this.ngxService.start();
+    this.Save = false;
+    this.Del = false;
     if (valid && this.RDBListAdd.length) {
+      this.Save = true;
+      this.Del = false;
+      this.Spinner = true;
+      this.ngxService.start();
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+    // const obj = {
+    //   "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+    //   "Report_Name_String":"Create_BL_Txn_Purchase_Challan_RDB",
+    //  "Json_Param_String": this.DataForSaveProduct()
+
+    // }
+    // this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //   console.log(data);
+    //   var tempID = data[0].Column1;
+    //   if(data[0].Column1){
+    //     this.compacctToast.clear();
+    //     //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+    //     this.compacctToast.add({
+    //      key: "compacct-toast",
+    //      severity: "success",
+    //      summary: "Return_ID  " + tempID,
+    //      detail: "Succesfully Saved" //+ mgs
+    //    });
+    //           this.Printrdb(data[0].Column1);
+    //           this.ObjRdb = new RDB();
+    //           this.ObjRdb1 = new RDB1();
+    //           this.RDBListAdd = [];
+    //           this.Spinner = false;
+    //           this.objRdb2 = new RDB2()
+    //           this.RDBFormSubmit2 = false;
+    //           this.RDB_Date = new Date();
+    //           this.SE_Date = new Date();
+    //           this.PO_Doc_Date = new Date();
+    //           this.GetAllData(true);
+    //           this.GetPendingPO(true);
+    //           this.ngxService.stop();
+              
+    //           this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    //           this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    //           this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    //           this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;  
+    //           this.deleteError = false        
+    //   } 
+    //   else{
+    //     this.Spinner = false;
+    //     this.ngxService.stop();
+    //     this.compacctToast.clear();
+    //     this.compacctToast.add({
+    //       key: "compacct-toast",
+    //       severity: "error",
+    //       summary: "Warn Message",
+    //       detail: "Something Wrong"
+    //     });
+    //   }
+    // })
+    }
+    else{
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
+    }
+
+   }
+   onConfirmSave(){
     const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
       "Report_Name_String":"Create_BL_Txn_Purchase_Challan_RDB",
@@ -591,7 +675,8 @@ export class RdbComponent implements OnInit {
               this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-              this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;          
+              this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;  
+              this.deleteError = false        
       } 
       else{
         this.Spinner = false;
@@ -605,23 +690,14 @@ export class RdbComponent implements OnInit {
         });
       }
     })
-    }
-    else{
-      this.Spinner = false;
-      this.ngxService.stop();
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-        summary: "Warn Message",
-        detail: "Something Wrong"
-      });
-    }
-
    }
   Deleterdb(obj){
-  if(obj.RDB_No){
     this.RDBNo = undefined;
+    this.Del = false;
+    this.Save = false;
+  if(obj.RDB_No){
+    this.Del = true;
+    this.Save = false;
     this.RDBNo = obj.RDB_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -633,7 +709,7 @@ export class RdbComponent implements OnInit {
     });
    }
   }
-  onConfirm(){
+  onConfirmDel(){
     if(this.RDBNo){
       const obj = {
         "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
@@ -654,6 +730,21 @@ export class RdbComponent implements OnInit {
         this.RDBNo = undefined;
         this.GetAllData(true);
         }
+        else {
+          this.onReject();
+          this.deleteError = true;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "c", 
+            sticky: true,
+            closable: false,
+            severity: "warn", // "info",
+            summary: data[0].Column1
+            // detail: data[0].Column1
+          });
+          this.RDBNo = undefined;
+         this.GetAllData(true)
+        }
       })
     
     }
@@ -666,6 +757,9 @@ export class RdbComponent implements OnInit {
   }
   onReject() {
     this.compacctToast.clear("c");
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.deleteError = false;
   }
   Printrdb(DocNo) {
     if(DocNo) {
