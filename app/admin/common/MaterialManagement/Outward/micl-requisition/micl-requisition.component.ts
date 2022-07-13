@@ -39,6 +39,7 @@ export class MiclRequisitionComponent implements OnInit {
   AddMaterialsList = []
   requisitionmaterialFormSubmit = false;
   allRequDataList = [];
+  allRequDataListHeader:any = [];
   costcenterList = [];
   GodownList = [];
   GodownBrowseList:any =[]
@@ -584,12 +585,18 @@ export class MiclRequisitionComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.allRequDataList = data;
+        if(this.allRequDataList.length){
+          this.allRequDataListHeader =Object.keys(data[0])
+        }
         this.RequistionSearchFormSubmit = false;
         this.seachSpinner = false
         console.log("this.allRequDataList",this.allRequDataList);
       })
     }
  
+  }
+  headerChange(header:any){
+  return header === "Req_No" ? this.headerText+" No" : header.replaceAll('_',' ')
   }
   Active(col){
     console.log("col",col);

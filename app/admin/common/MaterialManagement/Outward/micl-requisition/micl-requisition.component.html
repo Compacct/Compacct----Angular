@@ -78,13 +78,14 @@
                                     </div>
                                 </div>
                             </form>
-                            <div class="table-responsive no-padding">
+                            <div class="no-padding">
                                 <p-table [value]="allRequDataList" 
-                                [paginator]="allRequDataList.length ? true : false" 
+                                [paginator]="allRequDataList.length ? true : false"
+                                *ngIf='allRequDataList.length'
                                 [rows]="100" [rowHover]="true" 
                                 [autoLayout]="true" sortMode="multiple" 
                                 [rowsPerPageOptions]="[100,200,300]" 
-                                [globalFilterFields]="['Req_No','Req_Date','To_Cost_Cen_Name','Stock_Point','Total_Requisition_Qty','Remarks']"
+                                [globalFilterFields]="allRequDataListHeader"
                                     [rowHover]="true" #dt2>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -97,10 +98,8 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>{{headerText}} No</th>
-                                            <th>Date</th>
-                                            <th>To Cost Center</th>
-                                            <th>Total Qty</th>
+                                            <th nowrap="nowrap" *ngFor="let option of allRequDataListHeader">{{headerChange(option)}}</th>
+                                            
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -131,10 +130,9 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <td>{{col.Req_No}}</td>
-                                            <td>{{col.Req_Date | date: "dd/MMM/yyyy"}}</td>
-                                            <td>{{col.To_Cost_Cen_Name}}</td>
-                                            <td>{{col.Total_Requisition_Qty}}</td>
+                                            <ng-container *ngFor="let option of allRequDataListHeader">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
