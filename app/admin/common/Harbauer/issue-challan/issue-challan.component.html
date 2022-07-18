@@ -7,13 +7,13 @@
             <p>{{message.detail}}</p>
         </div>
 
-          <div class="ui-g ui-fluid">
+          <div class="ui-g ui-fluid" *ngIf="showTost">
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div> 
-            <div class="ui-g-6" >
+            <!-- <div class="ui-g-6" >
                 <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
-            </div> 
+            </div>  -->
              <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
             </div> 
@@ -35,7 +35,7 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                              </div>
-                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]= "initDate">
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]= "initDate2">
                                             </app-compacct-daterangepicker>
                                             
                                         </div>
@@ -43,7 +43,8 @@
                                     <div class="col-sm-3">
                                             <label class="control-label">Cost center<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="costCenterList" 
-                                                            name="Costcenter" 
+                                                            name="Costcenter1" 
+                                                            #Costcenter1="ngModel" 
                                                             [(ngModel)]="ObjBrowse.Cost_Cen_ID" 
                                                             [showClear]="true" 
                                                             [emptyFilterMessage]="' No Cost Cent Found'" 
@@ -53,13 +54,15 @@
                                                             [virtualScroll]="true" 
                                                             itemSize="30" 
                                                             (onChange)="getStockPoint()" 
-                                                            [required]="true">
+                                                            [ngClass]="{'clearance':BrowseFromSubmit && Costcenter1?.errors?.required}"
+                                                            required>
                                                     </p-dropdown>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="Stocklist" 
-                                                            name="Costcenter" 
+                                                            name="stork" 
+                                                            #stork="ngModel" 
                                                             [(ngModel)]="ObjBrowse.Godown_ID" 
                                                             [showClear]="true" 
                                                             [emptyFilterMessage]="' No Stock Point Found'" 
@@ -68,11 +71,12 @@
                                                             [placeholder]="'Select Stock Point'" 
                                                             [virtualScroll]="true" 
                                                             itemSize="30" 
-                                                            [required]="true">
+                                                            [ngClass]="{'clearance':BrowseFromSubmit && stork?.errors?.required}"
+                                                            required>
                                                     </p-dropdown>
                                         </div>
                                   
-                                    <button class="btn btn-primary" (click)="GetSearchedList()" id="buttonserch"data-loading-text="<i class='fa fa-spinner fa-spin '></i> Searching">
+                                    <button class="btn btn-primary" (click)="GetSearchedListBrowse(BrowseForm.form.valid)" id="buttonserch"data-loading-text="<i class='fa fa-spinner fa-spin '></i> Searching">
                                         <span class="glyphicon glyphicon-search"></span> Search
                                     </button>
                             </div>
@@ -80,12 +84,12 @@
                             </form>
                             <br>
                                <div class="table-responsive no-padding">
-                                <p-table #dt [value]="Searchedlist"  
+                                <p-table #dt [value]="SearchedlistBrowse"  [paginator]="SearchedlistBrowse.length ? true : false"  
                                 [rows]="100" [rowHover]="true" 
-                                
+                                *ngIf='SearchedlistBrowse.length'
                                  [autoLayout]="true" sortMode="multiple" 
                                  [rowsPerPageOptions]="[100,200,300]" 
-                                 [globalFilterFields]='DynamicHeader'
+                                 [globalFilterFields]='DynamicHeader2'
                                 [rowHover]="true">
                                 <ng-template pTemplate="caption">
                                 <div class="row">
@@ -98,7 +102,7 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th style="width:5em">Action</th>
-                                        <th *ngFor="let option of DynamicHeader | slice:2">{{option.replaceAll('_',' ')}}</th> 
+                                        <th *ngFor="let option of DynamicHeader2 | slice:2">{{option.replaceAll('_',' ')}}</th> 
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
@@ -112,20 +116,20 @@
                                                     </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a (click)="EditVoucher(col)">
-                                                            <i class="fa fa-fw fa-pencil"></i> Edit
+                                                        <a (click)="PrintBillBrowse(col)">
+                                                            <i class="fa fa-fw fa-print" aria-hidden="true"></i>Print
                                                         </a>
                                                     </li>
-                                                    <li>
+                                                    <!-- <li>
                                                         <a (click)="DeleteVoucher(col)">
                                                             <i class="fa fa-fw fa-trash"></i> Delete
                                                         </a>
-                                                    </li>
+                                                    </li> -->
                                                   
                                                 </ul>
                                             </div>
                                         </td>
-                                         <ng-container *ngFor="let option of DynamicHeader | slice:2" data->
+                                         <ng-container *ngFor="let option of DynamicHeader2 | slice:2" data->
                                             <td>{{col[option]}}</td>
                                         </ng-container>
                                     </tr>
@@ -441,7 +445,7 @@
                                             [class]="validatation?.required && !requi_Date ? 'clearance': ''" >
                                             </ejs-datepicker>
                                         </div> -->
-                                        <div class="label-t">{{createListObj.Req_Date ? createListObj.Req_Date : "-"}}</div>
+                                        <div class="label-t">{{createListObj.Req_Date ? (createListObj.Req_Date| date : 'dd/MMM/yyyy') : "-"}}</div>
                                     </div>
                                         <div class="col-sm-3"></div>
                                 
@@ -457,7 +461,9 @@
                                     </i> &nbsp;<strong>Dispatch Details:</strong></h5>
                                     <div class="col-sm-4">
                                         <label class="control-label">Delivered By<sup class="text-danger">*</sup></label>
-                                        <input class="form-control"placeholder="Delivered By"name="Delivered"
+                                        <input class="form-control"
+                                        placeholder="Delivered By"
+                                        name="Delivered"
                                         #Delivered ="ngModel"
                                         [(ngModel)]="objproject.Delivery_By"
                                         [ngClass]="{'clearance': projectFromSubmit && Delivered?.errors?.required}"
@@ -494,7 +500,7 @@
                                         <td>{{getToFix(optt.Batch_Qty)}}</td>
                                         <td>
                                             <input class="form-control"  CompacctDigitonly="true" [name]="optt.Product_ID" CompacctDigitonly="true"
-                                            [(ngModel)]="optt.Del_Qty" (ngModelChange)="GetTotalIssue()">
+                                            [(ngModel)]="optt.Del_Qty" (ngModelChange)="QTYCheck(optt)">
                                         </td>
                                     </tr>
                                    <tr *ngIf="buttonList.length" >
@@ -506,15 +512,14 @@
                                 </table>
                             </div>           
                             <div class="box-footer">
-                                <button class="btn btn-primary pull-right"  id="load" (click)="saveData(creatChallan.form.valid)"   [disabled]=" Spinner">
+                                <button class="btn btn-primary pull-right"  id="load" (click)="saveData(creatChallan.form.valid)"   [disabled]=" Spinner ||!showTost ||!createListObj.Req_No">
                                                 <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
-                                        </button>
+                                </button>
                             </div>
                         
                         </p-tabPanel>
-                      
-             </p-tabView>  
+                    </p-tabView>  
                </div>
             </div>
         </div>

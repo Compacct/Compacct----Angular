@@ -8,12 +8,12 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6">
+            <div class="ui-g-6"  *ngIf="!Save && del">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
-            <!-- <div class="ui-g-6"  *ngIf="act_popup && !can_popup">
+            <div class="ui-g-6" *ngIf="Save && !del">
                 <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
-            </div> -->
+            </div> 
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
             </div>
@@ -107,46 +107,40 @@
                             <form name="leaveForm" #leaveForm="ngForm" novalidate >
                         <div class="form-group">
                             <div class="col-sm-4">
-                                <label class="control-label">Employees
+                                <label class="control-label">HR Year
                                     <sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="HR_Year_ID"
+                                        #HR_Year_ID ="ngModel"
+                                        [(ngModel)]="Objleave.HR_Year_ID"
+                                        [ngClass]="{'clearance': leaveFormSubmitted && HR_Year_ID?.errors?.required}" 
+                                        (change)="leaveChange()"
+                                        [disabled]="Editdisable"
+                                        required>
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let year of hrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
+                                    </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Period<sup class="text-danger">*</sup></label>
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                     </div>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]= "initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Employees</label>
                                     <select class="form-control" name="Emp_Name"
                                     #Emp_Name ="ngModel"
-                                    [(ngModel)]="Objleave.Emp_ID"
-                                    [ngClass]="{'clearance': leaveFormSubmitted && Emp_Name?.errors?.required}" 
-                                    [disabled]="Editdisable"
-                                    required>
-                                    <option [ngValue]="undefined">Select</option>
+                                    [(ngModel)]="Objleave.Emp_ID" 
+                                    [disabled]="Editdisable">
+                                    <option [ngValue]="undefined">All</option>
                                     <option  *ngFor="let Emp of empDataList"  value ={{Emp.Emp_ID}}>{{Emp.Emp_Name}}</option>
                                  </select>
-                                </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">HR Year
-                                            <sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="HR_Year_ID"
-                                                #HR_Year_ID ="ngModel"
-                                                [(ngModel)]="Objleave.HR_Year_ID"
-                                                [ngClass]="{'clearance': leaveFormSubmitted && HR_Year_ID?.errors?.required}" 
-                                                (change)="leaveChange()"
-                                                [disabled]="Editdisable"
-                                                required>
-                                                <option [ngValue]="undefined">Select</option>
-                                                <option *ngFor="let year of hrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
-                                            </select>
-                                    </div>
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Tran Type
-                                                <sup class="text-danger">*</sup></label>
-                                                <select class="form-control" name="Tran_Type"
-                                                #Tran_Type ="ngModel"
-                                                [(ngModel)]="Objleave.Tran_Type"
-                                                [ngClass]="{'clearance': leaveFormSubmitted && Tran_Type?.errors?.required}" 
-                                                [disabled]="Editdisable"
-                                                required>
-                                                <option [ngValue]="undefined">Select</option>
-                                                <option >Issue</option>
-                                                <option >Opening</option>
-                                            </select>
-                                        </div> 
+                            </div>
+                                   
                             </div>
                            <div class="form-group">
                                 <div class="col-sm-4">

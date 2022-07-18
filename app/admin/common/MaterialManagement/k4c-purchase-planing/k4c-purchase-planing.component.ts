@@ -46,7 +46,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   AuthPoppup = false;
   Doc_no = undefined;
   Doc_date = undefined;
-  AuthorizedList = [];
+  AuthorizedList : any= [];
   BackupSearchedlist = [];
   todayDate : any = new Date();
   LastPurDate : any = new Date();
@@ -836,7 +836,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       Amtval += Number(item[key]);
     });
 
-    return Amtval ? Amtval : '-';
+    return Amtval ? Amtval.toFixed(2) : '-';
   }
   // getTotalGSTAmtValue(){
   //   let GSTAmtval = 0;
@@ -990,8 +990,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
       for(let i = 0; i < this.AuthorizedList.length ; i++){
       this.AuthorizedList[i].Confirm_Qty = this.AuthorizedList[i].Order_Qty;
       this.AuthorizedList[i].Confirm_Rate = this.AuthorizedList[i].Rate;
-      this.AuthorizedList[i].Confirm_Amount = this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate;
-      this.AuthorizedList[i].Confirm_Amount_With_GST = ((this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate) * this.AuthorizedList[i].GST_PER) / 100;
+      this.AuthorizedList[i].Confirm_Amount = Number(this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate).toFixed(2);
+      this.AuthorizedList[i].Confirm_Amount_With_GST = Number(((this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate) * this.AuthorizedList[i].GST_PER) / 100).toFixed(2);
       //this.AuthorizedList[i].Vendor_Name = this.AuthorizedList[i].Sub_Ledger_ID;
       }
        this.AuthPoppup = true;
@@ -1000,8 +1000,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
    confirmamountcalculate(indx){
     this.AuthorizedList[indx]['Confirm_Amount'] =  undefined;
     if(this.AuthorizedList[indx]['Order_Qty'] && this.AuthorizedList[indx]['Rate']){
-      this.AuthorizedList[indx]['Confirm_Amount'] = this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate'];
-      this.AuthorizedList[indx]['Confirm_Amount_With_GST'] = ((this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']) * this.AuthorizedList[indx]['GST_PER']) / 100;
+      this.AuthorizedList[indx]['Confirm_Amount'] = Number(this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']).toFixed(2);
+      this.AuthorizedList[indx]['Confirm_Amount_With_GST'] = Number(((this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']) * this.AuthorizedList[indx]['GST_PER']) / 100).toFixed(2);
     }
    }
    dataforApproved(){
