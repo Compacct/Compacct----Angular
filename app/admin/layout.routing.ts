@@ -229,7 +229,8 @@ import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/c
 import { REPStockReportComponent } from "./common/MaterialManagement/Report/rep-stock-report/rep-stock-report.component";
 import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher/contract-voucher-v2/contract-voucher-v2.component";
 import { IssueChallanComponent } from './common/Harbauer/issue-challan/issue-challan.component';
-
+import { HRTxnSpecialAllowanceDeductionComponent } from "./common/MICL/hr-txn-special-allowance-deduction/hr-txn-special-allowance-deduction.component";
+import { ProcessSalaryComponent } from './common/Attendance/process-salary/process-salary.component';
 
 
 
@@ -1677,6 +1678,20 @@ data: {
       component: IssueChallanComponent,
     data: {
       title: 'Issue Challan'
+    }
+    },
+    {
+      path: 'HR_Txn_Special_Allowance_Deduction',
+      component: HRTxnSpecialAllowanceDeductionComponent,
+      data: {
+        title: 'HR Txn Special Allowance Deduction'
+    }
+    },
+    {
+      path: 'Process_Salary',
+      component: ProcessSalaryComponent,
+      data: {
+        title: 'Process Salary'
     }
     },
 

@@ -1,10 +1,6 @@
-    div.table-responsive.table-id>p-table>div>div {
+    /* div.table-responsive.table-id>p-table>div>div {
         width: auto !important;
     }
-    /* .col-sm-1 {
-    width: 40%;
-  } */
-    
     .box-body {
         padding-top: 10px !important;
         padding-left: 10px !important;
@@ -36,10 +32,6 @@
     .ui-table-auto-layout>.ui-table-wrapper {
         width: auto !important;
     }
-    /* .custombutton {
-    margin-top: 28px;
-    margin-left: 130px;
-} */
     
     hr {
         margin-top: 1rem;
@@ -47,15 +39,6 @@
         border: 0;
         border-top: 1px solid rgba(0, 0, 0, 0.2);
     }
-    /* .custombutton2 {
-    margin-top: 28px;
-    margin-left: 20px;
-}
-
-.custombutton3 {
-    margin-top: 28px;
-    margin-left: 20px;
-} */
     
     .table-bordered>thead>tr>th,
     .table-bordered>tbody>tr>th,
@@ -118,9 +101,151 @@
     input[type="month" i]::-webkit-calendar-picker-indicator {
         background-image: #ffff;
         color: #ffff;
-    }
+    } */
     /* div.label-t {
         padding: 5px 10px;
         width: 45px;
         text-align: center;
     } */
+    /* :host ::ng-deep .ui-table-scrollable-header{
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0;
+        z-index: 1000;
+      } */
+
+
+
+
+      /* ATTENDANCE NEW */
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+  }
+  
+  .box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+  }
+  
+  .ta-editor {
+    min-height: 160px;
+  }
+  
+  body .ui-widget {
+    font-family: source sans pro, sans-serif !important;
+  }
+  
+  textarea.form-control {
+    height: auto;
+  }
+  
+  .btn {
+    border: red;
+  }
+  
+  .box.boxboxDivide-primary {
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset;
+  }
+  
+  .ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+  }
+  hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  
+  .table-bordered>thead>tr>th,
+  .table-bordered>tbody>tr>th,
+  .table-bordered>tfoot>tr>th,
+  .table-bordered>thead>tr>td,
+  .table-bordered>tbody>tr>td,
+  .table-bordered>tfoot>tr>td {
+    border: 1px solid #d0d0d0;
+  }
+  
+  .red>td {
+    background-color: red;
+  }
+  
+  .orange>td {
+    background-color: rgb(236, 97, 3);
+  }
+  
+  .green>td {
+    background-color: rgb(33, 110, 17);
+  } 
+  
+   .A {
+    background-color: #ff4141 !important;
+    color: #ffff;
+    text-align: center;
+  }
+  /* PL , CL , SL 
+  .EL,.AL,.CO,.LWP,.COMM,.OFF*/
+  
+  .LP,
+  .ED,
+  .HL,
+  .LWP {
+    background-color: rgb(244 121 38) !important;
+    color: #ffff;
+    text-align: center;
+  }
+  /* HD */
+  
+  .P,
+  .WO,
+  .CO,
+  .PH {
+    background-color: rgb(67 162 47) !important;
+    color: #ffff;
+    text-align: center;
+  }
+  /* .L,.HL,.OF */
+  
+  .SL,
+  .CL,
+  .PL {
+    background-color: rgb(78, 109, 235) !important;
+    color: #ffff;
+    text-align: center;
+  }
+  .L{
+    text-align: center;
+  }
+  
+  #picker {
+    background-image: none !important;
+  }
+  
+  input[type="month" i]::-webkit-calendar-picker-indicator {
+    background-image: #ffff;
+    color: #ffff;
+  }
+  table {
+    background-color: #ffff;
+  }
+  .empwidthwidth>td {
+    width : 40%
+  }
+  .pull-right1 {
+    margin-right: 900px;
+  }
+  .form-control {
+    border-radius: 0;
+    box-shadow: none;
+    border-color: #37383b;
+    font-size: 16px;
+  }
+  .tablelarge {
+    width:250px;
+  }
+  .tablesmall {
+    width:65px;
+  }

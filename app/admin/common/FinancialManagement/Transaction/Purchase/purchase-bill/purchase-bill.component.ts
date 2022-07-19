@@ -195,7 +195,7 @@ export class PurchaseBillComponent implements OnInit {
      this.Spinner = false;
     //  this.Godownlist = [];
      this.POorderlist = [];
-     this.ProductDetailslist = [];
+     this.GetProductdetails();
      this.ObjProductInfo = new ProductInfo();
    }
    clearData(){
@@ -283,14 +283,14 @@ export class PurchaseBillComponent implements OnInit {
     this.GRNList = [];
     this.GRNDate = undefined;
     // this.GetProductdetails();
-    this.ProductDetails = [];
+    // this.ProductDetails = [];
     this.ObjProductInfo.Product_Specification = undefined;
    }
    }
    GetChooseAddress(){
     //this.ExpiredProductFLag = false;
   // if(this.ObjPurChaseBill.Sub_Ledger_ID) {
-    this.GetProductdetails();
+    // this.GetProductdetails();
     this.PODate = undefined;
     this.GRNList = [];
     this.GRNDate = undefined;
@@ -449,16 +449,16 @@ export class PurchaseBillComponent implements OnInit {
       this.PODate = new Date(DateObj.Doc_Date);
       // this.podatedisabled = false;
       this.GetGRNno();
-      this.GetPurOrderProductdetails();
-      setTimeout(() => {
-      if (this.PONoProList.length) {
-        console.log("this.PONoProList",this.PONoProList)
+      // this.GetPurOrderProductdetails();
+      // setTimeout(() => {
+      // if (this.PONoProList.length) {
+      //   console.log("this.PONoProList",this.PONoProList)
         this.GetPONoProdetails2();
-      } 
-      else {
-        this.GetProductdetails();
-      }
-      }, 200);
+      // } 
+      // else {
+      //   this.GetProductdetails();
+      // }
+      // }, 200);
      }
      else {
        this.PODate = undefined;
@@ -505,16 +505,16 @@ export class PurchaseBillComponent implements OnInit {
       // this.ObjGRN1.RDB_Date = new Date(DateObj.RDB_Date);
       this.GRNDate = new Date(GRNDateObj.GRN_Date);
       // this.podatedisabled = false;
-      this.GetGRNNoProductdetails();
-      setTimeout(() => {
-      if (this.GRNNoProlist.length) {
-        console.log("this.GRNNoProlist",this.GRNNoProlist)
+      // this.GetGRNNoProductdetails();
+      // setTimeout(() => {
+      // if (this.GRNNoProlist.length) {
+      //   console.log("this.GRNNoProlist",this.GRNNoProlist)
         this.GetGRNNoProlistdetails2();
-      }
-      else {
-        this.GetProductdetails();
-      }
-      }, 200);
+      // }
+      // else {
+      //   this.GetProductdetails();
+      // }
+      // }, 200);
      }
      else {
        this.GRNDate = undefined;
@@ -523,6 +523,7 @@ export class PurchaseBillComponent implements OnInit {
        this.ObjProductInfo.Product_Specification = undefined;
       //  this.GetProductdetails();
       //  this.podatedisabled = true;
+       this.ChangePurchaseOrder();
      }
   }
    GetProductdetails(){

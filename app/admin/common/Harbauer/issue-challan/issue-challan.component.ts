@@ -26,6 +26,7 @@ export class IssueChallanComponent implements OnInit {
   AllData =[];
   buttonname = "Create";
   projectFromSubmit = false;
+  BrowseFromSubmit = false;
   objProjectRequi:any = {};
   DOC_Date = new Date();
   vouchermaxDate = new Date();
@@ -37,12 +38,14 @@ export class IssueChallanComponent implements OnInit {
   ObjBrowse:Browse = new Browse();
   ObjPanding:Panding = new Panding();
   initDate:any = [];
+  initDate2:any =[];
   DynamicHeader:any = [];
   DynamicHeader2:any = [];
-  costCenterList = [];
-  Stocklist =[];
+  costCenterList:any = [];
+  Stocklist:any =[];
   buttonList =[];
   SearchedlistPanding:any=[];
+  SearchedlistBrowse:any=[];
   backUPSearchedlistPanding:any=[];
   DistProject:any = [];
   SelectedDistProject:any = [];
@@ -64,6 +67,7 @@ export class IssueChallanComponent implements OnInit {
   Del = false;
   Searchedlist : any;
   validatation : any;
+  showTost = true;
   constructor(
     public $http: HttpClient,
     public commonApi: CompacctCommonApi,
@@ -91,8 +95,38 @@ TabClick(e:any) {
     this.buttonname = "Create";
     this.clearData();
   }
-  GetSearchedList(){}
-  saveData(valid){}
+GetSearchedListBrowse(valid:any){
+  this.BrowseFromSubmit = true;
+  if(valid){
+  this.SearchedlistBrowse = [];
+  const start = this.ObjBrowse.From_Date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.From_Date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.ObjBrowse.To_Date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.To_Date))
+  : this.DateService.dateConvert(new Date());
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+    Cost_Cen_ID: this.ObjBrowse.Cost_Cen_ID,
+    Godown_ID : this.ObjBrowse.Godown_ID,
+  }
+  //console.log("tempobj==",tempobj)
+  const obj = {
+  "SP_String": "Sp_Issue_Challan",
+  "Report_Name_String": "Bl_Txn_Issue_Challan_Browse",
+  "Json_Param_String": JSON.stringify([tempobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if(data.length){
+      this.SearchedlistBrowse = data;
+      this.DynamicHeader2 = Object.keys(data[0]);
+
+    }
+   console.log('SearchedlistBrowse===',this.SearchedlistBrowse)
+  })
+}
+}
 getCostCenter(){
     const obj = {
      "SP_String": "sp_Comm_Controller",
@@ -106,7 +140,12 @@ getCostCenter(){
          element['value'] = element.Cost_Cen_ID								
        });
        this.costCenterList = data;
-     } 
+       this.ObjBrowse.Cost_Cen_ID = this.costCenterList.length ? this.costCenterList[0].Cost_Cen_ID : undefined
+       if(this.ObjBrowse.Cost_Cen_ID){
+        this.getStockPoint()
+       }
+       
+      } 
      else {
        this.costCenterList = [];
      }
@@ -137,8 +176,9 @@ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     data.forEach(element => {
       element['label'] = element.godown_name,
       element['value'] = element.Godown_ID	});
- this.Stocklist = data;
- console.log('Stocklist=====',this.Stocklist)
+      this.Stocklist = data;
+      console.log('Stocklist=====',this.Stocklist)
+      this.ObjBrowse.Godown_ID = this.Stocklist.length ? this.Stocklist[0].Godown_ID : undefined
   }
   else{
     this.Stocklist = []; 
@@ -146,11 +186,13 @@ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
 })
 } 
 clearData(){
-    this.ObjBrowse = new Browse();
+    //this.ObjBrowse = new Browse();
     this.objproject = new project();
     this.SearchedlistPanding =[];
+    this.SearchedlistBrowse =[];
     this.backUPSearchedlistPanding = []
     this.initDate = [];
+    this.initDate2 = [];
     this.DOC_Date = this.voucherdata;
     //
     this.DistProject = [];
@@ -165,11 +207,17 @@ clearData(){
     this.SelectedDistWorkDetails =[];
     this.createListObj = {};
     this.buttonList =[];
+    this.showTost = true;
+    this.DelQtyTotal = 0
 }
-getDateRange(dateRangeObj) {
+getDateRange(dateRangeObj:any) {
     if (dateRangeObj.length) {
      this.ObjPanding.From_Date = dateRangeObj[0];
      this.ObjPanding.To_Date = dateRangeObj[1];
+    }
+    if(dateRangeObj.length){
+      this.ObjBrowse.From_Date = dateRangeObj[0];
+      this.ObjBrowse.To_Date = dateRangeObj[1];
     }
 }
 Finyear() {
@@ -181,6 +229,7 @@ Finyear() {
    this.voucherminDate = new Date(data[0].Fin_Year_Start);
    this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
    this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+   this.initDate2 = [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
     });
 }
 GetPandingSearch(){
@@ -298,14 +347,23 @@ this.SearchedlistPanding = [...this.backUPSearchedlistPanding] ;
 }
 
 }
-PrintBill(obj){
-  if (obj.Appo_ID) {
-    window.open("Report/Crystal_Files/CRM/Clinic/Audiometry_Report_CC_Saha_P1.aspx?Appo_ID=" + obj.Appo_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+PrintBill(obj:any){
+    if(obj) {
+    const objtemp = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Requisition_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + obj.DOC_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
+//   if (obj.Appo_ID) {
+//     window.open("Report/Crystal_Files/CRM/Clinic/Audiometry_Report_CC_Saha_P1.aspx?Appo_ID=" + obj.Appo_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
-    );
-}
-
-}
+//     );
+// }
 createIssue(ReqnoObj:any){
   this.ReqNoId= undefined
   if (ReqnoObj.Req_No) {
@@ -379,7 +437,7 @@ GetTotalbatch(){
    this.BatchQtyTotal = Number(Number(flg).toFixed())
    return this.BatchQtyTotal
  }
- GetTotalIssue(){
+GetTotalIssue(){
   console.log("check")
   let flg:Number = 0
   this.buttonList.forEach((ele:any) => {
@@ -388,78 +446,128 @@ GetTotalbatch(){
   this.DelQtyTotal = Number(Number(flg).toFixed())
   return this.DelQtyTotal
 }
-// saveData(valid:any){
-//   //console.log("savedata==",this.ObjHrleave);
-//   this.projectFromSubmit= true
-//  if(valid){
-// var Prod = this.createListObj.filter(item => Number(item.Project_Description) === Number(this.objproject.PROJECT_ID))
-// var sitd = this.createListObj.filter(item => Number(item.Site_Description) === Number(this.objproject.SITE_ID))
-// var grp = this.createListObj.filter(item => Number(item.Budget_Group_Name) === Number(this.objproject.Budget_Group_ID))
-// var sgrp = this.createListObj.filter(item => Number(item.Budget_Sub_Group_Name) === Number(this.objproject.Budget_Sub_Group_ID))
-// var wrk = this.createListObj.filter(item => Number(item.Work_Details) === Number(this.objproject.Work_Details_ID))
-//   this.objproject.PROJECT_ID = Prod.length ? Prod[0].PROJECT_ID:undefined;
-//   this.objproject.User_ID = Number(this.$CompacctAPI.CompacctCookies.User_ID);
-//   this.objproject.DOC_Date = this.DateService.dateConvert(new Date(this.voucherdata));
-//   this.objproject.Cost_Cen_ID = this.objproject.Cost_Cen_ID;
-//   this.objproject.Godown_ID = this.objproject.Godown_ID;
-//   this.objproject.Delivery_By = this.objproject.Delivery_By;
-//   this.objproject.Remarks = this.objproject.Remarks;
-//   this.objproject.Req_No = this.createListObj;
-//   this.objproject.PROJECT_ID = this.createListObj;
-//   this.objproject.SITE_ID = sitd.length ? sitd[0].SITE_ID:undefined;
-//   this.objproject.Budget_Group_ID = grp.length ? grp[0].Budget_Group_ID:undefined;
-//   this.objproject.Budget_Sub_Group_ID = sgrp.length ? sgrp[0].Budget_Sub_Group_ID:undefined;
-//   this.objproject.Work_Details_ID = wrk.length ? wrk[0].Work_Details_ID:undefined;
-//   this.objproject.bottom = this.buttonList;
-//  }
-//  console.log("data fi",this.objproject)
-//   //  const obj = {
-//   //       "SP_String": "SP_BL_CRM_Issue_Challan",
-//   //       "Report_Name_String": 'Get_Requisition_Product_Details_Batch',
-//   //       "Json_Param_String": JSON.stringify([this.objproject])
-//   //      }
-//   //      this.GlobalAPI.getData(obj)
-//   //      .subscribe((data:any)=>{
-//   //       console.log("Final save data ==",data);
-//   //       if (data[0].Column1){
-//   //         this.compacctToast.clear();
-//   //         this.compacctToast.add({
-//   //           key: "compacct-toast",
-//   //           severity: "success",
-//   //           summary: "Succesfully " +data[0].Msg,
-//   //           detail: "Succesfully "
-//   //         });
-//   //         this.Spinner = false;
-//   //         //this.GetBrowseData();
-//   //         //this.HrleaveId = undefined;
-//   //         //this.txnId = undefined;
+saveData(valid:any){
+  this.projectFromSubmit= true
+  let tempDataSave:any = []
+ if(valid){
+  this.showTost = true
+  const costCenter:any = this.costCenterList.filter((el:any)=> Number(el.Cost_Cen_ID) == Number(this.objproject.Cost_Cen_ID))
+  tempDataSave = {
+      DOC_No: "NA",
+      DOC_Date: this.DateService.dateConvert(new Date(this.DOC_Date)),
+      Req_No: this.createListObj.Req_No,
+      Cost_Cen_ID: Number(this.objproject.Cost_Cen_ID) ,
+      Cost_Cen_Name	: costCenter.length ? costCenter[0].Cost_Cen_Name : "NA",
+      Godown_ID: Number(this.objproject.Godown_ID),
+      Inv_Type_ID: 84,	
+      User_ID: this.$CompacctAPI.CompacctCookies.User_ID ,	
+      DOC_TYPE: "ISSUE CHALLAN",
+      PROJECT_ID: Number(this.createListObj.PROJECT_ID),
+      SITE_ID: Number(this.createListObj.SITE_ID),
+      Budget_Group_ID: Number(this.createListObj.Budget_Group_ID),
+      Budget_Sub_Group_ID: Number(this.createListObj.Budget_Sub_Group_ID),
+      Work_Details_ID	: Number(this.createListObj.Work_Details_ID),
+      Remarks : this.objproject.Remarks,
+      Delivery_By: this.objproject.Delivery_By,
+      bottom : this.bottomData()
+     } 
+ 
+// console.log("data fi",this.objproject)
+   const obj = {
+        "SP_String": "Sp_Issue_Challan",
+        "Report_Name_String": 'Bl_Txn_Issue_Challan_Create',
+        "Json_Param_String": JSON.stringify([tempDataSave])
+       }
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        console.log("Final save data ==",data);
+        if (data[0].Column1==='Done'){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Succesfully Issue Challan Create " ,
+            detail: "Succesfully "
+          });
+          this.Spinner = false;
+          //this.GetBrowseData();
+          this.tabIndexToView = 0;
+          this.projectFromSubmit = false;
+          this.objproject = new project();
+          //this.FromDatevalue = new Date()
+          //this.ToDatevalue = new Date()
           
-//   //         this.tabIndexToView = 0;
-//   //         this.projectFromSubmit = false;
-//   //         this.objproject = new project();
-//   //         //this.FromDatevalue = new Date()
-//   //         //this.ToDatevalue = new Date()
-          
-//   //         }
-//   //         else {
-//   //           this.Spinner = false;
-//   //           this.compacctToast.clear();
-//   //           this.compacctToast.add({
-//   //             key: "compacct-toast",
-//   //             severity: "error",
-//   //             summary: "Warn Message ",
-//   //             detail: data[0].Msg
-//   //           });
-//   //         }
+          }
+          else {
+            this.Spinner = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message ",
+              detail:"Issue Challan Not Create "
+            });
+          }
          
          
-//   //   });
-// }
+    });
+  }
+}
+bottomData(){
+  let tempbottomArr:any = []
+  this.buttonList.forEach((el:any)=>{
+    tempbottomArr.push({
+      Product_ID:el.Product_ID,
+      Product_Description:el.Product_Description,
+      Issue_Qty:el.Del_Qty,
+      UOM:el.UOM,
+      Sub_Ledger_ID:0,
+      Batch_Number:el.Batch_No,
+      Serial_No:null,
+      Rate: el.Rate,
+      Product_Expiry:el.Product_Expiry,		
+      Expiry_Date:el.Expiry_Date
+    })
+  })
+  return tempbottomArr
+}
+QTYCheck(col:any){
+ // this.GetTotalIssue();
+  this.showTost = true
+  this.buttonList.forEach((ele:any) => {
+    if( Number(ele.Del_Qty) >=  Number(ele.Ori_Req_Qty))
+    {
+      this.showTost = false
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "error",
+        detail: "Issue QTY can't be more than Requisition QTY"
+      });
+      return
+    }
+    });
+  
 
+   
+}
 onReject(){
   this.compacctToast.clear("c");
 }
-
+PrintBillBrowse(objj:any){
+  //console.log("printData",objj)
+  if(objj) {
+    const objtemp = {
+      "SP_String": "Sp_Issue_Challan",
+      "Report_Name_String": "Bl_Txn_Issue_Challan_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + objj.DOC_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+}
 }
 class project{
 PROJECT_ID:any;
@@ -474,7 +582,6 @@ Delivery_By :any;
 DOC_No="NA";	
 DOC_Date:any;
 Req_No:any;		
-Cost_Cen_Name:any	;	
 Inv_Type_ID	= 84;	
 Product_ID:any;   
 Issue_Qty:number;  
@@ -488,8 +595,7 @@ Product_Expiry:any;
 Expiry_Date:any;	      
 DOC_TYPE = "ISSUE CHALLAN";     
 SITE_ID:any;
-bottom:any;
-						
+bottom:any;						
 Product_Description	:any;	
 }           
 class Browse{

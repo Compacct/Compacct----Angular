@@ -23,6 +23,7 @@ export class HrLeaveOpeningComponent  implements OnInit {
   hrYeatList=[];
   leaveList=[];
   menuData=[];
+  initDate:any =[];
   tabIndexToView= 0;
   buttonname = "Create";
   leaveFormSubmitted = false;
@@ -39,8 +40,10 @@ export class HrLeaveOpeningComponent  implements OnInit {
   LEAVETYPE = undefined;
   TranType = undefined;
   Editdisable = false;
+  Save = false;
+  del = true;
   constructor(
-    private http: HttpClient,
+    public $http: HttpClient,
     private compact: CompacctCommonApi,
     private header:CompacctHeader, 
     private GlobalAPI:CompacctGlobalApiService,
@@ -57,18 +60,19 @@ ngOnInit() {
   ];
  
   this.header.pushHeader({
-    Header: "HR Leave Opening Issue Balance",
+    Header: "HR Leave Opening Balance",
     Link: " MICL -> HR-leave Opening"
   })
   this.employeeData();
   this.GetAllData();
   this.hrYearList();
   this.leaveTypList();
+  this.Finyear();
 }
 TabClick(e) {
   this.tabIndexToView = e.index;
   this.items = ["BROWSE", "CREATE"];
-  this.buttonname = "Save";
+  this.buttonname = "Create";
   this.clearData();
   this.Editdisable = false;
 }
@@ -76,8 +80,15 @@ clearData(){
   this.leaveFormSubmitted = false;
   this.Objleave = new leave();
   this.leaveId = undefined;
- }
- GetAllData(){
+  this.initDate =[];
+}
+getDateRange(dateRangeObj:any) {
+  if (dateRangeObj.length) {
+   this.Objleave.From_Date = dateRangeObj[0];
+   this.Objleave.To_Date = dateRangeObj[1];
+  }
+}
+GetAllData(){
   const obj = {
     "SP_String":"SP_HR_Leave_Opening_Issue_Balance",
     "Report_Name_String":"Browse_HR_Leave_Opening_Issue_Balance"
@@ -89,7 +100,7 @@ clearData(){
     console.log("all data==",this.AllData);
     });
    
- }
+}
 employeeData(){
   const obj = {
     "SP_String":"SP_HR_Leave_Opening_Issue_Balance",
@@ -114,6 +125,17 @@ hrYearList(){
     console.log("Hr Year==",this.hrYeatList);
     });
 }
+Finyear() {
+  this.$http
+    .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+    .subscribe((res: any) => {
+    let data = JSON.parse(res)
+    // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+    // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+    // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+   this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+    });
+}
 leaveTypList(){
   const obj = {
     "SP_String":"SP_HR_Leave_Opening_Issue_Balance",
@@ -126,17 +148,47 @@ leaveTypList(){
     });
 }
 saveData(valid:any){
-  console.log("savedata==",this.Objleave);
-  this.leaveFormSubmitted = true;
   if(valid){
+    if(!this.Objleave.Emp_ID){
+      this.Spinner =true
+      this.Save = true
+      this.del = false
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "c",
+          sticky: true,
+          severity: "error",
+          detail: "Previous Opening Leave For All Employes will remove for this period ",
+          summary: "Want to proceed",
+         
+        });
+        this.Spinner =false
+
+      }
+      else{
+       //console.log("this.Objleave.Emp_ID",this.Objleave.Emp_ID)
+       if(this.Objleave.Emp_ID){
+        this.Spinner =true;
+        this.Save = false;
+        this.del = false;
+        this.onConfirm2();
+       }
+      }
+    }
+  }
+onConfirm2(){
+  console.log("savedata==",this.Objleave);
+  this.leaveFormSubmitted = true
     console.log("leaveId==",this.leaveId);
     if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
-   this.Objleave.From_Date = this.DateService.dateConvert(new Date(this.Objleave.From_Date))
-   this.Objleave.To_Date = this.DateService.dateConvert(new Date(this.Objleave.To_Date))
+   this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
+   this.Objleave.To_Date? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
    this.Objleave.Leave_Month = "NA"
    this.Objleave.Leave_Year = "NA"
+   this.Objleave.Tran_Type = "Opening"
+   this.Objleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
     }
-    let msg = this.Objleave ? "Update" : "Create"
+    let msg = this.buttonname ;
       const obj = {
         "SP_String": "SP_HR_Leave_Opening_Issue_Balance",
         "Report_Name_String": 'Save_HR_Leave_Opening_Issue_Balance',
@@ -163,16 +215,13 @@ saveData(valid:any){
           this.leaveFormSubmitted = false;
           this.Objleave = new leave();
         });
-    }
-    else{
-      console.error("error password")
-    }
+    
       
-  }
-  onReject(){
+}
+onReject(){
     this.compacctToast.clear("c");
-  }
-  EditLeave(leave:any){
+}
+EditLeave(leave:any){
     this.leaveId = undefined;
     this.txnId = undefined;
     this.Editdisable = false;
@@ -205,14 +254,16 @@ GetEditMasterleave(Uid){
    })
 }
 DeleteLeave(masterLeave): void{
-  // this.act_popup = false;
+   this.del = true;
+   this.Save = false
   this.masterLeaveId = undefined ;
   this.mastertxnId = undefined;
   this.HRYearID = undefined;
   this.LEAVETYPE = undefined;
   this.TranType = undefined;
   if(masterLeave.Emp_ID){
-    // this.can_popup = true;
+    this.del = true;
+    this.Save = false;
     this.masterLeaveId = masterLeave.Emp_ID ;
     this.mastertxnId = masterLeave.Txn_ID;
     this.HRYearID = masterLeave.HR_Year_ID;
@@ -260,7 +311,7 @@ console.log("onconform==",this.Objleave)
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
-          summary: "User Id: " + this.masterLeaveId.toString(),
+          summary: "User ",
           detail: "Succesfully Deleted"
         });
        }
@@ -272,10 +323,12 @@ leaveChange(){
   this.Objleave.To_Date = undefined;
   if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
   if (this.Objleave.HR_Year_ID) {
-  const arr = this.hrYeatList.filter(item=> item.HR_Year_ID == this.Objleave.HR_Year_ID); 
-   this.Objleave.From_Date = arr[0].HR_Year_Start;
-   this.Objleave.To_Date = arr[0].HR_Year_End;
+  const arr:any = this.hrYeatList.filter((item:any) => Number(item.HR_Year_ID )== Number(this.Objleave.HR_Year_ID)); 
+   this.Objleave.From_Date = arr.length? arr[0].HR_Year_Start : new Date();
+   this.Objleave.To_Date = arr.length? arr[0].HR_Year_End : new Date();
+   this.initDate =  [new Date(arr[0].HR_Year_Start) , new Date(arr[0].HR_Year_End)]
    console.log('arr===',arr)
+   
   }  
 }
 else {
@@ -290,7 +343,7 @@ class leave{
   Leave_Year:any
   Leave_Type:any
   LEAVE_TYPE:any
-  Tran_Type:any
+  Tran_Type = "Opening"
   DR_Leave:any
   CR_Leave:any
   Remarks:any

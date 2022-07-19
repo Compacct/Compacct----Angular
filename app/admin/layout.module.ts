@@ -323,6 +323,8 @@ import { REPStockReportComponent } from './common/MaterialManagement/Report/rep-
 import { StockReportComponent } from './shared/compacct.components/stock-report/stock-report.component'
 import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher/contract-voucher-v2/contract-voucher-v2.component";
 import { IssueChallanComponent } from './common/Harbauer/issue-challan/issue-challan.component';
+import { HRTxnSpecialAllowanceDeductionComponent } from "./common/MICL/hr-txn-special-allowance-deduction/hr-txn-special-allowance-deduction.component";
+import { ProcessSalaryComponent } from './common/Attendance/process-salary/process-salary.component';
 
 @NgModule({
   declarations: [
@@ -564,7 +566,9 @@ import { IssueChallanComponent } from './common/Harbauer/issue-challan/issue-cha
     REPStockReportComponent,
     StockReportComponent,
     ContractVoucherV2Component,
-    IssueChallanComponent
+    IssueChallanComponent,
+    HRTxnSpecialAllowanceDeductionComponent,
+    ProcessSalaryComponent
   ],
   imports: [
     CommonModule,
