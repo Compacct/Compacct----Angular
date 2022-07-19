@@ -36,6 +36,7 @@ export class StockReportComponent implements OnInit {
   viewHeader:string = "";
   DetalisView:boolean = false;
   popUpList:any = [];
+  popUpListHeader:any = [];
   report_Type:string = "Cost_Center_Wise";
   productTypeList:any = []
   EXCELSpinner:boolean =false;
@@ -45,6 +46,7 @@ export class StockReportComponent implements OnInit {
   SelectedDistCostCen:any = [];
   DistStockPoint:any = [];
   SelectedDistStockPoint:any = [];
+  EXCELpopSpinner:boolean = false
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -244,6 +246,13 @@ export class StockReportComponent implements OnInit {
     XLSX.writeFile(workbook, 'stock_report.xlsx');
     this.EXCELSpinner = false
   }
+  exportexcelpopup(arr){
+    this.EXCELpopSpinner = true
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, 'stock_report.xlsx');
+    this.EXCELpopSpinner = false
+  }
   GetDistinct() {
     let materialType:any = [];
     let productType:any = [];
@@ -331,9 +340,15 @@ export class StockReportComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        console.log(data);
        this.viewHeader = (text.replace('_',' ')).split(" ").splice(-1)[0]+" QTY"
-       this.DetalisView = true;
        this.popUpList = [];
-       this.popUpList = data
+      this.popUpListHeader = [];
+      if(data.length){
+        this.popUpList = data;
+        this.popUpListHeader = Object.keys(data[0])
+      }
+      setTimeout(() => {
+        this.DetalisView = true;
+      }, 500);
     })
    }
   }

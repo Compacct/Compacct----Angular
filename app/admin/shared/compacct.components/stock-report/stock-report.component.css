@@ -88,4 +88,9 @@ div.table-responsive.table-id > p-table > div > div {
       body > app-root > app-root > app-layout > div > div > div:nth-child(3) > section.content > div > div > app-rep-stock-report > div > div > div > div > div > div > app-stock-report > div.table-responsive.no-padding > p-table > div > p-paginator > div > p-dropdown{
         margin-top: 30px;
       }
-      
+      #ui-tabpanel-2 > app-stock-report > div.table-responsive.no-padding > p-table > div > p-paginator > div > p-dropdown{
+        margin-top: 29px;
+      }
+     div.ng-trigger.ng-trigger-animation.ng-tns-c11-6.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-shadow.ui-dialog-draggable.ui-dialog-resizable.ng-star-inserted > div.ui-dialog-content.ui-widget-content > div > div > p-table > div > p-paginator > div > p-dropdown > div{
+      margin-top: 29px;
+     }
