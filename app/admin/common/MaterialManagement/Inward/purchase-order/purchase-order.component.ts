@@ -34,7 +34,7 @@ export class PurchaseOrderComponent implements OnInit {
   costCenterList = [];
   DetalisView = false;
   viewHeader = "";
-  DetalisObj = {};
+  DetalisObj:any = {};
   DocDate = new Date();
   RefDate = new Date();
   currencyList = [];
