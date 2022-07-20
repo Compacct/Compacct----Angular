@@ -52,7 +52,7 @@ export class ProductsPlaningComponent implements OnInit {
   ObjProdPlan = new ProdPlan();
   PlanedProductList = [];
 
-  AddedPlanedProductList = [];
+  AddedPlanedProductList:any = [];
   PlanedProductFormSubmit = true;
   ProjectList = [];
   SiteList = [];
@@ -150,6 +150,7 @@ export class ProductsPlaningComponent implements OnInit {
     this.AddedPlanedProductList = [];
     this.PlanedProductFormSubmit = false;
     this.EditFlag = false;
+    this.Spinner = false
   }
 
   //
@@ -218,10 +219,10 @@ export class ProductsPlaningComponent implements OnInit {
     }
   }
   ChangeSiteName() {
-    this.ObjProdPlan.Site_Description = undefined;
+    this.ObjProdPlan.Site_Description = "";
     this.ExsitData = [];
     if (this.ObjProdPlan.Site_ID) {
-      const arr = this.SiteList.filter(o => o.Site_ID == this.ObjProdPlan.Site_ID);
+      const arr:any = this.SiteList.filter((o:any) => o.Site_ID == this.ObjProdPlan.Site_ID);
       this.ObjProdPlan.Site_Description = arr.length ? arr[0].Site_Description : undefined;
       this.CheckIfExist();
     }
@@ -446,14 +447,13 @@ export class ProductsPlaningComponent implements OnInit {
         this.ObjProdPlan.Budget_Sub_Group_Name  = subGroupFilter.Budget_Sub_Group_Name
         this.AddedPlanedProductList.push(this.ObjProdPlan);
         this.ObjProdPlan.Qty = Number(this.ObjProdPlan.Qty).toFixed(3);
-        const obj = {
-          ...this.ObjProdPlan
-        };
-        this.ObjProdPlan = new ProdPlan();
-        this.ObjProdPlan.Tender_Doc_ID = obj.Tender_Doc_ID;
-        this.ObjProdPlan.work_name = obj.work_name;
-        this.ObjProdPlan.Site_ID = obj.Site_ID;
-        this.ObjProdPlan.Site_Description = obj.Site_Description;
+        let tempObj = {...this.ObjProdPlan}
+         this.ObjProdPlan = new ProdPlan()
+         this.ObjProdPlan.Budget_Group_ID = tempObj.Budget_Group_ID
+         this.ObjProdPlan.Budget_Sub_Group_ID = tempObj.Budget_Sub_Group_ID
+         this.ObjProdPlan.Work_Details_ID = tempObj.Work_Details_ID
+         this.ObjProdPlan.Tender_Doc_ID = tempObj.Tender_Doc_ID
+         this.ObjProdPlan.Site_ID = tempObj.Site_ID
       }
       
 
@@ -465,11 +465,24 @@ export class ProductsPlaningComponent implements OnInit {
   }
 // SAVE
   SaveProductPlanForm() {
-    this.PlanedProductFormSubmit = true;
-    if (this.AddedPlanedProductList.length) {
+   if (this.AddedPlanedProductList.length ) {
       this.Spinner = true;
+      let flg = false 
+      if(this.AddedPlanedProductList.length){
+        this.AddedPlanedProductList.forEach((ele:any) => {
+           if(!ele.Qty){
+            this.Spinner = false;
+            this.PlanedProductFormSubmit = false;
+             flg = false
+            return
+           }
+           else {
+            flg = true
+           }
+        });
+      }
       console.log("save", this.AddedPlanedProductList)
-      if(this.ObjProdPlan.Tender_Doc_ID){
+      if(this.ObjProdPlan.Tender_Doc_ID && flg){
         const project:any = this.ProjectList.filter((el:any)=>Number(el.Tender_Doc_ID) === Number(this.ObjProdPlan.Tender_Doc_ID))[0]
         this.AddedPlanedProductList.forEach((el:any)=>{
           el['Project_ID'] = project.Project_ID
@@ -679,6 +692,14 @@ export class ProductsPlaningComponent implements OnInit {
   }
   getTotalPurchaseAmt() {
     return this.ShowAddedEstimateProductList.length ? Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt() : '-';
+  }
+  culAmount(index:any){
+   for(let i=0; i<this.AddedPlanedProductList.length;i++){
+     this.AddedPlanedProductList[i].Amount = Number(this.AddedPlanedProductList[i].Qty) * Number(this.AddedPlanedProductList[i].Rate)
+   }
+  }
+  getToFix(n:any){
+   return Number(Number(n).toFixed(3))
   }
 }
 class ProdPlan {

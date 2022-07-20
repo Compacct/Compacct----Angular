@@ -281,9 +281,11 @@
                                       <td>{{d.Budget_Sub_Group_Name}}</td>
                                       <td>{{d.Type_Of_Product}}</td>
                                       <td>{{d.Product_Description}}</td>
-                                      <td>{{d.Qty}}</td>
-                                      <td>{{d.Rate}}</td>
-                                      <td>{{d.Amount}}</td>
+                                      <!-- <td>{{getToFix(d.Qty)}}</td> -->
+                                      <td><input type="text" [name]="index+1" [(ngModel)]='d.Qty' (ngModelChange)='culAmount(index)' [ngClass]="{'clearance' : !d.Qty}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                        /></td>
+                                      <td>{{getToFix(d.Rate)}}</td>
+                                      <td>{{getToFix(d.Amount)}}</td>
                                       <td class="text-center">
                                            <a (click)="DeleteProductPlan(d)"><div><i class="fa fa-fw fa-trash"> </i></div></a>
                                         </td>
