@@ -181,12 +181,13 @@ onConfirm2(){
   this.leaveFormSubmitted = true
     console.log("leaveId==",this.leaveId);
     if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
-   this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
-   this.Objleave.To_Date? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
+    this.Objleave.From_Date = this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
+    this.Objleave.To_Date = this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
    this.Objleave.Leave_Month = "NA"
    this.Objleave.Leave_Year = "NA"
    this.Objleave.Tran_Type = "Opening"
    this.Objleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
+   this.Objleave.LEAVE_TYPE = Number(this.Objleave.LEAVE_TYPE)
     }
     let msg = this.buttonname ;
       const obj = {
@@ -250,7 +251,7 @@ GetEditMasterleave(Uid){
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      console.log("EditMasterdata===",data);
     this.Objleave = data[0];
-    
+    this.initDate = [new Date(data[0].From_Date) , new Date(data[0].To_Date)]
    })
 }
 DeleteLeave(masterLeave): void{

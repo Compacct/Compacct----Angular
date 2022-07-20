@@ -7,10 +7,10 @@
             <p>{{message.detail}}</p>
         </div>
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6" *ngIf="Save">
+            <div class="ui-g-6" *ngIf="Save && !Approvecon">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
-            <div class="ui-g-6" *ngIf="act_popup && !can_popup">
+            <div class="ui-g-6" *ngIf="Approvecon && !Save">
                 <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
@@ -565,7 +565,7 @@
     </form>
     <p-footer>
         <button type="button" (click)="ViewProTypeModal = false" class="btn btn-default">
-  CANCEL
+  CLOSE
 </button>
     </p-footer>
 </p-dialog>
@@ -664,11 +664,11 @@
             </div>
         </div>
 
-        <button class="btn btn-primary " (click)="GetApprove()" id="load11" style="margin-top:65px;" [disabled]="Spinner">
+        <button class="btn btn-success pull-right" (click)="GetApprove()" id="load11" style="margin-top:65px;" [disabled]="Spinner">
                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                 <span *ngIf="!Spinner" class="glyphicon glyphicon-ok"></span>Approve
                             </button>
-        <button class="btn btn-primary " (click)="GetDisApprove()" id="load12" style="margin-top:65px; margin-left: 55px;" [disabled]="Spinner">
+        <button class="btn btn-danger pull-right" (click)="DisApprovePopup()" id="load12" style="margin-top:65px; margin-left: 55px; margin-right: 35px" [disabled]="Spinner">
                                 <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                             <span *ngIf="!Spinner" class="glyphicon glyphicon-remove"></span>Disapprove
                         </button>
@@ -676,7 +676,7 @@
     </form>
     <p-footer>
         <button type="button" (click)="ViewProTypeModal2 = false" class="btn btn-default">
-  CANCEL
+  CLOSE
 </button>
     </p-footer>
 </p-dialog>
@@ -706,7 +706,7 @@
     </div>
     <p-footer>
         <button type="button" (click)="ViewProTypeModal3 = false" class="btn btn-default">
-  CANCEL
+  CLOSE
 </button>
     </p-footer>
 </p-dialog>
@@ -771,7 +771,29 @@
     <p-footer>
         <button type="button" pButton icon="pi pi-check" (click)="saveReqPopUP(RequiredAmount)" label="Save Payment Requisition"></button>
         <button type="button" (click)="PaymentRequisitionActionPOPUP = false" class="btn btn-default">
-  CANCEL
+  CLOSE
+</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog [header]="''" [appendTo]="'body'" [visible]="ViewProTypeModal4" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <h2>Are you Sure to Disapprove?</h2>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Reason</label>
+                <textarea class="form-control" name="dis_Reason" [(ngModel)]="Reason" rows="2" placeholder="Reason" [ngClass]="{'clearance': Reasonsubmitted && !Reason}" required></textarea>
+            </div>
+        </div>
+
+
+
+    </div>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="GetDisApprove(Reason)" label="OK"></button>
+        <button type="button" (click)="ViewProTypeModal4 = false" class="btn btn-default">
+  CANCLE
 </button>
     </p-footer>
 </p-dialog>

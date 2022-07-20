@@ -231,6 +231,8 @@ import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher
 import { IssueChallanComponent } from './common/Harbauer/issue-challan/issue-challan.component';
 import { HRTxnSpecialAllowanceDeductionComponent } from "./common/MICL/hr-txn-special-allowance-deduction/hr-txn-special-allowance-deduction.component";
 import { ProcessSalaryComponent } from './common/Attendance/process-salary/process-salary.component';
+import { LeaveApprovalComponent } from './common/MICL/leave-approval/leave-approval.component';
+import { ConsumptionComponent } from "./common/MICL/consumption/consumption.component";
 
 
 
@@ -1694,6 +1696,21 @@ data: {
         title: 'Process Salary'
     }
     },
+    {
+      path: 'Leave_Approval',
+      component: LeaveApprovalComponent,
+      data: {
+        title: 'Leave Approval'
+    }
+    },
+    {
+      path: 'Consumption',
+      component: ConsumptionComponent,
+      data: {
+        title: 'Consumption'
+    }
+    },
+    
 
     /*{
 

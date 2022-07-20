@@ -1,0 +1,123 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" *ngIf="Final && !NotFinal">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+      <div class="ui-g ui-fluid" *ngIf="!Final && NotFinal">
+        <div class="ui-g-6">
+            <button type="button" pButton (click)="onReject()" label="Ok" class="ui-button-danger" style="margin-left: 70px;"></button>
+        </div>
+    </div>
+
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <div class="clearfix"></div>
+                    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+                        <p-table [value]="ApprovalList" [globalFilterFields]='["Product_Description","Indent_Qty","Order_Qty","Rate","Amount","Confirm_Qty","Confirm_Rate","Confirm_Amount","Vendor_Name","Remarks"]' [rowHover]="true" [autoLayout]="true" #dt2>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                    </div>
+                                </div> <br>
+
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th nowrap="nowrap">Employee Name</th>
+                                    <th nowrap="nowrap">Leave Type</th>
+                                    <th nowrap="nowrap">Leave Apply From Date</th>
+                                    <th nowrap="nowrap">Leave Apply To Date</th>
+                                    <th nowrap="nowrap">Reason</th>
+                                    <th nowrap="nowrap">Issue Date From</th>
+                                    <th nowrap="nowrap">Issue Date To</th>
+                                    <th nowrap="nowrap">Business Manager</th>
+                                    <th nowrap="nowrap">Remarks of Business Manager</th>
+                                    <th nowrap="nowrap">Reporting Manager</th>
+                                    <th nowrap="nowrap">Remarks of Reporting Manager</th>
+                                    <th nowrap="nowrap">Action</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                <tr>
+
+                                    <td nowrap="nowrap">{{col.Emp_Name}}</td>
+                                    <td nowrap="nowrap">{{col.Leave_Type}}</td>
+                                    <td nowrap="nowrap">{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
+                                    <td nowrap="nowrap">{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
+                                    <td nowrap="nowrap">{{col.Remarks ? col.Remarks : '-'}}</td>
+                                    <td nowrap="nowrap"> 
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_From_Date' style="width: 200px;"></ejs-datepicker>
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_To_Date' style="width: 200px;"></ejs-datepicker>
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Business_Manager">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  Value="YES">YES</option>
+                                            <option  Value="NO">NO</option>
+                                        </select>
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Business_Manager' class="form-control" style="width: 200px;" />
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Reporting_Manager">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  Value="YES">YES</option>
+                                            <option  Value="NO">NO</option>
+                                        </select>
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Reporting_Manager' class="form-control" />
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <button class="btn btn-primary custombtn" (click)='UpdateBox(col)' type="button" [id]="col.Txn_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                            Save
+                                        </button>
+                                        <!-- <button type="text" [id]="'RowID'+col.Product_ID" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" > Update </button> -->
+                                    </td>
+                                    <!-- <td>
+                                        <p-dropdown [options]="vendorlist" name="Appvendor" [(ngModel)]="col.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="crdchange(rowIndex)" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'"
+                                            [virtualScroll]="true" itemSize="30" #Appvendor="ngModel">
+                                        </p-dropdown>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" CompacctDigitonly="true" name="Appcreditdays" #Appcreditdays="ngModel" [(ngModel)]="col.Credit_days">
+                                    </td> -->
+
+                                </tr>
+                                    <!-- <td colspan="3" class="text-center">-</td>
+                                    <td>{{getTotalValue('Confirm_Amount')}}</td>
+                                    <td>{{getTotalValue('Confirm_Amount_With_GST')}}</td> 
+                                </tr> -->
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

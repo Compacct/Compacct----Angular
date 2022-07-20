@@ -55,6 +55,7 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
   ApproveListobj : any = {};
   ViewProTypeModal2 : boolean = false;
   ViewProTypeModal3 : boolean = false;
+  ViewProTypeModal4 : boolean = false;
   GridList : any = [];
   PaymentRequisitionObj:any = {};
   PaymentRequisitionActionPOPUP:boolean = false;
@@ -63,6 +64,9 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
   PrePaymentList : any = [];
   popupTitle : String = "";
   Save : boolean = false;
+  Approvecon : boolean = false;
+  Reasonsubmitted = false;
+  Reason : String = "";
   //Payment_Requisition_ID : any
 
   constructor(
@@ -288,6 +292,7 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
       this.Spinner = true;
 
       this.Save = true;
+      this.Approvecon = false;
       //this.Del = false;
      // this.Spinner = true;
       //this.ngxService.start();
@@ -413,6 +418,8 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
 
   }
 
+  
+
   AmountCheck(){
     this.flag = false;
     
@@ -487,9 +494,9 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
           summary: "Payment Requisition Create Succesfully ",
           detail: "Succesfully Created"
         });
-        this.getList();
+        //this.getList();
         this.PaymentRequisitionActionPOPUP = false;
-        //this.clearData();
+        this.clearData();
         
         this.Spinner = false;
         }
@@ -550,6 +557,47 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
   }
 
   onConfirm2(){
+    this.Spinner = true;
+    const tempObj = {
+      Payment_Requisition_ID : this.ApproveListobj.Payment_Requisition_ID,
+      User_ID : this.commonApi.CompacctCookies.User_ID,
+      Status : 'APPROVE'
+    }
+    const obj = {
+      "SP_String": "SP_Payment_Requisition",
+      "Report_Name_String": "Update_Requisition_Status",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log('data=',data[0].Column1);
+      if(data[0].Column1 == 'Updated Successfully')
+         {
+           //this.SubLedgerID = data[0].Column1
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Payment Requisition Approve Succesfully ",
+          detail: "Succesfully Approved"
+        });
+        this.Spinner = false;
+        this.ViewProTypeModal2 = false
+        this.GetPendingSearchedList("PENDING APPROVAL");
+      }
+      else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something Wrong"
+      });
+      this.Spinner = false;
+      this.ViewProTypeModal2 = false
+      }
+       
+     })
+     
 
   }
   // checkboxChange(){
@@ -743,57 +791,96 @@ const obj = {
   }
 
   GetApprove(){
-    this.Spinner = true;
-    const tempObj = {
-      Payment_Requisition_ID : this.ApproveListobj.Payment_Requisition_ID,
-      User_ID : this.commonApi.CompacctCookies.User_ID,
-      Status : 'APPROVE'
+    
+      
+      this.Spinner = true;
+
+      this.Save = false;
+      this.Approvecon = true;
+      //this.Del = false;
+     // this.Spinner = true;
+      //this.ngxService.start();
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+     this.Spinner = false;
+     this.ViewProTypeModal2=false;
+     //this.PaymentRequisitionActionPOPUP = false;
     }
-    const obj = {
-      "SP_String": "SP_Payment_Requisition",
-      "Report_Name_String": "Update_Requisition_Status",
-      "Json_Param_String": JSON.stringify([tempObj])
-    }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log('data=',data[0].Column1);
-      if(data[0].Column1 == 'Updated Successfully')
-         {
-           //this.SubLedgerID = data[0].Column1
-          this.compacctToast.clear();
-          this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Payment Requisition Approve Succesfully ",
-          detail: "Succesfully Approved"
-        });
-        this.Spinner = false;
-        this.ViewProTypeModal2 = false
-        this.GetPendingSearchedList("PENDING APPROVAL");
-      }
-      else{
-        this.compacctToast.clear();
-        this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-        summary: "Error",
-        detail: "Something Wrong"
-      });
-      this.Spinner = false;
-      this.ViewProTypeModal2 = false
-      }
+  
+
+  // GetApprove(){
+  //   this.Spinner = true;
+  //   const tempObj = {
+  //     Payment_Requisition_ID : this.ApproveListobj.Payment_Requisition_ID,
+  //     User_ID : this.commonApi.CompacctCookies.User_ID,
+  //     Status : 'APPROVE'
+  //   }
+  //   const obj = {
+  //     "SP_String": "SP_Payment_Requisition",
+  //     "Report_Name_String": "Update_Requisition_Status",
+  //     "Json_Param_String": JSON.stringify([tempObj])
+  //   }
+  //    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //     console.log('data=',data[0].Column1);
+  //     if(data[0].Column1 == 'Updated Successfully')
+  //        {
+  //          //this.SubLedgerID = data[0].Column1
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //         key: "compacct-toast",
+  //         severity: "success",
+  //         summary: "Payment Requisition Approve Succesfully ",
+  //         detail: "Succesfully Approved"
+  //       });
+  //       this.Spinner = false;
+  //       this.ViewProTypeModal2 = false
+  //       this.GetPendingSearchedList("PENDING APPROVAL");
+  //     }
+  //     else{
+  //       this.compacctToast.clear();
+  //       this.compacctToast.add({
+  //       key: "compacct-toast",
+  //       severity: "error",
+  //       summary: "Error",
+  //       detail: "Something Wrong"
+  //     });
+  //     this.Spinner = false;
+  //     this.ViewProTypeModal2 = false
+  //     }
        
-     })
+  //    })
      
      
+
+  // }
+
+  DisApprovePopup(){
+    this.Reason = "";
+    this.Reasonsubmitted = false;
+    setTimeout(() => {
+      this.ViewProTypeModal4 = true;
+    }, 200);
 
   }
 
-  GetDisApprove(){
+  GetDisApprove(Reasons : any){
+    this.Reasonsubmitted = true;
+    if(Reasons){
     this.Spinner = true;
+    
+    console.log(Reasons);
     const tempObj = {
       Payment_Requisition_ID : this.ApproveListobj.Payment_Requisition_ID,
       User_ID : this.commonApi.CompacctCookies.User_ID,
-      Status : 'DISAPPROVE'
+      Status : 'DISAPPROVE',
+      Disapprove_Reason : Reasons
     }
     const obj = {
       "SP_String": "SP_Payment_Requisition",
@@ -814,7 +901,9 @@ const obj = {
           detail: "Succesfully Disapproved"
         });
         this.Spinner = false;
-        this.ViewProTypeModal2 = false
+        this.ViewProTypeModal4 = false;
+        this.ViewProTypeModal2 = false;
+        this.Reasonsubmitted = false;
       }
       else{
         this.compacctToast.clear();
@@ -829,6 +918,8 @@ const obj = {
       }
        
      })
+    }
+    
   }
 
   PrePayment(col, type){
