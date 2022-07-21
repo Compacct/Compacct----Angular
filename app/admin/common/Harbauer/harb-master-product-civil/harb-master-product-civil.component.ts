@@ -199,7 +199,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
      if (this.PDFViewFlag === false) {
       this.fileInput.clear();
     }
-  
+    this.Product_Mfg_Comp = []
   }
   destroyChild() {
     if (this.ProductDetailsInput) {
@@ -1209,7 +1209,6 @@ export class HarbMasterProductCivilComponent implements OnInit {
         else {
       
           this.Spinner = false;
-          this.destroyChild();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
