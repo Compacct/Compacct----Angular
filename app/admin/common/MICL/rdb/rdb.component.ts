@@ -21,14 +21,14 @@ export class RdbComponent implements OnInit {
   buttonname = "Create";
   Spinner = false;
   can_popup = false;
-  items = [];
+  items:any = [];
   RDBFormSubmit = false;
   RDBFormSubmit2 = false
-  AllProductList = [];
+  AllProductList:any = [];
   act_popup = false;
-  menuList = [];
-  userList = [];
-  PoOrderList = [];
+  menuList:any = [];
+  userList:any = [];
+  PoOrderList:any = [];
   ObjRdb:RDB = new RDB();
   ObjRdb1:RDB1 = new RDB1();
   objRdb2:RDB2 = new RDB2();
@@ -39,33 +39,34 @@ export class RdbComponent implements OnInit {
   SE_Date = new Date();
   PO_Doc_Date = new Date();
  
-  Allproduct = [];
-  CostCenterList = [];
-  AllSupplierList = [];
-  SupplierList = [];
-  AllPoOrderList = [];
-  CostList = [];
-  AllStockList = [];
-  StockList = [];
-  rdbListAdd = [];
-  AllProductDetails = [];
-  ProductList = [];
-  RDBListAdd = [];
+  Allproduct:any = [];
+  CostCenterList:any = [];
+  AllSupplierList:any = [];
+  SupplierList:any = [];
+  AllPoOrderList:any = [];
+  CostList:any = [];
+  AllStockList:any = [];
+  StockList:any = [];
+  rdbListAdd:any = [];
+  AllProductDetails:any = [];
+  ProductList:any = [];
+  RDBListAdd:any = [];
   podatedisabled = false;
   RDBNo = undefined;
   seachSpinner = false;
   dateDis = true;
-  initDate = [];
-  companyList = [];
+  initDate:any = [];
+  companyList:any = [];
   RDBSearchFormSubmitted = false;
 
   ObjPendingPO = new PendingPO();
   PendingPOFormSubmitted = false;
-  PendingPOList = [];
-  DynamicHeaderforPPO = [];
+  PendingPOList:any = [];
+  DynamicHeaderforPPO:any = [];
   deleteError = false;
   Save = false;
   Del = false;
+  dataforcreterdb:any = [];
 
    constructor(
     private $http: HttpClient,
@@ -107,7 +108,6 @@ export class RdbComponent implements OnInit {
     this.PO_Doc_Date = new Date();
     this.RDB_Date = new Date();
     this.SE_Date = new Date();
-    this.ObjRdb = new RDB();
     this.RDBListAdd = [];
     this.Spinner = false;
     this.objRdb2 = new RDB2()
@@ -201,13 +201,25 @@ export class RdbComponent implements OnInit {
      {
        this.AllPoOrderList = data;
        console.log('AllPoOrderList=',this.AllPoOrderList);
-       this.AllPoOrderList.forEach((el : any)=>
-       {
-         this.PoOrderList.push({
-           label: el.Doc_No,
-           value: el.Doc_No
-         })
-       });
+       if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Doc_No,
+          element['value'] = element.Doc_No
+        });
+       this.PoOrderList = data;
+     console.log("PoOrderList======",this.PoOrderList);
+      }
+       else {
+        this.PoOrderList = [];
+
+      }
+      //  this.AllPoOrderList.forEach((el : any)=>
+      //  {
+      //    this.PoOrderList.push({
+      //      label: el.Doc_No,
+      //      value: el.Doc_No
+      //    })
+      //  });
        
      });
     }
@@ -219,7 +231,7 @@ export class RdbComponent implements OnInit {
   getProductDetails(PO_Doc_No){
     if(PO_Doc_No){
       this.ProductList = [];
-    const PoFilter = this.AllPoOrderList.filter(el=> el.Doc_No.toString() === this.ObjRdb.PO_Doc_No.toString())
+    const PoFilter = this.PoOrderList.filter(el=> el.Doc_No.toString() === this.ObjRdb.PO_Doc_No.toString())
      this.dateDis = false;
     this.PO_Doc_Date = PoFilter.length ? new Date(PoFilter[0].Doc_Date) : new Date();
       const obj = {
@@ -506,7 +518,7 @@ export class RdbComponent implements OnInit {
   DataForSaveProduct(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
     if(this.RDBListAdd.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.RDBListAdd.forEach(item => {
         const obj = {
             Product_ID : item.Product_ID,
@@ -729,6 +741,7 @@ export class RdbComponent implements OnInit {
         });
         this.RDBNo = undefined;
         this.GetAllData(true);
+        this.GetPendingPO(true);
         }
         else {
           this.onReject();
@@ -856,6 +869,43 @@ export class RdbComponent implements OnInit {
       window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     })
     }
+  }
+  CreateRDB(row){
+    this.clearData();
+    // this.ReqDate = new Date();
+    if(row.Doc_No) {
+      this.tabIndexToView = 1;
+      this.dataforcreaterdb(row.Doc_No);
+    }
+        
+  }
+  dataforcreaterdb(Doc_No){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_Data_For_Create_RDB",
+      "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.dataforcreterdb = data;
+      console.log("this.dataforcreterdb ===",this.dataforcreterdb)
+      this.ObjRdb.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+      this.getPoOrder(data[0].Sub_Ledger_ID);
+      this.ObjRdb.PO_Doc_No = data[0].Doc_No;
+      this.getProductDetails(data[0].Doc_No)
+      this.PO_Doc_Date = new Date(data[0].Doc_Date);
+      this.ObjRdb.Cost_Cen_ID = data[0].Cost_Cen_ID;
+      this.getStockPoint(data[0].Cost_Cen_ID);
+      this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+    })
+  // this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  // this.GetFromGodown();
+  // var tocostcent = this.ToCostCenterList.filter(el=> el.Cost_Cen_Name === obj.Cost_Cen_Name)
+  // this.Objdispatch.To_Cost_Cen_ID = tocostcent[0].Cost_Cen_ID;
+  // this.GetToGodown();
+  // this.ReqDate = new Date(obj.Req_Date);
+  // this.GetIndentList(true);
+  // this.SelectedIndent = obj.Req_No;
+  // this.GetshowProduct();
   }
 }
   class RDB{

@@ -7,7 +7,7 @@
             <p>{{message.detail}}</p>
         </div>
 
-        <div class="ui-g ui-fluid">
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
@@ -17,6 +17,13 @@
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
             </div>
+        </div>
+        <div class="ui-g ui-fluid" *ngIf="deleteError">
+            <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+            </div>
+         
+           
         </div>
     </ng-template>
 </p-toast>
@@ -47,7 +54,7 @@
                                         </ng-template>
                                         <ng-template pTemplate="header">
                                             <tr>
-                                                <!-- <th style="width:5em">Action</th> -->
+                                                <th style="width:5em">Action</th>
                                                 <th>Emp Name</th>
                                                 <th>Leave TYPE</th>
                                                 <th>Apply From Date</th>
@@ -58,33 +65,48 @@
                                         </ng-template> 
                                         <ng-template pTemplate="body" let-col>
                                             <tr>
-
-                                                <!-- <td>
+                                                <td>
                                                     <div class="dropdown">
-                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
-                                                        type="button" data-toggle="dropdown" style="height:27px">
-                                                                            <i class="fa fa-fw fa-bars"></i>
-                                                                            <span class="caret"></span>
-                                                                        </button>
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
                                                         <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a (click)="EditLeave(col)">
-                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            <!-- <li>
+                                                                <a (click)="View(col)">
+                                                                    <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
                                                                 </a>
                                                             </li>
-                                                            <li>
-                                                                <a (click)="DeleteLeave(col)">
-                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                            <li *ngIf= "col.Toyal_Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.F_Cost_Cen_ID">
+                                                                      <a (click)="edit(col)">
+                                                                        <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
+                                                                        Edit
+                                                                    </a>
+                                                                </li>
+                                                            <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'M'  && col.Autho_One_Staus == 'NO'">
+                                                                <a (click)="Authorized(col)">
+                                                                    <i class="fa fa-check"></i> Authorized
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Is_Active == 'N'" >
-                                                                <a (click)="Active(col)">
-                                                                        <i class="fa fa-power-off"></i> Active
+                                                            <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'A'">
+                                                                <a (click)="Authorized(col)">
+                                                                    <i class="fa fa-check"></i> Authorized
                                                                 </a>
-                                                            </li> 
+                                                            </li>
+    
+                                                            <li>
+                                                                <a (click)="exportoexcel2(col,'Purchase_Planning')">
+                                                                    <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
+                                                                </a>
+                                                            </li> -->
+                                                            <li> 
+                                                                <a (click)="CancleLeave(col)">
+                                                                    <i class="fa fa-fw fa-times"></i> Cancle
+                                                                </a>
+                                                            </li>
                                                         </ul>
-                                                    </div>
-                                                </td>  -->
+                                                    </div>      
+                                                </td> 
                                                 
                                                 <td>{{col.Emp_Name ? col.Emp_Name:"-"}}</td> 
                                                 <td>{{col.LEAVE_TYPE ? col.LEAVE_TYPE:"-"}}</td>

@@ -15,13 +15,13 @@ import * as moment from "moment";
   encapsulation: ViewEncapsulation.None
 })
 export class HrLeaveApplyComponent implements OnInit {
-  items = [];
-  menuList=[];
-  AllData = [];
-  empDataList=[];
-  hrYeatList=[];
-  leaveList=[];
-  menuData=[];
+  items:any = [];
+  menuList:any =[];
+  AllData:any = [];
+  empDataList:any = [];
+  hrYeatList:any = [];
+  leaveList:any = [];
+  menuData:any = [];
   tabIndexToView= 0;
   buttonname = "Create";
   leaveHrFormSubmitted = false;
@@ -31,7 +31,7 @@ export class HrLeaveApplyComponent implements OnInit {
   can_popup = false;
   act_popup = false;
   masterLeaveId : number;
-  GlobalApi=[];
+  GlobalApi:any = [];
   txnId = undefined;
   mastertxnId = undefined;
   HRYearID = undefined;
@@ -58,6 +58,9 @@ export class HrLeaveApplyComponent implements OnInit {
   maxToDate : Date;
   mndays = undefined;
   applydays = undefined;
+  empid: any;
+  TxnAppID: any;
+  deleteError = false;
 
   constructor(
     private http: HttpClient,
@@ -221,9 +224,6 @@ export class HrLeaveApplyComponent implements OnInit {
       }
         
     }
-  onReject(){
-    this.compacctToast.clear("c");
-  }
  GetNumberOfdays(){
     if(this.ToDatevalue && this.FromDatevalue){
       const diffTime = Math.abs(Number(new Date(this.ToDatevalue.toLocaleString().split(',')[0])) - Number(new Date(this.FromDatevalue.toLocaleString().split(',')[0])));
@@ -295,6 +295,72 @@ export class HrLeaveApplyComponent implements OnInit {
       
 //     }
 //   }
+CancleLeave(data){
+  if(data.Emp_ID && data.Txn_App_ID){
+  this.deleteError = false;
+  this.empid = data.Emp_ID;
+  this.TxnAppID = data.Txn_App_ID;
+  this.compacctToast.clear();
+  this.compacctToast.add({
+  key: "c",
+  sticky: true,
+  severity: "warn",
+  summary: "Are you sure?",
+  detail: "Confirm to proceed"
+  });
+  }
+}
+onConfirm() {
+  const Tempobj = {
+    Emp_ID : this.empid,
+    Txn_App_ID : this.TxnAppID,
+  }
+  const obj = {
+    "SP_String" : "SP_Leave_Application",
+    "Report_Name_String" : "UnApprove_Leave_Application",
+    "Json_Param_String" : JSON.stringify([Tempobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   // console.log(data);
+   var msg = data[0].Column1
+    if(data[0].Column1 === "Can not Cancel, Because already Approved this leave") {
+      this.onReject();
+      this.deleteError = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: msg,
+      // detail: "Confirm to proceed"
+      });
+      this.GetBrowseData();
+    }
+    else if (data[0].Column1 === "Successfully Cancel"){
+      this.deleteError = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Emp_ID : " + this.empid,
+        detail:  msg
+      });
+      this.GetBrowseData();
+    }
+    else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
+}
+onReject() {
+  this.compacctToast.clear("c");
+}
 }
 class Hrleave {
   Emp_ID:any;

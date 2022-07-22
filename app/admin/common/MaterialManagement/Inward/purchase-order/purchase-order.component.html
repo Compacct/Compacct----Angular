@@ -1518,9 +1518,12 @@ style="text-align: center;"
                  </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col>
-                <ng-container *ngFor="let option of pendPurInProViewListDynamic">
-                    <td >{{col[option]}}</td>
-                </ng-container>
+                <tr>
+                    <ng-container *ngFor="let option of pendPurInProViewListDynamic">
+                        <td >{{col[option]}}</td>
+                    </ng-container>
+                </tr>
+                
             </ng-template>
             <ng-template pTemplate="paginatorright" let-state>
                 Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
