@@ -47,4 +47,10 @@ border: 1px solid #ddd;
 border-radius: 4px;
 padding: 0px 10px 0px 10px;
 background-color: #ffffff;
-    }
+}
+.QtyColor {
+    color: #007ad9;
+  }
+.Othercolor {
+    color: black;
+}

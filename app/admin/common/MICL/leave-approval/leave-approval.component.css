@@ -71,3 +71,6 @@ div.label-t {
     margin-top: 21px;
     margin-left: 10px;
 }
+.width {
+    width: 20% !important;
+}

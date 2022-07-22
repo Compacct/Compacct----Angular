@@ -233,6 +233,7 @@ import { HRTxnSpecialAllowanceDeductionComponent } from "./common/MICL/hr-txn-sp
 import { ProcessSalaryComponent } from './common/Attendance/process-salary/process-salary.component';
 import { LeaveApprovalComponent } from './common/MICL/leave-approval/leave-approval.component';
 import { ConsumptionComponent } from "./common/MICL/consumption/consumption.component";
+import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transaction/Purchase/debit-note-wo-stock/debit-note-wo-stock.component';
 
 
 
@@ -1708,6 +1709,13 @@ data: {
       component: ConsumptionComponent,
       data: {
         title: 'Consumption'
+    }
+    },
+    {
+      path: 'Debit_Note_WO_Stock',
+      component: DebitNoteWoStockComponent,
+      data: {
+        title: 'Debit Note Without Stock'
     }
     },
     

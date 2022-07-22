@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<!-- <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -22,7 +22,7 @@
     </div>
 
     </ng-template>
-</p-toast>
+</p-toast> -->
 
 <div class="row">
     <div class="col-xs-12">
@@ -31,7 +31,7 @@
                 <div class="box-body">
                     <div class="clearfix"></div>
                     <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
-                        <p-table [value]="ApprovalList" [globalFilterFields]='["Product_Description","Indent_Qty","Order_Qty","Rate","Amount","Confirm_Qty","Confirm_Rate","Confirm_Amount","Vendor_Name","Remarks"]' [rowHover]="true" [autoLayout]="true" #dt2>
+                        <p-table [value]="ApprovalList" [globalFilterFields]='["Emp_Name","Leave_Type","Apply_From_Date","Apply_To_Date","Remarks","Issued_From_Date","Issued_To_Date","Approved_Status_Business_Manager","Approved_Note_Business_Manager","Approved_Status_Reporting_Manager","Approved_Note_Reporting_Manager"]' [rowHover]="true" [autoLayout]="true" #dt2>
                             <ng-template pTemplate="caption">
                                 <div class="row">
                                     <div class="col-sm-3 pull-right" style="text-align: right">
@@ -44,11 +44,11 @@
                                 <tr>
                                     <th nowrap="nowrap">Employee Name</th>
                                     <th nowrap="nowrap">Leave Type</th>
-                                    <th nowrap="nowrap">Leave Apply From Date</th>
-                                    <th nowrap="nowrap">Leave Apply To Date</th>
+                                    <th nowrap="nowrap">Leave Apply From</th>
+                                    <th nowrap="nowrap">Leave Apply To</th>
                                     <th nowrap="nowrap">Reason</th>
-                                    <th nowrap="nowrap">Issue Date From</th>
-                                    <th nowrap="nowrap">Issue Date To</th>
+                                    <th nowrap="nowrap">Approved From Date</th>
+                                    <th nowrap="nowrap">Approved To Date</th>
                                     <th nowrap="nowrap">Business Manager</th>
                                     <th nowrap="nowrap">Remarks of Business Manager</th>
                                     <th nowrap="nowrap">Reporting Manager</th>
@@ -59,40 +59,40 @@
                             <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                 <tr>
 
-                                    <td nowrap="nowrap">{{col.Emp_Name}}</td>
-                                    <td nowrap="nowrap">{{col.Leave_Type}}</td>
-                                    <td nowrap="nowrap">{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
-                                    <td nowrap="nowrap">{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
+                                    <td>{{col.Emp_Name}}</td>
+                                    <td>{{col.Leave_Type}}</td>
+                                    <td>{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
+                                    <td>{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
                                     <td nowrap="nowrap">{{col.Remarks ? col.Remarks : '-'}}</td>
-                                    <td nowrap="nowrap"> 
-                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_From_Date' style="width: 200px;"></ejs-datepicker>
+                                    <td> 
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_From_Date'></ejs-datepicker>
+                                    </td>
+                                    <td>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_To_Date'></ejs-datepicker>
                                     </td>
                                     <td nowrap="nowrap">
-                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_To_Date' style="width: 200px;"></ejs-datepicker>
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Business_Manager">
+                                        <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Business_Manager" [disabled]="Bussidisabled">
                                             <option  [ngValue]="undefined">Select</option>
-                                            <option  Value="YES">YES</option>
-                                            <option  Value="NO">NO</option>
+                                            <option  Value="Y">YES</option>
+                                            <option  Value="N">NO</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Business_Manager' class="form-control" [disabled]="Bussidisabled"/>
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Reporting_Manager" [disabled]="Reportdisabled">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  Value="Y">YES</option>
+                                            <option  Value="N">NO</option>
                                         </select>
                                     </td>
                                     <td nowrap="nowrap">
-                                        <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Business_Manager' class="form-control" style="width: 200px;" />
+                                        <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Reporting_Manager' class="form-control" [disabled]="Reportdisabled"/>
                                     </td>
                                     <td nowrap="nowrap">
-                                        <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Reporting_Manager">
-                                            <option  [ngValue]="undefined">Select</option>
-                                            <option  Value="YES">YES</option>
-                                            <option  Value="NO">NO</option>
-                                        </select>
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Reporting_Manager' class="form-control" />
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        <button class="btn btn-primary custombtn" (click)='UpdateBox(col)' type="button" [id]="col.Txn_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
-                                            Save
+                                        <button class="btn btn-primary custombtn" [disabled]="col.approvedisabled" (click)='ApprovedLeave(col)' type="button" [id]="col.Emp_ID"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                            Approve
                                         </button>
                                         <!-- <button type="text" [id]="'RowID'+col.Product_ID" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" > Update </button> -->
                                     </td>

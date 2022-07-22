@@ -359,9 +359,12 @@ export class MiclRequisitionComponent implements OnInit {
            // this.SaveNPrintBill();
            this.Print(data[0].Column1)
             this.clearData();
+            this.Spinner = false;
             this.searchData(true);
             this.tabIndexToView = 0;
             } else{
+              this.Spinner = false;
+              this.ngxService.stop();
               this.compacctToast.add({
               key: "compacct-toast",
               severity: "error",

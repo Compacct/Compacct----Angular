@@ -327,6 +327,7 @@ import { HRTxnSpecialAllowanceDeductionComponent } from "./common/MICL/hr-txn-sp
 import { ProcessSalaryComponent } from './common/Attendance/process-salary/process-salary.component';
 import { LeaveApprovalComponent } from './common/MICL/leave-approval/leave-approval.component';
 import { ConsumptionComponent } from "./common/MICL/consumption/consumption.component";
+import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transaction/Purchase/debit-note-wo-stock/debit-note-wo-stock.component';
 
 
 @NgModule({
@@ -573,7 +574,8 @@ import { ConsumptionComponent } from "./common/MICL/consumption/consumption.comp
     HRTxnSpecialAllowanceDeductionComponent,
     ProcessSalaryComponent,
     LeaveApprovalComponent,
-    ConsumptionComponent
+    ConsumptionComponent,
+    DebitNoteWoStockComponent
   ],
   imports: [
     CommonModule,

@@ -21,6 +21,10 @@ declare var $:any;
 export class LeaveApprovalComponent implements OnInit {
   employeelist = [];
   ApprovalList:any = [];
+  empid: any;
+  Bussidisabled = false;
+  Reportdisabled = false;
+  approvedisabled = false;
 
   constructor(
     private route : ActivatedRoute,
@@ -40,6 +44,7 @@ export class LeaveApprovalComponent implements OnInit {
     this.getemployee();
   }
   getemployee(){
+    this.empid = undefined;
     const obj = {
       "SP_String": "SP_Leave_Application",
       "Report_Name_String": "Get_Emp_ID",
@@ -47,6 +52,7 @@ export class LeaveApprovalComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.employeelist = data;
+      this.empid = data[0].Emp_ID;
        console.log("employeelist ===", this.employeelist);
        this.getApprovaldetails();
     })
@@ -56,15 +62,36 @@ export class LeaveApprovalComponent implements OnInit {
     const obj = {
       "SP_String": "SP_Leave_Application",
       "Report_Name_String": "Get_Leave_Apply_Data",
-      "Json_Param_String": JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}])
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid}])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ApprovalList = data;
       console.log("this.ApprovalList  ===",this.ApprovalList);
       this.ApprovalList.forEach(element => {
-        element['Approved_Status_Business_Manager'] = undefined;
-        element['Approved_Status_Reporting_Manager'] = undefined;
+        if ((element['Approved_Status_Business_Manager'] === "Y") && (element['Approved_Status_Reporting_Manager'] === "Y")) {
+          element['approvedisabled'] = true;
+        }
+        else {
+          element['approvedisabled'] = false;
+        }
+        element['Approved_Status_Business_Manager'] = element['Approved_Status_Business_Manager'] != null ? 
+                                                      element['Approved_Status_Business_Manager'] : undefined;
+        element['Approved_Status_Reporting_Manager'] = element['Approved_Status_Reporting_Manager'] != null ?
+                                                       element['Approved_Status_Reporting_Manager'] : undefined;
+        if (Number(element['Business_Manager']) ===  Number(this.empid)) {
+          this.Reportdisabled = true;
+          this.Bussidisabled = false;
+        }
+        else if (Number(element['Report_Manager']) ===  Number(this.empid)) {
+          this.Bussidisabled = true;
+          this.Reportdisabled = false;
+        }
+        else {
+          this.Reportdisabled = false;
+          this.Bussidisabled = false;
+        }
+
       });
       // for(let i = 0; i < this.AuthorizedList.length ; i++){
       // this.AuthorizedList[i].Confirm_Qty = this.AuthorizedList[i].Order_Qty;
@@ -75,5 +102,69 @@ export class LeaveApprovalComponent implements OnInit {
       // }
     })
    }
+   ApprovedLeave(obj){
+    if(obj.Txn_App_ID && obj.Emp_ID) {
+      if (((Number(obj.Business_Manager) === Number(this.empid)) && (obj.Approved_Status_Reporting_Manager && obj.Approved_Note_Reporting_Manager)) || 
+         ((Number(obj.Report_Manager) === Number(this.empid)) && (obj.Approved_Status_Business_Manager && obj.Approved_Note_Business_Manager))){
+      // if ((obj.Approved_Status_Business_Manager && obj.Approved_Note_Business_Manager) || 
+      //     (obj.Approved_Status_Reporting_Manager && obj.Approved_Note_Reporting_Manager)) {
+      const TObj = {
+        Txn_App_ID : obj.Txn_App_ID,
+        Emp_ID : obj.Emp_ID,
+        HR_Year_ID : obj.HR_Year_ID,
+        LEAVE_TYPE : obj.Atten_Type_ID.toString(),
+        Apply_From_Date : this.DateService.dateConvert(new Date(obj.Apply_From_Date)),
+        Apply_To_Date : this.DateService.dateConvert(new Date(obj.Apply_To_Date)),
+        No_Of_Days_Apply : obj.No_Of_Days_Apply,
+        Remarks : obj.Remarks,
+        Issued_From_Date : this.DateService.dateConvert(new Date(obj.Issued_From_Date)),
+        Issued_To_Date : this.DateService.dateConvert(new Date(obj.Issued_To_Date)),
+        No_Of_Days_Issued : obj.No_Of_Days_Issued,
+        Approved_Status_Business_Manager : obj.Approved_Status_Business_Manager ? obj.Approved_Status_Business_Manager : null,
+        Approved_Status_Reporting_Manager : obj.Approved_Status_Reporting_Manager ? obj.Approved_Status_Reporting_Manager : null,
+        Approved_Note_Business_Manager : obj.Approved_Note_Business_Manager,
+        Approved_Note_Reporting_Manager : obj.Approved_Note_Reporting_Manager,
+        Approval_ID : obj.Approval_ID,
+        HR_Remarks : obj.HR_Remarks
+       }
+    const Tempobj = {
+        "SP_String": "SP_Leave_Application",
+        "Report_Name_String": "Approve_Leave_Application",
+        "Json_Param_String" : JSON.stringify([TObj])
+      }
+      this.GlobalAPI.postData(Tempobj).subscribe((data:any)=>{
+           // console.log(data);
+            if(data[0].Column1) {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'Emp ID : ' + obj.Emp_ID,
+                detail: "Succesfully Approved."
+              });
+              this.getApprovaldetails();
+            }else{
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Error",
+                detail: "Error Occured"
+              });
+            }
+      });
+      console.log('Update ===', TObj)
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
+    }
+  }
+  }
 
 }
