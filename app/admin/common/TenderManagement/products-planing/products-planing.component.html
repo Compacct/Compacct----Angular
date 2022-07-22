@@ -284,7 +284,9 @@
                                       <!-- <td>{{getToFix(d.Qty)}}</td> -->
                                       <td><input type="text" [name]="index+1" [(ngModel)]='d.Qty' (ngModelChange)='culAmount(index)' [ngClass]="{'clearance' : !d.Qty}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
                                         /></td>
-                                      <td>{{getToFix(d.Rate)}}</td>
+                                        <td><input type="text" [name]="index+1+'rate'" [(ngModel)]='d.Rate' (ngModelChange)='culAmount(index)' [ngClass]="{'clearance' : !d.Rate}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                          /></td>
+                                      <!-- <td>{{getToFix(d.Rate)}}</td> -->
                                       <td>{{getToFix(d.Amount)}}</td>
                                       <td class="text-center">
                                            <a (click)="DeleteProductPlan(d)"><div><i class="fa fa-fw fa-trash"> </i></div></a>

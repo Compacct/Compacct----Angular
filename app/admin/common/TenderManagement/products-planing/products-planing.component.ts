@@ -470,7 +470,7 @@ export class ProductsPlaningComponent implements OnInit {
       let flg = false 
       if(this.AddedPlanedProductList.length){
         this.AddedPlanedProductList.forEach((ele:any) => {
-           if(!ele.Qty){
+           if(!ele.Qty || !ele.Rate){
             this.Spinner = false;
             this.PlanedProductFormSubmit = false;
              flg = false
