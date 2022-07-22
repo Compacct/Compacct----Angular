@@ -696,6 +696,25 @@
                                        </tbody>
                                     </table>
                                     </div>
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>PO Header :</strong>
+                                  </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "PO_Header"
+                                        #PO_Header="ngModel"
+                                        [(ngModel)]="objpurchase.PO_Header"
+                                        [style]="{'height':'200px'}"
+                                       >
+                                          
+                                        </p-editor>
+                                    </div>
                                 <h5 style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
@@ -742,12 +761,12 @@
                                 margin-top: 15px;
                                 ">
                                 <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Warranty :</strong>
+                                </i> &nbsp;<strong>Warranty / Guarantee :</strong>
                                </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Warranty"
                                     #Warranty="ngModel"
-                                    [(ngModel)]="objpurchase.Warranty"
+                                    [(ngModel)]="objpurchase.Warranty_Guarantee_Term"
                                     [style]="{'height':'200px'}"
                                     >
                                       
@@ -766,7 +785,7 @@
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Certifivates"
                                     #Certifivates="ngModel"
-                                    [(ngModel)]="objpurchase.Certificates"
+                                    [(ngModel)]="objpurchase.Certificates_Terms"
                                     [style]="{'height':'200px'}"
                                    >
                                       
@@ -785,7 +804,7 @@
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Installation_Commissionning"
                                     #Installation_Commissionning="ngModel"
-                                    [(ngModel)]="objpurchase.Installation_and_Commission"
+                                    [(ngModel)]="objpurchase.Installation_Commissioning"
                                     [style]="{'height':'200px'}"
                                     >
                                       
@@ -839,7 +858,7 @@
                                 </div>
                             </form>
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="	glyphicon glyphicon-hourglass">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
                             <form name="pendingReqForm" #pendingReqForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
@@ -925,6 +944,279 @@
                                         </ng-template>
                                     </p-table>
                                 </div> 
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="pendingPurIndProForm" #pendingPurIndProForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getDateRangePenpurIndPro($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Purchase Indent/Requisition For &nbsp;</label>
+                                        <select class="form-control" 
+                                        name="Cost_Cen_ID_Pending" 
+                                        #Cost_Cen_ID_Pending='ngModel' 
+                                        [(ngModel)]="objpendingPurIndPro.Cost_Cen_ID"
+                                        [ngClass]="{'clearance': pendingPurIndProFormSubmit && Cost_Cen_ID_Pending?.errors?.required}" 
+                                        required
+                                        [disabled]="userType != 'A'"
+                                       >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of costcenterListPeding" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getPendingPurIndPro(pendingPurIndProForm.form.valid)" id="load4" [disabled]="seachPendingPurIndProSpinner">
+                                          <p-progressSpinner *ngIf="seachPendingPurIndProSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachPendingPurIndProSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                </div>
+                                </form>
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="pendingPurIndProData" 
+                                    *ngIf='pendingPurIndProData.length' #dt5
+                                     [paginator]="pendingPurIndProData.length ? true : false"
+                                     [rows]="10"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowHover]="true"
+                                     [columns]="cols"
+                                     [globalFilterFields]='pendingPurIndProDataDynamicHeader'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                           <li>
+                                                                <a (click)="PrintREQ(col.Req_No)">
+                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                    Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <ng-container *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:1">
+                                                    <td [class]="option === 'PO_Qty' ? 'QtyColor' : 'Othercolor'" (click)="getdataforview(option,col)">{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="pendingPurIndProData.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="fa fa-pencil-square-o">
+                            <!-- <form name="UpdateTermsForm" #UpdateTermsForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="gettermDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Purchase Indent/Requisition For &nbsp;</label>
+                                        <select class="form-control" 
+                                        name="Cost_Cen_ID_Pending" 
+                                        #Cost_Cen_ID_Pending='ngModel' 
+                                        [(ngModel)]="objupdateterm.Cost_Cen_ID"
+                                        [ngClass]="{'clearance': UpdateTermsFormSubmit && Cost_Cen_ID_Pending?.errors?.required}" 
+                                        required
+                                        [disabled]="userType != 'A'"
+                                       >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of costcenterListPeding" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div>
+                                    </div>
+                                    </form> -->
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>PO Header :</strong>
+                                  </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "poheader"
+                                        #poheader="ngModel"
+                                        [(ngModel)]="objupdateterm.PO_Header"
+                                        [style]="{'height':'200px'}"
+                                       >
+                                          
+                                        </p-editor>
+                                    </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Payment Terms :</strong>
+                              </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "paymentterms"
+                                    #paymentterms="ngModel"
+                                    [(ngModel)]="objupdateterm.Payment_Terms"
+                                    [style]="{'height':'200px'}"
+                                   >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Delivery Terms :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "deliveryterms"
+                                    #deliveryterms="ngModel"
+                                    [(ngModel)]="objupdateterm.Delivery_Terms"
+                                    [style]="{'height':'200px'}"
+                                    >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Warranty / Guarantee :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "warranty"
+                                    #warranty="ngModel"
+                                    [(ngModel)]="objupdateterm.Warranty_Guarantee_Term"
+                                    [style]="{'height':'200px'}"
+                                    >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Certificates :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "certificates"
+                                    #certificates="ngModel"
+                                    [(ngModel)]="objupdateterm.Certificates_Terms"
+                                    [style]="{'height':'200px'}"
+                                   >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Installation & Commissioning:</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "InstallCommissionning"
+                                    #InstallCommissionning="ngModel"
+                                    [(ngModel)]="objupdateterm.Installation_Commissioning"
+                                    [style]="{'height':'200px'}"
+                                    >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Delivery Location :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "dellocation"
+                                    #dellocation="ngModel"
+                                    [(ngModel)]="objupdateterm.Delivery_Location"
+                                    [style]="{'height':'200px'}"
+                                   >
+                                      
+                                    </p-editor>
+                                </div>
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Remarks :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "remark" 
+                                    #remark="ngModel"
+                                    [(ngModel)]="objupdateterm.Remarks"
+                                    [style]="{'height':'200px'}"
+                                    >
+                                      
+                                    </p-editor>
+                                </div>
+                                <div class="box-footer">
+                                    <button *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" class="btn btn-primary pull-right" 
+                                    (click)="UpdateTerms()" 
+                                    id="load3" [disabled]="TermSpinner">
+                                     <p-progressSpinner *ngIf="TermSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!TermSpinner" class="glyphicon glyphicon-save"></span>Update
+                                    </button>
+                                </div>
                         </p-tabPanel>
                     </p-tabView>
                 </div>
@@ -1163,6 +1455,84 @@ style="text-align: center;"
     <button
     type="button"
     (click)="productDetalisView = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<!-- Pending purchase Indent Product for Qty view -->
+<p-dialog
+[header]="viewHeader"
+[appendTo]="'body'"
+[visible]="ViewListForPendIndQty"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="no-padding">
+        <p-table [value]="pendingPurIndProViewList" #dt2 
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [rowHover]="true" 
+        [globalFilterFields]='pendPurInProViewListDynamic'>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-6 pull-right" style="text-align: right">
+                    <div class="col-sm-6">  
+                     <!-- <button *ngIf="popUpList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcelpopup(popUpList)" id="load1" [disabled]="EXCELpopSpinner">
+                       <p-progressSpinner *ngIf="EXCELpopSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!EXCELpopSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                   </button> -->
+                   </div>
+                    <div class="col-sm-6">
+                       <input type="text" 
+                       pInputText 
+                       size="50"
+                       style="margin-top:25px;"
+                       placeholder="Search" 
+                       (input)="dt1.filterGlobal($event.target.value, 'contains')" 
+                       class="searchInput form-control">
+                    </div>
+                  
+               </div>
+            </div>
+
+        </ng-template>
+            <ng-template pTemplate="header">
+                <tr >
+                    <th *ngFor="let option of pendPurInProViewListDynamic" nowrap="nowrap">{{option.replaceAll('_',' ')}}</th>
+                 </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <ng-container *ngFor="let option of pendPurInProViewListDynamic">
+                    <td >{{col[option]}}</td>
+                </ng-container>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="ViewListForPendIndQty = false"
     class="btn btn-default"
     ><span class="glyphicon glyphicon-remove"></span>
     CLOSE

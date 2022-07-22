@@ -107,6 +107,21 @@ export class PurchaseOrderComponent implements OnInit {
   Save = false;
   Del = false;
 
+  objpendingPurIndPro :pendingpurindpro = new pendingpurindpro()
+  pendingPurIndProFormSubmit = false;
+  seachPendingPurIndProSpinner = false;
+  pendingPurIndProData:any = [];
+  pendingPurIndProDataDynamicHeader:any = [];
+  col: any;
+  pendingPurIndProViewList:any = [];
+  ViewListForPendIndQty = false;
+  cols:any =[]
+  pendPurInProViewListDynamic:any = [];
+  termsdetails:any = [];
+
+  objupdateterm :updateterm = new updateterm();
+  TermSpinner = false;
+
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -130,7 +145,7 @@ export class PurchaseOrderComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -159,13 +174,15 @@ export class PurchaseOrderComponent implements OnInit {
   } 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
     this.buttonname = "Create";
     this.clearData();
     this.clearProject()
     this.GetCostCenter();
+    // this.gettermsdetails();
   }
   clearData(){
+    this.gettermsdetails();
     this.viewHeader = "";
     this.DetalisObj = {};
     this.objpurchase = new purchase();
@@ -195,6 +212,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.objpurchase.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.objpendingreq.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+    this.objpendingPurIndPro.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.objpurchase.Billing_To  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.objpurchase.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.getreq();
@@ -1325,6 +1343,7 @@ getCostcenter(){
      console.log("costcenterList  ===",data);
     this.costcenterListPeding = data;
     this.objpendingreq.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+    this.objpendingPurIndPro.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
   })
  }
 getPendingReq(valid){
@@ -1379,6 +1398,140 @@ getProductPOPUPDetalis(){
   })
   }
 }
+getDateRangePenpurIndPro(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.objpendingPurIndPro.From_Date = dateRangeObj[0];
+    this.objpendingPurIndPro.To_Date = dateRangeObj[1];
+  }
+}
+getPendingPurIndPro(valid){
+  this.pendingPurIndProFormSubmit = true;
+  const start = this.objpendingPurIndPro.From_Date
+  ? this.DateService.dateConvert(new Date(this.objpendingPurIndPro.From_Date))
+  : this.DateService.dateConvert(new Date());
+const end = this.objpendingPurIndPro.To_Date
+  ? this.DateService.dateConvert(new Date(this.objpendingPurIndPro.To_Date))
+  : this.DateService.dateConvert(new Date());
+const tempobj = {
+  From_Date : start,
+  To_Date : end,
+  To_Cost_Cen_ID : this.objpendingPurIndPro.Cost_Cen_ID,
+  proj : this.openProject
+}
+console.log(this.objpendingPurIndPro.Cost_Cen_ID)
+console.log("valid",valid)
+if (valid || this.userType != 'A') {
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Browse_Pending_Requisition_Product_wise",
+    "Json_Param_String": JSON.stringify([tempobj])
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.pendingPurIndProData = data;
+  if(this.pendingPurIndProData.length){
+      this.pendingPurIndProDataDynamicHeader = Object.keys(data[0]);
+    }
+    this.seachPendingPurIndProSpinner = false
+    this.pendingPurIndProFormSubmit = false;
+    
+  })
+}
+}
+getdataforview(col,row){
+  console.log("col",col);
+    if(col === "PO_Qty") {
+      this.col = col;
+      // this.empid = row.Emp_ID;
+      // console.log("Row",row[this.col])
+      console.log("Row",row.PO_Qty)
+      if (row.PO_Qty>0) {
+      const tempobj = {
+        Req_No : row.Req_No,
+        proj : this.openProject,
+        Product_ID : row.Product_ID
+      }
+        const obj = {
+          "SP_String": "Sp_Purchase_Order",
+          "Report_Name_String": "Get_Details_Of_Product",
+          "Json_Param_String": JSON.stringify([tempobj])
+          }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.pendingPurIndProViewList = data;
+          if(this.pendingPurIndProViewList.length){
+            this.pendPurInProViewListDynamic = Object.keys(data[0]);
+          }
+          this.ViewListForPendIndQty = true
+          
+        })
+      }
+      }
+    }
+gettermsdetails(){
+      const obj = {
+        "SP_String": "Sp_Purchase_Order",
+        "Report_Name_String": "Get_Terms_Details",
+        "Json_Param_String": JSON.stringify([{Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID}])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.termsdetails = data;
+        this.objpurchase.Payment_Terms = data[0].Payment_Terms;
+        this.objpurchase.Delivery_Terms = data[0].Delivery_Terms;
+        this.objpurchase.Warranty_Guarantee_Term = data[0].Warranty_Guarantee_Term;
+        this.objpurchase.Certificates_Terms = data[0].Certificates_Terms;
+        this.objpurchase.Installation_Commissioning = data[0].Installation_Commissioning;
+        this.objpurchase.Delivery_Location = data[0].Delivery_Location;
+        this.objpurchase.Remarks = data[0].Remarks;
+        this.objpurchase.PO_Header = data[0].PO_Header;
+        this.objupdateterm = data[0];
+      })
+}
+  gettermDateRange(dateRangeObj){
+    if (dateRangeObj.length) {
+      this.objupdateterm.From_Date = dateRangeObj[0];
+      this.objupdateterm.To_Date = dateRangeObj[1];
+    }
+  }
+  UpdateTerms(){
+    this.TermSpinner = true
+    this.ngxService.start();
+    const costcent = {
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    }
+    const obj = {
+     "SP_String": "Sp_Purchase_Order",
+     "Report_Name_String": "Update_Terms_Details",
+     "Json_Param_String": JSON.stringify([{...costcent,...this.objupdateterm}])
+   
+   }
+   this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
+     if(data[0].Column1){
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        // summary: summary,
+        detail: "Succesfully Update"
+      });
+           this.TermSpinner = false;
+          //  this.getAllData(true);
+          //  this.getPendingReq(true);
+           this.ngxService.stop();
+          //  this.clearData();
+          this.gettermsdetails();
+     }
+     else {
+       this.ngxService.stop();
+       this.TermSpinner = false;
+       this.compacctToast.clear();
+       this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Error Occured "
+       });
+     }
+   })
+   }
 
 }
 class purchase {
@@ -1430,11 +1583,12 @@ class purchase {
         Currency_Symbol:any;
         L_element:any;
         Company_ID:any;
+        PO_Header:any;
         Payment_Terms:any
         Delivery_Terms:any
-        Warranty:any
-        Certificates:any
-        Installation_and_Commission:any
+        Warranty_Guarantee_Term:any
+        Certificates_Terms:any
+        Installation_Commissioning:any
         Delivery_Location:any
         User_ID:any
 }
@@ -1486,4 +1640,23 @@ class pendingreq {
   To_Date: string;
   Cost_Cen_ID: number;
   proj:string
+}
+class pendingpurindpro {
+  From_Date: string;
+  To_Date: string;
+  Cost_Cen_ID: number;
+  proj:string
+}
+class updateterm {
+  From_Date: string;
+  To_Date: string;
+  Cost_Cen_ID: number;
+  proj:string;
+  PO_Header:any;
+  Payment_Terms:any
+  Delivery_Terms:any
+  Warranty_Guarantee_Term:any
+  Certificates_Terms:any
+  Installation_Commissioning:any
+  Delivery_Location:any
 }

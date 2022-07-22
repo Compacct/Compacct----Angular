@@ -7,6 +7,8 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import * as XLSX from 'xlsx';
+import { formatDate } from '@angular/common';
+import { format } from 'url';
 declare var $:any;
 
 @Component({
@@ -28,6 +30,9 @@ export class ProcessSalaryComponent implements OnInit {
   DynamicHeader:any = [];
   cols:any =[]
   BrowseList = [];
+
+  Final = false;
+  NotFinal = false;
 
   constructor(
     private route : ActivatedRoute,
@@ -104,6 +109,7 @@ export class ProcessSalaryComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Data From Api",data);
       this.BrowseList = data;
+      if (data[0].Column1 != "Already Finalized, Can not Process again") {
       if(this.BrowseList.length){
         this.DynamicHeader = Object.keys(data[0]);
          this.DynamicHeader.forEach((el:any)=>{
@@ -118,6 +124,22 @@ export class ProcessSalaryComponent implements OnInit {
         this.GetBrowseData();
       }
       console.log('this.BrowseList',this.BrowseList)
+      }
+      else {
+        var msg = data[0].Column1;
+        this.Final = false;
+        this.NotFinal = true;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "c",
+         sticky: true,
+         closable:false,
+         severity: "warn",
+         summary: msg,
+        //  detail: "Confirm to proceed"
+       });
+        this.GetBrowseData();
+      }
   })
   }
   }
@@ -125,6 +147,60 @@ export class ProcessSalaryComponent implements OnInit {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+  Finalized(){
+    var firstDate = this.Month_Name+'-'+'01'
+    var StartDate:any = new Date(firstDate)
+    var Year = new Date(StartDate).getFullYear();
+    let longMonth = StartDate.toLocaleString('en-us', { month: 'long' }); /* June */
+    if (this.Month_Name) {
+      this.Final = true;
+      this.NotFinal = false;
+       this.compacctToast.clear();
+       this.compacctToast.add({
+         key: "c",
+         sticky: true,
+         severity: "warn",
+         summary: "Finalised Salary will restrict further modification for the Month of "+longMonth+" "+Year,
+         detail: "Confirm to proceed"
+       });
+    }
+  }
+  onConfirm(){
+    var firstDate = this.Month_Name+'-'+'01'
+    console.log('firstDate',firstDate)
+    const obj = {
+      "SP_String" : "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String" : "Finalized Process Salary",
+      "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
+
+    }
+    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+      //console.log(data);
+      var tempID = data[0].Column1;
+      console.log("After Save",tempID);
+     // this.Objproduction.Doc_No = data[0].Column1;
+      if(data[0].Column1){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         detail: "Succesfully Finalized."
+       });
+       this.GetBrowseData();
+      } else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+  }
+  onReject(){
+    this.compacctToast.clear("c");
   }
 
 }

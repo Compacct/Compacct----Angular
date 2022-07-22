@@ -264,7 +264,7 @@ export class HrLeaveApplyComponent implements OnInit {
     this.minFromDate  = new Date();
   if(this.ObjHrleave.Leave_Type) {
     const ctrl = this;
-    const mindayobj = $.grep(ctrl.leaveList,function(item) {return item.Leave_Type == ctrl.ObjHrleave.Leave_Type})[0];
+    const mindayobj = $.grep(ctrl.leaveList,function(item:any) {return Number(item.Atten_Type_ID) == Number(ctrl.ObjHrleave.Leave_Type)})[0];
     console.log("mindayobj >>",mindayobj);
     
     // this.minFromDate = new Date(new Date().getDate() + Number(mindayobj.Min_day));
