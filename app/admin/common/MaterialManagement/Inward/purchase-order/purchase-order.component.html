@@ -374,7 +374,11 @@
                                     <div class="form-group">
                                         <div class="col-sm-3">
                                             <label class="control-label">Pending Purchase Indent/Requisition<sup class="text-danger"></sup></label>
-                                            <select class="form-control" 
+                                            <p-dropdown [options]="Requlist" name="Requisition" #Requisition="ngModel" [(ngModel)]="objaddPurchacse.Req_No"  [showClear]="true" [emptyFilterMessage]="' No Req No Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Requisition No'" [virtualScroll]="true"
+                                                        itemSize="30" #Supplier="ngModel" [styleClass]="purChaseAddFormSubmit && Requisition.errors?.required ? 'clearance' : ''"
+                                                        [disabled]="objaddPurchacse.Product_Type_ID" [required]="true" (onChange)="getProduct()">
+                                                    </p-dropdown>
+                                            <!-- <select class="form-control" 
                                             name="Requisition" 
                                             #Requisition="ngModel" 
                                             [(ngModel)]="objaddPurchacse.Req_No"
@@ -386,7 +390,7 @@
                                             <option *ngFor = "let option of Requlist" [value] ="option.Req_No">
                                                 {{option.Req_No}}
                                               </option>
-                                          </select>
+                                          </select> -->
                                        </div>
                                        <div class="col-sm-3">
                                         <label class="control-label">Product Type</label>
@@ -1209,14 +1213,16 @@
                                       
                                     </p-editor>
                                 </div>
+                                <div>
                                 <div class="box-footer">
-                                    <button *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'" class="btn btn-primary pull-right" 
+                                    <button *ngIf="this.userType === 'A'" class="btn btn-primary pull-right" 
                                     (click)="UpdateTerms()" 
                                     id="load3" [disabled]="TermSpinner">
                                      <p-progressSpinner *ngIf="TermSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!TermSpinner" class="glyphicon glyphicon-save"></span>Update
                                     </button>
                                 </div>
+                            </div>
                         </p-tabPanel>
                     </p-tabView>
                 </div>
@@ -1518,9 +1524,12 @@ style="text-align: center;"
                  </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col>
-                <ng-container *ngFor="let option of pendPurInProViewListDynamic">
-                    <td >{{col[option]}}</td>
-                </ng-container>
+                <tr>
+                    <ng-container *ngFor="let option of pendPurInProViewListDynamic">
+                        <td >{{col[option]}}</td>
+                    </ng-container>
+                </tr>
+                
             </ng-template>
             <ng-template pTemplate="paginatorright" let-state>
                 Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}

@@ -48,7 +48,7 @@ export class PurchaseOrderComponent implements OnInit {
   objproject : project = new project();
   ObjBrowse : Browse = new Browse();
   objpendingreq :pendingreq = new pendingreq()
-  addPurchaseList = [];
+  addPurchaseList:any = [];
   AcceptanceOrderList = [];
   rate = undefined;
   totalRate = undefined;
@@ -657,7 +657,7 @@ export class PurchaseOrderComponent implements OnInit {
   AddPurchase(valid){
     this.purChaseAddFormSubmit = true
     console.log("valid",valid);
-   if(valid){
+   if(valid && this.GetSameProWithInd()){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
      console.log("productFilter",productFilter[0])
      let saveData = {
@@ -689,6 +689,22 @@ export class PurchaseOrderComponent implements OnInit {
       this.getAllTotal();
    }
  }
+ GetSameProWithInd () {
+  const sameproductwithindent = this.addPurchaseList.filter(item=> item.Req_No === this.objaddPurchacse.Req_No && item.Product_ID === this.objaddPurchacse.Product_ID );
+  if(sameproductwithindent.length) {
+    this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Same Product with Same Indent no. Can't be Added."
+        });
+    return false;
+    } 
+    else {
+      return true;
+    }
+  }
  async savePurchase(valid){
    this.purchaseFormSubmitted = true
    this.validatation.required = true
@@ -1274,7 +1290,19 @@ GetRequlist(){
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("data",data)
-    this.Requlist = data
+    // this.Requlist = data
+    if(data.length) {
+      data.forEach(element => {
+        element['label'] = element.Req_No,
+        element['value'] = element.Req_No
+      });
+     this.Requlist = data;
+   console.log("Requlist======",this.Requlist);
+    }
+     else {
+      this.Requlist = [];
+
+    }
   })
 }
 
@@ -1659,4 +1687,5 @@ class updateterm {
   Certificates_Terms:any
   Installation_Commissioning:any
   Delivery_Location:any
+  Remarks:any
 }

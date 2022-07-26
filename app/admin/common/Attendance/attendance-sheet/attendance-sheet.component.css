@@ -234,8 +234,14 @@ div.table-responsive.table-id>p-table>div>div {
   .empwidthwidth>td {
     width : 40%
   }
+  .pull-right {
+    margin-right: 10px;
+  }
   .pull-right1 {
     margin-right: 900px;
+  }
+  .pull-right2 {
+    margin-left: -28px;;
   }
   .form-control {
     border-radius: 0;

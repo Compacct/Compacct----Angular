@@ -53,7 +53,10 @@
                                     <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSearchedList(AllowanceForm.form.valid, objAllowance.Allowance_Deduction_ID)" id="load" [disabled]="seachSpinner">
                                     <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
-                                        </button>
+                                        </button> &nbsp;&nbsp;
+                                        <button type="button" (click)="exportoexcel(Searchedlist,'Allowance/Deduction')" [disabled]='!Searchedlist.length' class="btn btn-success custombutton">
+                                        <i class="glyphicon glyphicon-save"></i>&nbsp;  export to excel
+                                    </button>
                                 </div>
                             </div>
 
@@ -68,7 +71,7 @@
                                         <button class="btn btn-primary pull-right" (click)="SaveAllowance()" id="load" [disabled]="Spinner">
                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                                    </button>
+                                    </button> 
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-3 pull-right" style="text-align: right">

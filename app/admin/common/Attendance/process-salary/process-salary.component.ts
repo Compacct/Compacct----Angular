@@ -92,6 +92,20 @@ export class ProcessSalaryComponent implements OnInit {
   })
   }
   }
+  Print(DocNo) {
+    if(DocNo) {
+      var empidd = DocNo.EMP_ID;
+      var sldate = this.DateService.dateConvert(new Date(DocNo.Salary_Month));
+    const objtemp = {
+      "SP_String": "SP_Leave_Application",
+      "Report_Name_String": "Print_Salary_Slip"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Emp_ID=" + empidd + "&SLDate=" + sldate, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
   UpdateSPBrowseData(){
     this.BrowseList = [];
     var firstDate = this.Month_Name+'-'+'01'

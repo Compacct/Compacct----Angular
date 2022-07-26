@@ -140,6 +140,7 @@ export class DebitNoteWoStockComponent implements OnInit {
   PendingGRNList = [];
   DynamicHeaderforPGRN:any = [];
   deleteError = false;
+  PurchaseReturnFormSubmitted = false;
 
   constructor(
     private Header: CompacctHeader,

@@ -60,14 +60,14 @@
                                         </ng-template>
                                         <ng-template pTemplate="header">
                                             <tr>
-                                                <!-- <th style="width:5em">Action</th> -->
-                                                <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th>
+                                                <th style="width:5em">Action</th>
+                                                <th nowrap="nowrap" style="text-align: center;" *ngFor="let option of DynamicHeader | slice:1">{{option.replaceAll('_',' ')}}</th>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
                                             <tr>
         
-                                                <!-- <td>
+                                                <td>
                                                                     <div class="dropdown">
                                                                         <button class="btn btn-default btn-sm tableButton dropdown-toggle"
                                                                             type="button" data-toggle="dropdown" style="height:27px">
@@ -75,7 +75,13 @@
                                                                             <span class="caret"></span>
                                                                         </button>
                                                                         <ul class="dropdown-menu">
-                                                                            <li >
+                                                                            <li>
+                                                                                <a (click)="Print(col)">
+                                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                                    Print
+                                                                                </a>
+                                                                            </li>
+                                                                            <!-- <li >
                                                                                 <a (click)="EditProduction(col)">
                                                                                     <i class="fa fa-fw fa-pencil"></i>
                                                                                     Edit
@@ -86,12 +92,12 @@
                                                                                     <i class="fa fa-fw fa-trash"></i>
                                                                                     Delete
                                                                                 </a>
-                                                                            </li>
+                                                                            </li> -->
                                                                         </ul>
                                                                     </div>
-                                                            </td> -->
+                                                            </td>
         
-                                                <ng-container *ngFor="let option of DynamicHeader" data->
+                                                <ng-container *ngFor="let option of DynamicHeader | slice:1" data->
                                                     <td nowrap="nowrap" style="text-align: center;">{{col[option]}}</td>
                                                 </ng-container>
                                             </tr>

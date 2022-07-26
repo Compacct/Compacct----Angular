@@ -15,13 +15,13 @@ import * as moment from "moment";
   encapsulation: ViewEncapsulation.None
 })
 export class HrLeaveApplyComponent implements OnInit {
-  items = [];
-  menuList=[];
-  AllData = [];
-  empDataList=[];
-  hrYeatList=[];
-  leaveList=[];
-  menuData=[];
+  items:any = [];
+  menuList:any =[];
+  AllData:any = [];
+  empDataList:any = [];
+  hrYeatList:any = [];
+  leaveList:any = [];
+  menuData:any = [];
   tabIndexToView= 0;
   buttonname = "Create";
   leaveHrFormSubmitted = false;
@@ -31,7 +31,7 @@ export class HrLeaveApplyComponent implements OnInit {
   can_popup = false;
   act_popup = false;
   masterLeaveId : number;
-  GlobalApi=[];
+  GlobalApi:any = [];
   txnId = undefined;
   mastertxnId = undefined;
   HRYearID = undefined;
@@ -58,6 +58,18 @@ export class HrLeaveApplyComponent implements OnInit {
   maxToDate : Date;
   mndays = undefined;
   applydays = undefined;
+  empid: any;
+  TxnAppID: any;
+  deleteError = false;
+  
+  ObjBrowse : Browse = new Browse ();
+  HrLeaveApSearchFormSubmitted = false;
+  seachSpinner = false;
+  initDate:any = [];
+  BackupAllData:any = [];
+  DistEmpName:any = [];
+  SelectedDistEmpName:any = [];
+  SearchFields:any = [];
 
   constructor(
     private http: HttpClient,
@@ -83,11 +95,12 @@ export class HrLeaveApplyComponent implements OnInit {
     this.FromDatevalue = new Date(this.currentdate);
     this.ToDatevalue = new Date();
     this.employeeData();
-    this.GetBrowseData();
+    // this.GetBrowseData();
     this.hrYearList();
     this.leaveTypList();
     this.GetNumberOfdays();
     this.ToDatevalue = new Date();
+    this.initDate = [new Date(),new Date()]
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -108,17 +121,74 @@ export class HrLeaveApplyComponent implements OnInit {
     this.GetNumberOfdays();
     this.hrYearList();
     }
-   GetBrowseData(){
+  getDateRange(dateRangeObj) {
+      if (dateRangeObj.length) {
+        this.ObjBrowse.From_date = dateRangeObj[0];
+        this.ObjBrowse.To_date = dateRangeObj[1];
+      }
+    }
+   GetBrowseData(valid){
+    this.HrLeaveApSearchFormSubmitted = true;
+    // this.seachSpinner = true;
+    const From_date = this.ObjBrowse.From_date
+       ? this.DateService.dateConvert(new Date(this.ObjBrowse.From_date))
+       : this.DateService.dateConvert(new Date());
+     const To_date = this.ObjBrowse.To_date
+       ? this.DateService.dateConvert(new Date(this.ObjBrowse.To_date))
+       : this.DateService.dateConvert(new Date());
+       const tempobj = {
+         Start_Date : From_date,
+         End_Date : To_date,
+         Atten_Type_ID : this.ObjBrowse.Leave_Type
+         }
+    if(valid){
     const obj = {
       "SP_String":"SP_Leave_Application",
-      "Report_Name_String":"Browse_Leave_Application"
+      "Report_Name_String":"Browse_Leave_Application",
+      "Json_Param_String": JSON.stringify([tempobj])
     }
      this.GlobalAPI.getData(obj)
      .subscribe((data:any)=>{
       this.AllData = data;
+      this.BackupAllData = data;
+      this.GetDistinct();
+     this.HrLeaveApSearchFormSubmitted = false;
+     this.seachSpinner = false;
       console.log("Browse data==",this.AllData);
       }); 
+    }
    }
+    // DISTINCT & FILTER
+ GetDistinct() {
+  let DEmpName = [];
+  this.DistEmpName =[];
+  this.SelectedDistEmpName =[];
+  this.SearchFields =[];
+  this.AllData.forEach((item) => {
+ if (DEmpName.indexOf(item.Emp_ID) === -1) {
+  DEmpName.push(item.Emp_ID);
+ this.DistEmpName.push({ label: item.Emp_Name, value: item.Emp_ID });
+ }
+});
+   this.BackupAllData = [...this.AllData];
+}
+FilterDist() {
+  let DEmpName = [];
+  this.SearchFields =[];
+if (this.SelectedDistEmpName.length) {
+  this.SearchFields.push('Emp_ID');
+  DEmpName = this.SelectedDistEmpName;
+}
+this.AllData = [];
+if (this.SearchFields.length) {
+  let LeadArr = this.BackupAllData.filter(function (e) {
+    return (DEmpName.length ? DEmpName.includes(e['Emp_ID']) : true)
+  });
+this.AllData = LeadArr.length ? LeadArr : [];
+} else {
+this.AllData = [...this.BackupAllData] ;
+}
+}
    employeeData(){
      const obj = {
        "SP_String":"SP_Leave_Application",
@@ -191,7 +261,7 @@ export class HrLeaveApplyComponent implements OnInit {
               detail: "Succesfully "
             });
             this.Spinner = false;
-            this.GetBrowseData();
+            this.GetBrowseData(true);
             this.HrleaveId = undefined;
             this.txnId = undefined;
             this.Editdisable = false;
@@ -221,9 +291,6 @@ export class HrLeaveApplyComponent implements OnInit {
       }
         
     }
-  onReject(){
-    this.compacctToast.clear("c");
-  }
  GetNumberOfdays(){
     if(this.ToDatevalue && this.FromDatevalue){
       const diffTime = Math.abs(Number(new Date(this.ToDatevalue.toLocaleString().split(',')[0])) - Number(new Date(this.FromDatevalue.toLocaleString().split(',')[0])));
@@ -295,6 +362,72 @@ export class HrLeaveApplyComponent implements OnInit {
       
 //     }
 //   }
+CancleLeave(data){
+  if(data.Emp_ID && data.Txn_App_ID){
+  this.deleteError = false;
+  this.empid = data.Emp_ID;
+  this.TxnAppID = data.Txn_App_ID;
+  this.compacctToast.clear();
+  this.compacctToast.add({
+  key: "c",
+  sticky: true,
+  severity: "warn",
+  summary: "Are you sure?",
+  detail: "Confirm to proceed"
+  });
+  }
+}
+onConfirm() {
+  const Tempobj = {
+    Emp_ID : this.empid,
+    Txn_App_ID : this.TxnAppID,
+  }
+  const obj = {
+    "SP_String" : "SP_Leave_Application",
+    "Report_Name_String" : "UnApprove_Leave_Application",
+    "Json_Param_String" : JSON.stringify([Tempobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   // console.log(data);
+   var msg = data[0].Column1
+    if(data[0].Column1 === "Can not Cancel, Because already Approved this leave") {
+      this.onReject();
+      this.deleteError = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: msg,
+      // detail: "Confirm to proceed"
+      });
+      this.GetBrowseData(true);
+    }
+    else if (data[0].Column1 === "Successfully Cancel"){
+      this.deleteError = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Emp_ID : " + this.empid,
+        detail:  msg
+      });
+      this.GetBrowseData(true);
+    }
+    else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
+}
+onReject() {
+  this.compacctToast.clear("c");
+}
 }
 class Hrleave {
   Emp_ID:any;
@@ -314,3 +447,8 @@ class Hrleave {
   Approval_ID:any;
   HR_Remarks:any
 }
+class Browse {
+  Leave_Type : any;
+  From_date : Date;
+  To_date : Date;
+ }

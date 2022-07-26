@@ -104,8 +104,8 @@ export class LeaveApprovalComponent implements OnInit {
    }
    ApprovedLeave(obj){
     if(obj.Txn_App_ID && obj.Emp_ID) {
-      if (((Number(obj.Business_Manager) === Number(this.empid)) && (obj.Approved_Status_Reporting_Manager && obj.Approved_Note_Reporting_Manager)) || 
-         ((Number(obj.Report_Manager) === Number(this.empid)) && (obj.Approved_Status_Business_Manager && obj.Approved_Note_Business_Manager))){
+      if (((Number(obj.Business_Manager) === Number(this.empid)) && (obj.Approved_Status_Business_Manager && obj.Approved_Note_Business_Manager)) || 
+         ((Number(obj.Report_Manager) === Number(this.empid)) && (obj.Approved_Status_Reporting_Manager && obj.Approved_Note_Reporting_Manager))){
       // if ((obj.Approved_Status_Business_Manager && obj.Approved_Note_Business_Manager) || 
       //     (obj.Approved_Status_Reporting_Manager && obj.Approved_Note_Reporting_Manager)) {
       const TObj = {
@@ -134,7 +134,7 @@ export class LeaveApprovalComponent implements OnInit {
       }
       this.GlobalAPI.postData(Tempobj).subscribe((data:any)=>{
            // console.log(data);
-            if(data[0].Column1) {
+            if(data[0].Column1 === "Done") {
               this.compacctToast.clear();
               this.compacctToast.add({
                 key: "compacct-toast",
@@ -143,7 +143,20 @@ export class LeaveApprovalComponent implements OnInit {
                 detail: "Succesfully Approved."
               });
               this.getApprovaldetails();
-            }else{
+            }
+            else if(data[0].Column1 === "Something Wrong") {
+              this.onReject();
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "c", 
+                sticky: true,
+                closable: false,
+                severity: "warn", // "info",
+                summary: "Approve date should be between apply date.",
+                // detail: data[0].Column1
+              });
+            }
+            else {
               this.compacctToast.clear();
               this.compacctToast.add({
                 key: "compacct-toast",
@@ -165,6 +178,18 @@ export class LeaveApprovalComponent implements OnInit {
       });
     }
   }
+  else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Something Wrong"
+    });
   }
+  }
+  onReject(){
+    this.compacctToast.clear("c");
+   }
 
 }
