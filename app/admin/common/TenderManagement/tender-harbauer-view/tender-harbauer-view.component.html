@@ -187,12 +187,12 @@
                                                                     Update Pre Bid Budget
                                                                 </a>
                                                             </li>
-                                                                  <!-- <li >
-                                                                      <a (click)="updateFinance(col)">
-                                                                          <i class="fa fa-fw fa-clone"></i>
-                                                                          Update Finance
-                                                                      </a>
-                                                                  </li> -->
+                                                            <li >
+                                                                <a (click)="UploadDoc(col)">
+                                                                    <i class="fa fa-file"></i>
+                                                                    Upload Document
+                                                                </a>
+                                                            </li>
                                                               </ul>
                                                           </div>
                                                   </td>
@@ -2272,3 +2272,82 @@ id="load2"
 </button>
   </p-footer>
   </p-dialog>
+  <!-- UPLOAD DOCUMENT -->
+<p-dialog
+[header]="'Upload Document'"
+[appendTo]="'body'"
+[visible]="uploadModel"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '50%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+  <div class="form-group">
+    <div class="col-sm-8">
+      <label class="control-label">Upload Document</label>
+      <p-fileUpload #fileInput 
+                  *ngIf="!PDFViewFlag" 
+                  name="aFile566" 
+                  accept=".pdf, .png, .jpg, .jpeg" 
+                  [customUpload]="true" 
+                  [chooseLabel]="'Browse'" 
+                  [showUploadButton]="false" 
+                  (onSelect)="handleFileSelect($event)">
+              </p-fileUpload>
+      <a [href]="ProductPDFLink" 
+          *ngIf="PDFViewFlag" 
+          style="display: block;">
+          <img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+    </div>
+    <div class="col-sm-4">
+      <button
+        *ngIf="pImg"
+        class="btn btn-primary"
+        style="margin-top: 44px;"
+        (click)="showImg()"
+        id="loadimg" >
+        <span
+        class="glyphicon glyphicon-picture"
+        ></span
+        >&nbsp; &nbsp;Show Document
+        </button>
+    </div>
+  </div>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="uploadModel = false"
+  class="btn btn-default"
+>  <span
+class="glyphicon glyphicon-remove"
+></span
+>&nbsp;
+  CLOSE
+</button>
+<button
+class="btn btn-primary pull-right custombutton"
+(click)="SaveUploadDoc()"
+id="load2"
+[disabled]="SpinnerUpload"
+>
+<p-progressSpinner
+*ngIf="SpinnerUpload"
+[style]="{ width: '15px', height: '15px' }"
+strokeWidth="8"
+animationDuration=".5s"
+></p-progressSpinner>
+<span
+*ngIf="!SpinnerUpload"
+class="glyphicon glyphicon-cloud-upload"
+></span
+>&nbsp;UPLOAD
+</button>
+</p-footer>
+</p-dialog>
