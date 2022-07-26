@@ -20,12 +20,12 @@ export class SubLedgerComponent implements OnInit {
   buttonname = "Create";
   Spinner = false;
   can_popup = false;
-  items = [];
+  items:any = [];
   CostHeadFormSubmit = false;
   AllProductList = [];
   act_popup = false;
-  menuList = [];
-  userList = [];
+  menuList:any = [];
+  userList:any = [];
 
   SubLedgerID = undefined;
   
@@ -35,9 +35,9 @@ export class SubLedgerComponent implements OnInit {
   objDocument : Document = new Document();
   objBank : Bank = new Bank();
 
-  catagoryListFilter = [];
+  catagoryListFilter:any = [];
   SelectedCatagoryType:any = [];
-  TagLedgerFilter=[];
+  TagLedgerFilter:any=[];
   SelectedTagLedger : any = [];
 
   SubLedgerFormSubmit = false;
@@ -46,38 +46,45 @@ export class SubLedgerComponent implements OnInit {
   BankFormSubmit = false;
   DocumentFormSubmit = false;
 
-  AllLedgerList = [];
-  AllCountryList = [];
-  ledgerList = [];
-  AllStateList = [];
-  AllSales = [];
-  AllDocument=[];
-  AllUser=[];
-  SubledgerTypeList = [];
-  catagoryList = [];
-  subledgerClassList = [];
-  TDSDeduction = [];
-  AllRoute = [];
-  WeeklyClosingList = [];
-  RegionList = [];
-  AllEnquirySource = [];
-  AllTagLedger = [];
-  AllparentLedger = [];
-  TagledgerList = [];
-  AccountTypeList = [];
+  AllLedgerList:any = [];
+  AllCountryList:any = [];
+  ledgerList:any = [];
+  AllStateList:any = [];
+  AllSales:any = [];
+  AllDocument:any=[];
+  AllUser:any=[];
+  SubledgerTypeList:any = [];
+  catagoryLis:any = [];
+  subledgerClassList:any = [];
+  TDSDeduction:any = [];
+  AllRoute:any = [];
+  WeeklyClosingList:any = [];
+  RegionList:any = [];
+  AllEnquirySource:any = [];
+  AllTagLedger:any = [];
+  AllparentLedger:any = [];
+  TagledgerList:any = [];
+  AccountTypeList:any = [];
   //AddressListAdd : any[];
-  AddressListAdd  = [];
-  contactListAdd = [];
-  DepartmentList = [];
-  DocumentListAdd = [];
-  bankListAdd = [];
-  frequency = 0
+  AddressListAdd:any  = [];
+  contactListAdd:any = [];
+  DepartmentList:any = [];
+  DocumentListAdd:any = [];
+  bankListAdd:any = [];
+  frequency:any = 0
   
   tabIndex = 0;
   TabSpinner = false;
   Tabbuttonname = "Save"
   GSTvalidFlag = false;
   gstdisabled = false;
+  PDFFlag = false;
+  PDFViewFlag = false;
+  ProductPDFLink:any = undefined;
+  ProductPDFFile:any = {};
+  catagoryList:any = [];
+  upLoadData:any  = {}
+  @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -614,17 +621,33 @@ export class SubLedgerComponent implements OnInit {
        }
        else if(value === "DocumentVault"){
           //this.DocumentListAdd = [];
-         const DocFilter = this.AllDocument.filter(el=>Number(el.Document_Type_ID) === Number(this.objDocument.Document_Type_ID))
-         this.objDocument.Upload_Date = new Date();
-         this.objDocument.Upload_By = this.commonApi.CompacctCookies.User_ID
-         this.objDocument.Upload_Name = this.commonApi.CompacctCookies.User_Name
-         this.objDocument.Document_Type_Name = DocFilter[0].Document_Type_Name
-        //  tempArrdoc.push(this.objDocument);
-        //  this.DocumentListAdd = tempArrdoc
-       this.DocumentListAdd.push(this.objDocument);
-        console.log("DocumentListAdd",this.DocumentListAdd);
-        this.objDocument = new Document()
-        this.DocumentFormSubmit = false;
+          if(this.ProductPDFFile['size']){
+          
+             this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+             .subscribe((data : any)=>
+             {
+              console.log("File Upload data",data)
+              this.upLoadData = data
+              if(this.upLoadData.file_url){
+                this.ProductPDFFile = {}
+                const DocFilter = this.AllDocument.filter(el=>Number(el.Document_Type_ID) === Number(this.objDocument.Document_Type_ID))
+              this.objDocument.Upload_Date = new Date();
+              this.objDocument.Upload_By = this.commonApi.CompacctCookies.User_ID
+              this.objDocument.Upload_Name = this.commonApi.CompacctCookies.User_Name
+              this.objDocument.Document_Type_Name = DocFilter[0].Document_Type_Name
+              this.objDocument.Upload_File = this.upLoadData.file_url
+             //  tempArrdoc.push(this.objDocument);
+             //  this.DocumentListAdd = tempArrdoc
+            this.DocumentListAdd.push(this.objDocument);
+             console.log("DocumentListAdd",this.DocumentListAdd);
+             this.objDocument = new Document()
+             this.DocumentFormSubmit = false;
+              }
+              
+             })
+           
+          }
+        
        }
        else if(value === "bank"){
           //this.bankListAdd = [];
@@ -934,6 +957,18 @@ export class SubLedgerComponent implements OnInit {
     });
    }
  }
+ handleFileSelect(event:any) {
+  this.PDFFlag = false;
+  this.ProductPDFFile = {};
+  if (event) {
+    console.log(event)
+    this.ProductPDFFile = event.files[0];
+    this.PDFFlag = true;
+}
+}
+openImg(img){
+ window.open(img) 
+}
 }
 
 class SubLedger{
@@ -1036,6 +1071,7 @@ class Document{
   Upload_By:any
   Upload_Name:any
   Upload_File : any
+  
 }
 
 class Bank{

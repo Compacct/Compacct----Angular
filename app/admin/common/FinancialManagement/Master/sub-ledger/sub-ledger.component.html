@@ -787,7 +787,19 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <label class="control-label">Upload File</label>
-                                                <input class="form-control" name="Upload_File" #Upload_File="ngModel" [(ngModel)]="objDocument.Upload_File">
+                                                <p-fileUpload #fileInput 
+                                                            *ngIf="!PDFViewFlag" 
+                                                            name="aFile566" 
+                                                            accept=".pdf, .png" 
+                                                            [customUpload]="true" 
+                                                            [chooseLabel]="'Browse'" 
+                                                            [showUploadButton]="false" 
+                                                            (onSelect)="handleFileSelect($event)">
+                                                        </p-fileUpload>
+                                                <a [href]="ProductPDFLink" 
+                                                    *ngIf="PDFViewFlag" 
+                                                    style="display: block;">
+                                                    <img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
                                             </div>
 
                                         </div>
@@ -806,7 +818,7 @@
                                                     <th>Date</th>
                                                     <th>Created By</th>
                                                     <th>Document Type</th>
-                                                    <!-- <th>View PDF</th> -->
+                                                    <th>View image</th>
                                                     <th></th>
                                                 </tr>
                                             </ng-template>
@@ -815,6 +827,7 @@
                                                     <td>{{ col.Upload_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.Upload_Name ? col.Upload_Name : '-'}}</td>
                                                     <td>{{col.Document_Type_Name ? col.Document_Type_Name : '-'}}</td>
+                                                    <td><button (click)="openImg(col.Upload_File)" class="btn btn-primary"><i class="fa fa-picture-o"></i></button></td>
                                                     <td align="center"><button (click)="commondelete(rowIndex,'DocumentVault')" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                 </tr>
                                             </ng-template>
