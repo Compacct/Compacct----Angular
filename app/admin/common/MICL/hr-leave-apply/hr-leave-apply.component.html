@@ -34,6 +34,40 @@
                 <div class="box-body">
                         <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="HrLeaveApSearchForm" #HrLeaveApSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                         <label class="control-label">Date</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                         </app-compacct-daterangepicker>
+                                      </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Leave Type<sup class="text-danger">*</sup></label>
+                                            <select class="form-control" 
+                                            name="browseleavetype" 
+                                            #browseleavetype="ngModel" 
+                                            [(ngModel)]="ObjBrowse.Leave_Type"
+                                            [ngClass]="{'clearance': HrLeaveApSearchFormSubmitted && browseleavetype?.errors?.required}"
+                                            required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let type of leaveList" value="{{type.Atten_Type_ID}}">{{type.Leave_Type}}</option>
+                                          </select>
+                                        </div>
+                                    <div class="col-sm-2">
+                                        <!-- <div class="col-sm-3"> -->
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetBrowseData(HrLeaveApSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                        <!-- </div> -->
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Employee Name <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistEmpName" [(ngModel)]="SelectedDistEmpName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="empname"></p-multiSelect>
+                                    </div>
+                                </div>
+
+                            </form>
                             <div class="table-responsive no-padding">
                                 <div class="table-responsive no-padding">
                                     <p-table [value]="AllData" 
@@ -56,11 +90,15 @@
                                             <tr>
                                                 <th style="width:5em">Action</th>
                                                 <th>Emp Name</th>
-                                                <th>Leave TYPE</th>
+                                                <th>Application Date</th>
                                                 <th>Apply From Date</th>
                                                 <th>Apply To Date</th>
                                                 <th>No Of Days Issued</th>
                                                 <th>Remarks</th>
+                                                <th>Business Manager Approve Status</th>
+                                                <th>Reporting Manager Approve Status</th>
+                                                <th>Accepted Date From</th>
+                                                <th>Accepted Date To</th>
                                             </tr>
                                         </ng-template> 
                                         <ng-template pTemplate="body" let-col>
@@ -99,9 +137,9 @@
                                                                     <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
                                                                 </a>
                                                             </li> -->
-                                                            <li> 
+                                                            <li *ngIf="col.Approved_Status_Business_Manager != 'Y' || col.Approved_Status_Reporting_Manager != 'Y'"> 
                                                                 <a (click)="CancleLeave(col)">
-                                                                    <i class="fa fa-fw fa-times"></i> Cancle
+                                                                    <i class="fa fa-fw fa-times"></i> Cancel
                                                                 </a>
                                                             </li>
                                                         </ul>
@@ -109,11 +147,15 @@
                                                 </td> 
                                                 
                                                 <td>{{col.Emp_Name ? col.Emp_Name:"-"}}</td> 
-                                                <td>{{col.LEAVE_TYPE ? col.LEAVE_TYPE:"-"}}</td>
+                                                <td>{{col.Application_Date  | date : 'dd/MMM/yyyy'}}</td>
                                                 <td>{{col.Apply_From_Date  | date : 'dd/MMM/yyyy'}}</td>
                                                 <td>{{col.Apply_To_Date  | date : 'dd/MMM/yyyy'}}</td>
                                                 <td>{{col.No_Of_Days_Apply ? col.No_Of_Days_Apply:"-"}}</td>
                                                 <td>{{col.Remarks ? col.Remarks:"-"}}</td>
+                                                <td>{{col.Approved_Status_Business_Manager ? col.Approved_Status_Business_Manager:"-"}}</td>
+                                                <td>{{col.Approved_Status_Reporting_Manager ? col.Approved_Status_Reporting_Manager:"-"}}</td>
+                                                <td>{{col.Issued_From_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                                <td>{{col.Issued_To_Date  | date : 'dd/MMM/yyyy'}}</td>
                                             </tr>
                                         </ng-template>
                                             <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->

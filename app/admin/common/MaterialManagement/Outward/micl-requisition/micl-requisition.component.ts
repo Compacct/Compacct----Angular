@@ -29,14 +29,14 @@ export class MiclRequisitionComponent implements OnInit {
   itemList =[];
   items:any = [];
   tabIndexToView = 0;
-  menuList = [];
+  menuList:any = [];
   requi_Date = new Date();
   reqiFormSubmitted = false;
   objreqi:reqi = new reqi();
   DepartmentList = [];
   objmaterial:material = new material()
   objproject : project = new project()
-  AddMaterialsList = []
+  AddMaterialsList:any = []
   requisitionmaterialFormSubmit = false;
   allRequDataList = [];
   allRequDataListHeader:any = [];
@@ -151,7 +151,7 @@ export class MiclRequisitionComponent implements OnInit {
   console.log("valid",valid);
   this.requisitionmaterialFormSubmit = true;
   this.reqValid = true
-  if(valid){
+  if(valid && this.GetSameProduct()){
      if(this.projectMand == 'Y' && (Number(this.productFilterObj.Can_Be_Used_Qty)< Number(this.objmaterial.Req_Qty) || 0 == Number(this.objmaterial.Req_Qty))){
       console.log("done");
       this.reqValid = true
@@ -161,8 +161,8 @@ export class MiclRequisitionComponent implements OnInit {
       this.reqValid = false
      }
      
-    const productFilter = this.productListview.filter((el:any)=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
-    const productTypeFilter = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID))
+    const productFilter:any = this.productListview.filter((el:any)=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
+    const productTypeFilter:any = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID))
      console.log("productFilter",productFilter);
     if(productFilter.length){
       this.AddMaterialsList.push({
@@ -187,6 +187,21 @@ export class MiclRequisitionComponent implements OnInit {
   
   }
   }
+  GetSameProduct () {
+    const sameproduct = this.AddMaterialsList.filter(item=> Number(item.Product_ID) === Number(this.objmaterial.Product_ID) );
+    if(sameproduct.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Same Product Can't be Added."
+          });
+      return false;
+    } else {
+      return true;
+    }
+    }
   SaveRequi(valid){ 
    console.log("valid",valid);
    this.reqiFormSubmitted = true;

@@ -81,6 +81,7 @@ clearData(){
   this.Objleave = new leave();
   this.leaveId = undefined;
   this.initDate =[];
+  this.hrYearList();
 }
 getDateRange(dateRangeObj:any) {
   if (dateRangeObj.length) {
@@ -122,7 +123,9 @@ hrYearList(){
    this.GlobalAPI.getData(obj)
    .subscribe((data:any)=>{
     this.hrYeatList = data;
+    this.Objleave.HR_Year_ID = data[0].HR_Year_ID;
     console.log("Hr Year==",this.hrYeatList);
+    this.leaveChange();
     });
 }
 Finyear() {
@@ -268,7 +271,7 @@ DeleteLeave(masterLeave): void{
     this.masterLeaveId = masterLeave.Emp_ID ;
     this.mastertxnId = masterLeave.Txn_ID;
     this.HRYearID = masterLeave.HR_Year_ID;
-    this.LEAVETYPE = masterLeave.LEAVE_TYPE;
+    this.LEAVETYPE = masterLeave.Atten_Type_ID;
     this.TranType = masterLeave.Tran_Type;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -287,7 +290,7 @@ console.log("onconform==",this.Objleave)
       Emp_ID : this.masterLeaveId,
       Txn_ID : this.mastertxnId,
       HR_Year_ID : this.HRYearID,
-      LEAVE_TYPE : this.LEAVETYPE,
+      LEAVE_TYPE : Number(this.LEAVETYPE),
       Tran_Type : this.TranType
 
     }

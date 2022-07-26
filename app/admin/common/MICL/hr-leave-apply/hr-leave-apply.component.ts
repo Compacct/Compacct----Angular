@@ -61,6 +61,15 @@ export class HrLeaveApplyComponent implements OnInit {
   empid: any;
   TxnAppID: any;
   deleteError = false;
+  
+  ObjBrowse : Browse = new Browse ();
+  HrLeaveApSearchFormSubmitted = false;
+  seachSpinner = false;
+  initDate:any = [];
+  BackupAllData:any = [];
+  DistEmpName:any = [];
+  SelectedDistEmpName:any = [];
+  SearchFields:any = [];
 
   constructor(
     private http: HttpClient,
@@ -86,11 +95,12 @@ export class HrLeaveApplyComponent implements OnInit {
     this.FromDatevalue = new Date(this.currentdate);
     this.ToDatevalue = new Date();
     this.employeeData();
-    this.GetBrowseData();
+    // this.GetBrowseData();
     this.hrYearList();
     this.leaveTypList();
     this.GetNumberOfdays();
     this.ToDatevalue = new Date();
+    this.initDate = [new Date(),new Date()]
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -111,17 +121,74 @@ export class HrLeaveApplyComponent implements OnInit {
     this.GetNumberOfdays();
     this.hrYearList();
     }
-   GetBrowseData(){
+  getDateRange(dateRangeObj) {
+      if (dateRangeObj.length) {
+        this.ObjBrowse.From_date = dateRangeObj[0];
+        this.ObjBrowse.To_date = dateRangeObj[1];
+      }
+    }
+   GetBrowseData(valid){
+    this.HrLeaveApSearchFormSubmitted = true;
+    // this.seachSpinner = true;
+    const From_date = this.ObjBrowse.From_date
+       ? this.DateService.dateConvert(new Date(this.ObjBrowse.From_date))
+       : this.DateService.dateConvert(new Date());
+     const To_date = this.ObjBrowse.To_date
+       ? this.DateService.dateConvert(new Date(this.ObjBrowse.To_date))
+       : this.DateService.dateConvert(new Date());
+       const tempobj = {
+         Start_Date : From_date,
+         End_Date : To_date,
+         Atten_Type_ID : this.ObjBrowse.Leave_Type
+         }
+    if(valid){
     const obj = {
       "SP_String":"SP_Leave_Application",
-      "Report_Name_String":"Browse_Leave_Application"
+      "Report_Name_String":"Browse_Leave_Application",
+      "Json_Param_String": JSON.stringify([tempobj])
     }
      this.GlobalAPI.getData(obj)
      .subscribe((data:any)=>{
       this.AllData = data;
+      this.BackupAllData = data;
+      this.GetDistinct();
+     this.HrLeaveApSearchFormSubmitted = false;
+     this.seachSpinner = false;
       console.log("Browse data==",this.AllData);
       }); 
+    }
    }
+    // DISTINCT & FILTER
+ GetDistinct() {
+  let DEmpName = [];
+  this.DistEmpName =[];
+  this.SelectedDistEmpName =[];
+  this.SearchFields =[];
+  this.AllData.forEach((item) => {
+ if (DEmpName.indexOf(item.Emp_ID) === -1) {
+  DEmpName.push(item.Emp_ID);
+ this.DistEmpName.push({ label: item.Emp_Name, value: item.Emp_ID });
+ }
+});
+   this.BackupAllData = [...this.AllData];
+}
+FilterDist() {
+  let DEmpName = [];
+  this.SearchFields =[];
+if (this.SelectedDistEmpName.length) {
+  this.SearchFields.push('Emp_ID');
+  DEmpName = this.SelectedDistEmpName;
+}
+this.AllData = [];
+if (this.SearchFields.length) {
+  let LeadArr = this.BackupAllData.filter(function (e) {
+    return (DEmpName.length ? DEmpName.includes(e['Emp_ID']) : true)
+  });
+this.AllData = LeadArr.length ? LeadArr : [];
+} else {
+this.AllData = [...this.BackupAllData] ;
+}
+}
    employeeData(){
      const obj = {
        "SP_String":"SP_Leave_Application",
@@ -194,7 +261,7 @@ export class HrLeaveApplyComponent implements OnInit {
               detail: "Succesfully "
             });
             this.Spinner = false;
-            this.GetBrowseData();
+            this.GetBrowseData(true);
             this.HrleaveId = undefined;
             this.txnId = undefined;
             this.Editdisable = false;
@@ -334,7 +401,7 @@ onConfirm() {
       summary: msg,
       // detail: "Confirm to proceed"
       });
-      this.GetBrowseData();
+      this.GetBrowseData(true);
     }
     else if (data[0].Column1 === "Successfully Cancel"){
       this.deleteError = false;
@@ -345,7 +412,7 @@ onConfirm() {
         summary: "Emp_ID : " + this.empid,
         detail:  msg
       });
-      this.GetBrowseData();
+      this.GetBrowseData(true);
     }
     else{
       this.compacctToast.clear();
@@ -380,3 +447,8 @@ class Hrleave {
   Approval_ID:any;
   HR_Remarks:any
 }
+class Browse {
+  Leave_Type : any;
+  From_date : Date;
+  To_date : Date;
+ }

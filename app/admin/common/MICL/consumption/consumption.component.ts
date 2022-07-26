@@ -29,6 +29,7 @@ export class ConsumptionComponent implements OnInit {
   initDate : any = [];
   ObjBrowse : Browse = new Browse();  
   ConsumptionFormSubmitted : any = false;
+  BrowseFormSubmitted : any = false;
   Searchedlist : any = [];
   ToBcostcenlist : any = [];
   ToBGodownList : any = [];
@@ -38,12 +39,18 @@ export class ConsumptionComponent implements OnInit {
   Del : boolean = false;
   Browselist : any = [];
   ViewListobj : any = {};
+  ViewListobj2 : any = {};
   ViewList : any = [];
+  ViewList2 : any = [];
   ViewProTypeModal2 : any = false;
+  ViewProTypeModal3 : any = false;
   Productid : any;
   DocNo : any;
   Batchno : any;
   f : any;
+  objAllData : AllData = new AllData();
+  Del_Right : string = "";
+  
 
   constructor(
     private $http : HttpClient,
@@ -52,17 +59,19 @@ export class ConsumptionComponent implements OnInit {
     private GlobalAPI : CompacctGlobalApiService,
     private route : ActivatedRoute,
     private compacctToast : MessageService,
-    private DateService : DateTimeConvertService
+    private DateService : DateTimeConvertService,
+    private $CompacctAPI: CompacctCommonApi
   ) { }
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
-      Header:  "  " ,
+      Header:  " Consumption/Utilization " ,
       Link: " " 
     });
+    this.initDate = [new Date(),new Date()];
     this.getCostcenter();
-    this.getAllList();
+    //this.Getsearchlist2();
     
   }
 
@@ -90,7 +99,7 @@ export class ConsumptionComponent implements OnInit {
 
   // }
 
-  View(Doc_No)
+  Delete(Doc_No)
   {
     console.log('Doc_No', Doc_No);
     const obj = {
@@ -127,6 +136,43 @@ export class ConsumptionComponent implements OnInit {
 
   }
 
+  View(Doc_No){
+    console.log('Doc_No', Doc_No);
+    const obj = {
+      "SP_String": "Sp_Consumption_Module",
+    "Report_Name_String": "Txn_Consumption_Get",
+      "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Edit",data);
+      this.ViewList2 = data;
+      this.ViewListobj2 = data[0];
+      console.log('ViewListobj2=',this.ViewListobj2);
+      //this.todayDate = new Date(data[0].Doc_Date);
+      //this.ObjRawMateriali = data[0];
+      // TempData.forEach(element => {
+      //   this.Searchedlist.push({
+      //     Cost_Cen_ID:element.Cost_Cen_ID,
+      //     godown_id:element.godown_id,
+      //     Issue_Qty:element.Issue_Qty,
+      //     Remarks:element.Remarks,
+      //     Serial_No:element.Serial_No,
+      //     Product_ID:element.Product_ID,
+      //     Batch_No:element.Batch_No,
+      //     uom : element.UOM	
+          
+      //   })
+      //  });
+       //this.BackupIndentList = this.ProductList;
+       //this.GetProductType();
+    })
+    setTimeout(() => {
+      this.ViewProTypeModal3 = true;
+    }, 200);
+
+
+  }
+
   
 
   getCostcenter(){
@@ -137,8 +183,10 @@ export class ConsumptionComponent implements OnInit {
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.ToBcostcenlist = data;
+       this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+       this.objAllData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
        console.log('ToBcostcenlist=====',this.ToBcostcenlist)
-       
+       this.GetGodown();
      })
 
   }
@@ -155,6 +203,7 @@ export class ConsumptionComponent implements OnInit {
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.ToBGodownList = data;
+       this.ObjBrowse.godown_id = data[0].godown_id;
        console.log('ToBGodownList=====',this.ToBGodownList)
        
      })
@@ -192,6 +241,48 @@ const obj = {
 }
 
   }
+
+  getDateRange(dateRangeObj){
+    if (dateRangeObj.length) {
+      this.objAllData.Start_Date = dateRangeObj[0];
+      this.objAllData.End_Date = dateRangeObj[1];
+    }
+  }
+
+  Getsearchlist2(valid : any){
+    this.BrowseFormSubmitted = true;
+    if(valid){
+      this.seachSpinner = true;
+      this.Browselist = [];
+      const start = this.objAllData.Start_Date
+  ? this.DateService.dateConvert(new Date(this.objAllData.Start_Date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.objAllData.End_Date
+  ? this.DateService.dateConvert(new Date(this.objAllData.End_Date))
+  : this.DateService.dateConvert(new Date());
+ this.Del_Right = this.$CompacctAPI.CompacctCookies.Del_Right;
+ console.log('Del_Right==',this.Del_Right);
+const tempobj = {
+  from_Date : start,
+  to_date : end,
+  Cost_Cen_ID : this.objAllData.Cost_Cen_ID ? this.objAllData.Cost_Cen_ID : 0
+  }
+
+  const obj = {
+    "SP_String": "Sp_Consumption_Module",
+    "Report_Name_String": "Txn_Consumption_Browse",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Browselist = data;
+     console.log('Search list=====',this.Browselist)
+     this.seachSpinner = false;
+     this.BrowseFormSubmitted = false;
+   })
+
+  }
+
+}
   qtycheck(col){
     this.flag = false;
     for(let i = 0; i < this.Searchedlist.length ; i++){
@@ -304,7 +395,7 @@ saveqtyChk(){
         summary: "Consumption Create Succesfully ",
         detail: "Succesfully Created"
       });
-      this.getAllList();
+      //this.getAllList();
       
       this.clearData();
       
@@ -326,18 +417,18 @@ saveqtyChk(){
     
 }
 
-getAllList(){
-  const obj = {
-    "SP_String": "Sp_Consumption_Module",
-    "Report_Name_String": "Txn_Consumption_Browse"
-  }
-   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.Browselist = data;
-     console.log('Browselist=====',this.Browselist)
+// getAllList(){
+//   const obj = {
+//     "SP_String": "Sp_Consumption_Module",
+//     "Report_Name_String": "Txn_Consumption_Browse"
+//   }
+//    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//      this.Browselist = data;
+//      console.log('Browselist=====',this.Browselist)
      
-   })
+//    })
 
-}
+// }
 
 DeleteConsumption(col){
   this.Del = true;
@@ -386,8 +477,8 @@ onConfirm2(){
      summary: "Consumption Delete Succesfully ",
      detail: "Succesfully Deleted"
    });
-   this.View(this.DocNo);
-   this.getAllList();
+   this.Delete(this.DocNo);
+   this.Getsearchlist2(true);
   }
   else{
     this.compacctToast.clear();
@@ -406,9 +497,15 @@ onConfirm2(){
 
   clearData(){
     this.ObjBrowse = new Browse();
+    this.objAllData = new AllData();
     this.ConsumptionFormSubmitted = false;
+    this.BrowseFormSubmitted = false;
     this.Searchedlist = [];
+    this.Browselist=[];
     this.Entry_Date = new Date();
+    this.initDate = [new Date(),new Date()]
+    
+    this.getCostcenter();
 }
 
 }
@@ -419,4 +516,10 @@ class Browse{
   Entry_Date : any;
   
   godown_id : any
+}
+
+class AllData{
+  Start_Date : any;
+  End_Date  : any;
+  Cost_Cen_ID : any
 }
