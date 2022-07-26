@@ -374,8 +374,8 @@
                                     <div class="form-group">
                                         <div class="col-sm-3">
                                             <label class="control-label">Pending Purchase Indent/Requisition<sup class="text-danger"></sup></label>
-                                            <p-dropdown [options]="Requlist" name="Requisition" [(ngModel)]="objaddPurchacse.Req_No"  [showClear]="true" [emptyFilterMessage]="' No Req No Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Requisition No'" [virtualScroll]="true"
-                                                        itemSize="30" #Supplier="ngModel" [styleClass]="GRNFormSubmitted && Requisition.errors?.required ? 'clearance' : ''"
+                                            <p-dropdown [options]="Requlist" name="Requisition" #Requisition="ngModel" [(ngModel)]="objaddPurchacse.Req_No"  [showClear]="true" [emptyFilterMessage]="' No Req No Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Requisition No'" [virtualScroll]="true"
+                                                        itemSize="30" #Supplier="ngModel" [styleClass]="purChaseAddFormSubmit && Requisition.errors?.required ? 'clearance' : ''"
                                                         [disabled]="objaddPurchacse.Product_Type_ID" [required]="true" (onChange)="getProduct()">
                                                     </p-dropdown>
                                             <!-- <select class="form-control" 
