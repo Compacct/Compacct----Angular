@@ -67,6 +67,7 @@ export class GrnComponent implements OnInit {
   initDate:any = [];
   hrYeatList:any = [];
   HR_Year_ID:any;
+  dataforcretegrn: any;
 
 
   constructor(
@@ -128,6 +129,35 @@ export class GrnComponent implements OnInit {
      this.INVNo = undefined;
      this.SE_No_Date = undefined;
      this.INV_No_Date = undefined;
+   }
+   clearData(){
+   this.Spinner = false;
+   //  this.clearData();
+    this.ObjGRN1 = new GRN1();
+    this.GRNFormSubmitted = false;
+    this.productaddSubmit = [];
+    this.ObjGRN2 = new GRN2;
+    this.GRN2FormSubmitted = false;
+    this.PODate = new Date();
+    this.podatedisabled = true;
+    this.Spinner = false;
+    this.Godownlist = [];
+    this.RDBNolist = [];
+    this.ProductDetailslist = [];
+    this.disabledflaguom = false;
+    this.disabledflaghsn = false;
+    this.ObjGRN = new GRN;
+    this.SENo = "";
+    this.INVNo = "";
+    this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.GetGodown();
+    this.deleteError = false;
+    this.SENo = undefined;
+    this.INVNo = undefined;
+    this.SE_No_Date = undefined;
+    this.INV_No_Date = undefined;
    }
    hrYearList(){
     this.HR_Year_ID = undefined;
@@ -238,6 +268,7 @@ export class GrnComponent implements OnInit {
     this.SENo = "-"
     this.INVNo = "-"
     this.ObjGRN = new GRN();
+    if(this.ObjGRN1.RDB_No) {
     const postobj = {
       Doc_No : this.ObjGRN1.RDB_No
     }
@@ -262,8 +293,9 @@ export class GrnComponent implements OnInit {
      this.INVNo = data[0].Inv_No+" & "
      this.ObjGRN1.INV_No_Date = this.INVNo + this.DateService.dateConvert(this.INV_No_Date);
 
+     this.GetPODate();
    });
-   this.GetPODate();
+  }
  }
  GetRate(){
 
@@ -869,6 +901,37 @@ export class GrnComponent implements OnInit {
       window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     })
     }
+  }
+
+  CreateGRN(row){
+    this.clearData();
+    // this.ReqDate = new Date();
+    if(row.RDB_No) {
+      this.tabIndexToView = 1;
+      this.dataforcreategrn(row.RDB_No);
+    }
+        
+  }
+  dataforcreategrn(Doc_No){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "Get_Data_For_Create_GRN",
+      "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.dataforcretegrn = data;
+      console.log("this.dataforcretegrn ===",this.dataforcretegrn)
+      this.ObjGRN1.Cost_Cen_ID = data[0].Cost_Cen_ID;
+      this.GetGodown();
+      this.ObjGRN1.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+      this.GetRDBNo();
+      this.ObjGRN1.RDB_No = data[0].RDB_No;
+      setTimeout(() => {
+      this.GetProductDetails()
+      }, 200);
+      // this.PODate = new Date(data[0].RDB_Date);
+      // this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+    })
   }
 
 

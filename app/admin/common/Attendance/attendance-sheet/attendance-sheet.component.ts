@@ -492,6 +492,9 @@ export class AttendanceSheetComponent implements OnInit {
    }
   getcellText(value,col){
     let flag = "";
+    // if (value === null) {
+    //   value = 2;
+    // }
    if(col != 'Emp_ID' || col != "Emp_Name"){
      let attArrFilter:any = this.AttenTypelist.filter((el:any)=> Number(el.Atten_Type_ID) == Number(value))
       if(attArrFilter.length){
@@ -587,6 +590,9 @@ export class AttendanceSheetComponent implements OnInit {
       var firstDateofmonth = this.Month_Name+'-'+'01'
       let emp:any = {}
       for (const key in el) {
+        // if (el[key] === null) {
+        //   el[key] = 2;
+        // }
         const keyName = `_${key.substring(0,2)}`;
         if(!key.includes('Emp')) {
           emp[keyName] = el[key];
