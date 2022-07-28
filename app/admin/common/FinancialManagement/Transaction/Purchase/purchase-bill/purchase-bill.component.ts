@@ -140,6 +140,9 @@ export class PurchaseBillComponent implements OnInit {
   PendingGRNList = [];
   DynamicHeaderforPGRN = [];
   deleteError = false;
+  hrYeatList:any = [];
+  HR_Year_ID:any;
+  initDate:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -173,6 +176,7 @@ export class PurchaseBillComponent implements OnInit {
       Header: this.headerData,
       Link: " Financial Management -> Purchase -> " + this.headerData
     });
+    this.hrYearList();
     this.GetVendor();
     this.GetStateList();
     this.GetCostcenter();
@@ -229,6 +233,30 @@ export class PurchaseBillComponent implements OnInit {
     //  this.cleartotaltermamount();
     this.deleteError = false;
    }
+   hrYearList(){
+    this.HR_Year_ID = undefined;
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Get_HR_Year_List"
+   }
+   this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      this.hrYeatList = data;
+      console.log("Hr Year==",this.hrYeatList);
+      this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
+  
+       // if(this.ObjHrleave.HR_Year_ID){
+        this.getMaxMindate()
+     // }
+      });
+  }
+  getMaxMindate(){
+    if(this.HR_Year_ID){
+      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
+      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
+      
+    }
+  }
    getcompany(){
     const obj = {
       "SP_String": "sp_Comm_Controller",

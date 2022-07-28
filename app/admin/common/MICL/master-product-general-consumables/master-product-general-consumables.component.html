@@ -59,7 +59,7 @@
                                                 <th>HSN Code</th>
                                                 <th>Remarks</th>
                                                 <th>GST %</th>
-                                                <th>Qty</th>
+                                                <!-- <th>Qty</th> -->
                                                 <th>Manufacture Name (Optional)</th>
                                                 
                                             </tr>
@@ -96,15 +96,15 @@
                                                 <td>{{col.Product_Type}}</td> 
                                                 <td>{{col.Product_Sub_Type}}</td>
                                                 <td>{{col.Product_Description}}</td>
-                                                <td>{{col.MOC_Description}}</td>
+                                                <td>{{col.MOC_Description ? col.MOC_Description : '-'}}</td>
                                                 <td>{{col.Capacity_Size_Desc}}</td>
                                                 <td>{{col.Product_Feature_Desc}}</td>
-                                                <td>{{col.Grade_Description}}</td>
+                                                <td>{{col.Grade_Description ? col.Grade_Description : '-'}}</td>
                                                 <td>{{col.UOM}}</td>
                                                 <td>{{col.HSN_NO}}</td>
                                                 <td>{{col.Remarks}}</td>
                                                 <td>{{col.GST_Percentage}}</td>
-                                                <td></td>
+                                                <!-- <td></td> -->
                                                 <td>{{col.Mfg_Company}}</td>
                                             </tr>
                                         </ng-template>

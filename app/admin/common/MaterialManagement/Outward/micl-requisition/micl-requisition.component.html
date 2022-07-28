@@ -186,8 +186,21 @@
                                 <hr class="box boxboxDivide-primary">
                                 <form name="requisitionmaterialForm" #requisitionmaterialForm="ngForm" novalidate>
                                     <div class="form-group">
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
+                                             <select class="form-control" 
+                                            name="materialtype" 
+                                            #materialtype="ngModel"
+                                             [(ngModel)]='objmaterial.Material_Type_ID' 
+                                             [ngClass]="{'clearance': requisitionmaterialFormSubmit && materialtype?.errors?.required}" 
+                                             (change)="getProductType()"
+                                              required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of MaterialTypeList" [value]="option.Type_Of_Product">{{option.Type_Of_Product}}</option>
+                                            </select>
+                                        </div>
                                         <div class="col-sm-3">
-                                        <label class="control-label">Product Type</label>
+                                        <label class="control-label">Product Type <sup class="text-danger">*</sup></label>
                                         <!-- <select class="form-control" 
                                         name="Product_Type_ID" 
                                         #Product_Type_ID="ngModel"
@@ -234,11 +247,11 @@
                                         </p-dropdown>
                                         </div>
                                         
-                                        <div class="col-sm-3" *ngIf="openProject == 'Y'">
+                                        <div class="col-sm-2" *ngIf="openProject == 'Y'">
                                             <label class="control-label">As Per BOM<sup class="text-danger"></sup></label>
                                             <div class="label-t">{{productFilterObj?.BOM_Qty ? productFilterObj?.BOM_Qty : 0}}</div>
                                         </div>
-                                       <div class="col-sm-3"  *ngIf="openProject == 'Y'">
+                                       <div class="col-sm-2"  *ngIf="openProject == 'Y'">
                                             <label class="control-label">Used<sup class="text-danger"></sup></label>
                                             <div class="label-t">{{productFilterObj?.Used_Qty ? productFilterObj?.Used_Qty : 0}}</div>
                                         </div>
@@ -248,7 +261,7 @@
                                             <div class="label-t">{{productFilterObj?.Can_Be_Used_Qty ? productFilterObj?.Can_Be_Used_Qty : 0}}</div>
                                          </div>
                                          
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-2">
                                             <label class="control-label">Requisition QTY<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
                                             name="Req_Qty" 
@@ -261,7 +274,7 @@
                                             required>
                                         </div>
                                        
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-2">
                                             <label class="control-label">UOM<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
                                                 name="UOM" 

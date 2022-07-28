@@ -328,6 +328,7 @@ import { ProcessSalaryComponent } from './common/Attendance/process-salary/proce
 import { LeaveApprovalComponent } from './common/MICL/leave-approval/leave-approval.component';
 import { ConsumptionComponent } from "./common/MICL/consumption/consumption.component";
 import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transaction/Purchase/debit-note-wo-stock/debit-note-wo-stock.component';
+import { FinancialReminderComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-reminder/financial-reminder.component";
 
 
 @NgModule({
@@ -575,7 +576,8 @@ import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transact
     ProcessSalaryComponent,
     LeaveApprovalComponent,
     ConsumptionComponent,
-    DebitNoteWoStockComponent
+    DebitNoteWoStockComponent,
+    FinancialReminderComponent
   ],
   imports: [
     CommonModule,

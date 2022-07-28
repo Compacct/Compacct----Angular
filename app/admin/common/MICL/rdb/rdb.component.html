@@ -208,6 +208,14 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">INV No<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="INV_NO" #INV_NO="ngModel" [(ngModel)]="ObjRdb.Inv_No" [disabled]="RDBListAdd.length" placeholder="INV NO" [ngClass]="{'clearance': RDBFormSubmit && INV_NO.errors?.required}" required>
+                                                 </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">INV Date<sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="INV_Date" name="Inv_Date" [enabled]= "!RDBListAdd.length" required></ejs-datepicker>
+                                                </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">PO Number<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="PoOrderList" 
@@ -238,18 +246,18 @@
                                                 <label class="control-label">Mode Of Transport<sup class="text-danger">*</sup></label>
                                                 <input class="form-control" name="Transport" #Transport="ngModel" [(ngModel)]="ObjRdb.Mode_Of_transport" [disabled]="RDBListAdd.length" placeholder="Mode Of Transport" [ngClass]="{'clearance': RDBFormSubmit && Transport.errors?.required}" required>
                                             </div>
-                                               <div class="col-sm-2">
-                                                    <label class="control-label">LR No. & Date<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="LR_No" #LR_No="ngModel" [(ngModel)]="ObjRdb.LR_No_Date" [disabled]="RDBListAdd.length" placeholder="LR No. & Date" [ngClass]="{'clearance': RDBFormSubmit && LR_No.errors?.required}" required>
-            
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <label class="control-label">Vehicle No.<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Vehicle_No" #Vehicle_No="ngModel" [(ngModel)]="ObjRdb.Vehicle_No" [disabled]="RDBListAdd.length" placeholder="Vehicle No" [ngClass]="{'clearance': RDBFormSubmit && Vehicle_No.errors?.required}" required>
-                                                </div>
                                              </div>
                                        
                                             <div class="form-group">
+                                                <div class="col-sm-3">
+                                                     <label class="control-label">LR No. & Date<sup class="text-danger">*</sup></label>
+                                                     <input class="form-control" name="LR_No" #LR_No="ngModel" [(ngModel)]="ObjRdb.LR_No_Date" [disabled]="RDBListAdd.length" placeholder="LR No. & Date" [ngClass]="{'clearance': RDBFormSubmit && LR_No.errors?.required}" required>
+             
+                                                 </div>
+                                                 <div class="col-sm-2">
+                                                     <label class="control-label">Vehicle No.<sup class="text-danger">*</sup></label>
+                                                     <input class="form-control" name="Vehicle_No" #Vehicle_No="ngModel" [(ngModel)]="ObjRdb.Vehicle_No" [disabled]="RDBListAdd.length" placeholder="Vehicle No" [ngClass]="{'clearance': RDBFormSubmit && Vehicle_No.errors?.required}" required>
+                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Product details<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="ProductList" 
@@ -263,26 +271,26 @@
                                                     <label class="control-label">Unit<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Unit" #Unit="ngModel" [(ngModel)]="ObjRdb1.UOM" placeholder="Unit" [ngClass]="{'clearance': RDBFormSubmit && Unit.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">HSN code<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" 
-                                                    name="HSN_code"
-                                                     #HSN_code="ngModel" 
-                                                     [(ngModel)]="ObjRdb1.HSN_Code" 
-                                                     placeholder="HSN code" 
-                                                     disabled>
-                                                </div> 
-                                               <div class="col-sm-2">
-                                                <label class="control-label">PO QTY<sup class="text-danger">*</sup></label>
-                                                <input class="form-control" 
-                                                name="PO_QTY" 
-                                                #PO_QTY="ngModel" 
-                                                [(ngModel)]="ObjRdb1.PO_QTY" 
-                                                placeholder="PO QTY"
-                                                disabled>
-                                            </div>
                                              </div>
                                           <div class="form-group">
+                                            <div class="col-sm-3">
+                                                <label class="control-label">HSN code<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" 
+                                                name="HSN_code"
+                                                 #HSN_code="ngModel" 
+                                                 [(ngModel)]="ObjRdb1.HSN_Code" 
+                                                 placeholder="HSN code" 
+                                                 disabled>
+                                            </div> 
+                                           <div class="col-sm-2">
+                                            <label class="control-label">PO QTY<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="PO_QTY" 
+                                            #PO_QTY="ngModel" 
+                                            [(ngModel)]="ObjRdb1.PO_QTY" 
+                                            placeholder="PO QTY"
+                                            disabled>
+                                        </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Challan Qty<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Challan_Qty" #Challan_Qty="ngModel" [(ngModel)]="ObjRdb1.Challan_Qty" placeholder="Challan Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Challan_Qty.errors?.required}" required>
@@ -376,7 +384,7 @@
                                 <div class="col-sm-3">
                                     <label class="control-label">Date</label>
 
-                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeppo($event)">
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeppo($event)" [HardCodeDateOpt]="initDate">
                                     </app-compacct-daterangepicker>
 
                                 </div>

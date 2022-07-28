@@ -37,6 +37,9 @@ export class CompacctProductDetailsComponent implements OnInit,OnChanges {
 
   @Output() ProDetailsObj = new EventEmitter <product>();
   @Input() requirPro :any;
+  desmodellist:any = [];
+  DesModelSuggPopup = false;
+  desmodellistDynamic:any = [];
   constructor(
     private $CompacctAPI: CompacctCommonApi,
     private GlobalAPI:CompacctGlobalApiService,
@@ -331,6 +334,30 @@ ngOnChanges(changes: SimpleChanges) {
   // You can also use categoryId.previousValue and 
   // categoryId.firstChange for comparing old and new values
    this.ProDetailsFormSubmit = changes.requirPro.currentValue
+ }
+ getDesModelDetalis(){
+  this.desmodellist = [];
+  this.desmodellistDynamic = [];
+  const tempobj = {
+    Product_Type_ID : this.ObjproductDetails.Product_Type_ID,
+    Product_Sub_Type_ID : this.ObjproductDetails.Product_Sub_Type_ID,
+    Description_Like : this.ObjproductDetails.Product_Description
+  }
+      const obj = {
+       "SP_String": "SP_Harbauer_Master_Product_Civil",
+       "Report_Name_String":"Get_Product_Suggestion",
+       "Json_Param_String": JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.desmodellist = data;
+       this.EventEmitDefault();
+       if(this.desmodellist.length){
+         this.desmodellistDynamic = Object.keys(data[0]);
+       }
+      //  this.DesModelSuggPopup = true
+      console.log("desmodellist==",this.desmodellist);
+     })
+
  }
 }
 class product{

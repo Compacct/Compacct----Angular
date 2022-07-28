@@ -37,6 +37,7 @@ export class RdbComponent implements OnInit {
   
   RDB_Date = new Date();
   SE_Date = new Date();
+  INV_Date = new Date();
   PO_Doc_Date = new Date();
  
   Allproduct:any = [];
@@ -67,6 +68,8 @@ export class RdbComponent implements OnInit {
   Save = false;
   Del = false;
   dataforcreterdb:any = [];
+  hrYeatList:any = [];
+  HR_Year_ID:any;
 
    constructor(
     private $http: HttpClient,
@@ -89,10 +92,11 @@ export class RdbComponent implements OnInit {
       Header: "RDB",
       Link: " Material Management -> Inward -> RDB"
     });
+    this.hrYearList();
     this.getCostCenter();
     this.getSupplier();
     this.getcompany();
-    this.initDate = [new Date(),new Date()]
+    // this.initDate = [new Date(),new Date()]
    }
 
   TabClick(e) {
@@ -108,6 +112,7 @@ export class RdbComponent implements OnInit {
     this.PO_Doc_Date = new Date();
     this.RDB_Date = new Date();
     this.SE_Date = new Date();
+    this.INV_Date = new Date();
     this.RDBListAdd = [];
     this.Spinner = false;
     this.objRdb2 = new RDB2()
@@ -122,6 +127,30 @@ export class RdbComponent implements OnInit {
     this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
     this.deleteError = false
+  }
+  hrYearList(){
+    this.HR_Year_ID = undefined;
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Get_HR_Year_List"
+   }
+   this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      this.hrYeatList = data;
+      console.log("Hr Year==",this.hrYeatList);
+      this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
+  
+       // if(this.ObjHrleave.HR_Year_ID){
+        this.getMaxMindate()
+     // }
+      });
+  }
+  getMaxMindate(){
+    if(this.HR_Year_ID){
+      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
+      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
+      
+    }
   }
   GetAllData(valid){
     this.ngxService.start();
@@ -541,6 +570,8 @@ export class RdbComponent implements OnInit {
             godown_id : Number(this.ObjRdb.godown_id),
             SE_No : this.ObjRdb.SE_No,
             SE_Date : this.SE_Date ? this.DateService.dateConvert(this.SE_Date) : new Date(),
+            Inv_No : this.ObjRdb.Inv_No,
+            Inv_Date : this.INV_Date ? this.DateService.dateConvert(this.INV_Date) : new Date(),
             PO_Doc_No : this.ObjRdb.PO_Doc_No,
             PO_Doc_Date : this.PO_Doc_Date ? this.DateService.dateConvert(this.PO_Doc_Date) : new Date(),
             Mode_Of_transport : this.ObjRdb.Mode_Of_transport,
@@ -679,6 +710,7 @@ export class RdbComponent implements OnInit {
               this.RDBFormSubmit2 = false;
               this.RDB_Date = new Date();
               this.SE_Date = new Date();
+              this.INV_Date = new Date();
               this.PO_Doc_Date = new Date();
               this.GetAllData(true);
               this.GetPendingPO(true);
@@ -915,6 +947,7 @@ export class RdbComponent implements OnInit {
     Cost_Cen_ID : any;
     godown_id : any;
     RDB_Date : any;
+    Inv_No : any;
     SE_No : any;
     Mode_Of_transport : any;
     LR_No_Date : any;

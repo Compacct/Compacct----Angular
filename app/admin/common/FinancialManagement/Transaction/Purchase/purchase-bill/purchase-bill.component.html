@@ -53,7 +53,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Date</label>
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]= "initDateValid" required>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"> <!-- [minmaxValid]= "initDateValid" required -->
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
@@ -1106,7 +1106,7 @@
                                 <div class="col-sm-3">
                                     <label class="control-label">Date</label>
 
-                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeppo($event)">
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeppo($event)" [HardCodeDateOpt]="initDate">
                                     </app-compacct-daterangepicker>
 
                                 </div>
@@ -1216,7 +1216,7 @@
                                 <div class="col-sm-3">
                                     <label class="control-label">Date</label>
 
-                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangepgrn($event)">
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangepgrn($event)" [HardCodeDateOpt]="initDate">
                                     </app-compacct-daterangepicker>
 
                                 </div>

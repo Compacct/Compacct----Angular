@@ -42,6 +42,15 @@ export class HrLeaveOpeningComponent  implements OnInit {
   Editdisable = false;
   Save = false;
   del = true;
+
+  ObjBrowse : Browse = new Browse ();
+  HrLeaveAOpenSearchFormSubmitted = false;
+  seachSpinner = false;
+  BackupAllData:any = [];
+  DistEmpName:any = [];
+  SelectedDistEmpName:any = [];
+  SearchFields:any = [];
+
   constructor(
     public $http: HttpClient,
     private compact: CompacctCommonApi,
@@ -64,10 +73,10 @@ ngOnInit() {
     Link: " MICL -> HR-leave Opening"
   })
   this.employeeData();
-  this.GetAllData();
+  // this.GetAllData();
   this.hrYearList();
   this.leaveTypList();
-  this.Finyear();
+  // this.Finyear();
 }
 TabClick(e) {
   this.tabIndexToView = e.index;
@@ -89,18 +98,59 @@ getDateRange(dateRangeObj:any) {
    this.Objleave.To_Date = dateRangeObj[1];
   }
 }
-GetAllData(){
+GetAllData(valid){
+  this.HrLeaveAOpenSearchFormSubmitted = true;
+  const tempobj = {
+    HR_Year_ID  : this.ObjBrowse.HR_Year_ID,
+    Atten_Type_ID : this.ObjBrowse.Leave_Type
+    }
+    if(valid){
   const obj = {
     "SP_String":"SP_HR_Leave_Opening_Issue_Balance",
-    "Report_Name_String":"Browse_HR_Leave_Opening_Issue_Balance"
+    "Report_Name_String":"Browse_HR_Leave_Opening_Issue_Balance",
+    "Json_Param_String": JSON.stringify([tempobj])
   }
 
    this.GlobalAPI.getData(obj)
    .subscribe((data:any)=>{
     this.AllData = data;
+      this.BackupAllData = data;
+      this.GetDistinct();
+      this.HrLeaveAOpenSearchFormSubmitted = false;
     console.log("all data==",this.AllData);
     });
-   
+  }
+}
+  // DISTINCT & FILTER
+GetDistinct() {
+  let DEmpName = [];
+  this.DistEmpName =[];
+  this.SelectedDistEmpName =[];
+  this.SearchFields =[];
+  this.AllData.forEach((item) => {
+ if (DEmpName.indexOf(item.Emp_ID) === -1) {
+  DEmpName.push(item.Emp_ID);
+ this.DistEmpName.push({ label: item.Emp_Name, value: item.Emp_ID });
+ }
+});
+   this.BackupAllData = [...this.AllData];
+}
+FilterDist() {
+  let DEmpName = [];
+  this.SearchFields =[];
+if (this.SelectedDistEmpName.length) {
+  this.SearchFields.push('Emp_ID');
+  DEmpName = this.SelectedDistEmpName;
+}
+this.AllData = [];
+if (this.SearchFields.length) {
+  let LeadArr = this.BackupAllData.filter(function (e) {
+    return (DEmpName.length ? DEmpName.includes(e['Emp_ID']) : true)
+  });
+this.AllData = LeadArr.length ? LeadArr : [];
+} else {
+this.AllData = [...this.BackupAllData] ;
+}
 }
 employeeData(){
   const obj = {
@@ -124,21 +174,32 @@ hrYearList(){
    .subscribe((data:any)=>{
     this.hrYeatList = data;
     this.Objleave.HR_Year_ID = data[0].HR_Year_ID;
+    this.ObjBrowse.HR_Year_ID = data[0].HR_Year_ID;
     console.log("Hr Year==",this.hrYeatList);
     this.leaveChange();
     });
 }
-Finyear() {
-  this.$http
-    .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
-    .subscribe((res: any) => {
-    let data = JSON.parse(res)
-    // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
-    // this.voucherminDate = new Date(data[0].Fin_Year_Start);
-    // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
-   this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
-    });
-}
+// Finyear() {
+//   this.$http
+//     .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+//     .subscribe((res: any) => {
+//     let data = JSON.parse(res)
+//     // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+//     // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+//     // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+//    this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+//   //   const obj = {
+//   //     "SP_String":"SP_Leave_Application",
+//   //     "Report_Name_String":"Get_HR_Year_List"
+//   //  }
+//   //  this.GlobalAPI.getData(obj)
+//   //    .subscribe((data:any)=>{
+//   //     this.hrYeatList = data;
+//   //     console.log("Hr Year==",this.hrYeatList);
+//   //     // this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined
+//   //     this.initDate =  [new Date(data[0].HR_Year_Start) , new Date(data[0].HR_Year_End)]
+//     });
+// }
 leaveTypList(){
   const obj = {
     "SP_String":"SP_HR_Leave_Opening_Issue_Balance",
@@ -183,7 +244,7 @@ onConfirm2(){
   console.log("savedata==",this.Objleave);
   this.leaveFormSubmitted = true
     console.log("leaveId==",this.leaveId);
-    if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
+    // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
     this.Objleave.From_Date = this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
     this.Objleave.To_Date = this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
    this.Objleave.Leave_Month = "NA"
@@ -191,7 +252,7 @@ onConfirm2(){
    this.Objleave.Tran_Type = "Opening"
    this.Objleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
    this.Objleave.LEAVE_TYPE = Number(this.Objleave.LEAVE_TYPE)
-    }
+    // }
     let msg = this.buttonname ;
       const obj = {
         "SP_String": "SP_HR_Leave_Opening_Issue_Balance",
@@ -211,7 +272,7 @@ onConfirm2(){
           });
           }
           this.Spinner = false;
-          this.GetAllData();
+          this.GetAllData(true);
           this.leaveId = undefined;
           this.txnId = undefined;
           this.Editdisable = false;
@@ -304,7 +365,7 @@ console.log("onconform==",this.Objleave)
       if (data[0].Column1 === "Done"){
 
         this.onReject();
-        this.GetAllData();
+        this.GetAllData(true);
         this.masterLeaveId = undefined ;
         this.mastertxnId = undefined;
         this.HRYearID = undefined;
@@ -325,20 +386,22 @@ console.log("onconform==",this.Objleave)
 leaveChange(){
   this.Objleave.From_Date = undefined;
   this.Objleave.To_Date = undefined;
-  if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
+  // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
   if (this.Objleave.HR_Year_ID) {
   const arr:any = this.hrYeatList.filter((item:any) => Number(item.HR_Year_ID )== Number(this.Objleave.HR_Year_ID)); 
    this.Objleave.From_Date = arr.length? arr[0].HR_Year_Start : new Date();
    this.Objleave.To_Date = arr.length? arr[0].HR_Year_End : new Date();
-   this.initDate =  [new Date(arr[0].HR_Year_Start) , new Date(arr[0].HR_Year_End)]
+   var mindate = arr[0].HR_Year_Start;
+   var maxdate = arr[0].HR_Year_End;
+   this.initDate =  [new Date(mindate) , new Date(maxdate)]
    console.log('arr===',arr)
    
   }  
-}
-else {
-  this.Objleave.From_Date = undefined;
-   this.Objleave.To_Date = undefined;
-}
+// }
+// else {
+//   this.Objleave.From_Date = undefined;
+//    this.Objleave.To_Date = undefined;
+// }
 }
 } 
 class leave{
@@ -356,3 +419,9 @@ class leave{
   Emp_ID:any
   Emp_Name:any
 }
+class Browse {
+  HR_Year_ID : any;
+  Leave_Type : any;
+  From_date : Date;
+  To_date : Date;
+ }

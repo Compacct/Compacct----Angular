@@ -88,14 +88,13 @@
 <div class="form-group"> 
 <!-- <div class="clearfix"></div> -->
 <div class="col-sm-4">
-    <label class="control-label">Description/Model
-        <sup class="text-danger">*</sup>
-    </label>
+    <label class="control-label">Description/Model<sup class="text-danger">*</sup></label>
+    <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "ObjproductDetails.Product_Description" (click)="DesModelSuggPopup = true"><i class="fa fa-fw  fa-info-circle"></i></a></span>
     <input class="form-control" type="text" placeholder="Description/Mode"
         name="Product_Description"
         #Product_Description ="ngModel"
         [(ngModel)]="ObjproductDetails.Product_Description"
-        (change)="EventEmitDefault()"
+        (ngModelChange)="getDesModelDetalis()"
         [ngClass]="{'clearance': ProDetailsFormSubmit && Product_Description.errors?.required}"required>
 </div> 
 <div class="col-sm-4">
@@ -264,4 +263,85 @@ style="text-align: center;"
              CANCEL
         </button>
     </p-footer>
+</p-dialog>
+
+<!-- Description / Model Suggestion view -->
+<p-dialog
+[header]="viewHeader"
+[appendTo]="'body'"
+[visible]="DesModelSuggPopup"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="no-padding">
+        <p-table [value]="desmodellist" #dt2 
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [rowHover]="true" 
+        [globalFilterFields]='desmodellistDynamic'>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-6 pull-right" style="text-align: right">
+                    <div class="col-sm-6">  
+                     <!-- <button *ngIf="popUpList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcelpopup(popUpList)" id="load1" [disabled]="EXCELpopSpinner">
+                       <p-progressSpinner *ngIf="EXCELpopSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!EXCELpopSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                   </button> -->
+                   </div>
+                    <div class="col-sm-6">
+                       <input type="text" 
+                       pInputText 
+                       size="50"
+                       style="margin-top:25px;"
+                       placeholder="Search" 
+                       (input)="dt1.filterGlobal($event.target.value, 'contains')" 
+                       class="searchInput form-control">
+                    </div>
+                  
+               </div>
+            </div>
+
+        </ng-template>
+            <ng-template pTemplate="header">
+                <tr >
+                    <th *ngFor="let option of desmodellistDynamic" nowrap="nowrap">{{option.replaceAll('_',' ')}}</th>
+                 </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <ng-container *ngFor="let option of desmodellistDynamic">
+                        <td >{{col[option]}}</td>
+                    </ng-container>
+                </tr>
+                
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="DesModelSuggPopup = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
 </p-dialog>

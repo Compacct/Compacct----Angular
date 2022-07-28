@@ -6,13 +6,18 @@
             <h3>{{message.summary}}</h3>
             <p>{{message.detail}}</p>
         </div>
-
+        <form name="PasswordForm" #PasswordForm="ngForm" novalidate>
+            <div style="text-align: center">
+                <!-- <label class="control-label">Password <sup class="text-danger">*</sup></label> -->
+                <input class="form-control" type="password" name="password" #password="ngModel" [(ngModel)]="Password" [ngClass]="{'clearance':PasswordFormSubmitted && password?.errors?.required}" required>
+            </div>
+        </form>
         <div class="ui-g ui-fluid">
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="CheckPasswordStatus(PasswordForm.form.valid)" label="Save" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+                <button type="button" pButton (click)="onReject()" label="Close" class="ui-button-secondary"></button>
             </div>
         </div>
     </ng-template>
@@ -190,6 +195,10 @@
                                                         </option>
                                             </select></td>
                                         </tr>
+                                        <!-- <tr>
+                                            <td *ngIf="paymentList.length">Password</td>
+                                            <td *ngIf="paymentList.length"><input type="text" name="password" [(ngModel)]='Password' [disabled]="Passdisabled" class="form-control" style="width: 150px;" /></td>
+                                        </tr> -->
                                     </tbody>
 
                                 </table>

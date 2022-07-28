@@ -27,6 +27,47 @@
                     <div class="box-body">
                          <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
                             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                                <form name="HrLeaveAOpenSearchForm" #HrLeaveAOpenSearchForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">HR Year
+                                                <sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="HRYear"
+                                                    #HRYear ="ngModel"
+                                                    [(ngModel)]="ObjBrowse.HR_Year_ID"
+                                                    [ngClass]="{'clearance': HrLeaveAOpenSearchFormSubmitted && HRYear?.errors?.required}" 
+                                                    required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let year of hrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
+                                                </select>
+                                        </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Leave Type<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" 
+                                                name="browseleavetype" 
+                                                #browseleavetype="ngModel" 
+                                                [(ngModel)]="ObjBrowse.Leave_Type"
+                                                [ngClass]="{'clearance': HrLeaveAOpenSearchFormSubmitted && browseleavetype?.errors?.required}"
+                                                required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let type of leaveList" value="{{type.Atten_Type_ID}}">{{type.Leave_Type}}</option>
+                                              </select>
+                                            </div>
+                                        <div class="col-sm-2">
+                                            <!-- <div class="col-sm-3"> -->
+                                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAllData(HrLeaveAOpenSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                          <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                            <!-- </div> -->
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Employee Name <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistEmpName" [(ngModel)]="SelectedDistEmpName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="empname"></p-multiSelect>
+                                        </div>
+                                    </div>
+    
+                                </form>
                                 <div class="table-responsive no-padding">
                                     <div class="table-responsive no-padding">
                                         <p-table [value]="AllData" 
@@ -121,12 +162,12 @@
                                     </select>
                             </div>
                             <div class="col-sm-4">
-                                <label class="control-label">Period<sup class="text-danger">*</sup></label>
+                                <label class="control-label">Validity<sup class="text-danger">*</sup></label>
                                 <div class="input-group date">
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                      </div>
-                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]= "initDate">
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]= "initDate">
                                     </app-compacct-daterangepicker>
                                 </div>
                             </div>

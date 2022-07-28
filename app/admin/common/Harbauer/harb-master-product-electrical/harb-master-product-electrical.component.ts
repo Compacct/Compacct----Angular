@@ -239,13 +239,13 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     console.log(e)
     this.ObjGstandCustonDuty = undefined;
     this.ObjMasterProductel.Cat_ID = undefined;
-    this.ObjMasterProductel.HSN_Code = undefined;
+    this.ObjMasterProductel.HSN_NO = undefined;
     this.ObjMasterProductel.Custom_Duty = undefined;
     this.ObjMasterProductel.Remarks = undefined;
     if (e.Cat_ID) {
       this.ObjGstandCustonDuty = e;
       this.ObjMasterProductel.Cat_ID = e.Cat_ID;
-      this.ObjMasterProductel.HSN_Code = e.HSN_Code;
+      this.ObjMasterProductel.HSN_NO = e.HSN_NO;
       this.ObjMasterProductel.Custom_Duty = e.Custom_Duty;
       this.ObjMasterProductel.Remarks = e.Remarks;
       this.ObjMasterProductel.RCM_Per = Number(e.RCM_Per)
@@ -2098,7 +2098,7 @@ class MasterProductel{
    Product_ID:number;
    Grade_ID	:number;
    Remarks	:any;
-   HSN_NO:number;
+   HSN_NO:any;
    GST_Percentage:number;
    UOM:string;
   // Product_Mfg_Comp_ID:any;

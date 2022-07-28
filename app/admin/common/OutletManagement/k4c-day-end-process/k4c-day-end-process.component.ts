@@ -30,7 +30,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   Cost_Cen_ID = undefined
   costCenterList = [];
   sp_string = "SP_K4C_Day_End_Process"
-  paymentList = [];
+  paymentList:any = [];
   closeingUpdate = "";
   closeingstatus = undefined;
   paymentListlength = undefined;
@@ -46,6 +46,12 @@ export class K4cDayEndProcessComponent implements OnInit {
   viewList = [];
   viewpopup = false;
   outletdisableflag = false;
+  RTFstatus:any;
+  OSTstatus:any;
+  DispChallanStatus:any;
+  Password = undefined;
+  Passdisabled = true;
+  PasswordFormSubmitted = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -74,7 +80,9 @@ export class K4cDayEndProcessComponent implements OnInit {
     this.clearData();
    }
   onConfirm(){}
-  onReject(){}
+  onReject(){
+    this.compacctToast.clear("c");
+  }
   clearData(){
     this.Spinner = false;
     this.seachSpinner = false;
@@ -85,6 +93,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     this.buttonname = "Save";
     this.mismatch = false;
     this.GetProDate();
+    this.Passdisabled = true;
   }
   getConfirmDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -198,6 +207,7 @@ export class K4cDayEndProcessComponent implements OnInit {
         this.paymentList = data;
         this.paymentList.forEach(element => {
           element['Amount'] = undefined;
+          // element['Passdisabled'] = true;
         });
         this.paymentListlength = this.paymentList.length;
         this.GetclosingStatus();
@@ -273,6 +283,7 @@ export class K4cDayEndProcessComponent implements OnInit {
       })
     }
   }
+
   saveDayEnd(){
     let temparr = [];
     let saveValue = false;
@@ -305,6 +316,68 @@ export class K4cDayEndProcessComponent implements OnInit {
 
   }
 
+  // Checking Before Save for Password
+  CheckRTFstatus(){
+    this.RTFstatus = undefined;
+    if(this.Datevalue){
+      const tempObj = {
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
+        Date : this.DateService.dateConvert(new Date(this.Datevalue))
+      }
+      const obj = {
+        "SP_String": "SP_K4C_Day_End_Process",
+        "Report_Name_String": "Check_RTF_Status",
+        "Json_Param_String" :  JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.RTFstatus = data[0].RTF_Status;
+        // this.RTFstatus = "YES";
+        console.log("RTFstatus",this.RTFstatus);
+        this.CheckOSTstatus();
+      })
+    }
+  }
+  CheckOSTstatus(){
+    this.OSTstatus = undefined;
+    if(this.Datevalue){
+      const tempObj = {
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
+        Date : this.DateService.dateConvert(new Date(this.Datevalue))
+      }
+      const obj = {
+        "SP_String": "SP_K4C_Day_End_Process",
+        "Report_Name_String": "Check_Outlet_Stock_Transfer_Status",
+        "Json_Param_String" :  JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.OSTstatus = data[0].Outlet_Stock_Transfer_Status;
+        // this.OSTstatus = "YES";
+        console.log("OSTstatus",this.OSTstatus);
+      })
+    }
+  }
+  CheckDispChallanStatus(){
+    this.DispChallanStatus = undefined;
+    if(this.Datevalue){
+      const tempObj = {
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
+        Date : this.DateService.dateConvert(new Date(this.Datevalue))
+      }
+      const obj = {
+        "SP_String": "SP_K4C_Day_End_Process",
+        "Report_Name_String": "Check_Dispatch_Challan_Status",
+        "Json_Param_String" :  JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.DispChallanStatus = data[0].Dispatch_Challan_Status;
+        // this.DispChallanStatus = "YES";
+        console.log("DispChallanStatus",this.DispChallanStatus);
+      })
+    }
+  }
   CheckAdvOrDel(){
     const tempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -319,7 +392,12 @@ export class K4cDayEndProcessComponent implements OnInit {
       console.log("Save Check",data);
       var msg = data[0].Status;
       if(data[0].Status === "YES"){
-        this.saveCheck()
+        this.CheckRTFstatus();
+        // this.CheckOSTstatus();
+        this.CheckDispChallanStatus();
+        setTimeout(() => {
+          this.saveCheck();
+        }, 200);
       }
       else{
         this.compacctToast.clear();
@@ -345,7 +423,8 @@ export class K4cDayEndProcessComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Save Check",data);
       if(data[0].Status === "NO"){
-        this.save()
+        // this.save()
+        this.CheckForPasswordDisable();
       }
       else{
         this.compacctToast.clear();
@@ -358,6 +437,73 @@ export class K4cDayEndProcessComponent implements OnInit {
       }
     })
   }
+  CheckForPasswordDisable(){
+      this.Passdisabled = false;
+      if((this.RTFstatus === "YES") && (this.OSTstatus === "YES") && (this.DispChallanStatus === "YES")){
+        // this.paymentList['Passdisabled'] = true;
+        // this.Passdisabled = true;
+        this.save();
+      } else{
+        // this.Passdisabled = false;
+        // this.CheckingForPassword();
+        this.Password = undefined;
+        this.PasswordFormSubmitted = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "c",
+          sticky: true,
+          closable: false,
+          severity: "warn",
+          summary: "Acceptance Pending of RTF / Outlet Stock Transfer / Dispatch Challan. Please complete before EOD.",
+          // detail: "Confirm to proceed"
+        });
+      }
+  }
+  // CheckingForPassword(){
+  //     if((!this.Passdisabled) && (this.Password)){
+  //       this.CheckPasswordStatus()
+  //     } else{
+  //       this.compacctToast.clear();
+  //           this.compacctToast.add({
+  //             key: "compacct-toast",
+  //             severity: "error",
+  //             summary: "Warn Message",
+  //             detail: "Enter Password"
+  //           });
+  //     }
+
+  // }
+  CheckPasswordStatus(valid){
+    this.PasswordFormSubmitted = true;
+    const tempObj = {
+       Password : this.Password
+     }
+     if (valid){
+     const obj = {
+       "SP_String": "SP_K4C_Day_End_Process",
+       "Report_Name_String": "Check_Password",
+       "Json_Param_String" :  JSON.stringify([tempObj])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log("Save Password Check",data);
+       if(data[0].Status === "YES"){
+         this.save();
+         this.PasswordFormSubmitted = false;
+       }
+       else {
+        this.PasswordFormSubmitted = false;
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           detail: "Password Mismatched"
+         });
+       }
+     })
+    }
+   }
+
   save(){
     let saveData = [];
     this.saveSpinner = true;
@@ -396,6 +542,7 @@ export class K4cDayEndProcessComponent implements OnInit {
         });
         this.saveSpinner = false;
         this.clearData();
+        this.onReject();
       } else {
           this.compacctToast.clear();
           this.compacctToast.add({
