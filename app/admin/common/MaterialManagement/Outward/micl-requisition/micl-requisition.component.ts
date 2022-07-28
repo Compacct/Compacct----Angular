@@ -48,7 +48,7 @@ export class MiclRequisitionComponent implements OnInit {
   ReqNo = undefined;
   can_popup = false;
   act_popup = false;
-  initDate = [];
+  initDate:any = [];
   ObjBrowseData : BrowseData = new BrowseData ();
   RequistionSearchFormSubmit = false;
   seachSpinner = false;
@@ -73,6 +73,9 @@ export class MiclRequisitionComponent implements OnInit {
   ProjectInput: CompacctProjectComponent;
   Save = false;
   Del = false;
+  MaterialTypeList:any = [];
+  hrYeatList:any = [];
+  HR_Year_ID: any;
 
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -107,9 +110,11 @@ export class MiclRequisitionComponent implements OnInit {
       Header: this.headerText,
       Link: this.headerText
     });
+    this.hrYearList();
     this.ServerDate();
     this.AllowedEntryDays();
     this.getCostcenter();
+    this.getMaterialType();
     this.GetProductsDetalis();
     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
     if(this.openProject !== "Y"){
@@ -145,7 +150,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.validatation.required = false;
     this.projectDisable = false;
     this.reqValid = false;
-    this.deleteError = false
+    this.deleteError = false;
    }
   addMaterials(valid){
   console.log("valid",valid);
@@ -505,11 +510,24 @@ export class MiclRequisitionComponent implements OnInit {
 
    
   }
+  getMaterialType(){
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Type_Of_Product"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.MaterialTypeList = data;
+     console.log("MaterialTypeList",this.MaterialTypeList);
+     })
+  }
   getProductType(){
+    const materialtype = {
+      Type_Of_Product : this.objmaterial.Material_Type_ID
+    }
     const obj = {
       "SP_String": "SP_Txn_Requisition",
       "Report_Name_String": "Get_product_Type_Details",
-      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([this.objProjectRequi]) : JSON.stringify([{PROJECT_ID : 0}])
+      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify({...this.objProjectRequi,...materialtype}) : JSON.stringify([{PROJECT_ID : 0,Type_Of_Product : this.objmaterial.Material_Type_ID}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach(el => {
@@ -806,6 +824,30 @@ export class MiclRequisitionComponent implements OnInit {
     })
     }
   }
+  hrYearList(){
+    this.HR_Year_ID = undefined;
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Get_HR_Year_List"
+   }
+   this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      this.hrYeatList = data;
+      console.log("Hr Year==",this.hrYeatList);
+      this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
+
+       // if(this.ObjHrleave.HR_Year_ID){
+        this.getMaxMindate()
+     // }
+      });
+  }
+  getMaxMindate(){
+    if(this.HR_Year_ID){
+      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
+      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
+      
+    }
+  }
 }
 
 class reqi{
@@ -824,6 +866,7 @@ class material{
   Remarks:any;
   Created_By:any;
   Product_Type_ID:any;
+  Material_Type_ID:any;
 }
 
 class BrowseData {

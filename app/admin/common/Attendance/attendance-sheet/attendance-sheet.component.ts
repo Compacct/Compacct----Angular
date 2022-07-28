@@ -496,7 +496,7 @@ export class AttendanceSheetComponent implements OnInit {
      let attArrFilter:any = this.AttenTypelist.filter((el:any)=> Number(el.Atten_Type_ID) == Number(value))
       if(attArrFilter.length){
      flag = attArrFilter[0].Sht_Desc
-     }   
+     } 
     
    }
    if(col === 'Emp_ID' || col === "Emp_Name"){

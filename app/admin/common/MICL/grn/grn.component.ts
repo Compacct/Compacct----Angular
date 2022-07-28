@@ -46,6 +46,7 @@ export class GrnComponent implements OnInit {
   EditList = [];
   doc_no: any;
   SENo:string = "-"
+  INVNo:string = "-"
   disabledflaguom = false;
   disabledflaghsn = false;
   
@@ -53,6 +54,7 @@ export class GrnComponent implements OnInit {
   ObjBrowse : Browse = new Browse ();
   GRNSearchFormSubmitted = false;
   SE_No_Date: Date;
+  INV_No_Date: Date;
 
   ObjPendingRDB = new PendingRDB();
   PendingRDBFormSubmitted = false;
@@ -61,6 +63,10 @@ export class GrnComponent implements OnInit {
   deleteError = false;
   Save = false;
   Del = false;
+  
+  initDate:any = [];
+  hrYeatList:any = [];
+  HR_Year_ID:any;
 
 
   constructor(
@@ -84,6 +90,7 @@ export class GrnComponent implements OnInit {
       Header: "GRN",
       Link: " Material Management -> Inward -> GRN"
     });
+    this.hrYearList();
     this.GetSupplier();
     this.GetCostCenter();
     // this.GetSearchedlist(true);
@@ -111,14 +118,41 @@ export class GrnComponent implements OnInit {
      this.disabledflaghsn = false;
      this.ObjGRN = new GRN;
      this.SENo = "";
+     this.INVNo = "";
      this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      this.GetGodown();
      this.deleteError = false;
      this.SENo = undefined;
+     this.INVNo = undefined;
      this.SE_No_Date = undefined;
+     this.INV_No_Date = undefined;
    }
+   hrYearList(){
+    this.HR_Year_ID = undefined;
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Get_HR_Year_List"
+   }
+   this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      this.hrYeatList = data;
+      console.log("Hr Year==",this.hrYeatList);
+      this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
+  
+       // if(this.ObjHrleave.HR_Year_ID){
+        this.getMaxMindate()
+     // }
+      });
+  }
+  getMaxMindate(){
+    if(this.HR_Year_ID){
+      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
+      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
+      
+    }
+  }
    getcompany(){
     const obj = {
       "SP_String": "sp_Comm_Controller",
@@ -202,6 +236,7 @@ export class GrnComponent implements OnInit {
     this.ObjGRN.Product_Details = undefined;
     this.ObjGRN.GST_Tax_Per = undefined;
     this.SENo = "-"
+    this.INVNo = "-"
     this.ObjGRN = new GRN();
     const postobj = {
       Doc_No : this.ObjGRN1.RDB_No
@@ -216,6 +251,7 @@ export class GrnComponent implements OnInit {
        this.ProductDetailslist = data;
      console.log("RDBNolist======",this.ProductDetailslist);
      this.SE_No_Date = new Date(data[0].SE_Date);
+     this.INV_No_Date = new Date(data[0].Inv_Date);
      this.ObjGRN1.Mode_Of_transport = data[0].Mode_Of_transport;
      this.ObjGRN1.LR_No_Date = data[0].LR_No_Date;
      this.ObjGRN1.Vehicle_No = data[0].Vehicle_No;
@@ -223,6 +259,8 @@ export class GrnComponent implements OnInit {
     //  this.ObjGRN.Received_Qty = data[0].Received_Qty;
      this.SENo = data[0].SE_No+" & "
      this.ObjGRN1.SE_No_Date = this.SENo + this.DateService.dateConvert(this.SE_No_Date);
+     this.INVNo = data[0].Inv_No+" & "
+     this.ObjGRN1.INV_No_Date = this.INVNo + this.DateService.dateConvert(this.INV_No_Date);
 
    });
    this.GetPODate();
@@ -527,7 +565,9 @@ export class GrnComponent implements OnInit {
        this.GetGodown();
        this.deleteError = false;
        this.SENo = undefined;
+       this.INVNo = undefined;
        this.SE_No_Date = undefined;
+       this.INV_No_Date = undefined;
 
       } 
       else{
@@ -842,6 +882,7 @@ class GRN1 {
   godown_id : any;
   RDB_No_Date : any;
   SE_No_Date : any ;
+  INV_No_Date : any;
   RDB_No : any;
   RDB_Date : any;
   Mode_Of_transport : any;

@@ -121,6 +121,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   objupdateterm :updateterm = new updateterm();
   TermSpinner = false;
+  hrYeatList:any = [];
+  HR_Year_ID: any;
 
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -154,6 +156,7 @@ export class PurchaseOrderComponent implements OnInit {
         'Header' : this.headerText,
         'Link' : this.headerText
       });
+      this.hrYearList();
       this.objpurchase.Credit_Days = 0;
       this.getsubLedger();
       this.GetCostCenter();
@@ -180,6 +183,10 @@ export class PurchaseOrderComponent implements OnInit {
     this.clearProject()
     this.GetCostCenter();
     // this.gettermsdetails();
+      // setTimeout(function(){
+      //   const elem:any  = document.getElementById('creditdays');
+      //   elem.focus();
+      // },500)
   }
   clearData(){
     this.gettermsdetails();
@@ -220,7 +227,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.objpurchase.Currency_ID = 1;
     this.objpurchase.Type_ID = 1;
     this.seachPendingReqSpinner = false;
-    this.initDate = [new Date(),new Date()];
+    // this.initDate = [new Date(),new Date()];
     
     if(this.openProject === "Y"){
       this.Requlist = [];
@@ -972,6 +979,30 @@ this.compacctToast.add({
   }
   return flg
  }
+ hrYearList(){
+  this.HR_Year_ID = undefined;
+  const obj = {
+    "SP_String":"SP_Leave_Application",
+    "Report_Name_String":"Get_HR_Year_List"
+ }
+ this.GlobalAPI.getData(obj)
+   .subscribe((data:any)=>{
+    this.hrYeatList = data;
+    console.log("Hr Year==",this.hrYeatList);
+    this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
+
+     // if(this.ObjHrleave.HR_Year_ID){
+      this.getMaxMindate()
+   // }
+    });
+}
+getMaxMindate(){
+  if(this.HR_Year_ID){
+    const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
+    this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
+    
+  }
+}
  getDateRange(dateRangeObj) {
   if (dateRangeObj.length) {
     this.ObjBrowse.start_date = dateRangeObj[0];

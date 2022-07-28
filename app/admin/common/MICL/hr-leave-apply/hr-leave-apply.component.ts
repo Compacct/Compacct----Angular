@@ -100,7 +100,7 @@ export class HrLeaveApplyComponent implements OnInit {
     this.leaveTypList();
     this.GetNumberOfdays();
     this.ToDatevalue = new Date();
-    this.initDate = [new Date(),new Date()]
+    // this.initDate = [new Date(),new Date()]
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -108,6 +108,7 @@ export class HrLeaveApplyComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
     this.Editdisable = false;
+    // this.hrYearList();
   }
   clearData(){
     this.leaveHrFormSubmitted = false;
@@ -119,7 +120,7 @@ export class HrLeaveApplyComponent implements OnInit {
     this.showBaln = undefined;
     this.showErrorMsg = false
     this.GetNumberOfdays();
-    this.hrYearList();
+    this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
     }
   getDateRange(dateRangeObj) {
       if (dateRangeObj.length) {
@@ -209,10 +210,11 @@ this.AllData = [...this.BackupAllData] ;
       .subscribe((data:any)=>{
        this.hrYeatList = data;
        console.log("Hr Year==",this.hrYeatList);
-       this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined
-        if(this.ObjHrleave.HR_Year_ID){
-        //  this.getMaxMindate()
-       }
+       this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
+
+        // if(this.ObjHrleave.HR_Year_ID){
+         this.getMaxMindate()
+      // }
        });
    }
    leaveTypList(){
@@ -349,19 +351,20 @@ this.AllData = [...this.BackupAllData] ;
     //this.getapplydayschange();
   }
 }
-//  getMaxMindate(){
-//     if(this.ObjHrleave.HR_Year_ID){
-//       const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.ObjHrleave.HR_Year_ID))[0];
-//       console.log("HRFilterValue",HRFilterValue)
-//       this.maxDateFrom_Time = new Date(HRFilterValue.HR_Year_End);
-//       this.maxDateTo_Time = new Date(HRFilterValue.HR_Year_End);
-//       this.minDateFrom_Time = new Date(HRFilterValue.HR_Year_Start);
-//       console.log("this.maxDateFrom_Time",this.maxDateFrom_Time )
-//       console.log("this.maxDateTo_Time",this.maxDateTo_Time )
-//       console.log("this.maxDateFrom_Time",this.minDateFrom_Time )
+ getMaxMindate(){
+    if(this.ObjHrleave.HR_Year_ID){
+      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.ObjHrleave.HR_Year_ID))[0];
+      console.log("HRFilterValue",HRFilterValue)
+      // this.maxDateFrom_Time = new Date(HRFilterValue.HR_Year_End);
+      // this.maxDateTo_Time = new Date(HRFilterValue.HR_Year_End);
+      // this.minDateFrom_Time = new Date(HRFilterValue.HR_Year_Start);
+      // console.log("this.maxDateFrom_Time",this.maxDateFrom_Time )
+      // console.log("this.maxDateTo_Time",this.maxDateTo_Time )
+      // console.log("this.maxDateFrom_Time",this.minDateFrom_Time )
+      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
       
-//     }
-//   }
+    }
+  }
 CancleLeave(data){
   if(data.Emp_ID && data.Txn_App_ID){
   this.deleteError = false;
