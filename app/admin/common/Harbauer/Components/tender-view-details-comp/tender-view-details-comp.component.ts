@@ -26,6 +26,7 @@ import {
 import {
   CompacctGetDistinctService
 } from "../../../../shared/compacct.services/compacct-get-distinct.service"
+import { FileUpload } from "primeng/primeng";
 import * as moment from "moment";
 declare var $: any;
 import * as XLSX from 'xlsx';
@@ -70,7 +71,7 @@ export class TenderViewDetailsCompComponent implements OnInit {
   TenderPublishDate = new Date()
 
 
-  TabItems = ['Tender Details', 'Pre Bid Budget', 'Finance Details', 'Tender Log', 'Bidder List', 'Bid Opening & AOC Details']
+  TabItems = ['Tender Details', 'Pre Bid Budget', 'Finance Details', 'Tender Log', 'Bidder List', 'Bid Opening & AOC Details', 'Upload/Show Document']
   BudgetDetails$: Observable < [any] > ;
   FinanceDetails$: Observable < [any] > ;
   TenderLogDetails$: Observable < [any] > ;
@@ -186,9 +187,23 @@ export class TenderViewDetailsCompComponent implements OnInit {
 
   CompletionDate = new Date();
   CommencementDate = new Date();
-
+  // Upload Document
+  uploadModel:boolean = false;
+  PDFFlag:boolean = false;
+  ProductPDFFile:any = {};
+  SpinnerUpload:boolean = false
+  PDFViewFlag:boolean = false;
+  ProductPDFLink:any = undefined;
+  DocTenderDocID:any = undefined;
+  pImg:any = undefined
+  doctypeList:any = [];
+  docType:any = undefined
+  docTypeOther:any = undefined
+  doctypeFormSubmit:boolean = false
+  multipalDocTypeList:any = [];
   TenderLogList = [];
   distinctDateArray =[];
+  @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   @Input() set TenderId(val: any) {
     this._TenderId = val;
     this.FetchValues();
@@ -709,7 +724,10 @@ export class TenderViewDetailsCompComponent implements OnInit {
       this.GetBidOpenList();
       this.GetAgreementList();
       this.GetTenderLogList();
+
+      this.UploadDoc(this._TenderId)
     }
+    console.log("fjh")
   }
   clearData() {
     this.AllPSdata = [];
@@ -742,7 +760,149 @@ export class TenderViewDetailsCompComponent implements OnInit {
     this.TenderLogList = [];
     this.distinctDateArray =[];
   }
-
+  // Upload Doc
+  UploadDoc(TenderDocID){
+    console.log(TenderDocID)
+    if(TenderDocID){
+      //this.getUploadData(col.Tender_Doc_ID);
+      this.DocTenderDocID = undefined
+      this.DocTenderDocID = TenderDocID
+      this.PDFFlag = false;
+      this.ProductPDFFile = {};
+      this.docTypeOther = undefined;
+      this.docType = undefined;
+      this.SpinnerUpload = false;
+      this.PDFViewFlag = false;
+      this.ProductPDFLink = undefined;
+      this.pImg = undefined
+      this.doctypeFormSubmit = false
+      this.getDocType()
+      this.GetTenderDocMultiple()
+      if(this.fileInput){
+        this.fileInput.clear();
+      }
+      console.log("fileInput",this.fileInput)
+    }
+  }
+  getUploadData(TenderDocID){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Tender_Document",
+      "Json_Param_String": JSON.stringify({Tender_Doc_ID: Number(TenderDocID)})
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+    this.pImg = data[0].Product_Image
+    
+    })
+  }
+  handleFileSelect(event:any) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      console.log(event)
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+  }
+  }
+  SaveUploadDoc(valid:any){
+    this.doctypeFormSubmit = true
+    console.log(valid)
+    if(valid){
+      if(this.ProductPDFFile['size']){
+        this.SpinnerUpload =true
+        this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+        .subscribe((data : any)=>
+        {
+          if(data.file_url){
+            this.saveDoc(data.file_url)
+          }
+          else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Fail to upload"
+          });
+          }
+        })  
+      }
+    }
+    
+  }
+  saveDoc(fileUrl){
+    const tempSaveDataObj = {
+      Tender_Doc_ID: Number(this.DocTenderDocID),
+      Document_Type: this.docType == 'Other' ? this.docTypeOther : this.docType,
+      File_Name: fileUrl,
+      User_ID : this.commonApi.CompacctCookies.User_ID
+    }
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      // "Report_Name_String": "Update_Tender_Document",
+      "Report_Name_String": "Update_Tender_Document_Multiple",
+      "Json_Param_String": JSON.stringify(tempSaveDataObj)
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        console.log(data)
+        if(data[0].message == "Update done"){
+          this.PDFFlag = false;
+          this.ProductPDFFile = {};
+        // this.uploadModel = false;
+        this.docType = undefined;
+          this.GetTenderDocMultiple()
+          this.SpinnerUpload = false;
+          this.PDFViewFlag = false;
+          this.ProductPDFLink = undefined;
+          this.pImg = undefined;
+          this.doctypeFormSubmit = false
+          
+          this.fileInput.clear();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            // summary: "File Succesfully Upload",
+            detail: "File Succesfully Upload"
+          });
+        }
+        else {
+          this.SpinnerUpload =false 
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+    })
+  }
+  showImg(img:any){
+    window.open(img)
+  }
+  getDocType(){
+    this.doctypeList = []
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Document_Type"
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+    console.log(data);
+    this.doctypeList = data
+    })
+  }
+  GetTenderDocMultiple(){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Tender_Document_Multiple",
+      "Json_Param_String": JSON.stringify({Tender_Doc_ID : this.DocTenderDocID})
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+    console.log("multi Data",data)
+    this.multipalDocTypeList = data;
+    })
+  }
 }
 
 class Tender {

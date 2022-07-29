@@ -241,6 +241,10 @@ export class FinancialVoucherComponent implements OnInit {
        console.log("SubLedgerListlow",this.SubLedgerListlow)
       })
     }
+    else {
+      this.objjournalloweer.Sub_Ledger_ID = undefined;
+      this.SubLedgerListlow = []
+    }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
