@@ -897,10 +897,11 @@
                                     <p-table [value]="pendingREQData" 
                                     *ngIf='pendingREQData.length' #dt4 
                                      [paginator]="pendingREQData.length ? true : false"
-                                     [rows]="10"
+                                     [rows]="100"
                                      [rowHover]="true" 
                                      [autoLayout]="true" 
                                      sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
                                      [rowHover]="true"
                                      [globalFilterFields]='pendingREQDataDynamicHeader'>
                                         <ng-template pTemplate="caption">
@@ -984,10 +985,11 @@
                                     <p-table [value]="pendingPurIndProData" 
                                     *ngIf='pendingPurIndProData.length' #dt5
                                      [paginator]="pendingPurIndProData.length ? true : false"
-                                     [rows]="10"
+                                     [rows]="100"
                                      [rowHover]="true" 
                                      [autoLayout]="true" 
                                      sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
                                      [rowHover]="true"
                                      [columns]="cols"
                                      [globalFilterFields]='pendingPurIndProDataDynamicHeader'>

@@ -329,6 +329,7 @@ import { LeaveApprovalComponent } from './common/MICL/leave-approval/leave-appro
 import { ConsumptionComponent } from "./common/MICL/consumption/consumption.component";
 import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transaction/Purchase/debit-note-wo-stock/debit-note-wo-stock.component';
 import { FinancialReminderComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-reminder/financial-reminder.component";
+import { InflowPlaningComponent } from "./common/Harbauer/inflow-planing/inflow-planing.component";
 
 
 @NgModule({
@@ -577,7 +578,8 @@ import { FinancialReminderComponent } from "./common/FinancialManagement/Transac
     LeaveApprovalComponent,
     ConsumptionComponent,
     DebitNoteWoStockComponent,
-    FinancialReminderComponent
+    FinancialReminderComponent,
+    InflowPlaningComponent
   ],
   imports: [
     CommonModule,

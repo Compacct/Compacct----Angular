@@ -121,6 +121,7 @@ export class HrLeaveApplyComponent implements OnInit {
     this.showErrorMsg = false
     this.GetNumberOfdays();
     this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
+    this.employeeData();
     }
   getDateRange(dateRangeObj) {
       if (dateRangeObj.length) {
@@ -193,11 +194,15 @@ this.AllData = [...this.BackupAllData] ;
    employeeData(){
      const obj = {
        "SP_String":"SP_Leave_Application",
-       "Report_Name_String": "Get_Employee_List"
+       "Report_Name_String": "Get_Employee_List",
+       "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
      }
       this.GlobalAPI.getData(obj)
       .subscribe((data:any)=>{
        this.empDataList = data;
+       var empname = this.empDataList.filter(el=> Number(el.User_ID) === Number(this.$CompacctAPI.CompacctCookies.User_ID))
+       console.log(empname)
+       this.ObjHrleave.Emp_ID = empname.length ? empname[0].Emp_ID : undefined;
        console.log("employee==",this.empDataList);
        });
    }

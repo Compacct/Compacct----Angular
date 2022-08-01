@@ -91,6 +91,7 @@ export class AttendanceSheetComponent implements OnInit {
   showdata : any;
   generate = false;
   download = false;
+  AllattendancestatusFormSubmitted = false;
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -541,6 +542,7 @@ export class AttendanceSheetComponent implements OnInit {
         if (col === 'Emp_ID' || col === "Emp_Name") {
           this.display = false;
         } else {
+          this.attendancestatusFormSubmitted = false;
           this.display = true;
           // var Attent = this.AttenTypelist.filter( items => items.Sht_Desc === this.attendance_value);
           // this.Attendance_Status = Attent ? Attent[0].Atten_Type_ID : undefined;
@@ -548,14 +550,17 @@ export class AttendanceSheetComponent implements OnInit {
       }
       
   }
-  SaveAttendanceType(){
+  SaveAttendanceType(valid){
+    this.attendancestatusFormSubmitted = true;
+    if (valid){
        this.AllAttendanceData.forEach((el:any)=>{
          if(Number(el.Emp_ID )== Number(this.empid)){
           el[this.col] = Number(this.Attendance_Status)
          }
        })
+      //  this.attendancestatusFormSubmitted = false;
        this.display = false;
-     //}
+     }
    }
   ChangeAllRow(col){
     console.log("col",col);
@@ -569,18 +574,23 @@ export class AttendanceSheetComponent implements OnInit {
         if (col === "Emp_Name") {
           this.displayALLEmployee = false;
         } else {
+          this.AllattendancestatusFormSubmitted = false;
           this.displayALLEmployee = true;
         }
       }
       
   }
-  SaveForALLEmployee(){
+  SaveForALLEmployee(valid){
+    this.AllattendancestatusFormSubmitted = true;
+    if (valid){
       this.AllAttendanceData.forEach((el:any)=>{
         // if(Number(el.Emp_ID )== Number(this.empid)){
          el[this.col] = Number(this.Attendance_Status_ALlEmployee)
         // }
       })
+      // this.AllattendancestatusFormSubmitted = false;
       this.displayALLEmployee = false;
+    }
   }
   saveAttendance(){
     let tempArr:any = [];
@@ -590,9 +600,9 @@ export class AttendanceSheetComponent implements OnInit {
       var firstDateofmonth = this.Month_Name+'-'+'01'
       let emp:any = {}
       for (const key in el) {
-        // if (el[key] === null) {
-        //   el[key] = 2;
-        // }
+        if (el[key] === null) {
+          el[key] = 2;
+        }
         const keyName = `_${key.substring(0,2)}`;
         if(!key.includes('Emp')) {
           emp[keyName] = el[key];

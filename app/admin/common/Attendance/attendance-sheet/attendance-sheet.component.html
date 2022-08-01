@@ -250,45 +250,47 @@
         </div>
         <div class="col-sm-12">
             <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
-            <select name="atten" #atten="ngModel" [(ngModel)]="Attendance_Status" [ngClass]="{'clearance': attendancestatusFormSubmitted && atten?.errors?.required}">
+            <select name="attentype" #attentype="ngModel" [(ngModel)]="Attendance_Status" [ngClass]="{'clearance': attendancestatusFormSubmitted && attentype?.errors?.required}" required>
            <option  [ngValue]="undefined">Select</option>
            <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
              {{option.Atten_Type}}
             </option>
            </select>
         </div>
+    </form>
         <hr>
         <p-footer>
             <div class="text-right">
                 <button type="button" (click)="display = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
-                <button type="button" (click)="SaveAttendanceType()" class="btn btn-success">
+                <button type="button" (click)="SaveAttendanceType(attendancestatusForm.form.valid)" class="btn btn-success">
            <i class="fa fa-check"></i>&nbsp;  Done
          </button>
             </div>
         </p-footer>
-    </form>
 </p-dialog>
 
  <!-- FOR ALL EMPLOYEE (ONE COLUMN) -->
 <p-dialog header={{DayName}} [appendTo]="'body'" [(visible)]="displayALLEmployee" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '300px' }">
-    <div class="col-sm-12">
-        <label>Date:</label>&nbsp; {{Doc_date_AllEmp}}
+    <form name="AllattendancestatusForm" #AllattendancestatusForm="ngForm" novalidate>
+       <div class="col-sm-12">
+         <label>Date:</label>&nbsp; {{Doc_date_AllEmp}}
 
-    </div>
-    <div class="col-sm-12">
-        <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
-        <select name="atten" #atten="ngModel" [(ngModel)]="Attendance_Status_ALlEmployee" [ngClass]="{'clearance': attendancestatusFormSubmitted && atten?.errors?.required}">
-           <option  [ngValue]="undefined">Select</option>
-           <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
-             {{option.Atten_Type}}
+        </div>
+        <div class="col-sm-12">
+          <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+          <select name="Allattentype" #Allattentype="ngModel" [(ngModel)]="Attendance_Status_ALlEmployee" [ngClass]="{'clearance': AllattendancestatusFormSubmitted && Allattentype?.errors?.required}" required>
+            <option  [ngValue]="undefined">Select</option>
+            <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
+              {{option.Atten_Type}}
             </option>
-           </select>
-    </div>
+          </select>
+        </div>
+    </form>
     <hr>
     <p-footer>
         <div class="text-right">
             <button type="button" (click)="displayALLEmployee = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
-            <button type="button" (click)="SaveForALLEmployee()" class="btn btn-success">
+            <button type="button" (click)="SaveForALLEmployee(AllattendancestatusForm.form.valid)" class="btn btn-success">
            <i class="fa fa-check"></i>&nbsp;  Done
          </button>
         </div>

@@ -59,6 +59,8 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   MaterialType = undefined;
   remarks = undefined;
   datepickerdisable = false;
+  Browsecostcenlist:any = [];
+  BrowseGodownList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -92,8 +94,9 @@ export class K4cRsnsClosingStockComponent implements OnInit {
       Header: this.MaterialType_Flag + " Closing Stock ",// + this.Param_Flag, this.MaterialType_Flag + 
       Link: this.MaterialType_Flag + " Closing Stock "
     });
+    this.GetBrowseCostCen();
      this.GetCostCen();
-     this.GetGodown();
+    //  this.GetGodown();
      this.GetDate();
     // this.GetProductType();
     // this.todayDate = new Date(this.myDate);
@@ -142,28 +145,75 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.productListFilter = [];
      this.Gdisableflag = false;
    }
-  GetCostCen(){
-    const tempObj = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-      //Material_Type : this.MaterialType_Flag
-    }
+   GetBrowseCostCen(){
     const obj = {
-      "SP_String": "SP_Raw_Material_Stock_Transfer",
-      "Report_Name_String": "Get Cost Centre",
-      "Json_Param_String": JSON.stringify([tempObj])
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Cost Center Name All",
+      "Json_Param_String": JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}])
+     // "Json_Param_String": JSON.stringify([{User_ID : 61}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.Browsecostcenlist = data;
+      this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID; 
+      this.GetBrowseGodown();
+     })
+  }
+
+  GetBrowseGodown(){
+    this.BrowseGodownList = [];
+    //if(this.ObjrsnsClosingStock.Cost_Cen_ID){
+      const tempObj = {
+        Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID
+        //Material_Type : this.MaterialType_Flag
+      }
+      const obj = {
+        "SP_String": "SP_Raw_Material_Stock_Transfer",
+        "Report_Name_String": "Get - Godown",
+        "Json_Param_String": JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.BrowseGodownList = data;
+        //this.ObjRawMateriali.From_godown_id = data[0].godown_id;
+       this.ObjBrowse.godown_id = this.BrowseGodownList.length === 1 ? this.BrowseGodownList[0].godown_id : undefined;
+       if(this.BrowseGodownList.length === 1){
+         this.Gbrowsedisableflag = true;
+       }else{
+         this.Gbrowsedisableflag = false;
+       }
+         //console.log("From Godown List ===",this.FromGodownList);
+      })
+    //}
+
+  }
+  GetCostCen(){
+    // const tempObj = {
+    //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    //   //Material_Type : this.MaterialType_Flag
+    // }
+    // const obj = {
+    //   "SP_String": "SP_Raw_Material_Stock_Transfer",
+    //   "Report_Name_String": "Get Cost Centre",
+    //   "Json_Param_String": JSON.stringify([tempObj])
+    // }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Cost Center Name All",
+      "Json_Param_String": JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}])
+     // "Json_Param_String": JSON.stringify([{User_ID : 61}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.costcenlist = data;
       this.ObjrsnsClosingStock.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-      this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID; 
+      // this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID; 
       this.GetGodown();
      })
   }
 
   GetGodown(){
+    this.GodownList = [];
     //if(this.ObjrsnsClosingStock.Cost_Cen_ID){
       const tempObj = {
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.ObjrsnsClosingStock.Cost_Cen_ID
         //Material_Type : this.MaterialType_Flag
       }
       const obj = {
@@ -180,12 +230,12 @@ export class K4cRsnsClosingStockComponent implements OnInit {
        }else{
          this.Gdisableflag = false;
        }
-       this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-       if(this.GodownList.length === 1){
-         this.Gbrowsedisableflag = true;
-       }else{
-         this.Gbrowsedisableflag = false;
-       }
+      //  this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
+      //  if(this.GodownList.length === 1){
+      //    this.Gbrowsedisableflag = true;
+      //  }else{
+      //    this.Gbrowsedisableflag = false;
+      //  }
          //console.log("From Godown List ===",this.FromGodownList);
       })
     //}
@@ -569,15 +619,17 @@ onConfirm(){
  }
 
   clearData(){
-    this.ObjrsnsClosingStock.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID; 
+    this.GetBrowseCostCen();
+    this.GetCostCen();
+    // this.ObjrsnsClosingStock.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    // this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID; 
     //this.ObjrsnsClosingStock.Cost_Cen_ID = String(this.CostCentId_Flag);
-    this.ObjrsnsClosingStock.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-     if(this.GodownList.length === 1){
-       this.Gdisableflag = true;
-     }else{
-       this.Gdisableflag = false;
-     }
+    // this.ObjrsnsClosingStock.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
+    //  if(this.GodownList.length === 1){
+    //    this.Gdisableflag = true;
+    //  }else{
+    //    this.Gdisableflag = false;
+    //  }
     //  this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
     //  if(this.GodownList.length === 1){
     //    this.Gbrowsedisableflag = true;

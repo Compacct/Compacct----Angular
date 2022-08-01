@@ -60,7 +60,7 @@
                                 </div>
                             </form>
                             <div class="table-responsive no-padding">
-                                <p-table [value]="GetAllDataList" [paginator]="GetAllDataList.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [globalFilterFields]="['Req_No','Doc_No','Doc_Date','F_Godown_Name','To_Cost_Center_Name','Total_Qty','Vehicle_Details','Created_By_User','Created_On']"
+                                <p-table [value]="GetAllDataList" [paginator]="GetAllDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Req_No','Doc_No','Doc_Date','F_Godown_Name','To_Cost_Center_Name','Total_Qty','Vehicle_Details','Created_By_User','Created_On']"
                                     [rowHover]="true" #dt7>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -438,7 +438,7 @@
                                 <div class="col-sm-3">
                                     <label class="control-label">Date</label>
 
-                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
                                     </app-compacct-daterangepicker>
 
                                 </div>

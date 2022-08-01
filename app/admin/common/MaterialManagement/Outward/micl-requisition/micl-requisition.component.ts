@@ -110,7 +110,7 @@ export class MiclRequisitionComponent implements OnInit {
       Header: this.headerText,
       Link: this.headerText
     });
-    this.hrYearList();
+    this.Finyear();
     this.ServerDate();
     this.AllowedEntryDays();
     this.getCostcenter();
@@ -824,30 +824,41 @@ export class MiclRequisitionComponent implements OnInit {
     })
     }
   }
-  hrYearList(){
-    this.HR_Year_ID = undefined;
-    const obj = {
-      "SP_String":"SP_Leave_Application",
-      "Report_Name_String":"Get_HR_Year_List"
-   }
-   this.GlobalAPI.getData(obj)
-     .subscribe((data:any)=>{
-      this.hrYeatList = data;
-      console.log("Hr Year==",this.hrYeatList);
-      this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
+  // hrYearList(){
+  //   this.HR_Year_ID = undefined;
+  //   const obj = {
+  //     "SP_String":"SP_Leave_Application",
+  //     "Report_Name_String":"Get_HR_Year_List"
+  //  }
+  //  this.GlobalAPI.getData(obj)
+  //    .subscribe((data:any)=>{
+  //     this.hrYeatList = data;
+  //     console.log("Hr Year==",this.hrYeatList);
+  //     this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
 
-       // if(this.ObjHrleave.HR_Year_ID){
-        this.getMaxMindate()
-     // }
-      });
-  }
-  getMaxMindate(){
-    if(this.HR_Year_ID){
-      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
-      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
+  //      // if(this.ObjHrleave.HR_Year_ID){
+  //       this.getMaxMindate()
+  //    // }
+  //     });
+  // }
+  // getMaxMindate(){
+  //   if(this.HR_Year_ID){
+  //     const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
+  //     this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
       
+  //   }
+  // }
+  Finyear() {
+      this.$http
+        .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+        .subscribe((res: any) => {
+        let data = JSON.parse(res)
+        // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+        // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+        // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+       this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+        });
     }
-  }
 }
 
 class reqi{
