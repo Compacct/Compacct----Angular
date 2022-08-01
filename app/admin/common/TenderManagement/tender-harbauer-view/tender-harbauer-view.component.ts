@@ -147,6 +147,11 @@ export class TenderHarbauerViewComponent implements OnInit {
    ProductPDFLink:any = undefined;
    DocTenderDocID:any = undefined;
    pImg:any = undefined
+   doctypeList:any = [];
+   docType:any = undefined
+   docTypeOther:any = undefined
+   doctypeFormSubmit:boolean = false
+   multipalDocTypeList:any = [];
   // Bid Openning & AOC
    BidOpenningModel = false;
    ObjBidOpeningList = new BidOpeningList(); 
@@ -2276,17 +2281,24 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
   UploadDoc(col){
     console.log(col)
     if(col.Tender_Doc_ID){
-      this.getUploadData(col.Tender_Doc_ID);
+      //this.getUploadData(col.Tender_Doc_ID);
       this.DocTenderDocID = undefined
       this.DocTenderDocID = col.Tender_Doc_ID
       this.PDFFlag = false;
       this.ProductPDFFile = {};
-    
-       this.SpinnerUpload = false;
+      this.docTypeOther = undefined;
+      this.docType = undefined;
+      this.SpinnerUpload = false;
       this.PDFViewFlag = false;
       this.ProductPDFLink = undefined;
       this.pImg = undefined
+      this.doctypeFormSubmit = false
       this.fileInput.clear();
+      this.getDocType()
+      this.GetTenderDocMultiple()
+      setTimeout(() => {
+        this.uploadModel = true;
+      }, 700);
     }
    }
   getUploadData(TenderDocID){
@@ -2297,9 +2309,7 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
      this.pImg = data[0].Product_Image
-     setTimeout(() => {
-      this.uploadModel = true;
-    }, 300);
+    
     })
   }
   handleFileSelect(event:any) {
@@ -2309,51 +2319,59 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
       console.log(event)
       this.ProductPDFFile = event.files[0];
       this.PDFFlag = true;
+   }
   }
-  }
-  SaveUploadDoc(){
-    if(this.ProductPDFFile['size']){
-      this.SpinnerUpload =true
-      this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
-      .subscribe((data : any)=>
-      {
-        if(data.file_url){
-          this.saveDoc(data.file_url)
-        }
-        else {
-          this.compacctToast.clear();
-          this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Error",
-          detail: "Fail to upload"
-        });
-        }
-      })  
+  SaveUploadDoc(valid:any){
+    this.doctypeFormSubmit = true
+    if(valid){
+      if(this.ProductPDFFile['size']){
+        this.SpinnerUpload =true
+        this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+        .subscribe((data : any)=>
+        {
+          if(data.file_url){
+            this.saveDoc(data.file_url)
+          }
+          else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Fail to upload"
+          });
+          }
+        })  
+      }
     }
+    
   }
   saveDoc(fileUrl){
-    
-    const tempSaveDataObj = {
-      Tender_Doc_ID: Number(this.DocTenderDocID),  
-      File_Name: fileUrl
+     const tempSaveDataObj = {
+      Tender_Doc_ID: Number(this.DocTenderDocID),
+      Document_Type: this.docType == 'Other' ? this.docTypeOther : this.docType,
+      File_Name: fileUrl,
+      User_ID : this.commonApi.CompacctCookies.User_ID
     }
     const obj = {
       "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
-      "Report_Name_String": "Update_Tender_Document",
+      // "Report_Name_String": "Update_Tender_Document",
+      "Report_Name_String": "Update_Tender_Document_Multiple",
       "Json_Param_String": JSON.stringify(tempSaveDataObj)
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
         console.log(data)
         if(data[0].message == "Update done"){
-          this.DocTenderDocID = undefined
           this.PDFFlag = false;
           this.ProductPDFFile = {};
-          this.uploadModel = false;
+         // this.uploadModel = false;
+         this.docType = undefined;
+          this.GetTenderDocMultiple()
           this.SpinnerUpload = false;
           this.PDFViewFlag = false;
           this.ProductPDFLink = undefined;
-          this.pImg = undefined
+          this.pImg = undefined;
+          this.doctypeFormSubmit = false
           this.SearchTender(true);
           this.fileInput.clear();
           this.compacctToast.clear();
@@ -2376,9 +2394,32 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
         }
     })
   }
-  showImg(){
-    window.open(this.pImg)
+  showImg(img:any){
+    window.open(img)
   }
+  getDocType(){
+    this.doctypeList = []
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Document_Type"
+     }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+     console.log(data);
+     this.doctypeList = data
+    })
+  }
+  GetTenderDocMultiple(){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Tender_Document_Multiple",
+      "Json_Param_String": JSON.stringify({Tender_Doc_ID : this.DocTenderDocID})
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+     console.log("multi Data",data)
+     this.multipalDocTypeList = data;
+    })
+  }
+ 
 }
 class search{
   Filter1_Text:string;
