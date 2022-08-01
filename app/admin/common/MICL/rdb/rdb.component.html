@@ -69,9 +69,9 @@
                                 <p-table #dt [value]="AllProductList" 
                                 [globalFilterFields]="['User_ID']" 
                                 [paginator]="AllProductList.length ? true:false" 
-                                [rows]="10" [rowHover]="true" 
+                                [rows]="100" [rowHover]="true" 
                                 [autoLayout]="true" sortMode="multiple"
-                                [rowsPerPageOptions]="[10,20,30]" 
+                                [rowsPerPageOptions]="[100,200,300]" 
                                 [rowHover]="true"
                                 [responsive]="true">
                                     <ng-template pTemplate="caption">
@@ -477,6 +477,49 @@
                                 </p-table>
                             </div>
 
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                            <!-- <form name="PendingPOForm" #PendingPOForm="ngForm" novalidate> -->
+                            <div class="form-group">
+                                <!-- <div class="col-sm-4">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="ppocompany" 
+                                    #ppocompany="ngModel" 
+                                    [(ngModel)]="ObjPendingPO.Company_ID"
+                                    [ngClass]="{'clearance': PendingPOFormSubmitted && ppocompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div> -->
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeForRegister($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="PrintRdbRegister()" id="load" [disabled]="RegisterSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="RegisterSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <!-- <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp; -->Show Register
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- </form> -->
                         </p-tabPanel>
                     </p-tabView>
                 </div>

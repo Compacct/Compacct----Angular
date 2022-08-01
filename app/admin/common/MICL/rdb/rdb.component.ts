@@ -70,6 +70,8 @@ export class RdbComponent implements OnInit {
   dataforcreterdb:any = [];
   hrYeatList:any = [];
   HR_Year_ID:any;
+  RegisterSpinner = false;
+  ObjRDBRegister = new RDBRegister();
 
    constructor(
     private $http: HttpClient,
@@ -83,7 +85,7 @@ export class RdbComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER"];
+    this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -92,7 +94,7 @@ export class RdbComponent implements OnInit {
       Header: "RDB",
       Link: " Material Management -> Inward -> RDB"
     });
-    this.hrYearList();
+    this.Finyear();
     this.getCostCenter();
     this.getSupplier();
     this.getcompany();
@@ -101,7 +103,7 @@ export class RdbComponent implements OnInit {
 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER"];
+    this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
     this.buttonname = "Create";
     this.clearData();
   }
@@ -126,31 +128,19 @@ export class RdbComponent implements OnInit {
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
-    this.deleteError = false
+    this.deleteError = false;
+    this.RegisterSpinner = false;
   }
-  hrYearList(){
-    this.HR_Year_ID = undefined;
-    const obj = {
-      "SP_String":"SP_Leave_Application",
-      "Report_Name_String":"Get_HR_Year_List"
-   }
-   this.GlobalAPI.getData(obj)
-     .subscribe((data:any)=>{
-      this.hrYeatList = data;
-      console.log("Hr Year==",this.hrYeatList);
-      this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
-  
-       // if(this.ObjHrleave.HR_Year_ID){
-        this.getMaxMindate()
-     // }
+  Finyear() {
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+      // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+      // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+      // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
       });
-  }
-  getMaxMindate(){
-    if(this.HR_Year_ID){
-      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
-      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
-      
-    }
   }
   GetAllData(valid){
     this.ngxService.start();
@@ -939,6 +929,39 @@ export class RdbComponent implements OnInit {
   // this.SelectedIndent = obj.Req_No;
   // this.GetshowProduct();
   }
+  // RDB REGISTER
+  getDateRangeForRegister(dateRangeObjRegister) {
+    if (dateRangeObjRegister.length) {
+      this.ObjRDBRegister.start_date = dateRangeObjRegister[0];
+      this.ObjRDBRegister.end_date = dateRangeObjRegister[1];
+    }
+  }
+  PrintRdbRegister() {
+    // console.log("print register")
+    this.RegisterSpinner = true;
+    // if(DocNo) {
+    // const objtemp = {
+    //   "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+    //   "Report_Name_String": "RDB_Print"
+    //   }
+    // this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    //   var printlink = data[0].Column1;
+    // if(this.start_date && this.end_date) {
+      const start = this.ObjRDBRegister.start_date
+      ? this.DateService.dateConvert(new Date(this.ObjRDBRegister.start_date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjRDBRegister.end_date
+      ? this.DateService.dateConvert(new Date(this.ObjRDBRegister.end_date))
+      : this.DateService.dateConvert(new Date());
+    //   console.log(start)
+    //   console.log(end)
+    if(start && end) {
+    window.open("/Report/Crystal_Files/MICL/RDB_Register.aspx?From_Date=" + start + "&" + "To_Date=" + end, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    this.RegisterSpinner = false;
+    }
+    // })
+    // }
+  }
 }
   class RDB{
     Company_ID:any;
@@ -979,5 +1002,9 @@ export class RdbComponent implements OnInit {
     start_date : Date;
     end_date : Date;
     Cost_Cen_ID : any;
+  }
+  class RDBRegister {
+    start_date : Date;
+    end_date : Date;
   }
 

@@ -93,7 +93,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   editDis = false;
   reqQTYdis = true;
   AccQtydis = false;
-  initDate = [];
+  initDate:any = [];
   doc_date: any;
   filteredData = [];
   displaysavepopup = false;
@@ -182,6 +182,7 @@ export class MiclDispatchChallanComponent implements OnInit {
       Header: "Issue Material",
       Link: "Material Management -> Outward -> Issue Material"
     });
+    this.Finyear();
     this.GetFromCostcenter();
     // this.GetFromGodown();
     this.GetToCostCenter();
@@ -247,6 +248,17 @@ export class MiclDispatchChallanComponent implements OnInit {
   this.createchallandisabled = false;
   this.indentlistdisabled = false;
   this.createChallanflag = true;
+  }
+  Finyear() {
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+      // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+      // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+      // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+      });
   }
   GetFromCostcenter(){
     const obj = {

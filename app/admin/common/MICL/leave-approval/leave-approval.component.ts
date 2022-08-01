@@ -19,12 +19,35 @@ declare var $:any;
   encapsulation: ViewEncapsulation.None
 })
 export class LeaveApprovalComponent implements OnInit {
+  items:any = [];
+  menuList:any = [];
+  Spinner = false;
+  seachSpinner = false
+  tabIndexToView = 0;
   employeelist = [];
   ApprovalList:any = [];
   empid: any;
   Bussidisabled = false;
   Reportdisabled = false;
   approvedisabled = false;
+  BackupApprovalList:any = [];
+  DistEmpName:any = [];
+  SelectedDistEmpName:any = [];
+  SearchFields:any = [];
+
+  ApprovedApprovalList:any = [];
+  BackupApprovedApprovalList:any = [];
+  DistEmpNameTab2:any = [];
+  SelectedDistEmpNameTab2:any = [];
+  SearchFieldsTab2:any = [];
+  DynamicHeaderforTabSecond:any = [];
+
+  DisApprovedApprovalList:any = [];
+  DynamicHeaderforTabThird:any = [];
+  BackupDisApprovedApprovalList:any = [];
+  DistEmpNameTab3:any = [];
+  SelectedDistEmpNameTab3:any = [];
+  SearchFieldsTab3:any = [];
 
   constructor(
     private route : ActivatedRoute,
@@ -37,12 +60,25 @@ export class LeaveApprovalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.items = ["PENDING APPROVAL", "APPROVED APPROVAL", "DISAPPROVED APPROVAL"];
+    this.menuList = [
+      {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
+      {label: 'Delete', icon: 'fa fa-fw fa-trash'}
+    ]; 
     this.Header.pushHeader({
       Header: "Leave Approval",
       Link: " HR -> Transaction -> Leave Approval"
     });
     this.getemployee();
   }
+  TabClick(e){
+    // console.log(e)
+     this.tabIndexToView = e.index;
+     this.items = ["PENDING APPROVAL", "APPROVED APPROVAL", "DISAPPROVED APPROVAL"];
+    //  this.buttonname = "Save";
+    //  this.Spinner = false;
+    //  this.clearData();
+   }
   getemployee(){
     this.empid = undefined;
     const obj = {
@@ -54,19 +90,24 @@ export class LeaveApprovalComponent implements OnInit {
       this.employeelist = data;
       this.empid = data[0].Emp_ID;
        console.log("employeelist ===", this.employeelist);
-       this.getApprovaldetails();
+       this.getPedingApprovaldetails();
+       this.getApprovedApprovaldetails();
+       this.getDisApprovedApprovaldetails();
     })
   }
-  getApprovaldetails(){
+  // For Pending Approval
+  getPedingApprovaldetails(){
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Leave_Application",
       "Report_Name_String": "Get_Leave_Apply_Data",
-      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid}])
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"PENDING APPROVAL"}])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ApprovalList = data;
+      this.BackupApprovalList = data;
+      this.GetDistinct();
       console.log("this.ApprovalList  ===",this.ApprovalList);
       this.ApprovalList.forEach(element => {
         if ((element['Approved_Status_Business_Manager'] === "Y") && (element['Approved_Status_Reporting_Manager'] === "Y")) {
@@ -101,8 +142,39 @@ export class LeaveApprovalComponent implements OnInit {
       // //this.AuthorizedList[i].Vendor_Name = this.AuthorizedList[i].Sub_Ledger_ID;
       // }
     })
-   }
-   ApprovedLeave(obj){
+  }
+  // DISTINCT & FILTER
+  GetDistinct() {
+  let DEmpName:any = [];
+  this.DistEmpName =[];
+  this.SelectedDistEmpName =[];
+  this.SearchFields =[];
+  this.ApprovalList.forEach((item) => {
+ if (DEmpName.indexOf(item.Emp_ID) === -1) {
+  DEmpName.push(item.Emp_ID);
+ this.DistEmpName.push({ label: item.Emp_Name, value: item.Emp_ID });
+ }
+});
+   this.BackupApprovalList = [...this.ApprovalList];
+  }
+  FilterDist() {
+  let DEmpName:any = [];
+  this.SearchFields =[];
+if (this.SelectedDistEmpName.length) {
+  this.SearchFields.push('Emp_ID');
+  DEmpName = this.SelectedDistEmpName;
+}
+this.ApprovalList = [];
+if (this.SearchFields.length) {
+  let LeadArr = this.BackupApprovalList.filter(function (e) {
+    return (DEmpName.length ? DEmpName.includes(e['Emp_ID']) : true)
+  });
+this.ApprovalList = LeadArr.length ? LeadArr : [];
+} else {
+this.ApprovalList = [...this.BackupApprovalList] ;
+}
+  }
+  ApprovedLeave(obj){
     if(obj.Txn_App_ID && obj.Emp_ID) {
       if (((Number(obj.Business_Manager) === Number(this.empid)) && (obj.Approved_Status_Business_Manager && obj.Approved_Note_Business_Manager)) || 
          ((Number(obj.Report_Manager) === Number(this.empid)) && (obj.Approved_Status_Reporting_Manager && obj.Approved_Note_Reporting_Manager))){
@@ -142,7 +214,9 @@ export class LeaveApprovalComponent implements OnInit {
                 summary: 'Emp ID : ' + obj.Emp_ID,
                 detail: "Succesfully Approved."
               });
-              this.getApprovaldetails();
+              this.getPedingApprovaldetails();
+              this.getApprovedApprovaldetails();
+              this.getDisApprovedApprovaldetails();
             }
             else if(data[0].Column1 === "Something Wrong") {
               this.onReject();
@@ -190,6 +264,114 @@ export class LeaveApprovalComponent implements OnInit {
   }
   onReject(){
     this.compacctToast.clear("c");
-   }
+  }
+
+  // Approved Approval
+  getApprovedApprovaldetails(){
+    //console.log(this.ObjBrowse.Doc_No);
+    const obj = {
+      "SP_String": "SP_Leave_Application",
+      "Report_Name_String": "Get_Leave_Apply_Data",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"APPROVED APPROVAL"}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ApprovedApprovalList = data;
+      if(this.ApprovedApprovalList.length){
+        this.DynamicHeaderforTabSecond = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforTabSecond = [];
+      }
+      this.BackupApprovedApprovalList = data;
+      this.GetDistinctForTab2();
+      console.log("this.ApprovedApprovalList  ===",this.ApprovedApprovalList);
+      });
+  }
+  // DISTINCT & FILTER
+  GetDistinctForTab2() {
+  let DEmpNameTab2:any = [];
+  this.DistEmpNameTab2 =[];
+  this.SelectedDistEmpNameTab2 =[];
+  this.SearchFieldsTab2 =[];
+  this.ApprovedApprovalList.forEach((item) => {
+ if (DEmpNameTab2.indexOf(item.Emp_ID) === -1) {
+  DEmpNameTab2.push(item.Emp_ID);
+ this.DistEmpNameTab2.push({ label: item.Emp_Name, value: item.Emp_ID });
+ }
+});
+   this.BackupApprovedApprovalList = [...this.ApprovedApprovalList];
+  }
+  FilterDistTab2() {
+  let DEmpNameTab2:any = [];
+  this.SearchFieldsTab2 =[];
+if (this.SelectedDistEmpNameTab2.length) {
+  this.SearchFieldsTab2.push('Emp_ID');
+  DEmpNameTab2 = this.SelectedDistEmpNameTab2;
+}
+this.ApprovedApprovalList = [];
+if (this.SearchFieldsTab2.length) {
+  let LeadArr = this.BackupApprovedApprovalList.filter(function (e) {
+    return (DEmpNameTab2.length ? DEmpNameTab2.includes(e['Emp_ID']) : true)
+  });
+this.ApprovedApprovalList = LeadArr.length ? LeadArr : [];
+} else {
+this.ApprovedApprovalList = [...this.BackupApprovedApprovalList] ;
+}
+  }
+
+  // Disapproved Approval
+  getDisApprovedApprovaldetails(){
+    //console.log(this.ObjBrowse.Doc_No);
+    const obj = {
+      "SP_String": "SP_Leave_Application",
+      "Report_Name_String": "Get_Leave_Apply_Data",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"DISAPPROVED APPROVAL"}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.DisApprovedApprovalList = data;
+      if(this.DisApprovedApprovalList.length){
+        this.DynamicHeaderforTabThird = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforTabThird = [];
+      }
+      this.BackupDisApprovedApprovalList = data;
+      this.GetDistinctForTab3();
+      console.log("this.DisApprovedApprovalList  ===",this.DisApprovedApprovalList);
+      });
+  }
+  // DISTINCT & FILTER
+  GetDistinctForTab3() {
+  let DEmpNameTab3:any = [];
+  this.DistEmpNameTab3 =[];
+  this.SelectedDistEmpNameTab3 =[];
+  this.SearchFieldsTab3 =[];
+  this.DisApprovedApprovalList.forEach((item) => {
+ if (DEmpNameTab3.indexOf(item.Emp_ID) === -1) {
+  DEmpNameTab3.push(item.Emp_ID);
+ this.DistEmpNameTab3.push({ label: item.Emp_Name, value: item.Emp_ID });
+ }
+});
+   this.BackupDisApprovedApprovalList = [...this.DisApprovedApprovalList];
+  }
+  FilterDistTab3() {
+  let DEmpNameTab3:any = [];
+  this.SearchFieldsTab3 =[];
+  if (this.SelectedDistEmpNameTab3.length) {
+  this.SearchFieldsTab2.push('Emp_ID');
+  DEmpNameTab3 = this.SelectedDistEmpNameTab3;
+  }
+  this.DisApprovedApprovalList = [];
+  if (this.SearchFieldsTab3.length) {
+  let LeadArr = this.BackupDisApprovedApprovalList.filter(function (e) {
+    return (DEmpNameTab3.length ? DEmpNameTab3.includes(e['Emp_ID']) : true)
+  });
+  this.DisApprovedApprovalList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.DisApprovedApprovalList = [...this.BackupDisApprovedApprovalList] ;
+  }
+  }
 
 }

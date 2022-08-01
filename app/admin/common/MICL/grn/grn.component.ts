@@ -91,7 +91,7 @@ export class GrnComponent implements OnInit {
       Header: "GRN",
       Link: " Material Management -> Inward -> GRN"
     });
-    this.hrYearList();
+    this.Finyear();
     this.GetSupplier();
     this.GetCostCenter();
     // this.GetSearchedlist(true);
@@ -159,29 +159,16 @@ export class GrnComponent implements OnInit {
     this.SE_No_Date = undefined;
     this.INV_No_Date = undefined;
    }
-   hrYearList(){
-    this.HR_Year_ID = undefined;
-    const obj = {
-      "SP_String":"SP_Leave_Application",
-      "Report_Name_String":"Get_HR_Year_List"
-   }
-   this.GlobalAPI.getData(obj)
-     .subscribe((data:any)=>{
-      this.hrYeatList = data;
-      console.log("Hr Year==",this.hrYeatList);
-      this.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
-  
-       // if(this.ObjHrleave.HR_Year_ID){
-        this.getMaxMindate()
-     // }
+  Finyear() {
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+      // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+      // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+      // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
       });
-  }
-  getMaxMindate(){
-    if(this.HR_Year_ID){
-      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.HR_Year_ID))[0];
-      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
-      
-    }
   }
    getcompany(){
     const obj = {

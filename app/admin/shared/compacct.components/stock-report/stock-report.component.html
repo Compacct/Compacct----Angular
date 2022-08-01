@@ -35,8 +35,8 @@
         </div>
         <div class="col-sm-3">
             <label class="control-label">Date</label>
-            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [minmaxValid]="initDate"></app-compacct-daterangepicker>
-        </div>
+            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
+         </div> <!-- [minmaxValid]="initDate" -->
         <div class="col-sm-4" *ngIf="report_Type == 'Cost_Center_Wise'">
             <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
             <!-- <select class="form-control" 
