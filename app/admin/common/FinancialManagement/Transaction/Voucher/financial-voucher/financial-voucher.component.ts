@@ -345,7 +345,8 @@ export class FinancialVoucherComponent implements OnInit {
   }
   addFinancialVoucher(valid:any){
     this.journallowerFormSubmitted = true
-    if(valid){
+    this.validatation.required = true
+    if(valid && this.checkreq()){
      console.log("add Data",this.objjournalloweer)
      const LedgerFilter = this.LedgerListLow.filter((el:any)=>Number(el.value) === Number(this.objjournalloweer.Ledger_ID))[0]
      const subledgerFilter = this.SubLedgerListlow.filter((el:any)=>Number(el.value) === Number(this.objjournalloweer.Sub_Ledger_ID))[0]
@@ -376,19 +377,51 @@ export class FinancialVoucherComponent implements OnInit {
       Voucher_Type_ID: this.objjournalloweer.Voucher_Type_ID ? Number(this.objjournalloweer.Voucher_Type_ID) : 0,
       Cost_Cen_ID_Trn : Number(this.objjournal.Cost_Cen_ID_Trn),
       Cost_Cen_ID : Number(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID),
-      Voucher_Date : this.objjournalloweer.Voucher_Date
+      Voucher_Date : this.objjournalloweer.Voucher_Date,
+      DOC_DATE:this.DateService.dateConvert(new Date(this.voucherdata)),				
+      DOC_TYPE: this.headerText,			
+      PROJECT_ID: this.objProject.PROJECT_ID,				
+      SITE_ID:this.objProject.SITE_ID,			
+      Budget_Group_ID:this.objProject.Budget_Group_ID,				
+      Budget_Sub_Group_ID:this.objProject.Budget_Sub_Group_ID,			
+      Work_Details_ID:this.objProject.Work_Details_ID,			
+      SL_NO: this.lowerList.length + 1,
      }
      this.lowerList.push(tempAddobj);
      this.objjournalloweer = new journalLower()
      this.RefDocDate = new Date()
      this.ReminderDate = new Date()
      this.journallowerFormSubmitted = false
+     this.validatation.required = false
      this.getTotalDRCR();
-
+     this.clearProject();
   
     }
   }
-
+  getProjectName(fieldName,value){
+    console.log("Project Id", this.ProjectInput.getValue("PROJECT_ID",this.objProject.PROJECT_ID))
+    if(fieldName == "PROJECT_ID"){
+      const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
+      return tempObj.Project_Description
+    }
+    if(fieldName == "SITE_ID"){
+      const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
+      return tempObj.Site_Description
+    }
+    if(fieldName == "Budget_Group_ID"){
+      const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
+      return tempObj.Budget_Group_Name
+    }
+    if(fieldName == "Budget_Sub_Group_ID"){
+      const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
+      return tempObj.Budget_Sub_Group_Name
+    }
+    if(fieldName == "Work_Details_ID"){
+      const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
+      return tempObj.Work_Details
+    }
+  }
+ 
   DeleteProduct(index){
     this.lowerList.splice(index,1);
     this.getTotalDRCR();
@@ -416,7 +449,7 @@ export class FinancialVoucherComponent implements OnInit {
   saveJournal(valid){
     this.journalFormSubmitted = true
     this.validatation.required = true
-   if(valid && this.checkreq()){
+   if(valid ){
     const bankListFilter = this.BankTransactionTypeList.filter((el:any)=> Number(el.Bank_Txn_Type_ID) === Number(this.objjournal.Bank_Txn_Type))[0]
     if(bankListFilter){
      this.objjournal.Bank_Txn_Type = bankListFilter.Txn_Type_Name
@@ -454,39 +487,18 @@ export class FinancialVoucherComponent implements OnInit {
   this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
     this.validatation.required = false;
     if(data[0].Column1){
-      if(this.objProject.PROJECT_ID){ 
-        const projectSaveData = await this.SaveProject(data[0].Column1);
-        if(projectSaveData){
-          this.showTost(msg,this.headerText)
-          this.Spinner = false;
-          this.ShowSearchData(true)
-        }
-        else {
-          this.Spinner = false;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Error Occured "
-          });
-        }
-       }
-      else{
-        this.Spinner = false;
-        this.showTost(msg,this.headerText)
-        this.ShowSearchData(true)
+      this.showTost(msg,this.headerText)
+      this.Spinner = false;
+      this.ShowSearchData(true)
+      if(this.voucherNo){
+        this.tabIndexToView = 0;
+        this.items = ["BROWSE", "CREATE","REPORT"];
+        this.buttonname = "Create";
       }
-    
-    if(this.voucherNo){
-      this.tabIndexToView = 0;
-      this.items = ["BROWSE", "CREATE","REPORT"];
-      this.buttonname = "Create";
-    }
-    this.clearData();
-    this.ShowSearchData(true);
-   // this.Print(data[0].Column1)
-    this.clearProject()
+      this.clearData();
+      this.ShowSearchData(true);
+    // this.Print(data[0].Column1)
+      this.clearProject()
     }
     else {
       this.Spinner = false;
@@ -696,9 +708,9 @@ EditVoucher(col){
     this.objjournal = new journalTopper()
     this.clearProject();
     this.geteditmaster(col.Voucher_No);
-    if(this.openProject === "Y"){
-      this.getEditProject(col.Voucher_No);
-    }
+    // if(this.openProject === "Y"){
+    //   this.getEditProject(col.Voucher_No);
+    // }
    
    }
  }
@@ -718,6 +730,7 @@ EditVoucher(col){
   this.GetBankTransactionType(data[0].Ledger_ID);
   this.voucherdata = new Date(data[0].Voucher_Date)
   this.lowerList = data[0].bottom;
+  console.log("lowerList",this.lowerList)
    setTimeout(() => {
     if(data[0].Bank_Txn_Type){
       const bankTrnFilter = this.BankTransactionTypeList.filter((el:any)=> el.Txn_Type_Name === data[0].Bank_Txn_Type)[0]
@@ -820,6 +833,11 @@ onConfirm(){
 convartNumber(n:any){
 return typeof(n) === "number" ? n : Number(n)
 }
+getColspanDR(){
+  return this.openProject == 'Y' ? 10 : 5
+                      
+}
+
 }
 class journalTopper{
   Amount:any

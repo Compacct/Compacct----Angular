@@ -49,7 +49,7 @@
                                     </div>
                                     <div class="col-sm-1">
                                         <button class="btn btn-primary" 
-                                        style="margin-top: 28px" 
+                                        style="margin-top: 28px"    
                                         data-toggle="modal" 
                                         (click)="GetSearchedList(ameyoKBForm.form.valid)" 
                                         id="load" 
@@ -95,7 +95,8 @@
                                          #dtimp>
                                            <ng-template pTemplate="caption">
                                                <div class="row">
-                                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                                
+                                                    <div class="col-sm-12 pull-right" style="text-align: right">
                                                             <input type="text" pInputText size="50" placeholder="Search" (input)="dtimp.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                                         </div>
                                                </div>
