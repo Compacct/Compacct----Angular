@@ -72,6 +72,8 @@ export class RdbComponent implements OnInit {
   HR_Year_ID:any;
   RegisterSpinner = false;
   ObjRDBRegister = new RDBRegister();
+  DocNo: any;
+  editlist:any = [];
 
    constructor(
     private $http: HttpClient,
@@ -477,7 +479,8 @@ export class RdbComponent implements OnInit {
   Add(valid){
     this.RDBFormSubmit = true;
     if(valid){
-      if (Number(this.ObjRdb1.Received_Qty) && Number(this.ObjRdb1.Received_Qty) <= Number(this.ObjRdb1.Challan_Qty)){
+      if (Number(this.ObjRdb1.Challan_Qty)  <= Number(this.ObjRdb1.PO_QTY)) {
+      if (Number(this.ObjRdb1.Received_Qty) <= Number(this.ObjRdb1.Challan_Qty)){
         const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(this.ObjRdb1.Product_ID))[0];
         const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRdb.Sub_Ledger_ID))[0]
         console.log("productFilter",productFilter);
@@ -528,6 +531,16 @@ export class RdbComponent implements OnInit {
             detail: "Received Qty is more than Challan Qty "
           });
         }
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Challan Qty is more than PO Qty "
+        });
+      }
   }
   }
   delete(index) {
@@ -551,7 +564,8 @@ export class RdbComponent implements OnInit {
             Tax_Percentage : item.Tax_Percentage,
             Total_Tax_Amount : Number(item.Total_Tax_Amount).toFixed(2),
             Total_Amount : Number(item.Total_Amount).toFixed(2),
-            Remarks : item.Remarks,
+            // Remarks : item.Remarks,
+            Remarks : this.objRdb2.Remarks,
 
             RDB_Date : this.RDB_Date ? this.DateService.dateConvert(this.RDB_Date) : new Date(),
             Company_ID : this.ObjRdb.Company_ID,
@@ -725,6 +739,53 @@ export class RdbComponent implements OnInit {
       }
     })
    }
+  //  Edit(col){
+    // this.clearData();
+    // this.DocNo = undefined;
+    // if(col.Doc_No){
+    //   this.DocNo = col.Doc_No;
+    //   this.tabIndexToView = 1;
+    //   this.items = ["BROWSE", "UPDATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
+    //   this.buttonname = "Update";
+    //   this.getedit(col.Doc_No);
+    //  }
+  //  }
+  //  getedit(Dno){
+  //   this.editlist = [];
+  //   const obj = {
+  //     "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+  //     "Report_Name_String": "Purchase_Order_Get",
+  //     "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+  
+  //   }
+  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //     this.editlist = data;
+  //     console.log("Edit data",data);
+  //     this.ObjRdb = data[0],
+  //     this.RDB_Date = new Date(data[0].RDB_Date);
+  //     this.SE_Date = new Date(data[0].SE_Date);
+  //     this.INV_Date = new Date(data[0].INV_Date);
+  //     this.PO_Doc_Date = new Date(data[0].PO_Doc_Date);
+  //     // this.RDBListAdd = data[0].L_element;
+  //     data.forEach(element => {
+  //       const  productObj = {
+  //           Product_ID : element.Product_ID,
+  //           Product_Name : element.Product_Description,
+  //           HSN_Code : element.HSN_Code,
+  //           UOM : element.UOM,
+  //           Challan_Qty : Number(element.RateChallan_Qty),
+  //           Received_Qty : element.Received_Qty,
+  //           Rate :  Number(element.Rate),
+  //           Taxable_Value : Number(element.Taxable_Value).toFixed(2),
+  //           Tax_Percentage : Number(element.Tax_Percentage),
+  //           Total_Tax_Amount : Number(element.Total_Tax_Amount).toFixed(2),
+  //           Total_Amount : Number(element.Total_Amount).toFixed(2)
+  //         };
+    
+  //         this.RDBListAdd.push(productObj);
+  //       });
+  //   })
+  //  }
   Deleterdb(obj){
     this.RDBNo = undefined;
     this.Del = false;

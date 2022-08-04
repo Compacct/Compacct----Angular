@@ -35,7 +35,8 @@
                                      [autoLayout]="true" 
                                      sortMode="multiple" 
                                      [rowsPerPageOptions]="[10,20,30]"
-                                      [globalFilterFields]="['Product_Type','Product_Sub_Type','HSN_NO','Grade_Description','Material_Type','Product_Type_ID','Capacity_Size_ID','GST_Percentage']"[rowHover]="true" #dt>
+                                      [globalFilterFields]="['Product_Type','Product_Sub_Type','Product_Description','MOC_Description','Capacity_Size_Desc','Product_Feature_Desc','Grade_Description','UOM',
+                                      'HSN_NO','Remarks','GST_Percentage','Mfg_Company']"[rowHover]="true" #dt>
 
                                         <ng-template pTemplate="caption">
                                             <div class="row">
