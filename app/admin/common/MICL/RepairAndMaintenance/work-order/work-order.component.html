@@ -241,7 +241,7 @@
                                         name="Supp_Ref_No"
                                         #Supp_Ref_No="ngModel"
                                         [(ngModel)]="ObjWorkOrder.Supp_Ref_No"
-                                        placeholder="Supplier Ref No"
+                                        placeholder="Quotation No"
                                        >
                                     </div>
                                 </div>
@@ -490,7 +490,7 @@
                                         <thead>
                                             <tr style="background-color:#3c8dbc;color:white;">
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Sl. No.</th>
-                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Requisition</th>
+                                        <!-- <th nowrap="" rowspan="2" style="vertical-align:middle">Requisition</th> -->
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Product Details</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Product Spec</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Qty</th>
@@ -519,7 +519,7 @@
                                         <tbody>
                                             <tr *ngFor='let col of addPurchaseList let i = index' >
                                                 <td>{{i + 1}}</td>
-                                                <td>{{col.Req_No ? col.Req_No : '-'}}</td>
+                                                <!-- <td>{{col.Req_No ? col.Req_No : '-'}}</td> -->
                                                 <td>{{col.Product_Name ? col.Product_Name : '-'}}</td>
                                                 <td>{{col.Product_Spec}}</td>
                                                 <td>{{col.Qty}}</td>

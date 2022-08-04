@@ -331,6 +331,7 @@ import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transact
 import { FinancialReminderComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-reminder/financial-reminder.component";
 import { InflowPlaningComponent } from "./common/Harbauer/inflow-planing/inflow-planing.component";
 import { WorkOrderComponent } from './common/MICL/RepairAndMaintenance/work-order/work-order.component';
+import { RepairAndMaintenanceRdbComponent } from './common/MICL/RepairAndMaintenance/repair-and-maintenance-rdb/repair-and-maintenance-rdb.component';
 
 
 @NgModule({
@@ -581,7 +582,8 @@ import { WorkOrderComponent } from './common/MICL/RepairAndMaintenance/work-orde
     DebitNoteWoStockComponent,
     FinancialReminderComponent,
     InflowPlaningComponent,
-    WorkOrderComponent
+    WorkOrderComponent,
+    RepairAndMaintenanceRdbComponent
   ],
   imports: [
     CommonModule,

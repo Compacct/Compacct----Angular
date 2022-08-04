@@ -655,7 +655,7 @@ export class WorkOrderComponent implements OnInit {
      console.log("productFilter",productFilter[0])
      let saveData = {
         Product_ID: Number(this.ObjaddWorkOrder.Product_ID),
-        Req_No: this.ObjaddWorkOrder.Req_No ? this.ObjaddWorkOrder.Req_No : "NA",
+        // Req_No: this.ObjaddWorkOrder.Req_No ? this.ObjaddWorkOrder.Req_No : "NA",
         Product_Name:  productFilter[0].Product_Description,
         Product_Spec: this.ObjaddWorkOrder.Product_Spec,
         Exp_Delivery: this.DateService.dateConvert(new Date(this.ExpectedDeliverydate)),
