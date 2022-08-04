@@ -172,6 +172,23 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
     this.fieldDis = false 
     this.objproject = new project()
   }
+  getValue(fieldName:string,fieldValue:number){
+    if(fieldName == "PROJECT_ID"){
+      return this.ProjectList.filter((el:any)=> Number(el.Project_ID) == fieldValue)[0]
+    }
+    if(fieldName == "SITE_ID"){
+      return this.SiteList.filter((el:any)=> Number(el.Site_ID) == fieldValue)[0]
+    }
+    if(fieldName == "Budget_Group_ID"){
+      return this.groupList.filter((el:any)=> Number(el.Budget_Group_ID) == fieldValue)[0]
+    }
+    if(fieldName == "Budget_Sub_Group_ID"){
+      return this.subGorupList.filter((el:any)=> Number(el.Budget_Sub_Group_ID) == fieldValue)[0]
+    }
+    if(fieldName == "Work_Details_ID"){
+      return this.workList.filter((el:any)=> Number(el.Work_Details_ID) == fieldValue)[0]
+    }
+  }
   ngOnChanges(changes: SimpleChanges) {
     this.requField = changes.requir.currentValue.projectMand === "Y" ? true : false
     this.projectFromSubmit = changes.requir.currentValue.required

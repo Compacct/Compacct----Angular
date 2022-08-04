@@ -61,8 +61,9 @@ export class ProductsPlaningComponent implements OnInit {
   ExsitData = [];
   WorkData = [];
   SubGroupList = [];
-  
+  viewList:any = []
   ShowAddedEstimateProductList = [];
+  ViewModel = false
   rowGroupMetadata: any;
   cols = [{
       field: 'SL_No',
@@ -700,6 +701,46 @@ export class ProductsPlaningComponent implements OnInit {
   }
   getToFix(n:any){
    return Number(Number(n).toFixed(3))
+  }
+  getGrTotal(c){
+    let FlgTotal:number = 0
+    if(c == 'Create'){
+      this.AddedPlanedProductList.forEach(el => {
+        FlgTotal = Number(el.Amount) + FlgTotal
+      });
+    }
+    if(c == 'view'){
+      this.viewList.forEach(el => {
+        FlgTotal = Number(el.Amount) + FlgTotal
+      });
+    }
+  
+    return FlgTotal
+  }
+  viewProductPlan(col){
+   if(col.Tender_Doc_ID){
+    this.ObjProdPlan = new ProdPlan()
+    const tempObj = {
+      'Tender_Doc_ID': col.Tender_Doc_ID,
+      'Site_ID': col.Site_ID,
+    }
+    const obj1 = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
+      "Report_Name_String": "Project_Planning_Retrieve",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+    this.GlobalAPI.getData(obj1).subscribe((data: any) => {
+      console.log(data)
+      if(data.length) {
+        this.viewList = [...data,];
+        this.ViewModel = true
+        this.ObjProdPlan = new ProdPlan();
+        this.ObjProdPlan.Tender_Doc_ID = data[0].Tender_Doc_ID;
+        this.ProjectChange();
+        this.ObjProdPlan.Site_ID =  data[0].Site_ID;
+        }
+    })
+   }
   }
 }
 class ProdPlan {

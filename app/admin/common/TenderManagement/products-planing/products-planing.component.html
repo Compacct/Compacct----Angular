@@ -110,6 +110,12 @@
                                                                     </a>
                                                                 </li>
                                                                 <li>
+                                                                  <a (click)="viewProductPlan(col)">
+                                                                      <i class="fa fa-eye"></i>
+                                                                      View
+                                                                  </a>
+                                                              </li>
+                                                                <li>
                                                                     <a (click)="DeletePlan(col)">
                                                                         <i class="fa fa-fw fa-trash"></i>
                                                                         Delete
@@ -289,9 +295,13 @@
                                       <!-- <td>{{getToFix(d.Rate)}}</td> -->
                                       <td>{{getToFix(d.Amount)}}</td>
                                       <td class="text-center">
-                                           <a (click)="DeleteProductPlan(d)"><div><i class="fa fa-fw fa-trash"> </i></div></a>
+                                           <a (click)="DeleteProductPlan(index)"><div><i class="fa fa-fw fa-trash"> </i></div></a>
                                         </td>
                                     </tr>
+                                    <tr>
+                                      <td colspan="8"> <div class="pull-right" style="font-weight: 700;">Total Amount- {{getGrTotal('Create')}}</div> </td>
+                                      <td ></td>
+                                     </tr>
                                   </tbody>
                                 </table>
                               </div>
@@ -397,6 +407,74 @@
   </div>
   <p-footer>
     <button type="button" (click)="ProductsModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewModel" [closeOnEscape]="true" [closable]="false"
+  [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '200px' }" style="text-align: center;"
+  [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <div class="form-group">
+      <div class="col-sm-5">
+          <label class="control-label">Project Name&nbsp;<span class="text-danger">*</span></label>
+           <p-dropdown [options]="ProjectList" name="ProjectName" [(ngModel)]="ObjProdPlan.Tender_Doc_ID"
+            [showClear]="true" [emptyFilterMessage]="' No Project Found'"
+            (onChange)="ProjectChange()" [filter]="true" filterBy="label,value.name"
+            [placeholder]="'Select Project Name'" [virtualScroll]="true" itemSize="30" #ProjectName="ngModel"
+            [styleClass]="
+            PlanedProductFormSubmit && ProjectName.errors?.required? 'clearance': ''" [required]="true"
+             [disabled]='true'>
+          </p-dropdown>
+      </div>
+      <div class="col-sm-5">
+          <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
+          <p-dropdown [options]="SiteList" name="siteName" [(ngModel)]="ObjProdPlan.Site_ID"
+            [showClear]="true" [emptyFilterMessage]="' No Site Found'"
+            [filter]="true" filterBy="label,value.name" (onChange)="ChangeSiteName()"
+            [placeholder]="'Select Site Name'" [virtualScroll]="true" itemSize="30" #siteName="ngModel"
+            [styleClass]="
+            PlanedProductFormSubmit && siteName.errors?.required? 'clearance': ''" [required]="true"
+             [disabled]='true'>
+          </p-dropdown>
+      </div>
+  </div>
+  <div class="table-responsive no-padding" style="margin-top:2em;">
+    <table class="table table-bordered">
+      <thead>
+        <tr style="background-color:#3c8dbc;color:white;">
+          <th>SL NO</th>
+          <th>GROUP WORK</th>
+          <th>SUB GROUP</th>
+          <th>MATERIAL TYPE</th>
+          <th>PRODUCT</th>
+          <th>QTY</th>
+          <th>RATE</th>
+          <th>AMOUNT</th>  
+         </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of viewList;let odd = odd;let index = index" [class.even]="odd">
+          <td>{{ index + 1 }}</td>
+          <td>{{d.Budget_Group_Name}}</td>
+          <td>{{d.Budget_Sub_Group_Name}}</td>
+          <td>{{d.Type_Of_Product}}</td>
+          <td>{{d.Product_Description}}</td>
+          <td>{{getToFix(d.Qty)}}</td>
+          <td>{{getToFix(d.Rate)}}</td>
+          <td>{{getToFix(d.Amount)}}</td>
+          
+        </tr>
+        <tr>
+          <td colspan="8"> <div class="pull-right" style="font-weight: 700;">Total Amount- {{getGrTotal('view')}}</div> </td>
+          <td ></td>
+         </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+  <p-footer>
+    <button type="button" (click)="ViewModel = false" class="btn btn-default">
       CANCEL
     </button>
   </p-footer>
