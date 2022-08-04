@@ -952,7 +952,7 @@ saveqty(){
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GetAllDataList = data;
         console.log("this.GetAllDataList",this.GetAllDataList);
-        this.clearData();
+        // this.clearData();
         // this.todayDate = new Date();
         // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
        // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;

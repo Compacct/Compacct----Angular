@@ -419,18 +419,22 @@
                                     <div class="panel-body">
                                         <form name="GRN2Form" #GRN2Form="ngForm" novalidate>
                                             <div class="form-group">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">Quantity Remarks <sup class="text-danger">*</sup></label>
                                                     <textarea class="form-control" name="qtyremarks" #qtyremarks="ngModel" [(ngModel)]="ObjGRN2.Quantity_Remarks" placeholder="Quantity Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && qtyremarks?.errors?.required}" required></textarea>
                                                 </div>
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">Quality / Rejection Remarks <sup class="text-danger">*</sup></label>
                                                     <textarea class="form-control" name="qlrejremarks" #qlrejremarks="ngModel" [(ngModel)]="ObjGRN2.Quality_Rejection_Remarks" placeholder="Quality / Rejection Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && qlrejremarks?.errors?.required}" required></textarea>
                                                 </div>
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">Deduction for Rejection <sup class="text-danger">*</sup></label>
                                                     <!-- <input class="form-control" name="deduction" #deduction="ngModel" [(ngModel)]="ObjGRN2.Deduction_for_Rejection" placeholder="Deduction for Rejection" [ngClass]="{'clearance':GRN2FormSubmitted && deduction?.errors?.required}" required> -->
                                                     <textarea class="form-control" name="deduction" #deduction="ngModel" [(ngModel)]="ObjGRN2.Deduction_For_Rejection" placeholder="Deduction for Rejection" [ngClass]="{'clearance':GRN2FormSubmitted && deduction?.errors?.required}" required></textarea>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Remarks </label>
+                                                    <textarea class="form-control" name="alloverremarks" #alloverremarks="ngModel" [(ngModel)]="ObjGRN2.All_Over_Remarks" placeholder="Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && alloverremarks?.errors?.required}" ></textarea>
                                                 </div>
                                             </div>
                                         

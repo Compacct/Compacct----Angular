@@ -1229,6 +1229,7 @@ GetGRNNoProlistdetails2(){
     //  this.cleartotalamount();
      this.clearData();
      this.clearProject();
+     this.GetSerarchPurBill(true);
      this.GetPendingPO(true);
      this.GetPendingGRN(true);
     //  } else {
@@ -1265,6 +1266,7 @@ GetGRNNoProlistdetails2(){
       //  this.cleartotalamount();
        this.clearData();
        this.clearProject();
+       this.GetSerarchPurBill(true);
        this.GetPendingPO(true);
        this.GetPendingGRN(true);
       }

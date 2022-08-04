@@ -176,7 +176,7 @@ export class MiclRequisitionComponent implements OnInit {
         Product_Code: productFilter[0].Product_Code,
         Req_Qty: this.objmaterial.Req_Qty,
         UOM: this.objmaterial.UOM,
-        Remarks: this.objmaterial.Remarks,
+        Purpose: this.objmaterial.Purpose,
         Created_By: this.$CompacctAPI.CompacctCookies.User_ID,
         Product_Type_ID : this.objmaterial.Product_Type_ID,
         Product_Type : productTypeFilter[0].Product_Type
@@ -334,12 +334,13 @@ export class MiclRequisitionComponent implements OnInit {
          Product_Description: el.Product_Description,
          Req_Qty: Number(el.Req_Qty),
          UOM: el.UOM,
-         Remarks: el.Remarks,
+         Purpose: el.Purpose,
          Created_By: el.Created_By,
          Godown_ID: this.objreqi.Godown_ID,
          Product_Type_ID : Number(el.Product_Type_ID),
          Product_Type : el.Product_Type,
-         To_Cost_Cen_ID : Number(this.toCostCenter)
+         To_Cost_Cen_ID : Number(this.toCostCenter),
+         Remarks : this.objreqi.Remarks
         }
         saveData.push(save)
         })
@@ -866,7 +867,8 @@ class reqi{
     Req_Date:any;
     Cost_Cen_ID:any;
     Cost_Cen_Name:any;
-    Godown_ID:any
+    Godown_ID:any;
+    Remarks:any;
    }
 
 class material{
@@ -874,6 +876,7 @@ class material{
   Product_Description:any;
   Req_Qty:any;
   UOM:any;
+  Purpose:any;
   Remarks:any;
   Created_By:any;
   Product_Type_ID:any;

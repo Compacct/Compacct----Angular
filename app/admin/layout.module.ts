@@ -330,6 +330,7 @@ import { ConsumptionComponent } from "./common/MICL/consumption/consumption.comp
 import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transaction/Purchase/debit-note-wo-stock/debit-note-wo-stock.component';
 import { FinancialReminderComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-reminder/financial-reminder.component";
 import { InflowPlaningComponent } from "./common/Harbauer/inflow-planing/inflow-planing.component";
+import { WorkOrderComponent } from './common/MICL/RepairAndMaintenance/work-order/work-order.component';
 
 
 @NgModule({
@@ -579,7 +580,8 @@ import { InflowPlaningComponent } from "./common/Harbauer/inflow-planing/inflow-
     ConsumptionComponent,
     DebitNoteWoStockComponent,
     FinancialReminderComponent,
-    InflowPlaningComponent
+    InflowPlaningComponent,
+    WorkOrderComponent
   ],
   imports: [
     CommonModule,

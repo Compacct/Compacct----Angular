@@ -17,8 +17,8 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class GrnComponent implements OnInit {
-  items = [];
-  menuList = [];
+  items:any = [];
+  menuList:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -29,28 +29,28 @@ export class GrnComponent implements OnInit {
   ObjGRN1 : GRN1 = new GRN1();
   ObjGRN : GRN = new GRN ();
   GRNDate = new Date();
-  Supplierlist = [];
-  CostCenterlist = [];
-  Godownlist = [];
-  RDBNolist = [];
+  Supplierlist:any = [];
+  CostCenterlist:any = [];
+  Godownlist:any = [];
+  RDBNolist:any = [];
   PODate : any = new Date();
   podatedisabled = true;
-  ProductDetailslist = [];
+  ProductDetailslist:any = [];
 
   GRN2FormSubmitted = false;
   ObjGRN2 : GRN2 = new GRN2();
-  Productlist = [];
-  productaddSubmit = [];
+  Productlist:any = [];
+  productaddSubmit:any = [];
 
-  Searchedlist = [];
-  EditList = [];
+  Searchedlist:any = [];
+  EditList:any = [];
   doc_no: any;
   SENo:string = "-"
   INVNo:string = "-"
   disabledflaguom = false;
   disabledflaghsn = false;
   
-  companyList = [];
+  companyList:any = [];
   ObjBrowse : Browse = new Browse ();
   GRNSearchFormSubmitted = false;
   SE_No_Date: Date;
@@ -58,8 +58,8 @@ export class GrnComponent implements OnInit {
 
   ObjPendingRDB = new PendingRDB();
   PendingRDBFormSubmitted = false;
-  PendingRDBList = [];
-  DynamicHeaderforPRDB = [];
+  PendingRDBList:any = [];
+  DynamicHeaderforPRDB:any = [];
   deleteError = false;
   Save = false;
   Del = false;
@@ -68,6 +68,8 @@ export class GrnComponent implements OnInit {
   hrYeatList:any = [];
   HR_Year_ID:any;
   dataforcretegrn: any;
+  DocNo: undefined;
+  editlist:any = [];
 
 
   constructor(
@@ -422,7 +424,7 @@ export class GrnComponent implements OnInit {
      this.ObjGRN1.RDB_Date = this.DateService.dateConvert(new Date(this.PODate));
      this.ObjGRN2.Created_By = this.$CompacctAPI.CompacctCookies.User_ID;
     if(this.productaddSubmit.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.productaddSubmit.forEach(item => {
         const obj = {
             Product_ID : item.Product_ID,
@@ -602,6 +604,58 @@ export class GrnComponent implements OnInit {
       }
     })
    }
+  //  Edit(col){
+  //   this.clearData();
+  //   this.DocNo = undefined;
+  //   if(col.Doc_No){
+  //     this.DocNo = col.Doc_No;
+  //     this.tabIndexToView = 1;
+  //     this.items = ["BROWSE", "UPDATE", "PENDING RDB"];
+  //     this.buttonname = "Update";
+  //     this.getedit(col.Doc_No);
+  //    }
+  //  }
+  //  getedit(Dno){
+  //   this.editlist = [];
+  //   const obj = {
+  //     "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+  //     "Report_Name_String": "Purchase_Order_Get",
+  //     "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+  
+  //   }
+  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //     this.editlist = data;
+  //     console.log("Edit data",data);
+  //     this.ObjGRN1 = data[0],
+  //     this.GRNDate = new Date(data[0].GRN_Date);
+  //     this.PODate = new Date(data[0].RDB_Date);
+  //     this.SENo = data[0].SE_No;
+  //     this.SE_No_Date = new Date(data[0].PO_Doc_Date);
+  //     this.INVNo = data[0].INV_No;
+  //     this.INV_No_Date = new Date(data[0].PO_Doc_Date);
+  //     // this.RDBListAdd = data[0].L_element;
+  //     data.forEach(element => {
+  //       const  productObj = {
+  //           Product_ID : element.Product_ID,
+  //           Product_Description : element.Product_Description,
+  //           HSN_Code : element.HSN_Code,
+  //           UOM : element.UOM,
+  //           Challan_Qty : Number(element.Challan_Qty),
+  //           Received_Qty : Number(element.Received_Qty),
+  //           Rejected_Qty : Number(element.Rejected_Qty),
+  //           Accepted_Qty : Number(element.Accepted_Qty),
+  //           Rate :  Number(element.Rate),
+  //           Taxable_Value : Number(element.Taxable_Value).toFixed(2),
+  //           Tax_Percentage : Number(element.Tax_Percentage),
+  //           Total_Tax_Amount : Number(element.Total_Tax_Amount).toFixed(2),
+  //           Total_Amount : Number(element.Total_Amount).toFixed(2),
+  //           Remarks : element.Remarks,
+  //         };
+    
+  //         this.productaddSubmit.push(productObj);
+  //       });
+  //   })
+  //  }
    GetDataforUpdate(){
   //    this.EditList = [];
   //   //console.log(this.ObjBrowse.Doc_No);
@@ -956,6 +1010,7 @@ class GRN {
   Quantity_Remarks : string;
   Quality_Rejection_Remarks : string;
   Deduction_For_Rejection : string;
+  All_Over_Remarks : string;
   Created_By : string;
  }
  class Browse {
