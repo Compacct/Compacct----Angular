@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, SimpleChanges, MissingTranslationStrategy } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
@@ -13,6 +13,7 @@ import { identity } from 'rxjs';
 import { CompacctProjectComponent } from '../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 import { timeStamp } from 'console';
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-purchase-order',
@@ -27,21 +28,21 @@ export class PurchaseOrderComponent implements OnInit {
   Spinner = false;
   seachSpinner = false;
   items:any = [];
-  menuList = [];
+  menuList:any = [];
   purchaseFormSubmitted = false;
-  SubLedgerList = [];
-  SubLedgerDataList = [];
-  costCenterList = [];
+  SubLedgerList:any = [];
+  SubLedgerDataList:any = [];
+  costCenterList:any = [];
   DetalisView = false;
   viewHeader = "";
   DetalisObj:any = {};
   DocDate = new Date();
   RefDate = new Date();
-  currencyList = [];
-  projectList = [];
-  OrderTypeList = [];
-  productList = [];
-  productDataList = [];
+  currencyList:any = [];
+  projectList:any = [];
+  OrderTypeList:any = [];
+  productList:any = [];
+  productDataList:any = [];
   purChaseAddFormSubmit = false;
   ExpectedDeliverydate = new Date;
   objpurchase : purchase = new purchase();
@@ -49,16 +50,16 @@ export class PurchaseOrderComponent implements OnInit {
   ObjBrowse : Browse = new Browse();
   objpendingreq :pendingreq = new pendingreq()
   addPurchaseList:any = [];
-  AcceptanceOrderList = [];
+  AcceptanceOrderList:any = [];
   rate = undefined;
   totalRate = undefined;
   totalbackUp = undefined;
   totalAmtBackUp = undefined;
   DocNo = undefined;
-  getAllDataList = [];
+  getAllDataList:any = [];
   DynamicHeader:any = [];
   pendingREQDataDynamicHeader:any = [];
-  companyList = [];
+  companyList:any = [];
   disable = true;
   DiscountTypeList = [{Dtype : '%'},{Dtype : "AMT"}]
   grTotal:any = 0
@@ -78,7 +79,7 @@ export class PurchaseOrderComponent implements OnInit {
   userType = "";
   Requlist:any = [];
   objProjectRequi:any = {};
-  productTypeList = [];
+  productTypeList:any = [];
   projectDisable = false
   headerText:string
   initDate:any = [];
@@ -124,6 +125,25 @@ export class PurchaseOrderComponent implements OnInit {
   hrYeatList:any = [];
   HR_Year_ID: any;
 
+  ObjMIS : MIS = new MIS()
+  MISreportFormSubmit = false;
+  ReportNameList:any = [];
+  MISSpinner = false;
+  misReportList:any = [];
+  DynamicHeaderMISreport:any = [];
+  BackupMisReport:any = [];
+  DistVendorName:any = [];
+  SelectedDistVendorName:any = [];
+  DistMaterialType:any = [];
+  SelectedDistMaterialType:any = [];
+  DistProductType:any = [];
+  SelectedDistProductType:any = [];
+  SearchFieldsMis:any = [];
+  POcol: any;
+  ViewListForPO = false;
+  POViewList:any = [];
+  DynamicPOview:any = [];
+
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -147,7 +167,7 @@ export class PurchaseOrderComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -174,10 +194,11 @@ export class PurchaseOrderComponent implements OnInit {
        this.getProductType()
        this.GetRequlist()
      }
+     this.GetReportNameList();
   } 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.buttonname = "Create";
     this.clearData();
     this.clearProject()
@@ -899,18 +920,20 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
       this.showTost(msg,"Purchase order")
       this.getAllData(true);
       this.getPendingReq(true);
+      this.getPendingPurIndPro(true);
     }
   
   if(this.DocNo){
     this.ngxService.stop();
     this.tabIndexToView = 0;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.buttonname = "Create";
   }
   this.ngxService.stop();
   this.clearData();
   this.getAllData(true);
   this.getPendingReq(true);
+  this.getPendingPurIndPro(true);
   this.Print(data[0].Column1)
   this.clearProject()
   }
@@ -1079,7 +1102,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.buttonname = "Update";
     this.clearProject()
     this.geteditmaster(col.Doc_No);
@@ -1492,7 +1515,7 @@ getdataforview(col,row){
       console.log("Row",row.PO_Qty)
       if (row.PO_Qty>0) {
       const tempobj = {
-        Req_No : row.Req_No,
+        Req_No : row.Indent_No,
         proj : this.openProject,
         Product_ID : row.Product_ID
       }
@@ -1583,6 +1606,142 @@ gettermsdetails(){
      }
    })
    }
+   GetReportNameList(){
+    this.ReportNameList = [
+      {Report_Name : "Pending Purchase Indent - Details"},
+      {Report_Name : "Pending PO - Not Delivered - Summary"},
+      {Report_Name : "Pending PO - Not Delivered - Details"}
+    ]
+   }
+   getDateRangeMIS(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjMIS.From_Date = dateRangeObj[0];
+      this.ObjMIS.To_Date = dateRangeObj[1];
+    }
+  }
+  GetMISreport(valid){
+    this.misReportList = [];
+    this.BackupMisReport = [];
+    this.DynamicHeaderMISreport = [];
+    this.MISreportFormSubmit = true;
+  const start = this.ObjMIS.From_Date
+  ? this.DateService.dateConvert(new Date(this.ObjMIS.From_Date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.ObjMIS.To_Date
+  ? this.DateService.dateConvert(new Date(this.ObjMIS.To_Date))
+  : this.DateService.dateConvert(new Date());
+  const tempobj = {
+    From_Date : start,
+    To_Date : end
+  }
+  console.log("valid",valid)
+  if (valid) {
+    const obj = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": this.ObjMIS.Report_Name,
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.misReportList = data;
+      this.BackupMisReport = data;
+      this.GetDistinctReport();
+      if(this.misReportList.length){
+        this.DynamicHeaderMISreport = Object.keys(data[0]);
+      }
+      this.MISSpinner = false
+      this.MISreportFormSubmit = false;
+    })
+   }
+  }
+  exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+  // DISTINCT & FILTER
+ GetDistinctReport() {
+  let DVendorName:any = [];
+  let DMaterialType:any = [];
+  let DProductType:any = [];
+  this.DistVendorName =[];
+  this.SelectedDistVendorName =[];
+  this.DistMaterialType =[];
+  this.SelectedDistMaterialType =[];
+  this.DistProductType =[];
+  this.SelectedDistProductType =[];
+  this.SearchFieldsMis =[];
+  this.misReportList.forEach((item) => {
+  if (DVendorName.indexOf(item.Vendor_Name) === -1) {
+     DVendorName.push(item.Vendor_Name);
+     this.DistVendorName.push({ label: item.Vendor_Name, value: item.Vendor_Name });
+  }
+  if (DMaterialType.indexOf(item.Material_Type) === -1) {
+     DMaterialType.push(item.Material_Type);
+     this.DistMaterialType.push({ label: item.Material_Type, value: item.Material_Type });
+  }
+  if (DProductType.indexOf(item.Product_Type) === -1) {
+     DProductType.push(item.Product_Type);
+     this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type });
+  }
+});
+   this.BackupMisReport = [...this.misReportList];
+}
+FilterDistReport() {
+  let DVendorName:any = [];
+  let DMaterialType:any = [];
+  let DProductType:any = [];
+  this.SearchFieldsMis =[];
+if (this.SelectedDistVendorName.length) {
+  this.SearchFieldsMis.push('Vendor_Name');
+  DVendorName = this.SelectedDistVendorName;
+}
+if (this.SelectedDistMaterialType.length) {
+  this.SearchFieldsMis.push('Material_Type');
+  DMaterialType = this.SelectedDistMaterialType;
+}
+if (this.SelectedDistProductType.length) {
+  this.SearchFieldsMis.push('Product_Type');
+  DProductType = this.SelectedDistProductType;
+}
+this.misReportList = [];
+if (this.SearchFieldsMis.length) {
+  let LeadArr = this.BackupMisReport.filter(function (e) {
+    return (DVendorName.length ? DVendorName.includes(e['Vendor_Name']) : true)
+    && (DMaterialType.length ? DMaterialType.includes(e['Material_Type']) : true)
+    && (DProductType.length ? DProductType.includes(e['Product_Type']) : true)
+  });
+this.misReportList = LeadArr.length ? LeadArr : [];
+} else {
+this.misReportList = [...this.BackupMisReport] ;
+}
+}
+getPONoforview(col,row){
+  console.log("col",col);
+    if(col === "PO_No" && this.ObjMIS.Report_Name === "Pending PO - Not Delivered - Summary") {
+      this.POcol = col;
+      // this.empid = row.Emp_ID;
+      // console.log("Row",row[this.col])
+      console.log("Row",row.PO_No)
+      if (row.PO_No) {
+      const tempobj = {
+        Doc_No : row.PO_No,
+      }
+        const obj = {
+          "SP_String": "Sp_Purchase_Order",
+          "Report_Name_String": "Pending_PO_Material",
+          "Json_Param_String": JSON.stringify([tempobj])
+          }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.POViewList = data;
+          if(this.POViewList.length){
+            this.DynamicPOview = Object.keys(data[0]);
+          }
+          this.ViewListForPO = true
+          
+        })
+      }
+      }
+    }
 
 }
 class purchase {
@@ -1721,4 +1880,9 @@ class updateterm {
   Installation_Commissioning:any
   Delivery_Location:any
   Remarks:any
+}
+class MIS {
+  Report_Name : any;
+  From_Date : Date;
+  To_Date : Date;
 }

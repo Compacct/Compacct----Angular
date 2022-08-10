@@ -1,4 +1,4 @@
-/* #ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
+#ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
     width: auto !important;
   }
   .ui-table-auto-layout > .ui-table-wrapper {
@@ -29,14 +29,14 @@
     height: 10px;
     border: 0;
     box-shadow: 0 10px 10px -10px #8c8b8b inset;
-} */
+}
 
 
 
 
 
 /* ATTENDANCE */
-div.table-responsive.table-id>p-table>div>div {
+/* div.table-responsive.table-id>p-table>div>div {
   width: auto !important;
 }
 
@@ -102,32 +102,32 @@ hr {
 .A {
   background-color: #ff4141 !important;
   color: #ffff;
-  text-align: center;
+  text-align: center; */
   /* PL , CL , SL 
 .EL,.AL,.CO,.LWP,.COMM,.OFF*/
-}
+/* } */
 
-.LP,
+/* .LP,
 .ED,
 .HL,
 .LWP {
   background-color: rgb(244 121 38) !important;
   color: #ffff;
-  text-align: center;
+  text-align: center; */
   /* HD */
-}
+/* } */
 
-.P,
+/* .P,
 .WO,
 .CO,
 .PH {
   background-color: rgb(67 162 47) !important;
   color: #ffff;
-  text-align: center;
+  text-align: center; */
   /* .L,.HL,.OF */
-}
+/* } */
 
-.SL,
+/* .SL,
 .CL,
 .PL {
   background-color: rgb(78, 109, 235) !important;
@@ -163,4 +163,4 @@ table {
 }
 .tablesmall {
   width:65px;
-}
+} */

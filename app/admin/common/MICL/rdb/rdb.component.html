@@ -66,15 +66,15 @@
 
                             </form>
                             <div class="no-padding">
-                                <p-table [value]="AllProductList"  
+                                <p-table [value]="AllProductList"  #dt
                                 [paginator]="AllProductList.length ? true:false" 
                                 [rows]="100" [rowHover]="true" 
                                 [autoLayout]="true" sortMode="multiple"
                                 [rowsPerPageOptions]="[100,200,300]" 
                                 [rowHover]="true"
                                 [responsive]="true"
-                                [globalFilterFields]="['RDB_No','RDB_Date','Sub_Ledger_Name','Cost_Cen_Name','godown_name','PO_Doc_No','PO_Doc_Date','Mode_Of_transport',
-                                      'LR_No_Date','Vehicle_No','Remarks']" #dt>
+                                [globalFilterFields]='["RDB_No","RDB_Date","Sub_Ledger_Name","Cost_Cen_Name","godown_name","PO_Doc_No","PO_Doc_Date","Mode_Of_transport",
+                                      "LR_No_Date","Vehicle_No","Remarks"]' >
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right;">
