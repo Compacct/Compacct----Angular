@@ -216,7 +216,7 @@ export class FinancialVoucherComponent implements OnInit {
       this.totalCR = Number(Number((this.objjournal.Amount)).toFixed(2));
      }
      else {
-       console.error("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
+       //console.error("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
        
      }
    console.log("lowerList",this.lowerList);
@@ -276,12 +276,12 @@ export class FinancialVoucherComponent implements OnInit {
         this.JournalSearchFormSubmit = false
       })
     }
- }
+  }
   getToFix(number){
     if(number){
      return Number(Number(number).toFixed(2))
     }
-   }
+  }
    getcompany(){
     const obj = {
       "SP_String": "sp_Comm_Controller",
@@ -303,7 +303,7 @@ export class FinancialVoucherComponent implements OnInit {
         this.costTrnList = data;
         this.objjournal.Cost_Cen_ID_Trn  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      })
-    }
+  }
   GestCostHead(){
     const obj = {
       "SP_String": "SP_Financial_Voucher",
@@ -380,11 +380,11 @@ export class FinancialVoucherComponent implements OnInit {
       Voucher_Date : this.objjournalloweer.Voucher_Date,
       DOC_DATE:this.DateService.dateConvert(new Date(this.voucherdata)),				
       DOC_TYPE: this.headerText,			
-      PROJECT_ID: this.objProject.PROJECT_ID,				
-      SITE_ID:this.objProject.SITE_ID,			
-      Budget_Group_ID:this.objProject.Budget_Group_ID,				
-      Budget_Sub_Group_ID:this.objProject.Budget_Sub_Group_ID,			
-      Work_Details_ID:this.objProject.Work_Details_ID,			
+      PROJECT_ID: this.objProject.PROJECT_ID ? this.objProject.PROJECT_ID : 0,				
+      SITE_ID:this.objProject.SITE_ID ? this.objProject.SITE_ID :0,			
+      Budget_Group_ID:this.objProject.Budget_Group_ID ? this.objProject.Budget_Group_ID : 0,				
+      Budget_Sub_Group_ID:this.objProject.Budget_Sub_Group_ID ? this.objProject.Budget_Sub_Group_ID :0,			
+      Work_Details_ID:this.objProject.Work_Details_ID ? this.objProject.Work_Details_ID :0,			
       SL_NO: this.lowerList.length + 1,
      }
      this.lowerList.push(tempAddobj);
@@ -393,32 +393,34 @@ export class FinancialVoucherComponent implements OnInit {
      this.ReminderDate = new Date()
      this.journallowerFormSubmitted = false
      this.validatation.required = false
+     this.SubLedgerListlow = []
+     this.objProject = {}
      this.getTotalDRCR();
      this.clearProject();
   
     }
   }
   getProjectName(fieldName,value){
-    console.log("Project Id", this.ProjectInput.getValue("PROJECT_ID",this.objProject.PROJECT_ID))
     if(fieldName == "PROJECT_ID"){
       const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
-      return tempObj.Project_Description
+      return tempObj ? tempObj.Project_Description : ""
     }
     if(fieldName == "SITE_ID"){
       const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
-      return tempObj.Site_Description
+
+      return  tempObj ? tempObj.Site_Description : ""
     }
     if(fieldName == "Budget_Group_ID"){
       const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
-      return tempObj.Budget_Group_Name
+      return  tempObj ? tempObj.Budget_Group_Name : " "
     }
     if(fieldName == "Budget_Sub_Group_ID"){
       const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
-      return tempObj.Budget_Sub_Group_Name
+      return tempObj ? tempObj.Budget_Sub_Group_Name : ""
     }
     if(fieldName == "Work_Details_ID"){
       const tempObj:any = this.ProjectInput.getValue(fieldName,Number(value))
-      return tempObj.Work_Details
+      return tempObj ? tempObj.Work_Details : ""
     }
   }
  
@@ -432,6 +434,7 @@ export class FinancialVoucherComponent implements OnInit {
     console.log("objProjectRequi",this.objProject)
     let temparr = Object.keys(this.objProject)
     console.log(temparr)
+    console.log("LedgerListLow",this.LedgerListLow)
     // if(temparr.indexOf("PROJECT_ID") != -1 && temparr.indexOf("Budget_Group_ID") != -1 && temparr.indexOf("Budget_Sub_Group_ID") != -1 && temparr.indexOf("SITE_ID") != -1 && temparr.indexOf("Work_Details_ID") != -1){
     //  this.getProductType();
     //  this.GetRequlist();
@@ -442,7 +445,7 @@ export class FinancialVoucherComponent implements OnInit {
     //  this.objaddPurchacse.Product_Spec = undefined;
     // }
    
-   }
+  }
    whateverCopy(obj) {
     return JSON.parse(JSON.stringify(obj))
   }
@@ -468,7 +471,7 @@ export class FinancialVoucherComponent implements OnInit {
    this.objjournal.Cheque_Date = this.objjournal.Bank_Txn_Type == 2 ? this.DateService.dateConvert(new Date("01/01/1900")) : this.DateService.dateConvert(this.NEFTDate)
    this.objjournal.bottom = this.lowerList
    this.journalFormSubmitted = false
-  this.validatation.required = false
+   this.validatation.required = false
   console.log("this.objProject",this.objjournal)
   if(this.voucherNo){
     msg = "Update"
@@ -513,330 +516,330 @@ export class FinancialVoucherComponent implements OnInit {
   })
    }
   }
- getBankTRNType(id:any){
-  console.log("Type Check",typeof(id));
-  if(id){
-     if(Number(id) === 1){
-      this.labelText1 = "Transaction No"
-      this.labelText2 = "Transaction Date"
-      this.labelText3 = "Bank Name"
-      this.labelText4 = "Bank Branch Name"
-     }
-     else if(Number(id) === 2){
-      this.labelText1 = ""
-      this.labelText2 = ""
-      this.labelText3 = ""
-      this.labelText4 = ""
-     }
-     else if(Number(id) === 3){
-      this.labelText1 = "Cheque No"
-      this.labelText2 = "Cheque Date"
-      this.labelText3 = "Bank Name"
-      this.labelText4 = "Bank Branch Name"
-     }
-     else if(Number(id) === 4){
-      this.labelText1 = "NEFT No"
-      this.labelText2 = "NEFT Date"
-      this.labelText3 = ""
-      this.labelText4 = ""
-     }
-     else if(Number(id) === 6){
-      this.labelText1 = "Transaction No"
-      this.labelText2 = "Transaction Date"
-      this.labelText3 = "Card Issue Bank"
-      this.labelText4 = ""
-     }
-     else if(Number(id) === 7){
-      this.labelText1 = "Transaction No"
-      this.labelText2 = "Transaction Date"
-      this.labelText3 = ""
-      this.labelText4 = ""
-     }
-     else if(Number(id) === 5){
-      this.labelText1 = "Transaction No"
-      this.labelText2 = "Transaction Date"
-      this.labelText3 = "Finance"
-      this.labelText4 = ""
-     }
+  getBankTRNType(id:any){
+    console.log("Type Check",typeof(id));
+    if(id){
+      if(Number(id) === 1){
+        this.labelText1 = "Transaction No"
+        this.labelText2 = "Transaction Date"
+        this.labelText3 = "Bank Name"
+        this.labelText4 = "Bank Branch Name"
+      }
+      else if(Number(id) === 2){
+        this.labelText1 = ""
+        this.labelText2 = ""
+        this.labelText3 = ""
+        this.labelText4 = ""
+      }
+      else if(Number(id) === 3){
+        this.labelText1 = "Cheque No"
+        this.labelText2 = "Cheque Date"
+        this.labelText3 = "Bank Name"
+        this.labelText4 = "Bank Branch Name"
+      }
+      else if(Number(id) === 4){
+        this.labelText1 = "NEFT No"
+        this.labelText2 = "NEFT Date"
+        this.labelText3 = ""
+        this.labelText4 = ""
+      }
+      else if(Number(id) === 6){
+        this.labelText1 = "Transaction No"
+        this.labelText2 = "Transaction Date"
+        this.labelText3 = "Card Issue Bank"
+        this.labelText4 = ""
+      }
+      else if(Number(id) === 7){
+        this.labelText1 = "Transaction No"
+        this.labelText2 = "Transaction Date"
+        this.labelText3 = ""
+        this.labelText4 = ""
+      }
+      else if(Number(id) === 5){
+        this.labelText1 = "Transaction No"
+        this.labelText2 = "Transaction Date"
+        this.labelText3 = "Finance"
+        this.labelText4 = ""
+      }
+    }
   }
- }
- getDocType(){
-  if(this.VoucherTypeID && this.objjournalloweer.Sub_Ledger_ID && this.objjournal.Company_ID && this.objjournal.DrCrdata){
-     const tempObj = {
-      Voucher_Type_ID: Number(this.VoucherTypeID),
-		  Sub_Ledger_ID: Number(this.objjournalloweer.Sub_Ledger_ID),
-      Company_ID: Number(this.objjournal.Company_ID),
-			txn_typ: this.objjournal.DrCrdata
-     }
-     const obj = {
+  getDocType(){
+    if(this.VoucherTypeID && this.objjournalloweer.Sub_Ledger_ID && this.objjournal.Company_ID && this.objjournal.DrCrdata){
+      const tempObj = {
+        Voucher_Type_ID: Number(this.VoucherTypeID),
+        Sub_Ledger_ID: Number(this.objjournalloweer.Sub_Ledger_ID),
+        Company_ID: Number(this.objjournal.Company_ID),
+        txn_typ: this.objjournal.DrCrdata
+      }
+      const obj = {
+        "SP_String": "SP_Financial_Voucher",
+        "Report_Name_String": "Get_Doc_Type",
+        "Json_Param_String": JSON.stringify([tempObj])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("DocType",data)
+        this.RefDocTypeList = data;
+        this.getDocNo()
+      })
+    } 
+  }
+  getDocNo(){
+    if(this.VoucherTypeID && this.objjournalloweer.Sub_Ledger_ID && this.objjournal.Company_ID && this.objjournal.DrCrdata){
+      const tempObj = {
+        Sub_Ledger_ID: Number(this.objjournalloweer.Sub_Ledger_ID),
+        Company_ID: Number(this.objjournal.Company_ID),
+        Voucher_Type_ID: Number(this.objjournalloweer.Voucher_Type_ID),
+        txn_type: this.objjournal.DrCrdata
+      }
+      const obj = {
       "SP_String": "SP_Financial_Voucher",
-      "Report_Name_String": "Get_Doc_Type",
+      "Report_Name_String": "Get_Search_Document_No",
       "Json_Param_String": JSON.stringify([tempObj])
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("DocType",data)
-      this.RefDocTypeList = data;
-      this.getDocNo()
+      // console.log("DocType",data)
+      this.VoucherNoList = data
     })
   } 
- }
- getDocNo(){
-  if(this.VoucherTypeID && this.objjournalloweer.Sub_Ledger_ID && this.objjournal.Company_ID && this.objjournal.DrCrdata){
-    const tempObj = {
-      Sub_Ledger_ID: Number(this.objjournalloweer.Sub_Ledger_ID),
-      Company_ID: Number(this.objjournal.Company_ID),
-      Voucher_Type_ID: Number(this.objjournalloweer.Voucher_Type_ID),
-      txn_type: this.objjournal.DrCrdata
-    }
-    const obj = {
-     "SP_String": "SP_Financial_Voucher",
-     "Report_Name_String": "Get_Search_Document_No",
-     "Json_Param_String": JSON.stringify([tempObj])
-     }
-   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    // console.log("DocType",data)
-     this.VoucherNoList = data
-   })
- } 
- }
- getFinDate(){
-  const obj = {
-    "SP_String": "sp_Comm_Controller",
-    "Report_Name_String": "Dropdown_Financial_Year"
-    }
-  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     console.log("Fin Date",data)
-     let finDateDateFilter = data.filter((el:any)=> new Date(el.Fin_Year_Start).getMonth() === new Date(this.$CompacctAPI.CompacctCookies.Fin_Year_Start).getMonth())[0]
-    //  this.maxDate = new Date(finDateDateFilter.Fin_Year_End);
-    //  this.minDate = new Date(finDateDateFilter.Fin_Year_Start);
-     this.vouchermaxDate = new Date(finDateDateFilter.Fin_Year_End);
-     this.voucherminDate = new Date(finDateDateFilter.Fin_Year_Start);
-     this.voucherdata = new Date().getMonth() > new Date(finDateDateFilter.Fin_Year_End).getMonth() ? new Date() : new Date(finDateDateFilter.Fin_Year_End)
-     this.initDate =  [new Date(finDateDateFilter.Fin_Year_Start) , new Date(finDateDateFilter.Fin_Year_End)]
-    })
- }
- getGetReminder(){
-  const obj = {
-    "SP_String": "SP_Financial_Voucher",
-    "Report_Name_String": "Get_Reminder"
-    }
-  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-   console.log("Get Reminder",data)
-   this.ReminderTypeList = data
-  })
- }
- RefDocNoChange(){
-  if(this.objjournalloweer.Adjustment_Doc_No){
-     const VoucherNoFilter = this.VoucherNoList.filter((el:any)=>el.Voucher_No === this.objjournalloweer.Adjustment_Doc_No)[0]
-     this.objjournalloweer.Amount = VoucherNoFilter.Balance_Amount
   }
- }
- reqriredCheck(arr){
-  return arr.length ? true : false
- }
- checkreq(){
-  let flg = false
-  if(this.openProject === "Y" && this.projectMand === "Y"){
-    let getArrValue = Object.values(this.objProject);
-    console.log("getArrValue",getArrValue.length);
-    if(getArrValue.indexOf(undefined) == -1){
-      if(getArrValue.length === 5 || getArrValue.length > 5){
-        flg = true
+  getFinDate(){
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Dropdown_Financial_Year"
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Fin Date",data)
+      let finDateDateFilter = data.filter((el:any)=> new Date(el.Fin_Year_Start).getMonth() === new Date(this.$CompacctAPI.CompacctCookies.Fin_Year_Start).getMonth())[0]
+      //  this.maxDate = new Date(finDateDateFilter.Fin_Year_End);
+      //  this.minDate = new Date(finDateDateFilter.Fin_Year_Start);
+      this.vouchermaxDate = new Date(finDateDateFilter.Fin_Year_End);
+      this.voucherminDate = new Date(finDateDateFilter.Fin_Year_Start);
+      this.voucherdata = new Date().getMonth() > new Date(finDateDateFilter.Fin_Year_End).getMonth() ? new Date() : new Date(finDateDateFilter.Fin_Year_End)
+      this.initDate =  [new Date(finDateDateFilter.Fin_Year_Start) , new Date(finDateDateFilter.Fin_Year_End)]
+      })
+  }
+  getGetReminder(){
+    const obj = {
+      "SP_String": "SP_Financial_Voucher",
+      "Report_Name_String": "Get_Reminder"
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Get Reminder",data)
+    this.ReminderTypeList = data
+    })
+  }
+  RefDocNoChange(){
+    if(this.objjournalloweer.Adjustment_Doc_No){
+      const VoucherNoFilter = this.VoucherNoList.filter((el:any)=>el.Voucher_No === this.objjournalloweer.Adjustment_Doc_No)[0]
+      this.objjournalloweer.Amount = VoucherNoFilter.Balance_Amount
+    }
+  }
+  reqriredCheck(arr){
+    return arr.length ? true : false
+  }
+  checkreq(){
+    let flg = false
+    if(this.openProject === "Y" && this.projectMand === "Y"){
+      let getArrValue = Object.values(this.objProject);
+      console.log("getArrValue",getArrValue.length);
+      if(getArrValue.indexOf(undefined) == -1){
+        if(getArrValue.length === 5 || getArrValue.length > 5){
+          flg = true
+        }
+        else {
+          flg = false
+        }
       }
       else {
         flg = false
       }
     }
     else {
-      flg = false
+      flg = true
     }
+    return flg
   }
-  else {
-    flg = true
-  }
-  return flg
- }
- showTost(msg,summary){
-  this.compacctToast.clear();
-  this.compacctToast.add({
-    key: "compacct-toast",
-    severity: "success",
-    summary: summary,
-    detail: "Succesfully "+msg
-  });
-}
-async SaveProject(docNo){
-  if(docNo){
-   this.objProject.DOC_NO = docNo,
-   this.objProject.DOC_TYPE = this.headerText,
-   this.objProject.DOC_DATE = this.DateService.dateConvert(this.voucherdata)
-  }
-  const obj = {
-   "SP_String": "SP_BL_CRM_TXN_Project_Doc",
-   "Report_Name_String": "Create_BL_CRM_TXN_Project_Doc",
-   "Json_Param_String": JSON.stringify([this.objProject]) 
-  }
-  const projectData = await  this.GlobalAPI.getData(obj).toPromise();
-  console.log("projectData",projectData);
-  return projectData
- }
- clearProject(){
-  if(this.openProject === "Y"){
-    this.ProjectInput.clearData()
-  }
- 
-}
-getCosCenter(){
-  const obj = {
-    "SP_String": "sp_Comm_Controller",
-    "Report_Name_String": "Get_Master_Cost_Center_Dropdown"
-    }
-  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-   console.log("Cost Center",data)
-   this.costCenterList = data
-   this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
-  })
-}
-EditVoucher(col){
-  if(col.Voucher_No){
-    this.voucherNo = "";
-    this.tabIndexToView = 1;
-    this.items = ["BROWSE", "UPDATE","REPORT"];
-    this.buttonname = "Update";
-    this.clearData();
-    this.voucherNo = col.Voucher_No;
-    this.objjournal = new journalTopper()
-    this.clearProject();
-    this.geteditmaster(col.Voucher_No);
-    // if(this.openProject === "Y"){
-    //   this.getEditProject(col.Voucher_No);
-    // }
-   
-   }
- }
- geteditmaster(VoucherNo){
- if(VoucherNo){
-  const obj = {
-    "SP_String": "SP_Acc_Journal",
-    "Report_Name_String": "BL_Txn_Acc_Journal_Get",
-    "Json_Param_String": JSON.stringify([{Voucher_No : VoucherNo}])
-    }
-  this.GlobalAPI.getData(obj).subscribe((res:any)=>{
-  let data = JSON.parse(res[0].topper)
-  console.log("Edit Data",data)
-  this.objjournal = data[0]
-  this.objjournal.Voucher_No = data[0].voucher_No
-  this
-  this.GetBankTransactionType(data[0].Ledger_ID);
-  this.voucherdata = new Date(data[0].Voucher_Date)
-  this.lowerList = data[0].bottom;
-  console.log("lowerList",this.lowerList)
-   setTimeout(() => {
-    if(data[0].Bank_Txn_Type){
-      const bankTrnFilter = this.BankTransactionTypeList.filter((el:any)=> el.Txn_Type_Name === data[0].Bank_Txn_Type)[0]
-      this.objjournal.Bank_Txn_Type  = bankTrnFilter.Bank_Txn_Type_ID
-      console.log("this.objjournal.Bank_Txn_Type",typeof(this.objjournal.Bank_Txn_Type))
-      this.getBankTRNType(this.objjournal.Bank_Txn_Type)
-    }
-  }, 200);
- 
-  if(data[0].DR_Amt){
-    this.objjournal.Amount = Number((data[0].DR_Amt).toFixed(2))
-    this.objjournal.DrCrdata = "DR";
-    this.getTotalDRCR()
-  }
-  else if (data[0].CR_Amt){
-    this.objjournal.Amount = Number((data[0].CR_Amt).toFixed(2))
-    this.objjournal.DrCrdata = "CR";
-    this.getTotalDRCR()
-  }
-  else {
-    console.error("Amount Not Found");
-  }
-  })
- }
-}
-
-FilterArrList(text,value){
-  let flgReturn = ""
- if(text === 'Ledger'){
-  const LedgerFilter = this.LedgerListLow.filter((el:any)=>Number(el.value) === Number(value))[0]
-  flgReturn = LedgerFilter ? LedgerFilter.label : "Not Found"
- }
- else if(text === 'Sub_Ledger'){
-  const subledgerFilter = this.SubLedgerListlow.filter((el:any)=>Number(el.value) === Number(value))[0]
-  flgReturn = subledgerFilter ? subledgerFilter.label : "Not Found"
- }
- else if(text === 'Cost_Head'){
-  const costheadFilter = this.costHeadDataList.filter((el:any) => Number(el.Cost_Head_ID) === Number(value))[0]
-  flgReturn = costheadFilter ? costheadFilter.Cost_Head_Name : "Not Found"
- }
- else {
-  console.warn("NO"+text+"Found")
- }
-}
-
-getEditProject(DocNo){
-  if(DocNo){
-    const obj = {
-      "SP_String": "SP_BL_CRM_TXN_Project_Doc",
-      "Report_Name_String": "Get_BL_CRM_TXN_Project_Doc",
-      "Json_Param_String": JSON.stringify([{DOC_NO : DocNo}]) 
-     }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.objProject = data
-       console.log("this.projectEditData",this.objProject);
-       
-        this.ProjectInput.ProjectEdit(this.objProject)
-       
-        })
-  }
- }
-DeleteVoucher(col){
-  if(col.Voucher_No){
-    this.voucherNo = "";
-    this.voucherNo = col.Voucher_No;
+  showTost(msg,summary){
     this.compacctToast.clear();
     this.compacctToast.add({
-      key: "c",
-      sticky: true,
-      severity: "warn",
-      summary: "Are you sure?",
-      detail: "Confirm to proceed"
+      key: "compacct-toast",
+      severity: "success",
+      summary: summary,
+      detail: "Succesfully "+msg
     });
   }
-}
-onConfirm(){
-  if(this.voucherNo){
+  async SaveProject(docNo){
+    if(docNo){
+    this.objProject.DOC_NO = docNo,
+    this.objProject.DOC_TYPE = this.headerText,
+    this.objProject.DOC_DATE = this.DateService.dateConvert(this.voucherdata)
+    }
+    const obj = {
+    "SP_String": "SP_BL_CRM_TXN_Project_Doc",
+    "Report_Name_String": "Create_BL_CRM_TXN_Project_Doc",
+    "Json_Param_String": JSON.stringify([this.objProject]) 
+    }
+    const projectData = await  this.GlobalAPI.getData(obj).toPromise();
+    console.log("projectData",projectData);
+    return projectData
+  }
+  clearProject(){
+    if(this.openProject === "Y"){
+      this.ProjectInput.clearData()
+    }
+  
+  }
+  getCosCenter(){
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Get_Master_Cost_Center_Dropdown"
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Cost Center",data)
+    this.costCenterList = data
+    this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    })
+  }
+  EditVoucher(col){
+    if(col.Voucher_No){
+      this.voucherNo = "";
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE","REPORT"];
+      this.buttonname = "Update";
+      this.clearData();
+      this.voucherNo = col.Voucher_No;
+      this.objjournal = new journalTopper()
+      this.clearProject();
+      this.geteditmaster(col.Voucher_No);
+      // if(this.openProject === "Y"){
+      //   this.getEditProject(col.Voucher_No);
+      // }
+    
+    }
+  }
+  geteditmaster(VoucherNo){
+  if(VoucherNo){
     const obj = {
       "SP_String": "SP_Acc_Journal",
-      "Report_Name_String":"BL_Txn_Acc_Journal_Delete",
-      "Json_Param_String": JSON.stringify([{Voucher_No : this.voucherNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
+      "Report_Name_String": "BL_Txn_Acc_Journal_Get",
+      "Json_Param_String": JSON.stringify([{Voucher_No : VoucherNo}])
       }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("data ==",data[0].Column1);
-      if (data[0].Column1 === "Done"){
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: this.headerText+" Delete Succesfully",
-          detail: "Succesfully Delete"
-        });
-        }
-        this.ShowSearchData(true);
-       });
+    this.GlobalAPI.getData(obj).subscribe((res:any)=>{
+    let data = JSON.parse(res[0].topper)
+    console.log("Edit Data",data)
+    this.objjournal = data[0]
+    this.objjournal.Voucher_No = data[0].voucher_No
+    this
+    this.GetBankTransactionType(data[0].Ledger_ID);
+    this.voucherdata = new Date(data[0].Voucher_Date)
+    this.lowerList = data[0].bottom;
+    console.log("lowerList",this.lowerList)
+    setTimeout(() => {
+      if(data[0].Bank_Txn_Type){
+        const bankTrnFilter = this.BankTransactionTypeList.filter((el:any)=> el.Txn_Type_Name === data[0].Bank_Txn_Type)[0]
+        this.objjournal.Bank_Txn_Type  = bankTrnFilter.Bank_Txn_Type_ID
+        console.log("this.objjournal.Bank_Txn_Type",typeof(this.objjournal.Bank_Txn_Type))
+        this.getBankTRNType(this.objjournal.Bank_Txn_Type)
+      }
+    }, 200);
+  
+    if(data[0].DR_Amt){
+      this.objjournal.Amount = Number((data[0].DR_Amt).toFixed(2))
+      this.objjournal.DrCrdata = "DR";
+      this.getTotalDRCR()
+    }
+    else if (data[0].CR_Amt){
+      this.objjournal.Amount = Number((data[0].CR_Amt).toFixed(2))
+      this.objjournal.DrCrdata = "CR";
+      this.getTotalDRCR()
+    }
+    else {
+      console.error("Amount Not Found");
+    }
+    })
+  }
   }
 
+  FilterArrList(text,value){
+    let flgReturn = ""
+  if(text === 'Ledger'){
+    const LedgerFilter = this.LedgerListLow.filter((el:any)=>Number(el.value) === Number(value))[0]
+    flgReturn = LedgerFilter ? LedgerFilter.label : "Not Found"
+  }
+  else if(text === 'Sub_Ledger'){
+    const subledgerFilter = this.SubLedgerListlow.filter((el:any)=>Number(el.value) === Number(value))[0]
+    flgReturn = subledgerFilter ? subledgerFilter.label : "Not Found"
+  }
+  else if(text === 'Cost_Head'){
+    const costheadFilter = this.costHeadDataList.filter((el:any) => Number(el.Cost_Head_ID) === Number(value))[0]
+    flgReturn = costheadFilter ? costheadFilter.Cost_Head_Name : "Not Found"
+  }
+  else {
+    console.warn("NO"+text+"Found")
+  }
+  }
 
-}
-convartNumber(n:any){
-return typeof(n) === "number" ? n : Number(n)
-}
-getColspanDR(){
-  return this.openProject == 'Y' ? 10 : 5
-                      
-}
+  getEditProject(DocNo){
+    if(DocNo){
+      const obj = {
+        "SP_String": "SP_BL_CRM_TXN_Project_Doc",
+        "Report_Name_String": "Get_BL_CRM_TXN_Project_Doc",
+        "Json_Param_String": JSON.stringify([{DOC_NO : DocNo}]) 
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.objProject = data
+        console.log("this.projectEditData",this.objProject);
+        
+          this.ProjectInput.ProjectEdit(this.objProject)
+        
+          })
+    }
+  }
+  DeleteVoucher(col){
+    if(col.Voucher_No){
+      this.voucherNo = "";
+      this.voucherNo = col.Voucher_No;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirm(){
+    if(this.voucherNo){
+      const obj = {
+        "SP_String": "SP_Acc_Journal",
+        "Report_Name_String":"BL_Txn_Acc_Journal_Delete",
+        "Json_Param_String": JSON.stringify([{Voucher_No : this.voucherNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("data ==",data[0].Column1);
+        if (data[0].Column1 === "Done"){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: this.headerText+" Delete Succesfully",
+            detail: "Succesfully Delete"
+          });
+          }
+          this.ShowSearchData(true);
+        });
+    }
+
+
+  }
+  convartNumber(n:any){
+  return typeof(n) === "number" ? n : Number(n)
+  }
+  getColspanDR(){
+    return this.openProject == 'Y' ? 10 : 5
+                        
+  }
 
 }
 class journalTopper{
