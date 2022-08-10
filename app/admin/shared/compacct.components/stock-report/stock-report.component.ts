@@ -355,7 +355,7 @@ export class StockReportComponent implements OnInit {
   getProductType(){
     const obj = {
       "SP_String": "SP_Txn_Requisition",
-      "Report_Name_String": "Get_product_Type_Details",
+      "Report_Name_String": "Get_product_Type_For_Stock",
       "Json_Param_String":JSON.stringify([{PROJECT_ID : 0}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{

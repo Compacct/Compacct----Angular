@@ -15,10 +15,6 @@ div.table-responsive.table-id>p-table>div>div {
 .custombutton {
     margin-top: 25px;
 }
-.custombutton3 {
-    margin-top: 26px;
-    margin-left: -158px;
-  }
 .box.boxboxDivide-primary{
     border-top-color: #f3efec;
     height: 10px;
@@ -52,26 +48,9 @@ border-radius: 4px;
 padding: 0px 10px 0px 10px;
 background-color: #ffffff;
 }
-.QtyColor {
+/* .QtyColor {
     color: #007ad9;
   }
 .Othercolor {
     color: black;
-}
-fieldset
-	{
-		border: 1px solid #ddd !important;
-		margin: 0;
-		min-width: 0;
-		padding: 10px;
-		position: relative;
-		border-radius:4px;
-		background-color:#f5f5f5;
-		padding-left:10px!important;
-	}
-.text-blue-active>td {
-    color: #007ad9;
-}
-.text-black-active>td {
-    color: black;
-}
+} */

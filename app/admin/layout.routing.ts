@@ -237,7 +237,9 @@ import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transact
 import { FinancialReminderComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-reminder/financial-reminder.component";
 import { InflowPlaningComponent } from "./common/Harbauer/inflow-planing/inflow-planing.component";
 import { WorkOrderComponent } from './common/MICL/RepairAndMaintenance/work-order/work-order.component';
+import { ReturnableGatePassComponent } from "./common/MICL/RepairAndMaintenance/returnable-gate-pass/returnable-gate-pass.component";
 import { RepairAndMaintenanceRdbComponent } from './common/MICL/RepairAndMaintenance/repair-and-maintenance-rdb/repair-and-maintenance-rdb.component';
+import { K4cProductionClosingStockComponent } from './common/MaterialManagement/Production/k4c-production-closing-stock/k4c-production-closing-stock.component';
 
 
 const layoutRoutes: Routes = [{
@@ -1743,12 +1745,26 @@ data: {
         }
         },
         {
+          path: 'Returnable_Gate_Pass',
+           component: ReturnableGatePassComponent,
+            data: {
+              title: 'Returnable Gate Pass '
+          }
+          },
+        {
           path: 'Repair_And_Maintenance_RDB',
            component: RepairAndMaintenanceRdbComponent,
             data: {
               title: 'Repair And Maintenance RDB'
           }
           },
+          {
+            path: 'Production_Closing_Stock',
+             component: K4cProductionClosingStockComponent,
+              data: {
+                title: 'Production Closing Stock'
+            }
+            },
       
     
 

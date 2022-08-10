@@ -35,7 +35,7 @@
 
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">From Cost Center<span class="text-danger">*</span></label>
+                                        <label class="control-label">To Cost Center</label>
                                         <select class="form-control" name="CostCent" #CostCent="ngModel" [(ngModel)]='ObjBrowseData.Cost_Cen_ID' [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" [ngClass]="{'clearance': DispatchSearchFormSubmit && CostCent?.errors?.required}" (change)="GetBrowseGodown()" 
                                                     >
                                               <option  [ngValue]="undefined">Select</option>
@@ -43,7 +43,7 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">From Stock Point<span class="text-danger">*</span></label>
+                                        <label class="control-label">To Stock Point</label>
                                         <select class="form-control" name="Godown" #Godown="ngModel" [(ngModel)]="ObjBrowseData.Godown_ID" [ngClass]="{'clearance' : DispatchSearchFormSubmit && Godown.errors?.required}" 
                                                           >
                                               <option  [ngValue]="undefined">Select</option>
@@ -189,7 +189,7 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">From Cost Center<span class="text-danger">*</span></label>
-                                                        <select class="form-control" name="FCostCent" #FCostCent="ngModel" [(ngModel)]='Objdispatch.F_Cost_Cen_ID' [disabled]="inputBoxDisabled" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" [ngClass]="{'clearance': DispatchFormSubmit && FCostCent?.errors?.required}" (change)="GetFromGodown()" 
+                                                        <select class="form-control" name="FCostCent" #FCostCent="ngModel" [(ngModel)]='Objdispatch.F_Cost_Cen_ID' [disabled]="true" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" [ngClass]="{'clearance': DispatchFormSubmit && FCostCent?.errors?.required}" (change)="GetFromGodown()" 
                                                                     required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                               <option *ngFor="let option of FromCostCenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>

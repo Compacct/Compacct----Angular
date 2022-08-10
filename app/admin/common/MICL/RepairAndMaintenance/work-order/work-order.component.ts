@@ -148,7 +148,7 @@ export class WorkOrderComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE'];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -865,7 +865,7 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
   if(this.DocNo){
     this.ngxService.stop();
     this.tabIndexToView = 0;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE'];
     this.buttonname = "Create";
   }
   this.ngxService.stop();
@@ -999,7 +999,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE'];
     this.buttonname = "Update";
     this.geteditmaster(col.Doc_No);
    }

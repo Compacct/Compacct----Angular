@@ -25,14 +25,14 @@ export class MiclDispatchChallanComponent implements OnInit {
   ObjBrowseData : BrowseData = new BrowseData ()
   DispatchFormSubmit = false;
   FromCostCenterList = [];
-  FromGodownList = [];
+  FromGodownList:any = [];
   ToCostCenterList = [];
   ToGodownList = [];
   ReqDate : any = new Date();
 
   DispatchSearchFormSubmit = false;
   BrowseCostCenterList = [];
-  BrowseGodownList = [];
+  BrowseGodownList:any = [];
 
   doc_no : any;
   createdby : any;
@@ -66,7 +66,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   outletList = [];
   brandList = [];
   brandListBro = [];
-  toGodownList = [];
+  toGodownList:any = [];
   BatchList = [];
   reqNumber:any;
   outletListBro = [];
@@ -224,11 +224,14 @@ export class MiclDispatchChallanComponent implements OnInit {
   // this.Objdispatch.F_Cost_Cen_ID = this.FromCostCenterList.length === 1 ? this.FromCostCenterList[0].Cost_Cen_ID : undefined;
   // this.Objdispatch.To_Cost_Cen_ID = this.ToCostCenterList.length === 1 ? this.ToCostCenterList[0].Cost_Cen_ID : undefined;
   this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-  this.ObjBrowseData.Godown_ID = this.BrowseGodownList[0].Godown_ID;
+  this.GetBrowseGodown();
+  // this.ObjBrowseData.Godown_ID = this.BrowseGodownList[0].Godown_ID;
   this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-  this.Objdispatch.F_Godown_ID = this.FromGodownList[0].Godown_ID;
+  this.GetFromGodown();
+  // this.Objdispatch.F_Godown_ID = this.FromGodownList[0].Godown_ID;
   this.Objdispatch.To_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-  this.Objdispatch.To_Godown_ID = this.ToGodownList[0].Godown_ID;
+  this.GetToGodown();
+  // this.Objdispatch.To_Godown_ID = this.ToGodownList[0].Godown_ID;
   console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
   this.doc_no = undefined;
   this.DispatchFormSubmit = false;

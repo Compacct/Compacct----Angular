@@ -215,10 +215,10 @@
                 <td>{{rowData.Changed_Amount}}</td>
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
-                <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+                <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt() | currency:'INR'}}</td>
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
-                <td colspan="15" class="text-bold text-right"> Sale  Amount : {{getSaleAmt()}}</td>
+                <td colspan="15" class="text-bold text-right"> Sale  Amount : {{getSaleAmt() | currency:'INR'}}</td>
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                 <td colspan="15" class="text-bold text-right"> No of Site :
@@ -226,7 +226,7 @@
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                 <td colspan="15" class="text-bold text-right"> Total Purchase Amount :
-                  {{getTotalPurchaseAmt()}}</td>
+                  {{getTotalPurchaseAmt()  | currency:'INR'}}</td>
               </tr>
             </ng-template>
           </p-table>
