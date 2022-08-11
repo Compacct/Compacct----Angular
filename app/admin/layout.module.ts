@@ -334,6 +334,10 @@ import { WorkOrderComponent } from './common/MICL/RepairAndMaintenance/work-orde
 import { ReturnableGatePassComponent } from "./common/MICL/RepairAndMaintenance/returnable-gate-pass/returnable-gate-pass.component";
 import { RepairAndMaintenanceRdbComponent } from './common/MICL/RepairAndMaintenance/repair-and-maintenance-rdb/repair-and-maintenance-rdb.component';
 import { K4cProductionClosingStockComponent } from './common/MaterialManagement/Production/k4c-production-closing-stock/k4c-production-closing-stock.component';
+import { EmployeeSalaryMasterMiclComponent } from './common/MICL/employee-salary-master-micl/employee-salary-master-micl.component';
+import { HrEmployeeSalaryMasterHarbComponent } from './common/Harbauer/hr-employee-salary-master-harb/hr-employee-salary-master-harb.component';
+import { RepairAndMantainceGRNComponent } from "./common/MICL/RepairAndMaintenance/repair-and-mantaince-grn/repair-and-mantaince-grn.component";
+import { HREmployeeMasterComponent } from "./common/MICL/hr-employee-master/hr-employee-master.component";
 
 
 @NgModule({
@@ -587,7 +591,11 @@ import { K4cProductionClosingStockComponent } from './common/MaterialManagement/
     WorkOrderComponent,
     ReturnableGatePassComponent,
     RepairAndMaintenanceRdbComponent,
-    K4cProductionClosingStockComponent
+    K4cProductionClosingStockComponent,
+    EmployeeSalaryMasterMiclComponent,
+    HrEmployeeSalaryMasterHarbComponent,
+    RepairAndMantainceGRNComponent,
+    HREmployeeMasterComponent
   ],
   imports: [
     CommonModule,

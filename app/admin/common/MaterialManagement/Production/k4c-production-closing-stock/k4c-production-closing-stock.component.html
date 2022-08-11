@@ -35,7 +35,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Cost Cent</label>
-                                        <select class="form-control" name="Bcostcent" #Bcostcent="ngModel" [(ngModel)]="ObjBrowse.Cost_Cen_ID" [ngClass]="{'clearance': ProClosingStockSearchFormSubmitted && Bcostcent?.errors?.required}" (change)="GetBGodown()" [attr.disabled]="BCdisableflag? true: null">
+                                         <select class="form-control" name="Bcostcent" #Bcostcent="ngModel" [(ngModel)]="ObjBrowse.Cost_Cen_ID" [ngClass]="{'clearance': ProClosingStockSearchFormSubmitted && Bcostcent?.errors?.required}" [attr.disabled]="true" ><!--[attr.disabled]="BCdisableflag? true: null" -->
                               <option  [ngValue]="undefined">Select</option>
                               <option  *ngFor="let option of Bcostcenlist" value="{{option.Cost_Cen_ID}}">
                                 {{option.Cost_Cen_Name}}
@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Stock Point</label>
-                                        <select class="form-control" name="Bgodown" #Bgodown="ngModel" [(ngModel)]="ObjBrowse.godown_id" [ngClass]="{'clearance': ProClosingStockSearchFormSubmitted && Bgodown?.errors?.required}" [attr.disabled]="BGdisableflag? true: null">
+                                        <select class="form-control" name="Bgodown" #Bgodown="ngModel" [(ngModel)]="ObjBrowse.godown_id" [ngClass]="{'clearance': ProClosingStockSearchFormSubmitted && Bgodown?.errors?.required}" [attr.disabled]="true"><!--[attr.disabled]="BGdisableflag? true: null"-->
                             <option  [ngValue]="undefined">Select</option>
                             <option  *ngFor="let option of BGodownList" value="{{option.godown_id}}">
                                 {{option.godown_name}}
@@ -75,7 +75,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th style="width:5em">Action</th>
+                                            <!-- <th style="width:5em">Action</th> -->
                                             <th>Doc No</th>
                                             <th>Doc Date</th>
                                             <th>Cost Center</th>
@@ -86,14 +86,14 @@
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
 
-                                            <td>
+                                            <!-- <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                 <i class="fa fa-fw fa-bars"></i>
                                                                 <span class="caret"></span>
                                                             </button>
                                                     <ul class="dropdown-menu">
-                                                        <!-- <li>
+                                                        <li>
                                                             <a (click)="View(col)">
                                                                 <i class="fa fa-fw fa-eye"></i> View
                                                             </a>
@@ -102,7 +102,7 @@
                                                             <a (click)="EditIntStock(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
-                                                        </li> -->
+                                                        </li>
                                                         <li>
                                                             <a (click)="DeleteIntStocktr(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
@@ -110,7 +110,7 @@
                                                         </li>
                                                     </ul>
                                                 </div>
-                                            </td>
+                                            </td> -->
                                             <td>{{col.Doc_No }}</td>
                                             <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
                                             <td>{{col.Cost_Cen_Name}}</td>
@@ -138,8 +138,8 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Cost Cent<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel" [(ngModel)]="ObjProClosingStock.Cost_Cen_ID" [ngClass]="{'clearance': ProClosingStockFormSubmitted && Cost_Cen_ID?.errors?.required}" (change)="GetGodown()" [disabled]="Costdisableflag"
-                                                        [attr.disabled]="ProductList.length? true : null">
+                                                    <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel" [(ngModel)]="ObjProClosingStock.Cost_Cen_ID" [ngClass]="{'clearance': ProClosingStockFormSubmitted && Cost_Cen_ID?.errors?.required}" 
+                                                          [attr.disabled]="true"><!--[disabled]="Costdisableflag" [attr.disabled]="ProductList.length? true : null"-->
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  *ngFor="let option of CostCenList" value="{{option.Cost_Cen_ID}}">
                                               {{option.Cost_Cen_Name}}
@@ -148,8 +148,8 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="godown_id" #godown_id="ngModel" [(ngModel)]="ObjProClosingStock.godown_id" [ngClass]="{'clearance': ProClosingStockFormSubmitted && godown_id?.errors?.required}" [disabled]="Gdisableflag" [attr.disabled]="ProductList.length? true : null"
-                                                        required>
+                                                    <select class="form-control" name="godown_id" #godown_id="ngModel" [(ngModel)]="ObjProClosingStock.godown_id" [ngClass]="{'clearance': ProClosingStockFormSubmitted && godown_id?.errors?.required}"  
+                                                    [attr.disabled]="true"><!--[disabled]="Gdisableflag" [attr.disabled]="ProductList.length? true : null"-->
                                           <option  [ngValue]="undefined">Select</option>
                                           <option  *ngFor="let option of GodownList" value="{{option.godown_id}}">
                                             {{option.godown_name}}
@@ -201,13 +201,13 @@
                                             <th>Product Type</th>
                                             <th>Product Description</th>
                                             <th>UOM</th>
-                                            <th>Stock Qty</th>
+                                            <!-- <th>Stock Qty</th> -->
                                             <!-- <th>Batch No</th>
                                             <th>Batch Qty</th> -->
                                             <!-- <th >Current Stock in Department</th> -->
                                             <th>Closing Qty</th>
                                             <th>Wastage Qty</th>
-                                            <th>Remarks</th>
+                                            <th>Reason</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -215,7 +215,7 @@
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Description }}</td>
                                             <td>{{col.UOM}}</td>
-                                            <td>{{col.Stock_Qty}}</td>
+                                            <!-- <td>{{col.Stock_Qty}}</td> -->
                                             <!-- <td>{{col.Batch_No}}</td>
                                             <td>{{col.Batch_Qty}}</td> -->
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Closing_Qty' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
