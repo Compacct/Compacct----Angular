@@ -240,6 +240,10 @@ import { WorkOrderComponent } from './common/MICL/RepairAndMaintenance/work-orde
 import { ReturnableGatePassComponent } from "./common/MICL/RepairAndMaintenance/returnable-gate-pass/returnable-gate-pass.component";
 import { RepairAndMaintenanceRdbComponent } from './common/MICL/RepairAndMaintenance/repair-and-maintenance-rdb/repair-and-maintenance-rdb.component';
 import { K4cProductionClosingStockComponent } from './common/MaterialManagement/Production/k4c-production-closing-stock/k4c-production-closing-stock.component';
+import { EmployeeSalaryMasterMiclComponent } from './common/MICL/employee-salary-master-micl/employee-salary-master-micl.component';
+import { HrEmployeeSalaryMasterHarbComponent } from './common/Harbauer/hr-employee-salary-master-harb/hr-employee-salary-master-harb.component';
+import { RepairAndMantainceGRNComponent } from "./common/MICL/RepairAndMaintenance/repair-and-mantaince-grn/repair-and-mantaince-grn.component";
+import { HREmployeeMasterComponent } from "./common/MICL/hr-employee-master/hr-employee-master.component";
 
 
 const layoutRoutes: Routes = [{
@@ -1765,6 +1769,34 @@ data: {
                 title: 'Production Closing Stock'
             }
             },
+            {
+              path: 'Employee_Salary_Master_MICL',
+               component: EmployeeSalaryMasterMiclComponent,
+                data: {
+                  title: 'Employee Salary Master'
+              }
+              },
+              {
+                path: 'Employee_Salary_Master_Harbauer',
+                 component: HrEmployeeSalaryMasterHarbComponent,
+                  data: {
+                    title: 'Employee Salary_Master'
+                }
+                },
+                {
+                  path: 'Repair_And_Maintenance_GRN',
+                   component: RepairAndMantainceGRNComponent,
+                    data: {
+                      title: 'Repair and Maintenance GRN '
+                }
+                },
+                {
+                  path: 'HR_Employee_Master',
+                  component:HREmployeeMasterComponent,
+                  data: {
+                    title: 'HR Employee Master'
+                }
+                },
       
     
 
