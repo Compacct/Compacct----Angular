@@ -8,6 +8,7 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { CompacctGetDistinctService } from '../../../../shared/compacct.services/compacct-get-distinct.service';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { DateNepalConvertService } from '../../../../shared/compacct.global/dateNepal.service';
+import * as XLSX from 'xlsx'
 declare var NepaliFunctions: any;
 @Component({
   selector: 'app-crm-lead-opportunities',
@@ -546,6 +547,32 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
       queryParams: obj,
     };
     this.router.navigate(['./BL_CRM_Lead_Details_Nepal'], navigationExtras);
+  }
+  // Export To Excel
+  exportoexcel(fileName){
+    if(this.TableLeadList.length){
+      let exportList:any = []
+      this.TableLeadList.forEach((ele:any) => {
+        exportList.push({
+          ['Company Name'] : ele.Org_Name,
+          ['Lead Date'] : ele.Lead_Date,
+          ['Contact Person'] : ele.Contact_Name,
+          ['Phone'] : ele.Mobile ? ele.Mobile : '',
+          ['Email'] : ele.Email ? ele.Email : '-',
+          ['Mobile'] : ele.Phone ? ele.Phone :'-',
+          ['Address'] : ele. Address ? ele.Address : '-',
+          ['Sales Stage'] : ele.Status ? ele.Status :'-',
+          ['Source'] : ele.Enq_Source_Name ? ele.Enq_Source_Name : '-',
+          ['Assigned To'] :ele.Assign_To_Name ? ele.Assign_To_Name : '-'
+     })
+      });
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportList);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+    }
+      
+      
+  
   }
 }
 
