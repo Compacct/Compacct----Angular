@@ -228,6 +228,10 @@
                 <td colspan="15" class="text-bold text-right"> Total Purchase Amount :
                   {{getTotalPurchaseAmt()  | currency:'INR'}}</td>
               </tr>
+              <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                <td colspan="15" class="text-bold text-right"> Total Sale Amount :
+                  {{getTotalSaleAmt()  | currency:'INR'}}</td>
+              </tr>
             </ng-template>
           </p-table>
         </div>
