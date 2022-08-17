@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from "@angular/router";
   encapsulation: ViewEncapsulation.None
 })
 export class K4cRsnsClosingStockComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   ShowSpinner = false;
@@ -26,22 +26,22 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   rsnsClosingStockFormSubmitted = false;
   ObjBrowse : Browse = new Browse ();
   RSNSSearchFormSubmitted = false;
-  costcenlist = [];
-  GodownList = [];
+  costcenlist:any = [];
+  GodownList:any = [];
   Costdisableflag = false;
   Gdisableflag = false;
   Costbrowsedisableflag = false;
   Gbrowsedisableflag = false;
   IndentListFormSubmitted = false;
-  ProductList = [];
-  BackupProList = [];
+  ProductList:any = [];
+  BackupProList:any = [];
   SelectedIndent: any;
-  BackupIndentList = [];
-  IndentFilter = [];
-  TIndentList = [];
-  Searchedlist = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
+  TIndentList:any = [];
+  Searchedlist:any = [];
   flag = false;
-  productListFilter = [];
+  productListFilter:any = [];
   SelectedProductType :any = [];
   Param_Flag ='';
   CostCentId_Flag : any;
@@ -50,17 +50,18 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   minDate : any = new Date();
   maxDate :  any = new Date();
   Doc_No = undefined;
-  Editlist = [];
-  ViewList = [];
+  Editlist:any = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
   Godown_ID = undefined;
   MaterialType = undefined;
   remarks = undefined;
-  datepickerdisable = false;
+  datepickerdisable = true;
   Browsecostcenlist:any = [];
   BrowseGodownList:any = [];
+  Date: Date;
 
   constructor(
     private Header: CompacctHeader,
@@ -138,6 +139,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.items = ["BROWSE", "CREATE"];
      this.buttonname = "Save";
      this.clearData();
+     this.GetDate();
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
@@ -277,7 +279,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
 
   filterProduct(){
     if(this.SelectedProductType.length){
-      let tempProduct = [];
+      let tempProduct:any = [];
       this.SelectedProductType.forEach(item => {
         this.BackupIndentList.forEach((el,i)=>{
 
@@ -296,7 +298,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     }
   }
 GetProductType(){
-  let DOrderBy = [];
+  let DOrderBy:any = [];
     this.productListFilter = [];
     //this.SelectedDistOrderBy1 = [];
     this.BackupIndentList.forEach((item) => {
@@ -345,10 +347,10 @@ console.log(this.Editlist)
 }
 GetDataForSave(){
   if(this.ProductList.length) {
-    let tempArr =[];
+    let tempArr:any =[];
     const TempObj = {
-      //Doc_No	 : this.Doc_No ? this.Doc_No : "A",
-      Doc_No : "A",
+      Doc_No	 : this.Doc_No ? this.Doc_No : "A",
+      // Doc_No : "A",
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Cost_Cen_ID	: this.ObjrsnsClosingStock.Cost_Cen_ID,
       Godown_ID	: this.ObjrsnsClosingStock.godown_id,
@@ -406,6 +408,7 @@ Save(){
           this.items = ["BROWSE", "CREATE"];
           this.buttonname = "Create";
           this.clearData();
+          this.GetDate();
           this.GetSearchedList(true);
        }
        //this.clearData();
@@ -474,12 +477,14 @@ if(DocNo.Doc_No){
   this.ProductList = [];
   this.BackupProList = [];
 this.Doc_No = DocNo.Doc_No;
+this.Date = new Date(DocNo.Doc_Date);
 // this.ViewPoppup = true;
  this.tabIndexToView = 1;
  this.items = ["BROWSE", "UPDATE"];
  this.buttonname = "Update";
- this.datepickerdisable = true;
+ this.datepickerdisable = false;
  this.Gdisableflag = true;
+ this.todayDate = this.Date;
 // console.log("VIew ==", this.Objproduction.Doc_No);
  this.GetProductList(true); // await
  const ctrl = this;
@@ -500,7 +505,7 @@ GetdataforEdit(Doc_No){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Edit Data From API",data);
     this.Editlist = data;
-       this.todayDate = data[0].Doc_Date;
+      //  this.todayDate = new Date(data[0].Doc_Date);
       //  this.minDate = new Date(data[0].Doc_Date.getDate());
       //  this.maxDate = new Date(data[0].Doc_Date.getDate());
        this.ObjrsnsClosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
@@ -656,8 +661,9 @@ onConfirm(){
     //this.todayDate = new Date();
     // this.minDate = new Date(this.todayDate.getDate());
     // this.maxDate = new Date(this.todayDate.getDate());
-    this.datepickerdisable = false;
-    this.GetDate();
+    this.datepickerdisable = true;
+    // this.GetDate();
+    this.Editlist = [];
   }
 
 }

@@ -201,10 +201,8 @@
                                             <th>Product Type</th>
                                             <th>Product Description</th>
                                             <th>UOM</th>
-                                            <!-- <th>Stock Qty</th> -->
-                                            <!-- <th>Batch No</th>
-                                            <th>Batch Qty</th> -->
-                                            <!-- <th >Current Stock in Department</th> -->
+                                            <th>Opening Qty</th>
+                                            <th>Receive Qty</th>
                                             <th>Closing Qty</th>
                                             <th>Wastage Qty</th>
                                             <th>Reason</th>
@@ -215,9 +213,8 @@
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Description }}</td>
                                             <td>{{col.UOM}}</td>
-                                            <!-- <td>{{col.Stock_Qty}}</td> -->
-                                            <!-- <td>{{col.Batch_No}}</td>
-                                            <td>{{col.Batch_Qty}}</td> -->
+                                            <td>{{col.Opening_Qty}}</td>
+                                            <td>{{col.Receive_Qty}}</td> 
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Closing_Qty' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Wastage_Qty' (ngModelChange)='ChangeRemarks(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.remarkdisabled" class="form-control" style="width: 200px;" /></td>

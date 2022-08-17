@@ -436,6 +436,9 @@ export class TenderViewDetailsCompComponent implements OnInit {
   getTotalPurchaseAmt() {
     return this.ShowAddedEstimateProductList.length ? (Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt()).toFixed(2) : '-';
   }
+  getTotalSaleAmt() {
+    return this.ShowAddedEstimateProductList.length ? (Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getSaleAmt()).toFixed(2) : '-';
+  }
   // Finance Details 
   GetPaymentList() {
     this.$http

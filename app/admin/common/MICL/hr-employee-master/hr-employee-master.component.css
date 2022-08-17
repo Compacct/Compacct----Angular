@@ -71,3 +71,9 @@ div.label-t {
     padding: 6px 12px;
     background: rgb(206 216 216 / 51%);
 }
+
+.createPatient {
+    padding: 0 5px!important;
+    border-radius: 3px!important;
+    margin-top: 5px!important;
+}

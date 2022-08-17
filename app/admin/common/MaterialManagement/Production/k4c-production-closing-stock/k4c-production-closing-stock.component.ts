@@ -202,7 +202,9 @@ export class K4cProductionClosingStockComponent implements OnInit {
     this.ProClosingStockFormSubmitted = true;
     if(valid){
       this.ShowSpinner = true;
+      this.ObjProClosingStock.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
     const TempObj = {
+      Doc_Date : this.ObjProClosingStock.Doc_Date,
       Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID ? this.ObjProClosingStock.Cost_Cen_ID : 0,
       Godown_ID : this.ObjProClosingStock.godown_id ? this.ObjProClosingStock.godown_id : 0,
       Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
