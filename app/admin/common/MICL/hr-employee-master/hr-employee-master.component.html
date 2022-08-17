@@ -8,10 +8,10 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6" *ngIf="Save && !Del">
+            <div class="ui-g-6" *ngIf="Del2 && !Del">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
-            <div class="ui-g-6" *ngIf="Del && !Save">
+            <div class="ui-g-6" *ngIf="Del && !Del2">
                 <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
@@ -36,7 +36,7 @@
                                 {{option.NAME}}
                               </option>
                              </select> -->
-                                    <p-dropdown [options]="EmployeeList" name="Employee" #Employee="ngModel" [(ngModel)]="objselect.Emp_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
+                                    <p-dropdown [options]="EmployeeList" name="Employee" #Employee="ngModel" [(ngModel)]="objselect.Emp_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
                                         [virtualScroll]="true" itemSize="30" (onChange)="getEmployeeDetails(objselect.Emp_ID)">
                                     </p-dropdown>
                                 </div>
@@ -83,30 +83,31 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <div class="col-sm-6">
-                                                <label class="control-label ">Present Address 1<sup class="text-danger">*</sup></label>
-                                                <input class="form-control " placeholder="Present Address 1" name="address1" #address1="ngModel" [(ngModel)]="objemployee.Present_Add_1" [ngClass]="{ 'clearance': EmployeeFormSubmitted && address1.errors?.required} " required>
+                                            <div class="col-sm-8">
+                                                <label class="control-label ">Present Address <sup class="text-danger">*</sup></label>
+                                                <input class="form-control " placeholder="Present Address " name="address1" #address1="ngModel" [(ngModel)]="objemployee.Present_Add_1" [ngClass]="{ 'clearance': EmployeeFormSubmitted && address1.errors?.required} " required>
                                             </div>
-                                            <div class="col-sm-6">
-                                                <label class="control-label">Present Address 2</label>
-                                                <input class="form-control" placeholder="Present Address 2" name="address2" #address2="ngModel" [(ngModel)]="objemployee.Present_Add_2">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <label class="control-label">Pincode<sup class="text-danger ">*</sup></label>
                                                 <input class="form-control" placeholder="Pincode" name="Pincode" #Pincode="ngModel" [(ngModel)]="objemployee.Present_Pin" (ngModelChange)="StateDistrictChange(objemployee.Present_Pin)" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Pincode.errors?.required}"
                                                     required>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <!-- <div class="col-sm-6">
+                                                <label class="control-label">Present Address 2</label>
+                                                <input class="form-control" placeholder="Present Address 2" name="address2" #address2="ngModel" [(ngModel)]="objemployee.Present_Add_2">
+                                            </div> -->
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="col-sm-4">
                                                 <label class="control-label">District</label>
                                                 <input class="form-control" placeholder="District" name="District" #District="ngModel" [(ngModel)]="objemployee.Present_Dist" disabled>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <label class="control-label">State</label>
                                                 <input class="form-control" placeholder="State" name="State" #State="ngModel" [(ngModel)]="objemployee.Present_State" disabled>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <label class="control-label">Country</label>
                                                 <input class="form-control" placeholder="Country" name="Country" #Country="ngModel" [(ngModel)]="objemployee.Present_Country" disabled>
                                             </div>
@@ -131,28 +132,28 @@
                                 <div class="col-sm-12 ">
                                     <p-checkbox label="Same As Present Address" [(ngModel)]="ischeckaddress" name="Addresscheck" #Addresscheck="ngModel" (ngModelChange)="AddressCopy()" binary="true"></p-checkbox>
                                 </div>
-                                <div class="col-sm-6 ">
-                                    <label class="control-label ">Permanent Address 1<sup class="text-danger ">*</sup></label>
-                                    <input class="form-control" placeholder="Permanent Address 1" name="paddress1" #paddress1="ngModel" [(ngModel)]="objemployee.Perm_Add_1" [ngClass]="{ 'clearance': EmployeeFormSubmitted && paddress1.errors?.required}" required>
+                                <div class="col-sm-8">
+                                    <label class="control-label ">Permanent Address <sup class="text-danger ">*</sup></label>
+                                    <input class="form-control" placeholder="Permanent Address " name="paddress1" #paddress1="ngModel" [(ngModel)]="objemployee.Perm_Add_1" [ngClass]="{ 'clearance': EmployeeFormSubmitted && paddress1.errors?.required}" required>
                                 </div>
-                                <div class="col-sm-6 ">
+                                <!-- <div class="col-sm-6 ">
                                     <label class="control-label">Permanent Address 2</label>
                                     <input class="form-control" placeholder="Permanent Address 2" name="paddress2" #paddress2="ngModel" [(ngModel)]="objemployee.Perm_Add_2">
-                                </div>
-                                <div class="col-sm-3 ">
+                                </div> -->
+                                <div class="col-sm-4">
                                     <label class="control-label">Pincode</label>
                                     <input class="form-control" placeholder="Pincode" name="Pincode2" #Pincode2="ngModel" [(ngModel)]="objemployee.Perm_Pin" (ngModelChange)="StateDistrictChange2(objemployee.Perm_Pin)" [ngClass]="{ 'clearance':EmployeeFormSubmitted && Pincode2.errors?.required} "
                                         required>
                                 </div>
-                                <div class="col-sm-3 ">
+                                <div class="col-sm-4">
                                     <label class="control-label">District<sup class="text-danger">*</sup></label>
                                     <input class="form-control" placeholder="District" name="District2" #District2="ngModel" [(ngModel)]="objemployee.Perm_Dist" disabled>
                                 </div>
-                                <div class="col-sm-3 ">
+                                <div class="col-sm-4">
                                     <label class="control-label">State</label>
                                     <input class="form-control" placeholder="State" name="State2" #State2="ngModel" [(ngModel)]="objemployee.Perm_State" disabled>
                                 </div>
-                                <div class="col-sm-3 ">
+                                <div class="col-sm-4">
                                     <label class="control-label">Country</label>
                                     <input class="form-control" placeholder="Country" name="Country2" #Country2="ngModel" [(ngModel)]="objemployee.Perm_Country" disabled>
                                 </div>
@@ -207,8 +208,8 @@
                                     <input class="form-control" placeholder="Father/Mother's Name" name="Father" #Father="ngModel" [(ngModel)]="objemployee.Gurdian_Name" [ngClass]="{'clearance ': EmployeeFormSubmitted && Father.errors?.required}" required>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="control-label">Husband/Spouse Name</label>
-                                    <input class="form-control" placeholder="Husband/Spouse Name" name="Husband" #Husband="ngModel" [(ngModel)]="objemployee.Spouse_Wife_Name">
+                                    <label class="control-label">Spouse Name</label>
+                                    <input class="form-control" placeholder="Spouse Name" name="Husband" #Husband="ngModel" [(ngModel)]="objemployee.Spouse_Wife_Name">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Phone</label>
@@ -242,8 +243,8 @@
                                     <input class="form-control" placeholder="EPIC NO" name="EPIC" #EPIC="ngModel" [(ngModel)]="objemployee.EPIC_No">
                                 </div>
                                 <div class="col-sm-3">
-                                    <label class="control-label">ADHAR NO</label>
-                                    <input class="form-control" placeholder="Adhar No" name="ADHAR" CompacctDigitonly="true" maxlength="12" minlength="12" #ADHAR="ngModel" [(ngModel)]="objemployee.Adhar_No">
+                                    <label class="control-label">AADHAAR NO</label>
+                                    <input class="form-control" placeholder="Aadhaar No" name="ADHAR" CompacctDigitonly="true" maxlength="12" minlength="12" #ADHAR="ngModel" [(ngModel)]="objemployee.Adhar_No">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">PAN NO</label>
@@ -262,7 +263,7 @@
                                 ">
                                         <i class="fa fa-bars">
                                 </i> &nbsp;<strong>Posting Details:</strong></h5>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <label class="control-label">Working Company<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="Working" #Working="ngModel" [(ngModel)]="objemployee.Comp_ID" [ngClass]="{'clearance ': EmployeeFormSubmitted && Working.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
@@ -271,7 +272,7 @@
                                         </option>
                                        </select>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <label class="control-label">Current Location<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="Current" #Current="ngModel" [(ngModel)]="objemployee.Location_ID" [ngClass]="{'clearance ': EmployeeFormSubmitted && Current.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
@@ -280,8 +281,12 @@
                                         </option>
                                        </select>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6" style="margin-top: 10px;">
                                         <label class="control-label">Department<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <span (click)="ViewDepartmentType()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="CreateDepartment()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="Department" #Department="ngModel" [(ngModel)]="objemployee.Dept_ID" [ngClass]="{'clearance ': EmployeeFormSubmitted && Department.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of DeptList" value="{{option.Dept_ID}}">
@@ -290,8 +295,12 @@
                                        </select>
                                     </div>
 
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6" style="margin-top: 10px;">
                                         <label class="control-label">Designation<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <span (click)="ViewDesignationType()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="CreateDesignation()" class="btn-vk createPatient" style="cursor:pointer"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="Designation" #Designation="ngModel" [(ngModel)]="objemployee.Desig_ID" [ngClass]="{'clearance ': EmployeeFormSubmitted && Designation.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of DesignationList" value="{{option.Desig_ID}}">
@@ -299,7 +308,11 @@
                                         </option>
                                        </select>
                                     </div>
-                                    <div class="col-sm-2" style="margin-top: 25px;">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">State</label>
+                                        <input class="form-control" placeholder="State" name="Posting_State" #Posting_State="ngModel" [(ngModel)]="objemployee.Posting_State">
+                                    </div>
+                                    <div class="col-sm-2" style="margin-top: 1px;">
                                         <label class="control-label">Is HOD</label>
                                         <p-checkbox [(ngModel)]="objemployee.Is_HOD" name="Hold_Bill_Flag" [binary]="true"></p-checkbox>
                                     </div>
@@ -318,7 +331,7 @@
                                     </i> &nbsp;<strong>Salary payments Details:</strong></h5>
                                     <div class="col-sm-4">
                                         <label class="control-label">Salary Paid By<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Salary_Paid" #Salary_Paid="ngModel" [(ngModel)]="objemployee.Salary_Paid" (change)="Bankinfo()" [ngClass]="{'clearance ': EmployeeFormSubmitted && Salary_Paid.errors?.required}" required>
+                                        <select class="form-control" name="Salary_Paid" #Salary_Paid="ngModel" [(ngModel)]="objemployee.Salary_Paid_By" (change)="Bankinfo()" [ngClass]="{'clearance ': EmployeeFormSubmitted && Salary_Paid.errors?.required}" required>
                                              <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of SalaryPaidList" value="{{option}}">
                                           {{option}}
@@ -446,10 +459,10 @@
                                     <i class="fa fa-slack" aria-hidden="true">
                             </i> &nbsp;<strong>Statutary Details:</strong></h5>
                                 <div class="col-sm-4">
-                                    <label class="control-label">ESI Details</label>
+                                    <label class="control-label">ESIC Details</label>
                                     <div class="input-group ">
                                         <div class="input-group-addon">
-                                            <p-checkbox label="ESI No" [(ngModel)]="objemployee.ESI_Avail" name="ESI" #ESI="ngModel" binary="true" (ngModelChange)="Esicheck(objemployee.ESI_Avail)"></p-checkbox>
+                                            <p-checkbox label="ESIC No" [(ngModel)]="objemployee.ESI_Avail" name="ESI" #ESI="ngModel" binary="true" (ngModelChange)="Esicheck(objemployee.ESI_Avail)"></p-checkbox>
                                         </div>
                                         <input class="form-control" name="Esi_No" #Esi_No="ngModel" [(ngModel)]="objemployee.ESI_No" [disabled]="!objemployee.ESI_Avail">
                                     </div>
@@ -464,7 +477,7 @@
                                         <span class="input-group-btn" style="width:0px;"></span>
 
                                         <div class="input-group-addon">
-                                            <label>UNA No</label>
+                                            <label>UAN No</label>
                                         </div>
                                         <input class="form-control" name="UNA" #UNA="ngModel" [(ngModel)]="objemployee.UAN_NO" [disabled]="!objemployee.PF_Avail">
                                     </div>
@@ -485,8 +498,11 @@
                                     <i class="glyphicon glyphicon-user">
                                 </i> &nbsp;<strong>Managers</strong></h5>
                                 <div class="col-sm-6">
-                                    <label class="control-label">Reporting Managers<sup class="text-danger">*</sup></label>
-                                    <select class="form-control" name="Reporting" #Reporting="ngModel" [(ngModel)]="objemployee.Report_Manager" [ngClass]="{'clearance ': EmployeeFormSubmitted && Reporting.errors?.required}" required>
+                                    <label class="control-label">Reporting Managers</label>
+                                    <div class="pull-right">
+                                        <span (click)="RefreshReporting()" class="btn-vk  createPatient" style="cursor: pointer;"><i class="fa fa-refresh"></i> Refresh</span>
+                                    </div>
+                                    <select class="form-control" name="Reporting" #Reporting="ngModel" [(ngModel)]="objemployee.Report_Manager">
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of ReportingList" value="{{option.Emp_ID}}">
                                       {{option.NAME}}
@@ -494,8 +510,11 @@
                                    </select>
                                 </div>
                                 <div class="col-sm-6">
-                                    <label class="control-label">Business Managers<sup class="text-danger">*</sup></label>
-                                    <select class="form-control" name="Business" #Business="ngModel" [(ngModel)]="objemployee.Business_Manager" [ngClass]="{'clearance ': EmployeeFormSubmitted && Business.errors?.required}" required>
+                                    <div class="pull-right">
+                                        <span (click)="RefreshReporting()" class="btn-vk  createPatient" style="cursor: pointer;"><i class="fa fa-refresh"></i> Refresh</span>
+                                    </div>
+                                    <label class="control-label">Business Managers</label>
+                                    <select class="form-control" name="Business" #Business="ngModel" [(ngModel)]="objemployee.Business_Manager">
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of ReportingList" value="{{option.Emp_ID}}">
                                       {{option.NAME}}
@@ -578,6 +597,27 @@
                             </p-table>
                         </div>
 
+                        <div class="form-group" style="padding: 1em;">
+                            <h5 style="
+                            padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: -10px;
+                            ">
+                                <i class="glyphicon glyphicon-user">
+                            </i> &nbsp;<strong>ERP Settings</strong></h5>
+                            <div class="col-sm-6">
+                                <label class="control-label">ERP User ID</label>
+                                <select class="form-control" name="Reporting" #Reporting="ngModel" [(ngModel)]="objemployee.Login_User_ID">
+                                    <option  [ngValue]="undefined">Select</option>
+                                <option  *ngFor="let option of UserList" value="{{option.User_ID}}">
+                                  {{option.Name}}
+                                </option>
+                               </select>
+                            </div>
+                        </div>
+
                         <div class="box-footer">
                             <button class="btn btn-primary pull-right" id="load" (click)="saveemployeemaster(EmployeeForm.form.valid)" [disabled]="Spinner">
                                                 <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px ', height: '15px '}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
@@ -592,3 +632,141 @@
         </div>
     </div>
 </div>
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="100">
+
+    <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="ViewDesignationList" [globalFilterFields]='["Designation"]' [rowHover]="true" [autoLayout]="true" #dt2>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <!-- <th width='50%'>Product Description</th>
+                    <th width='25%'>Batch No</th>
+                    <th width='25%'>Receive Qty</th> -->
+                    <th>Designation</th>
+
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+
+                    <!-- <td>{{col.Product_Description}}</td>
+                    <td>{{col.Batch_No}}</td>
+                    <td>{{col.Rcv_Qty}}</td> -->
+                    <td>{{col.Designation}}</td>
+
+                    <td><button (click)="DeleteDesignation(col)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+
+    <p-footer>
+        <button type="button" (click)="ViewProTypeModal = false" class="btn btn-default">
+CLOSE
+</button>
+    </p-footer>
+</p-dialog>
+
+
+<p-dialog [header]="'Create'" [appendTo]="'body'" [visible]="ViewProTypeModal2" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '400px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Designation<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="dis_Reason" [(ngModel)]="Desig" placeholder="Designation" [ngClass]="{'clearance': Desigsubmitted && !Desig}" required>
+            </div>
+        </div>
+
+
+
+    </div>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="SaveDesignation(Desig)" label="Create"></button>
+        <button type="button" (click)="ViewProTypeModal2 = false" class="btn btn-default">
+  CLOSE
+</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal3" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '400px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="100">
+
+    <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="ViewDepartmentList" [globalFilterFields]='["Dept_Name"]' [rowHover]="true" [autoLayout]="true" #dt3>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <!-- <th width='50%'>Product Description</th>
+                    <th width='25%'>Batch No</th>
+                    <th width='25%'>Receive Qty</th> -->
+                    <th>Department</th>
+
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+
+                    <!-- <td>{{col.Product_Description}}</td>
+                    <td>{{col.Batch_No}}</td>
+                    <td>{{col.Rcv_Qty}}</td> -->
+                    <td>{{col.Dept_Name}}</td>
+
+                    <td><button (click)="DeleteDepartment(col)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+
+    <p-footer>
+        <button type="button" (click)="ViewProTypeModal3 = false" class="btn btn-default">
+CLOSE
+</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'Create'" [appendTo]="'body'" [visible]="ViewProTypeModal4" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Department<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="dis_Department" [(ngModel)]="Dept" placeholder="Department" [ngClass]="{'clearance': Deptsubmitted && !Dept}" required>
+            </div>
+        </div>
+
+
+
+    </div>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="SaveDepartment(Dept)" label="Create"></button>
+        <button type="button" (click)="ViewProTypeModal4 = false" class="btn btn-default">
+  CLOSE
+</button>
+    </p-footer>
+</p-dialog>

@@ -255,12 +255,13 @@
                                     </div>
                                     <!--  -->
                                     <div class="clearfix" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'"></div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Raw Material'">
-                                        <label class="control-label">Saleable Product<sup class="text-danger"></sup></label>
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
+                                        <label class="control-label" *ngIf="Param_Flag != 'Raw Material'">Saleable Product<sup class="text-danger"></sup></label>
+                                        <label class="control-label" *ngIf="Param_Flag === 'Raw Material'">Billable<sup class="text-danger"></sup></label>
                                         <div class="checkBox">
                                             <label>
                                        <p-checkbox  [(ngModel)]="ObjmasterProduct.Saleable_Product" #Saleable_Product="ngModel" name="Saleable_Product" binary="true"
-                                       ></p-checkbox> Enable Saleable Product
+                                       ></p-checkbox>  {{billableSaleable}}
                                    </label>
                                         </div>
                                     </div>

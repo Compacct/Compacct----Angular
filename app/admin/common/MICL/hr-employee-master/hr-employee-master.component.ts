@@ -21,7 +21,7 @@ import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime
 export class HREmployeeMasterComponent implements OnInit {
 
  
-  Save : boolean = false;
+  Del2 : boolean = false;
   Del : boolean = false;
   tabIndexToView : any = 0;
   items : any = [];
@@ -32,6 +32,8 @@ export class HREmployeeMasterComponent implements OnInit {
   Entry_Date : any;
   seachSpinner :any = false;
   Spinner : any = false;
+  Desigid : any;
+  Deptid : any;
   
 
   NationalityList : any = [];
@@ -70,8 +72,21 @@ export class HREmployeeMasterComponent implements OnInit {
   PDFFlag = false;
   ProductPDFFile:any = {};
   DocumentList : any = [];
+  UserList : any = [];
   AllEmployeeList : any = [];
   AllStateDistrictList2 : any =[];
+  ViewDesignationList : any = [];
+  ViewDepartmentList : any = [];
+  ViewDesignationListObj : any = {};
+  ViewDepartmentListObj : any = {};
+  ViewProTypeModal : any = false;
+  ViewProTypeModal2 : any = false;
+  ViewProTypeModal3 : any = false;
+  ViewProTypeModal4 : any = false;
+  Desigsubmitted :any = false;
+  Deptsubmitted : any = false;
+  Desig : string = "";
+  Dept : string = "";
   ProductView:any = {}
   ProductViewFalg:boolean = false
   SpinnerDoc:boolean = false
@@ -105,7 +120,7 @@ export class HREmployeeMasterComponent implements OnInit {
     this.physicallyChallanged = ["YES", "NO"];
     this.weakofflist = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-    this.Statuslist = ["WORKING-REJOIN", "WORKING-PROVITION", "WORKING-CASUAL", "WORKING-CONFIRMED", "WORKING-PARTTIME", "RETIRED", "LEFT", "SUSPENDED", "ABSCONDED", "PROBATION"];
+    this.Statuslist = ["WORKING-REJOIN", "WORKING-PROVISION", "WORKING-CASUAL", "WORKING-CONFIRMED", "WORKING-PARTTIME", "RETIRED", "LEFT", "SUSPENDED", "ABSCONDED", "PROBATION"];
     this.getDepartment();
     this.getWorkingCompany();
     this.getDesignation();
@@ -113,6 +128,7 @@ export class HREmployeeMasterComponent implements OnInit {
     this.getEmployee();
     this.getBankName();
     this.getReportingList();
+    this.getUser();
     this.objemployee.Bank_ID = 1;
     
   }
@@ -122,7 +138,7 @@ onReject(){
     this.compacctToast.clear("c");
 }
 Bankinfo(){
-  if(this.objemployee.Salary_Paid === 'Bank')
+  if(this.objemployee.Salary_Paid_By === 'Bank')
   {
     this.isdiabled = false;
     this.objemployee.Bank_ID = 1;
@@ -457,7 +473,9 @@ saveEmp(){
     this.objemployee.Late_Ded_Tag = this.objemployee.Late_Ded_Tag? 'Y' : 'N';
     this.objemployee.Is_Biometric = this.objemployee.Is_Biometric? 'Y' : 'N';
     this.objemployee.Is_HOD = this.objemployee.Is_HOD? 'Y' : 'N';
-    
+    this.objemployee.Login_User_ID = this.objemployee.Login_User_ID ? this.objemployee.Login_User_ID : 0;
+    this.objemployee.Off_In_Time = this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time));
+    this.objemployee.Off_Out_Time = this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time));
      if(this.Employeeid){
      console.log("Update");
       const obj = {
@@ -523,6 +541,7 @@ saveEmp(){
             this.Spinner = false;
             this.clearData();
             this.getEmployee();
+            this.getReportingList();
            
             
         }
@@ -604,17 +623,14 @@ GetNewEmployee(){
   this.flag=false;
   this.checkcode = undefined;
   this.DocumentList = [];
+  this.ischeckaddress = false;
   this.imagePath= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3_qIHtXBZ7vZeMQhyD8qLC1VRB9ImHadL09KET_iSQEX6ags4ICknfmqEKz8Nf6IOsA&usqp=CAU "
 
 
 }
-onConfirm(){
 
-}
 
-onConfirm2(){
 
-}
 ValidatePAN() {
   var txtPANCard:any = document.getElementById("txtPANCard");
   // var lblPANCard:any = document.getElementById("lblPANCard")
@@ -702,6 +718,342 @@ cleanPreView(){
   this.imagePath = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3_qIHtXBZ7vZeMQhyD8qLC1VRB9ImHadL09KET_iSQEX6ags4ICknfmqEKz8Nf6IOsA&usqp=CAU "
 }
 
+RefreshReporting(){
+  this.getReportingList();
+
+}
+
+ViewDesignationType(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+     "Report_Name_String":"Get_Designation" 
+      }
+      
+        this.GlobalAPI.getData(obj)
+        .subscribe((data)=>
+        {
+          this.ViewDesignationList = data;
+          this.ViewDesignationListObj = data;
+          //this.objSubLedger.State=this.AllStateList.StateName;
+          console.log('ViewDesignationListObj = ', this.ViewDesignationListObj);
+        
+        });
+        setTimeout(()=>{
+          this.ViewProTypeModal = true;
+         },200);
+      }
+
+      DeleteDesignation(col){
+        this.Del = true;
+        this.Del2 = false;
+        this.Desigid = col.Desig_ID;
+        
+        console.log(this.Desigid);
+           
+            this.Spinner = true;
+            
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "c",
+             sticky: true,
+             closable: false,
+             severity: "warn",
+             summary: "Are you sure?",
+             detail: "Confirm to proceed"
+           })
+           this.Spinner = false;
+
+      }
+
+      onConfirm2(){
+        const tempobj={
+          Desig_ID : this.Desigid,
+          
+        }
+        const obj = {
+          "SP_String": "Sp_HR_Employee_Master",
+          "Report_Name_String": "Delete_Designation",
+          "Json_Param_String": JSON.stringify([tempobj])
+          
+        }
+         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          console.log('data=',data);
+          //if (data[0].Sub_Ledger_ID)
+          if(data[0].Response=='Done')
+          {
+            //this.SubLedgerID = data[0].Column1
+           this.compacctToast.clear();
+           this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Designation Delete Succesfully ",
+           detail: "Succesfully Deleted"
+         });
+         //this.Delete(this.DocNo);
+         this.ViewDesignationType();
+         this.getDesignation();
+        }
+        else if(data[0].Response=='Already Exists'){
+          this.compacctToast.clear();
+           this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Error",
+           detail: "Already Exists"
+           })
+
+        }
+        else{
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error",
+          detail: "Something Wrong"
+        });
+      }
+           
+         })
+      
+
+      }
+
+    CreateDesignation(){
+    this.Desig = "";
+    this.Desigsubmitted = false;
+    setTimeout(() => {
+      this.ViewProTypeModal2 = true;
+    }, 200);
+    }
+
+  SaveDesignation(Desig){
+    this.Desigsubmitted = true;
+    if(Desig){
+    this.Spinner = true;
+    
+    console.log(Desig);
+    const tempObj = {
+      
+      Designation : Desig
+    }
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+      "Report_Name_String": "Create_Designation",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log('data=',data);
+      if(data[0].Response)
+         {
+          
+           //this.SubLedgerID = data[0].Column1
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Designation Create Succesfully ",
+          detail: "Succesfully Created"
+        });
+        this.Spinner = false;
+        
+        this.ViewProTypeModal2 = false;
+        this.getDesignation();
+        this.Desigsubmitted = false;
+        
+      }
+      else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something Wrong"
+      });
+      this.Spinner = false;
+      this.ViewProTypeModal2 = false
+      }
+       
+     });
+     
+    }
+  }
+
+  
+  ViewDepartmentType(){
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+       "Report_Name_String":"Get_Dept" 
+        }
+        
+          this.GlobalAPI.getData(obj)
+          .subscribe((data)=>
+          {
+            this.ViewDepartmentList = data;
+            this.ViewDepartmentListObj = data;
+            //this.objSubLedger.State=this.AllStateList.StateName;
+            console.log('ViewDepartmentListObj = ', this.ViewDepartmentListObj);
+          
+          });
+          setTimeout(()=>{
+            this.ViewProTypeModal3 = true;
+           },200);
+
+  }
+
+  DeleteDepartment(col){
+       this.Del = false;
+        this.Del2 = true;
+        
+        this.Deptid = col.Dept_ID;
+        
+        console.log(this.Deptid);
+           
+            this.Spinner = true;
+            
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "c",
+             sticky: true,
+             closable: false,
+             severity: "warn",
+             summary: "Are you sure?",
+             detail: "Confirm to proceed"
+           })
+           this.Spinner = false;
+
+  }
+
+  onConfirm(){
+    const tempobj={
+      Dept_ID : this.Deptid,
+      
+    }
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+      "Report_Name_String": "Delete_Hr_Dept",
+      "Json_Param_String": JSON.stringify([tempobj])
+      
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log('data=',data);
+      //if (data[0].Sub_Ledger_ID)
+      if(data[0].Response=='Done')
+      {
+        //this.SubLedgerID = data[0].Column1
+       this.compacctToast.clear();
+       this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: "Department Delete Succesfully ",
+       detail: "Succesfully Deleted"
+     });
+     //this.Delete(this.DocNo);
+     this.ViewDepartmentType();
+     this.getDepartment();
+    }
+    else if(data[0].Response=='Already Exists'){
+      this.compacctToast.clear();
+       this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Error",
+       detail: "Already Exists"
+       })
+
+    }
+    else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Error",
+      detail: "Something Wrong"
+    });
+  }
+       
+     })
+  
+     
+  }
+
+  CreateDepartment(){
+    this.Dept = "";
+    this.Deptsubmitted = false;
+    setTimeout(() => {
+      this.ViewProTypeModal4 = true;
+    }, 200);
+    }
+
+    SaveDepartment(Dept){
+    this.Deptsubmitted = true;
+    if(Dept){
+    this.Spinner = true;
+    
+    console.log(Dept);
+    const tempObj = {
+      
+      Dept_Name : Dept
+    }
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+      "Report_Name_String": "Create_Hr_Dept",
+      "Json_Param_String": JSON.stringify([tempObj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log('data=',data);
+      if(data[0].Response)
+         {
+          
+           //this.SubLedgerID = data[0].Column1
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Department Create Succesfully ",
+          detail: "Succesfully Created"
+        });
+        this.Spinner = false;
+        
+        this.ViewProTypeModal4 = false;
+        this.getDepartment();
+        this.Deptsubmitted = false;
+        
+      }
+      else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something Wrong"
+      });
+      this.Spinner = false;
+      this.ViewProTypeModal4 = false
+      }
+       
+     });
+     
+    }
+
+    }
+
+  getUser(){
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+      "Report_Name_String":"Get_User"
+       
+        }
+        
+          this.GlobalAPI.getData(obj)
+          .subscribe((data)=>
+          {
+            this.UserList = data;
+           console.log("UserList=",this.UserList);
+            
+         
+          });
+
+  }
 
 
 clearData(){
@@ -812,8 +1164,11 @@ class Employee{
   photo_file:any;
   Document_Name : any;
   Doc_URL : any;
-  doc:any
-  Person_Photo:any
+  doc:any;
+  Person_Photo:any;
+  Login_User_ID : any;
+  Salary_Paid_By : any;
+  Posting_State : any
 }
 class Select{
   name : any;

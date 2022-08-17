@@ -485,9 +485,13 @@ export class RdbComponent implements OnInit {
         const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRdb.Sub_Ledger_ID))[0]
         console.log("productFilter",productFilter);
         if(Object.keys(productFilter).length){
+        var apidiscountamt = productFilter.Discount_Amount;
+        var qtydis = Number(apidiscountamt / this.ObjRdb1.PO_QTY).toFixed(2);
+        var discountamt = Number(Number(qtydis) * this.ObjRdb1.Received_Qty).toFixed(2);
         var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
-        var taxsgstcgst =  (Number(Number(amount) * Number(productFilter.GST_Percentage)) / 100).toFixed(2);
-        var totalamount = (Number(amount) + Number(taxsgstcgst)).toFixed(2);
+        var taxable = Number(amount) - Number(discountamt);
+        var taxsgstcgst =  (Number(Number(taxable) * Number(productFilter.GST_Percentage)) / 100).toFixed(2);
+        var totalamount = (Number(taxable) + Number(taxsgstcgst)).toFixed(2);
         var productObj = {
                     // RDB_Date : this.RDB_Date ? this.DateService.dateConvert(this.RDB_Date) : new Date(),
                     // Sub_Ledger_ID	: Number(this.ObjRdb.Sub_Ledger_ID),
@@ -507,7 +511,8 @@ export class RdbComponent implements OnInit {
                     Challan_Qty : Number(this.ObjRdb1.Challan_Qty),
                     Received_Qty : Number(this.ObjRdb1.Received_Qty),
                     Rate : productFilter.Rate,
-                    Taxable_Value :  Number(amount).toFixed(2),
+                    Discount_Amount : Number(discountamt).toFixed(2),
+                    Taxable_Value :  Number(taxable).toFixed(2),
                     Tax_Percentage : productFilter.GST_Percentage,
                     Total_Tax_Amount : Number(taxsgstcgst).toFixed(2),
                     Total_Amount : Number(totalamount).toFixed(2)
@@ -560,6 +565,7 @@ export class RdbComponent implements OnInit {
             Challan_Qty : Number(item.Challan_Qty),
             Received_Qty : Number(item.Received_Qty),
             Rate : Number(item.Rate),
+            Discount_Amount : Number(item.Discount_Amount).toFixed(2),
             Taxable_Value : Number(item.Taxable_Value).toFixed(2),
             Tax_Percentage : item.Tax_Percentage,
             Total_Tax_Amount : Number(item.Total_Tax_Amount).toFixed(2),
@@ -884,9 +890,9 @@ export class RdbComponent implements OnInit {
     console.log(productFilter);
     this.ObjRdb1.UOM = productFilter.UOM ? productFilter.UOM : " ";
     this.ObjRdb1.HSN_Code = productFilter.HSN_NO ? productFilter.HSN_NO : " ";
-    this.ObjRdb1.PO_QTY = productFilter.Qty ? productFilter.Qty : " ";
-    this.ObjRdb1.Challan_Qty = productFilter.Qty;
-    this.ObjRdb1.Received_Qty = productFilter.Qty;
+    this.ObjRdb1.PO_QTY = productFilter.PO_Qty ? productFilter.PO_Qty : " ";
+    this.ObjRdb1.Challan_Qty = productFilter.PO_Qty;
+    this.ObjRdb1.Received_Qty = productFilter.PO_Qty;
    }
    else {
      this.ObjRdb1.UOM = undefined;
