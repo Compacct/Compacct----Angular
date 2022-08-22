@@ -71,6 +71,8 @@ export class GrnComponent implements OnInit {
   DocNo: undefined;
   editlist:any = [];
   DiscountAmount: any;
+  RegisterSpinner = false;
+  ObjGRNRegister = new GRNRegister();
 
 
   constructor(
@@ -85,7 +87,7 @@ export class GrnComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE", "PENDING RDB"];
+    this.items = ["BROWSE", "CREATE", "PENDING RDB","GRN REGISTER"];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -103,7 +105,7 @@ export class GrnComponent implements OnInit {
   TabClick(e){
     // console.log(e)
      this.tabIndexToView = e.index;
-     this.items = ["BROWSE", "CREATE", "PENDING RDB"];
+     this.items = ["BROWSE", "CREATE", "PENDING RDB","GRN REGISTER"];
      this.buttonname = "Save";
      this.Spinner = false;
     //  this.clearData();
@@ -984,6 +986,40 @@ export class GrnComponent implements OnInit {
     })
   }
 
+  // RDB REGISTER
+  getDateRangeForRegister(dateRangeObjRegister) {
+    if (dateRangeObjRegister.length) {
+      this.ObjGRNRegister.start_date = dateRangeObjRegister[0];
+      this.ObjGRNRegister.end_date = dateRangeObjRegister[1];
+    }
+  }
+  PrintGRNRegister() {
+    // console.log("print register")
+    this.RegisterSpinner = true;
+    // if(DocNo) {
+    // const objtemp = {
+    //   "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+    //   "Report_Name_String": "RDB_Print"
+    //   }
+    // this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    //   var printlink = data[0].Column1;
+    // if(this.start_date && this.end_date) {
+      const start = this.ObjGRNRegister.start_date
+      ? this.DateService.dateConvert(new Date(this.ObjGRNRegister.start_date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjGRNRegister.end_date
+      ? this.DateService.dateConvert(new Date(this.ObjGRNRegister.end_date))
+      : this.DateService.dateConvert(new Date());
+    //   console.log(start)
+    //   console.log(end)
+    if(start && end) {
+    window.open("/Report/Crystal_Files/MICL/GRN_Register.aspx?From_Date=" + start + "&" + "To_Date=" + end, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    this.RegisterSpinner = false;
+    }
+    // })
+    // }
+  }
+
 
 }
 
@@ -1033,6 +1069,11 @@ class GRN {
   end_date : Date;
   Cost_Cen_ID : any;
 }
+class GRNRegister {
+  start_date : Date;
+  end_date : Date;
+}
+
 
 
 

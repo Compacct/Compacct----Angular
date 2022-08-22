@@ -49,6 +49,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th style="width:5em">Action</th>
+                                                <th>Material Type</th>
                                                 <th>Prodct Type</th>
                                                 <th>Product Sub Type</th>
                                                 <th>Product Description</th>
@@ -94,6 +95,7 @@
                                                         </ul>
                                                     </div>
                                                 </td> 
+                                                <td>{{col.Material_Type}}</td> 
                                                 <td>{{col.Product_Type}}</td> 
                                                 <td>{{col.Product_Sub_Type}}</td>
                                                 <td>{{col.Product_Description}}</td>
@@ -118,6 +120,32 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                         <form name="ProductForm" #ProductForm="ngForm" novalidate >
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <button (click)="ViewMaterialType()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-eye"></i> View</button>
+                                            &nbsp; 
+                                            <button (click)="MatTypePopup()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-plus">
+                                            </i> Create</button>
+                                        </div>
+                                        <p-dropdown 
+                                        [options]="AllMaterialData" 
+                                        name="Material_Type"
+                                        [(ngModel)]="Objproduct.Material_ID"
+                                        #Material_Type="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Item Found'" 
+                                        (onChange)="MaterialChange()"
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Material Type'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        [ngClass]="{'clearance': ProductFormSubmitted && Material_Type.errors?.required}"required>
+                                        </p-dropdown>
+                                </div>
+                                </div>
                     <div class="form-group"style="padding: 1em;">
                         <h5 style="
                             padding: 0.5em 1em;
@@ -310,6 +338,53 @@
 </div>  
 
 <!-- CREATE -->
+<!--Material Type -->                                           
+<p-dialog 
+[header]="'Create Material Type'" 
+[appendTo]="'body'" 
+[visible]="MatTypeModal" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true"
+[style]="{ width: '40%', minWidth: '200px' }" 
+style="text-align: center;" 
+[minY]="70"
+[maximizable]="true" 
+[baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="MaterialTypeForm" #MaterialTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
+                    <input type="text"
+                    class="form-control" 
+                    name="MT" #MT="ngModel" 
+                    [(ngModel)]="MaterialTypeName" 
+                    placeholder="Material Type" 
+                    allow-pattern="([a-z ]|\.)" 
+                    [ngClass]="{clearance: MaterialTypeFormSubmitted && MT?.errors?.required}" required />
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="MatTypeModal = false" class="btn btn-default">CANCEL</button>
+            <button type="submit" 
+            name="bill" 
+            class="btn btn-primary pull-right custombutton" 
+            (click)="CreateMaterialType(MaterialTypeForm.form.valid)" 
+            id="load2" [disabled]="Spinner">
+                <p-progressSpinner
+                    *ngIf="Spinner"
+                    [style]="{ width: '15px', height: '15px' }"
+                    strokeWidth="8"
+                    animationDuration=".5s">
+                </p-progressSpinner>
+            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>&nbsp;CREATE
+        </button>
+    </p-footer>
+</p-dialog>
 <p-dialog 
 [header]="'Create Product Type'" 
 [appendTo]="'body'" 
@@ -591,6 +666,31 @@ style="text-align: center;"
 </p-dialog>
 
 <!-- VIEWS -->
+<!--Material Type -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewMetTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+       <p-table [value]="MaterialData"  [rowHover]="true">
+             <ng-template pTemplate="header">
+                <tr>
+                    <th>Material Type </th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                     <td>{{col.Material_Type}}</td>
+                    <td><button class="btn btn-sm btn-danger" 
+                        (click)="deleteMaterialType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewMetTypeModal = false" class="btn btn-default">
+  CANCEL
+       </button>
+    </p-footer>
+</p-dialog>
 <!-- Product Type -->
 <p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
