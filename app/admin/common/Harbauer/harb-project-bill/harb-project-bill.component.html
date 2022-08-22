@@ -1,0 +1,42 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+        <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="BillingAddressForm" #BillingAddressForm="ngForm" novalidate >
+                                <h5 class="customh5">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Billing Address :</strong>
+                                </h5>
+                            </form>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
