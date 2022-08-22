@@ -186,17 +186,44 @@
                                 <hr class="box boxboxDivide-primary">
                                 <form name="requisitionmaterialForm" #requisitionmaterialForm="ngForm" novalidate>
                                     <div class="form-group">
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-3" *ngIf="ReqType === 'Y'">
+                                            <label class="control-label">Requisition Type <sup class="text-danger">*</sup></label>
+                                             <select class="form-control" 
+                                              name="reqtype" 
+                                             #reqtype="ngModel"
+                                             [(ngModel)]='Requisition_ID' 
+                                             [disabled]="AddMaterialsList.length"
+                                             [ngClass]="{'clearance': requisitionmaterialFormSubmit && reqtype?.errors?.required}" 
+                                              required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of ReqTypeList" [value]="option.Requisiton_Type">{{option.Requisiton_Type}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3">
                                             <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
                                              <select class="form-control" 
                                             name="materialtype" 
                                             #materialtype="ngModel"
-                                             [(ngModel)]='objmaterial.Material_Type_ID' 
+                                             [(ngModel)]='Material_Type_ID' 
+                                             [disabled]="AddMaterialsList.length"
                                              [ngClass]="{'clearance': requisitionmaterialFormSubmit && materialtype?.errors?.required}" 
+                                             (change)="getProductCategory()"
+                                              required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of MaterialTypeList" [value]="option.Material_Type">{{option.Material_Type}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Product Category <sup class="text-danger">*</sup></label>
+                                             <select class="form-control" 
+                                            name="procat" 
+                                            #procat="ngModel"
+                                             [(ngModel)]='objmaterial.Product_Category' 
+                                             [ngClass]="{'clearance': requisitionmaterialFormSubmit && procat?.errors?.required}" 
                                              (change)="getProductType()"
                                               required>
                                             <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of MaterialTypeList" [value]="option.Type_Of_Product">{{option.Type_Of_Product}}</option>
+                                            <option *ngFor="let option of ProductCatList" [value]="option.Type_Of_Product">{{option.Type_Of_Product}}</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-3">
@@ -255,14 +282,15 @@
                                             <label class="control-label">Used<sup class="text-danger"></sup></label>
                                             <div class="label-t">{{productFilterObj?.Used_Qty ? productFilterObj?.Used_Qty : 0}}</div>
                                         </div>
-                                        <div class="clearfix"  *ngIf="openProject == 'Y'"></div>
+                                        <!-- <div class="clearfix"  *ngIf="openProject == 'Y'"></div> -->
                                        <div class="col-sm-3"  *ngIf="openProject == 'Y'">
                                             <label class="control-label">Can Be Used<sup class="text-danger"></sup></label>
                                             <div class="label-t">{{productFilterObj?.Can_Be_Used_Qty ? productFilterObj?.Can_Be_Used_Qty : 0}}</div>
                                          </div>
                                          
                                         <div class="col-sm-2">
-                                            <label class="control-label">Requisition QTY<sup class="text-danger">*</sup></label>
+                                            <label class="control-label" *ngIf="headerText === 'Purchase Indent'">Indent QTY<sup class="text-danger">*</sup></label>
+                                            <label class="control-label" *ngIf="headerText === 'Issue Requisition' || headerText === 'Requisition for Project'">Requisition QTY<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
                                             name="Req_Qty" 
                                             #Req_Qty="ngModel" 
@@ -284,7 +312,7 @@
                                                 disabled
                                                 >
                                         </div>
-                                        <div class="clearfix"  *ngIf="openProject == 'N'"></div>
+                                        <!-- <div class="clearfix"  *ngIf="openProject == 'N'"></div> -->
                                         <div class="col-sm-3">
                                             <label class="control-label">Purpose<sup class="text-danger"></sup></label>
                                             <textarea 
@@ -310,6 +338,7 @@
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr style="background-color:#4fa1d1;color:white;">
+                                                    <th>Product Category</th>
                                                     <th>Product Type</th>
                                                     <th>Product Description</th>
                                                     <th>Product Code</th>
@@ -321,6 +350,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor="let obj of AddMaterialsList; let ind = index;">
+                                                    <td>{{obj.Product_Category}}</td>
                                                     <td>{{obj.Product_Type}}</td>
                                                     <td>{{obj.Product_Description}}</td>
                                                     <td>{{obj.Product_Code ? obj.Product_Code : '-'}}</td>

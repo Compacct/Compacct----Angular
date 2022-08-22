@@ -91,15 +91,15 @@ export class PurchaseOrderComponent implements OnInit {
   seachPendingReqSpinner = false;
   @ViewChild("project", { static: false })
   ProjectInput: CompacctProjectComponent;
-  BackupSearchedlist = [];
-  DistSubledgerName = [];
-  SelectedDistSubledgerName = [];
-  DistCostCentreName = [];
-  SelectedDistCentreName = [];
-  SearchFields = [];
+  BackupSearchedlist:any = [];
+  DistSubledgerName:any = [];
+  SelectedDistSubledgerName:any = [];
+  DistCostCentreName:any = [];
+  SelectedDistCentreName:any = [];
+  SearchFields:any = [];
   RequistionPendingFormSubmit = false
   SearchFormSubmitted = false;
-  costcenterListPeding = [];
+  costcenterListPeding:any = [];
   pendingREQData:any = [];
   productDetalisView:boolean = false;
   productDetalisViewList:any = false;
@@ -143,6 +143,8 @@ export class PurchaseOrderComponent implements OnInit {
   ViewListForPO = false;
   POViewList:any = [];
   DynamicPOview:any = [];
+  Requisiton_Type: any;
+  Material_Type: any;
 
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -685,7 +687,7 @@ export class PurchaseOrderComponent implements OnInit {
   AddPurchase(valid){
     this.purChaseAddFormSubmit = true
     console.log("valid",valid);
-   if(valid && this.GetSameProWithInd()){
+   if(valid && this.GetSameProWithInd() && this.GetSameReqMatType()){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
      console.log("productFilter",productFilter[0])
      let saveData = {
@@ -707,10 +709,14 @@ export class PurchaseOrderComponent implements OnInit {
         Net_Amount:  Number(this.objaddPurchacse.Total_Amount),
         GST_Percentage: Number( this.objaddPurchacse.Gst),
         GST_Amount: Number(this.objaddPurchacse.GST_AMT),
+        Requisiton_Type: this.Requisiton_Type,
+        Material_Type: this.Material_Type
      }
       this.addPurchaseList.push(saveData);
       this.projectDisable = true
       this.objaddPurchacse = new addPurchacse();
+      this.Requisiton_Type = undefined;
+      this.Material_Type = undefined;
       this.purChaseAddFormSubmit = false;
       this.productList = [];
       console.log("addPurchaseList",this.addPurchaseList);
@@ -733,6 +739,30 @@ export class PurchaseOrderComponent implements OnInit {
       return true;
     }
   }
+  GetSameReqMatType () {
+    if(this.openProject === "N") {
+    if(this.addPurchaseList.length){
+      const sameReqMatTpye = this.addPurchaseList.filter(item=> (item.Requisiton_Type === this.Requisiton_Type) && (item.Material_Type === this.Material_Type) );
+     if(sameReqMatTpye.length) {
+      return true;
+      } 
+      else {
+        this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Requisition Type and Material Type Must be Same"
+          });
+      return false;
+      }
+    } else {
+      return true;
+    }
+    } else {
+      return true;
+    }
+    }
  async savePurchase(valid){
    this.purchaseFormSubmitted = true
    this.validatation.required = true
@@ -1055,8 +1085,8 @@ if (valid) {
  }
  // DISTINCT & FILTER
  GetDistinct() {
-  let DSubledgerName = [];
-  let DCostCentreName = [];
+  let DSubledgerName:any = [];
+  let DCostCentreName:any = [];
   this.DistSubledgerName =[];
   this.SelectedDistSubledgerName =[];
   this.DistCostCentreName =[];
@@ -1345,6 +1375,18 @@ GetRequlist(){
 
     }
   })
+}
+RequisitionChange(){
+  this.Requisiton_Type = undefined;
+  this.Material_Type = undefined;
+  if (this.objaddPurchacse.Req_No) {
+    const ctrl = this;
+    const ReqNoObj = $.grep(ctrl.Requlist,function(item: any) {return item.Req_No == ctrl.objaddPurchacse.Req_No})[0];
+    console.log(ReqNoObj);
+    this.Requisiton_Type = ReqNoObj.Requisiton_Type;
+    this.Material_Type = ReqNoObj.Material_Type;
+    this.getProduct();
+  }
 }
 
 getProductType(){

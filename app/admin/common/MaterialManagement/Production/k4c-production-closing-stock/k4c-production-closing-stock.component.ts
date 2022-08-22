@@ -61,6 +61,10 @@ export class K4cProductionClosingStockComponent implements OnInit {
   Doc_date: any;
   Formstockpoint: any;
   Tostockpoint: any;
+  BrandList:any = [];
+  EditList:any = [];
+  BackupProList:any = [];
+  Doc_Date: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -90,6 +94,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
       Header: "Production Closing Stock  - " + this.MaterialType_Flag, //this.MaterialType_Flag + 
       Link: " Material Management -> Production Closing Stock - " + this.MaterialType_Flag
     });
+    this.GetBrand();
     this.GetCostCen();
     this.GetBCostCen();
     this.GetProductType();
@@ -108,6 +113,16 @@ export class K4cProductionClosingStockComponent implements OnInit {
    }
    onReject() {
     this.compacctToast.clear("c");
+  }
+  GetBrand(){
+    const obj = {
+      "SP_String": "SP_Issue_Stock_Adjustment",
+      "Report_Name_String": "Get - Brand"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.BrandList = data;
+       console.log("Brand List ===",this.BrandList);
+    })
   }
    GetCostCen(){
     const tempObj = {
@@ -207,7 +222,8 @@ export class K4cProductionClosingStockComponent implements OnInit {
       Doc_Date : this.ObjProClosingStock.Doc_Date,
       Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID ? this.ObjProClosingStock.Cost_Cen_ID : 0,
       Godown_ID : this.ObjProClosingStock.godown_id ? this.ObjProClosingStock.godown_id : 0,
-      Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
+      Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA',
+      Brand_ID : this.ObjProClosingStock.Brand_ID ? this.ObjProClosingStock.Brand_ID : 0
      }
    const obj = {
     "SP_String": "SP_Production_Closing_Stock",
@@ -224,6 +240,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
     element['Remarks'] = undefined;
  });
    this.ProductList = tempData;
+   this.BackupProList = data;
    this.ShowSpinner = false;
    this.BackupIndentList = tempData;
     this.ProClosingStockFormSubmitted = false;
@@ -271,13 +288,17 @@ ChangeRemarks(obj){
   console.log("Change Remarks")
    this.ProductList.forEach(el=>{
      if(obj.Product_ID === el.Product_ID){
+      // var consqty = obj.Consumption_Qty;
       if(obj.Wastage_Qty){
         obj.remarkdisabled = false;
+        var openrec = (obj.Opening_Qty + obj.Receive_Qty).toFixed(2);
+        var subclosing = (Number(openrec) - obj.Receive_Qty).toFixed(2);
+        obj.Consumption_Qty = (Number(subclosing) - obj.Wastage_Qty).toFixed(2);
        } else {
         obj.remarkdisabled = true;
+        obj.Consumption_Qty = obj.Consumption_Qty;
        }
      }
-
    })
 }
 saveRemarks(){
@@ -303,6 +324,29 @@ saveRemarks(){
 
 
   return flag;
+}
+ConsumptionCal(indx){
+  this.ProductList[indx]['Consumption_Qty'] = 0;
+  if(this.ProductList[indx]['Wastage_Qty']){
+    var openrec = (this.ProductList[indx]['Opening_Qty'] + this.ProductList[indx]['Receive_Qty']).toFixed(2);
+    var subclosing = (Number(openrec) - this.ProductList[indx]['Closing_Qty']).toFixed(2);
+    this.ProductList[indx]['Consumption_Qty'] = (Number(subclosing) - this.ProductList[indx]['Wastage_Qty']).toFixed(2);
+    // var posNum = (Number(num) < 0) ? Number(num) * -1 : num;
+    // this.ProductList[indx]['Consumption_Qty'] = Number(posNum).toFixed(2);
+  }
+  //this.changeRemarks(indx);
+  this.ProductList.forEach(el=>{
+    if(this.ProductList[indx]['Product_ID'] === el.Product_ID){
+     if(this.ProductList[indx]['Wastage_Qty']){
+       // this.Remarksdisabled = true;
+       this.ProductList[indx]['remarkdisabled'] = false;
+      } else {
+     //   this.Remarksdisabled = false;
+     this.ProductList[indx]['remarkdisabled'] = true;
+      }
+    }
+
+  })
 }
 
   // GET PRODUCT LIST
@@ -408,6 +452,7 @@ saveRemarks(){
             Wastage_Qty : item.Wastage_Qty ? item.Wastage_Qty : 0,
             UOM	: item.UOM,
             Remarks	: item.Remarks,
+            Consumption_Qty : item.Consumption_Qty,
             Created_By	:this.$CompacctAPI.CompacctCookies.User_ID,
             // Created_On : item.Batch_No
          }
@@ -608,48 +653,135 @@ const obj = {
     this.ProClosingStockSearchFormSubmitted = false;
 
   }
-  // View
-  View(DocNo){
-    this.Viewlist = [];
-    this.ObjProClosingStock.Doc_No = undefined;
-    this.Doc_date = undefined;
-    this.Formstockpoint = undefined;
-    this.Tostockpoint = undefined;
-    if(DocNo.Doc_No){
-      this.ObjProClosingStock.Doc_No = DocNo.Doc_No;
-      this.Doc_date = DocNo.Doc_Date;
-      this.Formstockpoint = DocNo.From_Godown_Name;
-      this.Tostockpoint = DocNo.To_Godown_Name;
-    // this.AuthPoppup = true;
-    this.ViewPoppup = true;
-    //this.tabIndexToView = 1;
-     //console.log("this.EditDoc_No ", this.Adv_Order_No );
-     this.geteditmaster(DocNo.Doc_No)
-    }
-  }
+  
 // Edit
 EditIntStock(col){
   this.ObjProClosingStock.Doc_No = undefined;
+  this.Doc_Date = undefined;
   if(col.Doc_No){
-   this.ObjProClosingStock = col.Doc_No;
+   this.ObjProClosingStock.Doc_No = col.Doc_No;
+   this.Doc_Date = new Date(col.Doc_Date);
    this.tabIndexToView = 1;
    this.ProductList = [];
    this.BackupIndentList = [];
    this.items = ["BROWSE", "UPDATE"];
    this.buttonname = "Update";
-   this.geteditmaster(col.Doc_No)
+   this.todayDate = this.Doc_Date;
+  //  this.GetProduct(true); // await
+  //  const ctrl = this;
+  //  setTimeout(function () {
+    this.GetdataforEdit()
+  //  }, 600)
   }
 
 }
+GetdataforEdit(){
+  //this.OTclosingstockwithbatchFormSubmitted = false;
+    const obj = {
+      "SP_String": "SP_Production_Closing_Stock",
+      "Report_Name_String": "Get_Edit_Data",
+      "Json_Param_String": JSON.stringify([{Doc_No  : this.ObjProClosingStock.Doc_No, Doc_Date : this.DateService.dateConvert(new Date(this.Doc_Date))}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Edit Data From API",data);
+      this.EditList = data;
+      //  this.todayDate = new Date(data[0].Doc_Date);
+      //  this.minDate = new Date(data[0].Doc_Date.getDate());
+      //  this.maxDate = new Date(data[0].Doc_Date.getDate());
+      this.ObjProClosingStock.Brand_ID = data[0].Brand_ID ? data[0].Brand_ID : undefined;
+       this.ObjProClosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
+       this.ObjProClosingStock.godown_id = data[0].godown_id;
+         data.forEach(element => {
+           const  productObj = {
+            Brand : element.Brand,
+            Product_Type : element.Product_Type,
+            Product_ID : element.Product_ID,
+            Product_Description : element.Product_Description,
+            UOM : element.UOM,
+            Opening_Qty : element.Opening_Qty,
+            Receive_Qty : element.Rcv_Qty ? element.Rcv_Qty : 0,
+            Closing_Qty : element.Closing_Qty,
+            Wastage_Qty : element.Wastage_Qty,
+            Remarks :  element.Remarks,
+            Consumption_Qty : element.Consumption_Qty,
+            remarkdisabled : element.Wastage_Qty || element.Wastage_Qty != 0 ? false : true
+          };
+           this.ProductList.push(productObj);
+           this.BackupIndentList = [...this.ProductList];
+           //this.backUpproductList = this.productList;
+          //  this.BackupIndentList = this.IndentNoList;
+           this.GetEditProductType();
+          console.log("edit ProductList===", this.ProductList);
+      });
+    //   const ctrl = this;
+    //   setTimeout(function () {
+    //     ctrl.BackupProList.forEach(ele => {
+    //     const ARR = ctrl.EditList.filter(item => item.Product_ID === ele.Product_ID);
+    //     if (ARR.length) {
+    //       ele['Closing_Qty']= ARR[0].Closing_Qty,
+    //       // el.Product_Type_ID = aRR[0].Product_Type_ID,
+    //       // el.Product_Type = aRR[0].Product_Type,
+    //       // el.Product_ID = aRR[0].Product_ID,
+    //       // el.Product_Description = aRR[0].Product_Description,
+    //       ele['Last_Pur_Rate'] = ARR[0].Last_Pur_Rate,
+    //       ele['Batch_No'] = ARR[0].Batch_No,
+    //       ele['Batch_Qty'] = ARR[0].Total_Qty,
+    //       // el.UOM = aRR[0].UOM,
+    //       // el.Closing_Qty = aRR[0].Closing_Qty,
+    //       ele['Varience_Qty'] = ARR[0].Varience_Qty,
+    //       ele['Remarks'] = ARR[0].Remarks
+    //     }
+    //     ctrl.ProductList = ctrl.BackupProList;
+    //     console.log("edit ProductList===", ARR);
+    //   });
+    // }, 600)
+    //   this.ProductList = [...this.ProductList];
+    })
+}
+GetEditProductType(){
+  let DOrderBy:any = [];
+    this.productListFilter = [];
+    //this.SelectedDistOrderBy1 = [];
+    this.EditList.forEach((item) => {
+      if (DOrderBy.indexOf(item.Product_Type) === -1) {
+        DOrderBy.push(item.Product_Type);
+        //this.SelectedProductType.push(item.Product_Type);
+        this.productListFilter.push({ label: item.Product_Type, value: item.Product_Type });
+       // console.log("this.productListFilter", this.productListFilter);
+        //  this.ProductList  = [...this.BackupProList];
+      }
+    });
+}
+// View
+View(DocNo){
+  this.Viewlist = [];
+  this.ObjProClosingStock.Doc_No = undefined;
+  this.Doc_date = undefined;
+  this.Formstockpoint = undefined;
+  this.Tostockpoint = undefined;
+  if(DocNo.Doc_No){
+    this.ObjProClosingStock.Doc_No = DocNo.Doc_No;
+    this.Doc_date = DocNo.Doc_Date;
+    this.Formstockpoint = DocNo.From_Godown_Name;
+    this.Tostockpoint = DocNo.To_Godown_Name;
+  // this.AuthPoppup = true;
+  // this.ViewPoppup = true;
+  //this.tabIndexToView = 1;
+   //console.log("this.EditDoc_No ", this.Adv_Order_No );
+   this.geteditmaster(DocNo.Doc_No)
+  }
+}
 geteditmaster(Doc_No){
   const obj = {
-    "SP_String": "SP_Raw_Material_Stock_Transfer",
-  "Report_Name_String": "Get Raw Material Stock Transfer For Edit",
+    "SP_String": "SP_Production_Closing_Stock",
+    "Report_Name_String": "View_Production_Closing_Stock",
     "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("Edit",data);
     this.Viewlist = data;
+    this.ViewPoppup = true;
     const TempData = data;
     this.todayDate = new Date(data[0].Doc_Date);
     this.ObjProClosingStock = data[0];
@@ -693,8 +825,8 @@ onConfirm(){
       Doc_No : this.ObjProClosingStock.Doc_No
     }
     const objj = {
-      "SP_String": "SP_Raw_Material_Stock_Transfer",
-      "Report_Name_String": "Delete Raw Material Stock Transfer",
+      "SP_String": "SP_Production_Closing_Stock",
+      "Report_Name_String": "Delete_Production_Closing_Stock",
       "Json_Param_String": JSON.stringify([Tempdata])
     }
     this.GlobalAPI.getData(objj).subscribe((data:any)=>{
@@ -710,11 +842,21 @@ onConfirm(){
         });
         this.clearData();
       }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error occured"
+          });
+        }
     })
   }
 }
 }
 class ProClosingStock {
+  Brand_ID : any;
   Doc_No : any;
   Doc_Date : string;
   godown_id : any;

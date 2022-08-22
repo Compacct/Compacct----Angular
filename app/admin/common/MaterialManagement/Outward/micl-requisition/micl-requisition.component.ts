@@ -73,9 +73,14 @@ export class MiclRequisitionComponent implements OnInit {
   ProjectInput: CompacctProjectComponent;
   Save = false;
   Del = false;
-  MaterialTypeList:any = [];
+  ProductCatList:any = [];
   hrYeatList:any = [];
   HR_Year_ID: any;
+  ReqTypeList:any = [];
+  MaterialTypeList:any = [];
+  ReqType : any;
+  Requisition_ID :any;
+  Material_Type_ID :any;
 
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -89,10 +94,11 @@ export class MiclRequisitionComponent implements OnInit {
       this.route.queryParams.subscribe(params => {
         console.log(params);
         this.openProject = params['proj'];
-        this.validatation.projectMand = params['mand']
+        this.validatation.projectMand = params['mand'];
         this.projectMand = params['mand'];
         this.toCostCenter = Number(params['CostCenID']);
-        this.headerText = params['Caption']
+        this.headerText = params['Caption'];
+        this.ReqType = params['ReqType'];
         
        })
      }
@@ -114,7 +120,9 @@ export class MiclRequisitionComponent implements OnInit {
     this.ServerDate();
     this.AllowedEntryDays();
     this.getCostcenter();
+    this.getRequisitionType();
     this.getMaterialType();
+    this.getProductCategory();
     this.GetProductsDetalis();
     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
     if(this.openProject !== "Y"){
@@ -151,6 +159,10 @@ export class MiclRequisitionComponent implements OnInit {
     this.projectDisable = false;
     this.reqValid = false;
     this.deleteError = false;
+    this.ProductCatList = [];
+    this.productTypeList = [];
+    this.Requisition_ID = undefined;
+    this.Material_Type_ID = undefined;
    }
   addMaterials(valid){
   console.log("valid",valid);
@@ -167,7 +179,7 @@ export class MiclRequisitionComponent implements OnInit {
      }
      
     const productFilter:any = this.productListview.filter((el:any)=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
-    const productTypeFilter:any = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID))
+    const productTypeFilter:any = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID));
      console.log("productFilter",productFilter);
     if(productFilter.length){
       this.AddMaterialsList.push({
@@ -179,7 +191,8 @@ export class MiclRequisitionComponent implements OnInit {
         Purpose: this.objmaterial.Purpose,
         Created_By: this.$CompacctAPI.CompacctCookies.User_ID,
         Product_Type_ID : this.objmaterial.Product_Type_ID,
-        Product_Type : productTypeFilter[0].Product_Type
+        Product_Type : productTypeFilter[0].Product_Type,
+        Product_Category : this.objmaterial.Product_Category
       })
       this.requisitionmaterialFormSubmit = false;
       this.objmaterial = new material();
@@ -339,8 +352,11 @@ export class MiclRequisitionComponent implements OnInit {
          Godown_ID: this.objreqi.Godown_ID,
          Product_Type_ID : Number(el.Product_Type_ID),
          Product_Type : el.Product_Type,
+         Type_Of_Product : el.Product_Category,
          To_Cost_Cen_ID : Number(this.toCostCenter),
-         Remarks : this.objreqi.Remarks
+         Remarks : this.objreqi.Remarks,
+         Requisiton_Type : this.Requisition_ID,
+         Material_Type : this.Material_Type_ID
         }
         saveData.push(save)
         })
@@ -380,6 +396,8 @@ export class MiclRequisitionComponent implements OnInit {
            // this.SaveNPrintBill();
            this.Print(data[0].Column1)
             this.clearData();
+            this.Requisition_ID = undefined;
+            this.Material_Type_ID = undefined;
             this.Spinner = false;
             this.searchData(true);
             this.tabIndexToView = 0;
@@ -511,24 +529,46 @@ export class MiclRequisitionComponent implements OnInit {
 
    
   }
+  getRequisitionType(){
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Requisiton_Type"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ReqTypeList = data;
+     console.log("ReqTypeList",this.ReqTypeList);
+     })
+  }
   getMaterialType(){
     const obj = {
       "SP_String": "SP_Txn_Requisition",
-      "Report_Name_String": "Get_Type_Of_Product"
+      "Report_Name_String": "Get_Material_Type"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.MaterialTypeList = data;
      console.log("MaterialTypeList",this.MaterialTypeList);
      })
   }
+  getProductCategory(){
+    this.ProductCatList = [];
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Type_Of_Product",
+      "Json_Param_String": JSON.stringify([{Material_Type : this.Material_Type_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ProductCatList = data;
+     console.log("ProductCatList",this.ProductCatList);
+     })
+  }
   getProductType(){
     const materialtype = {
-      Type_Of_Product : this.objmaterial.Material_Type_ID
+      Type_Of_Product : this.objmaterial.Product_Category
     }
     const obj = {
       "SP_String": "SP_Txn_Requisition",
       "Report_Name_String": "Get_product_Type_Details",
-      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify({...this.objProjectRequi,...materialtype}) : JSON.stringify([{PROJECT_ID : 0,Type_Of_Product : this.objmaterial.Material_Type_ID}])
+      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify({...this.objProjectRequi,...materialtype}) : JSON.stringify([{PROJECT_ID : 0,Type_Of_Product : this.objmaterial.Product_Category}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach(el => {
@@ -872,6 +912,7 @@ class reqi{
    }
 
 class material{
+  Product_Category:any;
   Product_ID:any;
   Product_Description:any;
   Req_Qty:any;

@@ -75,7 +75,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th style="width:5em">Action</th>
                                             <th>Doc No</th>
                                             <th>Doc Date</th>
                                             <th>Cost Center</th>
@@ -86,7 +86,7 @@
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
 
-                                            <!-- <td>
+                                            <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                 <i class="fa fa-fw fa-bars"></i>
@@ -110,7 +110,7 @@
                                                         </li>
                                                     </ul>
                                                 </div>
-                                            </td> -->
+                                            </td>
                                             <td>{{col.Doc_No }}</td>
                                             <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
                                             <td>{{col.Cost_Cen_Name}}</td>
@@ -131,11 +131,25 @@
                                         <form name="ProClosingStockForm" #ProClosingStockForm="ngForm" novalidate>
 
                                             <div class="form-group">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">Date </label>
                                                     <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='todayDate'></ejs-datepicker>
                                                     <!-- <input class="form-control" name="Date" [disabled]="true" [ngModel]='todayDate  | date :"dd-MMM-yyyy"'> [enabled]='datepickerdisable'-->
                                                 </div>
+                                                <div class="col-sm-2">
+                                                  <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
+                                                  <select class="form-control"
+                                                  name="Brand_ID"
+                                                  #Brand_ID="ngModel"
+                                                  [(ngModel)]="ObjProClosingStock.Brand_ID"
+                                                  [ngClass]="{'clearance': ProClosingStockFormSubmitted && Brand_ID?.errors?.required}"
+                                                  >
+                                                  <option  [ngValue]="undefined">Select</option>
+                                              <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                                  {{option.Brand_INI}}
+                                              </option>
+                                          </select>
+                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Cost Cent<sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel" [(ngModel)]="ObjProClosingStock.Cost_Cen_ID" [ngClass]="{'clearance': ProClosingStockFormSubmitted && Cost_Cen_ID?.errors?.required}" 
@@ -156,7 +170,7 @@
                                           </option>
                                     </select>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                     <button class="btn btn-primary custombutton1" (click)="GetProduct(ProClosingStockForm.form.valid)" id="load" [disabled]="ProductList.length" [disabled]="ShowSpinner">
                                                         <p-progressSpinner *ngIf="ShowSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                     <span *ngIf="!ShowSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Show Products
@@ -182,7 +196,7 @@
                             <div class="table-responsive no-padding">
                                 <p-table [value]="ProductList" [autoLayout]="true" sortMode="multiple" [globalFilterFields]="['Product_Type','Product_Description','Stock_Qty','Batch_No','Batch_Qty']" [rowHover]="true" #dt1>
                                     <ng-template pTemplate="caption">
-                                        <div *ngIf="this.buttonname == 'Save'">
+                                        <div >
                                             <button class="btn btn-primary pull-left" (click)="SaveRawMaterialIssue()" id="load" [disabled]="Spinner">
                                                 <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
@@ -198,6 +212,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
+                                            <th>Brand</th>
                                             <th>Product Type</th>
                                             <th>Product Description</th>
                                             <th>UOM</th>
@@ -206,18 +221,21 @@
                                             <th>Closing Qty</th>
                                             <th>Wastage Qty</th>
                                             <th>Reason</th>
+                                            <th>Consumption Qty</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-col>
+                                    <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                         <tr>
+                                            <td>{{col.Brand}}</td>
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Description }}</td>
                                             <td>{{col.UOM}}</td>
                                             <td>{{col.Opening_Qty}}</td>
                                             <td>{{col.Receive_Qty}}</td> 
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Closing_Qty' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Wastage_Qty' (ngModelChange)='ChangeRemarks(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID +'1'" [(ngModel)]='col.Closing_Qty' (ngModelChange)='ConsumptionCal(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID +'2'" [(ngModel)]='col.Wastage_Qty' (ngModelChange)='ConsumptionCal(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.remarkdisabled" class="form-control" style="width: 200px;" /></td>
+                                            <td>{{col.Consumption_Qty}}</td>
                                         </tr>
                                     </ng-template>
 
@@ -242,11 +260,11 @@
 </div>
 
 <!-- VIEW POPUP -->
-<!-- <p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '80%', minWidth: '300px'}">
+<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '80%', minWidth: '300px'}">
     <div class="form-group">
         <div class="col-sm-3">
             <label class="control-label">Doc No</label>
-            <div class="label-t">{{ObjRawMateriali.Doc_No}}</div>
+            <div class="label-t">{{ObjProClosingStock.Doc_No}}</div>
         </div>
 
         <div class="col-sm-3">
@@ -254,7 +272,7 @@
             <div class="label-t">{{Doc_date | date :"dd/MMM/yyyy"}}</div>
 
         </div>
-        <div class="col-sm-3">
+        <!-- <div class="col-sm-3">
             <label class="control-label">From Stock Point</label>
             <div class="label-t">{{Formstockpoint}}</div>
 
@@ -263,7 +281,7 @@
             <label class="control-label">To Stock Point</label>
             <div class="label-t">{{Tostockpoint}}</div>
 
-        </div>
+        </div> -->
     </div>
     <div class="clearfix"></div>
     <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
@@ -278,24 +296,26 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Product Type</th>
+                    <th>Material Type</th>
+                    <th>Brand</th>
                     <th>Product Description</th>
                     <th>UOM</th>
-                    <th>Stock Qty</th>
-                    <th>Batch No</th>
-                    <th>Batch Qty</th>
-                    <th>Issue Qty</th>
+                    <th>Closing Qty</th>
+                    <th>Wastage Qty</th>
+                    <th>Consumption Qty</th>
+                    <th>Remarks</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col>
                 <tr>
-                    <td>{{col.Product_Type}}</td>
+                    <td>{{col.Material_Type}}</td>
+                    <td>{{col.Brand}}</td>
                     <td>{{col.Product_Description }}</td>
                     <td>{{col.UOM}}</td>
-                    <td>{{col.Stock_Qty}}</td>
-                    <td>{{col.Batch_No}}</td>
-                    <td>{{col.Batch_Qty}}</td>
-                    <td>{{col.Qty}}</td>
+                    <td>{{col.Closing_Qty}}</td>
+                    <td>{{col.Wastage_Qty}}</td>
+                    <td>{{col.Consumption_Qty}}</td>
+                    <td>{{col.Remarks}}</td>
 
                 </tr>
             </ng-template>
@@ -308,4 +328,4 @@
 <i class="fa fa-close"></i>&nbsp;  Close
 </button>
     </p-footer>
-</p-dialog> -->
+</p-dialog>
