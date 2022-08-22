@@ -244,7 +244,8 @@ import { EmployeeSalaryMasterMiclComponent } from './common/MICL/employee-salary
 import { HrEmployeeSalaryMasterHarbComponent } from './common/Harbauer/hr-employee-salary-master-harb/hr-employee-salary-master-harb.component';
 import { RepairAndMantainceGRNComponent } from "./common/MICL/RepairAndMaintenance/repair-and-mantaince-grn/repair-and-mantaince-grn.component";
 import { HREmployeeMasterComponent } from "./common/MICL/hr-employee-master/hr-employee-master.component";
-
+import { HarbProjectBillComponent } from './common/Harbauer/harb-project-bill/harb-project-bill.component';
+import { NepalSubledgerAliasCategoryComponent } from "./common/FinancialManagement/Master/nepal-subledger-alias-category/nepal-subledger-alias-category.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1795,6 +1796,20 @@ data: {
                   component:HREmployeeMasterComponent,
                   data: {
                     title: 'HR Employee Master'
+                }
+                },
+                {
+                  path: 'Project_Bill',
+                  component:HarbProjectBillComponent,
+                  data: {
+                    title: 'Project Bill'
+                }
+                },
+                {
+                  path: 'Nepal_Subledger_Alias_Category',
+                  component:NepalSubledgerAliasCategoryComponent,
+                  data: {
+                    title: 'Subledger Slias Category'
                 }
                 },
       
