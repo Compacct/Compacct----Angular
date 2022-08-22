@@ -340,6 +340,7 @@ import { RepairAndMantainceGRNComponent } from "./common/MICL/RepairAndMaintenan
 import { HREmployeeMasterComponent } from "./common/MICL/hr-employee-master/hr-employee-master.component";
 import { HarbProjectBillComponent } from './common/Harbauer/harb-project-bill/harb-project-bill.component';
 import { NepalSubledgerAliasCategoryComponent } from './common/FinancialManagement/Master/nepal-subledger-alias-category/nepal-subledger-alias-category.component';
+import { PatientCouponComponent } from "./common/PatientManagement/Transaction/patient-coupon/patient-coupon.component";
 
 
 @NgModule({
@@ -599,7 +600,8 @@ import { NepalSubledgerAliasCategoryComponent } from './common/FinancialManageme
     RepairAndMantainceGRNComponent,
     HREmployeeMasterComponent,
     HarbProjectBillComponent,
-    NepalSubledgerAliasCategoryComponent
+    NepalSubledgerAliasCategoryComponent,
+    PatientCouponComponent
   ],
   imports: [
     CommonModule,
