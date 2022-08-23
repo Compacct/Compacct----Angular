@@ -18,6 +18,9 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   encapsulation: ViewEncapsulation.None
 })
 export class StockReportComponent implements OnInit {
+  items:any = [];
+  tabIndexToView = 0;
+  menuList:any = [];
   ObjBrowse:Browse = new Browse();
   StockSearchFormSubmitted:boolean = false;
   initDate:any = [];
@@ -46,7 +49,13 @@ export class StockReportComponent implements OnInit {
   SelectedDistCostCen:any = [];
   DistStockPoint:any = [];
   SelectedDistStockPoint:any = [];
-  EXCELpopSpinner:boolean = false
+  EXCELpopSpinner:boolean = false;
+  ClosingReportSearchFormSubmitted:boolean = false;
+  Report_Type:string = "Closing_Stock_Report";
+  ObjClosingStockBrowse:ClosingStockBrowse = new ClosingStockBrowse();
+  ClosingReportList:any = [];
+  backUpClosingReportList:any = [];
+  EXCELClosingSpinner:boolean = false;
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -59,10 +68,20 @@ export class StockReportComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.items = ["STOCK REPORT", "CLOSING REPORT"];
+    this.menuList = [
+      { label: "Edit", icon: "pi pi-fw pi-user-edit" },
+      { label: "Delete", icon: "fa fa-fw fa-trash" }
+    ];
    this.userType =this.$CompacctAPI.CompacctCookies.User_Type
    this.getCosCenter();
    this.getProductType();
    this.Finyear()
+  }
+  TabClick(e) {
+    this.tabIndexToView = e.index;
+    this.items = ["STOCK REPORT", "CLOSING REPORT"];
+    //this.ObjBrowseData = new BrowseData ()
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -368,6 +387,62 @@ export class StockReportComponent implements OnInit {
      console.log("productTypeList",this.productTypeList);
      })
   }
+  getDateRangeClosingReport(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjClosingStockBrowse.Start_Date = dateRangeObj[0];
+      this.ObjClosingStockBrowse.End_Date = dateRangeObj[1];
+    }
+  }
+  searchClosingReportData(valid){
+    this.ClosingReportSearchFormSubmitted = true
+    this.seachSpinner = true;
+    if(valid){
+      this.ngxService.start();
+      const start = this.ObjClosingStockBrowse.Start_Date
+      ? this.DateService.dateConvert(new Date(this.ObjClosingStockBrowse.Start_Date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjClosingStockBrowse.End_Date
+      ? this.DateService.dateConvert(new Date(this.ObjClosingStockBrowse.End_Date))
+      : this.DateService.dateConvert(new Date());
+      if(this.Report_Type === "Closing_Stock_Report") {
+      //   console.log(start)
+      //   console.log(end)
+      if(start && end) {
+      window.open("/Report/Crystal_Files/MICL/Closing_Stock.aspx?From_Date=" + start + "&" + "To_Date=" + end, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      this.ClosingReportSearchFormSubmitted = false;
+      this.seachSpinner = false;
+      this.ngxService.stop();
+      }
+      }
+      else {
+      const CCTempobj={
+        StDate: start,
+        EndDate: end
+      }
+      const obj = {
+        "SP_String": "REP_Stock_Report",
+        "Report_Name_String": this.Report_Type === 'Closing_Stock_High_Value'? "Closing_Stock_High_Value" : "Closing_Stock_Low_Value",
+        "Json_Param_String": JSON.stringify([CCTempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         console.log(data)
+         this.ClosingReportList = data;
+         this.backUpClosingReportList = data;
+         this.ClosingReportSearchFormSubmitted = false;
+         this.seachSpinner = false;
+        //  this.GetDistinct();
+         this.ngxService.stop();
+      })
+     }
+    }
+  }
+  exportexcel2(Arr,fileName): void {
+    this.EXCELClosingSpinner = true;
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    this.EXCELClosingSpinner = false;
+  }
 }
 class Browse {
   Cost_Cen_ID:Number			
@@ -375,4 +450,8 @@ class Browse {
   StDate:any 				
   EndDate:any
   Product_Type_ID:Number
+ }
+ class ClosingStockBrowse {
+  Start_Date:any 				
+  End_Date:any
  }
