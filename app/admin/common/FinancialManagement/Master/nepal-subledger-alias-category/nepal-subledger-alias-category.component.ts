@@ -21,6 +21,7 @@ export class NepalSubledgerAliasCategoryComponent implements OnInit {
   buttonname:any = 'Create'
   tabIndexToView:any = 0
   DownloadList:any = []
+  catDownloadList:any = []
   excelFile:any = []
   excelFileFalg = false
   LeadListFromFile:any =[ ]
@@ -58,20 +59,35 @@ export class NepalSubledgerAliasCategoryComponent implements OnInit {
     }
     this.GlobalAPI.postData(obj).subscribe((data) => {
        this.DownloadList = data
-       if(this.DownloadList.length)
-          this.exportoexcel("Alias Category")
+       this.GetCategoryMaster()
+     })
+  }
+  GetCategoryMaster(){
+    const obj = {
+      "SP_String": "SP_Sub_Ledger_Alias_Cat_IDS",
+      "Report_Name_String": "Get_Sub_Ledger_Cat_ID"
+    }
+    this.GlobalAPI.postData(obj).subscribe((data) => {
+       this.catDownloadList = data
+        this.exportoexcel("Alias Category")
        
-    })
+     })
   }
 
-
   exportoexcel(fileName){
-    if(this.DownloadList.length){
-      let exportList:any =this.DownloadList
+    if(this.DownloadList.length && this.catDownloadList.length){
+      let exportList =this.DownloadList
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportList);
-      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      const worksheet1: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.catDownloadList);
+      const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Subledger Alias & Category');
+          XLSX.utils.book_append_sheet(workbook, worksheet1, 'Subledger Category Master');
+     // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
       XLSX.writeFile(workbook, fileName+'.xlsx');
       this.Spinner = false
+      this.catDownloadList = []
+      this.DownloadList = []
+      exportList = []
     }
       
       
@@ -86,15 +102,12 @@ export class NepalSubledgerAliasCategoryComponent implements OnInit {
       console.log("reader",reader)
       const ctrl = this;
       reader.onload = function(e:any){
-        console.log(e)
+        //console.log(e)
           var fileData = reader.result;
           var wb = XLSX.read(fileData, {type : 'binary',raw: false,
           cellDates: true,});
-
-          wb.SheetNames.forEach(function(sheetName){
-            ctrl.LeadListFromFile =XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
-            console.log(ctrl.LeadListFromFile);
-          })
+          ctrl.LeadListFromFile =XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+         console.log(ctrl.LeadListFromFile);
       };
       reader.readAsBinaryString(event.files[0]);
     }
@@ -106,7 +119,8 @@ export class NepalSubledgerAliasCategoryComponent implements OnInit {
   Uploadexcel(){
     console.log("Upload")
    if(this.LeadListFromFile.length){
-    this.ngxService.start();
+    console.log(this.LeadListFromFile)
+   this.ngxService.start();
     const obj = {
       "SP_String": "SP_Sub_Ledger_Alias_Cat_IDS",
       "Report_Name_String": "Update_Sub_Ledger_Alias_Cat_IDS",
