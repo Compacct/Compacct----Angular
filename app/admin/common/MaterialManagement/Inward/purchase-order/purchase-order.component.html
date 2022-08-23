@@ -507,7 +507,7 @@
                                             #Excise_Tax_Percentage="ngModel"
                                             [(ngModel)]="objaddPurchacse.Excise_Tax_Percentage"
                                             (ngModelChange)="getExciseAmt()"
-                                            placeholder="Excise Tax (%)"
+                                            placeholder="Freight-P/F %"
                                             CompacctDigitonly="true"
                                             >
                                         </div>
@@ -518,7 +518,7 @@
                                             name="Excise_Tax"
                                             #Excise_Tax="ngModel"
                                             [(ngModel)]="objaddPurchacse.Excise_Tax"
-                                            placeholder="Excise Amt"
+                                            placeholder="Freight-P/F Charges"
                                             CompacctDigitonly="true"
                                             >
                                         </div>
@@ -635,7 +635,7 @@
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Unit</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Rate</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Gross Amt</th>
-                                        <th nowrap="" colspan="2" style="vertical-align:middle">Excise Tax</th>
+                                        <th nowrap="" colspan="2" style="vertical-align:middle">Freight-P/F</th>
                                         <th nowrap="" colspan="3" style="vertical-align:middle">Discount </th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
                                         <th  nowrap="" colspan="2" style="vertical-align:middle">{{taxlabelChange()}}</th>
@@ -644,7 +644,7 @@
                                          </tr>
                                         <tr style="background-color:#3c8dbc;color:white;">
                                             <th nowrap="" style="vertical-align:middle">Tax</th>
-                                            <th nowrap="" style="vertical-align:middle">Amt.</th>
+                                            <th nowrap="" style="vertical-align:middle">Charges</th>
                                             <th nowrap="" style="vertical-align:middle">Disc Type</th>
                                             <th nowrap="" style="vertical-align:middle">Disc %</th>
                                             <th nowrap="" style="vertical-align:middle">Disc Amt</th>
@@ -691,7 +691,7 @@
                                           <td class="amt-td">{{getTofix(disTotal) ? getTofix(disTotal) : 0}}</td>
                                            </tr>
                                         <tr>
-                                          <th>Excise Amount:</th>
+                                          <th>Freight-P/F Charges:</th>
                                           <td class="amt-td">{{getTofix(ExciTotal) ? getTofix(ExciTotal) : 0}}</td>
                                           <th>{{taxlabelChange()}} Amount :</th>
                                           <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td>

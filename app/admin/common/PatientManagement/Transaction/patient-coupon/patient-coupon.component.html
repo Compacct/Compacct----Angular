@@ -1,0 +1,68 @@
+<p-toast key="compacct-toast" baseZIndex="99999999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" baseZIndex="99999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Del && !Save">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+
+                        <!-- <div class="col-sm-6">
+                            <button class="btn btn-success custombutton " data-toggle="modal" id="load2" style="margin-left: 260px;">
+                           <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Print Coupon
+                            </button>
+                        </div> -->
+                        <form name="SelectForm" #SelectForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Mobile No.</label>
+                                    <input class="form-control" name="Mobile" #Mobile="ngModel" [(ngModel)]="objPatient.Mobile" CompacctDigitonly="true" placeholder="Mobile No." maxlength="10" minlength="10" (ngModelChange)="getName(objPatient.Mobile)">
+
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Name</label>
+                                    <select class="form-control" name="Nationality" #Nationality="ngModel" [(ngModel)]="objPatient.Foot_Fall_ID" (change)="getPatientId(objPatient.Foot_Fall_ID)">
+                                        <option  [ngValue]="undefined ">Select</option>
+                                    <option  *ngFor="let option of AllNameList" value="{{option.Foot_Fall_ID}}">
+                                      {{option.Contact_Name}}
+                                    </option>
+                                   </select>
+                                </div>
+
+                                <div class="col-sm-3" style="margin-top: 25px;">
+                                    <h4> Coupon Id:- {{Footfallid}} </h4>
+                                </div>
+                                <div class="col-sm-3" *ngIf="Footfallid != null">
+                                    <button class="btn btn-success custombutton " data-toggle="modal" id="load2">
+                                    <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Print Coupon
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

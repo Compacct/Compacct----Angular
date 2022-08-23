@@ -34,16 +34,16 @@
                                     <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name" (change)="GetBrowseData()">
                                 </div>
                                 <div class="col-sm-2">
-                                    <button  class="btn btn-warning pull-right1" (click)="UpdateSPBrowseData()" >Process salary</button>
+                                    <button  class="btn btn-warning" (click)="UpdateSPBrowseData()" >Process salary</button>
                                 </div>
                                 <div class="col-sm-2">
-                                    <button  class="btn btn-success pull-right" (click)="exportoexcel(BrowseList,'Process_Salary')" [disabled]="!BrowseList.length">EXport To Excel</button>
-                                </div>
-                                <div class="col-sm-1">
-                                    <button  class="btn btn-primary pull-right2" (click)="Finalized()" >Finalized</button>
+                                    <button  class="btn btn-success" (click)="exportoexcel(BrowseList,'Process_Salary')" [disabled]="!BrowseList.length">Salary Register</button>
                                 </div>
                                 <div class="col-sm-2">
-                                    <button  class="btn btn-success pull-right3" (click)="exportoexcel2('Bank_Register')" [disabled]="!BrowseList.length">Bank Register</button>
+                                    <button  class="btn btn-primary" (click)="Finalized()" >Finalized</button>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button  class="btn btn-success" (click)="exportoexcel2('Bank_Register')" [disabled]="!BrowseList.length">Bank Register</button>
                                 </div>
                             </div>
                                 <div class="row">

@@ -94,3 +94,7 @@ div.table-responsive.table-id > p-table > div > div {
      div.ng-trigger.ng-trigger-animation.ng-tns-c11-6.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-shadow.ui-dialog-draggable.ui-dialog-resizable.ng-star-inserted > div.ui-dialog-content.ui-widget-content > div > div > p-table > div > p-paginator > div > p-dropdown > div{
       margin-top: 29px;
      }
+    body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+      border-bottom: 1px solid #c1c1c1 !important;
+      margin-bottom: 0px;
+    }
