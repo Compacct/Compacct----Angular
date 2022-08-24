@@ -522,7 +522,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPRDB">{{option.replace('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPRDB">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>

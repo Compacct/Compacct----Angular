@@ -343,6 +343,7 @@ import { HarbProjectBillComponent } from './common/Harbauer/harb-project-bill/ha
 import { NepalSubledgerAliasCategoryComponent } from './common/FinancialManagement/Master/nepal-subledger-alias-category/nepal-subledger-alias-category.component';
 import { PatientCouponComponent } from "./common/PatientManagement/Transaction/patient-coupon/patient-coupon.component";
 import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-case-history/hearing-case-history.component";
+import { GoodReceiveDetailsComponent } from './common/MICL/good-receive-details/good-receive-details.component';
 
 
 @NgModule({
@@ -604,7 +605,8 @@ import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-
     HarbProjectBillComponent,
     NepalSubledgerAliasCategoryComponent,
     PatientCouponComponent,
-    HearingCaseHistoryComponent
+    HearingCaseHistoryComponent,
+    GoodReceiveDetailsComponent
   ],
   imports: [
     CommonModule,

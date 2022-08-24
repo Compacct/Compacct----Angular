@@ -44,6 +44,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
+                                            <th>Employee Code</th>
                                             <th>Employee Name</th>
                                             <th>Basic Salary</th>
                                             <th>HRA</th>
@@ -57,6 +58,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
+                                            <td>{{col.Emp_Code}}</td>
                                             <td>{{col.Emp_Name}}</td>
                                             <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Basic_Salary' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>
                                             <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.HRA' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>

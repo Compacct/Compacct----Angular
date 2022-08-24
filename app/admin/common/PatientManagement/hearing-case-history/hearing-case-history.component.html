@@ -397,7 +397,7 @@
                                 <p-radioButton value="Diabetes"  label="Diabetes"name="Diabetes"[(ngModel)]="MedicalProblemObj.Diabetes" ></p-radioButton> &nbsp;&nbsp;&nbsp;
                                 <p-radioButton value="Head injury" label="Head injury"name="HeadInjury"[(ngModel)]="MedicalProblemObj.HeadInjury" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
                                 <p-radioButton value="Headache" label="Headache"name="Headache"[(ngModel)]="MedicalProblemObj.Headache" ></p-radioButton>           -->
-                                <p-multiSelect [options]="MedicalProblemsList" [(ngModel)]="ObjLast.Medical_Problems" [virtualScroll]="true"
+                                <p-multiSelect [options]="MedicalProblemsList" [(ngModel)]="SelectedMedicalProblems" [virtualScroll]="true"
                             itemSize="30"  [styleClass]="'compacct-multiselect'"
                             name="Medical"></p-multiSelect>
                             </div> 
@@ -733,8 +733,6 @@
                         <label class="control-label">Date</label>
                         <ejs-datepicker 
                         [(value)]="Case_Date"
-                        [min]='voucherminDate'
-                        [max] ='vouchermaxDate'
                         [format]="'dd/MMM/yyyy'"
                         ></ejs-datepicker> 
                         </div>
