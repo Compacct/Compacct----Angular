@@ -66,6 +66,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {DataViewModule} from 'primeng/dataview';
 import {PanelModule} from 'primeng/panel';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
+import {SliderModule} from 'primeng/slider';
 
 // SPINNER
 import { NgxUiLoaderModule } from "ngx-ui-loader";
@@ -650,6 +651,7 @@ import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-
     ChipsModule,
     NpDatepickerModule,
     SplitButtonModule,
+    SliderModule,
     
   ],
   exports: [],
