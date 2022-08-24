@@ -834,7 +834,7 @@
                                       
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                                <h5 *ngIf="openProject === 'Y'" style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
@@ -844,7 +844,7 @@
                                 <i class="fa fa-fw fa-fax">
                                 </i> &nbsp;<strong>Taxes And Duties :</strong>
                                </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <div *ngIf="openProject === 'Y'" class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Taxes_And_Duties"
                                     #Taxes_And_Duties="ngModel"
                                     [(ngModel)]="objpurchase.Taxes_And_Duties"
@@ -891,7 +891,7 @@
                                       
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                                <h5 *ngIf="openProject === 'Y'" style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
@@ -901,7 +901,7 @@
                                 <i class="fa fa-fw fa-fax">
                                 </i> &nbsp;<strong>Installation & Commissioning:</strong>
                                </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <div *ngIf="openProject === 'Y'" class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Installation_Commissionning"
                                     #Installation_Commissionning="ngModel"
                                     [(ngModel)]="objpurchase.Installation_Commissioning"
@@ -1292,7 +1292,7 @@
                                       
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                                <h5 *ngIf="openProject === 'Y'" style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
@@ -1302,7 +1302,7 @@
                                 <i class="fa fa-fw fa-fax">
                                 </i> &nbsp;<strong>Taxes And Duties :</strong>
                                </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <div *ngIf="openProject === 'Y'" class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Taxes_And_Duties"
                                     #Taxes_And_Duties="ngModel"
                                     [(ngModel)]="objupdateterm.Taxes_And_Duties"
@@ -1349,7 +1349,7 @@
                                       
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                                <h5 *ngIf="openProject === 'Y'" style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
@@ -1359,7 +1359,7 @@
                                 <i class="fa fa-fw fa-fax">
                                 </i> &nbsp;<strong>Installation & Commissioning:</strong>
                                </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <div *ngIf="openProject === 'Y'" class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "InstallCommissionning"
                                     #InstallCommissionning="ngModel"
                                     [(ngModel)]="objupdateterm.Installation_Commissioning"

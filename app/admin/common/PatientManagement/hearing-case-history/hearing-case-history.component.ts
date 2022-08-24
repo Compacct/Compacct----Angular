@@ -16,6 +16,7 @@ import { last } from 'rxjs/operators';
   encapsulation: ViewEncapsulation.None
 })
 export class HearingCaseHistoryComponent implements OnInit {
+  Spinner = false;
   buttonname = "Update";
   tabIndexToView= 0;
   AllData =[];
@@ -60,11 +61,22 @@ ngOnInit(){
       Header: "Hearing Case History",
       Link: "Patient Management -> Hearing Case History",   
   })
+  this.MedicalProblemsList = [
+    {label: 'History of Infection', value: 'History of Infection'},
+    {label: 'Heart problems', value: 'Heart problems'},
+    {label: 'High blood pressure', value: 'High blood pressure'},
+    {label: 'Cancer', value: 'Cancer'},
+    {label: 'Stroke', value: 'Stroke'},
+    {label: 'Kidney issues', value: 'Kidney issues'},
+    {label: 'Diabetes', value: 'Diabetes'},
+    {label: 'Head injury', value: 'Head injury'},
+    {label: 'Headache', value: 'Headache'},
+];
   this.GetPatient();
   this.GetCenter();
   this.getState();
-  this.GetMedicalProblemsList()
 }
+onReject(){}
 CustomerRadioChange(){
 if(this.ObjLast.Is_Hearing_Check === "Y"){
   this.IfYes = true;
@@ -164,58 +176,58 @@ const obj = {
   //this.DynamicHeader2 = Object.keys(data[0]);
    console.log('patientSearchList=====',this.patientSearchList)
    this.ObjMiddle.Contact_Name = this.patientSearchList[0].Contact_Name;
-   this.ObjMiddle.Foot_Fall_ID = this.patientSearchList[0].Foot_Fall_ID,
-   this.ObjMiddle.Gender = this.patientSearchList[0].Gender,
-   this.Date_Of_Birth = new Date(this.patientSearchList[0].Date_Of_Birth),
-   this.ObjMiddle.Address = this.patientSearchList[0].Address,
-   this.ObjMiddle.Pin = this.patientSearchList[0].Pin,
-   this.StateDistrictChange(this.ObjMiddle.Pin),
-   this.ObjMiddle.DISTRICT = this.patientSearchList[0].DISTRICT,
-   this.ObjMiddle.Mobile = this.patientSearchList[0].Mobile,
-   this.ObjMiddle.Mobile_2 = this.patientSearchList[0].Mobile_2,
-   this.ObjMiddle.Email = this.patientSearchList[0].Email,
-   this.ObjMiddle.Cost_Cen_ID = this.patientSearchList[0].Cost_Cen_ID,
-   this.GetAudilogist(),
-   this.ObjMiddle.STATE = this.patientSearchList[0].STATE,
-   this.ObjLast.Is_Hearing_Check = this.patientSearchList[0].Is_Hearing_Check,
-   this.ObjLast.Hearing_Check_Details = this.patientSearchList[0].Hearing_Check_Details,
-   this.ObjLast.Hearing_Loss_Details = this.patientSearchList[0].Hearing_Loss_Details,
-   this.ObjLast.Is_Ear_Infections = this.patientSearchList[0].Is_Ear_Infections,
-   this.ObjLast.Ear_Infection_Side = this.patientSearchList[0].Ear_Infection_Side,
-   this.ObjLast.Is_Suspect_Difficulty = this.patientSearchList[0].Is_Suspect_Difficulty,
-   this.ObjLast.Is_Lost_Hearing_Suddenly = this.patientSearchList[0].Is_Lost_Hearing_Suddenly,
-   this.ObjLast.Lost_Hearing_Suddenly_Side = this.patientSearchList[0].Lost_Hearing_Suddenly_Side,
-   this.ObjLast.Is_Exp_Dizziness = this.patientSearchList[0].Is_Exp_Dizziness,
-   this.ObjLast.Better_Ear = this.patientSearchList[0].Better_Ear,
-   this.ObjLast.Is_Pain = this.patientSearchList[0].Is_Pain,
-   this.ObjLast.Pain_Side = this.patientSearchList[0].Pain_Side,
-   this.ObjLast.Is_Exp_Ringing = this.patientSearchList[0].Is_Exp_Ringing,
-   this.ObjLast.Exp_Ringing_Side = this.patientSearchList[0].Exp_Ringing_Side,
-   this.ObjLast.Is_Loud_Noise = this.patientSearchList[0].Is_Loud_Noise,
-   this.ObjLast.Medical_Problems = this.patientSearchList[0].Medical_Problems,
-   this.ObjLast.Medical_Problems_Other = this.patientSearchList[0].Medical_Problems_Other,
-   this.ObjLast.Is_Treatment = this.patientSearchList[0].Is_Treatment,
-   this.ObjLast.Treatment_Side = this.patientSearchList[0].Treatment_Side,
-   this.ObjLast.Communication_Total_Score = this.patientSearchList[0].Communication_Total_Score,
-   this.ObjLast.Comm_1 = this.patientSearchList[0].Comm_1,
-   this.ObjLast.Comm_2 = this.patientSearchList[0].Comm_2,
-   this.ObjLast.Comm_3 = this.patientSearchList[0].Comm_3,
-   this.ObjLast.Comm_4 = this.patientSearchList[0].Comm_4,
-   this.ObjLast.Comm_5 = this.patientSearchList[0].Comm_5,
-   this.ObjLast.Comm_6 = this.patientSearchList[0].Comm_6,
-   this.ObjLast.Comm_7 = this.patientSearchList[0].Comm_7,
-   this.ObjLast.Comm_8 = this.patientSearchList[0].Comm_8,
-   this.ObjLast.Comm_9 = this.patientSearchList[0].Comm_9,
-   this.ObjLast.Comm_10 = this.patientSearchList[0].Comm_10,
-   this.ObjLast.Is_Hearing_Loss_Family = this.patientSearchList[0].Is_Hearing_Loss_Family,
-   this.ObjLast.Loss_Family_Who = this.patientSearchList[0].Loss_Family_Who,
-   this.ObjLast.Is_Other_Notice = this.patientSearchList[0].Is_Other_Notice,
-   this.ObjLast.Important_To_Improve = this.patientSearchList[0].Important_To_Improve,
-   this.ObjLast.Is_Using_HA = this.patientSearchList[0].Is_Using_HA,
-   this.ObjLast.HA_Name = this.patientSearchList[0].HA_Name,
-   this.ObjLast.Confident_To_Ability = this.patientSearchList[0].Confident_To_Ability,
-   this.ObjLast.Is_Satisfy_Hearing_Status = this.patientSearchList[0].Is_Satisfy_Hearing_Status,
-   this.Case_Date = new Date(this.patientSearchList[0].Case_Date),
+   this.ObjMiddle.Foot_Fall_ID = this.patientSearchList[0].Foot_Fall_ID;
+   this.ObjMiddle.Gender = this.patientSearchList[0].Gender;
+   this.Date_Of_Birth = new Date(this.patientSearchList[0].Date_Of_Birth);
+   this.ObjMiddle.Address = this.patientSearchList[0].Address;
+   this.ObjMiddle.Pin = this.patientSearchList[0].Pin;
+   this.StateDistrictChange(this.ObjMiddle.Pin);
+   this.ObjMiddle.DISTRICT = this.patientSearchList[0].DISTRICT;
+   this.ObjMiddle.Mobile = this.patientSearchList[0].Mobile;
+   this.ObjMiddle.Mobile_2 = this.patientSearchList[0].Mobile_2;
+   this.ObjMiddle.Email = this.patientSearchList[0].Email;
+   this.ObjMiddle.Cost_Cen_ID = this.patientSearchList[0].Cost_Cen_ID;
+   this.GetAudilogist();
+   this.ObjMiddle.STATE = this.patientSearchList[0].STATE;
+   this.ObjLast.Is_Hearing_Check = this.patientSearchList[0].Is_Hearing_Check;
+   this.ObjLast.Hearing_Check_Details = this.patientSearchList[0].Hearing_Check_Details;
+   this.ObjLast.Hearing_Loss_Details = this.patientSearchList[0].Hearing_Loss_Details;
+   this.ObjLast.Is_Ear_Infections = this.patientSearchList[0].Is_Ear_Infections;
+   this.ObjLast.Ear_Infection_Side = this.patientSearchList[0].Ear_Infection_Side;
+   this.ObjLast.Is_Suspect_Difficulty = this.patientSearchList[0].Is_Suspect_Difficulty;
+   this.ObjLast.Is_Lost_Hearing_Suddenly = this.patientSearchList[0].Is_Lost_Hearing_Suddenly;
+   this.ObjLast.Lost_Hearing_Suddenly_Side = this.patientSearchList[0].Lost_Hearing_Suddenly_Side;
+   this.ObjLast.Is_Exp_Dizziness = this.patientSearchList[0].Is_Exp_Dizziness;
+   this.ObjLast.Better_Ear = this.patientSearchList[0].Better_Ear;
+   this.ObjLast.Is_Pain = this.patientSearchList[0].Is_Pain;
+   this.ObjLast.Pain_Side = this.patientSearchList[0].Pain_Side;
+   this.ObjLast.Is_Exp_Ringing = this.patientSearchList[0].Is_Exp_Ringing;
+   this.ObjLast.Exp_Ringing_Side = this.patientSearchList[0].Exp_Ringing_Side;
+   this.ObjLast.Is_Loud_Noise = this.patientSearchList[0].Is_Loud_Noise;
+   this.SelectedMedicalProblems = this.patientSearchList[0].Medical_Problems.split(',');
+   this.ObjLast.Medical_Problems_Other = this.patientSearchList[0].Medical_Problems_Other;
+   this.ObjLast.Is_Treatment = this.patientSearchList[0].Is_Treatment;
+   this.ObjLast.Treatment_Side = this.patientSearchList[0].Treatment_Side;
+   this.ObjLast.Communication_Total_Score = this.patientSearchList[0].Communication_Total_Score;
+   this.ObjLast.Comm_1 = this.patientSearchList[0].Comm_1;
+   this.ObjLast.Comm_2 = this.patientSearchList[0].Comm_2;
+   this.ObjLast.Comm_3 = this.patientSearchList[0].Comm_3;
+   this.ObjLast.Comm_4 = this.patientSearchList[0].Comm_4;
+   this.ObjLast.Comm_5 = this.patientSearchList[0].Comm_5;
+   this.ObjLast.Comm_6 = this.patientSearchList[0].Comm_6;
+   this.ObjLast.Comm_7 = this.patientSearchList[0].Comm_7;
+   this.ObjLast.Comm_8 = this.patientSearchList[0].Comm_8;
+   this.ObjLast.Comm_9 = this.patientSearchList[0].Comm_9;
+   this.ObjLast.Comm_10 = this.patientSearchList[0].Comm_10;
+   this.ObjLast.Is_Hearing_Loss_Family = this.patientSearchList[0].Is_Hearing_Loss_Family;
+   this.ObjLast.Loss_Family_Who = this.patientSearchList[0].Loss_Family_Who;
+   this.ObjLast.Is_Other_Notice = this.patientSearchList[0].Is_Other_Notice;
+   this.ObjLast.Important_To_Improve = this.patientSearchList[0].Important_To_Improve;
+   this.ObjLast.Is_Using_HA = this.patientSearchList[0].Is_Using_HA;
+   this.ObjLast.HA_Name = this.patientSearchList[0].HA_Name;
+   this.ObjLast.Confident_To_Ability = this.patientSearchList[0].Confident_To_Ability;
+   this.ObjLast.Is_Satisfy_Hearing_Status = this.patientSearchList[0].Is_Satisfy_Hearing_Status;
+   this.Case_Date = new Date(this.patientSearchList[0].Case_Date);
    this.ObjLast.Audiologist_ID = this.patientSearchList[0].Audiologist_ID;
   // if(this.patientSearchList[0].Medical_Problems){
   //   let tempArr = this.patientSearchList[0].Medical_Problems.split(',')
@@ -372,7 +384,7 @@ if(valid){
       this.compacctToast.add({
        key: "compacct-toast",
        severity: "success",
-       summary: "Foot_Fall_ID  " + tempID,
+       summary: "Patient Details  ",
        detail: "Succesfully Update" //+ mgs
      });
      this.PatientMiddleFormSubmitted = false;
@@ -405,7 +417,7 @@ Pain_Side:this.ObjLast.Pain_Side,
 Is_Exp_Ringing: this.ObjLast.Is_Exp_Ringing,
 Exp_Ringing_Side: this.ObjLast.Exp_Ringing_Side,
 Is_Loud_Noise:this.ObjLast.Is_Loud_Noise,
-Medical_Problems: this.ObjLast.Medical_Problems.toString(),
+Medical_Problems: this.SelectedMedicalProblems.toString(),
 Medical_Problems_Other: this.ObjLast.Medical_Problems_Other,
 Is_Treatment: this.ObjLast.Is_Treatment,
 Treatment_Side: this.ObjLast.Treatment_Side,
@@ -446,7 +458,7 @@ if(valid){
       this.compacctToast.add({
        key: "compacct-toast",
        severity: "success",
-       summary: "Case_ID  " + tempID,
+       summary: "Patient Details  ",
        detail: "Succesfully Save" //+ mgs
      });
      this.PatientlastFormSubmitted = false;
@@ -455,24 +467,12 @@ if(valid){
      this.MedicalProblemObj= {};
      this.ObjFirst.Foot_Fall_ID = undefined;
      this.Active =true;
+     this.SelectedMedicalProblems =undefined;
      this.CustomerRadioChange()
       }
     }
   )}
 } 
-GetMedicalProblemsList() {
-    this.MedicalProblemsList = [
-      {label: 'History of Infection', value: 'History of Infection'},
-      {label: 'Heart problems', value: 'Heart problems'},
-      {label: 'High blood pressure', value: 'High blood pressure'},
-      {label: 'Cancer', value: 'Cancer'},
-      {label: 'Stroke', value: 'Stroke'},
-      {label: 'Kidney issues', value: 'Kidney issues'},
-      {label: 'Diabetes', value: 'Diabetes'},
-      {label: 'Head injury', value: 'Head injury'},
-      {label: 'Headache', value: 'Headache'},
-  ];
-}
 // getAudi(){
 //   const ProjectFilter = this.Audilogistlist.filter(el=> Number(el.value) === Number(this.ObjMiddle.Audiologist_ID))[0];
 //   this.ObjLast.Audiologist_Name = ProjectFilter.label;

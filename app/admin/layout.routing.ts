@@ -248,6 +248,7 @@ import { HarbProjectBillComponent } from './common/Harbauer/harb-project-bill/ha
 import { NepalSubledgerAliasCategoryComponent } from "./common/FinancialManagement/Master/nepal-subledger-alias-category/nepal-subledger-alias-category.component";
 import { PatientCouponComponent } from "./common/PatientManagement/Transaction/patient-coupon/patient-coupon.component";
 import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-case-history/hearing-case-history.component";
+import { GoodReceiveDetailsComponent } from './common/MICL/good-receive-details/good-receive-details.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1825,7 +1826,14 @@ data: {
                   path: 'Hearing_Case_History',
                    component: HearingCaseHistoryComponent,
                     data: {
-                      title: 'Hearing Case History '
+                      title: 'Hearing Case History'
+                }
+                },
+                {
+                  path: 'Good_Receive_Details',
+                   component: GoodReceiveDetailsComponent,
+                    data: {
+                      title: 'Good Receive Details'
                 }
                 },
       

@@ -496,14 +496,14 @@ export class AttendanceSheetComponent implements OnInit {
     // if (value === null) {
     //   value = 2;
     // }
-   if(col != 'Emp_ID' || col != "Emp_Name"){
+   if(col != "Emp_ID" || col != "Emp_Code" || col != "Emp_Name"){
      let attArrFilter:any = this.AttenTypelist.filter((el:any)=> Number(el.Atten_Type_ID) == Number(value))
       if(attArrFilter.length){
      flag = attArrFilter[0].Sht_Desc
      } 
     
    }
-   if(col === 'Emp_ID' || col === "Emp_Name"){
+   if(col === 'Emp_ID' || col === "Emp_Code" || col === "Emp_Name"){
     flag = value
    }
    this.attendance_value = flag;
@@ -539,7 +539,7 @@ export class AttendanceSheetComponent implements OnInit {
         let Doc_date = this.Month_Name+"-"+date;
         this.Doc_date = this.DateService.dateConvert(new Date(Doc_date))
 
-        if (col === 'Emp_ID' || col === "Emp_Name") {
+        if (col === 'Emp_ID' || col === "Emp_Code" || col === "Emp_Name") {
           this.display = false;
         } else {
           this.attendancestatusFormSubmitted = false;
@@ -571,7 +571,7 @@ export class AttendanceSheetComponent implements OnInit {
         let Doc_date = this.Month_Name+"-"+date;
         this.Doc_date_AllEmp = this.DateService.dateConvert(new Date(Doc_date))
 
-        if (col === "Emp_Name") {
+        if (col === "Emp_Code" || col === "Emp_Name") {
           this.displayALLEmployee = false;
         } else {
           this.AllattendancestatusFormSubmitted = false;
