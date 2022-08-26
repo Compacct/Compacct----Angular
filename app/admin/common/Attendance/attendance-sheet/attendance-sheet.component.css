@@ -181,7 +181,8 @@ div.table-responsive.table-id>p-table>div>div {
     background-color: rgb(33, 110, 17);
   } 
   
-   .A {
+   .A,
+   .L {
     background-color: #ff4141 !important;
     color: #ffff;
     text-align: center;
@@ -216,9 +217,9 @@ div.table-responsive.table-id>p-table>div>div {
     color: #ffff;
     text-align: center;
   }
-  .L{
+  /* .L{
     text-align: center;
-  }
+  } */
   
   #picker {
     background-image: none !important;

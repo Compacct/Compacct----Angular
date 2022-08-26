@@ -1230,7 +1230,7 @@ PrintREQ(DocNo) {
 GetGSTAmt(){
   if(this.objaddPurchacse.taxable_AMT){
     this.objaddPurchacse.GST_AMT = (Number(this.objaddPurchacse.taxable_AMT) * (Number(this.objaddPurchacse.Gst)/100)).toFixed(2);
-    this.objaddPurchacse.Total_Amount = Number(this.objaddPurchacse.GST_AMT) + Number(this.objaddPurchacse.taxable_AMT)
+    this.objaddPurchacse.Total_Amount = (Number(this.objaddPurchacse.GST_AMT) + Number(this.objaddPurchacse.taxable_AMT)).toFixed(2);
   }
   else {
     this.objaddPurchacse.Total_Amount = undefined;
@@ -1650,7 +1650,7 @@ gettermsdetails(){
    }
    GetReportNameList(){
     this.ReportNameList = [
-      {Report_Name : "Pending Purchase Indent - Details"},
+      {Report_Name : "Pending Indent Details"},
       {Report_Name : "Pending PO - Not Delivered - Summary"},
       {Report_Name : "Pending PO - Not Delivered - Details"}
     ]

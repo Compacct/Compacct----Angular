@@ -167,10 +167,13 @@
                             <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name" (change)="getAttendanceData()">
                         </div>
                         <div class="col-sm-2">
-                            <button  class="btn btn-primary pull-right1" (click)="getAttendanceDatafornewmonth()" >Generate Attendance</button>
+                            <button  class="btn btn-primary" (click)="getAttendanceDatafornewmonth()" >Generate Attendance</button>
                         </div>
-                        <div class="col-sm-2">
-                            <button  class="btn btn-warning pull-right2"  (click)="ChekMonthlyProcAS()">Process Monthly Attendance Sheet</button>
+                        <div class="col-sm-3">
+                            <button  class="btn btn-primary" (click)="getAttendanceDataforExistingmonth()" >Add Employee in Attendance Sheet</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button  class="btn btn-warning"  (click)="ChekMonthlyProcAS()">Process Monthly Attendance Sheet</button>
                         </div>
                     </div>
                     <br>

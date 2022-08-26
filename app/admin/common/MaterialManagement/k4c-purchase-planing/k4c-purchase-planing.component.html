@@ -509,6 +509,10 @@
                                                     <input class="form-control" name="lastPurrate" #lastPurrate="ngModel" [(ngModel)]="ObjPurchasePlan.Last_Purchase_Rate" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && lastPurrate?.errors?.required}" required>
                                                 </div>
                                                 <div class="col-sm-2">
+                                                    <label class="control-label">GST Percentage </label>
+                                                    <input class="form-control" name="gstper" #gstper="ngModel" [(ngModel)]="ObjPurchasePlan.GST_Percentage" [(disabled)]="uomdisabeld">
+                                                </div>
+                                                <div class="col-sm-2">
                                                     <label class="control-label">Current Stock <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="currentstock" #currentstock="ngModel" [(ngModel)]="ObjPurchasePlan.Current_Stock" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && currentstock?.errors?.required}" required>
                                                 </div>
@@ -530,13 +534,13 @@
                                                     <label></label>
                                                     <input class="form-control" name="altuom" #altuom="ngModel" [(ngModel)]="ObjPurchasePlan.Alt_UOM" [(disabled)]="uomdisabeld">
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Current Rate <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="rate" #rate="ngModel" [(ngModel)]="ObjPurchasePlan.Sale_rate" (change)='OrderValueChange()' CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && rate?.errors?.required}" required>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">Order Value <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Ovalue" #Ovalue="ngModel" [(ngModel)]="ObjPurchasePlan.Order_Value" [disabled]="ovaldisabled" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Ovalue?.errors?.required}" required>
                                                 </div>
@@ -553,12 +557,12 @@
                                                     <input class="form-control" onkeydown="if(event.key==='.'){event.preventDefault();}" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');" CompacctDigitonly="true" name="estimedel" #estimedel="ngModel" [(ngModel)]="ObjPurchasePlan.Estimated_Time_Of_Delivery"
                                                         [ngClass]="{'clearance':PurchaseFormSubmitted && estimedel?.errors?.required}" required>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Remarks</label>
                                                     <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjPurchasePlan.Remarks" [ngClass]="{'clearance':PurchaseFormSubmitted && Remarks?.errors?.required}"></textarea>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Select Vendor <sup class="text-danger">*</sup></label>
                                                     <!-- <div class="col-sm-2 pull-right" style="width:170px;">

@@ -481,7 +481,9 @@ export class MiclRequisitionComponent implements OnInit {
       console.log("costcenterList  ===",data);
      this.costcenterList = data;
      this.objreqi.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+     if(this.headerText === "Purchase Indent") {
      this.ObjBrowseData.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+     }
      this.Getgodown(this.objreqi.Cost_Cen_ID);
      this.GetgodownBrowse(this.ObjBrowseData.Cost_Cen_ID);
   })
@@ -519,7 +521,9 @@ export class MiclRequisitionComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownBrowseList = data;
         console.log("this.GodownBrowseList",this.GodownBrowseList);
+        // if(this.headerText === "Purchase Indent") {
         this.ObjBrowseData.Godown_ID = this.GodownBrowseList.length ? this.GodownBrowseList[0].Godown_ID : undefined
+        // }
         })
     }
     else{
