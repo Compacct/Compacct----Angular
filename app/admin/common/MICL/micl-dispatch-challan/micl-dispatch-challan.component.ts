@@ -913,7 +913,7 @@ saveqty(){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("costcenterList  ===",data);
       this.BrowseCostCenterList = data;
-      this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      // this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // if(this.Objdispatch.F_Cost_Cen_ID){
       //   this.toutLetDis = true;
       // }

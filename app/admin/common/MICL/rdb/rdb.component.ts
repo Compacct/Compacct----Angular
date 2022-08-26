@@ -485,11 +485,14 @@ export class RdbComponent implements OnInit {
         const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRdb.Sub_Ledger_ID))[0]
         console.log("productFilter",productFilter);
         if(Object.keys(productFilter).length){
+          var FreightPFPerc = productFilter.Excise_Tax_Percentage ? productFilter.Excise_Tax_Percentage : 0;
         var apidiscountamt = productFilter.Discount_Amount;
         var qtydis = Number(apidiscountamt / this.ObjRdb1.PO_QTY).toFixed(2);
         var discountamt = Number(Number(qtydis) * this.ObjRdb1.Received_Qty).toFixed(2);
         var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
-        var taxable = Number(amount) - Number(discountamt);
+        var FreightPFCharges = (Number(amount) * (Number(FreightPFPerc) / 100)).toFixed(2);
+        var amtwithfreightcharges = (Number(amount) + Number(FreightPFCharges)).toFixed(2);
+        var taxable = Number(amtwithfreightcharges) - Number(discountamt); //Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
         var taxsgstcgst =  (Number(Number(taxable) * Number(productFilter.GST_Percentage)) / 100).toFixed(2);
         var totalamount = (Number(taxable) + Number(taxsgstcgst)).toFixed(2);
         var productObj = {
@@ -511,6 +514,8 @@ export class RdbComponent implements OnInit {
                     Challan_Qty : Number(this.ObjRdb1.Challan_Qty),
                     Received_Qty : Number(this.ObjRdb1.Received_Qty),
                     Rate : productFilter.Rate,
+                    Freight_PF_Perc : Number(FreightPFPerc).toFixed(2),
+                    Freight_PF_Charges : Number(FreightPFCharges).toFixed(2),
                     Discount_Amount : Number(discountamt).toFixed(2),
                     Taxable_Value :  Number(taxable).toFixed(2),
                     Tax_Percentage : productFilter.GST_Percentage,
@@ -565,6 +570,8 @@ export class RdbComponent implements OnInit {
             Challan_Qty : Number(item.Challan_Qty),
             Received_Qty : Number(item.Received_Qty),
             Rate : Number(item.Rate),
+            Freight_PF_Perc : Number(item.Freight_PF_Perc),
+            Freight_PF_Charges : Number(item.Freight_PF_Charges),
             Discount_Amount : Number(item.Discount_Amount).toFixed(2),
             Taxable_Value : Number(item.Taxable_Value).toFixed(2),
             Tax_Percentage : item.Tax_Percentage,

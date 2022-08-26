@@ -17,7 +17,7 @@ import * as XLSX from 'xlsx';
   encapsulation: ViewEncapsulation.None
 })
 export class K4cPurchasePlaningComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -29,7 +29,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   uomdisabeld = false;
   PurchaseFormSubmitted = false;
   localpurchaseFLag = false;
-  Productlist = [];
+  Productlist:any = [];
   productaddSubmit = [];
   vendordisabled = false;
   vendorlist :any = [];
@@ -120,6 +120,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
       this.ObjMPtype.Product_Type = this.tabIndexToView ? this.ObjMPtype.Product_Type : undefined;
       this.productdisabled = this.tabIndexToView ? this.productdisabled : false;
       this.uomdisabeld = this.tabIndexToView ? this.uomdisabeld : false;
+      this.Orderlist = this.tabIndexToView ? this.Orderlist : [];
+      this.Productlist = this.tabIndexToView ? this.Productlist : this.getproduct();
      // this.data = "(Show Requisition Products)"
      //this.Productlist = [];
       this.PPdoc_no = undefined;
@@ -420,7 +422,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   //this.ExpiredProductFLag = false;
  if(this.ObjPurchasePlan.Product_ID) {
    const ctrl = this;
-   const productObj = $.grep(ctrl.Productlist,function(item) {return item.Product_ID == ctrl.ObjPurchasePlan.Product_ID})[0];
+   const productObj:any = $.grep(ctrl.Productlist,function(item:any) {return item.Product_ID == ctrl.ObjPurchasePlan.Product_ID})[0];
    //console.log(productObj);
    //this.ObjPurchasePlan.Product_Type = productObj.Product_Type;
    this.ObjPurchasePlan.Product_Description = productObj.Product_Description;
@@ -430,6 +432,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
    this.ObjPurchasePlan.Indent_Qty = productObj.Indent_Qty;
    this.uomdisabeld = true;
    this.ObjPurchasePlan.Last_Purchase_Rate =  productObj.Last_Purchase_Rate;
+   this.ObjPurchasePlan.GST_Percentage = productObj.GST_Tax_Per;
    this.ObjPurchasePlan.Last_Purchase_Qty = productObj.Last_Puchase_Qty;
    this.ObjPurchasePlan.Current_Stock =  productObj.Current_Stock;
    this.ObjPurchasePlan.Due_Payment = productObj.Due_Payment;
@@ -925,7 +928,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   exportoexcel3(Arr,fileName): void {
-    let temp = [];
+    let temp:any = [];
      Arr.forEach(element => {
        const obj = {
         Product_Type : element.Product_Type,
@@ -1241,6 +1244,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
        this.ObjPurchasePlan.Last_Purchase_Qty = data[0].Last_Purchase_Qty;
        this.ObjPurchasePlan.AL_UOM = data[0].Alt_UOM;
        this.ObjPurchasePlan.Last_Purchase_Rate = data[0].Last_Purchase_Rate;
+       this.ObjPurchasePlan.GST_Percentage = data[0].GST_Tax_Per;
        this.ObjPurchasePlan.Current_Stock = data[0].Stock_Qty;
        this.ObjPurchasePlan.Pcs_UOM = data[0].UOM;
        this.ObjPurchasePlan.Alt_UOM = data[0].Alt_UOM;
@@ -1318,6 +1322,7 @@ class PurchasePlan {
   Vendor : string;
   Vendor_ID : any;
   Last_Purchase_Rate : number;
+  GST_Percentage : any;
   Last_Purchase_Qty : number;
   Last_Purchase_With_GST : number;
   Current_Stock : number;

@@ -491,6 +491,41 @@ export class AttendanceSheetComponent implements OnInit {
   onReject(){
     this.compacctToast.clear("c");
    }
+   getAttendanceDataforExistingmonth(){
+    this.AllAttendanceData = [];
+    var firstDate = this.Month_Name+'-'+'01'
+    console.log('firstDate',firstDate)
+    const AtObj = {
+      Date : this.DateService.dateConvert(new Date(firstDate)),
+    }
+    const obj = {
+      "SP_String": "HR_Txn_Attn_Sheet",
+      // "Report_Name_String": "Get_Attn_Data",
+      "Report_Name_String": "Set_Attn_Data_for_Existing_month",
+      "Json_Param_String": JSON.stringify([AtObj])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Data From Api",data);
+      this.AllAttendanceData = data;
+      if(this.AllAttendanceData.length){
+        this.DynamicHeader = Object.keys(data[0]);
+         this.DynamicHeader.forEach((el:any)=>{
+          this.cols.push({
+           header: el 
+          })
+        })
+        // this.onReject();
+        this.getAttendanceData();
+      }
+      else {
+        this.DynamicHeader = [];
+        // this.onReject();
+        this.getAttendanceData();
+      }
+      console.log('this.AllAttendanceData',this.AllAttendanceData)
+  })
+  }
   getcellText(value,col){
     let flag = "";
     // if (value === null) {
@@ -516,7 +551,7 @@ export class AttendanceSheetComponent implements OnInit {
       this.empid = row.Emp_ID;
       console.log("Row",row[this.col])
       event.preventDefault();
-      if (this.col != "Emp_Name") {
+      if (this.col != "Emp_Code" && this.col != "Emp_Name" && row[this.col] != 13) {
         this.AllAttendanceData.forEach((el:any)=>{
           if(Number(el.Emp_ID )== Number(this.empid)){
            el[this.col] = 1;
@@ -539,7 +574,7 @@ export class AttendanceSheetComponent implements OnInit {
         let Doc_date = this.Month_Name+"-"+date;
         this.Doc_date = this.DateService.dateConvert(new Date(Doc_date))
 
-        if (col === 'Emp_ID' || col === "Emp_Code" || col === "Emp_Name") {
+        if (col === 'Emp_ID' || col === "Emp_Code" || col === "Emp_Name" || row[this.col] === 13) {
           this.display = false;
         } else {
           this.attendancestatusFormSubmitted = false;
@@ -585,7 +620,8 @@ export class AttendanceSheetComponent implements OnInit {
     if (valid){
       this.AllAttendanceData.forEach((el:any)=>{
         // if(Number(el.Emp_ID )== Number(this.empid)){
-         el[this.col] = Number(this.Attendance_Status_ALlEmployee)
+          // el[this.col] = Number(this.Attendance_Status_ALlEmployee);
+         el[this.col] =  el[this.col] != 13 ? Number(this.Attendance_Status_ALlEmployee) : el[this.col]
         // }
       })
       // this.AllattendancestatusFormSubmitted = false;

@@ -73,6 +73,7 @@ export class GrnComponent implements OnInit {
   DiscountAmount: any;
   RegisterSpinner = false;
   ObjGRNRegister = new GRNRegister();
+  FreightPFPerc: any;
 
 
   constructor(
@@ -294,6 +295,7 @@ export class GrnComponent implements OnInit {
   console.log(this.ObjGRN.Rate)
   this.disabledflaguom = false;
   this.disabledflaghsn = false;
+  this.FreightPFPerc = undefined;
   this.DiscountAmount = undefined;
   if(this.ObjGRN.Product_ID) {
     const ctrl = this;
@@ -306,6 +308,7 @@ export class GrnComponent implements OnInit {
     this.ObjGRN.HSN_Code = RateObj.HSN_Code
     this.ObjGRN.Challan_Qty = RateObj.Challan_Qty;
     this.ObjGRN.Received_Qty = RateObj.Received_Qty;
+    this.FreightPFPerc = RateObj.Freight_PF_Perc;
     this.DiscountAmount = RateObj.Discount_Amount;
     if(RateObj.UOM) {
     this.disabledflaguom = true;
@@ -362,11 +365,14 @@ export class GrnComponent implements OnInit {
     if(valid){
       if (Number(this.ObjGRN.Received_Qty) && Number(this.ObjGRN.Received_Qty) <= Number(this.ObjGRN.Challan_Qty)){
         if (Number(this.ObjGRN.Rejected_Qty) >= 0) {
+        var FreightPFPerc = this.FreightPFPerc ? this.FreightPFPerc : 0;
         var apidiscountamt = this.DiscountAmount;
         var qtydis = Number(apidiscountamt / this.ObjGRN.Received_Qty).toFixed(2);
         var discountamt = Number(Number(qtydis) * this.ObjGRN.Accepted_Qty).toFixed(2);
       var amount = Number(this.ObjGRN.Accepted_Qty * this.ObjGRN.Rate).toFixed(2);
-      var taxable = Number(amount) - Number(discountamt);
+      var FreightPFCharges = (Number(amount) * (Number(FreightPFPerc) / 100)).toFixed(2);
+      var amtwithfreightcharges = (Number(amount) + Number(FreightPFCharges)).toFixed(2);
+      var taxable = Number(amtwithfreightcharges) - Number(discountamt);
       // var taxablevalue = Number((Number(amount) * 100) / Number(this.ObjGRN1.GST_Tax_Per) + 100).toFixed(2);
       var taxsgstcgst =  (Number(Number(taxable) * Number(this.ObjGRN.GST_Tax_Per)) / 100).toFixed(2);
       var totalamount = (Number(taxable) + Number(taxsgstcgst)).toFixed(2);
@@ -384,6 +390,8 @@ export class GrnComponent implements OnInit {
       Accepted : this.ObjGRN.Accepted_Qty,
       // Rate : this.DateService.dateConvert(new Date(this.LastPurDate)),
       Rate : this.ObjGRN.Rate,
+      Freight_PF_Perc : Number(FreightPFPerc).toFixed(2),
+      Freight_PF_Charges : Number(FreightPFCharges).toFixed(2),
       Discount_Amount : Number(discountamt).toFixed(2),
       Taxable_Value : Number(taxable).toFixed(2),
       GST_Tax_Per : Number(this.ObjGRN.GST_Tax_Per),
@@ -446,6 +454,8 @@ export class GrnComponent implements OnInit {
             Rejected_Qty : Number(item.Rejected),
             Accepted_Qty : Number(item.Accepted),
             Rate : Number(item.Rate),
+            Freight_PF_Perc : Number(item.Freight_PF_Perc),
+            Freight_PF_Charges : Number(item.Freight_PF_Charges),
             Discount_Amount : Number(item.Discount_Amount).toFixed(2),
             Taxable_Value : Number(item.Taxable_Value).toFixed(2),
             Tax_Percentage : item.GST_Tax_Per,
