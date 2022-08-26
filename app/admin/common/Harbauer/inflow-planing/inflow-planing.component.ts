@@ -104,7 +104,7 @@ getProject(){
       // this.getGroup(this.objproject.Budget_Group_ID);
       // this.getSubGroup(this.objproject.Budget_Sub_Group_ID)
       // this.getWork(this.objproject.Work_Details_ID)
-      console.log("ProjectList",this.ProjectList);
+      //console.log("ProjectList",this.ProjectList);
       
     // this.EmitOnDataInit()
     })
@@ -119,7 +119,7 @@ getSite(projectID){
     let projectFilter:any = []
     setTimeout(() => {
       projectFilter = this.ProjectList.filter((el:any)=> Number(el.Project_ID) === Number(projectID))
-      console.log("projectFilter",projectFilter)
+      //console.log("projectFilter",projectFilter)
       const obj = {
         "SP_String": "SP_Tender_Management_All",
         "Report_Name_String": "Get_Site_For_Project_Planning",
@@ -129,7 +129,7 @@ getSite(projectID){
         this.SiteList = data;
         this.getWork(this.Objplaning.Work_Details_ID)
         
-        console.log("SiteList",this.SiteList);
+       // console.log("SiteList",this.SiteList);
       })
     }, 100);
      
@@ -149,14 +149,14 @@ getGroup(id?){
       "Json_Param_String": JSON.stringify([{Project_ID : Number(this.Objplaning.Project_ID) , Site_ID : Number(this.Objplaning.Site_ID)}]) 
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       console.log("getGroup",data);
+       //console.log("getGroup",data);
       this.groupList = data;
       setTimeout(() => {
         this.Objplaning.Budget_Group_ID = id ? id : undefined
         this.getSubGroup(this.Objplaning.Budget_Sub_Group_ID);
         this.getWork(this.Objplaning.Work_Details_ID)
       }, 1000);
-     console.log("groupList",this.groupList);
+     //console.log("groupList",this.groupList);
     })
   }
  else {
@@ -184,7 +184,7 @@ getSubGroup(id?){
         this.subGorupList = data;
         this.Objplaning.Budget_Sub_Group_ID = id ? id : undefined
         //this.EmitOnDataInit()
-        console.log("subGorupList",this.subGorupList);
+       //console.log("subGorupList",this.subGorupList);
      })
   }
   else {
@@ -209,7 +209,7 @@ getWork(id?){
     this.workList = data
     this.Objplaning.Work_Details_ID = id ? id : undefined
      //this.EmitOnDataInit()
-     console.log("workList",this.workList);
+    // console.log("workList",this.workList);
     })
   }
 }
@@ -256,7 +256,7 @@ saveData(valid:any){
      }
      this.GlobalAPI.getData(obj)
      .subscribe((data:any)=>{
-      console.log("Final save data ==",data);
+      //console.log("Final save data ==",data);
       if (data[0].Column1){
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -326,7 +326,7 @@ GetSearchedListBrowse(valid){
     From_Date : start,
     To_Date : end,
   }
-  console.log("tempobj DAte ====",tempobj)
+ // console.log("tempobj DAte ====",tempobj)
   const obj = {
   "SP_String": "SP_Inflow_Planning",
   "Report_Name_String": "Get_Inflow_With_Projected_Date",
@@ -339,7 +339,7 @@ GetSearchedListBrowse(valid){
       //this.DynamicHeader = Object.keys(data[0]);
     }
  
-   console.log('SearchedListBrowse===',this.SearchedListBrowse)
+   //console.log('SearchedListBrowse===',this.SearchedListBrowse)
   })
 }
 DeleteInflow(masterPlaning):void{
@@ -358,7 +358,7 @@ DeleteInflow(masterPlaning):void{
  }
 }
 onConfirm(){ 
-console.log("onconform==",this.Objplaning)
+//console.log("onconform==",this.Objplaning)
  if(this.masterPlaingId){
    const tempobj = {
     
@@ -382,7 +382,7 @@ console.log("onconform==",this.Objplaning)
        else {
         this.GetSearchedListBrowse(true)
        }
-      console.log("SearchedListBrowseProj",this.SearchedListBrowseProj.length)
+      //console.log("SearchedListBrowseProj",this.SearchedListBrowseProj.length)
      //  this.can_popup = false;
        this.compacctToast.clear();
        this.compacctToast.add({
@@ -438,7 +438,7 @@ showInflow(col:any){
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.ViewList = data;
        this.masterPlaingId = undefined
-       console.log('ViewList=====',this.ViewList);
+       //console.log('ViewList=====',this.ViewList);
       })
     setTimeout(() => {
       this.ViewProTypeModal = true;
@@ -446,7 +446,7 @@ showInflow(col:any){
   }
 }
 UpdateAmount(Amount:any){
-  console.log("Amount",Amount)
+  //console.log("Amount",Amount)
   this.InflowFormSubmitted = true;
   if(Amount){
   const tempobj = {
@@ -461,7 +461,7 @@ UpdateAmount(Amount:any){
       "Json_Param_String": JSON.stringify([tempobj])
       }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log('data=',data[0].Column1);
+      //console.log('data=',data[0].Column1);
       if(data[0].Column1)
          {
           this.compacctToast.clear();
@@ -480,7 +480,7 @@ UpdateAmount(Amount:any){
     }     
 }  
 UpdateMB(Update:any){
-  console.log("mb valide",Update)
+  //console.log("mb valide",Update)
   this.InflowPopFormSubmitted = true;
   if(Update){
   const tempobj = {
@@ -495,7 +495,7 @@ UpdateMB(Update:any){
       "Json_Param_String": JSON.stringify([tempobj])
       }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log('data=',data[0].Column1);
+      //console.log('data=',data[0].Column1);
       if(data[0].Column1)
          {
           this.compacctToast.clear();
@@ -511,6 +511,13 @@ UpdateMB(Update:any){
     })
     }     
 }
+ProjectedAmountTotal(){
+  let flg = 0
+  this.SearchedListBrowseProj.forEach((x:any)=>{
+    flg = Number(flg) + Number(x.Amount)
+  })
+  return flg
+}	
 onReject(){
   this.compacctToast.clear("c");
 }
