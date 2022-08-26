@@ -67,6 +67,7 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
   Approvecon : boolean = false;
   Reasonsubmitted = false;
   Reason : String = "";
+  EmployeeList : any = [];
   //Payment_Requisition_ID : any
 
   constructor(
@@ -93,6 +94,7 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
     this.GetAllProject();
     //this.GetAllSite();
     this.getAllVendor();
+    this.GetEmployee();
    
   }
 
@@ -235,6 +237,20 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
   }
   this.getList();
     }
+
+    GetEmployee(){
+      const obj = {
+        "SP_String": "SP_Payment_Requisition",
+        "Report_Name_String":"Get_Employee_Advance",
+       }
+       this.GlobalAPI.getData(obj)
+        .subscribe((data: any) => {
+          this.EmployeeList = data;
+         // this.getAmount();
+          console.log("AllEmployeeList=",this.EmployeeList);
+        });
+     }
+  
 
   getList(){
     if((this.objPayment.Sub_Ledger_ID && this.progmgURL === 'n') || (this.objPayment.Project_ID && this.objPayment.Site_ID && this.objPayment.Budget_Group_ID && this.objPayment.Sub_Ledger_ID && this.progmgURL === 'y')){
@@ -458,6 +474,7 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
       this.objPayment.Pending_Amount = this.objPayment.Pending_Amount? this.objPayment.Pending_Amount : 0;
       this.objPayment.Total_BOM_Amount = this.objPayment.Total_BOM_Amount? this.objPayment.Total_BOM_Amount : 0;
       this.objPayment.Total_Used_Amount = this.objPayment.Total_Used_Amount? this.objPayment.Total_Used_Amount : 0;
+      this.objPayment.Responsible_Emp_ID = this.objPayment.Responsible_Emp_ID ? this.objPayment.Responsible_Emp_ID : 0;
       this.objPayment.Created_By = this.commonApi.CompacctCookies.User_ID;
       this.PaymentRequisitionObj.PO_Value = this.PaymentRequisitionObj.Value;
       if(!this.Purchaseckeck){
@@ -980,7 +997,8 @@ class Payment{
   Total_Required_Amount : any;
   Total_Used_Amount : any;
   Created_By : any;
-  PO_Value : any
+  PO_Value : any;
+  Responsible_Emp_ID : any
 }
 
 class Pending{

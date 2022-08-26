@@ -46,7 +46,7 @@ export class GoodReceiveDetailsComponent implements OnInit {
     //   { label: "Delete", icon: "fa fa-fw fa-trash" }
     // ];
     this.Header.pushHeader({
-      Header: "Good Receice Details",
+      Header: "Goods Receice Details",
       Link: " Material Management -> Report -> Receice Details"
     });
    this.Finyear()

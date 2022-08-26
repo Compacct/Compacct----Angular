@@ -38,6 +38,7 @@
                             [placeholder]="'Select Patient'" 
                             [virtualScroll]="true"
                             itemSize="30"
+                            (onChange)="GetPatientLIST()"
                             [styleClass]="PatientFormSubmitted && Patient.errors?.required? 'clearance' : ''" [required]="true"> 
                         </p-dropdown>
                     </div>
@@ -193,7 +194,7 @@
                            </div>   
                            <div class="form-group"> 
                             <div class="col-sm-4">
-                                <label class="control-label">Audilogist<sup class="text-danger">*</sup></label>
+                                <!-- <label class="control-label">Audilogist<sup class="text-danger">*</sup></label>
                                 <p-dropdown [options]="Audilogistlist"
                                 name="Audilogist" 
                                 #Audilogist="ngModel" 
@@ -206,7 +207,7 @@
                                 [virtualScroll]="true"
                                 itemSize="30" 
                                 [styleClass]="PatientMiddleFormSubmitted && Audilogist.errors?.required? 'clearance' : ''" [required]="true"> 
-                            </p-dropdown>
+                            </p-dropdown> -->
                             </div>
                             <div class="col-sm-4"></div>
                             <div class="col-sm-4" style="margin-top: 27px;">
@@ -759,14 +760,18 @@
                   <!-- button -->
                   <div class="form-group" style="padding: 1em;">
                     <div class="col-sm-4"></div>
-                    <div class="col-sm-4"></div>
-                  <div class="col-sm-4">
-                    <button class="btn btn-primary pull-right"  id="load" (click)="saveDataLast(LASTForm.form.valid)"   [disabled]="Spinner || Active">
+                  <div class="col-sm-6">
+                    <button class="btn btn-primary pull-right"  id="load" (click)="saveDataLast(LASTForm.form.valid)"   [disabled]="Active">
                          <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
                  </button>
                  </div>
-                 </div> 
+                 <div class="col-sm-2">
+                    <button class="btn btn-success " (click)="GetPrint()" id="buttonserch" [disabled]="SaveAfter">
+                        <span class="glyphicon glyphicon-print"></span> Print
+                    </button>
+                </div>
+                 </div>             
                </form>
              </p-tabView>  
                </div>

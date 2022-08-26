@@ -115,6 +115,15 @@
                                         <label class="control-label">Present Status</label>
                                         <input class="form-control" name="Present_Status" #Present_Status="ngModel" [(ngModel)]="objPayment.Present_Status" placeholder="Present Status">
                                     </div>
+                                    <div class="col-sm-4" *ngIf="Purchaseckeck">
+                                        <label class="control-label">Select Responsible Employee<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Employee" #Employee="ngModel" [(ngModel)]="objPayment.Responsible_Emp_ID" [ngClass]="{'clearance': PaymentFormSubmit && Employee.errors?.required}" required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of EmployeeList" [ngValue]="option.Responsible_Emp_ID">
+                                        {{option.Responsible_Emp}}
+                                        </option>
+                                    </select>
+                                    </div>
 
                                 </div>
                                 <!-- <div class="col-sm-4">
@@ -226,6 +235,7 @@
                                             <th nowrap> Management Approve Status</th>
                                             <th nowrap>Created By </th>
                                             <th nowrap>Payment Voucher No</th>
+                                            <th nowrap>Responsible Employee</th>
 
                                         </tr>
                                     </ng-template>
@@ -264,6 +274,7 @@
                                             <td nowrap>{{col.Approver_Two_Status ? col.Approver_Two_Status : '-'}}</td>
                                             <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
                                             <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
+                                            <td nowrap>{{col.Responsible_Emp ? col.Responsible_Emp : '-' }}</td>
 
                                         </tr>
                                     </ng-template>
@@ -315,6 +326,8 @@
                                             <th nowrap> Management Approve Status</th>
                                             <th nowrap>Created By </th>
                                             <th nowrap>Payment Voucher No</th>
+                                            <th nowrap>Responsible Employee</th>
+
 
                                         </tr>
                                     </ng-template>
@@ -359,6 +372,7 @@
                                             <td nowrap>{{col.Approver_Two_Status ? col.Approver_Two_Status : '-'}}</td>
                                             <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
                                             <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
+                                            <td nowrap>{{col.Responsible_Emp ? col.Responsible_Emp : '-' }}</td>
 
                                         </tr>
                                     </ng-template>
@@ -411,6 +425,7 @@
                                             <th nowrap>Created By </th>
                                             <th nowrap>Payment Voucher No</th>
                                             <th nowrap>Disapprove Reason</th>
+                                            <th nowrap>Responsible Employee</th>
 
                                         </tr>
                                     </ng-template>
@@ -455,6 +470,7 @@
                                             <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
                                             <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
                                             <td nowrap>{{col.Disapprove_Reason ? col.Disapprove_Reason : '-' }}</td>
+                                            <td nowrap>{{col.Responsible_Emp ? col.Responsible_Emp : '-' }}</td>
 
                                         </tr>
                                     </ng-template>
@@ -564,6 +580,12 @@
                 <div class="label-t">{{ViewListObj?.Budget_Group_Name ? ViewListObj?.Budget_Group_Name : '-'}}</div>
             </div>
         </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Responsible Employee</label>
+                <div class="label-t">{{ViewListObj?.Responsible_Emp ? ViewListObj?.Responsible_Emp : '-'}}</div>
+            </div>
+        </div>
     </form>
     <p-footer>
         <button type="button" (click)="ViewProTypeModal = false" class="btn btn-default">
@@ -663,6 +685,12 @@
             <div class="col-sm-4">
                 <label class="control-label">Budget Group Name</label>
                 <div class="label-t">{{ApproveListobj?.Budget_Group_Name ? ApproveListobj?.Budget_Group_Name : '-'}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Responsible Employee</label>
+                <div class="label-t">{{ApproveListobj?.Responsible_Emp ? ApproveListobj?.Responsible_Emp : '-'}}</div>
             </div>
         </div>
 
