@@ -588,22 +588,22 @@ export class PurchaseOrderComponent implements OnInit {
     }
    
   }
-  getExciseAmt(){
-    if(this.objaddPurchacse.Excise_Tax_Percentage){
-      this.objaddPurchacse.Excise_Tax = undefined;
-      this.objaddPurchacse.taxable_AMT = undefined;
-      this.objaddPurchacse.Excise_Tax = (Number(this.objaddPurchacse.Gross_Amt) * (Number(this.objaddPurchacse.Excise_Tax_Percentage) / 100)).toFixed(2)
-      this.objaddPurchacse.taxable_AMT = Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
-      this.totalbackUp = this.objaddPurchacse.taxable_AMT;
-      this.getDis();
-      this.GetGSTAmt();
-    }
-    else {
-      this.objaddPurchacse.Excise_Tax = undefined;
-      this.objaddPurchacse.taxable_AMT = this.totalRate;
-      this.GetGSTAmt();
-    }
-  }
+  // getExciseAmt(){
+  //   if(this.objaddPurchacse.Excise_Tax_Percentage){
+  //     this.objaddPurchacse.Excise_Tax = undefined;
+  //     this.objaddPurchacse.taxable_AMT = undefined;
+  //     this.objaddPurchacse.Excise_Tax = (Number(this.objaddPurchacse.Gross_Amt) * (Number(this.objaddPurchacse.Excise_Tax_Percentage) / 100)).toFixed(2)
+  //     this.objaddPurchacse.taxable_AMT = Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
+  //     this.totalbackUp = this.objaddPurchacse.taxable_AMT;
+  //     this.getDis();
+  //     this.GetGSTAmt();
+  //   }
+  //   else {
+  //     this.objaddPurchacse.Excise_Tax = undefined;
+  //     this.objaddPurchacse.taxable_AMT = this.totalRate;
+  //     this.GetGSTAmt();
+  //   }
+  // }
   getTotalForTax(){
     if(this.objaddPurchacse.Tax_Rate){
       this.objaddPurchacse.taxable_AMT = undefined;
@@ -613,6 +613,77 @@ export class PurchaseOrderComponent implements OnInit {
     }
     else {
       this.objaddPurchacse.taxable_AMT = this.totalbackUp ? Number((this.totalbackUp).toFixed(2)) : Number((this.totalRate).toFixed(2))
+    }
+  }
+  // New Freight Calculation
+  getExciseAmt(){
+    if(this.objaddPurchacse.Freight_PF_Type === 'amt'){
+        this.objaddPurchacse.Excise_Tax = undefined;
+        //const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
+        // let taxacl:number =  this.objaddPurchacse.taxable_AMT
+        this.objaddPurchacse.taxable_AMT = undefined
+        this.objaddPurchacse.Excise_Tax = this.objaddPurchacse.Excise_Tax_Percentage;
+        //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
+        //   taxacl = Number(this.disAmtBackUpAMT) + Number(taxacl)
+        //  }
+        //  this.disAmtBackUpAMT = 0
+        //  this.disAmtBackUpAMT = this.objaddPurchacse.Discount_AMT ? Number(this.objaddPurchacse.Discount_AMT) : 0;
+        if(this.objaddPurchacse.Excise_Tax){
+          this.objaddPurchacse.taxable_AMT  = (Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)).toFixed(2);
+          this.totalbackUp = this.objaddPurchacse.taxable_AMT;
+          this.getDis();
+          this.GetGSTAmt();
+        }
+        else {
+          this.objaddPurchacse.Excise_Tax = undefined;
+          this.objaddPurchacse.taxable_AMT = this.totalRate;
+          this.GetGSTAmt();
+        }
+         
+        }
+      else if(this.objaddPurchacse.Freight_PF_Type === 'per'){
+        this.objaddPurchacse.Excise_Tax = undefined;
+        this.objaddPurchacse.taxable_AMT = undefined;
+        this.objaddPurchacse.Excise_Tax = (Number(this.objaddPurchacse.Gross_Amt) * (Number(this.objaddPurchacse.Excise_Tax_Percentage) / 100)).toFixed(2)
+        // this.objaddPurchacse.taxable_AMT = Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
+        this.totalbackUp = this.objaddPurchacse.taxable_AMT;
+       
+       if(this.objaddPurchacse.Excise_Tax){
+        this.objaddPurchacse.taxable_AMT  = (Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)).toFixed(2);
+        this.totalbackUp = this.objaddPurchacse.taxable_AMT;
+        this.getDis();
+        this.GetGSTAmt();
+      }
+      else {
+        this.objaddPurchacse.Excise_Tax = undefined;
+        this.objaddPurchacse.taxable_AMT = this.totalRate;
+        this.GetGSTAmt();
+      }
+        // this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
+        // this.getTaxAble()
+      }
+     else {
+      this.objaddPurchacse.Excise_Tax = undefined;
+      // this.objaddPurchacse.Total_Amount = undefined;
+      // this.objaddPurchacse.GST_AMT = undefined
+      this.objaddPurchacse.taxable_AMT = this.totalRate;
+      this.GetGSTAmt();
+    }
+  }
+  FreightClear(){
+    if(!this.objaddPurchacse.Freight_PF_Type){
+      this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - (Number(this.objaddPurchacse.Excise_Tax) ? Number(this.objaddPurchacse.Excise_Tax) : 0)).toFixed(2)
+      this.objaddPurchacse.Excise_Tax = undefined;
+      this.objaddPurchacse.Excise_Tax_Percentage = undefined;
+      this.GetGSTAmt();
+     }
+    else {
+      this.objaddPurchacse.Excise_Tax = undefined;
+      this.objaddPurchacse.Excise_Tax_Percentage = undefined;
+      // this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+      this.objaddPurchacse.taxable_AMT = this.totalRate;
+      this.GetGSTAmt();
+     
     }
   }
   DisClear(){
@@ -1857,7 +1928,8 @@ class addPurchacse{
       Qty:any;
       Rate:number;
       Gross_Amt:any;
-      Excise_Tax_Percentage:Number = 0;
+      Freight_PF_Type:any;
+      Excise_Tax_Percentage:any;
       Excise_Tax:any;
       Tax_Desc:any;
       Tax_Rate:any;
