@@ -145,7 +145,7 @@ export class PurchaseOrderComponent implements OnInit {
   DynamicPOview:any = [];
   Requisiton_Type: any;
   Material_Type: any;
-
+  disBackUp:any = undefined;
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -228,7 +228,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.totalbackUp = undefined;
     this.totalAmtBackUp = undefined;
     this.DocNo = undefined;
-    this.ExpectedDeliverydate = new Date;
+    this.ExpectedDeliverydate = new Date();
     this.DocDate = new Date();
     this.RefDate = new Date();
     this.disable = false
@@ -439,6 +439,19 @@ export class PurchaseOrderComponent implements OnInit {
  
     }
   GetProductSpecification(){
+    const tempAddObj = {...this.objaddPurchacse}
+  this.objaddPurchacse = new addPurchacse()
+  this.ExpectedDeliverydate = new Date();
+  this.grTotal = 0;
+  this.taxAblTotal = 0;
+  this.disTotal = 0;
+  this.ExciTotal = 0;
+  this.GSTTotal  = 0;
+  this.NetTotal  = 0;
+  this.disBackUp = undefined
+  this.objaddPurchacse.Req_No = tempAddObj.Req_No
+  this.objaddPurchacse.Product_Type_ID = tempAddObj.Product_Type_ID
+  this.objaddPurchacse.Product_ID = tempAddObj.Product_ID
    if(this.objaddPurchacse.Product_ID){
     let tempVal:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID));
     this.objaddPurchacse.Product_Spec = tempVal[0].Product_Description;
@@ -636,7 +649,11 @@ export class PurchaseOrderComponent implements OnInit {
         }
         else {
           this.objaddPurchacse.Excise_Tax = undefined;
-          this.objaddPurchacse.taxable_AMT = this.totalRate;
+         this.totalbackUp = undefined;
+          this.totalAmtBackUp = undefined;
+          this.getDis();
+          this.objaddPurchacse.taxable_AMT = this.objaddPurchacse.Discount_AMT ? Number(this.totalRate) - Number(this.objaddPurchacse.Discount_AMT) : this.totalRate;
+          this.totalbackUp = this.objaddPurchacse.taxable_AMT
           this.GetGSTAmt();
         }
          
@@ -655,8 +672,12 @@ export class PurchaseOrderComponent implements OnInit {
         this.GetGSTAmt();
       }
       else {
+        this.totalbackUp = undefined;
+        this.totalAmtBackUp = undefined;
+        this.getDis();
         this.objaddPurchacse.Excise_Tax = undefined;
         this.objaddPurchacse.taxable_AMT = this.totalRate;
+        this.totalbackUp = this.objaddPurchacse.taxable_AMT;
         this.GetGSTAmt();
       }
         // this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
@@ -672,23 +693,34 @@ export class PurchaseOrderComponent implements OnInit {
   }
   FreightClear(){
     if(!this.objaddPurchacse.Freight_PF_Type){
-      this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - (Number(this.objaddPurchacse.Excise_Tax) ? Number(this.objaddPurchacse.Excise_Tax) : 0)).toFixed(2)
       this.objaddPurchacse.Excise_Tax = undefined;
       this.objaddPurchacse.Excise_Tax_Percentage = undefined;
+      this.totalbackUp = undefined
+      this.totalAmtBackUp = undefined
+      this.getDis();
+      this.objaddPurchacse.taxable_AMT =  (Number(this.objaddPurchacse.Discount_AMT) ? 
+      Number(this.objaddPurchacse.taxable_AMT) : Number(this.totalRate)).toFixed(2)
+      this.totalbackUp =  this.objaddPurchacse.taxable_AMT
+     
       this.GetGSTAmt();
+    
      }
     else {
+      this.totalbackUp = undefined
+    
       this.objaddPurchacse.Excise_Tax = undefined;
       this.objaddPurchacse.Excise_Tax_Percentage = undefined;
-      // this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
-      this.objaddPurchacse.taxable_AMT = this.totalRate;
+      this.getDis()
+      this.objaddPurchacse.taxable_AMT =  (Number(this.objaddPurchacse.Discount_AMT) ? 
+                                            Number(this.objaddPurchacse.taxable_AMT) : Number(this.totalRate)).toFixed(2);
+   this.totalbackUp =  this.objaddPurchacse.taxable_AMT
       this.GetGSTAmt();
-     
+    
     }
   }
   DisClear(){
     if(!this.objaddPurchacse.Discount_Type){
-      this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) + (Number(this.objaddPurchacse.Discount_AMT) ? Number(this.objaddPurchacse.Discount_AMT) : 0)).toFixed(2)
+      this.objaddPurchacse.taxable_AMT = ((Number(this.objaddPurchacse.Excise_Tax) ? Number(this.objaddPurchacse.Excise_Tax) + Number(this.totalRate) : Number(this.totalRate))).toFixed(2)
       this.objaddPurchacse.Discount_AMT = undefined;
       this.objaddPurchacse.Discount = undefined;
       this.GetGSTAmt();
@@ -696,7 +728,7 @@ export class PurchaseOrderComponent implements OnInit {
     else {
       this.objaddPurchacse.Discount_AMT = undefined;
       this.objaddPurchacse.Discount = undefined;
-      this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+      this.objaddPurchacse.taxable_AMT = this.objaddPurchacse.Excise_Tax ? this.totalbackUp : this.totalRate;
       this.GetGSTAmt();
      
     }
@@ -704,8 +736,8 @@ export class PurchaseOrderComponent implements OnInit {
   getDis(){
     if(this.objaddPurchacse.Discount_Type === 'AMT'){
         this.objaddPurchacse.Discount_AMT = undefined;
-        //const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
-        let taxacl:number =  this.objaddPurchacse.taxable_AMT
+        const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
+      //  let taxacl:number =  this.objaddPurchacse.taxable_AMT
         this.objaddPurchacse.taxable_AMT = undefined
         this.objaddPurchacse.Discount_AMT = this.objaddPurchacse.Discount;
         //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
@@ -714,7 +746,7 @@ export class PurchaseOrderComponent implements OnInit {
         //  this.disAmtBackUpAMT = 0
         //  this.disAmtBackUpAMT = this.objaddPurchacse.Discount_AMT ? Number(this.objaddPurchacse.Discount_AMT) : 0;
         if(this.objaddPurchacse.Discount_AMT){
-          this.objaddPurchacse.taxable_AMT  = (Number(taxacl) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
+          this.objaddPurchacse.taxable_AMT  = (Number(tempTotal) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
           this.GetGSTAmt();
         }
         else {
@@ -1450,6 +1482,17 @@ GetRequlist(){
 RequisitionChange(){
   this.Requisiton_Type = undefined;
   this.Material_Type = undefined;
+  const tempAddObj = {...this.objaddPurchacse}
+  this.objaddPurchacse = new addPurchacse()
+  this.ExpectedDeliverydate = new Date();
+  this.grTotal = 0;
+  this.taxAblTotal = 0;
+  this.disTotal = 0;
+  this.ExciTotal = 0;
+  this.GSTTotal  = 0;
+  this.NetTotal  = 0;
+  this.disBackUp = undefined
+  this.objaddPurchacse.Req_No = tempAddObj.Req_No
   if (this.objaddPurchacse.Req_No) {
     const ctrl = this;
     const ReqNoObj = $.grep(ctrl.Requlist,function(item: any) {return item.Req_No == ctrl.objaddPurchacse.Req_No})[0];
@@ -1478,6 +1521,18 @@ getProductType(){
    })
 }
 GetProductsDetalis(){
+  const tempAddObj = {...this.objaddPurchacse}
+  this.objaddPurchacse = new addPurchacse()
+  this.ExpectedDeliverydate = new Date();
+  this.grTotal = 0;
+  this.taxAblTotal = 0;
+  this.disTotal = 0;
+  this.ExciTotal = 0;
+  this.GSTTotal  = 0;
+  this.NetTotal  = 0;
+  this.disBackUp = undefined
+  this.objaddPurchacse.Req_No = tempAddObj.Req_No
+  this.objaddPurchacse.Product_Type_ID = tempAddObj.Product_Type_ID
   if(this.objaddPurchacse.Product_Type_ID){
     this.objaddPurchacse.Req_No = undefined;
     this.productDataList = [];
