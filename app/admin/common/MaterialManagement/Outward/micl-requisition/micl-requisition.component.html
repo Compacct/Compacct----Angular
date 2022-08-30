@@ -71,7 +71,7 @@
 
                                     </div>
                                     <div class="col-sm-2">
-                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData(RequistionSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData()" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                    </button>
