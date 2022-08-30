@@ -146,6 +146,7 @@ export class PurchaseOrderComponent implements OnInit {
   Requisiton_Type: any;
   Material_Type: any;
   disBackUp:any = undefined;
+  FreightTypeList:any = [];
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -180,6 +181,7 @@ export class PurchaseOrderComponent implements OnInit {
       });
       this.Finyear();
       this.objpurchase.Credit_Days = 0;
+      this.GetFreightType();
       this.getsubLedger();
       this.GetCostCenter();
       this.GetCurrency();
@@ -198,6 +200,9 @@ export class PurchaseOrderComponent implements OnInit {
      }
      this.GetReportNameList();
   } 
+  GetFreightType(){
+    this.FreightTypeList = [{FreightType : "%"},{FreightType: "AMT"}]
+  }
   TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
@@ -630,7 +635,7 @@ export class PurchaseOrderComponent implements OnInit {
   }
   // New Freight Calculation
   getExciseAmt(){
-    if(this.objaddPurchacse.Freight_PF_Type === 'amt'){
+    if(this.objaddPurchacse.Freight_PF_Type === 'AMT'){
         this.objaddPurchacse.Excise_Tax = undefined;
         //const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
         // let taxacl:number =  this.objaddPurchacse.taxable_AMT
@@ -658,7 +663,7 @@ export class PurchaseOrderComponent implements OnInit {
         }
          
         }
-      else if(this.objaddPurchacse.Freight_PF_Type === 'per'){
+      else if(this.objaddPurchacse.Freight_PF_Type === '%'){
         this.objaddPurchacse.Excise_Tax = undefined;
         this.objaddPurchacse.taxable_AMT = undefined;
         this.objaddPurchacse.Excise_Tax = (Number(this.objaddPurchacse.Gross_Amt) * (Number(this.objaddPurchacse.Excise_Tax_Percentage) / 100)).toFixed(2)
@@ -802,7 +807,7 @@ export class PurchaseOrderComponent implements OnInit {
         Qty: Number(this.objaddPurchacse.Qty),
         Rate: Number(this.objaddPurchacse.Rate),
         Gross_Amt	: Number(this.objaddPurchacse.Gross_Amt),
-        Excise_Tax_Percentage: Number(this.objaddPurchacse.Excise_Tax_Percentage),
+        Excise_Tax_Percentage: this.objaddPurchacse.Freight_PF_Type === "AMT" ? 0 : Number(this.objaddPurchacse.Excise_Tax_Percentage),
         Excise_Amount: Number(this.objaddPurchacse.Excise_Tax),
         Taxable_Amount:  Number(this.objaddPurchacse.taxable_AMT),
         Discount_Type:  this.objaddPurchacse.Discount_Type,

@@ -501,6 +501,11 @@
             </div>
             <div class="col-sm-4">
                 <label class="control-label">Po No</label>
+                <div class="pull-right">
+                    <button (click)="PrintPo()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-print">
+                       </i> Print
+                    </button>
+                </div>
                 <div class="label-t">{{ViewListObj?.PO_NO ? ViewListObj?.PO_NO : '-' }}</div>
             </div>
 
@@ -794,7 +799,7 @@
         <div class="form-group">
             <div class="col-sm-4">
                 <label class="control-label">Required Amount</label>
-                <input class="form-control" name="Required_Amount" #Required_Amount="ngModel" [(ngModel)]="RequiredAmount" placeholder="Required Amount" (ngModelChange)="ReqCheck()" [ngClass]="{'clearance': RequiredAmountSubmitted}">
+                <input class="form-control" name="Required_Amount" #Required_Amount="ngModel" [(ngModel)]="RequiredAmount" placeholder="Required Amount" CompacctDigitonly="true" (ngModelChange)="ReqCheck()" [ngClass]="{'clearance': RequiredAmountSubmitted}">
             </div>
         </div>
     </div>

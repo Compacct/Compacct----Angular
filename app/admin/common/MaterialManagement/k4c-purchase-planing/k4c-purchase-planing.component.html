@@ -779,7 +779,9 @@
                                             <th>Product Name</th>
                                             <th>UOM</th>
                                             <th>Last Purchase Qty</th>
+                                            <th>Last Purchase Rate</th>
                                             <th>Last Purchase Date</th>
+                                            <th>Weekly Avg Cons</th>
                                             <th>Current Stock</th>
                                             <th>Notification Level</th>
                                             <th>Critical Level</th>
@@ -795,7 +797,9 @@
                                             <td [class]='col.textClass'>{{col.Product_Description}}</td>
                                             <td [class]='col.textClass'>{{col.UOM}}</td>
                                             <td [class]='col.textClass'>{{col.Last_Purchase_Qty ? col.Last_Purchase_Qty : '-'}}</td>
+                                            <td [class]='col.textClass'>{{col.Last_Purchase_Rate ? col.Last_Purchase_Rate : '-'}}</td>
                                             <td [class]='col.textClass'>{{col.Last_Purchase_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td [class]='col.textClass'>{{col.Weekly_Avg_Cons ? col.Weekly_Avg_Cons : '-'}}</td>
                                             <td [class]='col.textClass'>{{col.Stock_Qty}}</td>
                                             <!-- <td>{{col.Reorder_Level ? col.Reorder_Level : '-'}}</td> -->
                                             <td [class]='col.textClass'>{{col.Reorder_Level }}</td>
