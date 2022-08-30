@@ -481,11 +481,10 @@ export class MiclRequisitionComponent implements OnInit {
       console.log("costcenterList  ===",data);
      this.costcenterList = data;
      this.objreqi.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
-     if(this.headerText === "Purchase Indent") {
      this.ObjBrowseData.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
-     }
-     this.Getgodown(this.objreqi.Cost_Cen_ID);
+      this.Getgodown(this.objreqi.Cost_Cen_ID);
      this.GetgodownBrowse(this.ObjBrowseData.Cost_Cen_ID);
+     this.searchData()
   })
   }
   Getgodown(CostID){
@@ -523,6 +522,7 @@ export class MiclRequisitionComponent implements OnInit {
         console.log("this.GodownBrowseList",this.GodownBrowseList);
         // if(this.headerText === "Purchase Indent") {
         this.ObjBrowseData.Godown_ID = this.GodownBrowseList.length ? this.GodownBrowseList[0].Godown_ID : undefined
+        this.searchData()
         // }
         })
     }
@@ -643,10 +643,9 @@ export class MiclRequisitionComponent implements OnInit {
       this.ObjBrowseData.To_Date = dateRangeObj[1];
     }
   }
-  searchData(valid){
+  searchData(valid?){
     this.RequistionSearchFormSubmit = true;
-    if(valid){
-      this.seachSpinner = true
+    this.seachSpinner = true
       const tempDate = {
         From_Date :this.ObjBrowseData.From_Date
         ? this.DateService.dateConvert(new Date(this.ObjBrowseData.From_Date))
@@ -667,13 +666,13 @@ export class MiclRequisitionComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.allRequDataList = data;
         if(this.allRequDataList.length){
-          this.allRequDataListHeader =Object.keys(data[0])
+          this.allRequDataListHeader= Object.keys(data[0])
         }
         this.RequistionSearchFormSubmit = false;
         this.seachSpinner = false
         console.log("this.allRequDataList",this.allRequDataList);
       })
-    }
+  
  
   }
   headerChange(header:any){

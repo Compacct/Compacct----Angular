@@ -40,3 +40,6 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
   border-bottom: 1px solid #c1c1c1 !important;
   margin-bottom: 0px;
 }
+#ui-tabpanel-3 > div > p-table > div > p-paginator > div > p-dropdown{
+  top: 41px !important;
+}
