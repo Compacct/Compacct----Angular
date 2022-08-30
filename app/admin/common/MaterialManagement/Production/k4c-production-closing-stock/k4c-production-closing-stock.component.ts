@@ -328,7 +328,7 @@ saveRemarks(){
 ConsumptionCal(indx){
   this.ProductList[indx]['Consumption_Qty'] = 0;
   if(this.ProductList[indx]['Wastage_Qty']){
-    var openrec = (this.ProductList[indx]['Opening_Qty'] + this.ProductList[indx]['Receive_Qty']).toFixed(2);
+    var openrec = (this.ProductList[indx]['Opening_Qty'] + Number((this.ProductList[indx]['Receive_Qty']))).toFixed(2);
     var subclosing = (Number(openrec) - this.ProductList[indx]['Closing_Qty']).toFixed(2);
     this.ProductList[indx]['Consumption_Qty'] = (Number(subclosing) - this.ProductList[indx]['Wastage_Qty']).toFixed(2);
     // var posNum = (Number(num) < 0) ? Number(num) * -1 : num;
@@ -439,6 +439,7 @@ ConsumptionCal(indx){
       let tempArr:any =[]
       this.ProductList.forEach(item => {
         // if(item.Wastage_Qty && Number(item.Wastage_Qty) != 0) {
+        //  var Prorecqty = this.MaterialType_Flag === "Semi Finished" ? "Production_Qty" : "Receive_Qty"
      const TempObj = {
             Doc_No:  this.ObjProClosingStock.Doc_No ?  this.ObjProClosingStock.Doc_No : "A",
             Doc_Date: this.ObjProClosingStock.Doc_Date,
@@ -448,6 +449,7 @@ ConsumptionCal(indx){
             Product_ID	: item.Product_ID,
             Product_Description	: item.Product_Description,
             Product_Type_ID	: item.Product_Type_ID,
+            Production_Qty : item.Receive_Qty,
             Closing_Qty	: item.Closing_Qty,
             Wastage_Qty : item.Wastage_Qty ? item.Wastage_Qty : 0,
             UOM	: item.UOM,

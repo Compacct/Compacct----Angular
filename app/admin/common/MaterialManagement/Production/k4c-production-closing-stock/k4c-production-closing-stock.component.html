@@ -217,7 +217,8 @@
                                             <th>Product Description</th>
                                             <th>UOM</th>
                                             <th>Opening Qty</th>
-                                            <th>Receive Qty</th>
+                                            <th *ngIf="MaterialType_Flag != 'Semi Finished'">Receive Qty</th>
+                                            <th *ngIf="MaterialType_Flag === 'Semi Finished'">Production Qty</th>
                                             <th>Closing Qty</th>
                                             <th>Wastage Qty</th>
                                             <th>Reason</th>
@@ -231,7 +232,8 @@
                                             <td>{{col.Product_Description }}</td>
                                             <td>{{col.UOM}}</td>
                                             <td>{{col.Opening_Qty}}</td>
-                                            <td>{{col.Receive_Qty}}</td> 
+                                            <td *ngIf="MaterialType_Flag != 'Semi Finished'">{{col.Receive_Qty}}</td> 
+                                            <td *ngIf="MaterialType_Flag === 'Semi Finished'"><input type="text" [name]="col.Product_ID +'3'" [(ngModel)]='col.Receive_Qty' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID +'1'" [(ngModel)]='col.Closing_Qty' (ngModelChange)='ConsumptionCal(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID +'2'" [(ngModel)]='col.Wastage_Qty' (ngModelChange)='ConsumptionCal(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.remarkdisabled" class="form-control" style="width: 200px;" /></td>

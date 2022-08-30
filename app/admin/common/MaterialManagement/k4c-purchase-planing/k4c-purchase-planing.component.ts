@@ -936,7 +936,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
         Product_Description : element.Product_Description,
         UOM : element.UOM,
         Last_Purchase_Qty : element.Last_Purchase_Qty,
+        Last_Purchase_Rate : element.Last_Purchase_Rate,
         Last_Purchase_Date : this.DateService.dateConvert(new Date(element.Last_Purchase_Date)),
+        Weekly_Avg_Cons : element.Weekly_Avg_Cons,
         Stock_Qty : element.Stock_Qty,
         Reorder_Level : element.Reorder_Level,
         Critical_Level : element.Critical_Level

@@ -68,6 +68,7 @@ export class HIPLPaymentRequisitionComponent implements OnInit {
   Reasonsubmitted = false;
   Reason : String = "";
   EmployeeList : any = [];
+  ponumber : any;
   //Payment_Requisition_ID : any
 
   constructor(
@@ -764,6 +765,7 @@ const obj = {
    this.popupTitle = "";
   }
   view(col:any){
+    this.ponumber = undefined;
     const tempobj = {
       Payment_Requisition_ID : col.Payment_Requisition_ID
     }
@@ -774,6 +776,7 @@ const obj = {
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.ViewListObj = data[0];
+       this.ponumber = data[0].PO_NO;
        console.log('ViewList=====',this.ViewListObj);
        console.log(this.ViewListObj.PO_Value);
       })
@@ -782,6 +785,20 @@ const obj = {
       this.ViewProTypeModal = true;
     }, 300);
   
+  }
+
+  PrintPo(){
+    if(this.ponumber) {
+      const objtemp = {
+        "SP_String": "Sp_Purchase_Order",
+        "Report_Name_String": "Purchase_Order_Print"
+        }
+      this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+        var printlink = data[0].Column1;
+        window.open(printlink+"?Doc_No=" + this.ponumber, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+      }
+
   }
   Approve(col:any){
     const tempobj = {

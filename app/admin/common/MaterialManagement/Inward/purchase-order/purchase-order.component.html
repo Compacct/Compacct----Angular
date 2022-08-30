@@ -93,7 +93,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader  |  slice:1">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -124,7 +124,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeader">
+                                            <ng-container *ngFor="let option of DynamicHeader |  slice:1">
                                                 <td>{{col[option]}}</td>
                                             </ng-container>
                                             
@@ -508,15 +508,15 @@
                                             (change)="FreightClear()"
                                             >
                                             <option  [ngValue]="undefined">Select</option>
-                                            <option  value="per">%</option>
-                                            <option  value="amt">AMT</option>
-                                               <!-- <option *ngFor = "let option of DiscountTypeList" [value] ="option.Dtype">
-                                                  {{option.Dtype}}
-                                                </option> -->
+                                            <!-- <option  value="per">%</option>
+                                            <option  value="amt">AMT</option> -->
+                                               <option *ngFor = "let option of FreightTypeList" [value] ="option.FreightType">
+                                                  {{option.FreightType}}
+                                                </option>
                                           </select>
                                         </div>
                                         <div class="col-sm-2">
-                                            <label class="control-label">Freight-P/F<span>{{objaddPurchacse.Freight_PF_Type}}</span></label>
+                                            <label class="control-label">Freight-P/F &nbsp; <span>{{objaddPurchacse.Freight_PF_Type}}</span></label>
                                             <input type="text"
                                             class="form-control"
                                             name="Excise_Tax_Percentage"
@@ -1029,7 +1029,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th style="width:5em">Action</th>
-                                                <th *ngFor="let option of pendingREQDataDynamicHeader">{{option.replaceAll('_',' ')}}</th>
+                                                <th *ngFor="let option of pendingREQDataDynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
                                                </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -1043,7 +1043,7 @@
                                                         </button>
                                                         <ul class="dropdown-menu">
                                                            <li>
-                                                                <a (click)="PrintREQ(col.Indent_No)">
+                                                                <a (click)="PrintREQ(col.Req_No)">
                                                                     <i class="fa fa-print" aria-hidden="true"></i>
                                                                     Print
                                                                 </a>
@@ -1051,7 +1051,7 @@
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                <ng-container *ngFor="let option of pendingREQDataDynamicHeader">
+                                                <ng-container *ngFor="let option of pendingREQDataDynamicHeader |  slice:1">
                                                     <td>{{col[option]}}</td>
                                                 </ng-container>
                                             </tr>
@@ -1118,7 +1118,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th style="width:5em">Action</th>
-                                                <th *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
+                                                <th *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:2">{{option.replaceAll('_',' ')}}</th>
                                                </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -1132,7 +1132,7 @@
                                                         </button>
                                                         <ul class="dropdown-menu">
                                                            <li>
-                                                                <a (click)="PrintREQ(col.Indent_No)">
+                                                                <a (click)="PrintREQ(col.Req_No)">
                                                                     <i class="fa fa-print" aria-hidden="true"></i>
                                                                     Print
                                                                 </a>
@@ -1140,7 +1140,7 @@
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                <ng-container *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:1">
+                                                <ng-container *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:2">
                                                     <td [class]="option === 'PO_Qty' ? 'QtyColor' : 'Othercolor'" (click)="getdataforview(option,col)">{{col[option]}}</td>
                                                 </ng-container>
                                             </tr>
