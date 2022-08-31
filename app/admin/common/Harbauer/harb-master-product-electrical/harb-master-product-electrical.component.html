@@ -36,6 +36,12 @@
                                             <div class="col-sm-3 pull-right" style="text-align: right;">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <button *ngIf="BrowseList.length" class="btn btn-success" data-toggle="modal" (click)="exportexcel(BrowseList)" id="load1" [disabled]="EXCELSpinner">
+                                                    <p-progressSpinner *ngIf="EXCELSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                    <span *ngIf="!EXCELSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                                                </button>
+                                            </div>
                                         </div>
 
                                     </ng-template>

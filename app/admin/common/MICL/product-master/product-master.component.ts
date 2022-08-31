@@ -10,7 +10,7 @@ import { CompacctProductDetailsComponent } from '../../../shared/compacct.compon
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctFinancialDetailsComponent } from "../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
 import { ActivatedRoute } from '@angular/router';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-product-master',
   templateUrl: './product-master.component.html',
@@ -116,7 +116,7 @@ export class ProductMasterComponent implements OnInit {
   act_popup = false;
   SubCatFilter = [];
   headerData = ""
-
+  EXCELSpinner:boolean = false
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -1311,6 +1311,27 @@ onReject(){
 sendJson(data){
   return JSON.parse(JSON.stringify(data))
  }
+ exportexcel(Arr): void {
+  this.EXCELSpinner =true
+   let excelData:any = []
+  Arr.forEach(ele => {
+      excelData.push({
+          'Material Type': ele.Material_Type,
+          'Product Code': ele.Product_Code,
+          'Product Type': ele.Product_Type,
+          'Product Sub Type': ele.Product_Sub_Type,
+          'Manufacturer': ele.Product_Manufacturing_Group,
+          'Product Description': ele.Product_Description,
+          'GST Category': ele.GST_Tax_Per,
+          'HSN Code': ele.HSN_Code,
+          })
+   });
+
+ const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, 'master_product.xlsx');
+  this.EXCELSpinner = false
+}
 }
 class product{
 Material_ID:number;	
