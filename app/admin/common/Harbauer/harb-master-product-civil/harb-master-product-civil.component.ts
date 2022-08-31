@@ -150,7 +150,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
   MaterialTypeName: any;
   MatTypeModal = false;
   ViewMetTypeModal = false;
-
+  EXCELSpinner:boolean = false
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -1752,7 +1752,36 @@ deleteMaterialType(mettype){
           detail: "Confirm to proceed"
         });
       }
-    }  
+    } 
+
+    exportexcel(Arr): void {
+      this.EXCELSpinner =true
+       let excelData:any = []
+      Arr.forEach(ele => {
+          excelData.push({
+              'Product Code': ele.Product_ID,
+              'Make (Multiple)': ele.Mfg_Company,
+              'Product Description': ele.Product_Description,
+              'Material Type': ele.Material_Type,
+              'Product Type': ele.Product_Type,
+              'Product Sub Type': ele.Product_Sub_Type,
+              'GST Category': ele.Cat_Name,
+              'Material of Cons.': ele.MOC_Description,
+              'Capacity': ele.Capacity_Size_Desc,
+              'Product Feature': ele.Product_Feature_Desc,
+              'Grade': ele.Grade_Description,
+              'Remarks': ele.Remarks,
+              'HSN Code': ele.HSN_NO,
+              'GST Percentage': ele.GST_Percentage,
+              'UOM': ele.UOM
+              })
+       });
+  
+     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, 'master_product_civil.xlsx');
+      this.EXCELSpinner = false
+    }
 }
 class MasterProductCivil{
   Material_ID:number;

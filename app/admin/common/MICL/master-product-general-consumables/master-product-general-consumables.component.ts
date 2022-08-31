@@ -8,7 +8,7 @@ import { CompacctProductDetailsComponent } from '../../../shared/compacct.compon
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
 import { ActivatedRoute } from '@angular/router';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-master-product-general-consumables',
   templateUrl: './master-product-general-consumables.component.html',
@@ -104,7 +104,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   MaterialTypeName: any;
   MatTypeModal = false;
   ViewMetTypeModal = false;
-
+  EXCELSpinner:boolean = false;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -1401,6 +1401,32 @@ deleteProUom(uom){
       detail: "Confirm to proceed"
     });
   }
+}
+exportexcel(Arr): void {
+  this.EXCELSpinner =true
+   let excelData:any = []
+  Arr.forEach(ele => {
+      excelData.push({
+          'Material Type': ele.Material_Type,
+          'Prodct Type': ele.Product_Type,
+          'Product Sub Type': ele.Product_Sub_Type,
+          'Product Description': ele.Product_Description,
+          'MOC (Material of Cons.)': ele.MOC_Description,
+          'Size/Capacity': ele.Capacity_Size_Desc,
+          'Product Feature': ele.Product_Feature_Desc,
+          'Grade': ele.Grade_Description,
+          'Unit of Mesurement (UOM)': ele.UOM,
+          'HSN Code': ele.HSN_NO,
+          'Remarks': ele.Remarks,
+          'GST %': ele.GST_Percentage,
+          'Manufacture Name (Optional)': ele.Mfg_Company
+          })
+   });
+
+ const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, 'master_product_general_consumables.xlsx');
+  this.EXCELSpinner = false
 }
 }
 
