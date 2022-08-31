@@ -594,6 +594,8 @@ export class PurchaseOrderComponent implements OnInit {
         this.totalRate = this.objaddPurchacse.taxable_AMT;
         if(this.objaddPurchacse.taxable_AMT){
           this.GetGSTAmt();
+          this.getExciseAmt();
+          this.getDis();
         }
        
       }
@@ -602,6 +604,8 @@ export class PurchaseOrderComponent implements OnInit {
         this.objaddPurchacse.Gross_Amt = undefined;
         this.objaddPurchacse.taxable_AMT = undefined;
         this.GetGSTAmt();
+        this.getExciseAmt();
+        this.getDis();
       }
     }
    

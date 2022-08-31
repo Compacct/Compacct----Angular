@@ -249,6 +249,7 @@ import { NepalSubledgerAliasCategoryComponent } from "./common/FinancialManageme
 import { PatientCouponComponent } from "./common/PatientManagement/Transaction/patient-coupon/patient-coupon.component";
 import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-case-history/hearing-case-history.component";
 import { GoodReceiveDetailsComponent } from './common/MICL/good-receive-details/good-receive-details.component';
+import { MasterHolidayComponent } from "./common/MICL/master-holiday/master-holiday.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1834,6 +1835,13 @@ data: {
                    component: GoodReceiveDetailsComponent,
                     data: {
                       title: 'Good Receive Details'
+                }
+                },
+                {
+                  path: 'Master_Holiday',
+                  component:MasterHolidayComponent,
+                  data: {
+                    title: 'Master Holiday'
                 }
                 },
       
