@@ -116,6 +116,7 @@ export class GrnComponent implements OnInit {
      this.ObjGRN2 = new GRN2;
      this.GRN2FormSubmitted = false;
      this.PODate = new Date();
+     this.GRNDate = new Date();
      this.podatedisabled = true;
      this.Spinner = false;
      this.Godownlist = [];
@@ -145,6 +146,7 @@ export class GrnComponent implements OnInit {
     this.ObjGRN2 = new GRN2;
     this.GRN2FormSubmitted = false;
     this.PODate = new Date();
+    // this.GRNDate = new Date();
     this.podatedisabled = true;
     this.Spinner = false;
     this.Godownlist = [];
@@ -593,6 +595,7 @@ export class GrnComponent implements OnInit {
        this.ObjGRN2 = new GRN2;
        this.GRN2FormSubmitted = false;
        this.PODate = new Date();
+       this.GRNDate = new Date();
        this.podatedisabled = true;
        this.Spinner = false;
        this.Godownlist = [];

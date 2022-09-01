@@ -143,6 +143,7 @@ export class PurchaseBillComponent implements OnInit {
   hrYeatList:any = [];
   HR_Year_ID:any;
   initDate:any = [];
+  POList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -216,6 +217,7 @@ export class PurchaseBillComponent implements OnInit {
      this.SupplierBillDate = new Date();
      this.CNDate = undefined;
      this.PurOrderList = [];
+     this.POList = [];
      this.PODate = undefined;
      this.GRNList = [];
      this.GRNDate = undefined;
@@ -294,6 +296,7 @@ export class PurchaseBillComponent implements OnInit {
     this.GetPurOrderNoList();
    } else{
     this.PurOrderList = [];
+    this.POList = [];
     this.PODate = undefined;
     this.GRNList = [];
     this.GRNDate = undefined;
@@ -429,6 +432,7 @@ export class PurchaseBillComponent implements OnInit {
       })
   }
   GetPurOrderNoList(){
+    this.POList = [];
     this.PurOrderList = [];
     this.ObjProductInfo.Pur_Order_No = undefined;
     if( this.ObjPurChaseBill.Sub_Ledger_ID){
@@ -442,6 +446,7 @@ export class PurchaseBillComponent implements OnInit {
  
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.POList = data;
        if(data.length){
        
         let DOrderBy:any = [];
@@ -463,8 +468,8 @@ export class PurchaseBillComponent implements OnInit {
     // this.podatedisabled = true;
     if(this.ObjProductInfo.Pur_Order_No) {
       const ctrl = this;
-      const DateObj = $.grep(ctrl.PurOrderList,function(item: any) {return item.value == ctrl.ObjProductInfo.Pur_Order_No})[0];
-     // console.log(DateObj);
+      const DateObj = $.grep(ctrl.POList,function(item: any) {return item.value == ctrl.ObjProductInfo.Pur_Order_No})[0];
+    //  console.log(DateObj);
       // this.ObjGRN1.RDB_Date = new Date(DateObj.RDB_Date);
       this.PODate = new Date(DateObj.Doc_Date);
       // this.podatedisabled = false;
@@ -831,6 +836,7 @@ GetGRNNoProlistdetails2(){
     else {
      // console.log('this.AddProductDetails===',this.AddProductDetails)
       this.ObjProductInfo = new ProductInfo();
+      this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
       this.GRNList = [];
       this.GetProductdetails();
       this.ProductInfoSubmitted = false;
