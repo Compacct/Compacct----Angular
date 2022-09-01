@@ -24,52 +24,52 @@ export class MiclDispatchChallanComponent implements OnInit {
   // Objadditem: additem = new additem ()
   ObjBrowseData : BrowseData = new BrowseData ()
   DispatchFormSubmit = false;
-  FromCostCenterList = [];
+  FromCostCenterList:any = [];
   FromGodownList:any = [];
   ToCostCenterList = [];
   ToGodownList:any = [];
   ReqDate : any = new Date();
 
   DispatchSearchFormSubmit = false;
-  BrowseCostCenterList = [];
+  BrowseCostCenterList:any = [];
   BrowseGodownList:any = [];
 
   doc_no : any;
   createdby : any;
 
-  costcenterList = [];
+  costcenterList:any = [];
   myDate : Date;
   ChallanDate : any = new Date() ;
-  productDetails = [];
+  productDetails:any = [];
   buttonname = "Create";
   Spinner = false;
   SpinnerShow = false;
-  itemList =[];
-  items = [];
+  itemList:any =[];
+  items:any = [];
   tabIndexToView = 0;
-  menuList = [];
+  menuList:any = [];
   brandInput = false ;
-  NativeitemList = [];
+  NativeitemList:any = [];
   adlist: any = {};
-  EditList = [];
+  EditList:any = [];
   inList = false;
-  saveData = [];
+  saveData:any = [];
   outLetDis = false;
-  GetAllDataList = [];
-  VehicleList = [];
+  GetAllDataList:any = [];
+  VehicleList:any = [];
   AddtionalFormSubmit = false;
   matchflag = true;
   AdditioanFormSubmit = false;
   OutletFormSubmit = false;
   disabled: boolean = true;
   seachSpinner = false;
-  outletList = [];
-  brandList = [];
-  brandListBro = [];
+  outletList:any = [];
+  brandList:any = [];
+  brandListBro:any = [];
   toGodownList:any = [];
-  BatchList = [];
+  BatchList:any = [];
   reqNumber:any;
-  outletListBro = [];
+  outletListBro:any = [];
   data = "(Show All Products)";
   inputBoxDisabled = false;
   docdateDisabled = true;
@@ -81,7 +81,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   To_Godown_ID_Dis = false;
   From_Godown_ID_Dis = false;
   editPopUp = false;
-  editdataList = [];
+  editdataList:any = [];
   brand = undefined;
   toOutlet = undefined;
   OutletStokePoint = undefined;
@@ -95,17 +95,17 @@ export class MiclDispatchChallanComponent implements OnInit {
   AccQtydis = false;
   initDate:any = [];
   doc_date: any;
-  filteredData = [];
+  filteredData:any = [];
   displaysavepopup = false;
-  IndentNoList = [];
-  BackupIndentList = [];
-  IndentFilter = [];
+  IndentNoList:any = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
   SelectedIndent: any;
-  TIndentList = [];
-  BackUpproductDetails = [];
-  Refreshlist = [];
-  RefreshData = [];
-  editIndentList = [];
+  TIndentList:any = [];
+  BackUpproductDetails:any = [];
+  Refreshlist:any = [];
+  RefreshData:any = [];
+  editIndentList:any = [];
   Auto_Accepted: any;
   totalqty: any;
   totalaccpqty: any;
@@ -114,9 +114,9 @@ export class MiclDispatchChallanComponent implements OnInit {
 
   FranchiseBill:any;
   dispatchchallanno: any;
-  FranchiseProductList = [];
+  FranchiseProductList:any = [];
   currentDate : any = new Date();
-  FranchiseList = [];
+  FranchiseList:any = [];
   subledgerid:any;
   franchisecostcenid:any;
 
@@ -129,13 +129,13 @@ export class MiclDispatchChallanComponent implements OnInit {
   Round_Off: any;
   editdocno: any;
 
-  viewproductDetails = [];
+  viewproductDetails:any = [];
   viewDocNO = undefined;
   viewFromStokePoint = undefined;
   viewdate = undefined;
   tabView = false;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -153,15 +153,15 @@ export class MiclDispatchChallanComponent implements OnInit {
 
   ObjPendingIndent = new PendingIndent();
   PendingIndentFormSubmitted = false;
-  PendingIndentList = [];
-  DynamicHeaderforPIndent = [];
-  costcenterListPeding = [];
+  PendingIndentList:any = [];
+  DynamicHeaderforPIndent:any = [];
+  costcenterListPeding:any = [];
 
   createchallandisabled = false;
   createChallanflag = true;
   indentlistdisabled = false;
   creteChallanList: any = [];
-
+  DOrderBy:any = []
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -499,6 +499,10 @@ GetshowProduct(){
       //this.SpinnerShow = false;
       this.BackUpproductDetails = [...this.productDetails];
       console.log("this.productDetails",this.productDetails);
+      this.productDetails.forEach(element => {
+        element.Delivery_Qty = 0;
+      });
+      this.backupTotalReq()
       // this.inputBoxDisabled = true;
       // this.indentdateDisabled = false;
       // this.From_Godown_ID_Dis = true;
@@ -510,7 +514,47 @@ GetshowProduct(){
  }
 
 }
+CheckLengthProductID(ID) {
+  const tempArr = this.productDetails.filter(item=> item.product_id == ID);
+  return tempArr.length
+}
+CheckIndexProductID(ID) {
+  let found = 0;
+  for(let i = 0; i < this.productDetails.length; i++) {
+      if (this.productDetails[i].product_id == ID) {
+          found = i;
+          break;
+      }
+  }
+  return found;
+}
+
+backupTotalReq(){
+  this.DOrderBy = []
+  this.productDetails.forEach((item) => {
+      console.log("this.DOrderBy.indexOf(item.product_id)",this.DOrderBy.indexOf(item.Product_Description))
+      if (this.DOrderBy.indexOf(item.Product_Description) === -1) {
+        this.DOrderBy.push(item);
+      }
+    });
+    console.log("DOrderBy",this.DOrderBy)
+}
+
+
+TotalReq(){
+  let TotalAmt = 0;
+ if(this.DOrderBy.length){
+    this.DOrderBy.forEach((x:any) => {
+      TotalAmt += Number(x.Req_Qty);
+    });
+  
+    return TotalAmt ? TotalAmt.toFixed(2) : '-';
+  }
+
+}
+
 getTotal(key){
+  
   let TotalAmt = 0;
   this.productDetails.forEach((item)=>{
     TotalAmt += Number(item[key]);

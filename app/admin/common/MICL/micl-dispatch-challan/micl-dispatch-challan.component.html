@@ -221,7 +221,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                        <label class="control-label">Vehicle Details / Delivery By<span class="text-danger">*</span></label>
+                                                        <label class="control-label">Received By<span class="text-danger">*</span></label>
                                                         <input class="form-control" name="Vehicle_Details" #Vehicle_Details="ngModel" [(ngModel)]="Objdispatch.Vehicle_Details" [disabled]="inputBoxDisabled" placeholder="Vehicle Details" [ngClass]="{'clearance':DispatchFormSubmit && Vehicle_Details?.errors?.required}" required>
                                                     </div>
                                                 </div>
@@ -382,27 +382,29 @@
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-i="rowIndex">
                                         <tr>
-                                            <!-- <ng-container *ngIf="CheckLengthProductID(col.product_id) !== 1 && CheckIndexProductID(col.product_id) === i;" >
+                                            <ng-container *ngIf="CheckLengthProductID(col.product_id) !== 1 && CheckIndexProductID(col.product_id) === i;" >
+                                                <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.product_type}}</td>
                                                 <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.Product_Description}}</td>
+                                                <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.UOM}}</td>
                                                 <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.Req_Qty}}</td>
 
-                                            </ng-container> -->
-
+                                            </ng-container>
+                                            <ng-container *ngIf="CheckLengthProductID(col.product_id) === 1">
                                             <td>{{col.product_type}}</td>
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.UOM}}</td>
                                             <td *ngIf="reqQTYdis">{{col.Req_Qty}}</td>
+                                            </ng-container>
 
                                             <td>{{col.Batch_No}}</td>
                                             <td *ngIf="AccQtydis">{{col.Accepted_Qty}}</td>
                                             <td>{{col.Batch_Qty}}</td>
                                             <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <!-- <td *ngIf="EditList.length">{{col.Accept_Reason}}</td> -->
-
                                         </tr>
                                         <tr *ngIf='i === (productDetails.length - 1)'>
                                             <td colspan="3" class="text-right">Total</td>
-                                            <td *ngIf="reqQTYdis">{{getTotal('Req_Qty')}}</td>
+                                            <td *ngIf="reqQTYdis">{{TotalReq()}}</td>
                                             <td></td>
                                             <td *ngIf="AccQtydis">{{getTotal('Accepted_Qty')}}</td>
                                             <td>{{getTotal('Batch_Qty')}}</td>
@@ -557,7 +559,7 @@
         <thead>
             <tr>
                 <th scope="col">Product Description</th>
-                <th scope="col" *ngIf="reqQTYdis">Indent Qty</th>
+                <th scope="col" *ngIf="reqQTYdis">Req Qty</th>
                 <th scope="col">Batch Qty</th>
                 <th scope="col">Issue Qty</th>
             </tr>

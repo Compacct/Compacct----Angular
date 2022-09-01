@@ -566,6 +566,7 @@ export class MiclRequisitionComponent implements OnInit {
      })
   }
   getProductType(){
+    this.productTypeList = [];
     const materialtype = {
       Type_Of_Product : this.objmaterial.Product_Category
     }
