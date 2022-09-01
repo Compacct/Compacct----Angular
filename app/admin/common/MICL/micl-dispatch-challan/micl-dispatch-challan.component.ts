@@ -531,10 +531,11 @@ CheckIndexProductID(ID) {
 
 backupTotalReq(){
   this.DOrderBy = []
+  let checkarr:any = []
   this.productDetails.forEach((item) => {
-      console.log("this.DOrderBy.indexOf(item.product_id)",this.DOrderBy.indexOf(item.Product_Description))
-      if (this.DOrderBy.indexOf(item.Product_Description) === -1) {
-        this.DOrderBy.push(item);
+      if (checkarr.indexOf(item.product_id) === -1) {
+        checkarr.push(item.product_id);
+        this.DOrderBy.push({product_id:item.product_id, Req_Qty:item.Req_Qty})
       }
     });
     console.log("DOrderBy",this.DOrderBy)
