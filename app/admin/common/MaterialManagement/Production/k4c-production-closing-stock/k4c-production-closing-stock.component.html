@@ -302,6 +302,8 @@
                     <th>Brand</th>
                     <th>Product Description</th>
                     <th>UOM</th>
+                    <th *ngIf="MaterialType_Flag != 'Semi Finished'">Receive Qty</th>
+                    <th *ngIf="MaterialType_Flag === 'Semi Finished'">Production Qty</th>
                     <th>Closing Qty</th>
                     <th>Wastage Qty</th>
                     <th>Consumption Qty</th>
@@ -314,6 +316,8 @@
                     <td>{{col.Brand}}</td>
                     <td>{{col.Product_Description }}</td>
                     <td>{{col.UOM}}</td>
+                    <td *ngIf="MaterialType_Flag === 'Semi Finished'">{{col.Production_Recv_Qty}}</td>
+                    <td *ngIf="MaterialType_Flag != 'Semi Finished'">{{col.Production_Recv_Qty}}</td> 
                     <td>{{col.Closing_Qty}}</td>
                     <td>{{col.Wastage_Qty}}</td>
                     <td>{{col.Consumption_Qty}}</td>

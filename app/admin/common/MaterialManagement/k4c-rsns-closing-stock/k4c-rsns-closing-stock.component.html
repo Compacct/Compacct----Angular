@@ -248,7 +248,7 @@
     <div class="form-group">
         <div class="col-sm-4">
             <label class="control-label">Doc No</label>
-            <div class="label-t">{{Doc_No}}</div>
+            <div class="label-t">{{ViewDoc_No}}</div>
         </div>
 
         <div class="col-sm-4">
@@ -282,7 +282,7 @@
     </div>
     <div class="clearfix"></div>
     <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
-        <p-table [value]="Editlist" [globalFilterFields]='["Product_Type","Product_Description","Batch_No","Closing_Qty","Remarks"]' [rowHover]="true" [autoLayout]="true" #dt2>
+        <p-table [value]="Viewlist" [globalFilterFields]='["Product_Type","Product_Description","Batch_No","Closing_Qty","Remarks"]' [rowHover]="true" [autoLayout]="true" #dt2>
             <ng-template pTemplate="caption">
                 <div class="row">
                     <div class="col-sm-3 pull-right" style="text-align: right">

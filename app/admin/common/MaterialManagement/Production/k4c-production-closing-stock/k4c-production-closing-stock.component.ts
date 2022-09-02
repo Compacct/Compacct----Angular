@@ -702,7 +702,7 @@ GetdataforEdit(){
             Product_Description : element.Product_Description,
             UOM : element.UOM,
             Opening_Qty : element.Opening_Qty,
-            Receive_Qty : element.Rcv_Qty ? element.Rcv_Qty : 0,
+            Receive_Qty : element.Production_Qty ? element.Production_Qty : 0,
             Closing_Qty : element.Closing_Qty,
             Wastage_Qty : element.Wastage_Qty,
             Remarks :  element.Remarks,

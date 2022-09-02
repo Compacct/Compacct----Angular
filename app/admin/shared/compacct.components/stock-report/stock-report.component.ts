@@ -56,6 +56,18 @@ export class StockReportComponent implements OnInit {
   ClosingReportList:any = [];
   backUpClosingReportList:any = [];
   EXCELClosingSpinner:boolean = false;
+  SelectedDistMatClStk:any = [];
+  SelectedDistProTypeClStk:any = [];
+  SelectedDistProSubTypeClStk:any = [];
+  SelectedDistProDescriptionClStk:any = [];
+  SelectedDistCostCenCS:any = [];
+  SelectedDistStockPointCS:any = [];
+  DistMatTypeClStk:any = [];
+  DistProTypeClStk:any = [];
+  DistProSubTypeClStk:any = [];
+  DistProDescriptionClStk:any = [];
+  DistCostCenCS:any = [];
+  DistStockPointCS:any = [];
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -430,7 +442,7 @@ export class StockReportComponent implements OnInit {
          this.backUpClosingReportList = data;
          this.ClosingReportSearchFormSubmitted = false;
          this.seachSpinner = false;
-        //  this.GetDistinct();
+         this.GetDistinctClosingStock();
          this.ngxService.stop();
       })
      }
@@ -442,6 +454,122 @@ export class StockReportComponent implements OnInit {
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
     this.EXCELClosingSpinner = false;
+  }
+  FilterDistClosingStock() {
+    let matTypeCS:any = [];
+    let proTypeCS:any = [];
+    let proSubTypeCS:any = [];
+    let proDescriptionCS:any = [];
+    // let CostCenterNameCS:any = [];
+    // let stockPointCS:any = [];
+    let SearchFieldsClosingStk:any =[];
+  if (this.SelectedDistMatClStk.length) {
+    SearchFieldsClosingStk.push('Material_Type');
+     matTypeCS = this.SelectedDistMatClStk;
+  }
+  if (this.SelectedDistProTypeClStk.length) {
+    SearchFieldsClosingStk.push('Product_Type');
+    proTypeCS = this.SelectedDistProTypeClStk;
+  }
+  if (this.SelectedDistProSubTypeClStk.length) {
+    SearchFieldsClosingStk.push('Product_Sub_Type');
+    proSubTypeCS = this.SelectedDistProSubTypeClStk;
+  }
+  if (this.SelectedDistProDescriptionClStk.length) {
+    SearchFieldsClosingStk.push('Product_Description');
+    proDescriptionCS = this.SelectedDistProDescriptionClStk;
+  }
+  // if (this.SelectedDistCostCenCS.length) {
+  //   SearchFieldsCS.push('Cost_Cen_Name');
+  //   CostCenterNameCS = this.SelectedDistCostCenCS;
+  // }
+  // if (this.SelectedDistStockPointCS.length) {
+  //   SearchFieldsCS.push('Stock_Point');
+  //   stockPointCS = this.SelectedDistStockPointCS;
+  // }
+  this.ClosingReportList = [];
+  if (SearchFieldsClosingStk.length) {
+    let LeadArr = this.backUpClosingReportList.filter(function (e) {
+      return (matTypeCS.length ? matTypeCS.includes(e['Material_Type']) : true)
+      && (proTypeCS.length ? proTypeCS.includes(e['Product_Type']) : true)
+      && (proSubTypeCS.length ? proSubTypeCS.includes(e['Product_Sub_Type']) : true)
+      && (proDescriptionCS.length ? proDescriptionCS.includes(e['Product_Description']) : true)
+      // && (CostCenterNameCS.length ? CostCenterNameCS.includes(e['Cost_Cen_Name']) : true)
+      // && (stockPointCS.length ? stockPointCS.includes(e['Stock_Point']) : true)
+    });
+  this.ClosingReportList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.ClosingReportList = [...this.backUpClosingReportList] ;
+  }
+  
+  }
+  GetDistinctClosingStock() {
+    let matTypeCS:any = [];
+    let proTypeCS:any = [];
+    let proSubTypeCS:any = [];
+    let productDesCriptionCS:any = [];
+    // let costCenterNameCS:any = []
+    // let stockPointCS:any = []
+    this.DistMatTypeClStk =[];
+    this.SelectedDistMatClStk =[];
+    this.DistProTypeClStk =[];
+    this.SelectedDistProTypeClStk =[];
+    this.DistProSubTypeClStk =[];
+    this.SelectedDistProSubTypeClStk =[];
+    this.DistProDescriptionClStk = [];
+    this.SelectedDistProDescriptionClStk = [];
+    // this.DistCostCenCS = [];
+    // this.SelectedDistCostCenCS = [];
+    // this.DistStockPointCS = [];
+    // this.SelectedDistStockPointCS = [];
+    this.ClosingReportList.forEach((item) => {
+  if (matTypeCS.indexOf(item.Material_Type) === -1) {
+    matTypeCS.push(item.Material_Type);
+    this.DistMatTypeClStk.push({ label: item.Material_Type, value: item.Material_Type });
+    }
+   if (proTypeCS.indexOf(item.Product_Type) === -1) {
+    proTypeCS.push(item.Product_Type);
+   this.DistProTypeClStk.push({ label: item.Product_Type, value: item.Product_Type });
+   }
+  if (proSubTypeCS.indexOf(item.Product_Sub_Type) === -1) {
+    proSubTypeCS.push(item.Product_Sub_Type);
+    this.DistProSubTypeClStk.push({ label: item.Product_Sub_Type, value: item.Product_Sub_Type });
+    }
+  if (productDesCriptionCS.indexOf(item.Product_Description) === -1) {
+    productDesCriptionCS.push(item.Product_Description);
+    this.DistProDescriptionClStk.push({ label: item.Product_Description, value: item.Product_Description });
+    }
+  // if (costCenterNameCS.indexOf(item.Cost_Cen_Name) === -1) {
+  //   costCenterNameCS.push(item.Cost_Cen_Name);
+  //   this.DistCostCenCS.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+  //   }
+  // if (stockPointCS.indexOf(item.Stock_Point) === -1) {
+  //   stockPointCS.push(item.Stock_Point);
+  //   this.DistStockPointCS.push({ label: item.Stock_Point, value: item.Stock_Point });
+  //   }
+  });
+     this.backUpClosingReportList = [...this.ClosingReportList];
+  }
+  reportTypeChangeforClStk(){
+    this.DistMatTypeClStk =[];
+    this.SelectedDistMatClStk =[];
+    this.DistProTypeClStk =[];
+    this.SelectedDistProTypeClStk =[];
+    this.DistProSubTypeClStk =[];
+    this.SelectedDistProSubTypeClStk =[];
+    this.DistProDescriptionClStk = [];
+    this.SelectedDistProDescriptionClStk = [];
+    // this.DistCostCen = [];
+    // this.SelectedDistCostCen = [];
+    // this.DistStockPoint = [];
+    // this.SelectedDistStockPoint = [];
+    this.ObjClosingStockBrowse = new ClosingStockBrowse();
+    this.ClosingReportList = [];
+    this.backUpClosingReportList = [];
+    this.ClosingReportSearchFormSubmitted = false;
+    // this.getCosCenter();
+    // this.getProductType();
+    this.Finyear()
   }
 }
 class Browse {

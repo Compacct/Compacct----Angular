@@ -112,7 +112,7 @@
         </button>
     </div>
 </form>
-<div class="form-group" style="padding:15px" *ngIf="stockList.length">
+<div class="form-group" style="padding:15px">
 
     <fieldset class="col-md-12">
         <legend>Filter</legend>
@@ -249,6 +249,7 @@
                 name="ClosingReportType" 
                 #ClosingReportType="ngModel" 
                 [(ngModel)]="Report_Type"
+                (change)="reportTypeChangeforClStk()"
                 [ngClass]="{'clearance': ClosingReportSearchFormSubmitted && ClosingReportType?.errors?.required}" required>
                         <option  value="Closing_Stock_Report">Closing Stock Report</option>
                         <option  value="Closing_Stock_High_Value">Closing Stock High Value</option>
@@ -283,40 +284,40 @@
             </button>
         </div> -->
     </form>
-    <!-- <div class="form-group" style="padding:15px" *ngIf="stockList.length">
+    <div class="form-group" style="padding:15px">
     
         <fieldset class="col-md-12">
             <legend>Filter</legend>
     
             <div class="form-group">
-                <div class="col-sm-3" *ngIf="report_Type == 'Product_Wise'">
+                <!-- <div class="col-sm-3" *ngIf="report_Type == 'Product_Wise'">
                     <label class="control-label">Cost Center Name <span class="text-danger"></span></label>
                     <p-multiSelect [options]="DistCostCen" [(ngModel)]="SelectedDistCostCen" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Cost_Center_Name"></p-multiSelect>
-                </div>
-                <div class="col-sm-3" *ngIf="report_Type == 'Product_Wise'">
+                </div> -->
+                <!-- <div class="col-sm-3" *ngIf="report_Type == 'Product_Wise'">
                     <label class="control-label">Stock Point <span class="text-danger"></span></label>
                     <p-multiSelect [options]="DistStockPoint" [(ngModel)]="SelectedDistStockPoint" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Stock_Point"></p-multiSelect>
-                </div>
+                </div> -->
                 <div class="col-sm-3">
                     <label class="control-label">Material Type <span class="text-danger"></span></label>
-                    <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterial" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
+                    <p-multiSelect [options]="DistMatTypeClStk" [(ngModel)]="SelectedDistMatClStk" itemSize="30" (onChange)='FilterDistClosingStock()' [styleClass]="'compacct-multiselect'" name="Material_Type_CLStk"></p-multiSelect>
                 </div>
-                <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise'">
+                <div class="col-sm-3">
                     <label class="control-label">Product Type <span class="text-danger"></span></label>
-                    <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProduct" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+                    <p-multiSelect [options]="DistProTypeClStk" [(ngModel)]="SelectedDistProTypeClStk" itemSize="30" (onChange)='FilterDistClosingStock()' [styleClass]="'compacct-multiselect'" name="Product_Type_ClStk"></p-multiSelect>
                 </div>
-                <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise'">
+                <div class="col-sm-3">
                     <label class="control-label">Product Sub Type <span class="text-danger"></span></label>
-                    <p-multiSelect [options]="DistProductSubType" [(ngModel)]="SelectedDistProductSubType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Sub_Type"></p-multiSelect>
+                    <p-multiSelect [options]="DistProSubTypeClStk" [(ngModel)]="SelectedDistProSubTypeClStk" itemSize="30" (onChange)='FilterDistClosingStock()' [styleClass]="'compacct-multiselect'" name="Product_Sub_Type_ClStk"></p-multiSelect>
                 </div>
                 <div class="col-sm-3">
                     <label class="control-label">Product Name <span class="text-danger"></span></label>
-                    <p-multiSelect [options]="DistProductName" [(ngModel)]="SelectedDistProductName" [virtualScroll]="true" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Name"></p-multiSelect>
+                    <p-multiSelect [options]="DistProDescriptionClStk" [(ngModel)]="SelectedDistProDescriptionClStk" [virtualScroll]="true" itemSize="30" (onChange)='FilterDistClosingStock()' [styleClass]="'compacct-multiselect'" name="Product_Description_ClStk"></p-multiSelect>
                 </div>
             </div>
     
         </fieldset>
-    </div> -->
+    </div>
     <br>
     <div class="table-responsive no-padding">
         <p-table [value]="ClosingReportList" #dt3 
@@ -355,7 +356,10 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Product Description</th>
+                    <th>Material Type</th>
+                    <th>Product Type</th>
+                    <th>Product Sub Type</th>
+                    <th>Product Name</th>
                     <th>UOM</th>
                     <th>Batch No</th>
                     <th>Balance Qty</th>
@@ -366,6 +370,9 @@
             </ng-template>
             <ng-template pTemplate="body" let-col>
                 <tr>
+                    <td>{{col.Material_Type}}</td>
+                    <td>{{col.Product_Type }}</td>
+                    <td>{{col.Product_Sub_Type}}</td>
                     <td>{{col.Product_Description}}</td>
                     <td>{{col.UOM}}</td>
                     <td>{{col.Batch_No }}</td>
