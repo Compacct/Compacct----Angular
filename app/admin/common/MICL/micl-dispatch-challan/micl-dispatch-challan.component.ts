@@ -162,6 +162,9 @@ export class MiclDispatchChallanComponent implements OnInit {
   indentlistdisabled = false;
   creteChallanList: any = [];
   DOrderBy:any = []
+  BackupfilteredData: any = [];
+  Save = false;
+  Del = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -645,27 +648,57 @@ saveqty(){
 //  }
 //  return flag;
 // }
-  showDialog(valid) {
-    this.DispatchFormSubmit = true;
-    if (valid) {
-      this.DispatchFormSubmit = false;
-    this.displaysavepopup = true;
-    this.filteredData = [];
+  // showDialog() {
+  //   this.DispatchFormSubmit = true;
+  //   if (this.productDetails.length) {
+  //     this.DispatchFormSubmit = false;
+  //   this.displaysavepopup = true;
+  //   this.filteredData = [];
   //   this.BackUpproductDetails.forEach(obj => {
   //     if(obj.Delivery_Qty && Number(obj.Delivery_Qty) !== 0 ){
   //     //  console.log(filteredData.push(obj.Product_ID));
   //     this.filteredData.push(obj);
+  //     // this.BackupfilteredData = [...this.filteredData];
   //      // console.log("this.filteredData===",this.filteredData);
   //   }
   //  })
-   this.productDetails.forEach(obj => {
-    if(obj.Delivery_Qty){  //   && Number(obj.Delivery_Qty) !== 0
-    //  console.log(filteredData.push(obj.Product_ID));
-    this.filteredData.push(obj);
-     // console.log("this.filteredData===",this.filteredData);
-  }
- })
- }
+//    this.productDetails.forEach(obj => {
+//     if(obj.Delivery_Qty){  //   && Number(obj.Delivery_Qty) !== 0
+//     //  console.log(filteredData.push(obj.Product_ID));
+//     this.filteredData.push(obj);
+//      // console.log("this.filteredData===",this.filteredData);
+//   }
+//  })
+//  }
+//   }
+  showDialog(valid){
+    this.DispatchFormSubmit = true;
+     // this.ngxService.start();
+     this.Save = false;
+     this.Del = false;
+     if (valid && this.productDetails.length) {
+      this.DispatchFormSubmit = false;
+      // this.BackUpproductDetails.forEach(obj => {
+      //  if(obj.Delivery_Qty){
+     this.Save = true;
+     this.Del = false;
+     this.Spinner = true;
+     this.ngxService.start();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      closable: false,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+    // }
+    // })
+    }
+    else {
+ 
+    }
   }
   getTotalIndValue(){
     let Indval = 0;
@@ -844,6 +877,7 @@ saveqty(){
             Product_ID: el.product_id,
             Batch_No: el.Batch_No,
             Req_Qty: el.Req_Qty,
+            Purpose: el.Purpose,
             Qty: el.Delivery_Qty,
             Accepted_Qty: el.Delivery_Qty,
             // Rate: 0,
@@ -890,6 +924,7 @@ saveqty(){
       // this.items = ["BROWSE", "CREATE"];
       // this.buttonname = "Create";
       this.clearData();
+      this.Spinner = false;
       this.tabIndexToView = 0;
       this.PrintDispatch(data[0].Column1);
       this.inputBoxDisabled = false;
@@ -918,6 +953,7 @@ saveqty(){
     //  this.ReqDate = new Date();
     //  this.ChallanDate = this.DateService.dateConvert(new Date(this.challanDate));
      }else{
+      this.Spinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -932,6 +968,7 @@ saveqty(){
     // }
   }
   else{
+    this.Spinner = false;
     this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
@@ -1041,7 +1078,11 @@ saveqty(){
 deleteDispatch(data){
  console.log("deleteCol",data)
  this.doc_no = undefined;
+ this.Save = false;
+ this.Del = false;
  if (data.Doc_No) {
+ this.Save = false;
+ this.Del = true;
   this.doc_no = data.Doc_No;
   this.createdby = data.Created_By;
   this.compacctToast.clear();
@@ -1088,6 +1129,8 @@ onConfirm(){
 }
 onReject(){
   this.compacctToast.clear("c");
+  this.Spinner = false;
+  this.ngxService.stop();
 }
 
 // PENDING INDENT

@@ -62,6 +62,8 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   Browsecostcenlist:any = [];
   BrowseGodownList:any = [];
   Date: Date;
+  ViewDoc_No: any;
+  Viewlist:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -146,6 +148,10 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.ProductList = [];
      this.productListFilter = [];
      this.Gdisableflag = false;
+     this.ViewDoc_No = undefined;
+     if (this.buttonname === "Save") {
+      this.Doc_No = undefined;
+     }
    }
    GetBrowseCostCen(){
     const obj = {
@@ -251,7 +257,8 @@ export class K4cRsnsClosingStockComponent implements OnInit {
       Cost_Cen_ID : this.ObjrsnsClosingStock.Cost_Cen_ID,
       Godown_ID : this.ObjrsnsClosingStock.godown_id,
       Product_Type_ID : 0,
-      Material_Type : this.MaterialType_Flag
+      Material_Type : this.MaterialType_Flag,
+      Doc_Type : this.buttonname === "Save" ? "Create" : "Edit"
      }
    const obj = {
     "SP_String": "SP_K4C_RSNS_Closing_Stock",
@@ -410,6 +417,7 @@ Save(){
           this.clearData();
           this.GetDate();
           this.GetSearchedList(true);
+          this.Doc_No = undefined;
        }
        //this.clearData();
       // this.IssueStockFormSubmitted = false;
@@ -509,6 +517,7 @@ GetdataforEdit(Doc_No){
       //  this.minDate = new Date(data[0].Doc_Date.getDate());
       //  this.maxDate = new Date(data[0].Doc_Date.getDate());
        this.ObjrsnsClosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
+       this.GetGodown();
        this.ObjrsnsClosingStock.godown_id = data[0].godown_id;
       //    data.forEach(element => {
       //      const  productObj = {
@@ -530,7 +539,8 @@ GetdataforEdit(Doc_No){
       const ctrl = this;
       setTimeout(function () {
         ctrl.BackupProList.forEach(ele => {
-        const ARR = ctrl.Editlist.filter(item => item.Product_ID === ele.Product_ID);
+        const ARR = ctrl.Editlist.filter(item => (Number(item.Product_ID) == Number(ele.Product_ID) && (item.Batch_No == ele.Batch_No)))
+        console.log("ARR",ARR)
         if (ARR.length) {
           ele['Closing_Qty']= ARR[0].Closing_Qty,
           // el.Product_Type_ID = aRR[0].Product_Type_ID,
@@ -546,37 +556,58 @@ GetdataforEdit(Doc_No){
           ele['Remarks'] = ARR[0].Remarks
         }
         ctrl.ProductList = ctrl.BackupProList;
-        console.log("edit ProductList===", ARR);
+       // console.log("edit ProductList===", ARR);
       });
     }, 600)
     //   this.ProductList = [...this.ProductList];
      
       
       // FOR VIEW
-      this.Doc_No = data[0].Doc_No;
-      this.Doc_date = new Date(data[0].Doc_Date);
-      this.Cost_Cent_ID = data[0].Location;
-      this.Godown_ID = data[0].godown_name;
-      this.MaterialType = data[0].Brand_Name;
+      // this.Doc_No = data[0].Doc_No;
+      // this.Doc_date = new Date(data[0].Doc_Date);
+      // this.Cost_Cent_ID = data[0].Location;
+      // this.Godown_ID = data[0].godown_name;
+      // this.MaterialType = data[0].Brand_Name;
     })
 }
 View(DocNo){
   //console.log("View ==",DocNo);
 this.clearData();
 //this.editList = [];
-this.Doc_No = undefined;
+this.ViewDoc_No = undefined;
 this.Doc_date = undefined;
 this.MaterialType = undefined;
 this.Cost_Cent_ID = undefined;
 this.Godown_ID = undefined;
 this.remarks = undefined;
 if(DocNo.Doc_No){
-this.Doc_No = DocNo.Doc_No;
- this.ViewPoppup = true;
-// console.log("VIew ==", this.Objproduction.Doc_No);
-this.GetdataforEdit(this.Doc_No);
+this.ViewDoc_No = DocNo.Doc_No;
+console.log("VIew ==", this.ViewDoc_No);
+this.GetdataforView();
 //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
 }
+}
+GetdataforView(){
+  this.Viewlist = [];
+  //this.OTclosingstockwithbatchFormSubmitted = false;
+    const obj = {
+      "SP_String": "SP_K4C_RSNS_Closing_Stock",
+      "Report_Name_String": "Get_Edit_Data",
+      "Json_Param_String": JSON.stringify([{Doc_No  : this.ViewDoc_No}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("View Data From API",data);
+    this.Viewlist = data;
+    this.ViewPoppup = true;
+      console.log("view Viewlist===", this.BackupProList);
+      // FOR VIEW
+      this.ViewDoc_No = data[0].Doc_No;
+      this.Doc_date = new Date(data[0].Doc_Date);
+      this.Cost_Cent_ID = data[0].Location;
+      this.Godown_ID = data[0].godown_name;
+      this.MaterialType = data[0].Brand_Name;
+    })
 }
 Delete(row){
   // console.log("delete",row)
@@ -664,6 +695,8 @@ onConfirm(){
     this.datepickerdisable = true;
     // this.GetDate();
     this.Editlist = [];
+    this.ViewDoc_No = undefined;
+    this.ViewList = [];
   }
 
 }

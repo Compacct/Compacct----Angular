@@ -8,9 +8,15 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6">
+            <!-- <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div> -->
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="saveDispatch()" label="Yes" class="ui-button-success"></button>
             </div>
+            <div class="ui-g-6" *ngIf="Del && !Save">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
             </div>
@@ -373,6 +379,7 @@
                                             <th>Product Description</th>
                                             <th>UOM</th>
                                             <th *ngIf="reqQTYdis">Req Qty</th>
+                                            <th>Purpose</th>
                                             <th>Batch No</th>
                                             <th *ngIf="!reqQTYdis">Accepted Qty</th>
                                             <th>Batch Qty</th>
@@ -387,6 +394,9 @@
                                                 <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.Product_Description}}</td>
                                                 <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.UOM}}</td>
                                                 <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.Req_Qty}}</td>
+                                                <td [attr.rowspan]="CheckLengthProductID(col.product_id)">
+                                                    <input type="text" [name]="col.product_id" [(ngModel)]='col.Purpose' class="form-control" style="width: 200px;" />
+                                                </td>
 
                                             </ng-container>
                                             <ng-container *ngIf="CheckLengthProductID(col.product_id) === 1">
@@ -394,6 +404,7 @@
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.UOM}}</td>
                                             <td *ngIf="reqQTYdis">{{col.Req_Qty}}</td>
+                                            <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Purpose'  class="form-control" style="width: 200px;" /></td>
                                             </ng-container>
 
                                             <td>{{col.Batch_No}}</td>

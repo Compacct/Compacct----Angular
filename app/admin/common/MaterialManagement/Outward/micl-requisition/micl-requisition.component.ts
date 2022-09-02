@@ -82,6 +82,12 @@ export class MiclRequisitionComponent implements OnInit {
   Requisition_ID :any;
   Material_Type_ID :any;
 
+  ObjReqStatusData : ReqStatusData = new ReqStatusData ();
+  reqstatusSpinner = false;
+  ReqStatusDataList:any = [];
+  DynamicReqStatusDataListHeader:any = [];
+  GodownReqStatusList:any = [];
+
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -105,7 +111,7 @@ export class MiclRequisitionComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items =  ["BROWSE", "CREATE", "STOCK"];
+    this.items =  ["BROWSE", "CREATE", "STOCK", "REQUISITION STATUS"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -133,7 +139,7 @@ export class MiclRequisitionComponent implements OnInit {
   TabClick(e) {
    
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "STOCK"];
+    this.items = ["BROWSE", "CREATE", "STOCK", "REQUISITION STATUS"];
     this.buttonname = "Save";
     this.clearData();
   }
@@ -482,8 +488,10 @@ export class MiclRequisitionComponent implements OnInit {
      this.costcenterList = data;
      this.objreqi.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
      this.ObjBrowseData.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+     this.ObjReqStatusData.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
       this.Getgodown(this.objreqi.Cost_Cen_ID);
      this.GetgodownBrowse(this.ObjBrowseData.Cost_Cen_ID);
+     this.GetgodownReqStatus(this.ObjReqStatusData.Cost_Cen_ID);
      this.searchData()
   })
   }
@@ -522,6 +530,31 @@ export class MiclRequisitionComponent implements OnInit {
         console.log("this.GodownBrowseList",this.GodownBrowseList);
         // if(this.headerText === "Purchase Indent") {
         this.ObjBrowseData.Godown_ID = this.GodownBrowseList.length ? this.GodownBrowseList[0].Godown_ID : undefined
+        this.searchData()
+        // }
+        })
+    }
+    else{
+      this.GodownBrowseList = [];
+      this.ObjBrowseData.Godown_ID = undefined;
+    }
+
+   
+  }
+  GetgodownReqStatus(CostID){
+    if(CostID){
+      this.GodownReqStatusList = [];
+      const obj = {
+        "SP_String": "SP_Txn_Requisition",
+        "Report_Name_String": "Get_Cost_Center_Godown",
+        "Json_Param_String": JSON.stringify([{Cost_Cen_ID : CostID}])
+  
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.GodownReqStatusList = data;
+        console.log("this.GodownReqStatusList",this.GodownReqStatusList);
+        // if(this.headerText === "Purchase Indent") {
+        this.ObjReqStatusData.Godown_ID = this.GodownReqStatusList.length ? this.GodownReqStatusList[0].Godown_ID : undefined
         this.searchData()
         // }
         })
@@ -904,6 +937,44 @@ export class MiclRequisitionComponent implements OnInit {
        this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
         });
     }
+    getReStatsuDateRange(dateRangeObj) {
+      if (dateRangeObj.length) {
+        this.ObjReqStatusData.From_Date = dateRangeObj[0];
+        this.ObjReqStatusData.To_Date = dateRangeObj[1];
+      }
+    }
+    GetRequisitionStatusData(){
+      // this.RequistionSearchFormSubmit = true;
+      this.reqstatusSpinner = true
+        const tempDate = {
+          From_Date :this.ObjReqStatusData.From_Date
+          ? this.DateService.dateConvert(new Date(this.ObjReqStatusData.From_Date))
+          : this.DateService.dateConvert(new Date()),
+          To_Date :this.ObjReqStatusData.To_Date
+          ? this.DateService.dateConvert(new Date(this.ObjReqStatusData.To_Date))
+          : this.DateService.dateConvert(new Date()),
+          Cost_Cen_ID :this.ObjReqStatusData.Cost_Cen_ID ? this.ObjReqStatusData.Cost_Cen_ID : 0,
+          Godown_ID : this.ObjReqStatusData.Godown_ID ? this.ObjReqStatusData.Godown_ID : 0,
+          proj : this.openProject ? this.openProject : "N",
+          To_Cost_Cen_ID : this.toCostCenter
+        }
+        const obj = {
+          "SP_String": "SP_Txn_Requisition",
+          "Report_Name_String": "Browse_Requisition",
+          "Json_Param_String": JSON.stringify([tempDate])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.ReqStatusDataList = data;
+          if(this.ReqStatusDataList.length){
+            this.DynamicReqStatusDataListHeader= Object.keys(data[0])
+          }
+          // this.RequistionSearchFormSubmit = false;
+          this.reqstatusSpinner = false
+          console.log("this.ReqStatusDataList",this.ReqStatusDataList);
+        })
+    
+   
+    }
 }
 
 class reqi{
@@ -945,3 +1016,10 @@ class project{
   Budget_Sub_Group_ID:any
   Work_Details_ID:any
 }
+class ReqStatusData {
+  From_Date: string;
+  To_Date: string;
+  Cost_Cen_ID : any;
+  Godown_ID : any;
+  To_Cost_Cen_ID :any
+  }
