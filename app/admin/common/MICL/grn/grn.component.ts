@@ -365,13 +365,17 @@ export class GrnComponent implements OnInit {
   Add(valid){
     this.GRNFormSubmitted = true;
     if(valid){
+      if (new Date(this.GRNDate).toISOString() >= new Date(this.PODate).toISOString()) {
       if (Number(this.ObjGRN.Received_Qty) && Number(this.ObjGRN.Received_Qty) <= Number(this.ObjGRN.Challan_Qty)){
         if (Number(this.ObjGRN.Rejected_Qty) >= 0) {
         var FreightPFPerc = this.FreightPFPerc ? this.FreightPFPerc : 0;
         var apidiscountamt = this.DiscountAmount;
         var qtydis = Number(apidiscountamt / this.ObjGRN.Received_Qty).toFixed(2);
-        var discountamt = Number(Number(qtydis) * this.ObjGRN.Accepted_Qty).toFixed(2);
-      var amount = Number(this.ObjGRN.Accepted_Qty * this.ObjGRN.Rate).toFixed(2);
+        // var discountamt = Number(Number(qtydis) * this.ObjGRN.Accepted_Qty).toFixed(2);
+        // var amount = Number(this.ObjGRN.Accepted_Qty * this.ObjGRN.Rate).toFixed(2);
+        // var qtydis = Number(apidiscountamt / this.ObjGRN.Challan_Qty).toFixed(2);
+        var discountamt = Number(Number(qtydis) * this.ObjGRN.Challan_Qty).toFixed(2);
+      var amount = Number(this.ObjGRN.Challan_Qty * this.ObjGRN.Rate).toFixed(2);
       var FreightPFCharges = (Number(amount) * (Number(FreightPFPerc) / 100)).toFixed(2);
       var amtwithfreightcharges = (Number(amount) + Number(FreightPFCharges)).toFixed(2);
       var taxable = Number(amtwithfreightcharges) - Number(discountamt);
@@ -432,6 +436,16 @@ export class GrnComponent implements OnInit {
           detail: "Received Qty is more than Challan Qty "
         });
       }
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "RDB Date can't be greater than GRN Date "
+      });
+    }
    }
    }
    delete(index) {

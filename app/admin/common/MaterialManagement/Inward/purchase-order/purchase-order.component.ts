@@ -749,6 +749,9 @@ export class PurchaseOrderComponent implements OnInit {
       //  let taxacl:number =  this.objaddPurchacse.taxable_AMT
         this.objaddPurchacse.taxable_AMT = undefined
         this.objaddPurchacse.Discount_AMT = this.objaddPurchacse.Discount;
+        // let tempExiAmt = this.objaddPurchacse.Excise_Tax ? Number(this.objaddPurchacse.Excise_Tax) : 0 
+        // let tempGrsAmt = this.objaddPurchacse.Gross_Amt ? Number(this.objaddPurchacse.Gross_Amt) : 0 
+        // let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
         //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
         //   taxacl = Number(this.disAmtBackUpAMT) + Number(taxacl)
         //  }
@@ -829,6 +832,9 @@ export class PurchaseOrderComponent implements OnInit {
       this.objaddPurchacse = new addPurchacse();
       this.Requisiton_Type = undefined;
       this.Material_Type = undefined;
+      this.totalAmtBackUp = undefined;
+      this.totalbackUp = undefined; 
+      this.totalRate = undefined;
       this.purChaseAddFormSubmit = false;
       this.productList = [];
       console.log("addPurchaseList",this.addPurchaseList);

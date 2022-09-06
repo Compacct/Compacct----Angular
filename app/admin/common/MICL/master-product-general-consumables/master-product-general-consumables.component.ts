@@ -105,6 +105,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   MatTypeModal = false;
   ViewMetTypeModal = false;
   EXCELSpinner:boolean = false;
+  DescriptionCheck:any;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -182,6 +183,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
       this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
       this.objProductrequ.Product_Description = e.Product_Description;
+      this.CheckDescription();
     }
   }
   getGstAndCustDutyData(e) {
@@ -972,6 +974,27 @@ deleteMaterialType(mettype){
     this.productCode = undefined;
     this.destroyChild();
    }
+   CheckDescription(){
+    const tempobj = {
+      Product_Type_ID : this.Objproduct.Product_Type_ID,
+      Product_Sub_Type_ID : this.Objproduct.Product_Sub_Type_ID,
+      Description_Like : this.Objproduct.Product_Description
+    }
+    const objtemp = {
+      Product_ID : this.Objproduct.Product_ID,
+      Description_Like : this.Objproduct.Product_Description
+    }
+        const obj = {
+         "SP_String": "SP_Harbauer_Master_Product_Civil",
+         "Report_Name_String":this.buttonname === "Update" ? 'Check_Product_Description_On_Update' : 'Check_Product_Description',
+         "Json_Param_String": this.buttonname === "Update" ? JSON.stringify([objtemp]) : JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         this.DescriptionCheck = data[0].Column1;
+        console.log("DescriptionCheck==",this.DescriptionCheck);
+       })
+  
+   }
   
    //Save Data
 saveData(valid:any){
@@ -980,6 +1003,7 @@ saveData(valid:any){
     this.ProductFormSubmitted = true;
     console.log("checkrequ",this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ))
     if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+      if(this.DescriptionCheck === "OK") { 
       console.log("productCode==",this.productCode);
       
       // var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
@@ -1016,7 +1040,18 @@ saveData(valid:any){
             this.ProductFormSubmitted = false;
             this.Objproduct = new product();
            });
-       }
+      }
+      else {
+       this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Description already exists."
+          });
+     }
+     }
        else{
          console.error("Somthing Wrong")
        }    

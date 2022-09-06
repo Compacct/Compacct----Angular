@@ -28,7 +28,7 @@
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
 
-                            <div class="table-responsive no-padding productTable">
+                             <div class="table-responsive no-padding"> <!--productTable -->
                                 <p-table #dt [value]="BrowseList" [globalFilterFields]="['Product_ID','Product_Type','Product_Sub_Type','Cat_Name','Product_Description','MOC_Description','Capacity_Size_Desc','Product_Feature_Desc','Grade_Description','Remarks','HSN_NO','GST_Percentage','UOM','Mfg_Company']"
                                     [paginator]="BrowseList.length ? true:false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
                                     <ng-template pTemplate="caption">

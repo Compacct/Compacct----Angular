@@ -148,6 +148,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   MatTypeModal = false;
   ViewMetTypeModal = false;
   EXCELSpinner:boolean = false
+  DescriptionCheck: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -229,6 +230,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
       this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
       this.objProductrequ.Product_Description = e.Product_Description;
+      this.CheckDescription();
     }
   }
   getGstAndCustDutyData(e) {
@@ -1232,12 +1234,34 @@ deleteMaterialType(mettype){
   //     }
   //   }
   // }
+  CheckDescription(){
+    const tempobj = {
+      Product_Type_ID : this.ObjMasterProductm.Product_Type_ID,
+      Product_Sub_Type_ID : this.ObjMasterProductm.Product_Sub_Type_ID,
+      Description_Like : this.ObjMasterProductm.Product_Description
+    }
+    const objtemp = {
+      Product_ID : this.ObjMasterProductm.Product_ID,
+      Description_Like : this.ObjMasterProductm.Product_Description
+    }
+        const obj = {
+         "SP_String": "SP_Harbauer_Master_Product_Civil",
+         "Report_Name_String":this.buttonname === "Update" ? 'Check_Product_Description_On_Update' : 'Check_Product_Description',
+         "Json_Param_String": this.buttonname === "Update" ? JSON.stringify([objtemp]) : JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         this.DescriptionCheck = data[0].Column1;
+        console.log("DescriptionCheck==",this.DescriptionCheck);
+       })
+  
+   }
   SaveMasterProductM(valid){
    if (this.productid) {
         this.Spinner = true;
         this.MasterProductmFormSubmitted = true;
         console.log("this.checkrequ()",this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ))
       if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+        if(this.DescriptionCheck === "OK") {
       let UpdateArr =[]
      
         const Obj = {
@@ -1273,7 +1297,20 @@ deleteMaterialType(mettype){
          })
      
       
-      } else {
+      
+        }
+        else {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Description already exists."
+        });
+      }
+      } 
+      else {
       this.Spinner = false;
       this.compacctToast.clear();
         this.compacctToast.add({
@@ -1289,6 +1326,7 @@ deleteMaterialType(mettype){
       this.Spinner = true;
       this.MasterProductmFormSubmitted = true;
        if(valid && this.Product_Mfg_Comp_ID.length){
+        if(this.DescriptionCheck === "OK") {
          let tempArr =[]
         this.Product_Mfg_Comp_ID.forEach(item => {
           const obj = {
@@ -1336,6 +1374,17 @@ deleteMaterialType(mettype){
            }
          })
         }
+      else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Description already exists."
+      });
+    }
+     }
         else {
         //if(!this.ProductPDFFile['size']) {
           this.Spinner = false;
