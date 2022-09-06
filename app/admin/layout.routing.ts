@@ -1806,7 +1806,7 @@ data: {
                   path: 'Project_Bill',
                   component:HarbProjectBillComponent,
                   data: {
-                    title: 'Project Bill'
+                    title: 'Sale Bill Project'
                 }
                 },
                 {

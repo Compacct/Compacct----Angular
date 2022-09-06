@@ -112,6 +112,7 @@ export class PurchaseBillComponent implements OnInit {
   
   ObjBrowsePurBill = new BrowsePurBill();
   SerarchPurBillList:any = [];
+  bckUpSerarchPurBillList:any = []
   SearchPurBillFormSubmitted = false;
   initDateValid:any = [];
   // Objsave = new save();
@@ -144,7 +145,10 @@ export class PurchaseBillComponent implements OnInit {
   HR_Year_ID:any;
   initDate:any = [];
   POList:any = [];
-
+  DistProject:any = []
+  SelectedDistProject:any = []
+  DistSubledger:any = []
+  SelectedSubledger:any = []
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -384,9 +388,10 @@ export class PurchaseBillComponent implements OnInit {
       "Json_Param_String": JSON.stringify([TempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     // console.log("costcenterList  ===",data);
+      console.log("GodownList  ===",data);
       this.GodownList = data;
       this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
+      this.ObjProductInfo.Godown_Id = this.openProject == 'Y' ? 1 : undefined
       // this.ObjPurChaseBill.Cost_Cen_ID = this.CostCenterList.length === 1 ? this.CostCenterList[0].Cost_Cen_ID : undefined;
       // this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // this.GetCosCenAddress();
@@ -469,7 +474,7 @@ export class PurchaseBillComponent implements OnInit {
     if(this.ObjProductInfo.Pur_Order_No) {
       const ctrl = this;
       const DateObj = $.grep(ctrl.POList,function(item: any) {return item.value == ctrl.ObjProductInfo.Pur_Order_No})[0];
-    //  console.log(DateObj);
+      console.log(DateObj);
       // this.ObjGRN1.RDB_Date = new Date(DateObj.RDB_Date);
       this.PODate = new Date(DateObj.Doc_Date);
       // this.podatedisabled = false;
@@ -1375,6 +1380,7 @@ GetGRNNoProlistdetails2(){
     // if(this.getAllDataList.length){
     //   this.DynamicHeader = Object.keys(data[0]);
     // }
+    this.GetDistinctArr()
     this.seachSpinner = false;
     this.SearchPurBillFormSubmitted = false;
    // console.log("Get All Data",this.SerarchPurBillList);
@@ -1569,6 +1575,56 @@ GetGRNNoProlistdetails2(){
     })
     }
   }
+ // Distinct
+  GetDistinctArr() {
+    let DProject:any = [];
+    let DSubledger:any= [];
+    this.DistProject = []
+    this.DistSubledger = []
+    this.SelectedDistProject = [];
+    this.SelectedSubledger = [];
+    this.SerarchPurBillList.forEach((item:any) => {
+       if (DProject.indexOf(item.Project_Description) === -1) {
+        DProject.push(item.Project_Description);
+          this.DistProject.push({label: item.Project_Description,value: item.Project_Description});
+      }
+      if (DSubledger.indexOf(item.Sub_Ledger_Name) === -1) {
+        DSubledger.push(item.Sub_Ledger_Name);
+          this.DistSubledger.push({label: item.Sub_Ledger_Name,value: item.Sub_Ledger_Name});
+      }
+    });
+    this.bckUpSerarchPurBillList = [...this.SerarchPurBillList];
+
+  }
+
+
+
+  // FilterChangen
+  GlobalFilterChangenUpdate() {
+    let searchFields:any = [];
+    let ProjectFilter:any = [];
+    let subLedgerFilter:any = [];
+   
+  if (this.SelectedDistProject.length) {
+     searchFields.push('Project_Description');
+      ProjectFilter = this.SelectedDistProject;
+    }
+    if (this.SelectedSubledger.length) {
+      searchFields.push('Sub_Ledger_Name');
+      subLedgerFilter = this.SelectedSubledger;
+    }
+    this.SerarchPurBillList = [];
+    if (searchFields.length) {
+      let LeadArr = this.bckUpSerarchPurBillList.filter(function (e) {
+        return ((ProjectFilter.length ? ProjectFilter.includes(e['Project_Description']) : true)
+          && (subLedgerFilter.length ? subLedgerFilter.includes(e['Sub_Ledger_Name']) : true)
+         );
+      });
+      this.SerarchPurBillList = LeadArr.length ? LeadArr : [];
+    } else {
+      this.SerarchPurBillList = this.bckUpSerarchPurBillList;
+    }
+  }
 }
 class PurChaseBill {
   Choose_Address : any;
@@ -1675,7 +1731,7 @@ class ProductInfo {
   Discount_Type_Amt : number;
   Discount : number;
   Taxable_Amount : number;
-  Godown_Id: 0;
+  Godown_Id: any;
   CESS_Percentage: number;
   GRN_No: any;
 
