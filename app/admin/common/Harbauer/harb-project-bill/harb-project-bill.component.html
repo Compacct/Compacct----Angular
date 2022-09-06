@@ -17,6 +17,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" baseZIndex="99999" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+        <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -100,12 +118,12 @@
                                                             <a (click)="Print(col.Doc_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
-                                                        </li>
+                                                        </li>-->
                                                         <li>
-                                                            <a (click)="Delete(col)">
+                                                            <a (click)="DeleteProjectBill(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
-                                                        </li> -->
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>

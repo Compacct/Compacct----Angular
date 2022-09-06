@@ -55,6 +55,7 @@ export class HarbProjectBillComponent implements OnInit {
   ObjBrowse : Browse = new Browse();
   seachSpinner:boolean = false
   initDate:any = [];
+  DocNo:any = undefined
   constructor(
     public $http: HttpClient,
     public commonApi: CompacctCommonApi,
@@ -136,7 +137,8 @@ export class HarbProjectBillComponent implements OnInit {
     this.addProductList = []
     this.Ref_Date = new Date();
     this.AddSpinner = false;
-    this.seachSpinner = false
+    this.seachSpinner = false;
+    this.DocNo = undefined
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -146,6 +148,7 @@ export class HarbProjectBillComponent implements OnInit {
   }
   onReject(){
     this.compacctToast.clear("c");
+    this.compacctToast.clear("d");
   }
   SubledgerChange(){
    if(this.ObjProjectBill.Sub_Ledger_ID){
@@ -470,7 +473,7 @@ export class HarbProjectBillComponent implements OnInit {
       })
     
   }
-  onConfirm(){}
+ 
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjBrowse.From_Date = dateRangeObj[0];
@@ -512,6 +515,55 @@ export class HarbProjectBillComponent implements OnInit {
       }
       this.seachSpinner = false
     })
+  }
+  DeleteProjectBill(col:any){
+   if(col.Doc_No){
+     this.DocNo = col.Doc_No
+     this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "d",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+   }
+  }
+  onConfirm(){
+    if(this.DocNo){
+      const tempObj = {
+        Doc_No: this.DocNo,
+        User_ID : this.$CompacctAPI.CompacctCookies.User_ID
+      }
+      const obj = {
+        "SP_String": "SP_Sale_Bill",
+        "Report_Name_String":"Sale_Bill_Delete",
+        "Json_Param_String": JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        if(data[0].Success == "True"){
+          this.getAllData()
+          this.DocNo = undefined
+          this.compacctToast.clear();
+           this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Sale Bill Project",
+           detail: "Succesfully Created " 
+         });
+        }
+        else{
+          this.onReject()
+          this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: data[1].Error
+           })
+        }
+      })
+    }
   }
 }
 class ProjectBill{
