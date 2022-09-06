@@ -81,7 +81,38 @@
                                         <h5><strong></strong></h5>
                                     </div>
                                 </div>
-                                <div class="table-responsive table-id">
+                                <div *ngIf="SerarchPurBillList.length && openProject == 'Y'" style="margin-top:5px;margin-bottom:10px">
+                                    <fieldset class="col-md-12">
+                                      <legend>Filter</legend>
+          
+                                      <div class="form-group">
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Project <span class="text-danger"></span></label>
+                                          <p-multiSelect
+                                          [options]="DistProject"
+                                          [(ngModel)]="SelectedDistProject"
+                                          [virtualScroll]="true"
+                                          itemSize="30"
+                                          (onChange)='GlobalFilterChangenUpdate()'
+                                          [styleClass]="'compacct-multiselect'"
+                                          name="Project"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Sub Ledger <span class="text-danger"></span></label>
+                                          <p-multiSelect
+                                          [options]="DistSubledger"
+                                          [(ngModel)]="SelectedSubledger"
+                                          [virtualScroll]="true"
+                                          itemSize="30"
+                                          (onChange)='GlobalFilterChangenUpdate()'
+                                          [styleClass]="'compacct-multiselect'"
+                                          name="Sub_Ledger"></p-multiSelect>
+                                        </div>
+                                         </div>
+                                        </fieldset>
+                                  </div>
+                                  <div class="clearfix"></div>
+                                <div class="table-id">
                                     <p-table [value]="SerarchPurBillList"
                                     [paginator]="true" [rows]="100" 
                                     [loading]="seachSpinner" [rowHover]="true" 
@@ -102,6 +133,7 @@
                                                 <th style="width:5em">Action</th>
                                                 <th nowrap="nowrap">Doc No</th> 
                                                 <th nowrap="nowrap">Doc Date</th>
+                                                <th nowrap="nowrap" *ngIf="openProject == 'Y'" >Project</th>
                                                 <th nowrap="nowrap">Sub Ledger</th>
                                                 <th nowrap="nowrap">Cost Center</th>
                                                 <th nowrap="nowrap">Net Amount</th>
@@ -142,13 +174,14 @@
                                                 <!-- <ng-container pTemplate="body" let-col> -->
                                                     <td>{{col.Doc_No}}</td>
                                                     <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td nowrap="nowrap" *ngIf="openProject == 'Y'">{{col.Project_Description}}</td>
                                                     <td>{{col.Sub_Ledger_Name}}</td>
                                                     <td>{{col.Cost_Cen_Name}}</td>
                                                     <td>{{col.Bill_Net_Amt}}</td>
                                                     <td>{{col.Supp_Ref_No}}</td>
                                                     <td>{{col.Supp_Ref_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.Document ? col.Document : '-'}}</td>
-                                                    <td>{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
+                                                    <td nowrap="nowrap" >{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
                                                 <!-- </ng-container> -->
                                                 
                                             </tr>
@@ -623,7 +656,7 @@
                                                       name="godown" 
                                                       #godown="ngModel" 
                                                       [(ngModel)]="ObjProductInfo.Godown_Id"
-                                                      [disabled]="Is_Service"
+                                                      [disabled]="Is_Service || openProject === 'Y'"
                                                       [ngClass]="{clearance:ProductInfoSubmitted && godown?.errors?.required}" required
                                                       >
                                                       <option  [ngValue]="undefined">Select</option>
