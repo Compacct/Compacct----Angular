@@ -5,6 +5,11 @@
     width: auto !important;
     min-height: 170px !important;
 }
+.table-bordered > thead > tr > th{
+  color: #fff;
+  background-color: #3c8dbc;
+
+}
   .custombutton {
     margin-top: 25px;
   }
@@ -24,22 +29,25 @@
   .text-red-active > td {
     color:red;
   }
-  .box.boxboxDivide-primary{
-    border-top-color: #f3efec;
-    height: 10px;
-    border: 0;
-    box-shadow: 0 10px 10px -10px #8c8b8b inset
-}
-.text-red-active>td {
-  color: red;
-}
-/* #ej2-datepicker_296 > div .e-invalid-input{
-  border: 2px red solid;
-} */
-body .ui-tabview.ui-tabview-top .ui-tabview-nav {
-  border-bottom: 1px solid #c1c1c1 !important;
+  fieldset
+  {
+      border: 1px solid #ddd !important;
+      margin: 0;
+      min-width: 0;
+      padding: 10px;
+      position: relative;
+      border-radius:4px;
+      background-color:#f5f5f5;
+      padding-left:10px!important;
+  }
+legend
+      {
+      font-size: 14px;
+  font-weight: bold;
   margin-bottom: 0px;
-}
-/* #ui-tabpanel-3 > div > p-table > div > p-paginator > div > p-dropdown{
-  top: 41px !important;
-} */
+  width: fit-content;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0px 10px 0px 10px;
+  background-color: #ffffff;
+      }

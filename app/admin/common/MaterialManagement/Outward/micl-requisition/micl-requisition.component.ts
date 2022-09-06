@@ -111,7 +111,7 @@ export class MiclRequisitionComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items =  ["BROWSE", "CREATE", "STOCK", "REQUISITION STATUS"];
+    this.items =  ["BROWSE", "CREATE", "STOCK", "STATUS"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -139,7 +139,7 @@ export class MiclRequisitionComponent implements OnInit {
   TabClick(e) {
    
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "STOCK", "REQUISITION STATUS"];
+    this.items = ["BROWSE", "CREATE", "STOCK", "STATUS"];
     this.buttonname = "Save";
     this.clearData();
   }
@@ -953,14 +953,14 @@ export class MiclRequisitionComponent implements OnInit {
           To_Date :this.ObjReqStatusData.To_Date
           ? this.DateService.dateConvert(new Date(this.ObjReqStatusData.To_Date))
           : this.DateService.dateConvert(new Date()),
-          Cost_Cen_ID :this.ObjReqStatusData.Cost_Cen_ID ? this.ObjReqStatusData.Cost_Cen_ID : 0,
-          Godown_ID : this.ObjReqStatusData.Godown_ID ? this.ObjReqStatusData.Godown_ID : 0,
+          // Cost_Cen_ID :this.ObjReqStatusData.Cost_Cen_ID ? this.ObjReqStatusData.Cost_Cen_ID : 0,
+          // Godown_ID : this.ObjReqStatusData.Godown_ID ? this.ObjReqStatusData.Godown_ID : 0,
           proj : this.openProject ? this.openProject : "N",
           To_Cost_Cen_ID : this.toCostCenter
         }
         const obj = {
           "SP_String": "SP_Txn_Requisition",
-          "Report_Name_String": "Browse_Requisition",
+          "Report_Name_String": this.headerText === "Purchase Indent" ? "Get_Purchase_Indent_Status" :  "Get_Issue_Requisition_Status",
           "Json_Param_String": JSON.stringify([tempDate])
         }
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{

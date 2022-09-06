@@ -250,6 +250,7 @@ import { PatientCouponComponent } from "./common/PatientManagement/Transaction/p
 import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-case-history/hearing-case-history.component";
 import { GoodReceiveDetailsComponent } from './common/MICL/good-receive-details/good-receive-details.component';
 import { MasterHolidayComponent } from "./common/MICL/master-holiday/master-holiday.component";
+import { MICLDispatchChallanChargeableComponent } from "./common/MICL/micl-dispatch-challan-chargeable/micl-dispatch-challan-chargeable.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1844,6 +1845,14 @@ data: {
                     title: 'Master Holiday'
                 }
                 },
+                {
+                  path: 'MICL_Dispatch_Challan_Chargeable',
+                   component: MICLDispatchChallanChargeableComponent,
+                    data: {
+                      title: 'MICL Dispatch Challan Chargeable '
+                }
+                },
+                
       
     
 

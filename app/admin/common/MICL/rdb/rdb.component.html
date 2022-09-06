@@ -297,6 +297,15 @@
                                             placeholder="PO QTY"
                                             disabled>
                                         </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Pending PO QTY<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="PendingPO_QTY" 
+                                            #PendingPO_QTY="ngModel" 
+                                            [(ngModel)]="ObjRdb1.Pending_PO_QTY" 
+                                            placeholder="Pending PO QTY"
+                                            disabled>
+                                        </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Challan Qty<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Challan_Qty" #Challan_Qty="ngModel" [(ngModel)]="ObjRdb1.Challan_Qty" placeholder="Challan Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Challan_Qty.errors?.required}" required>
@@ -305,8 +314,8 @@
                                                     <label class="control-label">Received Qty<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Received_Qty" #Received_Qty="ngModel" [(ngModel)]="ObjRdb1.Received_Qty" placeholder="Received Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Received_Qty.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-2">
-                                                    <button class="btn btn-primary pull-left custombutton" (click)="Add(RDBForm.form.valid)">
+                                                <div class="col-sm-1">
+                                                    <button class="btn btn-primary pull-left custombutton1" (click)="Add(RDBForm.form.valid)">
                                                         <span class="glyphicon glyphicon-plus"> </span>Add
                                                         </button>
                                                 </div>

@@ -171,6 +171,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   MatTypeModal = false;
   ViewMetTypeModal = false;
   EXCELSpinner:boolean = false
+  DescriptionCheck: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -241,6 +242,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
       this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
       this.objProductrequ.Product_Description = e.Product_Description;
+      this.CheckDescription();
     }
   }
   getGstAndCustDutyData(e) {
@@ -1632,12 +1634,35 @@ deleteMaterialType(mettype){
   //     }
   //   }
   // }
+
+  CheckDescription(){
+    const tempobj = {
+      Product_Type_ID : this.ObjMasterProductel.Product_Type_ID,
+      Product_Sub_Type_ID : this.ObjMasterProductel.Product_Sub_Type_ID,
+      Description_Like : this.ObjMasterProductel.Product_Description
+    }
+    const objtemp = {
+      Product_ID : this.ObjMasterProductel.Product_ID,
+      Description_Like : this.ObjMasterProductel.Product_Description
+    }
+        const obj = {
+         "SP_String": "SP_Harbauer_Master_Product_Civil",
+         "Report_Name_String":this.buttonname === "Update" ? 'Check_Product_Description_On_Update' : 'Check_Product_Description',
+         "Json_Param_String": this.buttonname === "Update" ? JSON.stringify([objtemp]) : JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         this.DescriptionCheck = data[0].Column1;
+        console.log("DescriptionCheck==",this.DescriptionCheck);
+       })
+  
+   }
   SaveMasterProductel(valid){
     //if(this.Product_Mfg_Comp_ID.length) {
       if (this.productid) {
         this.Spinner = true;
         this.MasterProductelFormSubmitted = true;
       if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)) {
+        if(this.DescriptionCheck === "OK") {
       let UpdateArr:any =[]
       // this.Product_Mfg_Comp_ID.forEach(item => {
         const Obj = {
@@ -1692,7 +1717,20 @@ deleteMaterialType(mettype){
          })
        // }
       
-      } else {
+      
+    }
+    else {
+     this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Description already exists."
+        });
+   } 
+  }
+   else {
       this.Spinner = false;
      // this.destroyChild();
         this.compacctToast.clear();
@@ -1714,6 +1752,7 @@ deleteMaterialType(mettype){
       //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
       // }
       if(valid && this.Product_Mfg_Comp_ID.length) {
+        if(this.DescriptionCheck === "OK") {
       // if(this.Product_Mfg_Comp_ID.length) {
         let tempArr =[]
         this.Product_Mfg_Comp_ID.forEach(item => {
@@ -1774,6 +1813,17 @@ deleteMaterialType(mettype){
       //       detail: "Error Occured "
       //     });
       // }
+    }
+      else {
+       this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Description already exists."
+          });
+     }
     }
     else {
       //  if(!this.ProductPDFFile['size']) {
@@ -1849,6 +1899,7 @@ deleteMaterialType(mettype){
       // this.ManualPaymentConfirmFormSubmit = false;
       // this.ManualPaymentConfirmModal = false;
       this.clearData();
+      this.destroyChild();
   };
   // upload(id) {
   //   const endpoint = "/Harbauer_Master_Product_mechanical/Upload_Doc";

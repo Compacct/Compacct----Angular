@@ -381,7 +381,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-oil">
                             <app-stock-report></app-stock-report>
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [disabled]="true" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="ReqStatusForm" #ReqStatusForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -391,7 +391,7 @@
                                         </app-compacct-daterangepicker>
 
                                     </div>
-                                    <div class="col-sm-4">
+                                    <!-- <div class="col-sm-4">
                                         <label class="control-label">From Cost Center &nbsp;</label>
                                         <select class="form-control" 
                                         name="costcenreqstatus" 
@@ -417,7 +417,7 @@
                                             <option *ngFor="let option of GodownReqStatusList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                                       </select>
 
-                                    </div>
+                                    </div> -->
                                     <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetRequisitionStatusData()" id="load" [disabled]="reqstatusSpinner">
                                       <p-progressSpinner *ngIf="reqstatusSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
@@ -427,13 +427,16 @@
                                 </div>
                             </form>
                             <div class="no-padding">
-                                <p-table [value]="ReqStatusDataList" 
+                                <p-table [value]="ReqStatusDataList"
                                 [paginator]="ReqStatusDataList.length ? true : false"
                                 *ngIf='ReqStatusDataList.length'
-                                [rows]="100" [rowHover]="true" 
-                                [autoLayout]="true" sortMode="multiple" 
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
                                 [rowsPerPageOptions]="[100,200,300]" 
-                                [globalFilterFields]="DynamicReqStatusDataListHeader"
+                                [globalFilterFields]='DynamicReqStatusDataListHeader'
                                     [rowHover]="true" #dt2>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -441,46 +444,41 @@
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
-
+    
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicReqStatusDataListHeader">{{headerChange(option)}}</th>
-                                            
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicReqStatusDataListHeader">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr [class]='col.Cancel_Requisition === "Y" ? "text-red-active" : ""'>
-
-                                            <td>
+                                        <tr>
+    
+                                            <!-- <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                     <i class="fa fa-fw fa-bars"></i>
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <!-- <li *ngIf="col.Cancel_Requisition == 'Y'">
-                                                            <a (click)="Cancel(col)">
-                                                                <i class="fa fa-fw fa-power-off"></i> Active
-                                                            </a>
-                                                        </li> -->
-                                                        <!-- <li *ngIf="col.Cancel_Requisition == 'N'">
-                                                            <a (click)="Active(col)">
-                                                                <i class="fa fa-fw fa-trash"></i> Delete
-                                                            </a>
-                                                        </li> -->
                                                         <li>
-                                                            <a (click)="Print(col.Req_No)">
+                                                            <a (click)="CreateGRN(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Create GRN 
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintPRDB(col.RDB_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
                                                     </ul>
                                                 </div>
-                                            </td>
+                                            </td> -->
                                             <ng-container *ngFor="let option of DynamicReqStatusDataListHeader">
                                                 <td nowrap="nowrap">{{col[option]}}</td>
                                             </ng-container>
+                                            
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>

@@ -479,6 +479,7 @@ export class RdbComponent implements OnInit {
   Add(valid){
     this.RDBFormSubmit = true;
     if(valid){
+      if (new Date(this.RDB_Date).toISOString() >= new Date(this.PO_Doc_Date).toISOString()) {
       if (Number(this.ObjRdb1.Challan_Qty)  <= Number(this.ObjRdb1.PO_QTY)) {
       if (Number(this.ObjRdb1.Received_Qty) <= Number(this.ObjRdb1.Challan_Qty)){
         const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(this.ObjRdb1.Product_ID))[0];
@@ -488,8 +489,10 @@ export class RdbComponent implements OnInit {
           var FreightPFPerc = productFilter.Excise_Tax_Percentage ? productFilter.Excise_Tax_Percentage : 0;
         var apidiscountamt = productFilter.Discount_Amount;
         var qtydis = Number(apidiscountamt / this.ObjRdb1.PO_QTY).toFixed(2);
-        var discountamt = Number(Number(qtydis) * this.ObjRdb1.Received_Qty).toFixed(2);
-        var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
+        // var discountamt = Number(Number(qtydis) * this.ObjRdb1.Received_Qty).toFixed(2);
+        // var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
+        var discountamt = Number(Number(qtydis) * this.ObjRdb1.Challan_Qty).toFixed(2);
+        var amount = Number(Number(this.ObjRdb1.Challan_Qty) * Number(productFilter.Rate)).toFixed(2);
         var FreightPFCharges = (Number(amount) * (Number(FreightPFPerc) / 100)).toFixed(2);
         var amtwithfreightcharges = (Number(amount) + Number(FreightPFCharges)).toFixed(2);
         var taxable = Number(amtwithfreightcharges) - Number(discountamt); //Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
@@ -529,7 +532,7 @@ export class RdbComponent implements OnInit {
             // this.PO_Doc_Date = new Date();
             // this.RDB_Date = new Date();
             // this.SE_Date = new Date();
-            this.dateDis = true;
+            this.dateDis = false;
         }
         }
         else {
@@ -551,6 +554,16 @@ export class RdbComponent implements OnInit {
           detail: "Challan Qty is more than PO Qty "
         });
       }
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "PO Date can't be greater than RDB Date "
+      });
+    }
   }
   }
   delete(index) {
@@ -898,8 +911,9 @@ export class RdbComponent implements OnInit {
     this.ObjRdb1.UOM = productFilter.UOM ? productFilter.UOM : " ";
     this.ObjRdb1.HSN_Code = productFilter.HSN_NO ? productFilter.HSN_NO : " ";
     this.ObjRdb1.PO_QTY = productFilter.PO_Qty ? productFilter.PO_Qty : " ";
-    this.ObjRdb1.Challan_Qty = productFilter.PO_Qty;
-    this.ObjRdb1.Received_Qty = productFilter.PO_Qty;
+    this.ObjRdb1.Pending_PO_QTY = productFilter.Pending_PO_QTY ? productFilter.Pending_PO_QTY : " ";;
+    // this.ObjRdb1.Challan_Qty = productFilter.PO_Qty;
+    // this.ObjRdb1.Received_Qty = productFilter.PO_Qty;
    }
    else {
      this.ObjRdb1.UOM = undefined;
@@ -1059,6 +1073,7 @@ export class RdbComponent implements OnInit {
     UOM : any;
     HSN_Code : any;
     PO_QTY:any;
+    Pending_PO_QTY:any;
     Challan_Qty : any;
     Received_Qty : any;
   }
