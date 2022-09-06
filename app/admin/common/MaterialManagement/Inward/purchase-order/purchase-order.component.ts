@@ -1266,6 +1266,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     let data = JSON.parse(res[0].Column1)
     console.log("Edit data",data);
     this.objpurchase = data[0],
+    this.getreq();
     this.DocDate = new Date(data[0].Doc_Date);
     this.RefDate = new Date(data[0].Supp_Ref_Date)
     this.addPurchaseList = data[0].L_element;
@@ -1787,7 +1788,8 @@ gettermsdetails(){
     this.ReportNameList = [
       {Report_Name : "Pending Indent Details"},
       {Report_Name : "Pending PO - Not Delivered - Summary"},
-      {Report_Name : "Pending PO - Not Delivered - Details"}
+      {Report_Name : "Pending PO - Not Delivered - Details"},
+      {Report_Name : "PO Wise Summary"}
     ]
    }
    getDateRangeMIS(dateRangeObj) {
