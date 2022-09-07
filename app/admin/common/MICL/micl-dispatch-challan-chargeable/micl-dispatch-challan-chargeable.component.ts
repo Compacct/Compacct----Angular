@@ -50,6 +50,7 @@ export class MICLDispatchChallanChargeableComponent implements OnInit {
   VenderCode = undefined;
   masterDispatchId =undefined;
   Del : boolean = false;
+  seachSpinner = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -391,7 +392,7 @@ SaveForm(vaild:any){
 
   }
 }
-BrowseSearched(){
+BrowseSearched(valid?){
   this.DispatchSearchFormSubmit = true;
   this.Searchedlist = [];
   this.backUPSearchedlistPanding = [];
