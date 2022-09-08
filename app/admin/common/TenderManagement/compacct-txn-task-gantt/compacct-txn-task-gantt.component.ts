@@ -45,6 +45,8 @@ import {
   SelectionSettingsModel
 } from '@syncfusion/ej2-angular-grids';
 
+import { NgxUiLoaderService } from "ngx-ui-loader";
+import { Console } from 'console';
 @Component({
   selector: 'app-compacct-txn-task-gantt',
   templateUrl: './compacct-txn-task-gantt.component.html',
@@ -139,20 +141,26 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
 
   ViewSiteModal = false;
   Siteid = undefined;
+  
+  public selectionSettings: SelectionSettingsModel;
+  TaskViewObj:any = {};
+  taskUpdate = false;
+  updateDataList = [];
 
   @ViewChild('gantt', {
     static: true
   })
   public ganttObj: GanttComponent;
   constructor(private $http: HttpClient,
-    private commonApi: CompacctCommonApi,
+    public commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
     private GetDistinctItems: CompacctGetDistinctService,
     private router: Router,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private ngxService: NgxUiLoaderService) {
     this.ExpectBillType = [{
         label: 'YES',
         value: 'Y',
@@ -210,6 +218,10 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.labelSettings = {
       taskLabel: 'Job_Name',
   };
+  this.selectionSettings = {
+    mode: 'Row',
+    type: 'Single',
+};
   this.Header.pushHeader({
     Header: "Project Planing",
     Link: "Project Management -> Project Planing"
@@ -223,12 +235,60 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.GetTypeofWorkList();
     this.GetSummaryList();
   }
+  disableCreateBtn(): void {
+    if(this.commonApi.CompacctCookies.User_Type == 'U'){
+      this.ganttObj.toolbarModule.enableItems(['createTask'], false);
+    }
+  }
+  rowSelected(e){
+    console.log(e)
+    this.ViewTaskStatus(e.data.taskData)
+  }
+  ViewTaskStatus(obj:any){
+    console.log(obj);
+    this.updateDataList = [];
+    this.TaskViewObj = {};
+   if(obj.isSubTask){
+    this.ngxService.start();
+    this.TaskViewObj = obj;
+    this.getUpdatedataList(obj.Task_Txn_ID);
+    console.log(this.TaskViewObj);
+    setTimeout(() => {
+      this.taskUpdate = true;
+    }, 1000);
+   }
+  }
+  getUpdatedataList(txn:any){
+    if(txn){
+      const obj = {
+        "SP_String": "SP_Task_GNATT",
+        "Report_Name_String": "Get_Remarks_Task",
+        "Json_Param_String": JSON.stringify([{Task_Txn_ID : Number(txn)}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("Update data",data);
+        this.updateDataList = data;
+        this.ngxService.stop();
+      })
+    }
+  }
   public queryTaskbarInfo(args: any) { 
-    const color = this.GetClassName(args.data.taskData.Task_Status);
+    const color = this.GetClassName(args.data);
     args.taskbarBgColor = color; 
     args.progressBarBgColor = color;
+    this.ganttObj.scrollToDate(new Date().toLocaleDateString());
+    this.disableCreateBtn();
   } 
-  GetClassName(status) {
+  GetClassName(data) {
+    const status = data.taskData.Task_Status;
+    const endDate = new Date(data.taskData.EndDate);
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    if(endDate > today) {
+      if(status === 'In Progress'){
+        return 'red';
+      }
+    }
     if(status === 'Not Started'){
       return 'Orange';
     }
@@ -537,7 +597,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
           EndDate: new Date(list[i].Planned_End_Date),
           Task_Txn_ID: list[i].Task_Txn_ID,
           U_id: list[i].U_id,
-          Remarks: list[i].Remarks,
+          Remarks: list[i].Latest_Task_Remarks,
           Task_Status: list[i].Task_Status,
           isSubTask: false,
           subtasks: []
@@ -549,7 +609,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     const options = list.map(function (row) {
       return {
         isSubTask: true,
-        Remarks: row.Remarks,
+        Remarks: row.Latest_Task_Remarks,
         Task_Name: row.Task_Name,
         U_id: row.U_id,
         Task_ID: row.SL_ID,
@@ -568,6 +628,8 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
         Task_Status: row.Task_Status,
         Dependency_Job_ID:row.Dependency_Job_ID,
         Dependency_Relationship: row.Dependency_Relationship,
+        Task_Txn_ID: row.Task_Txn_ID,
+        Latest_Task_Remarks : row.Latest_Task_Remarks
       }
     })
     for (i = 0; i < roots.length; i += 1) {
@@ -666,6 +728,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       this.ObjProdPlan.Project_ID = this.ObjProjectTask.Project_ID;
       this.ObjProdPlan.Site_ID = this.ObjProjectTask.Site_ID;
      // this.GetSubTask();
+     console.log(TaskArr)
       this.TaskCreateList = [...TaskArr];
       this.TaskModalFlag = true;
     }
