@@ -2,6 +2,10 @@
     padding-top: 10px !important;
     padding-left: 10px !important;
 }
+.ui-table-auto-layout > .ui-table-wrapper {
+  width: auto !important;
+  
+}
 .createPatient {
     padding: 0 5px !important;
     border-radius: 3px !important;
