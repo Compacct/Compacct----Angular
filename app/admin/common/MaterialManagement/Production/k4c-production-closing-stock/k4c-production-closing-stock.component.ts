@@ -113,6 +113,8 @@ export class K4cProductionClosingStockComponent implements OnInit {
    }
    onReject() {
     this.compacctToast.clear("c");
+    this.compacctToast.clear("s");
+    this.Spinner = false;
   }
   GetBrand(){
     const obj = {
@@ -431,6 +433,19 @@ ConsumptionCal(indx){
    return flag;
   }
   // SAVE AND UPDATE
+  SaveBeforeCheck(){
+    this.Spinner = true;
+     if (this.ProductList.length) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "s",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
   dataforSaveRawMaterialIssue(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.ObjProClosingStock.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
@@ -650,6 +665,7 @@ const obj = {
     // Product Filter
     this.SelectedProductType = [];
     this.ShowSpinner = false;
+    this.Spinner = false;
     this.ObjProClosingStock.Doc_No = undefined;
     this.todayDate = new Date();
     this.ProClosingStockSearchFormSubmitted = false;

@@ -73,8 +73,8 @@
                                             <th nowrap>Voucher Date</th>
                                             <th nowrap>Ledger Name</th>
                                             <th nowrap>Sub Ledger Name</th>
-                                            <th nowrap>Adjustment Doc No</th>
-                                            <th nowrap>Adjustment Amt</th>
+                                            <!-- <th nowrap>Adjustment Doc No</th>
+                                            <th nowrap>Adjustment Amt</th> -->
                                             <th nowrap>DR Amt</th>
                                             <th nowrap>CR Amt</th>
                                             <th nowrap>Cost Cen Name</th>
@@ -114,8 +114,8 @@
                                             <td nowrap>{{col.Dated | date: "dd/MMM/yyyy"}}</td>
                                             <td nowrap>{{col.Ledger_Name ? col.Ledger_Name : '-'}} </td>
                                             <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
-                                            <td nowrap>{{col.Adjustment_Doc_No ? col.Adjustment_Doc_No : '-'}}</td>
-                                            <td nowrap>{{col.Adjustment_Amt ? col.Adjustment_Amt : '-'}}</td>
+                                            <!-- <td nowrap>{{col.Adjustment_Doc_No ? col.Adjustment_Doc_No : '-'}}</td>
+                                            <td nowrap>{{col.Adjustment_Amt ? col.Adjustment_Amt : '-'}}</td> -->
                                             <td nowrap>{{col.DR_Amt ? col.DR_Amt : '-'}}</td>
                                             <td nowrap>{{col.CR_Amt ? col.CR_Amt : '-'}}</td>
                                             <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
@@ -169,8 +169,8 @@
                                         <input class="form-control" placeholder="Naration" name="Naration" #Naration="ngModel" [(ngModel)]="objJournal.Naration" [disabled]="JournalListAdd.length? true : false">
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Journal Type</label>
-                                        <select class="form-control" name="journal_type" #journal_type="ngModel" [(ngModel)]="objJournal.JV_Type" [disabled]="JournalListAdd.length? true : false">
+                                        <label class="control-label">Journal Type<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="journal_type" #journal_type="ngModel" [(ngModel)]="objJournal.JV_Type" (change)="getDocType(objJournal.JV_Type)" [ngClass]="{'clearance ': JournalFormSubmitted && journal_type.errors?.required}" required [disabled]="JournalListAdd.length? true : false">
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of JournalList" value="{{option}}">
                                       {{option}}
@@ -200,7 +200,7 @@
                                     <div class="col-sm-4">
                                         <label class="control-label">Sub Ledger&nbsp;<span *ngIf = "SubLedgerListlow.length" class="text-danger">*</span></label>
                                         <p-dropdown [options]="SubLedgerListlow" name="Sub_Ledger" [(ngModel)]="objJournal.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
-                                            [virtualScroll]="true" itemSize="30" #Sub_Ledger="ngModel" [styleClass]="
+                                            [virtualScroll]="true" itemSize="30" #Sub_Ledger="ngModel" (onChange)="getDocNo()" [styleClass]="
                                             JournalFormSubmitted && Sub_Ledger.errors?.required && validcheck()? 'clearance': ''" [required]="validcheck()">
                                         </p-dropdown>
                                     </div>
@@ -217,11 +217,11 @@
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Ref Doc No</label>
-                                        <input class="form-control" placeholder="Ref Doc No" name="Ref_Doc_No" #Ref_Doc_No="ngModel" [(ngModel)]="objJournal.Ref_Doc_No">
+                                        <input class="form-control" placeholder="Ref Doc No" name="Ref_Doc_No" #Ref_Doc_No="ngModel" [(ngModel)]="objJournal.Ref_Doc_No" (ngModelChange)="RefDate(objJournal.Ref_Doc_No)">
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Ref Doc Date<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Ref_Doc_Date' name="Ref_Date"></ejs-datepicker>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Ref_Doc_Date' name="Ref_Date" [enabled]="IsEnabled"></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">HSN NO</label>
@@ -243,11 +243,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-2">
                                         <label class="control-label">GST Per</label>
                                         <input class="form-control" placeholder="GST Per" name="GST_Per" #GST_Per="ngModel" CompacctDigitonly="true" [(ngModel)]="objJournal.GST_Per">
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-2">
                                         <label class="control-label">ITC Eligibility</label>
                                         <select class="form-control" name="ITC_Eligibility" #ITC_Eligibility="ngModel" [(ngModel)]="objJournal.ITC_Eligibility">
                                                           <option  [ngValue]="undefined">Select</option>
@@ -258,8 +258,26 @@
                                                           <option  Value="None">None</option>
                                                 </select>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <button class="btn btn-primary custombutton" style="margin-top: 27px;" (click)="AddJournalVoucher(JournalForm.form.valid)"><span class="glyphicon glyphicon-plus"></span>Add </button>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Adjustment Doc Type</label>
+                                        <select class="form-control" name="AD_doc_type" #AD_doc_type="ngModel" [(ngModel)]="objJournal.Adj_Doc_Type">
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of docTypeList" value="{{option}}">
+                                      {{option}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Adjustment Doc No</label>
+                                        <select class="form-control" name="AD_doc_no" #AD_doc_no="ngModel" [(ngModel)]="objJournal.Adjustment_Doc_No">
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of doNoList" value="{{option.Doc_No}}">
+                                      {{option.Doc_No}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton pull-right" style="margin-top: 27px;" (click)="AddJournalVoucher(JournalForm.form.valid)"><span class="glyphicon glyphicon-plus"></span>Add </button>
                                     </div>
 
                                 </div>
@@ -279,6 +297,8 @@
                                             <th nowrap="nowrap">HSN NO</th>
                                             <th nowrap="nowrap">ITC Eligibility</th>
                                             <th nowrap="nowrap">GST Per</th>
+                                            <th nowrap="nowrap">Adjustment Doc Type</th>
+                                            <th nowrap="nowrap">Adjustment Doc No</th>
                                             <th nowrap="nowrap"></th>
                                         </tr>
                                     </thead>
@@ -295,6 +315,8 @@
                                             <td nowrap="nowrap">{{col.HSN_NO}}</td>
                                             <td nowrap="nowrap">{{col.ITC_Eligibility}}</td>
                                             <td nowrap="nowrap">{{col.GST_Per}}</td>
+                                            <td nowrap="nowrap">{{col.Adj_Doc_Type}}</td>
+                                            <td nowrap="nowrap">{{col.Doc_No}}</td>
                                             <td><button (click)="DeleteProduct(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>

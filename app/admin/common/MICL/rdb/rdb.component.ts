@@ -486,7 +486,8 @@ export class RdbComponent implements OnInit {
         const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRdb.Sub_Ledger_ID))[0]
         console.log("productFilter",productFilter);
         if(Object.keys(productFilter).length){
-          var FreightPFPerc = productFilter.Excise_Tax_Percentage ? productFilter.Excise_Tax_Percentage : 0;
+          // var FreightPFPerc = productFilter.Excise_Tax_Percentage ? productFilter.Excise_Tax_Percentage : 0;
+          var FreightPFPerc = 0;
         var apidiscountamt = productFilter.Discount_Amount;
         var qtydis = Number(apidiscountamt / this.ObjRdb1.PO_QTY).toFixed(2);
         // var discountamt = Number(Number(qtydis) * this.ObjRdb1.Received_Qty).toFixed(2);

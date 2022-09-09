@@ -1785,7 +1785,10 @@ this.ReportNameList = [
   {Report_Name : "Pending Indent Details"},
   {Report_Name : "Pending PO - Not Delivered - Summary"},
   {Report_Name : "Pending PO - Not Delivered - Details"},
-  {Report_Name : "PO Wise Summary"}
+  {Report_Name : "PO Wise Summary"},
+  {Report_Name : "PO Wise Details"},
+  {Report_Name : "Total Indent Received - Summary"},
+  {Report_Name : "Total Indent Received - Details"}
 ]
 }
 getDateRangeMIS(dateRangeObj) {
@@ -1799,6 +1802,7 @@ GetMISreport(valid){
   this.BackupMisReport = [];
   this.DynamicHeaderMISreport = [];
   this.MISreportFormSubmit = true;
+  this.MISSpinner = true;
 const start = this.ObjMIS.From_Date
 ? this.DateService.dateConvert(new Date(this.ObjMIS.From_Date))
 : this.DateService.dateConvert(new Date());

@@ -18,6 +18,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="s" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="SaveOTcloingWithBatch()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -267,8 +285,12 @@
                                 </div>
                             </div>
                             <div>
-                                <button type="button" (click)="EODCheck(OTclosingstockwithbatchForm.form.valid)" class="btn btn-primary pull-right">
+                                <!-- <button type="button" (click)="EODCheck(OTclosingstockwithbatchForm.form.valid)" class="btn btn-primary pull-right">
                      <span class="glyphicon glyphicon-search"></span>  Get Product
+                  </button> -->
+                  <button class="btn btn-primary pull-right" (click)="EODCheck(OTclosingstockwithbatchForm.form.valid)" id="load" [disabled]="ShowSpinner">
+                    <p-progressSpinner *ngIf="ShowSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                    <span *ngIf="!ShowSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Get Product
                   </button>
                             </div>
 
@@ -337,7 +359,7 @@
 
 
                             <div class="box-footer">
-                                <button type="button" class="btn btn-primary pull-right" (click)="SaveOTcloingWithBatch()" id="load" [disabled]="Spinner">
+                                <button type="button" class="btn btn-primary pull-right" (click)="SaveBeforeCheck()" id="load" [disabled]="Spinner">
                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
                     </button>
