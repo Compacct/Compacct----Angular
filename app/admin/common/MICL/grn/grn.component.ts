@@ -75,6 +75,11 @@ export class GrnComponent implements OnInit {
   ObjGRNRegister = new GRNRegister();
   FreightPFPerc: any;
 
+  ObjPendRDBProWise = new PendRDBProWise();
+  PendRDBProWiseFormSubmitted = false;
+  PendRDBProWiseList:any = [];
+  DynamicHeaderforPRDBProWise:any = [];
+
 
   constructor(
     private Header: CompacctHeader,
@@ -88,7 +93,7 @@ export class GrnComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE", "PENDING RDB","GRN REGISTER"];
+    this.items = ["BROWSE", "CREATE", "PENDING RDB", "PENDING RDB PRODUCT WISE", "GRN REGISTER"];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -106,7 +111,7 @@ export class GrnComponent implements OnInit {
   TabClick(e){
     // console.log(e)
      this.tabIndexToView = e.index;
-     this.items = ["BROWSE", "CREATE", "PENDING RDB","GRN REGISTER"];
+     this.items = ["BROWSE", "CREATE", "PENDING RDB", "PENDING RDB PRODUCT WISE", "GRN REGISTER"];
      this.buttonname = "Save";
      this.Spinner = false;
     //  this.clearData();
@@ -189,6 +194,7 @@ export class GrnComponent implements OnInit {
      this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjPendingRDB.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+     this.ObjPendRDBProWise.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     })
   }
    GetSupplier(){
@@ -368,7 +374,8 @@ export class GrnComponent implements OnInit {
       if (new Date(this.GRNDate).toISOString() >= new Date(this.PODate).toISOString()) {
       if (Number(this.ObjGRN.Received_Qty) && Number(this.ObjGRN.Received_Qty) <= Number(this.ObjGRN.Challan_Qty)){
         if (Number(this.ObjGRN.Rejected_Qty) >= 0) {
-        var FreightPFPerc = this.FreightPFPerc ? this.FreightPFPerc : 0;
+        // var FreightPFPerc = this.FreightPFPerc ? this.FreightPFPerc : 0;
+        var FreightPFPerc = 0;
         var apidiscountamt = this.DiscountAmount;
         var qtydis = Number(apidiscountamt / this.ObjGRN.Received_Qty).toFixed(2);
         // var discountamt = Number(Number(qtydis) * this.ObjGRN.Accepted_Qty).toFixed(2);
@@ -618,6 +625,7 @@ export class GrnComponent implements OnInit {
        this.ngxService.stop();
        this.GetSearchedlist(true);
        this.GetPendingRDB(true);
+       this.GetPendRDBProWise(true);
        this.ObjGRN1.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
        this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
        this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
@@ -874,6 +882,18 @@ export class GrnComponent implements OnInit {
     })
     }
   }
+  RejectionPrintPGRN(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "Rejection_GRN_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var GRNRejprintlink = data[0].Column1;
+      window.open(GRNRejprintlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
   //  Order(pro_id){
     //  //this.clearData();
     // if(pro_id.Product_ID){
@@ -1012,6 +1032,48 @@ export class GrnComponent implements OnInit {
       // this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
     })
   }
+  getDateRangeprdbprowise(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjPendRDBProWise.start_date = dateRangeObj[0];
+      this.ObjPendRDBProWise.end_date = dateRangeObj[1];
+    }
+  }
+  GetPendRDBProWise(valid){
+    this.PendRDBProWiseFormSubmitted = true;
+    const start = this.ObjPendRDBProWise.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjPendRDBProWise.start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.ObjPendRDBProWise.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjPendRDBProWise.end_date))
+    : this.DateService.dateConvert(new Date());
+    const tempobj = {
+     From_Date : start,
+     To_Date : end,
+     Company_ID : this.ObjPendRDBProWise.Company_ID,
+     proj : "N"
+    }
+    if (valid) {
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "Pending_RDB_Product_Wise",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.PendRDBProWiseList = data;
+      // this.BackupSearchedlist = data;
+      // this.GetDistinct();
+      if(this.PendRDBProWiseList.length){
+        this.DynamicHeaderforPRDBProWise = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforPRDBProWise = [];
+      }
+      this.seachSpinner = false;
+      this.PendRDBProWiseFormSubmitted = false;
+      console.log("PendRDBProWiseList",this.PendRDBProWiseList);
+    })
+    }
+}
 
   // RDB REGISTER
   getDateRangeForRegister(dateRangeObjRegister) {
@@ -1099,6 +1161,12 @@ class GRN {
 class GRNRegister {
   start_date : Date;
   end_date : Date;
+}
+class PendRDBProWise{
+  Company_ID : any;
+  start_date : Date;
+  end_date : Date;
+  Cost_Cen_ID : any;
 }
 
 

@@ -18,41 +18,42 @@ import * as XLSX from 'xlsx';
 })
 export class OutletClosingStockWithBatchComponent implements OnInit {
   Remarks:any;
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save"
   ObjOTclosingwithbatch : OTclosingwithbatch = new OTclosingwithbatch ();
-  BrandList = [];
-  CostCenter = [];
+  BrandList:any = [];
+  CostCenter:any = [];
   costcentdisableflag = false;
-  GodownId = [];
+  GodownId:any = [];
   godowndisableflag = false;
-  productlist = [];
+  productlist:any = [];
   flag = false;
   BillDate : any = Date;
   dateList: any;
   OTclosingstockwithbatchFormSubmitted = false;
   ObjBrowse : Browse  = new Browse();
-  Searchedlist = [];
+  Searchedlist:any = [];
   SearchFormSubmitted = false;
   checkSave = false;
   BrandDisable = false;
   Doc_No = undefined;
-  ViewList = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
   Godown_ID = undefined;
   BrandId = undefined;
   remarks = undefined;
-  editList = [];
+  editList:any = [];
   del_doc_no: any;
   minDate:Date;
   maxDate:Date;
   EODstatus: any;
   datedisable = true;
+  ShowSpinner = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -203,6 +204,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   EODCheck(valid){
     this.productlist = [];
     this.OTclosingstockwithbatchFormSubmitted = true;
+    this.ShowSpinner = true;
     if(valid) {
     const TempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -248,6 +250,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.productlist = data;
+      this.ShowSpinner = false;
      // this.productlist[0].Issue_Qty = this.productlist[0].batch_Qty
        console.log(" product List ===",this.productlist);
        this.OTclosingstockwithbatchFormSubmitted = false;
@@ -290,9 +293,22 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     //          }
     // }
   }
+  SaveBeforeCheck(){
+    this.Spinner = true;
+     if (this.productlist.length) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "s",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
   GetDataForSave(){
     if(this.productlist.length) {
-      let tempArr =[];
+      let tempArr:any =[];
       const TempObj = {
         Doc_No	 : this.Doc_No ? this.Doc_No : "A",
         Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
@@ -340,6 +356,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         if(data[0].Column1 != "Something Wrong"){
           this.ngxService.stop();
           this.compacctToast.clear();
+          this.Spinner = false;
           const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
           this.compacctToast.add({
            key: "compacct-toast",
@@ -364,6 +381,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         // this.IssueStockFormSubmitted = false;
 
         } else{
+          this.Spinner = false;
           this.ngxService.stop();
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -552,9 +570,11 @@ const obj = {
    
    onReject(){
      this.compacctToast.clear("c");
+     this.compacctToast.clear("s");
+     this.Spinner = false;
    }
    exportoexcel(Arr,fileName): void {
-     let temp = [];
+     let temp:any = [];
      Arr.forEach(element => {
        const obj = {
         Product_Type : element.Product_Type,
@@ -576,6 +596,8 @@ const obj = {
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   clearData(){
+    this.Spinner = false;
+    this.ShowSpinner = false;
     if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
       this.ObjOTclosingwithbatch.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
       this.ObjBrowse.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
@@ -603,7 +625,7 @@ const obj = {
     this.datedisable = true;
   }
   exportoexcel3(Arr,fileName): void {
-    let temp = [];
+    let temp:any = [];
      Arr.forEach(element => {
        const obj = {
         Doc_No : element.Doc_No,
@@ -622,7 +644,7 @@ const obj = {
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   exportoexcel4(Arr,fileName): void {
-    let temp = [];
+    let temp:any = [];
     Arr.forEach(element => {
       const obj = {
        Product_Type : element.Product_Type,

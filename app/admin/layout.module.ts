@@ -349,6 +349,7 @@ import { MICLDispatchChallanChargeableComponent } from "./common/MICL/micl-dispa
 import { DailyAttendanceSheetComponent } from './common/Attendance/daily-attendance-sheet/daily-attendance-sheet.component';
 import { MasterConsultancyV3Component } from "./common/PatientManagement/Master/master-consultancy-v3/master-consultancy-v3.component";
 import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/micl-journal-voucher.component";
+import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-authorization.component";
 
 
 @NgModule({
@@ -616,7 +617,8 @@ import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/
     MICLDispatchChallanChargeableComponent,
     DailyAttendanceSheetComponent,
     MasterConsultancyV3Component,
-    MICLJournalVoucherComponent
+    MICLJournalVoucherComponent,
+    POAuthorizationComponent
   ],
   imports: [
     CommonModule,

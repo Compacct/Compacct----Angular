@@ -1502,13 +1502,13 @@
                                          <app-compacct-daterangepicker (DaterangeObj)="getDateRangeMIS($event)" [HardCodeDateOpt]="initDate">
                                         </app-compacct-daterangepicker>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetMISreport(MISreportForm.form.valid)" id="load4" [disabled]="MISSpinner">
                                           <p-progressSpinner *ngIf="MISSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                           <span *ngIf="!MISSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                        </button>
                                     </div>
-                                    <div class="col-sm-1">
+                                    <div class="col-sm-2">
                                         <button class="btn btn-success custombutton3" (click)="exportoexcel(BackupMisReport,'MIS_Report')" [disabled]="!misReportList.length">
                                                  <span  class="glyphicon glyphicon-save"></span> Download Report
                                               </button>
@@ -1521,15 +1521,24 @@
                                         <!-- <legend>Filter</legend> -->
 
                                         <div class="form-group" >
-                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending Purchase Indent - Details'">
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending Indent Details' &&
+                                                                         ObjMIS.Report_Name != 'Total Indent Received - Summary' &&
+                                                                         ObjMIS.Report_Name != 'Total Indent Received - Details'">
                                                 <label class="control-label">Vendor Name <span class="text-danger"></span></label>
                                                 <p-multiSelect [options]="DistVendorName" [(ngModel)]="SelectedDistVendorName" itemSize="30" (onChange)='FilterDistReport()' #vender [styleClass]="'compacct-multiselect'" name="Vendor_Name"></p-multiSelect>
                                             </div>
-                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary'">
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary' && 
+                                                                         ObjMIS.Report_Name != 'PO Wise Summary' &&
+                                                                         ObjMIS.Report_Name != 'PO Wise Details' &&
+                                                                         ObjMIS.Report_Name != 'Total Indent Received - Summary' &&
+                                                                         ObjMIS.Report_Name != 'Total Indent Received - Details'">
                                                 <label class="control-label">Material Type <span class="text-danger"></span></label>
                                                 <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterialType" itemSize="30" (onChange)='FilterDistReport()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
                                             </div>
-                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary'">
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary' &&
+                                                                         ObjMIS.Report_Name != 'PO Wise Summary' &&
+                                                                         ObjMIS.Report_Name != 'PO Wise Details' &&
+                                                                         ObjMIS.Report_Name != 'Total Indent Received - Summary'">
                                                 <label class="control-label">Product Type <span class="text-danger"></span></label>
                                                 <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDistReport()'[styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
                                         </div>

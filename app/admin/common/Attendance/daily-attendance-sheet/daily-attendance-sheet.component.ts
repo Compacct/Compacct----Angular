@@ -92,8 +92,8 @@ export class DailyAttendanceSheetComponent implements OnInit {
         var attendanceid = this.AttenTypelist.filter( ele => Number(ele.Atten_Type_ID) === Number(val.Atten_Type_ID));
         val.Atten_Type_ID = attendanceid ?  attendanceid[0].Sht_Desc : null;
         }
-        if(val.OT_Avail === 0) {
-          val["OT_Minutes"] = undefined;
+        if(val.OT_Avail === 0 || val.OT_Avail === null) {
+          // val["OT_Minutes"] = val.OT_Minutes;
           val["OTdisabled"] = true;
         } else {
           val["OTdisabled"] = false;
@@ -140,13 +140,18 @@ export class DailyAttendanceSheetComponent implements OnInit {
         // console.log("obj.Off_In_Time",intime.getTime())
       var minutes = Math.abs(outtime.getTime() - intime.getTime()) / 36e5 * 60;
       obj.Work_Minute = minutes;
-      this.CalculateOTMin(obj);
+      if (obj.OT_Avail === 0 || obj.OT_Avail === null) {
+        obj.OT_Minutes = 0;
+      }
+      else {
+        this.CalculateOTMin(obj);
+      }
       // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)));
       // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
     } 
     else {
       obj.Work_Minute = obj.Working_Hours_Mins;
-      obj.OT_Minutes = undefined;
+      obj.OT_Minutes = obj.OT_Minutes;
     }
   }
   CalculateOTMin(object){
@@ -156,7 +161,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
       // console.log(Number(otmin))
       object.OT_Minutes = Number(otmin);
     } else {
-      object.OT_Minutes = undefined;
+      object.OT_Minutes = object.OT_Minutes;
     }
   }
   // TimeChq(col){

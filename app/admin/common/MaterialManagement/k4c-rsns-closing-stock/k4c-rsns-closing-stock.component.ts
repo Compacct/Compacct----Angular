@@ -389,6 +389,19 @@ GetDataForSave(){
 
   }
 }
+SaveBeforeCheck(){
+  this.Spinner = true;
+   if (this.ProductList.length) {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "s",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+  }
+}
 Save(){
   //if(valid){
     const obj = {
@@ -410,6 +423,7 @@ Save(){
          summary: "Doc_No  " + tempID,
          detail: "Succesfully  "  + mgs
        });
+       this.Spinner = false;
        if (this.buttonname != "Save") {
           this.tabIndexToView = 0;
           this.items = ["BROWSE", "CREATE"];
@@ -423,6 +437,7 @@ Save(){
       // this.IssueStockFormSubmitted = false;
 
       } else{
+        this.Spinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -654,6 +669,8 @@ onConfirm(){
  }
  onReject(){
    this.compacctToast.clear("c");
+   this.compacctToast.clear("s");
+   this.Spinner = false;
  }
 
   clearData(){
@@ -685,6 +702,7 @@ onConfirm(){
     this.rsnsClosingStockFormSubmitted = false;
     this.SelectedProductType = [];
     this.ShowSpinner = false;
+    this.Spinner = false;
     this.RSNSSearchFormSubmitted = false;
     this.ObjrsnsClosingStock.Doc_No = undefined;
     this.items = ["BROWSE", "CREATE"];
