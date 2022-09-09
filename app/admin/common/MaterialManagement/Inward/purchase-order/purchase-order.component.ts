@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, SimpleChanges, MissingTranslationStrategy } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, SimpleChanges, MissingTranslationStrategy, AfterViewInit, ElementRef } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
@@ -49,8 +49,10 @@ export class PurchaseOrderComponent implements OnInit {
   objproject : project = new project();
   ObjBrowse : Browse = new Browse();
   objpendingreq :pendingreq = new pendingreq()
+  ObjTerm:Term = new Term()
   addPurchaseList:any = [];
   AcceptanceOrderList:any = [];
+  TermFormSubmitted:boolean = false
   rate = undefined;
   totalRate = undefined;
   totalbackUp = undefined;
@@ -147,6 +149,15 @@ export class PurchaseOrderComponent implements OnInit {
   Material_Type: any;
   disBackUp:any = undefined;
   FreightTypeList:any = [];
+  TermList:any = []
+  AddTermList:any = []
+  addPurchaseListInput:boolean = false
+  addPurchaseListInputField:any = {}
+  editorDis:boolean = false
+  GrTermAmount:number = 0
+  GrGstTermAmt:number = 0
+  grNetTerm:number = 0
+  @ViewChild('vender',{static:false}) vender:ElementRef;
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -192,6 +203,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.getcompany();
       this.GetRequlist();
       this.getCostcenter();
+      this.GettermAmt()
      this.userType = this.$CompacctAPI.CompacctCookies.User_Type
      console.log("proj",this.openProject);
      if(this.openProject !== "Y"){
@@ -210,6 +222,8 @@ export class PurchaseOrderComponent implements OnInit {
     this.clearData();
     this.clearProject()
     this.GetCostCenter();
+    this.addPurchaseListInput = false
+    
     // this.gettermsdetails();
       // setTimeout(function(){
       //   const elem:any  = document.getElementById('creditdays');
@@ -218,15 +232,18 @@ export class PurchaseOrderComponent implements OnInit {
   }
   clearData(){
     this.gettermsdetails();
+    
     this.viewHeader = "";
     this.DetalisObj = {};
     this.objpurchase = new purchase();
     this.objaddPurchacse = new addPurchacse();
     this.objproject = new project()
+    this.ObjTerm = new Term()
     this.Spinner = false;
     this.purChaseAddFormSubmit = false;
     this.purchaseFormSubmitted = false;
     this.validatation.required = false;
+    this.TermFormSubmitted = false
     this.addPurchaseList = []; 
     this.rate = undefined;
     this.totalRate = undefined;
@@ -255,6 +272,11 @@ export class PurchaseOrderComponent implements OnInit {
     this.objpurchase.Currency_ID = 1;
     this.objpurchase.Type_ID = 1;
     this.seachPendingReqSpinner = false;
+    this.AddTermList = []
+    this.GrTermAmount = 0
+    this.GrGstTermAmt = 0
+    this.grNetTerm = 0
+    this.getAllTotal()
     // this.initDate = [new Date(),new Date()];
     
     if(this.openProject === "Y"){
@@ -265,6 +287,11 @@ export class PurchaseOrderComponent implements OnInit {
     this.RequistionPendingFormSubmit =false;
     this.productDetalisView = false;
     this.productDetalisViewList = [];
+    this.addPurchaseListInputField = {}
+    this.editorDis = true
+    setTimeout(() => {
+      this.editorDis = false
+    }, 500);
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -405,7 +432,7 @@ export class PurchaseOrderComponent implements OnInit {
       console.log("projectList",this.projectList);
     })
   }
-  getProduct(){
+  getProduct(id?,uom?,psc?){
   
     if(this.objaddPurchacse.Req_No){
       this.objaddPurchacse.Product_Type_ID = undefined;
@@ -432,6 +459,14 @@ export class PurchaseOrderComponent implements OnInit {
               value: el.Product_ID
             });
            });
+           if(id){
+            this.objaddPurchacse.Product_ID = id ? id : 0
+
+           }
+          
+           this.objaddPurchacse.Product_Spec = psc ? psc : undefined
+           this.objaddPurchacse.Unit = uom ? uom : undefined;
+         
         })
     }
     else {
@@ -487,7 +522,7 @@ export class PurchaseOrderComponent implements OnInit {
   getProductDetalis(){
      if(this.objaddPurchacse.Product_ID){
         let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
-         this.objaddPurchacse.Unit = tempVal[0].UOM
+         this.objaddPurchacse.Unit = tempVal.length ? tempVal[0].UOM : undefined
          console.log("tempVal",tempVal);
          this.GetTaxDetalis(this.objaddPurchacse.Product_ID);
          if(this.objaddPurchacse.Rate){
@@ -594,8 +629,7 @@ export class PurchaseOrderComponent implements OnInit {
         this.totalRate = this.objaddPurchacse.taxable_AMT;
         if(this.objaddPurchacse.taxable_AMT){
           this.GetGSTAmt();
-          this.getExciseAmt();
-          this.getDis();
+         this.getDis();
         }
        
       }
@@ -604,28 +638,12 @@ export class PurchaseOrderComponent implements OnInit {
         this.objaddPurchacse.Gross_Amt = undefined;
         this.objaddPurchacse.taxable_AMT = undefined;
         this.GetGSTAmt();
-        this.getExciseAmt();
-        this.getDis();
+       this.getDis();
       }
     }
    
   }
-  // getExciseAmt(){
-  //   if(this.objaddPurchacse.Excise_Tax_Percentage){
-  //     this.objaddPurchacse.Excise_Tax = undefined;
-  //     this.objaddPurchacse.taxable_AMT = undefined;
-  //     this.objaddPurchacse.Excise_Tax = (Number(this.objaddPurchacse.Gross_Amt) * (Number(this.objaddPurchacse.Excise_Tax_Percentage) / 100)).toFixed(2)
-  //     this.objaddPurchacse.taxable_AMT = Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
-  //     this.totalbackUp = this.objaddPurchacse.taxable_AMT;
-  //     this.getDis();
-  //     this.GetGSTAmt();
-  //   }
-  //   else {
-  //     this.objaddPurchacse.Excise_Tax = undefined;
-  //     this.objaddPurchacse.taxable_AMT = this.totalRate;
-  //     this.GetGSTAmt();
-  //   }
-  // }
+
   getTotalForTax(){
     if(this.objaddPurchacse.Tax_Rate){
       this.objaddPurchacse.taxable_AMT = undefined;
@@ -637,96 +655,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.objaddPurchacse.taxable_AMT = this.totalbackUp ? Number((this.totalbackUp).toFixed(2)) : Number((this.totalRate).toFixed(2))
     }
   }
-  // New Freight Calculation
-  getExciseAmt(){
-    if(this.objaddPurchacse.Freight_PF_Type === 'AMT'){
-        this.objaddPurchacse.Excise_Tax = undefined;
-        //const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
-        // let taxacl:number =  this.objaddPurchacse.taxable_AMT
-        this.objaddPurchacse.taxable_AMT = undefined
-        this.objaddPurchacse.Excise_Tax = this.objaddPurchacse.Excise_Tax_Percentage;
-        //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
-        //   taxacl = Number(this.disAmtBackUpAMT) + Number(taxacl)
-        //  }
-        //  this.disAmtBackUpAMT = 0
-        //  this.disAmtBackUpAMT = this.objaddPurchacse.Discount_AMT ? Number(this.objaddPurchacse.Discount_AMT) : 0;
-        if(this.objaddPurchacse.Excise_Tax){
-          this.objaddPurchacse.taxable_AMT  = (Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)).toFixed(2);
-          this.totalbackUp = this.objaddPurchacse.taxable_AMT;
-          this.getDis();
-          this.GetGSTAmt();
-        }
-        else {
-          this.objaddPurchacse.Excise_Tax = undefined;
-         this.totalbackUp = undefined;
-          this.totalAmtBackUp = undefined;
-          this.getDis();
-          this.objaddPurchacse.taxable_AMT = this.objaddPurchacse.Discount_AMT ? Number(this.totalRate) - Number(this.objaddPurchacse.Discount_AMT) : this.totalRate;
-          this.totalbackUp = this.objaddPurchacse.taxable_AMT
-          this.GetGSTAmt();
-        }
-         
-        }
-      else if(this.objaddPurchacse.Freight_PF_Type === '%'){
-        this.objaddPurchacse.Excise_Tax = undefined;
-        this.objaddPurchacse.taxable_AMT = undefined;
-        this.objaddPurchacse.Excise_Tax = (Number(this.objaddPurchacse.Gross_Amt) * (Number(this.objaddPurchacse.Excise_Tax_Percentage) / 100)).toFixed(2)
-        // this.objaddPurchacse.taxable_AMT = Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
-        this.totalbackUp = this.objaddPurchacse.taxable_AMT;
-       
-       if(this.objaddPurchacse.Excise_Tax){
-        this.objaddPurchacse.taxable_AMT  = (Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)).toFixed(2);
-        this.totalbackUp = this.objaddPurchacse.taxable_AMT;
-        this.getDis();
-        this.GetGSTAmt();
-      }
-      else {
-        this.totalbackUp = undefined;
-        this.totalAmtBackUp = undefined;
-        this.getDis();
-        this.objaddPurchacse.Excise_Tax = undefined;
-        this.objaddPurchacse.taxable_AMT = this.totalRate;
-        this.totalbackUp = this.objaddPurchacse.taxable_AMT;
-        this.GetGSTAmt();
-      }
-        // this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
-        // this.getTaxAble()
-      }
-     else {
-      this.objaddPurchacse.Excise_Tax = undefined;
-      // this.objaddPurchacse.Total_Amount = undefined;
-      // this.objaddPurchacse.GST_AMT = undefined
-      this.objaddPurchacse.taxable_AMT = this.totalRate;
-      this.GetGSTAmt();
-    }
-  }
-  FreightClear(){
-    if(!this.objaddPurchacse.Freight_PF_Type){
-      this.objaddPurchacse.Excise_Tax = undefined;
-      this.objaddPurchacse.Excise_Tax_Percentage = undefined;
-      this.totalbackUp = undefined
-      this.totalAmtBackUp = undefined
-      this.getDis();
-      this.objaddPurchacse.taxable_AMT =  (Number(this.objaddPurchacse.Discount_AMT) ? 
-      Number(this.objaddPurchacse.taxable_AMT) : Number(this.totalRate)).toFixed(2)
-      this.totalbackUp =  this.objaddPurchacse.taxable_AMT
-     
-      this.GetGSTAmt();
-    
-     }
-    else {
-      this.totalbackUp = undefined
-    
-      this.objaddPurchacse.Excise_Tax = undefined;
-      this.objaddPurchacse.Excise_Tax_Percentage = undefined;
-      this.getDis()
-      this.objaddPurchacse.taxable_AMT =  (Number(this.objaddPurchacse.Discount_AMT) ? 
-                                            Number(this.objaddPurchacse.taxable_AMT) : Number(this.totalRate)).toFixed(2);
-   this.totalbackUp =  this.objaddPurchacse.taxable_AMT
-      this.GetGSTAmt();
-    
-    }
-  }
+  
   DisClear(){
     if(!this.objaddPurchacse.Discount_Type){
       this.objaddPurchacse.taxable_AMT = ((Number(this.objaddPurchacse.Excise_Tax) ? Number(this.objaddPurchacse.Excise_Tax) + Number(this.totalRate) : Number(this.totalRate))).toFixed(2)
@@ -744,49 +673,49 @@ export class PurchaseOrderComponent implements OnInit {
   }
   getDis(){
     if(this.objaddPurchacse.Discount_Type === 'AMT'){
-        this.objaddPurchacse.Discount_AMT = undefined;
-        const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
-      //  let taxacl:number =  this.objaddPurchacse.taxable_AMT
-        this.objaddPurchacse.taxable_AMT = undefined
-        this.objaddPurchacse.Discount_AMT = this.objaddPurchacse.Discount;
-        // let tempExiAmt = this.objaddPurchacse.Excise_Tax ? Number(this.objaddPurchacse.Excise_Tax) : 0 
-        // let tempGrsAmt = this.objaddPurchacse.Gross_Amt ? Number(this.objaddPurchacse.Gross_Amt) : 0 
-        // let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
-        //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
-        //   taxacl = Number(this.disAmtBackUpAMT) + Number(taxacl)
-        //  }
-        //  this.disAmtBackUpAMT = 0
-        //  this.disAmtBackUpAMT = this.objaddPurchacse.Discount_AMT ? Number(this.objaddPurchacse.Discount_AMT) : 0;
-        if(this.objaddPurchacse.Discount_AMT){
-          this.objaddPurchacse.taxable_AMT  = (Number(tempTotal) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
+        if(this.objaddPurchacse.Discount){
+          this.objaddPurchacse.Discount_AMT = undefined;
+          const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
+          this.objaddPurchacse.taxable_AMT = undefined
+          this.objaddPurchacse.Discount_AMT = this.objaddPurchacse.Discount;
+          
+          if(this.objaddPurchacse.Discount_AMT){
+            this.objaddPurchacse.taxable_AMT  = (Number(tempTotal) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
+            this.GetGSTAmt();
+          }
+          else {
+            this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+            this.GetGSTAmt();
+          }
+        }
+        else{
+          this.objaddPurchacse.Discount_AMT = undefined
+        }
+        }
+      else if(this.objaddPurchacse.Discount_Type === '%'){
+        if(this.objaddPurchacse.Discount){
+          this.objaddPurchacse.Discount_AMT = undefined;
+          let taxacl:number =  this.objaddPurchacse.taxable_AMT
+          this.objaddPurchacse.taxable_AMT = undefined
+          let tempExiAmt = this.objaddPurchacse.Excise_Tax ? Number(this.objaddPurchacse.Excise_Tax) : 0 
+          let tempGrsAmt = this.objaddPurchacse.Gross_Amt ? Number(this.objaddPurchacse.Gross_Amt) : 0 
+          let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
+          
+         this.objaddPurchacse.Discount_AMT = (Number(totalAmt) * Number(this.objaddPurchacse.Discount)/100).toFixed(2);
+         
+         if(this.objaddPurchacse.Discount_AMT){
+          this.objaddPurchacse.taxable_AMT  = (Number(totalAmt) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
           this.GetGSTAmt();
         }
         else {
           this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
           this.GetGSTAmt();
         }
-         
-        }
-      else if(this.objaddPurchacse.Discount_Type === '%'){
-        this.objaddPurchacse.Discount_AMT = undefined;
-        let taxacl:number =  this.objaddPurchacse.taxable_AMT
-        this.objaddPurchacse.taxable_AMT = undefined
-        let tempExiAmt = this.objaddPurchacse.Excise_Tax ? Number(this.objaddPurchacse.Excise_Tax) : 0 
-        let tempGrsAmt = this.objaddPurchacse.Gross_Amt ? Number(this.objaddPurchacse.Gross_Amt) : 0 
-        let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
         
-       this.objaddPurchacse.Discount_AMT = (Number(totalAmt) * Number(this.objaddPurchacse.Discount)/100).toFixed(2);
-       
-       if(this.objaddPurchacse.Discount_AMT){
-        this.objaddPurchacse.taxable_AMT  = (Number(totalAmt) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
-        this.GetGSTAmt();
-      }
-      else {
-        this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
-        this.GetGSTAmt();
-      }
-        // this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
-        // this.getTaxAble()
+        }
+        else{
+          this.objaddPurchacse.Discount_AMT = undefined
+        }
       }
      else {
       this.objaddPurchacse.Discount_AMT = undefined;
@@ -801,14 +730,12 @@ export class PurchaseOrderComponent implements OnInit {
   }
   AddPurchase(valid){
     this.purChaseAddFormSubmit = true
-    console.log("valid",valid);
-   if(valid && this.GetSameProWithInd() && this.GetSameReqMatType()){
+  if(valid && this.GetSameProWithInd() && this.GetSameReqMatType()){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
-     console.log("productFilter",productFilter[0])
      let saveData = {
         Product_ID: Number(this.objaddPurchacse.Product_ID),
         Req_No: this.objaddPurchacse.Req_No ? this.objaddPurchacse.Req_No : "NA",
-        Product_Name:  productFilter[0].Product_Description,
+        Product_Name: this.addPurchaseListInput ? this.addPurchaseListInputField.Product_Name: productFilter[0].Product_Description,
         Product_Spec: this.objaddPurchacse.Product_Spec,
         Exp_Delivery: this.DateService.dateConvert(new Date(this.ExpectedDeliverydate)),
         Qty: Number(this.objaddPurchacse.Qty),
@@ -821,14 +748,37 @@ export class PurchaseOrderComponent implements OnInit {
         Discount:  this.objaddPurchacse.Discount,
         Discount_Amount: Number(this.objaddPurchacse.Discount_AMT),
         UOM: this.objaddPurchacse.Unit,
-        Net_Amount:  Number(this.objaddPurchacse.Total_Amount),
+        Total_Amount:  Number(this.objaddPurchacse.Total_Amount),
         GST_Percentage: Number( this.objaddPurchacse.Gst),
         GST_Amount: Number(this.objaddPurchacse.GST_AMT),
         Requisiton_Type: this.Requisiton_Type,
         Material_Type: this.Material_Type
      }
+     if(this.addPurchaseList.length && this.addPurchaseListInput){
+      this.addPurchaseList.forEach((xz:any,i) => {
+        console.log(i)
+        if( xz.Req_No == this.objaddPurchacse.Req_No && xz.Product_ID == this.objaddPurchacse.Product_ID){
+          this.addPurchaseList[i] = {...this.objaddPurchacse}
+          this.addPurchaseList[i].Discount_Amount =  Number(this.objaddPurchacse.Discount_AMT)
+          this.addPurchaseList[i].Taxable_Amount = Number(this.objaddPurchacse.taxable_AMT)
+          this.addPurchaseList[i].GST_Percentage = Number(this.objaddPurchacse.Gst)
+          this.addPurchaseList[i].GST_Amount =Number (this.objaddPurchacse.GST_AMT)
+          this.addPurchaseList[i].Total_Amount  = Number(this.objaddPurchacse.Total_Amount)
+          this.addPurchaseList[i].Product_Name = this.addPurchaseListInputField.Product_Name
+        }
+       });
+       this.addClear()
+     }
+     else{
       this.addPurchaseList.push(saveData);
-      this.projectDisable = true
+      this.addClear()
+     }
+     
+     
+   }
+ }
+ addClear(){
+  this.projectDisable = true
       this.objaddPurchacse = new addPurchacse();
       this.Requisiton_Type = undefined;
       this.Material_Type = undefined;
@@ -837,50 +787,126 @@ export class PurchaseOrderComponent implements OnInit {
       this.totalRate = undefined;
       this.purChaseAddFormSubmit = false;
       this.productList = [];
+      this.addPurchaseListInput = false
+      this.addPurchaseListInputField = {}
       console.log("addPurchaseList",this.addPurchaseList);
       this.getAllTotal();
-   }
  }
  GetSameProWithInd () {
-  const sameproductwithindent = this.addPurchaseList.filter(item=> item.Req_No === this.objaddPurchacse.Req_No && item.Product_ID === this.objaddPurchacse.Product_ID );
-  if(sameproductwithindent.length) {
-    this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-          detail: "Same Product with Same Indent no. Can't be Added."
-        });
-    return false;
-    } 
-    else {
-      return true;
-    }
-  }
-  GetSameReqMatType () {
-    if(this.openProject === "N") {
-    if(this.addPurchaseList.length){
-      const sameReqMatTpye = this.addPurchaseList.filter(item=> (item.Requisiton_Type === this.Requisiton_Type) && (item.Material_Type === this.Material_Type) );
-     if(sameReqMatTpye.length) {
-      return true;
-      } 
-      else {
-        this.compacctToast.clear();
+  if(!this.addPurchaseListInput){
+    const sameproductwithindent = this.addPurchaseList.filter(item=> item.Req_No === this.objaddPurchacse.Req_No && item.Product_ID === this.objaddPurchacse.Product_ID );
+    if(sameproductwithindent.length) {
+      this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
             summary: "Warn Message",
-            detail: "Requisition Type and Material Type Must be Same"
+            detail: "Same Product with Same Indent no. Can't be Added."
           });
       return false;
+      } 
+      else {
+        return true;
       }
-    } else {
+  }
+  else{
+  return true
+  }
+  
+}
+GetSameReqMatType () {
+  console.log("objaddPurchacse",this.addPurchaseListInputField)
+  if(this.openProject === "N") {
+      if(this.addPurchaseList.length){
+        const sameReqMatTpye = this.addPurchaseList.filter(item=> (item.Requisiton_Type === this.Requisiton_Type) && (item.Material_Type === this.Material_Type) );
+        if(sameReqMatTpye.length) {
+        return true;
+        } 
+        else {
+          this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Requisition Type and Material Type Must be Same"
+            });
+        return false;
+        }
+      } else {
+        return true;
+      }
+      } else {
+        return true;
+      }
+
+  
+}
+
+GettermAmt(){
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Get_Term",
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.TermList = data
+  })
+}
+TermChange(){
+  this.ObjTerm.HSN_No = undefined;
+  if(this.ObjTerm.Term_ID) {
+  const ctrl = this;
+  const termobj = $.grep(ctrl.TermList,function(item: any) {return item.Term_ID == ctrl.ObjTerm.Term_ID})[0];
+  console.log(termobj);
+  this.ObjTerm.Term_ID = termobj.Term_ID
+  this.ObjTerm.Term_Name = termobj.Term_Name;
+  this.ObjTerm.HSN_No = termobj.HSN_No;
+  this.ObjTerm.GST_Per = termobj.GST_Tax_Per;
+  this.ObjTerm.Sale_Pur = termobj.Sale_Pur;
+  }
+}
+AddTerm(valid){this.TermFormSubmitted = true;
+  if(valid && this.TeramChek()) {
+    var TERMobj = {
+    Sale_Pur : this.ObjTerm.Sale_Pur,
+    Term_ID : this.ObjTerm.Term_ID,
+    Term_Name : this.ObjTerm.Term_Name,
+    Term_Amount : Number(this.ObjTerm.Term_Amount),
+    GST_Per : this.ObjTerm.GST_Per,
+    GST_Amount:  Number(Number(Number(this.ObjTerm.Term_Amount) * Number(this.ObjTerm.GST_Per) / 100).toFixed(2)),
+    HSN_No : this.ObjTerm.HSN_No,
+  };
+  this.AddTermList.push(TERMobj);
+  this.getAllTotal()
+  this.ObjTerm = new Term();
+  this.TermFormSubmitted = false;
+    
+  }
+}
+ TeramChek(){
+  if(this.AddTermList.length){
+    const FilterAddTermList = this.AddTermList.find((el:any)=> Number(el.Term_ID) == Number(this.ObjTerm.Term_ID))
+    if(FilterAddTermList){
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Same Term Name Can't be Added."
+      });
+      return false;
+    }
+    else {
       return true;
     }
-    } else {
-      return true;
-    }
-    }
+  }
+  else{
+    return true;
+  }
+ }
+DeteteTerm(index) {
+  this.AddTermList.splice(index,1)
+  this.getAllTotal()
+}
  async savePurchase(valid){
    this.purchaseFormSubmitted = true
    this.validatation.required = true
@@ -892,8 +918,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.Save = true;
     this.Del = false;
     this.Spinner = true;
-    this.ngxService.start();
-   this.compacctToast.clear();
+    this.compacctToast.clear();
    this.compacctToast.add({
      key: "c",
      sticky: true,
@@ -902,102 +927,7 @@ export class PurchaseOrderComponent implements OnInit {
      summary: "Are you sure?",
      detail: "Confirm to proceed"
    });
-  //    this.Spinner = true
-  //    let msg = "";
-  //     let rept = ""
-  //   const tempCost = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))[0]
-  //   const tempsub = this.SubLedgerDataList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.objpurchase.Sub_Ledger_ID))[0]
-  //   const tempCurr = this.currencyList.filter(el=> Number(el.Currency_ID) === Number(this.objpurchase.Currency_ID))
-  //   this.objpurchase.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate));
-  //   this.objpurchase.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.RefDate));
-  //   this.objpurchase.Currency_Symbol = tempCurr[0].Currency_Symbol;
-  //   this.objpurchase.Project_ID = Number(this.objpurchase.Project_ID) ? Number(this.objpurchase.Project_ID) : null
-  //   this.objpurchase.Currency_ID = this.objpurchase.Currency_ID ? Number(this.objpurchase.Currency_ID) : null
-  //   this.objpurchase.Company_ID = this.objpurchase.Company_ID ? Number(this.objpurchase.Company_ID) : undefined
-  //   this.objpurchase.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
-  //    let save = []
-  //    if(this.addPurchaseList.length){
-  //    if(this.DocNo){
-  //     msg = "Update"
-  //     rept = "Purchase_Order_Edit"
-  //      this.objpurchase.Doc_No = this.DocNo;
-  //     this.objpurchase.L_element = this.addPurchaseList
-  //     save = {...tempCost,...tempsub,...this.objpurchase}
-  //    }
-  //    else {
-  //     msg = "Create"
-  //     rept = "Purchase_Order_Create"
-  //     this.objpurchase.L_element = this.addPurchaseList
-  //     save = {...tempCost,...tempsub,...this.objpurchase}
-  //    }
-  //    const obj = {
-  //     "SP_String": "Sp_Purchase_Order",
-  //     "Report_Name_String": rept,
-  //     "Json_Param_String": JSON.stringify(save)
   
-  //   }
-  //   this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
-  //     this.validatation.required = false;
-  //     if(data[0].Column1){
-  //       if(this.objproject.PROJECT_ID && !this.DocNo){ 
-  //         const projectSaveData = await this.SaveProject(data[0].Column1);
-  //         if(projectSaveData){
-  //           this.showTost(msg,"Purchase order")
-  //           this.Spinner = false;
-  //           this.getAllData(true);
-  //           this.getPendingReq(true);
-  //         }
-  //         else {
-  //           this.Spinner = false;
-  //           this.compacctToast.clear();
-  //           this.compacctToast.add({
-  //             key: "compacct-toast",
-  //             severity: "error",
-  //             summary: "Warn Message",
-  //             detail: "Error Occured "
-  //           });
-  //         }
-  //        }
-  //       else{
-  //         this.Spinner = false;
-  //         this.showTost(msg,"Purchase order")
-  //         this.getAllData(true);
-  //         this.getPendingReq(true);
-  //       }
-      
-  //     if(this.DocNo){
-  //       this.tabIndexToView = 0;
-  //       this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT'];
-  //       this.buttonname = "Create";
-  //     }
-  //     this.clearData();
-  //     this.getAllData(true);
-  //     this.getPendingReq(true);
-  //     this.Print(data[0].Column1)
-  //     this.clearProject()
-  //     }
-  //     else {
-  //       this.Spinner = false;
-  //       this.compacctToast.clear();
-  //       this.compacctToast.add({
-  //         key: "compacct-toast",
-  //         severity: "error",
-  //         summary: "Warn Message",
-  //         detail: "Error Occured "
-  //       });
-  //     }
-  //   })
-  // }
-  // else {
-  //   this.Spinner = false;
-  //   this.compacctToast.clear();
-  //   this.compacctToast.add({
-  //     key: "compacct-toast",
-  //     severity: "error",
-  //     summary: "Warn Message",
-  //     detail: "Error Occured "
-  //   });
-  // }
    }
    else {
 
@@ -1005,6 +935,7 @@ export class PurchaseOrderComponent implements OnInit {
  }
  onConfirmSave(){
  this.Spinner = true
+ this.ngxService.start();
  let msg = "";
   let rept = ""
 const tempCost = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))[0]
@@ -1014,9 +945,21 @@ this.objpurchase.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate))
 this.objpurchase.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.RefDate));
 this.objpurchase.Currency_Symbol = tempCurr[0].Currency_Symbol;
 this.objpurchase.Project_ID = Number(this.objpurchase.Project_ID) ? Number(this.objpurchase.Project_ID) : null
+this.objaddPurchacse.Product_Type_ID = Number(this.objaddPurchacse.Product_Type_ID) ? Number(this.objaddPurchacse.Product_Type_ID) : null
 this.objpurchase.Currency_ID = this.objpurchase.Currency_ID ? Number(this.objpurchase.Currency_ID) : null
 this.objpurchase.Company_ID = this.objpurchase.Company_ID ? Number(this.objpurchase.Company_ID) : undefined
 this.objpurchase.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
+this.objpurchase.Product_Gross = this.getTofix(this.grTotal);
+this.objpurchase.Product_Discount = this.getTofix(this.disTotal) ;
+this.objpurchase.Product_Taxable = this.getTofix(this.taxAblTotal) ;
+this.objpurchase.Product_GST = this.getTofix(this.GSTTotal);
+this.objpurchase.Product_Net = this.getTofix(this.NetTotal);
+this.objpurchase.Term_Taxable = this.getTofix(this.GrTermAmount);
+this.objpurchase.Term_GST = this.getTofix(this.GrGstTermAmt);
+this.objpurchase.Term_Net = this.getTofix(this.grNetTerm)
+this.objpurchase.Total_GST = this.getTofix(Number(this.GSTTotal) + Number(this.GrGstTermAmt))
+this.objpurchase.Rounded_Off = Number(this.getRoundedOff());
+this.objpurchase.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt));
  let save = []
  if(this.addPurchaseList.length){
  if(this.DocNo){
@@ -1032,6 +975,7 @@ this.objpurchase.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
   this.objpurchase.L_element = this.addPurchaseList
   save = {...tempCost,...tempsub,...this.objpurchase}
  }
+ console.log("objpurchase",this.objpurchase)
  const obj = {
   "SP_String": "Sp_Purchase_Order",
   "Report_Name_String": rept,
@@ -1041,6 +985,8 @@ this.objpurchase.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
 this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
   this.validatation.required = false;
   if(data[0].Column1){
+   const constSaveData = await this.TermSave(data[0].Column1);
+  if(constSaveData){
     if(this.objproject.PROJECT_ID && !this.DocNo){ 
       const projectSaveData = await this.SaveProject(data[0].Column1);
       if(projectSaveData){
@@ -1070,6 +1016,16 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
       this.getPendingReq(true);
       this.getPendingPurIndPro(true);
     }
+  }
+  else{
+    this.ngxService.stop();
+    this.Spinner = false;
+    this.showTost(msg,"Purchase order")
+    this.getAllData(true);
+    this.getPendingReq(true);
+    this.getPendingPurIndPro(true);
+  }
+   
   
   if(this.DocNo){
     this.ngxService.stop();
@@ -1077,6 +1033,7 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
     this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.buttonname = "Create";
   }
+
   this.ngxService.stop();
   this.clearData();
   this.getAllData(true);
@@ -1110,7 +1067,21 @@ this.compacctToast.add({
 });
 }
 }
-
+async TermSave(doc:any){
+  if(doc && this.AddTermList.length){
+     this.AddTermList.forEach((ele:any) => {
+       ele['DOC_No'] = doc
+     });
+    const obj = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": "Insert_Term_Details",
+      "Json_Param_String": JSON.stringify(this.AddTermList)
+    }
+    const TermData = await  this.GlobalAPI.getData(obj).toPromise();
+   // console.log("projectData",TermData);
+    return TermData
+  }
+}
 //  checkreq(){
 //   let flg = false
 //   if(this.openProject === "Y" && this.projectMand === "Y"){
@@ -1276,10 +1247,16 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocDate = new Date(data[0].Doc_Date);
     this.RefDate = new Date(data[0].Supp_Ref_Date)
     this.addPurchaseList = data[0].L_element;
+    this.AddTermList = data[0].Term_element;
+    this.editorDis = true
     console.log("addPurchaseList",this.addPurchaseList)
-    if(this.addPurchaseList.length){
+    if(this.addPurchaseList.length || this.AddTermList.length){
       this.getAllTotal()
     }
+   
+    setTimeout(() => {
+      this.editorDis = false
+    }, 500);
   })
  }
  getEditProject(DocNo){
@@ -1365,6 +1342,9 @@ getAllTotal(){
   this.ExciTotal = 0;
   this.GSTTotal = 0;
   this.NetTotal = 0;
+  this.GrTermAmount = 0
+  this.GrGstTermAmt = 0
+  this.grNetTerm = 0
   if(this.addPurchaseList.length){
     this.addPurchaseList.forEach(ele => {
       this.grTotal += Number(ele.Gross_Amt) ? Number(ele.Gross_Amt) : 0
@@ -1372,14 +1352,24 @@ getAllTotal(){
       this.disTotal += Number(ele.Discount_Amount) ?  Number(ele.Discount_Amount) : 0
       this.ExciTotal += Number(ele.Excise_Amount) ? Number(ele.Excise_Amount) : 0
       this.GSTTotal += Number(ele.GST_Amount) ? Number(ele.GST_Amount) : 0
-      this.NetTotal += Number(ele.Net_Amount) ? Number(ele.Net_Amount)  :0
+      this.NetTotal += Number(ele.Total_Amount) ? Number(ele.Total_Amount)  :0
     });
   }
-
+  
+if(this.AddTermList.length){
+ this.AddTermList.forEach((el:any) => {
+   this.GrTermAmount += Number(el.Term_Amount);
+   this.GrGstTermAmt += Number(el.GST_Amount);
+   this.grNetTerm += Number(Number(el.Term_Amount) + Number(el.GST_Amount))
+ });
+}
 
 }
 getTofix(key){
- return key.toFixed(2)
+ return Number(Number(key).toFixed(2))
+}
+RoundOff(key:any){
+  return Math.round(Number(Number(key).toFixed(2)))
 }
 getcompany(){
   const obj = {
@@ -1726,6 +1716,7 @@ gettermsdetails(){
         "Json_Param_String": JSON.stringify([{Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID}])
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log("gettermsdetails call")
         this.termsdetails = data;
         this.objpurchase.PO_Header = data[0].PO_Header;
         this.objpurchase.Terms_Of_Price = data[0].Terms_Of_Price;
@@ -1740,109 +1731,108 @@ gettermsdetails(){
         this.objpurchase.Installation_Commissioning = data[0].Installation_Commissioning;
         this.objpurchase.Delivery_Location = data[0].Delivery_Location;
         this.objpurchase.Remarks = data[0].Remarks;
+        window.scroll(0,0);
         this.objupdateterm = data[0];
+
       })
 }
-  gettermDateRange(dateRangeObj){
-    if (dateRangeObj.length) {
-      this.objupdateterm.From_Date = dateRangeObj[0];
-      this.objupdateterm.To_Date = dateRangeObj[1];
-    }
+gettermDateRange(dateRangeObj){
+  if (dateRangeObj.length) {
+    this.objupdateterm.From_Date = dateRangeObj[0];
+    this.objupdateterm.To_Date = dateRangeObj[1];
   }
-  UpdateTerms(){
-    this.TermSpinner = true
-    this.ngxService.start();
-    const costcent = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+}
+UpdateTerms(){
+  this.TermSpinner = true
+  this.ngxService.start();
+  const costcent = {
+    Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+  }
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Update_Terms_Details",
+    "Json_Param_String": JSON.stringify([{...costcent,...this.objupdateterm}])
+  
+  }
+  this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
+    if(data[0].Column1){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      // summary: summary,
+      detail: "Succesfully Update"
+    });
+          this.TermSpinner = false;
+          this.ngxService.stop();
+          this.gettermsdetails();
     }
-    const obj = {
-     "SP_String": "Sp_Purchase_Order",
-     "Report_Name_String": "Update_Terms_Details",
-     "Json_Param_String": JSON.stringify([{...costcent,...this.objupdateterm}])
-   
-   }
-   this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
-     if(data[0].Column1){
+    else {
+      this.ngxService.stop();
+      this.TermSpinner = false;
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
-        severity: "success",
-        // summary: summary,
-        detail: "Succesfully Update"
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
       });
-           this.TermSpinner = false;
-          //  this.getAllData(true);
-          //  this.getPendingReq(true);
-           this.ngxService.stop();
-          //  this.clearData();
-          this.gettermsdetails();
-     }
-     else {
-       this.ngxService.stop();
-       this.TermSpinner = false;
-       this.compacctToast.clear();
-       this.compacctToast.add({
-         key: "compacct-toast",
-         severity: "error",
-         summary: "Warn Message",
-         detail: "Error Occured "
-       });
-     }
-   })
-   }
-   GetReportNameList(){
-    this.ReportNameList = [
-      {Report_Name : "Pending Indent Details"},
-      {Report_Name : "Pending PO - Not Delivered - Summary"},
-      {Report_Name : "Pending PO - Not Delivered - Details"},
-      {Report_Name : "PO Wise Summary"}
-    ]
-   }
-   getDateRangeMIS(dateRangeObj) {
-    if (dateRangeObj.length) {
-      this.ObjMIS.From_Date = dateRangeObj[0];
-      this.ObjMIS.To_Date = dateRangeObj[1];
     }
+  })
   }
-  GetMISreport(valid){
-    this.misReportList = [];
-    this.BackupMisReport = [];
-    this.DynamicHeaderMISreport = [];
-    this.MISreportFormSubmit = true;
-  const start = this.ObjMIS.From_Date
-  ? this.DateService.dateConvert(new Date(this.ObjMIS.From_Date))
-  : this.DateService.dateConvert(new Date());
-  const end = this.ObjMIS.To_Date
-  ? this.DateService.dateConvert(new Date(this.ObjMIS.To_Date))
-  : this.DateService.dateConvert(new Date());
-  const tempobj = {
-    From_Date : start,
-    To_Date : end
+GetReportNameList(){
+this.ReportNameList = [
+  {Report_Name : "Pending Indent Details"},
+  {Report_Name : "Pending PO - Not Delivered - Summary"},
+  {Report_Name : "Pending PO - Not Delivered - Details"},
+  {Report_Name : "PO Wise Summary"}
+]
+}
+getDateRangeMIS(dateRangeObj) {
+if (dateRangeObj.length) {
+  this.ObjMIS.From_Date = dateRangeObj[0];
+  this.ObjMIS.To_Date = dateRangeObj[1];
+}
+}
+GetMISreport(valid){
+  this.misReportList = [];
+  this.BackupMisReport = [];
+  this.DynamicHeaderMISreport = [];
+  this.MISreportFormSubmit = true;
+const start = this.ObjMIS.From_Date
+? this.DateService.dateConvert(new Date(this.ObjMIS.From_Date))
+: this.DateService.dateConvert(new Date());
+const end = this.ObjMIS.To_Date
+? this.DateService.dateConvert(new Date(this.ObjMIS.To_Date))
+: this.DateService.dateConvert(new Date());
+const tempobj = {
+  From_Date : start,
+  To_Date : end
+}
+console.log("valid",valid)
+if (valid) {
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": this.ObjMIS.Report_Name,
+    "Json_Param_String": JSON.stringify([tempobj])
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.misReportList = data;
+    this.BackupMisReport = data;
+    this.GetDistinctReport();
+    if(this.misReportList.length){
+      this.DynamicHeaderMISreport = Object.keys(data[0]);
+    }
+    this.MISSpinner = false
+    this.MISreportFormSubmit = false;
+  })
   }
-  console.log("valid",valid)
-  if (valid) {
-    const obj = {
-      "SP_String": "Sp_Purchase_Order",
-      "Report_Name_String": this.ObjMIS.Report_Name,
-      "Json_Param_String": JSON.stringify([tempobj])
-      }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.misReportList = data;
-      this.BackupMisReport = data;
-      this.GetDistinctReport();
-      if(this.misReportList.length){
-        this.DynamicHeaderMISreport = Object.keys(data[0]);
-      }
-      this.MISSpinner = false
-      this.MISreportFormSubmit = false;
-    })
-   }
-  }
-  exportoexcel(Arr,fileName): void {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
-    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-    XLSX.writeFile(workbook, fileName+'.xlsx');
-  }
+}
+exportoexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
   // DISTINCT & FILTER
  GetDistinctReport() {
   let DVendorName:any = [];
@@ -1928,6 +1918,34 @@ getPONoforview(col,row){
       }
     }
 
+// Edit Add Purchase 
+ EditAddPurchase(inx:any){
+  console.log(this.addPurchaseList[inx])
+  this.objaddPurchacse.Req_No = this.addPurchaseList[inx].Req_No
+  this.addPurchaseListInputField = this.addPurchaseList[inx]
+  setTimeout(() => {
+    this.getProduct(this.addPurchaseList[inx].Product_ID,this.addPurchaseList[inx].UOM,this.addPurchaseList[inx].Product_Spec)
+  }, 300);
+   this.objaddPurchacse.Product_ID = this.addPurchaseList[inx].Product_ID
+   this.objaddPurchacse = {...this.addPurchaseList[inx]}
+   this.objaddPurchacse.Unit = this.addPurchaseList[inx].UOM
+   this.objaddPurchacse.Product_Spec = this.addPurchaseList[inx].Product_Spec
+   this.addPurchaseListInput = true
+   this.Requisiton_Type =  this.addPurchaseList[inx].Requisiton_Type
+   this.Material_Type = this.addPurchaseList[inx].Material_Type
+   this.objaddPurchacse.Discount_AMT =  this.addPurchaseList[inx].Discount_Amount
+   this.objaddPurchacse.taxable_AMT = this.addPurchaseList[inx].Taxable_Amount
+   this.objaddPurchacse.Gst = this.addPurchaseList[inx].GST_Percentage
+   this.objaddPurchacse.GST_AMT = this.addPurchaseList[inx].GST_Amount
+   this.objaddPurchacse.Total_Amount  = this.addPurchaseList[inx].Net_Amount
+  
+}
+
+getRoundedOff(){
+  return this.getTofix(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)) -
+          Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)))) 
+} 
+
 }
 class purchase {
         Doc_No:any;
@@ -1991,6 +2009,17 @@ class purchase {
         Installation_Commissioning:any
         Delivery_Location:any
         User_ID:any
+        Product_Gross:any
+        Product_Discount:any
+        Product_Taxable:any
+        Product_GST:any
+        Product_Net:any
+        Term_Taxable:any
+        Term_GST:any
+        Term_Net:any
+        Total_GST:any
+        Rounded_Off:any
+        Total_Net_Amount:any
 }
 class addPurchacse{
       Product_ID:any;
@@ -2071,4 +2100,14 @@ class MIS {
   Report_Name : any;
   From_Date : Date;
   To_Date : Date;
+}
+class Term {
+  DOC_No:any
+  Sale_Pur:any
+  Term_ID:any
+  Term_Name:any
+  Term_Amount:any
+  GST_Per:any
+  GST_Amount:any
+  HSN_No:any
 }
