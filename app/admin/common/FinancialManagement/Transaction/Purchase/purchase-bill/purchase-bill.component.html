@@ -620,7 +620,7 @@
                                                     <div class="input-group-addon">
                                                       <i class="fa fa-calendar"></i>
                                                     </div>
-                                                    <input style="width: 90%;" type="month" name="exdate" [(ngModel)]="expiryDate" [ngClass]="{clearance:ProductInfoSubmitted && exdate?.errors?.required}" required>
+                                                    <input style="width: 90%;" type="month" name="exdate" #exdate="ngModel" [(ngModel)]="expiryDate" [ngClass]="{clearance:ProductInfoSubmitted && exdate?.errors?.required}" required>
                                                     <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='expiryDate' [enabled]="Product_Expiry" placeholder="dd/MMM/yyyy"></ejs-datepicker> -->
                                                     <!--  <input
                                                       type="date"
@@ -669,8 +669,10 @@
                                                 <div class="col-sm-1">
                                                     <label class="control-label">Qty<sup class="text-danger">*</sup></label>
                                                 <!-- <div class="input-group"> -->
-                                                    <input class="form-control" name="qty" #qty="ngModel" [(ngModel)]="ObjProductInfo.Qty" (ngModelChange)="CalCulateTotalAmt()"
-                                                      [ngClass]="{clearance:ProductInfoSubmitted && qty?.errors?.required}" [disabled]="Maintain_Serial_No" [required]="true"
+                                                    <input class="form-control" 
+                                                    name="qty" #qty="ngModel" 
+                                                    [(ngModel)]="ObjProductInfo.Qty" (ngModelChange)="CalCulateTotalAmt()"
+                                                    [ngClass]="{clearance:(ProductInfoSubmitted && qty?.errors?.required) || chkqut() }" [disabled]="Maintain_Serial_No" [required]="true"
                                                       CompacctDigitonly="true" placeholder="Qty"/>
                                                     <!--<div class="input-group-addon" style="padding: 0px 0px; border: 0px solid #ccc;">
                                                     <input type="text" class="form-control" style="width: -1%" name="unit" #unit="ngModel" [(ngModel)]="ObjProductInfo.UOM"
@@ -694,6 +696,7 @@
                                                       CompacctDigitonly="true"
                                                       [required]="true"
                                                       placeholder="Rate"
+                                                      [disabled]="ObjProductInfo.Pur_Order_No"
                                                     />
                                                   </div>
                                                 <div class="col-sm-2">

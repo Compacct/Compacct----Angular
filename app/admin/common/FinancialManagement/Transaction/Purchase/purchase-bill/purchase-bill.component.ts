@@ -149,6 +149,8 @@ export class PurchaseBillComponent implements OnInit {
   SelectedDistProject:any = []
   DistSubledger:any = []
   SelectedSubledger:any = []
+  bckUpQty:any = undefined
+  bckUpQtyValid:boolean = false
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -220,7 +222,9 @@ export class PurchaseBillComponent implements OnInit {
      this.DocDate = new Date();
      this.SupplierBillDate = new Date();
      this.CNDate = undefined;
+     this.bckUpQtyValid = false
      this.PurOrderList = [];
+     this.bckUpQty = undefined
      this.POList = [];
      this.PODate = undefined;
      this.GRNList = [];
@@ -238,6 +242,7 @@ export class PurchaseBillComponent implements OnInit {
      this.ObjTerm = new Term();
     //  this.cleartotaltermamount();
     this.deleteError = false;
+  
    }
    Finyear() {
     this.$http
@@ -677,6 +682,7 @@ GetGRNNoProlistdetails2(){
       else {
       this.ObjProductInfo.Qty = ProductObj.Qty;
       }
+       this.bckUpQty = this.ObjProductInfo.Qty
       this.Batch_No = ProductObj.Batch_No
       this.ObjProductInfo.Batch_Number = ProductObj.Batch_No;
       this.ObjProductInfo.Product_Expiry = ProductObj.Product_Expiry;
@@ -688,7 +694,7 @@ GetGRNNoProlistdetails2(){
       this.ObjProductInfo.HSN_No = ProductObj.HSN_No;
       this.ObjProductInfo.UOM = ProductObj.UOM;
       this.ObjProductInfo.Rate = ProductObj.MRP;
-      this.CalCulateTotalAmt();
+       this.CalCulateTotalAmt();
       this.ObjProductInfo.CGST_Rate = ProductObj.CGST_Rate;
       this.ObjProductInfo.SGST_Rate = ProductObj.SGST_Rate;
       this.ObjProductInfo.IGST_Rate = ProductObj.IGST_Rate;
@@ -702,11 +708,28 @@ GetGRNNoProlistdetails2(){
   CalCulateTotalAmt(){
     this.ObjProductInfo.Amount = 0;
     if (this.ObjProductInfo.Qty && this.ObjProductInfo.Rate) {
+      this.chkqut()
       var amt;
       amt = Number(this.ObjProductInfo.Qty * this.ObjProductInfo.Rate).toFixed(2);
       this.ObjProductInfo.Amount = amt;
       this.ObjProductInfo.Taxable_Amount = Number(this.ObjProductInfo.Amount);
     }
+  }
+  chkqut(){
+    let flg = false
+   if(this.ObjProductInfo.Pur_Order_No && this.ObjProductInfo.Product_ID){
+    if((this.bckUpQty > this.ObjProductInfo.Qty || this.bckUpQty == this.ObjProductInfo.Qty)){
+      flg = false
+      return false
+    }
+    else {
+      flg = true
+      return true
+     }
+  
+   }
+   
+  
   }
   DiscChange(){
     if(!this.ObjProductInfo.Discount_Type){
@@ -753,7 +776,7 @@ GetGRNNoProlistdetails2(){
   AddProductInfo(valid) {
     //console.log(this.ObjaddbillForm.Product_ID)
     this.ProductInfoSubmitted = true;
-    if(valid) {
+    if(valid && !this.chkqut()) {
       const SubLedgerState = this.ObjPurChaseBill.Sub_Ledger_State
         ? this.ObjPurChaseBill.Sub_Ledger_State.toUpperCase()
         : undefined;
