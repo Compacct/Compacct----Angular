@@ -765,9 +765,9 @@
                          <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
                  </button>
-                 </div>
+                 </div> 
                  <div class="col-sm-2">
-                    <button class="btn btn-success " (click)="GetPrint()" id="buttonserch" [disabled]="SaveAfter">
+                    <button class="btn btn-success " (click)="GetPrint()" [disabled]="!ObjFirst.Foot_Fall_ID">
                         <span class="glyphicon glyphicon-print"></span> Print
                     </button>
                 </div>

@@ -433,11 +433,19 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Duty Start Time</label>
-                                        <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_In_Time" name="Off_In_Time" #Off_In_Time="ngModel" [ngModel]="objemployee.Off_In_Time" [format]="'hh:mm a'" [value]='TimeValue '></ejs-timepicker>
+                                        <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_In_Time" name="Off_In_Time" #Off_In_Time="ngModel" [ngModel]="objemployee.Off_In_Time" [format]="'hh:mm a'" [value]='TimeValue ' (change)="CalculateTime()"></ejs-timepicker>
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Duty End Time</label>
-                                        <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_Out_Time" name="Off_Out_Time" #Off_Out_Time="ngModel" [ngModel]="objemployee.Off_Out_Time" [format]="'hh:mm a'" [value]='TimeValue '></ejs-timepicker>
+                                        <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_Out_Time" name="Off_Out_Time" #Off_Out_Time="ngModel" [ngModel]="objemployee.Off_Out_Time" [format]="'hh:mm a'" [value]='TimeValue ' (change)="CalculateTime()"></ejs-timepicker>
+                                    </div>
+                                    <div class="col-sm-12">
+                                         <label class="control-label">Working Hours (In Mins)</label>
+                                        <!--<div class="label-t">{{objemployee.Working_Hours_Mins}}</div> -->
+                                        <input class="form-control" placeholder="Working Hours (In Mins)" name="Working_Hours_Mins" #Working_Hours_Mins="ngModel" [(ngModel)]="objemployee.Working_Hours_Mins" [disabled]="true">
+                                    </div>
+                                    <div class="col-sm-12" style="padding-top: 10px;">
+                                        <p-checkbox label="Eligible For OT" [(ngModel)]="objemployee.OT_Avail" name="otavail" binary="true"></p-checkbox>
                                     </div>
                                     <div class="col-sm-12" style="padding-top: 10px;">
                                         <p-checkbox label="Late Deduction" [(ngModel)]="objemployee.Late_Ded_Tag" name="Late_Deduct" binary="true"></p-checkbox>

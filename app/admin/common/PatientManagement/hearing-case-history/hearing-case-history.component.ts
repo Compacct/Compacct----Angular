@@ -48,6 +48,7 @@ export class HearingCaseHistoryComponent implements OnInit {
   SaveAfter = true;
   SelectedMedicalProblems = [];
   MedicalProblemsList:any =[];
+  footFallId:any = undefined
   constructor(
     private header:CompacctHeader,
     private $http: HttpClient,
@@ -557,6 +558,7 @@ if(valid){
     //console.log(data);
     var tempID = data[0].Column1;
     if(data[0].Column1){
+      
       this.compacctToast.clear();
       this.compacctToast.add({
        key: "compacct-toast",
@@ -577,15 +579,13 @@ if(valid){
     }
   )}
 } 
-GetPrint(){}
-// getAudi(){
-//   const ProjectFilter = this.Audilogistlist.filter(el=> Number(el.value) === Number(this.ObjMiddle.Audiologist_ID))[0];
-//   this.ObjLast.Audiologist_Name = ProjectFilter.label;
-//  this.ObjLast.Audiologist_ID = this.ObjMiddle.Audiologist_ID ;
-// }
-// Refresh(){
-// this.MedicalProblemObj = {}
-// }
+GetPrint(){
+  if (this.ObjFirst.Foot_Fall_ID) {
+    window.open("/Report/Crystal_Files/CRM/joh_Form/Case_History.aspx?Foot_Fall_ID=" + this.ObjFirst.Foot_Fall_ID, 
+    'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+    );
+  }
+  }
 }
 class First{
 Lead_Details:any;

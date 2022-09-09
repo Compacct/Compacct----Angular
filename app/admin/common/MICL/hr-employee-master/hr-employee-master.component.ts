@@ -116,7 +116,7 @@ export class HREmployeeMasterComponent implements OnInit {
     this.BankAcList = ["SAVINGS", "CURRENT", "OTHER"];
     this.MaritalList = ["UNMARRIED", "MARRIED", "WIDOWED", "SEPERATED", "DIVORCED"];
     this.BloodGroupList = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
-    this.SalaryPaidList = ["Bank", "Check", "Cash"];
+    this.SalaryPaidList = ["Bank", "Cheque", "Cash"];
     this.physicallyChallanged = ["YES", "NO"];
     this.weakofflist = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
@@ -371,6 +371,7 @@ getEmployeeDetails(Emp_ID){
           console.log("editlist=",editlist);
          if (this.objselect.Emp_ID) {
          this.objemployee = editlist;
+         this.CalculateTime();
          this.objemployee.Dept_ID = data[0].Dept_ID ? data[0].Dept_ID : undefined;
          this.objemployee.Bank_Ac_Type = data[0].Bank_Ac_Type ? data[0].Bank_Ac_Type : undefined;
          this.objemployee.Physically_Chalanged = data[0].Physically_Chalanged === 1 ? 'YES' : 'NO';
@@ -432,6 +433,26 @@ getReportingList(){
 
 
 }
+CalculateTime(){
+  this.objemployee.Working_Hours_Mins = undefined;
+  if (this.objemployee.Off_In_Time && this.objemployee.Off_Out_Time) {
+    var outtime:any = new Date(this.objemployee.Off_Out_Time);
+    var intime:any = new Date(this.objemployee.Off_In_Time);
+    console.log("outtime ====",new Date(outtime));
+    console.log("intime =====",new Date(intime));
+    // var diff = outtime - intime;
+    // return this.objemployee.Working_Hours_Mins = Math.floor(diff/(1000*60*60)).toLocaleString(undefined, {minimumIntegerDigits: 2}) + ":" + (Math.floor(diff/(1000*60))%60).toLocaleString(undefined, {minimumIntegerDigits: 2})  + ":" + (Math.floor(diff/1000)%60).toLocaleString(undefined, {minimumIntegerDigits: 2}) ;
+    var minutes = Math.abs(outtime.getTime() - intime.getTime()) / 36e5 * 60;
+    // var minutes = Math.abs(outtime.getTime() - intime.getTime()) / (1000 * 60) % 60;
+    // console.log("out time ====",outtime.getTime());
+    // console.log("in time =====",intime.getTime());
+    // console.log("subtime =====",Math.abs(outtime.getTime() - intime.getTime()));
+    // console.log("minutes =====",minutes);
+    this.objemployee.Working_Hours_Mins = minutes;
+    // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)));
+    // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
+  }
+}
 
 async saveemployeemaster(valid){
   this.EmployeeFormSubmitted = true;
@@ -476,6 +497,7 @@ saveEmp(){
     this.objemployee.Login_User_ID = this.objemployee.Login_User_ID ? this.objemployee.Login_User_ID : 0;
     this.objemployee.Off_In_Time = this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time));
     this.objemployee.Off_Out_Time = this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time));
+    this.objemployee.OT_Avail = this.objemployee.OT_Avail === true ? 1 : 0;
      if(this.Employeeid){
      console.log("Update");
       const obj = {
@@ -1142,6 +1164,7 @@ class Employee{
   Present_Status : any;
   Bank_ID : any;
   Is_Biometric : any;
+  OT_Avail : any;
   ESI_No : any;
   PF_Ac_No : any;
   UAN_NO : any;
@@ -1149,6 +1172,7 @@ class Employee{
   Business_Manager : any;
   Off_In_Time : any;
   Off_Out_Time : any;
+  Working_Hours_Mins : any;
   PTax_Avail : any;
   Is_HOD : any;
   Emp_Leave_Dt : any;
