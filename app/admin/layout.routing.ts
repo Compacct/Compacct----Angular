@@ -251,6 +251,9 @@ import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-
 import { GoodReceiveDetailsComponent } from './common/MICL/good-receive-details/good-receive-details.component';
 import { MasterHolidayComponent } from "./common/MICL/master-holiday/master-holiday.component";
 import { MICLDispatchChallanChargeableComponent } from "./common/MICL/micl-dispatch-challan-chargeable/micl-dispatch-challan-chargeable.component";
+import { DailyAttendanceSheetComponent } from './common/Attendance/daily-attendance-sheet/daily-attendance-sheet.component';
+import { MasterConsultancyV3Component } from "./common/PatientManagement/Master/master-consultancy-v3/master-consultancy-v3.component";
+import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/micl-journal-voucher.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1850,6 +1853,27 @@ data: {
                    component: MICLDispatchChallanChargeableComponent,
                     data: {
                       title: 'MICL Dispatch Challan Chargeable '
+                }
+                },
+                {
+                  path: 'Daily_Attendance_Sheet',
+                   component: DailyAttendanceSheetComponent,
+                    data: {
+                      title: 'Daily Attendance Sheet '
+                }
+                },
+                {
+                  path: 'BL_CRM_Master_Consultancy_V3',
+                   component: MasterConsultancyV3Component,
+                    data: {
+                      title: 'BL CRM Master Consultancy '
+                }
+                },
+                {
+                  path: 'MICL_Journal_Voucher',
+                  component:MICLJournalVoucherComponent,
+                  data: {
+                    title: 'MICL Journal Voucher'
                 }
                 },
                 

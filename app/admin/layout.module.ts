@@ -346,6 +346,9 @@ import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-
 import { GoodReceiveDetailsComponent } from './common/MICL/good-receive-details/good-receive-details.component';
 import { MasterHolidayComponent } from "./common/MICL/master-holiday/master-holiday.component";
 import { MICLDispatchChallanChargeableComponent } from "./common/MICL/micl-dispatch-challan-chargeable/micl-dispatch-challan-chargeable.component";
+import { DailyAttendanceSheetComponent } from './common/Attendance/daily-attendance-sheet/daily-attendance-sheet.component';
+import { MasterConsultancyV3Component } from "./common/PatientManagement/Master/master-consultancy-v3/master-consultancy-v3.component";
+import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/micl-journal-voucher.component";
 
 
 @NgModule({
@@ -610,7 +613,10 @@ import { MICLDispatchChallanChargeableComponent } from "./common/MICL/micl-dispa
     HearingCaseHistoryComponent,
     GoodReceiveDetailsComponent,
     MasterHolidayComponent,
-    MICLDispatchChallanChargeableComponent
+    MICLDispatchChallanChargeableComponent,
+    DailyAttendanceSheetComponent,
+    MasterConsultancyV3Component,
+    MICLJournalVoucherComponent
   ],
   imports: [
     CommonModule,

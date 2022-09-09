@@ -745,7 +745,7 @@ export class AttendanceSheetComponent implements OnInit {
     console.log('firstDate',firstDate)
     const obj = {
       "SP_String": "SP_Process_Monthly_Attendance_Sheet",
-      "Report_Name_String": "Attendance Sheet Monthly Process",
+      "Report_Name_String": "New Process Monthly Attendance Sheet",
       "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
