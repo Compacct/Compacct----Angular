@@ -32,6 +32,7 @@
             (change)="reportTypeChange()"
             [ngClass]="{'clearance': StockSearchFormSubmitted && ReportType?.errors?.required}" required>
                     <option  value="Cost_Center_Wise">Cost Center Wise</option>
+                    <option  value="GET_STOCK_With_Value">Cost Center Wise Value</option>
                     <option  value="Product_Wise">Product Wise</option>
             </select>
         </div>
@@ -39,7 +40,7 @@
             <label class="control-label">Date</label>
             <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
          </div> <!-- [minmaxValid]="initDate" -->
-        <div class="col-sm-4" *ngIf="report_Type == 'Cost_Center_Wise'">
+        <div class="col-sm-4" *ngIf="report_Type == 'Cost_Center_Wise' || 'GET_STOCK_With_Value'">
             <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
             <!-- <select class="form-control" 
             name="browsecostcenter" 
@@ -70,7 +71,7 @@
             required>
         </p-dropdown>
         </div>
-        <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise'">
+        <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise' || 'GET_STOCK_With_Value'">
             <label class="control-label">Stock Point&nbsp;<sup class="text-danger"></sup>
             </label>
             <select class="form-control" 
@@ -105,7 +106,7 @@
             </button>
         </div>
     </div>
-    <div class="box-footer" style="padding: 0px;" *ngIf="report_Type == 'Cost_Center_Wise'">
+    <div class="box-footer" style="padding: 0px;" *ngIf="report_Type == 'Cost_Center_Wise' || 'GET_STOCK_With_Value' ">
         <button class="btn btn-primary pull-right"  data-toggle="modal" (click)="searchData(StockSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
             <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
@@ -239,6 +240,28 @@
         </ng-template>
     </p-table>
 </div>
+<div class="table-responsive no-padding">
+    <table class="table bidopen table-bordered" *ngIf="stockList.length">
+        <thead>
+          <tr>
+                <th style=" width: 60% ;" ></th>
+                <th style=" width: 10% ;" >Total Opening </th>
+                <th style=" width: 10% ;" >Total Recieve </th>
+                <th style=" width: 10% ;" >Total Issue/Used</th>
+                <th style=" width: 10% ;" >Total Closing</th>
+          </tr>
+          <tr>
+            <th style=" width: 60% ;" ></th>
+            <th style=" width: 10% ;" >{{allTotalObj.Total_Opening ? allTotalObj.Total_Opening : 0}}</th>
+            <th style=" width: 10% ;" >{{allTotalObj.Total_Recieve ? allTotalObj.Total_Recieve : 0}}</th>
+            <th style=" width: 10% ;" >{{allTotalObj.Total_IssueUsed ? allTotalObj.Total_IssueUsed : 0}}</th>
+            <th style=" width: 10% ;" >{{allTotalObj.Total_Closing ? allTotalObj.Total_Closing : 0}}</th>
+      </tr>
+  
+        </thead>
+        
+      </table>
+</div>
 </p-tabPanel>
 <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
     <form name="ClosingReportSearchForm" #ClosingReportSearchForm="ngForm" novalidate>
@@ -254,6 +277,7 @@
                         <option  value="Closing_Stock_Report">Closing Stock Report</option>
                         <option  value="Closing_Stock_High_Value">Closing Stock High Value</option>
                         <option  value="Closing_Stock_Low_Value">Closing Stock Low Value</option>
+                        <option  value="Closing_Stock_All_Value">Closing Stock All Value</option>
                 </select>
             </div>
             <div class="col-sm-3">
@@ -408,6 +432,61 @@
                         </a>
                         <span *ngIf="!col.CLOSING_QTY"> {{col.CLOSING_QTY}}</span>
                     </td> -->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="table-responsive no-padding" *ngIf="ClosingReportList.length" >
+        <table class="table bidopen table-bordered">
+            <thead>
+              <tr>
+                    <th style=" width: 0% ;" ></th>
+                    <th style=" width: 30% ;" >Total Pro Value - {{TotalProValue}} </th>
+              </tr>
+            
+      
+            </thead>
+            
+          </table>
+    </div>
+</p-tabPanel>
+<p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+    <div class="table-responsive no-padding">
+        <p-table [value]="AgeingList" #dt4
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [rowHover]="true" 
+        [globalFilterFields]='["Product_Description","0-90","91-180","181_and_Above"]'>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Product Description</th>
+                    <th>0 to 90</th>
+                    <th>91 to 180</th>
+                    <th>181 and Above</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <td>{{col.Product_Description}}</td>
+                    <td>{{col.Age_0_90 }}</td>
+                    <td>{{col.Age_91_180 }}</td>
+                    <td>{{col.Age_180_Above}}</td>
+                  
                 </tr>
             </ng-template>
             <ng-template pTemplate="paginatorright" let-state>

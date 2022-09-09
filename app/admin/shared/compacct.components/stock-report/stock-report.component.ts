@@ -68,6 +68,9 @@ export class StockReportComponent implements OnInit {
   DistProDescriptionClStk:any = [];
   DistCostCenCS:any = [];
   DistStockPointCS:any = [];
+  allTotalObj:any = {}
+  TotalProValue:any = undefined
+  AgeingList:any = []
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -80,7 +83,7 @@ export class StockReportComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["STOCK REPORT", "CLOSING REPORT"];
+    this.items = ["STOCK REPORT", "CLOSING REPORT","STOCK AGEING REPORT"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -89,11 +92,14 @@ export class StockReportComponent implements OnInit {
    this.getCosCenter();
    this.getProductType();
    this.Finyear()
+   this.getAgeingList()
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["STOCK REPORT", "CLOSING REPORT"];
+    this.items = ["STOCK REPORT", "CLOSING REPORT","STOCK AGEING REPORT"];
     //this.ObjBrowseData = new BrowseData ()
+    this.getclosingTotal(this.ClosingReportList);
+    this.getTotal(this.stockList)
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -106,6 +112,16 @@ export class StockReportComponent implements OnInit {
       this.ObjBrowse.StDate = dateRangeObj[0];
       this.ObjBrowse.EndDate = dateRangeObj[1];
     }
+   }
+   getAgeingList(){
+    const obj = {
+      "SP_String": "REP_Stock_Report",
+      "Report_Name_String": "Stock_Ageing_Report" ,
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.AgeingList = data
+     console.log("AgeingList",this.AgeingList)
+    })
    }
    Finyear() {
     this.$http
@@ -176,14 +192,16 @@ export class StockReportComponent implements OnInit {
       }
       const obj = {
         "SP_String": "REP_Stock_Report",
-        "Report_Name_String": this.report_Type === 'Cost_Center_Wise'? "GET_STOCK" : "GET_Product_Wise_Stock",
-        "Json_Param_String": this.report_Type === 'Cost_Center_Wise'? JSON.stringify([CCTempobj]):JSON.stringify([PtempObj])
+      //  "Report_Name_String": this.report_Type === 'Cost_Center_Wise'? "GET_STOCK" : "GET_Product_Wise_Stock",
+      "Report_Name_String": this.report_Type === 'Cost_Center_Wise'? "GET_STOCK" : this.report_Type === 'GET_STOCK_With_Value'? "GET_STOCK_With_Value" : "GET_Product_Wise_Stock",
+        "Json_Param_String": this.report_Type === 'Product_Wise'?JSON.stringify([PtempObj]) : JSON.stringify([CCTempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
          console.log(data)
          this.stockList = data;
          this.backUpstockList = data;
          this.GetDistinct();
+         this.getTotal(this.stockList)
          this.ngxService.stop();
       })
     }
@@ -234,7 +252,7 @@ export class StockReportComponent implements OnInit {
   } else {
   this.stockList = [...this.backUpstockList] ;
   }
-  
+  this.getTotal(this.stockList)
   }
   exportexcel(Arr): void {
     this.EXCELSpinner =true
@@ -433,7 +451,7 @@ export class StockReportComponent implements OnInit {
       }
       const obj = {
         "SP_String": "REP_Stock_Report",
-        "Report_Name_String": this.Report_Type === 'Closing_Stock_High_Value'? "Closing_Stock_High_Value" : "Closing_Stock_Low_Value",
+        "Report_Name_String": this.Report_Type,
         "Json_Param_String": JSON.stringify([CCTempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -442,6 +460,7 @@ export class StockReportComponent implements OnInit {
          this.backUpClosingReportList = data;
          this.ClosingReportSearchFormSubmitted = false;
          this.seachSpinner = false;
+         this.getclosingTotal(this.ClosingReportList)
          this.GetDistinctClosingStock();
          this.ngxService.stop();
       })
@@ -501,7 +520,7 @@ export class StockReportComponent implements OnInit {
   } else {
   this.ClosingReportList = [...this.backUpClosingReportList] ;
   }
-  
+  this.getclosingTotal(this.ClosingReportList)
   }
   GetDistinctClosingStock() {
     let matTypeCS:any = [];
@@ -570,6 +589,30 @@ export class StockReportComponent implements OnInit {
     // this.getCosCenter();
     // this.getProductType();
     this.Finyear()
+  }
+  getTotal(arrList:any){
+    if(arrList.length){
+      this.allTotalObj.Total_Opening =0
+        this.allTotalObj.Total_Recieve = 0
+        this.allTotalObj.Total_IssueUsed = 0
+        this.allTotalObj.Total_Closing = 0
+      arrList.forEach(ele => {
+        this.allTotalObj.Total_Opening = Number(ele.OPENING_QTY) + Number(this.allTotalObj.Total_Opening)
+        this.allTotalObj.Total_Recieve = Number(ele.RECV_QTY) + Number(this.allTotalObj.Total_Recieve)
+        this.allTotalObj.Total_IssueUsed = Number(ele.ISSUE_QTY) + Number(this.allTotalObj.Total_IssueUsed)
+        this.allTotalObj.Total_Closing = Number(ele.CLOSING_QTY) + Number(this.allTotalObj.Total_Closing)
+      });
+    }
+    console.log(this.allTotalObj)
+  }
+  getclosingTotal(arrList:any){
+    if(arrList.length){
+       this.TotalProValue = 0
+       arrList.forEach(ele => {
+         this.TotalProValue = Number(ele.Pro_Value) + Number(this.TotalProValue)
+       });
+       this.TotalProValue = Number(Number(this.TotalProValue).toFixed(4))
+    }
   }
 }
 class Browse {
