@@ -145,19 +145,37 @@ export class HarbaTaskListComponent implements OnInit {
     })
    }
   }
-  getStatusWiseColor(Status) {
-   switch (Status) {
-        case 'Not Started':
-          return 'Orange';
-          break;
-        case 'In Progress':
-          return 'blueviolet';
-          break;
-        case 'Completed':
-          return 'yellowgreen';
-          break;
-        default:
+  getStatusWiseColor(data) {
+    const status = data.Task_Status;
+    const endDate = new Date(data.taskData.Planned_End_Date);
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    if(endDate < today) {
+      if(status === 'In Progress'){
+        return 'red';
       }
+    }
+    if(status === 'Not Started'){
+      return 'Orange';
+    }
+    if(status === 'In Progress'){
+      return 'blueviolet';
+    }
+    if(status === 'Completed'){
+      return 'yellowgreen';
+    }
+  //  switch (Status) {
+  //       case 'Not Started':
+  //         return 'Orange';
+  //         break;
+  //       case 'In Progress':
+  //         return 'blueviolet';
+  //         break;
+  //       case 'Completed':
+  //         return 'yellowgreen';
+  //         break;
+  //       default:
+  //     }
     
   }
   updateTask(obj:any){

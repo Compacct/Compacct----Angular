@@ -140,7 +140,7 @@
                                                 <td>{{col.No_Of_Days}}</td>
                                                 <td>{{col.Task_Name}}</td>
                                                 <td>{{col.Responsible_Person}}</td>
-                                                <td><span [ngClass]="'badge bg-'+ getStatusWiseColor(col.Task_Status)">{{col.Task_Status}}</span></td>
+                                                <td><span [ngClass]="'badge bg-'+ getStatusWiseColor(col)">{{col.Task_Status}}</span></td>
                                              </tr>
                                         </ng-template>
                                         <ng-template pTemplate="paginatorright" let-state>
