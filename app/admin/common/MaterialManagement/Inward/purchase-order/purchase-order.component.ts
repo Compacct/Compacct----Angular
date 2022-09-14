@@ -171,7 +171,7 @@ export class PurchaseOrderComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
     ) {
       this.route.queryParams.subscribe(params => {
-        console.log(params);
+        // console.log(params);
         this.openProject = params['proj'];
         this.projectMand = params['mand'];
         this.validatation.projectMand = params['mand']
@@ -205,7 +205,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.getCostcenter();
       this.GettermAmt()
      this.userType = this.$CompacctAPI.CompacctCookies.User_Type
-     console.log("proj",this.openProject);
+     // console.log("proj",this.openProject);
      if(this.openProject !== "Y"){
        this.getProductType()
        this.GetRequlist()
@@ -307,7 +307,7 @@ export class PurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{Doc_No : this.DocNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
       }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("data ==",data[0].Column1);
+      // console.log("data ==",data[0].Column1);
       if (data[0].Column1 === "Done"){
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -343,10 +343,10 @@ export class PurchaseOrderComponent implements OnInit {
         "Report_Name_String": "Get_Sub_Ledger_Dropdown",
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        // console.log(data);
+        // // console.log(data);
         this.SubLedgerDataList = data;
        
-        console.log("SubLedgerDataList",this.SubLedgerDataList);
+        // console.log("SubLedgerDataList",this.SubLedgerDataList);
         this.SubLedgerDataList.forEach(el => {
           this.SubLedgerList.push({
               label: el.Sub_Ledger_Name,
@@ -367,8 +367,8 @@ export class PurchaseOrderComponent implements OnInit {
         this.getCostCenterDetalis();
       }
 
-      console.log("Cost Center",this.costCenterList);
-      console.log("compacct Cookies",this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
+      // console.log("Cost Center",this.costCenterList);
+      // console.log("compacct Cookies",this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
   })
   }
   getCostCenterDetalis(){
@@ -377,7 +377,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.getreq();
        const tempVal = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))
        this.DetalisObj = tempVal[0]
-      console.log("DetalisObj",this.DetalisObj);
+      // console.log("DetalisObj",this.DetalisObj);
     }
   }
   getSubLedgerDetalis(){
@@ -385,7 +385,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.DetalisObj = {};
       const tempVal = this.SubLedgerDataList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.objpurchase.Sub_Ledger_ID))
        this.DetalisObj = tempVal[0]
-      console.log("DetalisObj",this.DetalisObj);
+      // console.log("DetalisObj",this.DetalisObj);
     }
   }
   getDetalis(header){
@@ -408,7 +408,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.currencyList = data;
         this.objpurchase.Currency_ID = 1;
-      console.log("currencyList",this.currencyList);
+      // console.log("currencyList",this.currencyList);
     })
   }
   GetOrderType(){
@@ -419,7 +419,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.OrderTypeList = data;
         this.objpurchase.Type_ID = 1;
-      console.log("OrderTypeList",this.OrderTypeList);
+      // console.log("OrderTypeList",this.OrderTypeList);
     })
   }
   GetProject(){
@@ -429,7 +429,7 @@ export class PurchaseOrderComponent implements OnInit {
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.projectList = data;
-      console.log("projectList",this.projectList);
+      // console.log("projectList",this.projectList);
     })
   }
   getProduct(id?,uom?,psc?){
@@ -449,10 +449,10 @@ export class PurchaseOrderComponent implements OnInit {
         "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Req_No : this.objaddPurchacse.Req_No}}]) : JSON.stringify([{Req_No : this.objaddPurchacse.Req_No}])
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        // console.log(data);
+        //console.log(data);
         this.productDataList = data;
        
-        console.log("productDataList",this.productDataList);
+        // console.log("productDataList",this.productDataList);
         this.productDataList.forEach((el:any) => {
           this.productList.push({
               label: el.Product_Description,
@@ -515,7 +515,7 @@ export class PurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ProductID : Number(ProductID)}])
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("Aolist",this.Aolist);
+      // console.log("Aolist",this.Aolist);
        this.Aolist = data
     })
   }
@@ -523,7 +523,7 @@ export class PurchaseOrderComponent implements OnInit {
      if(this.objaddPurchacse.Product_ID){
         let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
          this.objaddPurchacse.Unit = tempVal.length ? tempVal[0].UOM : undefined
-         console.log("tempVal",tempVal);
+         // console.log("tempVal",tempVal);
          this.GetTaxDetalis(this.objaddPurchacse.Product_ID);
          if(this.objaddPurchacse.Rate){
           this.getGrsAmt();
@@ -756,7 +756,7 @@ export class PurchaseOrderComponent implements OnInit {
      }
      if(this.addPurchaseList.length && this.addPurchaseListInput){
       this.addPurchaseList.forEach((xz:any,i) => {
-        console.log(i)
+        // console.log(i)
         if( xz.Req_No == this.objaddPurchacse.Req_No && xz.Product_ID == this.objaddPurchacse.Product_ID){
           this.addPurchaseList[i] = {...this.objaddPurchacse}
           this.addPurchaseList[i].Discount_Amount =  Number(this.objaddPurchacse.Discount_AMT)
@@ -789,7 +789,7 @@ export class PurchaseOrderComponent implements OnInit {
       this.productList = [];
       this.addPurchaseListInput = false
       this.addPurchaseListInputField = {}
-      console.log("addPurchaseList",this.addPurchaseList);
+      // console.log("addPurchaseList",this.addPurchaseList);
       this.getAllTotal();
  }
  GetSameProWithInd () {
@@ -815,7 +815,7 @@ export class PurchaseOrderComponent implements OnInit {
   
 }
 GetSameReqMatType () {
-  console.log("objaddPurchacse",this.addPurchaseListInputField)
+  // console.log("objaddPurchacse",this.addPurchaseListInputField)
   if(this.openProject === "N") {
       if(this.addPurchaseList.length){
         const sameReqMatTpye = this.addPurchaseList.filter(item=> (item.Requisiton_Type === this.Requisiton_Type) && (item.Material_Type === this.Material_Type) );
@@ -856,7 +856,7 @@ TermChange(){
   if(this.ObjTerm.Term_ID) {
   const ctrl = this;
   const termobj = $.grep(ctrl.TermList,function(item: any) {return item.Term_ID == ctrl.ObjTerm.Term_ID})[0];
-  console.log(termobj);
+  // console.log(termobj);
   this.ObjTerm.Term_ID = termobj.Term_ID
   this.ObjTerm.Term_Name = termobj.Term_Name;
   this.ObjTerm.HSN_No = termobj.HSN_No;
@@ -975,7 +975,7 @@ this.objpurchase.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + this
   this.objpurchase.L_element = this.addPurchaseList
   save = {...tempCost,...tempsub,...this.objpurchase}
  }
- console.log("objpurchase",this.objpurchase)
+ // console.log("objpurchase",this.objpurchase)
  const obj = {
   "SP_String": "Sp_Purchase_Order",
   "Report_Name_String": rept,
@@ -1068,25 +1068,36 @@ this.compacctToast.add({
 }
 }
 async TermSave(doc:any){
-  if(doc && this.AddTermList.length){
-     this.AddTermList.forEach((ele:any) => {
-       ele['DOC_No'] = doc
-     });
-    const obj = {
-      "SP_String": "Sp_Purchase_Order",
-      "Report_Name_String": "Insert_Term_Details",
-      "Json_Param_String": JSON.stringify(this.AddTermList)
-    }
-    const TermData = await  this.GlobalAPI.getData(obj).toPromise();
-   // console.log("projectData",TermData);
-    return TermData
-  }
+  if(doc){
+     if(this.AddTermList.length){
+      this.AddTermList.forEach((ele:any) => {
+        ele['DOC_No'] = doc
+      });
+     }
+     else{
+      this.AddTermList.push({
+        "DOC_No": doc,
+        "Term_ID":0
+      })
+     }
+      
+     const obj = {
+       "SP_String": "Sp_Purchase_Order",
+       "Report_Name_String": "Insert_Term_Details",
+       "Json_Param_String": JSON.stringify(this.AddTermList)
+     }
+     const TermData = await  this.GlobalAPI.getData(obj).toPromise();
+    
+     return TermData
+   }
+  
+ 
 }
 //  checkreq(){
 //   let flg = false
 //   if(this.openProject === "Y" && this.projectMand === "Y"){
 //     let getArrValue = Object.values(this.objProjectRequi);
-//     console.log("getArrValue",getArrValue.length);
+//    
 //     if(getArrValue.length === 5 || getArrValue.length > 5){
 //       flg = true
 //     }
@@ -1103,7 +1114,7 @@ async TermSave(doc:any){
   let flg = false
   if(this.openProject === "Y" && this.projectMand === "Y"){
     let getArrValue = Object.values(this.objProjectRequi);
-    console.log("getArrValue",getArrValue.length);
+    // console.log("getArrValue",getArrValue.length);
     if(getArrValue.indexOf(undefined) == -1){
       if(getArrValue.length === 5 || getArrValue.length > 5){
         flg = true
@@ -1168,7 +1179,7 @@ if (valid) {
     }
     this.seachSpinner = false;
     this.SearchFormSubmitted = false;
-    console.log("Get All Data",this.getAllDataList);
+    // console.log("Get All Data",this.getAllDataList);
   })
 }
  }
@@ -1221,7 +1232,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
+    this.items = [ 'BROWSE', 'UPDATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.buttonname = "Update";
     this.clearProject()
     this.geteditmaster(col.Doc_No);
@@ -1236,10 +1247,8 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Purchase_Order_Get",
     "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
-
-  }
+ }
   this.GlobalAPI.getData(obj).subscribe((res:any)=>{
-   
     let data = JSON.parse(res[0].Column1)
     console.log("Edit data",data);
     this.objpurchase = data[0],
@@ -1247,16 +1256,15 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocDate = new Date(data[0].Doc_Date);
     this.RefDate = new Date(data[0].Supp_Ref_Date)
     this.addPurchaseList = data[0].L_element;
-    this.AddTermList = data[0].Term_element;
+    this.AddTermList = data[0].Term_element ? data[0].Term_element : [] ;
     this.editorDis = true
-    console.log("addPurchaseList",this.addPurchaseList)
+    // console.log("addPurchaseList",this.addPurchaseList)
     if(this.addPurchaseList.length || this.AddTermList.length){
       this.getAllTotal()
     }
-   
     setTimeout(() => {
       this.editorDis = false
-    }, 500);
+    }, 700);
   })
  }
  getEditProject(DocNo){
@@ -1268,7 +1276,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.projectEditData = data
-       console.log("this.projectEditData",this.projectEditData);
+       // console.log("this.projectEditData",this.projectEditData);
        
         this.ProjectInput.ProjectEdit(this.projectEditData)
        
@@ -1300,7 +1308,7 @@ PrintREQ(DocNo) {
   }
 }
  Delete(col){
-  console.log("Delete Col",col);
+  // console.log("Delete Col",col);
   this.DocNo = undefined;
   this.Del = false;
   this.Save = false;
@@ -1378,20 +1386,20 @@ getcompany(){
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.companyList = data
-   console.log("companyList",this.companyList)
+   // console.log("companyList",this.companyList)
    this.objpurchase.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
    this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
   })
 }
 getProjectData(e){
- console.log("Project Data",e);
+ // console.log("Project Data",e);
  this.objproject = e
  this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
  this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
  this.objProjectRequi = e
- console.log("objProjectRequi",this.objProjectRequi)
+ // console.log("objProjectRequi",this.objProjectRequi)
  let temparr = Object.keys(this.objProjectRequi)
- console.log(temparr)
+ // console.log(temparr)
  if(temparr.indexOf("PROJECT_ID") != -1 && temparr.indexOf("Budget_Group_ID") != -1 && temparr.indexOf("Budget_Sub_Group_ID") != -1 && temparr.indexOf("SITE_ID") != -1 && temparr.indexOf("Work_Details_ID") != -1){
   this.getProductType();
   this.GetRequlist();
@@ -1421,7 +1429,7 @@ async SaveProject(docNo){
   "Json_Param_String": JSON.stringify([this.objproject]) 
  }
  const projectData = await  this.GlobalAPI.getData(obj).toPromise();
- console.log("projectData",projectData);
+ // console.log("projectData",projectData);
  return projectData
 }
 showTost(msg,summary){
@@ -1469,7 +1477,7 @@ GetRequlist(){
     "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([this.objProjectRequi]) : JSON.stringify([{PROJECT_ID : 0,To_Cost_Cen_ID : this.objpurchase.Billing_To,F_Cost_Cen_ID:this.objpurchase.Cost_Cen_ID}])
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    console.log("data",data)
+    // console.log("data",data)
     // this.Requlist = data
     if(data.length) {
       data.forEach(element => {
@@ -1477,7 +1485,7 @@ GetRequlist(){
         element['value'] = element.Req_No
       });
      this.Requlist = data;
-   console.log("Requlist======",this.Requlist);
+   // console.log("Requlist======",this.Requlist);
     }
      else {
       this.Requlist = [];
@@ -1502,7 +1510,7 @@ RequisitionChange(){
   if (this.objaddPurchacse.Req_No) {
     const ctrl = this;
     const ReqNoObj = $.grep(ctrl.Requlist,function(item: any) {return item.Req_No == ctrl.objaddPurchacse.Req_No})[0];
-    console.log(ReqNoObj);
+    // console.log(ReqNoObj);
     this.Requisiton_Type = ReqNoObj.Requisiton_Type;
     this.Material_Type = ReqNoObj.Material_Type;
     this.getProduct();
@@ -1523,7 +1531,7 @@ getProductType(){
     });
      
     this.productTypeList = data;
-   console.log("productTypeList",this.productTypeList);
+   // console.log("productTypeList",this.productTypeList);
    })
 }
 GetProductsDetalis(){
@@ -1553,7 +1561,7 @@ GetProductsDetalis(){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.productDataList = data;
-     console.log("productDataList",this.productDataList);
+     // console.log("productDataList",this.productDataList);
      this.productDataList.forEach((el:any) => {
       this.productList.push({
           label: el.Product_Description,
@@ -1583,7 +1591,7 @@ getCostcenter(){
      "Report_Name_String": "Get_Cost_Center",
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     console.log("costcenterList  ===",data);
+     // console.log("costcenterList  ===",data);
     this.costcenterListPeding = data;
     this.objpendingreq.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.objpendingPurIndPro.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
@@ -1603,8 +1611,8 @@ const tempobj = {
   To_Cost_Cen_ID : this.objpendingreq.Cost_Cen_ID,
   proj : this.openProject
 }
-console.log(this.objpendingreq.Cost_Cen_ID)
-console.log("valid",valid)
+// console.log(this.objpendingreq.Cost_Cen_ID)
+// console.log("valid",valid)
 if (valid || this.userType != 'A') {
   const obj = {
     "SP_String": "Sp_Purchase_Order",
@@ -1661,8 +1669,8 @@ const tempobj = {
   To_Cost_Cen_ID : this.objpendingPurIndPro.Cost_Cen_ID,
   proj : this.openProject
 }
-console.log(this.objpendingPurIndPro.Cost_Cen_ID)
-console.log("valid",valid)
+// console.log(this.objpendingPurIndPro.Cost_Cen_ID)
+// console.log("valid",valid)
 if (valid || this.userType != 'A') {
   const obj = {
     "SP_String": "Sp_Purchase_Order",
@@ -1681,12 +1689,12 @@ if (valid || this.userType != 'A') {
 }
 }
 getdataforview(col,row){
-  console.log("col",col);
+  // console.log("col",col);
     if(col === "PO_Qty") {
       this.col = col;
       // this.empid = row.Emp_ID;
-      // console.log("Row",row[this.col])
-      console.log("Row",row.PO_Qty)
+      // // console.log("Row",row[this.col])
+      // console.log("Row",row.PO_Qty)
       if (row.PO_Qty>0) {
       const tempobj = {
         Req_No : row.Indent_No,
@@ -1716,7 +1724,7 @@ gettermsdetails(){
         "Json_Param_String": JSON.stringify([{Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID}])
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log("gettermsdetails call")
+        // console.log("gettermsdetails call")
         this.termsdetails = data;
         this.objpurchase.PO_Header = data[0].PO_Header;
         this.objpurchase.Terms_Of_Price = data[0].Terms_Of_Price;
@@ -1813,7 +1821,7 @@ const tempobj = {
   From_Date : start,
   To_Date : end
 }
-console.log("valid",valid)
+// console.log("valid",valid)
 if (valid) {
   const obj = {
     "SP_String": "Sp_Purchase_Order",
@@ -1895,12 +1903,12 @@ this.misReportList = [...this.BackupMisReport] ;
 }
 }
 getPONoforview(col,row){
-  console.log("col",col);
+  // console.log("col",col);
     if(col === "PO_No" && this.ObjMIS.Report_Name === "Pending PO - Not Delivered - Summary") {
       this.POcol = col;
       // this.empid = row.Emp_ID;
-      // console.log("Row",row[this.col])
-      console.log("Row",row.PO_No)
+      // // console.log("Row",row[this.col])
+      // console.log("Row",row.PO_No)
       if (row.PO_No) {
       const tempobj = {
         Doc_No : row.PO_No,
@@ -1924,7 +1932,7 @@ getPONoforview(col,row){
 
 // Edit Add Purchase 
  EditAddPurchase(inx:any){
-  console.log(this.addPurchaseList[inx])
+  // console.log(this.addPurchaseList[inx])
   this.objaddPurchacse.Req_No = this.addPurchaseList[inx].Req_No
   this.addPurchaseListInputField = this.addPurchaseList[inx]
   setTimeout(() => {
