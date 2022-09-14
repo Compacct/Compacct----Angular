@@ -87,6 +87,13 @@ export class MiclRequisitionComponent implements OnInit {
   ReqStatusDataList:any = [];
   DynamicReqStatusDataListHeader:any = [];
   GodownReqStatusList:any = [];
+  currentstocklist:any = [];
+  Current_Stock:any;
+  backUpReqStatusDataList:any = [];
+  SelectedDistDepartment:any = [];
+  SelectedDistProductType:any = [];
+  DistDepartment:any = [];
+  DistProductType:any = [];
 
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -142,6 +149,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.items = ["BROWSE", "CREATE", "STOCK", "STATUS"];
     this.buttonname = "Save";
     this.clearData();
+    this.Current_Stock = undefined;
   }
   clearData(){
     if(this.openProject === "Y"){
@@ -202,6 +210,7 @@ export class MiclRequisitionComponent implements OnInit {
       })
       this.requisitionmaterialFormSubmit = false;
       this.objmaterial = new material();
+      this.Current_Stock = undefined;
       this.productList = [];
       this.productListview = [];
       this.projectDisable = true;
@@ -653,10 +662,25 @@ export class MiclRequisitionComponent implements OnInit {
       console.log("ProductFilter",ProductFilter);
       this.productFilterObj = ProductFilter[0];
        this.objmaterial.UOM = ProductFilter[0].UOM
+       this.GetCurrentStock();
     }
     else {
       this.productFilterObj = {}
     }
+  }
+  GetCurrentStock(){
+    this.currentstocklist = [];
+    this.Current_Stock = undefined;
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Current_Stock_Inside_Store",
+      "Json_Param_String": JSON.stringify([{Product_ID : this.objmaterial.Product_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.currentstocklist = data;
+      this.Current_Stock = data[0].Bln_Qty;
+     console.log("ProductCatList",this.ProductCatList);
+     })
   }
   reqiValid(id:any){
    if(id || Number(id) == 0){
@@ -969,11 +993,60 @@ export class MiclRequisitionComponent implements OnInit {
             this.DynamicReqStatusDataListHeader= Object.keys(data[0])
           }
           // this.RequistionSearchFormSubmit = false;
+          this.backUpReqStatusDataList = data;
+          this.GetDistinctStatus();
           this.reqstatusSpinner = false
           console.log("this.ReqStatusDataList",this.ReqStatusDataList);
         })
     
    
+    }
+    exportexcel(Arr,fileName): void {
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+    }
+    FilterDistStatus() {
+      let department:any = [];
+      let producttype:any = [];
+      let SearchFieldsStatus:any =[];
+    if (this.SelectedDistDepartment.length) {
+      SearchFieldsStatus.push('Dept_Name');
+      department = this.SelectedDistDepartment;
+    }
+    if (this.SelectedDistProductType.length) {
+      SearchFieldsStatus.push('Product_Type');
+      producttype = this.SelectedDistProductType;
+    }
+    this.ReqStatusDataList = [];
+    if (SearchFieldsStatus.length) {
+      let LeadArr = this.backUpReqStatusDataList.filter(function (e) {
+        return (department.length ? department.includes(e['Dept_Name']) : true)
+        && (producttype.length ? producttype.includes(e['Product_Type']) : true)
+      });
+    this.ReqStatusDataList = LeadArr.length ? LeadArr : [];
+    } else {
+    this.ReqStatusDataList = [...this.backUpReqStatusDataList] ;
+    }
+    }
+    GetDistinctStatus() {
+      let department:any = [];
+      let producttype:any = [];
+      this.DistDepartment =[];
+      this.SelectedDistDepartment =[];
+      this.DistProductType =[];
+      this.SelectedDistProductType =[];
+      this.ReqStatusDataList.forEach((item) => {
+    if (department.indexOf(item.Dept_Name) === -1) {
+      department.push(item.Dept_Name);
+      this.DistDepartment.push({ label: item.Dept_Name, value: item.Dept_Name });
+      }
+     if (producttype.indexOf(item.Product_Type) === -1) {
+      producttype.push(item.Product_Type);
+     this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type });
+     }
+    });
+       this.backUpReqStatusDataList = [...this.ReqStatusDataList];
     }
 }
 

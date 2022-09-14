@@ -312,6 +312,16 @@
                                                 disabled
                                                 >
                                         </div>
+                                        <div class="col-sm-2" *ngIf="headerText === 'Issue Requisition'">
+                                            <label class="control-label">Current Stock<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                                name="currentstk" 
+                                                #currentstk="ngModel" 
+                                                [(ngModel)]="Current_Stock" 
+                                                placeholder="Current Stock"
+                                                disabled
+                                                >
+                                        </div>
                                         <!-- <div class="clearfix"  *ngIf="openProject == 'N'"></div> -->
                                         <div class="col-sm-3">
                                             <label class="control-label">Purpose<sup class="text-danger"></sup></label>
@@ -384,7 +394,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="ReqStatusForm" #ReqStatusForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <label class="control-label">Period</label>
 
                                         <app-compacct-daterangepicker (DaterangeObj)="getReStatsuDateRange($event)" [HardCodeDateOpt]="initDate">
@@ -424,8 +434,37 @@
                                       <span *ngIf="!reqstatusSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                    </button>
                                     </div>
+                                    <div class="col-sm-2">  
+                                        <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel(ReqStatusDataList, 'Requisition_Status')" id="load1" [disabled]="ReqStatusDataList.length ? false : true">
+                                        <span class="fa fa-fw  fa-download"></span>&nbsp;EXPORT TO EXCEL
+                                     </button>
+                                     <!-- <button *ngIf="ClosingReportList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel2(ClosingReportList,'Closing_Stock_Report')" id="load1" [disabled]="EXCELClosingSpinner">
+                                        <p-progressSpinner *ngIf="EXCELClosingSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!EXCELClosingSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                                    </button> -->
+                                    </div>
                                 </div>
                             </form>
+                            <br *ngIf="headerText === 'Purchase Indent'">
+                            <div class="form-group" *ngIf="headerText === 'Purchase Indent' && ReqStatusDataList.length">
+    
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+                            
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Department <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistDepartment" [(ngModel)]="SelectedDistDepartment" itemSize="30" (onChange)='FilterDistStatus()' [styleClass]="'compacct-multiselect'" name="Department"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDistStatus()' [styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+                                        </div>
+                                    </div>
+                            
+                                </fieldset>
+                            </div>
+                            <br>
                             <div class="no-padding">
                                 <p-table [value]="ReqStatusDataList"
                                 [paginator]="ReqStatusDataList.length ? true : false"

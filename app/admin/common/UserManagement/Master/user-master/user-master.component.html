@@ -29,7 +29,10 @@
                             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                                 <div class="table-responsive no-padding">
                                     <div class="table-responsive no-padding">
-                                        <p-table [value]="AllData" [paginator]="AllData.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [globalFilterFields]="['','Primary/Alternative','Decimal_Place']"[rowHover]="true" #dt>
+                                        <p-table [value]="AllData" [paginator]="AllData.length ? true : false" 
+                                        [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" 
+                                        [rowsPerPageOptions]="[10,20,30]" 
+                                        [globalFilterFields]="['Name','User_Name','Cost_Cen_Name','User_Mobile','Menu_Ref_Name','Under_User','Apprv_Auth']"[rowHover]="true" #dt>
 
                                             <ng-template pTemplate="caption">
                                                 <div class="row">

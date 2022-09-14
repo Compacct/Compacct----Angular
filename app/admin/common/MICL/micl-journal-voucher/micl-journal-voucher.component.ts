@@ -645,7 +645,8 @@ export class MICLJournalVoucherComponent implements OnInit {
             detail: "Succesfully Deleted"
           });
          }
-      })
+      });
+      this.clearData();
     }
 
   }
@@ -745,7 +746,7 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.objJournal.Cost_Cen_ID_Trn = this.commonApi.CompacctCookies.Cost_Cen_ID;
     this.objsearch.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
     this.IsEnabled = false;
-   
+   this.doNoList = [];
     this.initDate = [new Date(),new Date()];
  }
 

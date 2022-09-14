@@ -33,6 +33,13 @@ export class POAuthorizationComponent implements OnInit {
   masterApproveId =undefined;
   Approved :boolean = false;
   DisApproved :boolean = false;
+  MasterdisApproveId = undefined;
+  ViewProTypeModal: boolean = false;
+  ViewPopList:any =[];
+  masterPopview = undefined;
+  TElementobj:any = {};
+  DetailsArrList:any = [];
+  TermsArrList:any = [];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -62,6 +69,9 @@ TabClick(e){
 clearData(){
  this.ApprovedSearchedlist =[];
  this.NotApprovedSearchedlist = [];
+ this.DetailsArrList =[];
+ this.TermsArrList =[];
+ this.TElementobj ={};
 }
 // Panding Authorization List 
 getListPandingAuth(){
@@ -76,13 +86,19 @@ getListPandingAuth(){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.SearchedlistPanding = data;
-   this.DynamicHeaderPanding = this.SearchedlistPanding.length ?  Object.keys(data[0]) : [];
+  //  this.DynamicHeaderPanding = Object.keys(data[0]) ? Object.keys(data[0]) :undefined;
+   if (this.SearchedlistPanding.length){
+    this.DynamicHeaderPanding = Object.keys(data[0]);
+   }
+  else {
+    this.DynamicHeaderPanding = [];
+  }
    //this.SearchedlistPanding = data;
-   //console.log('Search list=====',this.SearchedlistPanding)
+   //console.log('DynamicHeaderPanding=====',this.DynamicHeaderPanding)
   })
 }
 // Authorized PO Serch Button fn
-AuthorizationSearchButton(valid?){
+AuthorizationSearchButton(){
   this.ApprovedSearchedlist = [];
   const start = this.OBjAuthorized.From_Date
   ? this.DateService.dateConvert(new Date(this.OBjAuthorized.From_Date))
@@ -103,14 +119,20 @@ AuthorizationSearchButton(valid?){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.ApprovedSearchedlist = data;
-   console.log('ApprovedSearchedlist=====',this.ApprovedSearchedlist)
-   this.DynamicHeaderAuthorized = Object.keys(data[0]);
-   //this.ApprovedSearchedlist = data;
+   //console.log('ApprovedSearchedlist=====',this.ApprovedSearchedlist)
+  //  this.DynamicHeaderAuthorized = Object.keys(data[0]) ? Object.keys(data[0]) :undefined;
+   if (this.ApprovedSearchedlist.length){
+    this.DynamicHeaderAuthorized = Object.keys(data[0]);
+   }
+  else {
+    this.DynamicHeaderAuthorized = [];
+  }
+  //  this.ApprovedSearchedlist = data;
   
   })
 }
 // NOt Authorized PO Serch Button fn
-NotAuthorizationSearchButton(valid?){
+NotAuthorizationSearchButton(){
   this.NotApprovedSearchedlist = [];
   const start = this.OBjAuthorized.From_Date
   ? this.DateService.dateConvert(new Date(this.OBjAuthorized.From_Date))
@@ -131,9 +153,15 @@ NotAuthorizationSearchButton(valid?){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.NotApprovedSearchedlist = data;
-   console.log('NotApprovedSearchedlist=====',this.NotApprovedSearchedlist)
-   this.DynamicHeaderNOTAuthorized = Object.keys(data[0]);
+   //console.log('NotApprovedSearchedlist=====',this.NotApprovedSearchedlist)
+  //  this.DynamicHeaderNOTAuthorized = Object.keys(data[0]) ? Object.keys(data[0]) :undefined;
    //this.NotApprovedSearchedlist = data;
+   if (this.NotApprovedSearchedlist.length){
+    this.DynamicHeaderNOTAuthorized = Object.keys(data[0]);
+   }
+   else {
+    this.DynamicHeaderNOTAuthorized = [];
+   }
    
   })
 }
@@ -163,20 +191,21 @@ onReject() {
   this.compacctToast.clear('c');
 }
 // Pop For Approved Po
-ApprovedPo(master:any): void{
+ApprovedPo(master:any){
+  //console.log("master==",master)
   this.Approved = false
   this.DisApproved = true
   this.masterApproveId =undefined;
-  if(master.Doc_No){
+  if(master){
     this.Approved = true
     this.DisApproved = false
-    this.masterApproveId = master.Doc_No ;
+    this.masterApproveId = master;
     this.compacctToast.clear();
     this.compacctToast.add({
       key: "c",
       sticky: true,
       severity: "warn",
-      summary: "Are you sure Approved Po",
+      summary: "Are you sure To Approved This Po",
       detail: "Confirm to proceed"
     });
 }
@@ -195,11 +224,10 @@ ApprovedPo(master:any): void{
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       console.log("del Data===", data[0].Column1)
+      // console.log("del Data===", data[0].Column1)
       if (data[0].Column1){
         this.onReject();
         this.getListPandingAuth();
-        this.masterApproveId = undefined ;
         this.Approved = false;
         this.DisApproved = true;
         this.compacctToast.clear();
@@ -209,34 +237,36 @@ ApprovedPo(master:any): void{
           summary: " PO No " + this.masterApproveId ,
           detail: "Succesfully Approved "
         });
+        this.masterApproveId = undefined ;
+        this.ViewProTypeModal = false;
        }
     })
   }
 }
  // Pop For DisApproved Po
- DisapprovedPo(masterDisAproved:any): void{
-  this.Approved = false
-  this.DisApproved = true
-  this.masterApproveId =undefined;
-  if(masterDisAproved.Doc_No){
-    this.Approved = true
-    this.DisApproved = false
-    this.masterApproveId = masterDisAproved.Doc_No ;
+ DisapprovedPo(masterDisAproved:any){
+  this.Approved = true;
+  this.DisApproved = false;
+  this.MasterdisApproveId =undefined;
+  if(masterDisAproved){
+    this.Approved = false;
+    this.DisApproved = true;
+    this.MasterdisApproveId = masterDisAproved ;
     this.compacctToast.clear();
     this.compacctToast.add({
       key: "c",
       sticky: true,
       severity: "warn",
-      summary: "Are you sure DisApproved Po",
+      summary: "Are you sure To Dis-Approved This Po",
       detail: "Confirm to proceed"
     });
 }
 }
   // Pop For DisApproved Po Button
 onConfirm2(){ 
-  if(this.masterApproveId){
+  if(this.MasterdisApproveId){
     const tempobj = {
-     Doc_No : this.masterApproveId,
+     Doc_No : this.MasterdisApproveId,
      User_ID :this.$CompacctAPI.CompacctCookies.User_ID,
      Status : "DISAPPROVE"
     }
@@ -246,24 +276,99 @@ onConfirm2(){
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       console.log("del Data===", data[0].Column1)
+       //console.log("del Data===", data[0].Column1)
       if (data[0].Column1){
         this.onReject();
         this.getListPandingAuth();
-        this.masterApproveId = undefined ;
         this.Approved = false;
         this.DisApproved = true;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
-          summary: " PO No " + this.masterApproveId ,
+          summary: " PO No " + this.MasterdisApproveId ,
           detail: "Succesfully DisApproved"
         });
+         this.MasterdisApproveId = undefined ;
+         this.ViewProTypeModal = false;
        }
     })
   }
 }
+//View Pop Panding 
+showApproved(col:any){
+  this.ViewPopList = [];
+  this.masterPopview = undefined 
+  if(col.Doc_No){
+    this.masterPopview = col.Doc_No
+    const tempobj = {
+      Doc_No  : this.masterPopview
+    }
+    const obj = {
+      "SP_String": "SP_PO_Authorization",
+      "Report_Name_String": "PO_approval_view",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.ViewPopList = JSON.parse(data[0].T_element)
+    this.TElementobj = this.ViewPopList[0];
+    this.masterPopview = undefined;
+    this.DetailsArrList = this.ViewPopList[0].pod_Element ? this.ViewPopList[0].pod_Element :undefined;
+    this.TermsArrList = this.ViewPopList[0].term_Element ? this.ViewPopList[0].term_Element :undefined;
+   // console.log("TElementobj",this.TElementobj)
+    //console.log("DetailsArrList",this.DetailsArrList)
+   // console.log("TermsArrList",this.TermsArrList)
+       //console.log(this.TElementobj.Doc_NO);
+      })
+    setTimeout(() => {
+      this.ViewProTypeModal = true;
+    }, 300);
+  }
+}
+//Panding Auth Print
+Print(DocNo:any) {
+  //console.log("DocNo",DocNo)
+  if(DocNo) {
+  const objtemp = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Purchase_Order_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    window.open(printlink+"?Doc_No=" + DocNo.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    // console.log("doc===",DocNo.Doc_No)
+  })
+  }
+}
+//Auth Print
+PrintAuthorized(DocAuth:any) {
+    if(DocAuth) {
+    const objtemp = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": "Purchase_Order_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocAuth.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      //console.log("DocAuth===",DocAuth.Doc_No)
+    })
+}
+}
+//Not Auth Print
+PrintNotAuthorized(DocNot:any) {
+      if(DocNot) {
+      const objtemp = {
+        "SP_String": "Sp_Purchase_Order",
+        "Report_Name_String": "Purchase_Order_Print"
+        }
+      this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+        var printlink = data[0].Column1;
+        window.open(printlink+"?Doc_No=" + DocNot.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+        // console.log("DocNot===",DocNot.Doc_No)
+      })
+    }
+}
+
 // // Authorized Cost Center
 // getCostCenter(){
 //   this.AuthorizedCostList =[];
@@ -304,12 +409,12 @@ onConfirm2(){
 // }
 }
 class Authorized{
-  Cost_Cen_ID :any;
+ // Cost_Cen_ID :any;
   From_Date :any;
   To_Date  : any;
 }
 class NOTAuthorized{
-  Cost_Cen_ID :any; 
+ // Cost_Cen_ID :any; 
   From_Date :any;
   To_Date : any;
 }

@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-rdb',
   templateUrl: './rdb.component.html',
@@ -74,6 +75,9 @@ export class RdbComponent implements OnInit {
   ObjRDBRegister = new RDBRegister();
   DocNo: any;
   editlist:any = [];
+  BackupPendingPOList:any = [];
+  SelectedDistProductType:any = [];
+  DistProductType:any = [];
 
    constructor(
     private $http: HttpClient,
@@ -955,8 +959,8 @@ export class RdbComponent implements OnInit {
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.PendingPOList = data;
-        // this.BackupSearchedlist = data;
-        // this.GetDistinct();
+        this.BackupPendingPOList = data;
+        this.GetDistinctPenPo();
         if(this.PendingPOList.length){
           this.DynamicHeaderforPPO = Object.keys(data[0]);
         }
@@ -968,6 +972,40 @@ export class RdbComponent implements OnInit {
         console.log("PendingPOList",this.PendingPOList);
       })
       }
+  }
+  exportexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+  FilterDistPenPo() {
+    let producttype:any = [];
+    let SearchFieldsPenPo:any =[];
+  if (this.SelectedDistProductType.length) {
+    SearchFieldsPenPo.push('Product_Type');
+    producttype = this.SelectedDistProductType;
+  }
+  this.PendingPOList = [];
+  if (SearchFieldsPenPo.length) {
+    let LeadArr = this.BackupPendingPOList.filter(function (e) {
+      return (producttype.length ? producttype.includes(e['Product_Type']) : true)
+    });
+  this.PendingPOList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.PendingPOList = [...this.BackupPendingPOList] ;
+  }
+  }
+  GetDistinctPenPo() {
+    let producttype:any = [];
+    this.DistProductType =[];
+    this.SelectedDistProductType =[];
+    this.PendingPOList.forEach((item) => {
+  if (producttype.indexOf(item.Product_Type) === -1) {
+    producttype.push(item.Product_Type);
+    this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type });
+    }
+  });
+     this.BackupPendingPOList = [...this.PendingPOList];
   }
   PrintPPO(DocNo) {
     if(DocNo) {
@@ -984,9 +1022,10 @@ export class RdbComponent implements OnInit {
   CreateRDB(row){
     this.clearData();
     // this.ReqDate = new Date();
-    if(row.Doc_No) {
+    let Docno = row.Doc_No ? row.Doc_No : row.PO_No;
+    if(Docno) {
       this.tabIndexToView = 1;
-      this.dataforcreaterdb(row.Doc_No);
+      this.dataforcreaterdb(Docno);
     }
         
   }
