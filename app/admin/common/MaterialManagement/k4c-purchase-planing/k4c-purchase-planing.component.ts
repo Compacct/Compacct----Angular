@@ -1242,7 +1242,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
        this.ObjPurchasePlan.Weekly_Avg_Cons = data[0].Weekly_Avg_Cons;
        this.ObjPurchasePlan.UOM = data[0].UOM;
        this.ObjPurchasePlan.Weekly_Cons_Value = data[0].Weekly_Cons_Value;
-       this.LastPurDate = this.DateService.dateConvert(new Date(data[0].Last_Purchase_Date));
+      //  this.LastPurDate = this.DateService.dateConvert(new Date(data[0].Last_Purchase_Date));
+       this.LastPurDate = data[0].Last_Purchase_Date === null ? '01/Jan/1900' : new Date(data[0].Last_Purchase_Date);
        this.ObjPurchasePlan.Last_Purchase_Qty = data[0].Last_Purchase_Qty;
        this.ObjPurchasePlan.AL_UOM = data[0].Alt_UOM;
        this.ObjPurchasePlan.Last_Purchase_Rate = data[0].Last_Purchase_Rate;

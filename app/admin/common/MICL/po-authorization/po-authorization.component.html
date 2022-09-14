@@ -1,10 +1,10 @@
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast key="compacct-toast" baseZIndex="9999999999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" baseZIndex="999999999">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
             <h3>{{message.summary}}</h3>
-            <p>{{message.detail}}</p>
+            <h5>{{message.detail}}</h5>
         </div>
 
         <div class="ui-g ui-fluid">
@@ -12,7 +12,7 @@
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6" *ngIf="!Approved && DisApproved" >
-                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-danger"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -45,10 +45,12 @@
                                     </fieldset>
                                 </div> 
                             </form> -->
+                            <strong *ngIf="!SearchedlistPanding.length" style="font-size: large;">No Data Found</strong>
                             <div class="table-responsive no-padding">
                                 <p-table [value]="SearchedlistPanding" 
                                 [paginator]="SearchedlistPanding.length ? true : false"  
                                  [rows]="10" [rowHover]="true" 
+                                 *ngIf="SearchedlistPanding.length"
                                  [autoLayout]="true" sortMode="multiple" 
                                  [rowsPerPageOptions]="[10,20,30]" 
                                  [globalFilterFields]="DynamicHeaderPanding"
@@ -82,21 +84,21 @@
                                                             </a>
                                                         </li>
                                                          <li   >
-                                                            <a (click)="ApprovedPo(col)">
-                                                                <i class="glyphicon glyphicon-ok"></i> Approved Po
+                                                            <a (click)="showApproved(col)">
+                                                                <i class="glyphicon glyphicon-ok"></i> Approved / Disapproved PO
                                                             </a>
                                                         </li>
-                                                        <li >
+                                                        <!-- <li >
                                                             <a (click)="DisapprovedPo(col)">
                                                                 <i class="glyphicon glyphicon-remove"></i> Disapproved Po
                                                             </a>
-                                                        </li>
+                                                        </li> -->
                                                        
                                                     </ul>
                                                 </div>
                                             </td>
                                             <ng-container *ngFor="let option of DynamicHeaderPanding | slice:2" data->
-                                                <td>{{col[option]}}</td>
+                                                <td>{{col[option] ? col[option] : "_" }}</td>
                                             </ng-container>
                                         </tr>     
                                     </ng-template>
@@ -115,16 +117,18 @@
                                             </app-compacct-daterangepicker>
                                         </div>                                                                            
                                         <div class="col-sm-3">
-                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="AuthorizationSearchButton(Authorized.form.valid)" id="load"> Search
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="AuthorizationSearchButton()" id="load"> Search
                                            </button>
                                         </div>
                                      </div>
                                 </form>
                                 <br>
+                               
                                 <div class="table-responsive no-padding">
                                     <p-table [value]="ApprovedSearchedlist"  
                                     [paginator]="ApprovedSearchedlist.length ? true : false"
                                      [rows]="10" [rowHover]="true" 
+                                     *ngIf="ApprovedSearchedlist.length"
                                      [autoLayout]="true" sortMode="multiple" 
                                      [rowsPerPageOptions]="[10,20,30]" 
                                      [globalFilterFields]="DynamicHeaderAuthorized"
@@ -155,7 +159,7 @@
                                                                     </button>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a (click)="Print(col)">
+                                                                <a (click)="PrintAuthorized(col)">
                                                                     <i class="fa fa-print"></i> Print Authorized PO
                                                                 </a>
                                                             </li>                                                           
@@ -163,7 +167,7 @@
                                                     </div>
                                                 </td>
                                                 <ng-container *ngFor="let option of DynamicHeaderAuthorized | slice:2" data->
-                                                    <td>{{col[option]}}</td>
+                                                    <td>{{col[option] ? col[option] :"_" }}</td>
                                                 </ng-container>
                                         </ng-template>
                                         <!-- <ng-template pTemplate="paginatorright" let-state>
@@ -182,16 +186,18 @@
                                         </app-compacct-daterangepicker>
                                     </div>                                     
                                     <div class="col-sm-3">
-                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="NotAuthorizationSearchButton(NotAuthorized.form.valid)" id="load"> Search
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="NotAuthorizationSearchButton()" id="load"> Search
                                        </button>
                                     </div>
                                  </div>
                             </form>  
                             <br>
+                            
                             <div class="table-responsive no-padding">
                                 <p-table  [value]="NotApprovedSearchedlist"  
                                 [paginator]="NotApprovedSearchedlist.length ? true : false"
                                  [rows]="10" [rowHover]="true" 
+                                 *ngIf="NotApprovedSearchedlist.length"
                                  [autoLayout]="true" sortMode="multiple" 
                                  [rowsPerPageOptions]="[10,20,30]" 
                                  [globalFilterFields]="DynamicHeaderNOTAuthorized"
@@ -220,7 +226,7 @@
                                                                 </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a (click)="Print(col)">
+                                                            <a (click)="PrintNotAuthorized(col)">
                                                                 <i class="fa fa-print"></i> Print Not Authorized Po
                                                             </a>
                                                         </li>                                                        
@@ -228,7 +234,7 @@
                                                 </div>
                                             </td>
                                             <ng-container *ngFor="let option of DynamicHeaderNOTAuthorized | slice:2" data->
-                                                <td>{{col[option]}}</td>
+                                                <td>{{col[option] ? col[option] : "-" }}</td>
                                             </ng-container>
                                          </tr>
                                     </ng-template>
@@ -245,5 +251,126 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- Approved / DisApproved Po View -->
+<p-dialog header="Approved / DisApproved Po " appendTo="body" [(visible)]="ViewProTypeModal" [modal]="true" [responsive]="true" [style]="{ width: '75%', minWidth: '375px' }" style="text-align: center;" [minY]="70" 
+[maximizable]="true" [baseZIndex]="10000">
+<div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
+    <div class="panel-body">
+              <div class="box-body">
+                <div class="col-sm-4">
+                    <label class="control-label">PO No</label>
+                    <div class="label-t" >{{TElementobj.Doc_NO}}</div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">PO Date</label>
+                    <div class="label-t" >{{TElementobj.Doc_Date}}</div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Consignor</label>
+                    <div class="label-t" >{{TElementobj.Sub_Ledger_Name}}</div>
+                </div>
+              </div>  
+    </div> 
+</div><br> 
+<div>
+<label>Details :</label>
+<br>
+    <ng-container>
+        <table class="table table-bordered">
+       <thead>
+            <tr>
+                <th>SL NO</th>
+                <th>REQ NO</th>
+                <th>HSN</th>
+                <th>DESCRIPTION</th>
+                <th>UOM</th>
+                <th>QTY</th>
+                <th>UNIT PRICE</th>
+                <th>DISCOUNT(%)</th>
+                <th>GST(%)</th>
+                <th>TAXABLE AMOUNT</th>
+            </tr>
+       </thead>
+       <tbody>
+            <tr *ngFor="let col of DetailsArrList">
+                <td>{{col.Sl_No}}</td>
+                <td>{{col.Req_No}}</td>
+                <td>{{col.HSN}}</td>
+                <td>{{col.Description_Specification}}</td>
+                <td>{{col.UOM}}</td>
+                <td>{{col.QTY}}</td>
+                <td>{{col.Unit_price}}</td>
+                <td>{{col.Disc}}</td>
+                <td>{{col.GST}}</td>
+                <td>{{col.Amount}}</td>
+                <!-- //<td> <span (click)="Delete(i)" style="margin:auto; display:table;cursor: pointer"> <i class="fa fa-fw fa-trash"> </i> </span> </td> -->
+            </tr>
+       </tbody>
+     </table>
+   </ng-container>  
+</div>  
+<div>
+    <label>Terms. :</label>
+    <br>
+        <ng-container>
+            <table class="table table-bordered">
+           <thead>
+                <tr>
+                    <th>TERM NAME</th>
+                    <th>SAC-CODE</th>
+                    <th>TERM AMOUNT</th>
+                    <th>GST(%)</th>
+                    <th>GST AMOUNT</th>
+                    <!-- <th>UNIT PRICE</th> -->
+                </tr>
+           </thead>
+           <tbody>
+                <tr *ngFor="let col of TermsArrList">
+                    <td>{{col.Term_Name}}</td>
+                    <td>{{col.SAC_Code}}</td>
+                    <td>{{col.Amount}}</td>
+                    <td>{{col.GST_Per}}</td>
+                    <td>{{col.GST_Amount}}</td>
+                    <!-- <td></td> -->
+                    <!-- //<td> <span (click)="Delete(i)" style="margin:auto; display:table;cursor: pointer"> <i class="fa fa-fw fa-trash"> </i> </span> </td> -->
+                </tr>
+           </tbody>
+         </table>
+       </ng-container>  
+</div>
+<table align="right"class="table table-bordered"  style="width: 31em;;">
+    <tbody>
+        <tr>
+            <th>Total Amount(INR):</th>
+            <th>{{TElementobj.Product_Gross}}</th>
+        </tr>
+        <tr>
+            <th>Total Discount(INR):</th>
+            <th>{{TElementobj.Product_Discount}}</th>
+        </tr>
+        <tr>
+            <th>Total Freight-P/F Charges (INR):</th>
+            <th>{{TElementobj.Term_Taxable}}</th>
+        </tr>
+        <tr>
+            <th>Total GST (INR):</th>
+            <th>{{TElementobj.Total_GST}}</th>
+        </tr>
+        <tr>
+            <th>Grand Total(INR):</th>
+            <th>{{TElementobj.Total_Net_Amount}}</th>
+        </tr>
+    </tbody>
+</table>
+
+    <p-footer> 
+        <button type="button" (click)="DisapprovedPo(TElementobj.Doc_NO)" class="btn btn-danger"><i class="pi pi-times"></i> DisApproved</button>
+        <button type="button"  (click)="ApprovedPo(TElementobj.Doc_NO)" class="btn btn-success"><i class=" pi pi-check"></i>Approved</button>    
+    </p-footer>
+</p-dialog>
+
 
 

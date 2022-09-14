@@ -410,7 +410,7 @@
 
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingPO(PendingPOForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
@@ -425,8 +425,33 @@
                                       >&nbsp;Search
                                     </button>
                                 </div>
+                                <div class="col-sm-2">  
+                                    <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel(PendingPOList, 'Pending_PO')" id="load1" [disabled]="PendingPOList.length ? false : true">
+                                    <span class="fa fa-fw  fa-download"></span>&nbsp;EXPORT TO EXCEL
+                                 </button>
+                                 <!-- <button *ngIf="ClosingReportList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel2(ClosingReportList,'Closing_Stock_Report')" id="load1" [disabled]="EXCELClosingSpinner">
+                                    <p-progressSpinner *ngIf="EXCELClosingSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!EXCELClosingSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                                </button> -->
+                                </div>
                             </div>
                             </form> 
+                            <br>
+                            <div class="form-group" *ngIf="PendingPOList.length">
+    
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+                            
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDistPenPo()' [styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+                                        </div>
+                                    </div>
+                            
+                                </fieldset>
+                            </div>
+                            <br>
                             <div class="no-padding">
                                 <p-table [value]="PendingPOList"
                                 [paginator]="PendingPOList.length ? true : false"
@@ -450,7 +475,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO">{{option.replace('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO | slice:1">{{option.replace('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -474,7 +499,7 @@
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a (click)="PrintPPO(col.Doc_No)">
+                                                            <a (click)="PrintPPO(col.PO_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
@@ -486,7 +511,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeaderforPPO">
+                                            <ng-container *ngFor="let option of DynamicHeaderforPPO | slice:1">
                                                 <td nowrap="nowrap">{{col[option]}}</td>
                                             </ng-container>
                                             

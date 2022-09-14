@@ -22,23 +22,23 @@ declare var $:any;
   encapsulation: ViewEncapsulation.Emulated
 })
 export class K4cOutletAdvanceOrderComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   tabIndexToView = 0;
   buttonname = "Save & Print Bill";
   searchObj : search = new search();
   seachSpinner = false;
   seachSpinner1 = false;
-  Searchlist = [];
+  Searchlist:any = [];
   MobileSubmitFormSubmitted = false;
-  Searchbymobilelist = [];
+  Searchbymobilelist:any = [];
   Search_By = "Delivery Date";
   dateList: any;
   myDate: Date;
-  returnedID = [];
-  selectitem = [];
+  returnedID:any = [];
+  selectitem:any = [];
   ObjaddbillForm : addbillForm  = new addbillForm();
-  productSubmit = [];
+  productSubmit:any = [];
 
   Objcustomerdetail : customerdetail = new customerdetail();
   GSTvalidFlag = false;
@@ -51,7 +51,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Total: any;
   Round_Off: any;
   Amount_Payable: any;
-  FlavourList = [];
+  FlavourList:any = [];
   Amount: any;
   withoutdisamt:any;
   taxb4disamt:any;
@@ -102,7 +102,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Cancle_Remarks : string;
   cancleFormSubmitted = false;
   Can_Remarks = false;
-  BackupproductSubmit = [];
+  BackupproductSubmit:any = [];
   ProductType = undefined;
 
   PDFViewFlag = false;
@@ -111,7 +111,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   ProductPDFLink = undefined;
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   PhotoUploadPopup = false;
-  photoforproductList = [];
+  photoforproductList:any = [];
   adornumber = undefined;
   Uploadbutton = "Upload"
   uploadbuttondisabled = false;
@@ -119,7 +119,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   CostcentState : any;
 
   UpdatePayModeModal = false;
-  UpdatePayModeList = [];
+  UpdatePayModeList:any = [];
   ObjUpdatePayMode : UpdatePayMode =  new  UpdatePayMode();
   Ord_No = undefined;
 
@@ -1451,7 +1451,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
   //console.log("this.ObjcashForm.Card_Ac",this.productSubmit);
 
   if(this.productSubmit.length) {
-    let tempArr =[];
+    let tempArr:any =[];
     const Deltime = new Date(this.Objcustomerdetail.Del_Date_Time);
      var hr = Deltime.getHours();
      let min:any = Deltime.getMinutes();
@@ -1825,7 +1825,7 @@ this.ObjcashForm.Wallet_Amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashFo
 this.ObjcashForm.Cash_Amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0;
 this.ObjcashForm.Card_Amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
 
-let temparr = []
+let temparr:any = []
 const TempObj = {
   Payment_Ref_No : "a",
   Doc_No : this.Objcustomerdetail.Adv_Order_No,
@@ -2041,7 +2041,7 @@ this.ObjRefundcashForm.Wallet_Ac = this.ObjRefundcashForm.Wallet_Ac ? this.ObjRe
 this.ObjRefundcashForm.Wallet_Amount = this.ObjRefundcashForm.Wallet_Amount ? this.ObjRefundcashForm.Wallet_Amount : 0;
 this.ObjRefundcashForm.Cash_Amount = this.ObjRefundcashForm.Cash_Amount ? this.ObjRefundcashForm.Cash_Amount : 0;
 
-let temparr = []
+let temparr:any = []
 const TempObj = {
   Doc_No : this.Adv_Order_No,
   Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,

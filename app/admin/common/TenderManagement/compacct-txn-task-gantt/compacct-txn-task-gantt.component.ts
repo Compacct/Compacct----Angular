@@ -284,7 +284,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     const endDate = new Date(data.taskData.EndDate);
     var today = new Date();
     today.setHours(0,0,0,0);
-    if(endDate > today) {
+    if(endDate < today) {
       if(status === 'In Progress'){
         return 'red';
       }

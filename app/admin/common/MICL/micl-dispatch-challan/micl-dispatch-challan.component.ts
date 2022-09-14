@@ -165,6 +165,19 @@ export class MiclDispatchChallanComponent implements OnInit {
   BackupfilteredData: any = [];
   Save = false;
   Del = false;
+
+  seachSpinnerMis = false;
+  MIS_start_date: Date;
+  MIS_end_date: Date;
+  MISList:any = [];
+  DynamicHeaderforMISList:any = [];
+  allTotalObj:any = {}
+  BackupMISList:any = [];
+  SelectedDistDepartment:any = [];
+  SelectedDistCostCen:any = [];
+  DistDepartment:any = [];
+  DistCostCen:any = [];
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -177,7 +190,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK"];
+    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK", "MIS"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -198,7 +211,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK"];
+    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK", "MIS"];
     this.brandInput = false ;
     this.buttonname = "Save";
     //this.ObjBrowseData = new BrowseData ()
@@ -223,6 +236,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     //this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     this.SelectedIndent = undefined;
     this.IndentFilter = [];
+    this.TotalValue(this.MISList);
   }
   clearData(){
   // this.ObjBrowseData.Cost_Cen_ID = this.BrowseCostCenterList.length === 1 ? this.BrowseCostCenterList[0].Cost_Cen_ID : undefined;
@@ -1274,6 +1288,119 @@ dataforcreateChallan(Doc_No){
     // console.log("obj.Req_No==",this.SelectedIndent)
     this.GetshowProduct();
   })
+}
+// PENDING INDENT
+getDateRangeMis(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.MIS_start_date = dateRangeObj[0];
+    this.MIS_end_date = dateRangeObj[1];
+  }
+}
+GetMIS(){
+    // this.PendingIndentFormSubmitted = true;
+    this.seachSpinnerMis = true;
+    const start = this.MIS_start_date
+    ? this.DateService.dateConvert(new Date(this.MIS_start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.MIS_end_date
+    ? this.DateService.dateConvert(new Date(this.MIS_end_date))
+    : this.DateService.dateConvert(new Date());
+    if (start && end) {
+    const tempobj = {
+     From_Date : start,
+     To_Date : end,
+    //  To_Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
+    //  proj : "N"
+    }
+    // if (valid) {
+    const obj = {
+      "SP_String": "SP_MICL_Dispatch_Challan",
+      "Report_Name_String": "Dispatch_MIS",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.MISList = data;
+      this.BackupMISList = data;
+      this.GetDistinctMis();
+      if(this.MISList.length){
+        this.DynamicHeaderforMISList = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforMISList = [];
+      }
+      this.seachSpinnerMis = false;
+      this.TotalValue(this.MISList);
+      // console.log("DynamicHeaderforMISList",this.DynamicHeaderforMISList);
+    })
+    }
+    else {
+      this.seachSpinnerMis = false;
+      // this.ngxService.stop();
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
+    }
+}
+exportexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
+FilterDistMis() {
+  let department:any = [];
+  let costcen:any = [];
+  let SearchFieldsMis:any =[];
+if (this.SelectedDistDepartment.length) {
+  SearchFieldsMis.push('Dept_Name');
+  department = this.SelectedDistDepartment;
+}
+if (this.SelectedDistCostCen.length) {
+  SearchFieldsMis.push('Cost_Cen_Name');
+  costcen = this.SelectedDistCostCen;
+}
+this.MISList = [];
+if (SearchFieldsMis.length) {
+  let LeadArr = this.BackupMISList.filter(function (e) {
+    return (department.length ? department.includes(e['Dept_Name']) : true)
+    && (costcen.length ? costcen.includes(e['Cost_Cen_Name']) : true)
+  });
+this.MISList = LeadArr.length ? LeadArr : [];
+} else {
+this.MISList = [...this.BackupMISList] ;
+}
+this.TotalValue(this.MISList);
+}
+GetDistinctMis() {
+  let department:any = [];
+  let costcen:any = [];
+  this.DistDepartment =[];
+  this.SelectedDistDepartment =[];
+  this.DistCostCen =[];
+  this.SelectedDistCostCen =[];
+  this.MISList.forEach((item) => {
+if (department.indexOf(item.Dept_Name) === -1) {
+  department.push(item.Dept_Name);
+  this.DistDepartment.push({ label: item.Dept_Name, value: item.Dept_Name });
+  }
+ if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+  costcen.push(item.Cost_Cen_Name);
+ this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+ }
+});
+   this.BackupMISList = [...this.MISList];
+}
+TotalValue(arrList:any){
+  if(arrList.length){
+    this.allTotalObj.Value =0
+    arrList.forEach(ele => {
+      this.allTotalObj.Value = Number(Number(ele.Value) + Number(this.allTotalObj.Value)).toFixed(2)
+    });
+  }
+  console.log(this.allTotalObj)
 }
 }
 

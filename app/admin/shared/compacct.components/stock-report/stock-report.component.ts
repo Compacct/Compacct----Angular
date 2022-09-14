@@ -444,6 +444,16 @@ export class StockReportComponent implements OnInit {
       this.ngxService.stop();
       }
       }
+      else if(this.Report_Type === "Closing_Stock_With_Value") {
+        //   console.log(start)
+        //   console.log(end)
+        if(start && end) {
+        window.open("/Report/Crystal_Files/MICL/Closing_Stock_Value.aspx?From_Date=" + start + "&" + "To_Date=" + end, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+        this.ClosingReportSearchFormSubmitted = false;
+        this.seachSpinner = false;
+        this.ngxService.stop();
+        }
+        }
       else {
       const CCTempobj={
         StDate: start,

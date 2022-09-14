@@ -79,6 +79,10 @@ export class GrnComponent implements OnInit {
   PendRDBProWiseFormSubmitted = false;
   PendRDBProWiseList:any = [];
   DynamicHeaderforPRDBProWise:any = [];
+  ObjTerm:Term = new Term()
+  TermList:any = [];
+  TermFormSubmitted = false;
+  AddTermList:any = [];
 
 
   constructor(
@@ -107,6 +111,7 @@ export class GrnComponent implements OnInit {
     this.GetCostCenter();
     // this.GetSearchedlist(true);
     this.getcompany();
+    this.GettermAmt();
   }
   TabClick(e){
     // console.log(e)
@@ -141,6 +146,8 @@ export class GrnComponent implements OnInit {
      this.INVNo = undefined;
      this.SE_No_Date = undefined;
      this.INV_No_Date = undefined;
+     this.ObjTerm = new Term();
+     this.AddTermList = [];
    }
    clearData(){
    this.Spinner = false;
@@ -597,10 +604,12 @@ export class GrnComponent implements OnInit {
      "Json_Param_String": this.DataForSaveProduct()
 
     }
-    this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    this.GlobalAPI.postData(obj).subscribe(async (data:any)=>{
       console.log(data);
       var tempID = data[0].Column1;
       if(data[0].Column1){
+        const constSaveData = await this.TermSave(data[0].Column1);
+        if(constSaveData){
         this.compacctToast.clear();
         //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
         this.compacctToast.add({
@@ -635,6 +644,8 @@ export class GrnComponent implements OnInit {
        this.INVNo = undefined;
        this.SE_No_Date = undefined;
        this.INV_No_Date = undefined;
+       this.ObjTerm = new Term();
+       this.AddTermList = [];
 
       } 
       else{
@@ -648,6 +659,18 @@ export class GrnComponent implements OnInit {
           detail: "Error Occured "
         });
       }
+    } 
+    else{
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
     })
    }
   //  Edit(col){
@@ -761,6 +784,87 @@ export class GrnComponent implements OnInit {
   //  });
   //   })
    }
+   GettermAmt(){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "Get_Term",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.TermList = data
+    })
+  }
+  TermChange(){
+    this.ObjTerm.HSN_No = undefined;
+    if(this.ObjTerm.Term_ID) {
+    const ctrl = this;
+    const termobj = $.grep(ctrl.TermList,function(item: any) {return item.Term_ID == ctrl.ObjTerm.Term_ID})[0];
+    console.log(termobj);
+    this.ObjTerm.Term_ID = termobj.Term_ID
+    this.ObjTerm.Term_Name = termobj.Term_Name;
+    this.ObjTerm.HSN_No = termobj.HSN_No;
+    this.ObjTerm.GST_Per = termobj.GST_Tax_Per;
+    this.ObjTerm.Sale_Pur = termobj.Sale_Pur;
+    }
+  }
+  AddTerm(valid){
+    this.TermFormSubmitted = true;
+    if(valid && this.TeramChek()) {
+      var TERMobj = {
+      Sale_Pur : this.ObjTerm.Sale_Pur,
+      Term_ID : this.ObjTerm.Term_ID,
+      Term_Name : this.ObjTerm.Term_Name,
+      Term_Amount : Number(this.ObjTerm.Term_Amount),
+      GST_Per : this.ObjTerm.GST_Per,
+      GST_Amount:  Number(Number(Number(this.ObjTerm.Term_Amount) * Number(this.ObjTerm.GST_Per) / 100).toFixed(2)),
+      HSN_No : this.ObjTerm.HSN_No,
+    };
+    this.AddTermList.push(TERMobj);
+    // this.getAllTotal()
+    this.ObjTerm = new Term();
+    this.TermFormSubmitted = false;
+      
+    }
+  }
+   TeramChek(){
+    if(this.AddTermList.length){
+      const FilterAddTermList = this.AddTermList.find((el:any)=> Number(el.Term_ID) == Number(this.ObjTerm.Term_ID))
+      if(FilterAddTermList){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Same Term Name Can't be Added."
+        });
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    else{
+      return true;
+    }
+   }
+  DeteteTerm(index) {
+    this.AddTermList.splice(index,1)
+    // this.getAllTotal()
+  }
+  async TermSave(doc:any){
+    if(doc && this.AddTermList.length){
+       this.AddTermList.forEach((ele:any) => {
+         ele['DOC_No'] = doc
+       });
+      const obj = {
+        "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+        "Report_Name_String": "Insert_Term_Details",
+        "Json_Param_String": JSON.stringify(this.AddTermList)
+      }
+      const TermData = await  this.GlobalAPI.getData(obj).toPromise();
+     // console.log("projectData",TermData);
+      return TermData
+    }
+  }
 
    // CREATE TAB END
 
@@ -1167,6 +1271,16 @@ class PendRDBProWise{
   start_date : Date;
   end_date : Date;
   Cost_Cen_ID : any;
+}
+class Term {
+  DOC_No:any
+  Sale_Pur:any
+  Term_ID:any
+  Term_Name:any
+  Term_Amount:any
+  GST_Per:any
+  GST_Amount:any
+  HSN_No:any
 }
 
 

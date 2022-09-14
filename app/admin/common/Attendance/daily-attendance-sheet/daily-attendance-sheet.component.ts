@@ -86,7 +86,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
       this.seachSpinner = false;
       this.EmpDailyAttenList.forEach((val) => {
         val["OTdisabled"] = false;
-        val["Work_Minute"] = val.Working_Hours_Mins;
+        // val["Work_Minute"] = val.Work_Minute;
         val["minDate"] = Date;
         if(val.Atten_Type_ID) {
         var attendanceid = this.AttenTypelist.filter( ele => Number(ele.Atten_Type_ID) === Number(val.Atten_Type_ID));
@@ -134,11 +134,14 @@ export class DailyAttendanceSheetComponent implements OnInit {
         obj.minDate = new Date(obj.Off_In_Time);
       }
       if (obj.Off_In_Time && obj.Off_Out_Time) {
+        // console.log("obj.Off_Out_Time",obj.Off_In_Time)
+        // console.log("obj.Off_In_Time",obj.Off_In_Time)
         var outtime:any = new Date(obj.Off_Out_Time);
         var intime:any = new Date(obj.Off_In_Time);
-        // console.log("obj.Off_Out_Time",outtime.getTime())
-        // console.log("obj.Off_In_Time",intime.getTime())
-      var minutes = Math.abs(outtime.getTime() - intime.getTime()) / 36e5 * 60;
+        // console.log("getOut_Time",outtime.getTime())
+        // console.log("getIn_Time",intime.getTime())
+      // var minutes = Math.abs(outtime.getTime() - intime.getTime()) / 36e5 * 60;
+      var minutes = (Math.abs(outtime.getTime() - intime.getTime()) / (1000 * 60));
       obj.Work_Minute = minutes;
       if (obj.OT_Avail === 0 || obj.OT_Avail === null) {
         obj.OT_Minutes = 0;
