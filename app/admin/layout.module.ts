@@ -352,6 +352,7 @@ import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/
 import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-authorization.component";
 import { BranchRequisitionComponent } from './common/Patna/branch-requisition/branch-requisition.component';
 import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-authorization/requisition-authorization.component";
+import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/bom-authorization.component";
 
 
 @NgModule({
@@ -622,7 +623,8 @@ import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-aut
     MICLJournalVoucherComponent,
     POAuthorizationComponent,
     BranchRequisitionComponent,
-    RequisitionAuthorizationComponent
+    RequisitionAuthorizationComponent,
+    BOMAuthorizationComponent
   ],
   imports: [
     CommonModule,
