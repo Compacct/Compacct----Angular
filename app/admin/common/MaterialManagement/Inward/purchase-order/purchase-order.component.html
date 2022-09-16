@@ -390,7 +390,8 @@
                                             CompacctDigitonly="true"
                                             (ngModelChange)="getProductDetalis()"
                                             [ngClass]="{'clearance': purChaseAddFormSubmit && Rate?.errors?.required }"
-                                             required><!--[disabled] = 'disable' -->
+                                            required
+                                            [disabled] = 'disable'><!--[disabled] = 'disable' -->
                                         </div>
                                         <div class="col-sm-2">
                                             <label class="control-label">Grs Amt<sup class="text-danger"></sup></label>
