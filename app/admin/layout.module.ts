@@ -350,6 +350,7 @@ import { DailyAttendanceSheetComponent } from './common/Attendance/daily-attenda
 import { MasterConsultancyV3Component } from "./common/PatientManagement/Master/master-consultancy-v3/master-consultancy-v3.component";
 import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/micl-journal-voucher.component";
 import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-authorization.component";
+import { BranchRequisitionComponent } from './common/Patna/branch-requisition/branch-requisition.component';
 
 
 @NgModule({
@@ -618,7 +619,8 @@ import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-auth
     DailyAttendanceSheetComponent,
     MasterConsultancyV3Component,
     MICLJournalVoucherComponent,
-    POAuthorizationComponent
+    POAuthorizationComponent,
+    BranchRequisitionComponent
   ],
   imports: [
     CommonModule,
