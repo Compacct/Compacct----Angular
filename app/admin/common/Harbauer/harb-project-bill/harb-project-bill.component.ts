@@ -433,7 +433,7 @@ export class HarbProjectBillComponent implements OnInit {
       this.ObjProjectBill.Total_IGST_Amount = Number(this.getTofix(this.grIGST))
       this.ObjProjectBill.Tax_Amt = this.getTofix(Number(this.grCGST) + Number(this.grIGST) + Number(this.grSGST))
       this.ObjProjectBill.Term_Amt = 0
-      this.ObjProjectBill.Rounded_Off = this.getTofix(Number((Number(this.grNetAMt).toFixed(2))) - Math.round(Number((Number(this.grNetAMt).toFixed(2)))))
+      this.ObjProjectBill.Rounded_Off = this.getTofix( Math.round(Number((Number(this.grNetAMt).toFixed(2)))) - Number((Number(this.grNetAMt).toFixed(2))))
       this.ObjProjectBill.Ref_Date = this.DateService.dateConvert(this.Ref_Date)
       this.ObjProjectBill.Percentage_claimed_Previous_Bills = Number(this.ObjProjectBill.Percentage_claimed_Previous_Bills)
       this.ObjProjectBill.Percentage_claimed_This_Bill = Number(this.ObjProjectBill.Percentage_claimed_This_Bill)
@@ -564,6 +564,12 @@ export class HarbProjectBillComponent implements OnInit {
         }
       })
     }
+  }
+  RoundOff(key:any){
+    return Math.round(Number(Number(key).toFixed(2)))
+  }
+  roundOffValue(){
+    return this.getTofix( Math.round(Number((Number(this.grNetAMt).toFixed(2)))) - Number((Number(this.grNetAMt).toFixed(2))))
   }
 }
 class ProjectBill{

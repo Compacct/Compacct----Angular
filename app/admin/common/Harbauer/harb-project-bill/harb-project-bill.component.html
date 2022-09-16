@@ -681,8 +681,8 @@
                                     <td class="amt-td">{{getTofix(grTotalAmt)}}</td>
                                     <th>CGST Amount :</th>
                                     <td class="amt-td ">{{getTofix(grCGST)}}</td>
-                                    <th></th>
-                                    <td class="amt-td"></td>
+                                    <th>Rounded Off :</th>
+                                    <td class="amt-td">{{roundOffValue()}}</td>
                                      </tr>
                                     <tr>
                                     <th>Discount Amount:</th>
@@ -690,7 +690,7 @@
                                     <th>IGST Amount:</th>
                                     <td class="amt-td ">{{getTofix(grIGST)}}</td>
                                     <th>Net Amount : </th>
-                                    <td class="amt-td">{{getTofix(grNetAMt)}}</td>
+                                    <td class="amt-td">{{RoundOff(this.grNetAMt)}}</td>
                                     </tr>
                                     <tr>
                                         <th>Taxable Amount:</th>

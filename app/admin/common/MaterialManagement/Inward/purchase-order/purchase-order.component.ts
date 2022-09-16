@@ -1951,12 +1951,11 @@ getPONoforview(col,row){
    this.objaddPurchacse.Gst = this.addPurchaseList[inx].GST_Percentage
    this.objaddPurchacse.GST_AMT = this.addPurchaseList[inx].GST_Amount
    this.objaddPurchacse.Total_Amount  = this.addPurchaseList[inx].Total_Amount
-  
+   this.disable = false
 }
 
 getRoundedOff(){
-  return this.getTofix(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)) -
-          Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)))) 
+  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) - Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) 
 } 
 
 }
