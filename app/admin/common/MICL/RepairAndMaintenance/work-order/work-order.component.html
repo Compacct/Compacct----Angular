@@ -320,6 +320,7 @@
                                             [(ngModel)]="ObjaddWorkOrder.Qty"
                                             placeholder="Quantity"
                                             CompacctDigitonly="true"
+                                            (ngModelChange)="getProductDetalis()" 
                                             [disabled] = "!ObjaddWorkOrder.Product_ID"
                                             [ngClass]="{'clearance': WorkAddFormSubmit && Qty?.errors?.required }"
                                             required>
@@ -343,10 +344,10 @@
                                             [(ngModel)]="ObjaddWorkOrder.Rate"
                                             placeholder="Rate"
                                             CompacctDigitonly="true"
-                                            (ngModelChange)="getGrsAmt()"
+                                            (ngModelChange)="getProductDetalis()" 
                                             [ngClass]="{'clearance': WorkAddFormSubmit && Rate?.errors?.required }"
                                             required
-                                            [disabled] = 'disable'>
+                                            [disabled] = 'disable'><!--(ngModelChange)="getGrsAmt()" -->
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Grs Amt<sup class="text-danger"></sup></label>
@@ -361,7 +362,7 @@
                                         </div>
                                      </div>
                                     <div class="form-group">
-                                        <div class="col-sm-2">
+                                        <!-- <div class="col-sm-2">
                                             <label class="control-label">Excise Tax (%)<sup class="text-danger"></sup></label>
                                             <input type="text"
                                             class="form-control"
@@ -383,14 +384,14 @@
                                             placeholder="Excise Amt"
                                             CompacctDigitonly="true"
                                             disabled>
-                                        </div>
+                                        </div> -->
                                         <div class="col-sm-2">
                                             <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
                                             <select class="form-control" 
                                             name="Discount_Type" 
                                             #Discount_Type="ngModel" 
                                             [(ngModel)]="ObjaddWorkOrder.Discount_Type"
-                                            (change)="DisClear()">
+                                            (change)="getProductDetalis()"> <!-- (change)="DisClear()" -->
                                             <option  [ngValue]="undefined">Select</option>
                                                <option *ngFor = "let option of DiscountTypeList" [value] ="option.Dtype">
                                                   {{option.Dtype}}
@@ -406,10 +407,10 @@
                                                 name="Discount"
                                                 #Discount="ngModel"
                                                 [(ngModel)]="ObjaddWorkOrder.Discount"
-                                                (ngModelChange)="getDis()"
+                                                (ngModelChange)="getProductDetalis()"
                                                 placeholder="Discount"
                                                 CompacctDigitonly="true"
-                                                [disabled] = "!ObjaddWorkOrder.Discount_Type">
+                                                [disabled] = "!ObjaddWorkOrder.Discount_Type"><!--(ngModelChange)="getDis()" -->
                                         </div>
                                         <div class="col-sm-2">
                                             <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
@@ -423,30 +424,30 @@
                                             CompacctDigitonly="true"
                                              disabled>
                                         </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
+                                                <input type="text"
+                                            class="form-control"
+                                            name="taxable_AMT"
+                                            #taxable_AMT="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.taxable_AMT"
+                                            placeholder="Taxable AMT"
+                                            disabled
+                                            >
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">{{taxlabelChange()}}(%)<sup class="text-danger"></sup></label>
+                                                <input type="text"
+                                                class="form-control"
+                                                name="Gst"
+                                                #Gst="ngModel"
+                                                [(ngModel)]="ObjaddWorkOrder.Gst"
+                                                placeholder="GST(%)"
+                                                CompacctDigitonly="true"
+                                                disabled>
+                                            </div>
                                     </div>
                                  <div class="form-group">
-                                    <div class="col-sm-2">
-                                    <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
-                                        <input type="text"
-                                    class="form-control"
-                                    name="taxable_AMT"
-                                    #taxable_AMT="ngModel"
-                                    [(ngModel)]="ObjaddWorkOrder.taxable_AMT"
-                                    placeholder="Taxable AMT"
-                                    disabled
-                                    >
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label class="control-label">{{taxlabelChange()}}(%)<sup class="text-danger"></sup></label>
-                                        <input type="text"
-                                        class="form-control"
-                                        name="Gst"
-                                        #Gst="ngModel"
-                                        [(ngModel)]="ObjaddWorkOrder.Gst"
-                                        placeholder="GST(%)"
-                                        CompacctDigitonly="true"
-                                        disabled>
-                                    </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">{{taxlabelChange()}} Amount<sup class="text-danger"></sup></label>
                                         <input type="text"
@@ -497,16 +498,17 @@
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Unit</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Rate</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Gross Amt</th>
-                                        <th nowrap="" colspan="2" style="vertical-align:middle">Excise Tax</th>
+                                        <!-- <th nowrap="" colspan="2" style="vertical-align:middle">Excise Tax</th> -->
                                         <th nowrap="" colspan="3" style="vertical-align:middle">Discount </th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
                                         <th  nowrap="" colspan="2" style="vertical-align:middle">{{taxlabelChange()}}</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Net Amount</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Edit</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Delete</th>
                                          </tr>
                                         <tr style="background-color:#3c8dbc;color:white;">
-                                            <th nowrap="" style="vertical-align:middle">Tax</th>
-                                            <th nowrap="" style="vertical-align:middle">Amt.</th>
+                                            <!-- <th nowrap="" style="vertical-align:middle">Tax</th>
+                                            <th nowrap="" style="vertical-align:middle">Amt.</th> -->
                                             <th nowrap="" style="vertical-align:middle">Disc Type</th>
                                             <th nowrap="" style="vertical-align:middle">Disc %</th>
                                             <th nowrap="" style="vertical-align:middle">Disc Amt</th>
@@ -526,8 +528,8 @@
                                                 <td>{{col.UOM}}</td>
                                                 <td>{{col.Rate ? col.Rate : 0}}</td>
                                                 <td>{{col.Gross_Amt ? col.Gross_Amt :0}}</td>
-                                                <td>{{col.Excise_Tax_Percentage ? col.Excise_Tax_Percentage : 0}}</td>
-                                                <td>{{col.Excise_Amount ? col.Excise_Amount : 0}}</td>
+                                                <!-- <td>{{col.Excise_Tax_Percentage ? col.Excise_Tax_Percentage : 0}}</td>
+                                                <td>{{col.Excise_Amount ? col.Excise_Amount : 0}}</td> -->
                                                 <td>{{col.Discount_Type ? col.Discount_Type : 0}}</td>
                                                 <td>{{col.Discount ? col.Discount : 0}}</td>
                                                 <td>{{col.Discount_Amount ? col.Discount_Amount : 0}}</td>
@@ -535,31 +537,109 @@
                                                 <td>{{col.GST_Percentage ? col.GST_Percentage : 0}}</td>
                                                 <td>{{col.GST_Amount ? col.GST_Amount : 0}}</td>
                                                 <td>{{col.Net_Amount ? col.Net_Amount : 0}}</td>
-                                               <td> <a (click)="DeleteAddPurchase(i)"
+                                                <td> <a class="btn btn-sm btn-warning" (click)="EditAddPurchase(i)"
+                                                    ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                                  </a></td>
+                                                  <td> <a class="btn btn-sm btn-danger" (click)="DeleteAddPurchase(i)"
+                                                    ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                                  </a></td>
+                                               <!-- <td> <a (click)="DeleteAddPurchase(i)"
                                                 ><div><i class="fa fa-fw fa-trash"> </i></div>
-                                              </a></td>
+                                              </a></td> -->
                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
+                                <br>
+                                <hr class="box boxboxDivide-primary" />
+                                <form #TermForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                             <label class="control-label">Term Name<sup class="text-danger">*</sup></label>
+                                             <select class="form-control" name="termname" #termname="ngModel" [(ngModel)]="ObjTerm.Term_ID"
+                                                [ngClass]="{clearance: TermFormSubmitted && termname?.errors?.required}"
+                                                (change)="TermChange()" required >
+                                             <option [ngValue]="undefined">Select</option>
+                                             <option *ngFor="let option of TermList" [ngValue]="option.Term_ID">{{ option.Term_Name }}</option>
+                                            </select>
+                                         </div>
+                                        <div class="col-sm-2">
+                                          <label>HSN No<sup class="text-danger"></sup></label>
+                                            <input class="form-control" name="HSNNo" [(ngModel)]="ObjTerm.HSN_No" required="true" disabled="true" placeholder="HSN No" />
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <label>Term Amount<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="termamount" #termamount="ngModel" [(ngModel)]="ObjTerm.Term_Amount"
+                                              [ngClass]="{clearance: TermFormSubmitted && termamount?.errors?.required}"
+                                              required="true" CompacctDigitonly="true" placeholder="Term Amount" />
+                                        </div>
+                                       <button type="submit" class="btn btn-primary custombutton" (click)="AddTerm(TermForm.form.valid)">
+                                        <span class="glyphicon glyphicon-plus"></span>Add
+                                       </button>
+                                    </div>
+                                <br>
+                                <div class="table-responsive no-padding">
+                                    <table class="table table-bordered">
+                                     <thead style="background-color:#3c8dbc;color:white;">
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl. No.</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Name</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">HSN No</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Amount</th>
+                                          <th colspan="2" scope="colgroup" class="text-center">GST</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
+                                          <th rowspan="2" class="text-center" style="vertical-align:middle">Delete</th>
+                                        </tr>
+                                        <tr style="background-color:#3c8dbc;color:white">
+                                           <th scope="col" class="text-center">Rate</th>
+                                           <th scope="col" class="text-center">Amt.</th>
+                                         </tr>
+                                     </thead>
+                                    <tbody>
+                                        <tr *ngFor=" let TermTableList of AddTermList; let ind = index; let odd = odd;" [class.even]="odd">
+                                          <td>{{ ind + 1  }}</td>
+                                          <td>{{ TermTableList.Term_Name }}</td>
+                                          <td>{{ TermTableList.HSN_No }}</td>
+                                          <td>{{ TermTableList.Term_Amount }}</td>
+                                          <td>{{ TermTableList.GST_Per }}</td>
+                                          <td>{{ getTofix(TermTableList.GST_Amount )}}</td>
+                                          <td>{{ getTofix(TermTableList.Term_Amount + TermTableList.GST_Amount)}}</td>
+                                          <td><button (click)="DeteteTerm(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                   </table>
+                                </div>
+                           </form>
                                  <div class="table-responsive">
                                       <table class="table">
                                         <tbody><tr>
-                                          <th>Gross Amount:</th>
+                                          <th>Total Amount:</th>
                                           <td class="amt-td ">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
-                                          <th>Taxable Amount :</th>
-                                          <td class="amt-td ">{{getTofix(taxAblTotal) ? getTofix(taxAblTotal) : 0}}</td>
-                                          <th>Discount Amount :</th>
-                                          <td class="amt-td">{{getTofix(disTotal) ? getTofix(disTotal) : 0}}</td>
+                                          <th>Term Amount:</th>
+                                          <td class="amt-td ">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
+                                          <th></th>
+                                          <td class="amt-td"></td>
                                            </tr>
                                         <tr>
-                                          <th>Excise Amount:</th>
-                                          <td class="amt-td">{{getTofix(ExciTotal) ? getTofix(ExciTotal) : 0}}</td>
+                                          <th>Discount Amount :</th>
+                                          <td class="amt-td">{{getTofix(disTotal) ? getTofix(disTotal) : 0}}</td>
+                                          <!-- <th>Excise Amount:</th>
+                                          <td class="amt-td">{{getTofix(ExciTotal) ? getTofix(ExciTotal) : 0}}</td> -->
                                           <th>{{taxlabelChange()}} Amount :</th>
-                                          <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td>
+                                          <!-- <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td> -->
+                                          <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
                                           <th>Net Amount : </th>
-                                          <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td>
-                                            </tr>
+                                          <!-- <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td> -->
+                                          <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt)}}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Taxable Amount :</th>
+                                          <td class="amt-td ">{{getTofix(taxAblTotal) ? getTofix(taxAblTotal) : 0}}</td>
+                                          <th>Rounded Off :</th>
+                                          <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
+                                          <th></th>
+                                          <td class="amt-td"></td>
+                                        </tr>
                                        </tbody>
                                     </table>
                                     </div>
@@ -578,6 +658,7 @@
                                         #PO_Header="ngModel"
                                         [(ngModel)]="ObjWorkOrder.PO_Header"
                                         [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
                                        >
                                           
                                         </p-editor>
@@ -597,6 +678,7 @@
                                         #Terms_Of_Price="ngModel"
                                         [(ngModel)]="ObjWorkOrder.Terms_Of_Price"
                                         [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
                                        >
                                           
                                         </p-editor>
@@ -616,6 +698,7 @@
                                     #Payment_Terms="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Payment_Terms"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -635,6 +718,7 @@
                                     #Delivery_Terms="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Delivery_Terms"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -654,6 +738,7 @@
                                     #Warranty="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Warranty_Guarantee_Term"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -673,6 +758,7 @@
                                     #Transist_Insurance="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Transist_Insurance"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -692,6 +778,7 @@
                                     #Certifivates="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Certificates_Terms"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -711,6 +798,7 @@
                                     #Taxes_And_Duties="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Taxes_And_Duties"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -730,6 +818,7 @@
                                     #Packing_And_Forward="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Packing_And_Forward"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -749,6 +838,7 @@
                                     #Transpotation="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Transpotation"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -768,6 +858,7 @@
                                     #Installation_Commissionning="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Installation_Commissioning"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -787,6 +878,7 @@
                                     #Delivery_Location="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Delivery_Location"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -806,6 +898,7 @@
                                     #Remarks="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Remarks"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>

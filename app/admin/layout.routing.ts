@@ -256,6 +256,7 @@ import { MasterConsultancyV3Component } from "./common/PatientManagement/Master/
 import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/micl-journal-voucher.component";
 import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-authorization.component";
 import { BranchRequisitionComponent } from "./common/Patna/branch-requisition/branch-requisition.component";
+import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-authorization/requisition-authorization.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1890,6 +1891,13 @@ data: {
                    component: BranchRequisitionComponent,
                     data: {
                       title: 'Branch_Requisition'
+                }
+                },
+                {
+                  path: 'Requisition_Authorization',
+                  component: RequisitionAuthorizationComponent,
+                  data: {
+                    title: 'Requisition Authorization'
                 }
                 },
       
