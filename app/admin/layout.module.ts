@@ -351,6 +351,7 @@ import { MasterConsultancyV3Component } from "./common/PatientManagement/Master/
 import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/micl-journal-voucher.component";
 import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-authorization.component";
 import { BranchRequisitionComponent } from './common/Patna/branch-requisition/branch-requisition.component';
+import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-authorization/requisition-authorization.component";
 
 
 @NgModule({
@@ -620,7 +621,8 @@ import { BranchRequisitionComponent } from './common/Patna/branch-requisition/br
     MasterConsultancyV3Component,
     MICLJournalVoucherComponent,
     POAuthorizationComponent,
-    BranchRequisitionComponent
+    BranchRequisitionComponent,
+    RequisitionAuthorizationComponent
   ],
   imports: [
     CommonModule,

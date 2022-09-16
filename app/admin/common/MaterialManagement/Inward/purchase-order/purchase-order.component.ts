@@ -718,6 +718,7 @@ export class PurchaseOrderComponent implements OnInit {
         }
       }
      else {
+      this.objaddPurchacse.Discount = undefined;
       this.objaddPurchacse.Discount_AMT = undefined;
       this.objaddPurchacse.Total_Amount = undefined;
       this.objaddPurchacse.GST_AMT = undefined
@@ -1945,11 +1946,11 @@ getPONoforview(col,row){
    this.addPurchaseListInput = true
    this.Requisiton_Type =  this.addPurchaseList[inx].Requisiton_Type
    this.Material_Type = this.addPurchaseList[inx].Material_Type
-   this.objaddPurchacse.Discount_AMT =  this.addPurchaseList[inx].Discount_Amount
+   this.objaddPurchacse.Discount_AMT =  this.addPurchaseList[inx].Discount_Amount ? this.addPurchaseList[inx].Discount_Amount : undefined
    this.objaddPurchacse.taxable_AMT = this.addPurchaseList[inx].Taxable_Amount
    this.objaddPurchacse.Gst = this.addPurchaseList[inx].GST_Percentage
    this.objaddPurchacse.GST_AMT = this.addPurchaseList[inx].GST_Amount
-   this.objaddPurchacse.Total_Amount  = this.addPurchaseList[inx].Net_Amount
+   this.objaddPurchacse.Total_Amount  = this.addPurchaseList[inx].Total_Amount
   
 }
 

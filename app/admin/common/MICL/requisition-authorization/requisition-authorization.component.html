@@ -1,0 +1,374 @@
+<p-toast key="compacct-toast" baseZIndex="9999999999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" baseZIndex="999999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <h5>{{message.detail}}</h5>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Approved && !DisApproved">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="!Approved && DisApproved" >
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-danger"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal" style="margin-top: 8px;">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-hourglass">
+                            <!-- <form name="DispatchSearchForm" #DispatchSearchForm="ngForm" novalidate>
+                                 filter -->
+                                <!-- <div  class="form-group"*ngIf='Searchedlist.length' style="padding:15px">
+                                    <fieldset class="col-md-12">
+                                        <legend>Filter</legend>
+                                        <div class="form-group" >
+                                            <div class="col-sm-6">
+                                              <label class="control-label">Vendor</label>
+                                              <p-multiSelect [options]="DistVendor"  
+                                                itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                                [(ngModel)]="SelectedDistVendor"
+                                                name="Vendor"
+                                                (onChange)='FilterVendor()'></p-multiSelect>
+                                            </div>
+                                          </div>
+                                    </fieldset>
+                                </div> 
+                            </form> -->
+                            <strong *ngIf="!SearchedlistPanding.length" style="font-size: large;">No Data Found</strong>
+                            <div class="table-responsive no-padding">
+                                <p-table [value]="SearchedlistPanding" 
+                                [paginator]="SearchedlistPanding.length ? true : false"  
+                                 [rows]="10" [rowHover]="true" 
+                                 *ngIf="SearchedlistPanding.length"
+                                 [autoLayout]="true" sortMode="multiple" 
+                                 [rowsPerPageOptions]="[10,20,30]" 
+                                 [globalFilterFields]="DynamicHeaderPanding"
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                             <th style="width:5em">Action</th>
+                                            <th *ngFor="let option of DynamicHeaderPanding ">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                         <tr >
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="Print(col)">
+                                                                <i class="fa fa-print"></i> Print Requisition
+                                                            </a>
+                                                        </li>
+                                                         <li   >
+                                                            <a (click)="ApprovedPo(col)">
+                                                                <i class="glyphicon glyphicon-ok"></i> Approved  Requisition
+                                                            </a>
+                                                        </li>
+                                                        <li >
+                                                            <a (click)="DisapprovedPo(col)">
+                                                                <i class="glyphicon glyphicon-remove"></i> Disapproved Requisition
+                                                            </a>
+                                                        </li>
+                                                       
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeaderPanding " >
+                                                <td>{{col[option] ? col[option] : "_" }}</td>
+                                            </ng-container>
+                                        </tr>     
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-ok-sign">
+                                 <form name="Authorized" #Authorized="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Date</label>
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                            </app-compacct-daterangepicker>
+                                        </div>                                                                            
+                                        <div class="col-sm-3">
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="AuthorizationSearchButton()" id="load"> Search
+                                           </button>
+                                        </div>
+                                     </div>
+                                </form>
+                                <br>
+                               
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="ApprovedSearchedlist"  
+                                    [paginator]="ApprovedSearchedlist.length ? true : false"
+                                     [rows]="10" [rowHover]="true" 
+                                     *ngIf="ApprovedSearchedlist.length"
+                                     [autoLayout]="true" sortMode="multiple" 
+                                     [rowsPerPageOptions]="[10,20,30]" 
+                                     [globalFilterFields]="DynamicHeaderAuthorized"
+                                        [rowHover]="true" #dt8>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt8.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+    
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th *ngFor="let option of DynamicHeaderAuthorized ">{{option.replaceAll('_',' ')}}</th> 
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                             <tr >
+    
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="PrintAuthorized(col)">
+                                                                    <i class="fa fa-print"></i> Print
+                                                                </a>
+                                                            </li>                                                           
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <ng-container *ngFor="let option of DynamicHeaderAuthorized " >
+                                                    <td>{{col[option] ? col[option] :"_" }}</td>
+                                                </ng-container>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-remove-sign">
+                            <form name="NotAuthorized" #NotAuthorized="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate2">
+                                        </app-compacct-daterangepicker>
+                                    </div>                                     
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="NotAuthorizationSearchButton(NotAuthorized.form.valid)" id="load"> Search
+                                       </button>
+                                    </div>
+                                 </div>
+                            </form>  
+                            <br>
+                            
+                            <div class="table-responsive no-padding">
+                                <p-table  [value]="NotApprovedSearchedlist"  
+                                [paginator]="NotApprovedSearchedlist.length ? true : false"
+                                 [rows]="10" [rowHover]="true" 
+                                 *ngIf="NotApprovedSearchedlist.length"
+                                 [autoLayout]="true" sortMode="multiple" 
+                                 [rowsPerPageOptions]="[10,20,30]" 
+                                 [globalFilterFields]="DynamicHeaderNOTAuthorized"
+                                    [rowHover]="true" #dt7>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt7.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th *ngFor="let option of DynamicHeaderNOTAuthorized ">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                         <tr >
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="PrintNotAuthorized(col)">
+                                                                <i class="fa fa-print"></i> Print
+                                                            </a>
+                                                        </li>                                                        
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeaderNOTAuthorized " >
+                                                <td>{{col[option] ? col[option] : "-" }}</td>
+                                            </ng-container>
+                                         </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>          
+                      
+                       </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Approved / DisApproved Po View -->
+<!-- <p-dialog header="Approved / DisApproved Requisition " appendTo="body" [(visible)]="ViewProTypeModal" [modal]="true" [responsive]="true" [style]="{ width: '75%', minWidth: '375px' }" style="text-align: center;" [minY]="70" 
+[maximizable]="true" [baseZIndex]="10000">
+<div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
+    <div class="panel-body">
+              <div class="box-body">
+                <div class="col-sm-4">
+                    <label class="control-label">PO No</label>
+                    <div class="label-t" >{{TElementobj.Doc_NO}}</div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">PO Date</label>
+                    <div class="label-t" >{{TElementobj.Doc_Date}}</div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Consignor</label>
+                    <div class="label-t" >{{TElementobj.Sub_Ledger_Name}}</div>
+                </div>
+              </div>  
+    </div> 
+</div><br> 
+<div>
+<label>Details :</label>
+<br>
+    <ng-container>
+        <table class="table table-bordered">
+       <thead>
+            <tr>
+                <th>SL NO</th>
+                <th>REQ NO</th>
+                <th>HSN</th>
+                <th>DESCRIPTION</th>
+                <th>UOM</th>
+                <th>QTY</th>
+                <th>UNIT PRICE</th>
+                <th>DISCOUNT(%)</th>
+                <th>GST(%)</th>
+                <th>TAXABLE AMOUNT</th>
+            </tr>
+       </thead>
+       <tbody>
+            <tr *ngFor="let col of DetailsArrList">
+                <td>{{col.Sl_No}}</td>
+                <td>{{col.Req_No}}</td>
+                <td>{{col.HSN}}</td>
+                <td>{{col.Description_Specification}}</td>
+                <td>{{col.UOM}}</td>
+                <td>{{col.QTY}}</td>
+                <td>{{col.Unit_price}}</td>
+                <td>{{col.Disc}}</td>
+                <td>{{col.GST}}</td>
+                <td>{{col.Amount}}</td>
+                 //<td> <span (click)="Delete(i)" style="margin:auto; display:table;cursor: pointer"> <i class="fa fa-fw fa-trash"> </i> </span> </td> -->
+             <!-- </tr>
+       </tbody>
+     </table>
+   </ng-container>  
+</div>  
+<div>
+    <label>Terms. :</label>
+    <br>
+        <ng-container>
+            <table class="table table-bordered">
+           <thead>
+                <tr>
+                    <th>TERM NAME</th>
+                    <th>SAC-CODE</th>
+                    <th>TERM AMOUNT</th>
+                    <th>GST(%)</th>
+                    <th>GST AMOUNT</th> -->
+                    <!-- <th>UNIT PRICE</th> -->
+                <!-- </tr>
+           </thead>
+           <tbody>
+                <tr *ngFor="let col of TermsArrList">
+                    <td>{{col.Term_Name}}</td>
+                    <td>{{col.SAC_Code}}</td>
+                    <td>{{col.Amount}}</td>
+                    <td>{{col.GST_Per}}</td>
+                    <td>{{col.GST_Amount}}</td> -->
+                    <!-- <td></td> -->
+                    <!-- //<td> <span (click)="Delete(i)" style="margin:auto; display:table;cursor: pointer"> <i class="fa fa-fw fa-trash"> </i> </span> </td>
+                </tr>
+           </tbody>
+         </table>
+       </ng-container>  
+</div> -->
+<!-- <table align="right"class="table table-bordered"  style="width: 31em;;">
+    <tbody>
+        <tr>
+            <th>Total Amount(INR):</th>
+            <th>{{TElementobj.Product_Gross}}</th>
+        </tr>
+        <tr>
+            <th>Total Discount(INR):</th>
+            <th>{{TElementobj.Product_Discount}}</th>
+        </tr>
+        <tr>
+            <th>Total Freight-P/F Charges (INR):</th>
+            <th>{{TElementobj.Term_Taxable}}</th>
+        </tr>
+        <tr>
+            <th>Total GST (INR):</th>
+            <th>{{TElementobj.Total_GST}}</th>
+        </tr>
+        <tr>
+            <th>Grand Total(INR):</th>
+            <th>{{TElementobj.Total_Net_Amount}}</th>
+        </tr>
+    </tbody>
+</table>
+
+    <p-footer> 
+        <button type="button" (click)="DisapprovedPo(TElementobj.Doc_NO)" class="btn btn-danger"><i class="pi pi-times"></i> DisApproved</button>
+        <button type="button"  (click)="ApprovedPo(TElementobj.Doc_NO)" class="btn btn-success"><i class=" pi pi-check"></i>Approved</button>    
+    </p-footer>
+</p-dialog>
+  -->

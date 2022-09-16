@@ -470,8 +470,8 @@
       <div class="col-md-12">
         <div class="form-horizontal">
           <div class="box-body">
-            <form name="TaskModalUpdate" *ngIf="commonApi.CompacctCookies.User_Type == 'A'" #TaskModalUpdate="ngForm" novalidate>
-              <fieldset [disabled]="TaskDisabledFlag">
+            <form name="TaskModalUpdate" #TaskModalUpdate="ngForm" novalidate>
+              <fieldset  *ngIf="commonApi.CompacctCookies.User_Type == 'A'" [disabled]="TaskDisabledFlag">
                 <div class="form-group">
                   <div class="col-sm-6">
                     <label class="control-label">Type of Work&nbsp;<span class="text-danger">*</span></label>
