@@ -1,0 +1,284 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="BranceRequistionSearchForm" #BranceRequistionSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+                                        <app-compacct-daterangepicker 
+                                        (DaterangeObj)="getConfirmDateRange($event)" 
+                                        [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center &nbsp;</label>
+                                        <select class="form-control" 
+                                        name="Cost_Cen_ID_Browse" 
+                                        #Cost_Cen_ID_Browse='ngModel' 
+                                        [(ngModel)]="objBrowseData.Cost_Cent_ID"
+                                        [ngClass]="{'clearance': BranchRequisitionBrowseFormSubmit && Cost_Cen_ID.errors?.required}" 
+                                        required
+                                        [attr.disabled]="userType != 'A' ? true :null"
+                                        >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of costCenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" 
+                                        data-toggle="modal" (click)="searchData(BranceRequistionSearchForm.form.valid)"
+                                         [disabled]="seachSpinner">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                         </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table [value]="getAllDataList"
+                                [paginator]="getAllDataList.length ? true : false"
+                                *ngIf='getAllDataList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeader'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                                <a (click)="EditBranchReq(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>               
+                                                        <li>
+                                                            <a (click)="DeleteBranchReq(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="userType == 'A'">
+                                                            <a (click)="UpdateBotton(col)">
+                                                                <i class="fa fa-refresh" aria-hidden="true"></i> Update
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeader">
+                                                <td>{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"
+                            leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="BranchRequisitionForm" #BranchRequisitionForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel"
+                                            [(ngModel)]="ObjbranchREQ.Cost_Cent_ID"
+                                            [ngClass]="{'clearance': BranchRequisitionFormSubmit && Cost_Cen_ID.errors?.required}" 
+                                            required 
+                                            [attr.disabled]="userType != 'A' ? true :null">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of costCenterList" value="{{option.Cost_Cen_ID}}">
+                                                {{option.Cost_Cen_Name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6" >
+                                        <label class="control-label">Doc Date</label>
+                                        <ejs-datepicker  [format]="'dd/MMM/yyyy'"
+                                                [(value)]='DocDate'
+                                                [enabled]="!AddBranchReqList.length"
+                                               >
+                                        </ejs-datepicker>
+                                    </div>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+                                <div class="form-group">
+                                    <div class="col-sm-5">
+                                        <label class="control-label">Product Name<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="Productlist" 
+                                        name="Product_ID" 
+                                        [(ngModel)]="ObjbranchREQ.Product_ID" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Product Found'" 
+                                        [filter]="true" filterBy="label,value.name"
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Product Name'" 
+                                        [virtualScroll]="true"
+                                        itemSize="30" 
+                                        #Product_ID="ngModel" 
+                                        [styleClass]=" BranchRequisitionFormSubmit && Product_ID.errors?.required? 'clearance': '' "
+                                        [required]="true" 
+                                       >
+                                    </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">QTY<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                               name="Qty" 
+                                               #Qty="ngModel" 
+                                               [(ngModel)]="ObjbranchREQ.Qty" 
+                                               placeholder="Qty"
+                                               CompacctDigitonly="true"
+                                               [ngClass]="{'clearance': BranchRequisitionFormSubmit && Qty.errors?.required}" 
+                                               required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Product Remarks<sup class="text-danger"></sup></label>
+                                        <textarea class="form-control" 
+                                                name="Product_Remarks" 
+                                                #Product_Remarks="ngModel" 
+                                                rows='2' 
+                                                [(ngModel)]="ObjbranchREQ.Product_Remarks">
+                                    </textarea>
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" 
+                                            (click)="AddBranchReq(BranchRequisitionForm.form.valid)" 
+                                            id="load" 
+                                            [disabled]="Spinner">
+                                        <p-progressSpinner 
+                                        *ngIf="Spinner" 
+                                        [style]="{width: '15px', height: '15px'}" 
+                                        strokeWidth="8"  
+                                        animationDuration=".5s">
+                                    </p-progressSpinner>
+                                    <span *ngIf="!Spinner" 
+                                    class="	glyphicon glyphicon-plus">
+                                    </span>Add
+                                </button>
+                                </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table [value]="AddBranchReqList" 
+                                        [rowHover]="true" 
+                                        [autoLayout]="true">
+                           
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Sl No.</th>
+                                            <th>Product Name</th>
+                                            <th>Qty</th>
+                                            <th>Product Remarks</th>
+                                            <th>Status</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                        <tr>
+                                            <td>{{rowIndex+1}}</td>
+                                            <td>{{col.Product_Description}}</td>
+                                            <td>{{col.Qty}}</td>
+                                            <td>{{col.Product_Remarks}}</td>
+                                            <td>{{col.Status}}</td>
+                                            <td> <a class="btn btn-sm btn-danger" (click)="DeleteAddBranchReq(rowIndex)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" 
+                                                    (click)="SaveBranchReq()" 
+                                                    id="load" 
+                                                    [disabled]="SaveSpinner">
+                                                <p-progressSpinner 
+                                                *ngIf="SaveSpinner" 
+                                                [style]="{width: '15px', height: '15px'}" 
+                                                strokeWidth="8"  
+                                                animationDuration=".5s">
+                                            </p-progressSpinner>
+                                            <span *ngIf="!SaveSpinner" 
+                                            class="glyphicon glyphicon-save">
+                                            </span>{{buttonname}}
+                                    </button>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog header="Approved / DisApproved Po " appendTo="body" [(visible)]="ViewProTypeModal" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" 
+[maximizable]="true" [baseZIndex]="10000">
+<div class="form-group">
+    <div class="col-sm-12">
+        <label class="control-label">Delivery Remarks<span class="text-danger">*</span></label>
+        <select class="form-control" 
+        name="Delivery_Remarks" 
+        #Delivery_Remarks="ngModel" 
+        [(ngModel)]="DeliveryRemarksObj.Status">
+            <option  [ngValue]="undefined">Select</option>
+            <option value="Pending" >Pending</option>
+            <option value="Complete" >Complete</option>
+            <option Invalid="Invalid" >Invalid</option>
+        </select>
+    </div>
+</div>
+    <p-footer> 
+        <!-- <button type="button" (click)="DisapprovedPo(TElementobj.Doc_NO)" class="btn btn-danger"><i class="pi pi-times"></i> DisApproved</button> -->
+        <button type="button"  (click)="UpdateData()" class="btn btn-primary"><i class="fa fa-refresh" aria-hidden="true"></i>Update</button>    
+    </p-footer>
+</p-dialog>
