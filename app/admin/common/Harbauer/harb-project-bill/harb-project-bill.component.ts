@@ -128,6 +128,7 @@ export class HarbProjectBillComponent implements OnInit {
     this.grIGST = 0;
     this.grTaxable = 0;
     this.grNetAMt = 0;
+    this.grDiscount = 0
     this.grTotalAmt = 0
     this.fullAddress = ""
     this.ShippingStateCode = undefined
@@ -387,8 +388,8 @@ export class HarbProjectBillComponent implements OnInit {
     this.grTaxable = 0;
     this.grNetAMt = 0;
     this.grDiscount = 0
+    this.grTotalAmt = 0
     this.addProductList.forEach((xz:any) => {
-      
       this.grCGST = xz.CGST_Amount? this.grCGST + Number(xz.CGST_Amount) : 0;
       this.grSGST = xz.SGST_Amount ? this.grSGST + Number(xz.SGST_Amount) : 0;
       this.grIGST = xz.IGST_Amount ?  this.grIGST + Number(xz.IGST_Amount) : 0;
