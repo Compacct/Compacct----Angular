@@ -1090,7 +1090,40 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     }
   }
   DeleteTask(k) {
-    this.TaskCreateList.splice(k, 1);
+    if(this.TaskCreateList[k]['Task_Txn_ID']){
+      if (confirm("Are you sure to Delete?") == true) {
+      this.ngxService.start();
+      const temp = { "Task_Txn_ID" : this.TaskCreateList[k]['Task_Txn_ID']}
+      const obj = {
+        "SP_String": "SP_Task_GNATT",
+        "Report_Name_String": "Delete_GNATT_TASK",
+        "Json_Param_String": JSON.stringify([temp])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data[0].message) {
+          this.TaskCreateList.splice(k, 1);        
+          this.GetGanttTaskList();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Success",
+            detail: "Succesfully Deleted"
+          });
+          this.ngxService.stop();
+        } else {
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+      });
+    }
+  }
   }
   CheckTaskValid() {
     let flag = true;

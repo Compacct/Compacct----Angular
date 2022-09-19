@@ -202,7 +202,7 @@
                 <div class="label-t">{{TaskViewObj.Assign_To_Name ? TaskViewObj.Assign_To_Name : '-'}}</div>
               </div>
         </div>
-        <div class="col-sm-12">
+        <div class="col-sm-12"  *ngIf="commonApi.CompacctCookies.User_ID == TaskViewObj.User_ID">
             <label class="control-label">Remarks <sup class="text-danger">*</sup><sup class="text-danger"></sup></label>
             <textarea class="form-control"
                     name="Remarks"
@@ -213,7 +213,7 @@
                      required>
             </textarea>
           </div>
-          <div class="col-sm-12">
+          <div class="col-sm-12"  *ngIf="commonApi.CompacctCookies.User_ID == TaskViewObj.User_ID">
             <label class="control-label">Task Status <sup class="text-danger">*</sup><sup class="text-danger"></sup></label>
             <select class="form-control"
             name="Task_Status"
@@ -277,7 +277,7 @@
   >
     CANCEL
   </button>
-  <button
+  <button  *ngIf="commonApi.CompacctCookies.User_ID == TaskViewObj.User_ID"
 class="btn btn-primary pull-right custombutton"
 (click)="saveTaskStatus(taskListUpdateForm.form.valid)"
 id="load2"

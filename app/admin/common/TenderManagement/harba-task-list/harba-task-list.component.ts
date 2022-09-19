@@ -43,7 +43,7 @@ export class HarbaTaskListComponent implements OnInit {
   req_date2 = undefined;
   initDate = [];
   constructor(
-    private commonApi: CompacctCommonApi,
+    public commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     private GlobalAPI: CompacctGlobalApiService,
@@ -147,7 +147,7 @@ export class HarbaTaskListComponent implements OnInit {
   }
   getStatusWiseColor(data) {
     const status = data.Task_Status;
-    const endDate = new Date(data.taskData.Planned_End_Date);
+    const endDate = new Date(data.Planned_End_Date);
     var today = new Date();
     today.setHours(0,0,0,0);
     if(endDate < today) {

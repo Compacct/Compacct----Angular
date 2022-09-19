@@ -6,7 +6,6 @@
             <h3>{{message.summary}}</h3>
             <h5>{{message.detail}}</h5>
         </div>
-
         <div class="ui-g ui-fluid">
             <div class="ui-g-6" *ngIf="Approved && !DisApproved">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
