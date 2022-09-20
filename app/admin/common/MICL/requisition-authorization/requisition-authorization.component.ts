@@ -5,6 +5,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
+import { ActivatedRoute } from "@angular/router";
 
 
 @Component({
@@ -42,6 +43,7 @@ export class RequisitionAuthorizationComponent implements OnInit {
   DetailsArrList:any = [];
   TermsArrList:any = [];
   ViewRequisitionList : any = [];
+  headerText:string
 
   constructor(
     private $http : HttpClient,
@@ -51,13 +53,21 @@ export class RequisitionAuthorizationComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-  ) { }
+    private route: ActivatedRoute,
+  ) {
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+      this.headerText = params['cap'];
+      
+     })
+   }
 
   ngOnInit() {
+    $(document).prop('title', this.headerText ? this.headerText : $('title').text());
     this.items = ["Pending Authorization", "Authorized Requisition","Not Authorized Requisition"];
     this.Header.pushHeader({
-      Header: "Requisition Authorization",
-      Link: "MICL -> Requisition Authorization"
+      Header: this.headerText,
+      Link: this.headerText,
     });
     this.getListPandingAuth();
     this.Finyear();

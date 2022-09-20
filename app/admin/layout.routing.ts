@@ -258,6 +258,7 @@ import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-auth
 import { BranchRequisitionComponent } from "./common/Patna/branch-requisition/branch-requisition.component";
 import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-authorization/requisition-authorization.component";
 import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/bom-authorization.component";
+import { ProjectPlanApproveComponent } from "./common/Harbauer/project-plan-approve/project-plan-approve.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1906,6 +1907,13 @@ data: {
                    component: BOMAuthorizationComponent,
                     data: {
                       title: 'BOM Authorization '
+                }
+                },
+                {
+                  path: 'Project_Plan_Approve',
+                  component: ProjectPlanApproveComponent,
+                  data: {
+                    title: 'Project Plan Approve'
                 }
                 },
                 
