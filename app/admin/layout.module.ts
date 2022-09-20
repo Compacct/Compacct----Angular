@@ -353,6 +353,7 @@ import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-auth
 import { BranchRequisitionComponent } from './common/Patna/branch-requisition/branch-requisition.component';
 import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-authorization/requisition-authorization.component";
 import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/bom-authorization.component";
+import { ProjectPlanApproveComponent } from "./common/Harbauer/project-plan-approve/project-plan-approve.component";
 
 
 @NgModule({
@@ -624,7 +625,8 @@ import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/b
     POAuthorizationComponent,
     BranchRequisitionComponent,
     RequisitionAuthorizationComponent,
-    BOMAuthorizationComponent
+    BOMAuthorizationComponent,
+    ProjectPlanApproveComponent
   ],
   imports: [
     CommonModule,

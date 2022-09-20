@@ -66,7 +66,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                              <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeaderPanding ">{{option.replaceAll('_',' ')}}</th> 
+                                            <th *ngFor="let option of DynamicHeaderPanding | slice:1">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -97,7 +97,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeaderPanding " >
+                                            <ng-container *ngFor="let option of DynamicHeaderPanding | slice:1" >
                                                 <td>{{col[option] ? col[option] : "_" }}</td>
                                             </ng-container>
                                         </tr>     
@@ -144,7 +144,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeaderAuthorized ">{{option.replaceAll('_',' ')}}</th> 
+                                            <th *ngFor="let option of DynamicHeaderAuthorized | slice:1">{{option.replaceAll('_',' ')}}</th> 
                                                 
                                             </tr>
                                         </ng-template>
@@ -166,7 +166,7 @@
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                <ng-container *ngFor="let option of DynamicHeaderAuthorized " >
+                                                <ng-container *ngFor="let option of DynamicHeaderAuthorized | slice:1" >
                                                     <td>{{col[option] ? col[option] :"_" }}</td>
                                                 </ng-container>
                                         </ng-template>
@@ -213,7 +213,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeaderNOTAuthorized ">{{option.replaceAll('_',' ')}}</th> 
+                                            <th *ngFor="let option of DynamicHeaderNOTAuthorized | slice:1">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -233,7 +233,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeaderNOTAuthorized " >
+                                            <ng-container *ngFor="let option of DynamicHeaderNOTAuthorized | slice:1" >
                                                 <td>{{col[option] ? col[option] : "-" }}</td>
                                             </ng-container>
                                          </tr>
