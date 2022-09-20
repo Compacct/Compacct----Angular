@@ -355,6 +355,7 @@ import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-aut
 import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/bom-authorization.component";
 import { ProjectPlanApproveComponent } from "./common/Harbauer/project-plan-approve/project-plan-approve.component";
 import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authorization-harbauer/po-authorization-harbauer.component";
+import { HarbProjectDesignApprovalComponent } from './common/Harbauer/harb-project-design-approval/harb-project-design-approval.component';
 
 
 @NgModule({
@@ -628,7 +629,8 @@ import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authoriza
     RequisitionAuthorizationComponent,
     BOMAuthorizationComponent,
     ProjectPlanApproveComponent,
-    POAuthorizationHarbauerComponent
+    POAuthorizationHarbauerComponent,
+    HarbProjectDesignApprovalComponent
   ],
   imports: [
     CommonModule,
