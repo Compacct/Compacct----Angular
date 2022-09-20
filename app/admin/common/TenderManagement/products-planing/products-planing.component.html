@@ -121,6 +121,12 @@
                                                                         Delete
                                                                     </a>
                                                                 </li>
+                                                                <li >
+                                                                  <a (click)="UploadDoc(col)">
+                                                                      <i class="fa fa-file"></i>
+                                                                      Upload/Show Document
+                                                                  </a>
+                                                              </li>
                                                             </ul>
                                                         </div>
                                                 </td>
@@ -411,6 +417,7 @@
     </button>
   </p-footer>
 </p-dialog>
+
 <p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewModel" [closeOnEscape]="true" [closable]="false"
   [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '200px' }" style="text-align: center;"
   [minY]="70" [maximizable]="true" [baseZIndex]="10000">
@@ -438,6 +445,9 @@
              [disabled]='true'>
           </p-dropdown>
       </div>
+        <button *ngIf="viewList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcel()">
+          <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Export To Excel
+           </button>
   </div>
   <div class="table-responsive no-padding" style="margin-top:2em;">
     <table class="table table-bordered">
@@ -479,3 +489,140 @@
     </button>
   </p-footer>
 </p-dialog>
+
+  <!-- UPLOAD DOCUMENT -->
+ <p-dialog
+  [header]="'Upload/Show Document'"
+  [appendTo]="'body'"
+  [visible]="uploadModel"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '75%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  >
+  <div class="form-horizontal">
+    <form name="doctypeForm" #doctypeForm="ngForm" novalidate>
+      <div class="form-group">
+      
+        <div class="col-sm-3">
+          <label class="control-label">Doc Type<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+                  name="type"
+                  #type="ngModel"
+                  [(ngModel)]="docType"
+                  [ngClass]="{'clearance': doctypeFormSubmit && type.errors?.required}" required>
+                  <option  [ngValue]="undefined">Select</option>
+                  <option *ngFor='let option of doctypeList' [ngValue]="option.Document_Name">{{option.Document_Name }}</option>
+           </select>
+        </div>
+        <div class="col-sm-3" *ngIf="docType == 'Other'">
+          <label class="control-label">Other<sup class="text-danger">*</sup></label>
+          <input class="form-control"
+                  name="Other"
+                  #Other="ngModel"
+                  [(ngModel)]="docTypeOther"
+                  placeholder="Other"
+                  [ngClass]="{'clearance': doctypeFormSubmit && Other.errors?.required}"
+                  [required]="docType == 'Other'">
+        </div>
+        <div class="col-sm-6">
+          <label class="control-label">Upload Document</label>
+          <p-fileUpload #fileInput 
+                      *ngIf="!PDFViewFlag" 
+                      name="aFile566" 
+                      accept=".pdf, .png, .jpg, .jpeg, .xls, .xlsx" 
+                      [customUpload]="true" 
+                      [chooseLabel]="'Browse'" 
+                      [showUploadButton]="false" 
+                      (onSelect)="handleFileSelect($event)">
+                  </p-fileUpload>
+          <a [href]="ProductPDFLink" 
+              *ngIf="PDFViewFlag" 
+              style="display: block;">
+              <img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+        </div>
+       </div>
+      <div class="box-footer">
+        <button
+        class="btn btn-primary pull-right custombutton"
+        (click)="SaveUploadDoc(doctypeForm.form.valid)"
+        id="load2"
+        [disabled]="SpinnerUpload"
+        >
+        <p-progressSpinner
+        *ngIf="SpinnerUpload"
+        [style]="{ width: '15px', height: '15px' }"
+        strokeWidth="8"
+        animationDuration=".5s"
+        ></p-progressSpinner>
+        <span
+        *ngIf="!SpinnerUpload"
+        class="glyphicon glyphicon-cloud-upload"
+        ></span
+        >&nbsp;UPLOAD
+        </button>
+      </div>
+      <div class="no-padding">
+        <p-table [value]="multipalDocTypeList"
+        [paginator]=""
+       [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [globalFilterFields]='["Document_Date","Document_Type","File_Name","Name"]'
+            [rowHover]="true" #doc>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="doc.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+  
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <!-- <th style="width:5em">Action</th> -->
+                    <th nowrap="nowrap">Document Date</th>
+                    <th nowrap="nowrap">Document Type</th> 
+                    <th nowrap="nowrap">File</th>
+                    <th nowrap="nowrap">Upload By</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                 <td>{{col.Document_Date | date: 'dd-MMM-yy'}}</td>
+                 <td>{{col.Document_Type}}</td>
+                 <td class="text-center"><a (click)="showImg(col.File_Name)" ><div style="font-size:2rem"><i style="color: #b14020;cursor: pointer;" class="fa fa-file-text-o"> </i></div></a></td>
+                 <td>{{col.Name}}</td>
+                 </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+     
+    </form>
+    
+  </div>
+  <p-footer>
+  <button
+    type="button"
+    (click)="uploadModel = false"
+    class="btn btn-info"
+  >  <span
+  class="glyphicon glyphicon-remove"
+  ></span
+  >&nbsp;
+    CLOSE
+  </button>
+  
+  </p-footer>
+  </p-dialog>
