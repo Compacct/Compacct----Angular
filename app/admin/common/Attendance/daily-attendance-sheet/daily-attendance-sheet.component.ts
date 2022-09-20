@@ -86,7 +86,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
       this.seachSpinner = false;
       this.EmpDailyAttenList.forEach((val) => {
         val["OTdisabled"] = false;
-        // val["Work_Minute"] = val.Work_Minute;
+        val["Work_Minute"] = 0;//val.Work_Minute;
         val["minDate"] = Date;
         if(val.Atten_Type_ID) {
         var attendanceid = this.AttenTypelist.filter( ele => Number(ele.Atten_Type_ID) === Number(val.Atten_Type_ID));
@@ -153,7 +153,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
       // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
     } 
     else {
-      obj.Work_Minute = obj.Working_Hours_Mins;
+      // obj.Work_Minute = obj.Working_Hours_Mins;
       obj.OT_Minutes = obj.OT_Minutes;
     }
   }

@@ -1,0 +1,319 @@
+<p-toast key="compacct-toast" baseZIndex="9999999999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" baseZIndex="999999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <h5>{{message.detail}}</h5>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Approved && !DisApproved">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="!Approved && DisApproved" >
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-danger"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal" style="margin-top: 8px;">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="SelectForm" #SelectForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Project</label>
+                                        <p-dropdown [options]="ProjectList" name="Project" #Project="ngModel" [(ngModel)]="objProject.Project_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select project'"
+                                        [virtualScroll]="true" itemSize="30" (onChange)="getSiteDetails(objProject.Project_ID)">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Site</label>
+                                        <p-dropdown [options]="SiteList" name="Site" #Site="ngModel" [(ngModel)]="objProject.Site_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Site'"
+                                        [virtualScroll]="true" itemSize="30" >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingSearchedList()" id="load" [disabled]="seachSpinner" style="margin-top: 28px;">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class=" no-padding">
+                                <p-table [value]="AllPendingSearchList" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Type_Of_Work','Tender_Group','Summary_Task','Task_Name','Remarks', 'Expected_Start_Date', 'Expected_End_Date']"
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap>Type Of Work</th>
+                                            <th nowrap> Tender Group</th>
+                                            <th nowrap>Summery Task</th>
+                                            <th nowrap>Task Name</th>
+                                            <th nowrap>Job Name </th>
+                                            <th nowrap>Remarks </th>
+                                            <th nowrap>Expected Start Date</th>
+                                            <th nowrap>Expected End Date</th>
+                                           
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <!-- <li>
+                                                            <a (click)="view(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> view
+                                                            </a>
+                                                        </li> -->
+                                                        <li *ngIf="col.Action_Visible == 'Y'">
+                                                            <a (click)="Approve(col)">
+                                                                <i class="fa fa-check"></i> Approve
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Action_Visible == 'Y'">
+                                                            <a (click)="DisApprove(col)">
+                                                                <i class="fa fa-times"></i> Disapprove
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td nowrap>{{col.Type_Of_Work ? col.Type_Of_Work : '-' }}</td>
+                                            <td nowrap>{{col.Tender_Group ? col.Tender_Group : '-'}}</td>
+                                            <td nowrap>{{col.Summary_Task ? col.Summary_Task : '-'}}</td>
+                                            <td nowrap>{{col.Task_Name ? col.Task_Name : '-'}}</td>
+                                            <td nowrap>{{col.Job_Name ? col.Job_Name : '-'}}</td>
+                                            <td nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                                            <td nowrap>{{col.Expected_Start_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Expected_End_Date | date: "dd/MMM/yyyy"}}</td>
+                                            
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-ok-sign">
+                            <form name="SelectForm" #SelectForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Project</label>
+                                        <p-dropdown [options]="ProjectList" name="Project" #Project="ngModel" [(ngModel)]="objApprove.Project_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select project'"
+                                        [virtualScroll]="true" itemSize="30" (onChange)="getSiteDetails(objApprove.Project_ID)">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Site</label>
+                                        <p-dropdown [options]="SiteList" name="Site" #Site="ngModel" [(ngModel)]="objApprove.Site_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Site'"
+                                        [virtualScroll]="true" itemSize="30" >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetApproveSearchedList()" id="load2" [disabled]="seachSpinner" style="margin-top: 28px;">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class=" no-padding">
+                                <p-table [value]="AllApproveSearchList" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Type_Of_Work','Tender_Group','Summary_Task','Task_Name','Remarks', 'Expected_Start_Date', 'Expected_End_Date']"
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap>Type Of Work</th>
+                                            <th nowrap> Tender Group</th>
+                                            <th nowrap>Summery Task</th>
+                                            <th nowrap>Task Name</th>
+                                            <th nowrap>Job Name </th>
+                                            <th nowrap>Remarks </th>
+                                            <th nowrap>Expected Start Date</th>
+                                            <th nowrap>Expected End Date</th>
+                                           
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu"> -->
+                                                        <!-- <li>
+                                                            <a (click)="view(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> view
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li *ngIf="col.Action_Visible == 'Y'">
+                                                            <a (click)="Approve(col)">
+                                                                <i class="fa fa-check"></i> Approve
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Action_Visible == 'Y'">
+                                                            <a (click)="Approve(col)">
+                                                                <i class="fa fa-check"></i> Disapprove
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <td nowrap>{{col.Type_Of_Work ? col.Type_Of_Work : '-' }}</td>
+                                            <td nowrap>{{col.Tender_Group ? col.Tender_Group : '-'}}</td>
+                                            <td nowrap>{{col.Summary_Task ? col.Summary_Task : '-'}}</td>
+                                            <td nowrap>{{col.Task_Name ? col.Task_Name : '-'}}</td>
+                                            <td nowrap>{{col.Job_Name ? col.Job_Name : '-'}}</td>
+                                            <td nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                                            <td nowrap>{{col.Expected_Start_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Expected_End_Date | date: "dd/MMM/yyyy"}}</td>
+                                            
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-remove-sign">
+                            <form name="SelectForm" #SelectForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Project</label>
+                                        <p-dropdown [options]="ProjectList" name="Project" #Project="ngModel" [(ngModel)]="objDisapprove.Project_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select project'"
+                                        [virtualScroll]="true" itemSize="30" (onChange)="getSiteDetails(objDisapprove.Project_ID)">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Site</label>
+                                        <p-dropdown [options]="SiteList" name="Site" #Site="ngModel" [(ngModel)]="objDisapprove.Site_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Site'"
+                                        [virtualScroll]="true" itemSize="30" >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetDisApproveSearchedList()" id="load3" [disabled]="seachSpinner" style="margin-top: 28px;">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class=" no-padding">
+                                <p-table [value]="AllDisApproveSearchList" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Type_Of_Work','Tender_Group','Summary_Task','Task_Name','Remarks', 'Expected_Start_Date', 'Expected_End_Date']"
+                                    [rowHover]="true" #dt3>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap>Type Of Work</th>
+                                            <th nowrap> Tender Group</th>
+                                            <th nowrap>Summery Task</th>
+                                            <th nowrap>Task Name</th>
+                                            <th nowrap>Job Name </th>
+                                            <th nowrap>Remarks </th>
+                                            <th nowrap>Expected Start Date</th>
+                                            <th nowrap>Expected End Date</th>
+                                           
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu"> -->
+                                                        <!-- <li>
+                                                            <a (click)="view(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> view
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li *ngIf="col.Action_Visible == 'Y'">
+                                                            <a (click)="Approve(col)">
+                                                                <i class="fa fa-check"></i> Approve
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Action_Visible == 'Y'">
+                                                            <a (click)="Approve(col)">
+                                                                <i class="fa fa-check"></i> Disapprove
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <td nowrap>{{col.Type_Of_Work ? col.Type_Of_Work : '-' }}</td>
+                                            <td nowrap>{{col.Tender_Group ? col.Tender_Group : '-'}}</td>
+                                            <td nowrap>{{col.Summary_Task ? col.Summary_Task : '-'}}</td>
+                                            <td nowrap>{{col.Task_Name ? col.Task_Name : '-'}}</td>
+                                            <td nowrap>{{col.Job_Name ? col.Job_Name : '-'}}</td>
+                                            <td nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                                            <td nowrap>{{col.Expected_Start_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Expected_End_Date | date: "dd/MMM/yyyy"}}</td>
+                                            
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
