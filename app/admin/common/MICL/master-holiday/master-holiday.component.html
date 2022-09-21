@@ -29,7 +29,7 @@
                             <form name="BrowseForm" #BrowseForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">HR Year</label>
+                                        <label class="control-label">Holiday List</label>
                                         <select class="form-control" name="HR_Year" #HR_Year="ngModel" [(ngModel)]="objBrowse.HR_Year_ID">
                                     <option  [ngValue]="undefined">Select</option>
                                 <option  *ngFor="let option of HrYearList" value="{{option.HR_Year_ID}}">
@@ -59,9 +59,9 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Hr Year</th>
+                                            <th>Year</th>
                                             <th>Date</th>
-                                            <th>Leave Type</th>
+                                            <th>Occasion</th>
                                             <th>Location</th>
                                             <th>Purpose</th>
                                         </tr>
@@ -112,7 +112,7 @@
                             <form name="HolidayForm" #HolidayForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
-                                        <label class="control-label">HR Year<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">Holiday List<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="HR_Year" #HR_Year="ngModel" [(ngModel)]="objHoliday.HR_Year_ID" [ngClass]="{'clearance ': HolidayFormSubmitted && HR_Year.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of HrYearList" value="{{option.HR_Year_ID}}">
@@ -151,7 +151,7 @@
 
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Hr Year</th>
+                                            <th>Year</th>
                                             <th>Date</th>
                                             <!-- <th>Leave Type</th> -->
                                             <th>Location</th>

@@ -136,7 +136,57 @@
                                         <ng-container *ngFor="let option of DynamicHeader" data->
                                             <td>{{col[option]}}</td>
                                         </ng-container>
+                                        <ng-container>
+                                            <td colspan="5">Total</td>
+                                            <td>{{getTotalValue('Amount')}}</td>
+                                            <td></td>
+                                            <td>{{getTotalValue('Discount_Amt')}}</td>
+                                            
+                                            <td>{{getTotalValue('Taxable_Amt')}}</td>
+                                            <td>{{getTotalValue('CGST_Amt')}}</td>
+                                            
+                                            <td>{{getTotalValue('SGST_Amt')}}</td>
+                                            <td>{{getTotalValue('IGST_Amt')}}</td>
+                                            
+                                            <td>{{getTotalValue('Rounded_Off')}}</td>
+                                            <td>{{getTotalValue('Bill_Amount')}}</td>
+    
+                                            <td>{{getTotalValue('Advance')}}</td>
+                                            <td>{{getTotalValue('Cash_Paid')}}</td>
+                                            
+                                            <td>{{getTotalValue('Card_Paid')}}</td>
+    
+                                            <td></td>
+                                            <td>{{getTotalValue('Wallet_Paid')}}</td>
+                                            
+                                            </ng-container>
                                     </tr>
+                                    <!-- <tr>
+                                        <ng-container>
+                                        <td colspan="5">Total</td>
+                                        <td>{{getTotalValue('Amount')}}</td>
+                                        <td></td>
+                                        <td>{{getTotalValue('Discount_Amt')}}</td>
+                                        
+                                        <td>{{getTotalValue('Taxable_Amt')}}</td>
+                                        <td>{{getTotalValue('CGST_Amt')}}</td>
+                                        
+                                        <td>{{getTotalValue('SGST_Amt')}}</td>
+                                        <td>{{getTotalValue('IGST_Amt')}}</td>
+                                        
+                                        <td>{{getTotalValue('Rounded_Off')}}</td>
+                                        <td>{{getTotalValue('Bill_Amount')}}</td>
+
+                                        <td>{{getTotalValue('Advance')}}</td>
+                                        <td>{{getTotalValue('Cash_Paid')}}</td>
+                                        
+                                        <td>{{getTotalValue('Card_Paid')}}</td>
+
+                                        <td></td>
+                                        <td>{{getTotalValue('Wallet_Paid')}}</td>
+                                        
+                                        </ng-container>
+                                    </tr> -->
                                 </ng-template>
                                 <ng-template pTemplate="paginatorright" let-state>
                                     Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}

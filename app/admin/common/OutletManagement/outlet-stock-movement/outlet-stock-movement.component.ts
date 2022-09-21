@@ -224,6 +224,17 @@ export class OutletStockMovementComponent implements OnInit {
     //    })
     //   }
     }
+    getTotalValue(key){
+      if (this.ObjBrowseStockView.Choose_Report === "Sales Register") {
+        let Total = 0;
+      this.Searchlist.forEach((item)=>{
+        Total += Number(item[key]);
+      });
+    
+      return Total ? Total.toFixed(2) : '-';
+      }
+      
+    }
     exportoexcel(Arr,fileName): void {
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
       const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
