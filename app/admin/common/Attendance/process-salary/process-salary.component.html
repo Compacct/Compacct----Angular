@@ -33,17 +33,20 @@
                                 <div class="col-sm-3">
                                     <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name" (change)="GetBrowseData()">
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
                                     <button  class="btn btn-warning" (click)="UpdateSPBrowseData()" >Process salary</button>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
                                     <button  class="btn btn-success" (click)="exportoexcel('Process_Salary')" [disabled]="!BrowseList.length">Salary Register</button>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
                                     <button  class="btn btn-primary" (click)="Finalized()" >Finalized</button>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
                                     <button  class="btn btn-success" (click)="exportoexcel2('Bank_Register')" [disabled]="!BrowseList.length">Bank Register</button>
+                                </div>
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'U'">
+                                    <button  class="btn btn-success" (click)="SalarySlip()">Print Salary Slip</button>
                                 </div>
                             </div>
                                 <div class="row">
@@ -51,7 +54,7 @@
                                         <h5><strong></strong></h5>
                                     </div>
                                 </div>
-                                <div class="no-padding">
+                                <div class="no-padding" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
                                     <p-table [value]="BrowseList" [paginator]="BrowseList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]='DynamicHeader' [rowHover]="true" #dt>
                                         <ng-template pTemplate="caption">
                                             <div class="row" *ngIf="BrowseList.length">

@@ -33,6 +33,8 @@ export class ProcessSalaryComponent implements OnInit {
 
   Final = false;
   NotFinal = false;
+  CheckFinalizedOrNot: any;
+  empid: any;
 
   constructor(
     private route : ActivatedRoute,
@@ -58,6 +60,7 @@ export class ProcessSalaryComponent implements OnInit {
     //this.startdate = this.Month_Name+'-'+'01'
     console.log('Month_Name',this.Month_Name)
    // this.Month_Name = new Date();
+    this.GetEmpId();
     this.GetBrowseData();
   }
   GetBrowseData(){
@@ -76,7 +79,12 @@ export class ProcessSalaryComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Data From Api",data);
+      if (this.$CompacctAPI.CompacctCookies.User_Type === 'U') {
+        this.BrowseList = [];
+      } 
+      else {
       this.BrowseList = data;
+      }
       if(this.BrowseList.length){
         this.DynamicHeader = Object.keys(data[0]);
          this.DynamicHeader.forEach((el:any)=>{
@@ -89,6 +97,7 @@ export class ProcessSalaryComponent implements OnInit {
         this.DynamicHeader = [];
       }
       console.log('this.BrowseList',this.BrowseList)
+      this.CheckBackRegister();
   })
   }
   }
@@ -104,6 +113,46 @@ export class ProcessSalaryComponent implements OnInit {
       var printlink = data[0].Column1;
       window.open(printlink+"?Emp_ID=" + empidd + "&SLDate=" + sldate, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     })
+    }
+  }
+  GetEmpId(){
+    this.empid = undefined;
+    const useridobj = {
+      User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+    }
+    const objtemp = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Get_Employee_ID",
+      "Json_Param_String": JSON.stringify([useridobj])
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      this.empid = data ? data[0].Emp_ID : undefined;
+    })
+  }
+  SalarySlip(){
+    if(this.empid) {
+      if (this.CheckFinalizedOrNot === "Finalized") {
+      var empidd = this.empid;
+      var firstDate = this.Month_Name+'-'+'01';
+      var sldate = this.DateService.dateConvert(new Date(firstDate));
+    const objtemp = {
+      "SP_String": "SP_Leave_Application",
+      "Report_Name_String": "Print_Salary_Slip"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Emp_ID=" + empidd + "&SLDate=" + sldate, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+    else {
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: this.CheckFinalizedOrNot
+        });
+    }
     }
   }
   UpdateSPBrowseData(){
@@ -231,8 +280,21 @@ export class ProcessSalaryComponent implements OnInit {
   onReject(){
     this.compacctToast.clear("c");
   }
+  CheckBackRegister(){
+    var firstDate = this.Month_Name+'-'+'01'
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Check Finalized Or Not",
+      "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.CheckFinalizedOrNot = data ? data[0].Column1 : undefined;
+    })
+  }
   exportoexcel2(fileName){
     var firstDate = this.Month_Name+'-'+'01'
+    if (this.CheckFinalizedOrNot === "Finalized") {
     const obj = {
       "SP_String": "SP_Process_Monthly_Attendance_Sheet",
       "Report_Name_String": "Download_Bank_Transfer_Register",
@@ -245,6 +307,16 @@ export class ProcessSalaryComponent implements OnInit {
       XLSX.writeFile(workbook, fileName+'.xlsx');
       
     })
+    }
+    else {
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: this.CheckFinalizedOrNot
+        });
+    }
   }
 
 }

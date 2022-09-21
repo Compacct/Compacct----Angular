@@ -197,7 +197,7 @@
                                 <p-table [value]="ProductList" [autoLayout]="true" sortMode="multiple" [globalFilterFields]="['Product_Type','Product_Description','Stock_Qty','Batch_No','Batch_Qty']" [rowHover]="true" #dt1>
                                     <ng-template pTemplate="caption">
                                         <div *ngIf="this.buttonname == 'Save'">
-                                            <button class="btn btn-primary pull-left" (click)="SaveRawMaterialIssue()" id="load" [disabled]="Spinner">
+                                            <button class="btn btn-primary pull-left" (click)="showDialog()" id="load" [disabled]="Spinner">
                                                 <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                         </button>
@@ -243,7 +243,7 @@
                             <hr class="box boxboxDivide-primary ng-scope">
 
                             <div class="box-footer">
-                                <button class="btn btn-primary pull-right" (click)="SaveRawMaterialIssue()" id="load" [disabled]="Spinner">
+                                <button class="btn btn-primary pull-right" (click)="showDialog()" id="load" [disabled]="Spinner">
                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                    </button>
@@ -334,3 +334,43 @@
         </div>
     </div>
 </div>
+
+<!-- popup Save -->
+<p-dialog header="Raw Material Stock Transfer" [(visible)]="displaysavepopup" [modal]="true" [responsive]="true" [style]="{width: '545px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <table class="table table-striped" style="height: 230px; overflow-y: auto; ;">
+        <thead>
+            <tr>
+                <th scope="col">Product Description</th>
+                <th scope="col">UOM</th>
+                <th scope="col">Batch No</th>
+                <th scope="col">Batch Qty</th>
+                <th scope="col">Issue Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="d-flex" *ngFor="let option of filteredData;">
+                <td>{{option.Product_Description}}</td>
+                <td>{{option.UOM}}</td>
+                <td>{{option.Batch_No}}</td>
+                <td>{{option.Batch_Qty}}</td>
+                <td>{{option.Issue_Qty}}</td>
+            </tr>
+            <tr>
+                <td colspan="3">Total</td>
+                <td>{{getTotalValue('Batch_Qty')}}</td>
+                <td>{{getTotalValue('Issue_Qty')}}</td>
+                <!-- <td *ngIf="reqQTYdis">{{getTotalIndValue()}}</td>
+                <td>{{getTotalBatchValue()}}</td>
+                <td>{{getTotalIssueValue()}}</td> -->
+            </tr>
+        </tbody>
+    </table>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="SaveRawMaterialIssue()" label="Save" [disabled]="ShowPopupSpinner">
+            <p-progressSpinner *ngIf="ShowPopupSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        </button>
+        <button type="button" pButton icon="pi pi-close" (click)="displaysavepopup=false" label="Close" class="ui-button-secondary">
+            <p-progressSpinner *ngIf="ShowPopupSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        </button>
+    </p-footer>
+</p-dialog>

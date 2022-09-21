@@ -93,7 +93,9 @@ export class HREmployeeMasterComponent implements OnInit {
   DocvalidSubmit:boolean = false
   imagePath:any = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3_qIHtXBZ7vZeMQhyD8qLC1VRB9ImHadL09KET_iSQEX6ags4ICknfmqEKz8Nf6IOsA&usqp=CAU "
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
-  @ViewChild ("preview", { static : false}) preview : FileUpload
+  @ViewChild ("preview", { static : false}) preview : FileUpload;
+  userdisabled = false;
+  userdatedisabled = true;
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -101,7 +103,8 @@ export class HREmployeeMasterComponent implements OnInit {
     private GlobalAPI : CompacctGlobalApiService,
     private route : ActivatedRoute,
     private compacctToast : MessageService,
-    private DateService : DateTimeConvertService
+    private DateService : DateTimeConvertService,
+    public $CompacctAPI: CompacctCommonApi,
   ) { }
 
   ngOnInit() {
@@ -111,7 +114,7 @@ export class HREmployeeMasterComponent implements OnInit {
     });
     this.objemployee.Present_Country = "India";
     this.objemployee.Perm_Country = "India";
-    this.NationalityList = ['INDIAN', 'OTHERS'];
+    this.NationalityList = ["INDIAN", "OTHERS"];
     this.GenderList = ["MALE", "FEMALE", "OTHERS"];
     this.BankAcList = ["SAVINGS", "CURRENT", "OTHER"];
     this.MaritalList = ["UNMARRIED", "MARRIED", "WIDOWED", "SEPERATED", "DIVORCED"];
@@ -120,7 +123,8 @@ export class HREmployeeMasterComponent implements OnInit {
     this.physicallyChallanged = ["YES", "NO"];
     this.weakofflist = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-    this.Statuslist = ["WORKING-REJOIN", "WORKING-PROVISION", "WORKING-CASUAL", "WORKING-CONFIRMED", "WORKING-PARTTIME", "RETIRED", "LEFT", "SUSPENDED", "ABSCONDED", "PROBATION"];
+    // this.Statuslist = ["WORKING-REJOIN", "WORKING-PROVISION", "WORKING-CASUAL", "WORKING-CONFIRMED", "WORKING-PARTTIME", "RETIRED", "LEFT", "SUSPENDED", "ABSCONDED", "PROBATION"];
+    this.Statuslist = ["TRANNIE", "PROBATION", "PERMANENT", "RESIGNED", "SUSPENDED", "ABSCONDED"];
     this.getDepartment();
     this.getWorkingCompany();
     this.getDesignation();
@@ -345,12 +349,28 @@ getEmployee(){
           value: el.Emp_ID
         });
       });
-      
+      this.getempdetailsforU();
   
     })
 }
+getempdetailsforU(){
+  this.objselect.Emp_ID = undefined;
+  if(this.$CompacctAPI.CompacctCookies.User_Type === "U") {
+    const userid = this.AllEmployeeList.filter(ele=> Number(ele.User_ID)===Number(this.$CompacctAPI.CompacctCookies.User_ID));
+    this.objselect.Emp_ID = userid ? userid[0].Emp_ID : undefined;
+    this.getEmployeeDetails(this.objselect.Emp_ID);
+    this.userdisabled = true;
+    this.userdatedisabled = false;
+  }
+  else{
+    this.objselect.Emp_ID = undefined;
+    this.userdisabled = false;
+    this.userdatedisabled = true;
+  }
+}
 
 getEmployeeDetails(Emp_ID){
+  if (this.objselect.Emp_ID) {
   const obj = {
     "SP_String": "Sp_HR_Employee_Master",
      "Report_Name_String":"Get_HR_Employee_Details",
@@ -366,7 +386,7 @@ getEmployeeDetails(Emp_ID){
           let data = JSON.parse(res[0].main)
           this.EmployeeDetailsList = data;
          console.log("EmployeeDetailsList=",this.EmployeeDetailsList);
-         const editlist = data[0];
+         const editlist = data ? data[0] : undefined;
          this.DocumentList = data[0].doc ? data[0].doc : []
           console.log("editlist=",editlist);
          if (this.objselect.Emp_ID) {
@@ -395,6 +415,10 @@ getEmployeeDetails(Emp_ID){
         }
           
         });
+      }
+      else {
+        this.objemployee = new Employee();
+      }
 }
 
 getBankName(){
@@ -521,6 +545,8 @@ saveEmp(){
             });
             this.Spinner = false;
             this.clearData();
+            this.getEmployee();
+            this.getReportingList();
          
         }
         else{
@@ -1150,6 +1176,7 @@ class Employee{
   EPIC_No : any;
   Adhar_No : any;
   PAN_No : any;
+  Highest_Qualification : any;
   Company_Name : any;
   Comp_ID	: any;
   Location_ID : any;
