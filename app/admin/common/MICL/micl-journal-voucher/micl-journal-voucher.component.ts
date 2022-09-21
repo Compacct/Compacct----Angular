@@ -78,7 +78,7 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.docTypeList = ['Purchase Order'];
     this.Getledger();
     this.getCostCenter();
-    this. GetCostHead();
+    this.GetCostHead();
     this.getProject();
     this.GetCompany();
     this.objJournal.DR = "DR";
@@ -128,35 +128,35 @@ export class MICLJournalVoucherComponent implements OnInit {
 
   getsubLedger(id){
     if(id){
-      this.SubLedgerListlow = [];
+      this.SubLedgerDataListlow = [];
+      this.objJournal.Adjustment_Doc_No = undefined;
+      this.doNoList = [];
+      this.objJournal.Sub_Ledger_ID = undefined;
       const obj = {
-        "SP_String": "sp_Comm_Controller",
-        "Report_Name_String": "Get_Accounting_Sub_Ledger_Dropdown",
-        "Json_Param_String": JSON.stringify([{Ledger_ID : id}])      
+        "SP_String": "SP_Financial_Voucher",
+        "Report_Name_String": "Get_Subledger_with_Ledger_ID",
+        "Json_Param_String": JSON.stringify([{ledger_id : id}])      
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         // console.log(data);
         this.SubLedgerDataListlow = data;
        
         console.log("SubLedgerDataListlow",this.SubLedgerDataListlow);
-        this.SubLedgerDataListlow.forEach(el => {
-          this.SubLedgerListlow.push({
-              label: el.Sub_Ledger_Name,
-              value: el.Sub_Ledger_ID
-            });
-           
-          });
+        
          
       })
     }
     else {
-      this.objJournal.Sub_Ledger_ID = undefined
-      this.SubLedgerListlow = []
+      this.objJournal.Sub_Ledger_ID = undefined;
+      this.SubLedgerDataListlow = [];
+      this.doNoList = [];
+      this.objJournal.Adjustment_Doc_No = undefined;
+
     }
    
    }
    validcheck(){
-    return this.SubLedgerListlow.length ? true : false
+    return this.SubLedgerDataListlow.length ? true : false
   }
 
   getCostCenter(){
@@ -203,6 +203,7 @@ export class MICLJournalVoucherComponent implements OnInit {
     console.log('JVType', JVType);
     if(JVType == 'Purchase'){
       this.objJournal.Adj_Doc_Type = 'Purchase Order';
+      this.getDocNo();
       
     }
     else{
@@ -212,11 +213,16 @@ export class MICLJournalVoucherComponent implements OnInit {
   }
 
   getDocNo(){
-    if(this.objJournal.Adj_Doc_Type){
+
+    if(this.objJournal.Adj_Doc_Type && this.objJournal.Sub_Ledger_ID && this.objJournal.JV_Type && this.Voucher_Date){
+     
+      this.objJournal.Adjustment_Doc_No = undefined;
+      this.doNoList = [];
+      
     let TempData = {
       Voucher_Date : this.Voucher_Date,
       Journal_Type : this.objJournal.JV_Type,
-      Sub_Ledger_ID : this.objJournal.Sub_Ledger_ID,
+      Sub_Ledger_ID : Number(this.objJournal.Sub_Ledger_ID),
       Adj_Doc_Type : this.objJournal.Adj_Doc_Type
     }
 
@@ -232,6 +238,10 @@ export class MICLJournalVoucherComponent implements OnInit {
           //this.getPuschaseOrder();
           console.log("doNoList=",this.doNoList);
         });
+      }
+      else{
+        this.doNoList = [];
+        this.objJournal.Adjustment_Doc_No = undefined;
       }
     
   }
@@ -743,6 +753,7 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.VoucherNo = undefined;
     this.SaveData = [];
     this.SubLedgerListlow = [];
+    this.SubLedgerDataListlow = [];
     this.objJournal.Cost_Cen_ID_Trn = this.commonApi.CompacctCookies.Cost_Cen_ID;
     this.objsearch.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
     this.IsEnabled = false;

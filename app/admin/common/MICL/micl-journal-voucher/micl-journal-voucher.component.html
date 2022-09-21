@@ -151,7 +151,7 @@
 
                                     <div class="col-sm-6">
                                         <label class="control-label">Voucher Date<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Voucher_Date' name="Date_Voucher" [enabled]="JournalListAdd.length? false : true"></ejs-datepicker>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Voucher_Date' name="Date_Voucher" [enabled]="JournalListAdd.length? false : true" (change)="getDocNo()"></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Cost Cent Trn<sup class="text-danger">*</sup></label>
@@ -198,8 +198,8 @@
                                         </p-dropdown>
                                     </div> -->
                                     <div class="col-sm-4">
-                                        <label class="control-label">Sub Ledger&nbsp;<span *ngIf = "SubLedgerListlow.length" class="text-danger">*</span></label>
-                                        <p-dropdown [options]="SubLedgerListlow" name="Sub_Ledger" [(ngModel)]="objJournal.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
+                                        <label class="control-label">Sub Ledger&nbsp;<span *ngIf = "SubLedgerDataListlow.length" class="text-danger">*</span></label>
+                                        <p-dropdown [options]="SubLedgerDataListlow" name="Sub_Ledger" [(ngModel)]="objJournal.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
                                             [virtualScroll]="true" itemSize="30" #Sub_Ledger="ngModel" (onChange)="getDocNo()" [styleClass]="
                                             JournalFormSubmitted && Sub_Ledger.errors?.required && validcheck()? 'clearance': ''" [required]="validcheck()">
                                         </p-dropdown>
@@ -259,8 +259,8 @@
                                                 </select>
                                     </div>
                                     <div class="col-sm-2">
-                                        <label class="control-label">Adjustment Doc Type</label>
-                                        <select class="form-control" name="AD_doc_type" #AD_doc_type="ngModel" [(ngModel)]="objJournal.Adj_Doc_Type">
+                                        <label class="control-label">Against Ref Type</label>
+                                        <select class="form-control" name="AD_doc_type" #AD_doc_type="ngModel" [(ngModel)]="objJournal.Adj_Doc_Type" (change)="getDocNo()">
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of docTypeList" value="{{option}}">
                                       {{option}}
@@ -268,7 +268,7 @@
                                    </select>
                                     </div>
                                     <div class="col-sm-2">
-                                        <label class="control-label">Adjustment Doc No</label>
+                                        <label class="control-label">Against Doc No</label>
                                         <select class="form-control" name="AD_doc_no" #AD_doc_no="ngModel" [(ngModel)]="objJournal.Adjustment_Doc_No">
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of doNoList" value="{{option.Doc_No}}">

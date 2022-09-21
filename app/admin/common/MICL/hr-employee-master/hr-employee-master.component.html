@@ -36,12 +36,12 @@
                                 {{option.NAME}}
                               </option>
                              </select> -->
-                                    <p-dropdown [options]="EmployeeList" name="Employee" #Employee="ngModel" [(ngModel)]="objselect.Emp_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
+                                    <p-dropdown [options]="EmployeeList" name="Employee" #Employee="ngModel" [(ngModel)]="objselect.Emp_ID" [disabled]="userdisabled" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
                                         [virtualScroll]="true" itemSize="30" (onChange)="getEmployeeDetails(objselect.Emp_ID)">
                                     </p-dropdown>
                                 </div>
                                 <div class="col-sm-4 ">
-                                    <button class="btn btn-primary " style="margin-top: 28px;margin-left: 40%; " data-toggle="modal " (click)="GetNewEmployee() " id="load30 " [disabled]="seachSpinner ">
+                                    <button [disabled]="userdisabled" class="btn btn-primary " style="margin-top: 28px;margin-left: 40%; " data-toggle="modal " (click)="GetNewEmployee() " id="load30 " [disabled]="seachSpinner ">
                                 <p-progressSpinner *ngIf="seachSpinner " [style]="{width: '15px', height: '15px'} " strokeWidth="8 "  animationDuration=".5s "></p-progressSpinner>
                                <span *ngIf="!seachSpinner " class="glyphicon glyphicon-plus "></span>&nbsp;New Employee
                                </button>
@@ -63,33 +63,33 @@
                                             </div>
                                             <div class="col-sm-3 ">
                                                 <label class="control-label ">Employee Code<sup class="text-danger ">*</sup></label>
-                                                <input class="form-control " name="Emp_Code" #Emp_Code="ngModel" [(ngModel)]="objemployee.Emp_Code" (ngModelChange)="onCheckCode(objemployee.Emp_Code)" placeholder="Employee Code" [ngClass]="{
+                                                <input class="form-control " name="Emp_Code" #Emp_Code="ngModel" [(ngModel)]="objemployee.Emp_Code" [disabled]="userdisabled" (ngModelChange)="onCheckCode(objemployee.Emp_Code)" placeholder="Employee Code" [ngClass]="{
                                         'clearance': flag || EmployeeFormSubmitted && Emp_Code.errors?.required}" required>
                                             </div>
                                             <div class="col-sm-2 ">
                                                 <label class="control-label">First Name<sup class="text-danger">*</sup></label>
-                                                <input class="form-control" name="F_Name" #F_Name="ngModel" [(ngModel)]="objemployee.First_Name" placeholder="First Name" [ngClass]="{ 'clearance': EmployeeFormSubmitted && F_Name.errors?.required}" required>
+                                                <input class="form-control" name="F_Name" #F_Name="ngModel" [(ngModel)]="objemployee.First_Name" [disabled]="userdisabled" placeholder="First Name" [ngClass]="{ 'clearance': EmployeeFormSubmitted && F_Name.errors?.required}" required>
 
                                             </div>
                                             <div class="col-sm-2">
                                                 <label class="control-label">Middle Name</label>
-                                                <input class="form-control" name="M_Name" #M_Name="ngModel" [(ngModel)]="objemployee.Middle_Name" placeholder="Middle Name">
+                                                <input class="form-control" name="M_Name" #M_Name="ngModel" [(ngModel)]="objemployee.Middle_Name" [disabled]="userdisabled" placeholder="Middle Name">
 
                                             </div>
                                             <div class="col-sm-2">
                                                 <label class="control-label ">Last Name<sup class="text-danger ">*</sup></label>
-                                                <input class="form-control " name="L_Name" #L_Name="ngModel" [(ngModel)]="objemployee.Last_Name" placeholder="Last Name" [ngClass]="{ 'clearance': EmployeeFormSubmitted && L_Name.errors?.required}" required>
+                                                <input class="form-control " name="L_Name" #L_Name="ngModel" [(ngModel)]="objemployee.Last_Name" [disabled]="userdisabled" placeholder="Last Name" [ngClass]="{ 'clearance': EmployeeFormSubmitted && L_Name.errors?.required}" required>
 
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="col-sm-8">
                                                 <label class="control-label ">Present Address <sup class="text-danger">*</sup></label>
-                                                <input class="form-control " placeholder="Present Address " name="address1" #address1="ngModel" [(ngModel)]="objemployee.Present_Add_1" [ngClass]="{ 'clearance': EmployeeFormSubmitted && address1.errors?.required} " required>
+                                                <input class="form-control " placeholder="Present Address " name="address1" #address1="ngModel" [(ngModel)]="objemployee.Present_Add_1" [disabled]="userdisabled" [ngClass]="{ 'clearance': EmployeeFormSubmitted && address1.errors?.required} " required>
                                             </div>
                                             <div class="col-sm-4">
                                                 <label class="control-label">Pincode<sup class="text-danger ">*</sup></label>
-                                                <input class="form-control" placeholder="Pincode" name="Pincode" #Pincode="ngModel" [(ngModel)]="objemployee.Present_Pin" (ngModelChange)="StateDistrictChange(objemployee.Present_Pin)" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Pincode.errors?.required}"
+                                                <input class="form-control" placeholder="Pincode" name="Pincode" #Pincode="ngModel" [(ngModel)]="objemployee.Present_Pin" [disabled]="userdisabled" (ngModelChange)="StateDistrictChange(objemployee.Present_Pin)" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Pincode.errors?.required}"
                                                     required>
                                             </div>
                                             <!-- <div class="col-sm-6">
@@ -117,9 +117,9 @@
                                 <div class="col-sm-2 ">
                                     <img [src]="imagePath" width="100% ">
                                     <div class="custombutton">
-                                        <p-fileUpload #preview mode="basic" chooseLabel="Browse" name="demo[]" accept="image/*" [showUploadButton]="false" maxFileSize="1000000" (onSelect)="handleFileSelect($event)">
+                                        <p-fileUpload #preview mode="basic" chooseLabel="Browse" name="demo[]" accept="image/*" [showUploadButton]="false" [disabled]="userdisabled" maxFileSize="1000000" (onSelect)="handleFileSelect($event)">
                                         </p-fileUpload>
-                                        <button class="btn btn-danger pull-right" (click)="cleanPreView()" [disabled]="!ProductViewFalg"><span class="glyphicon glyphicon-remove" ></span> </button>
+                                        <button class="btn btn-danger pull-right" (click)="cleanPreView()" [disabled]="userdisabled" [disabled]="!ProductViewFalg"><span class="glyphicon glyphicon-remove" ></span> </button>
                                     </div>
 
                                 </div>
@@ -130,11 +130,11 @@
                                     <i class="fa fa-home " aria-hidden="true ">
                                 </i> &nbsp;<strong>Permanent address:</strong></h5>
                                 <div class="col-sm-12 ">
-                                    <p-checkbox label="Same As Present Address" [(ngModel)]="ischeckaddress" name="Addresscheck" #Addresscheck="ngModel" (ngModelChange)="AddressCopy()" binary="true"></p-checkbox>
+                                    <p-checkbox label="Same As Present Address" [(ngModel)]="ischeckaddress" [disabled]="userdisabled" name="Addresscheck" #Addresscheck="ngModel" (ngModelChange)="AddressCopy()" binary="true"></p-checkbox>
                                 </div>
                                 <div class="col-sm-8">
                                     <label class="control-label ">Permanent Address <sup class="text-danger ">*</sup></label>
-                                    <input class="form-control" placeholder="Permanent Address " name="paddress1" #paddress1="ngModel" [(ngModel)]="objemployee.Perm_Add_1" [ngClass]="{ 'clearance': EmployeeFormSubmitted && paddress1.errors?.required}" required>
+                                    <input class="form-control" placeholder="Permanent Address " name="paddress1" #paddress1="ngModel" [(ngModel)]="objemployee.Perm_Add_1" [disabled]="userdisabled" [ngClass]="{ 'clearance': EmployeeFormSubmitted && paddress1.errors?.required}" required>
                                 </div>
                                 <!-- <div class="col-sm-6 ">
                                     <label class="control-label">Permanent Address 2</label>
@@ -142,7 +142,7 @@
                                 </div> -->
                                 <div class="col-sm-4">
                                     <label class="control-label">Pincode</label>
-                                    <input class="form-control" placeholder="Pincode" name="Pincode2" #Pincode2="ngModel" [(ngModel)]="objemployee.Perm_Pin" (ngModelChange)="StateDistrictChange2(objemployee.Perm_Pin)" [ngClass]="{ 'clearance':EmployeeFormSubmitted && Pincode2.errors?.required} "
+                                    <input class="form-control" placeholder="Pincode" name="Pincode2" #Pincode2="ngModel" [(ngModel)]="objemployee.Perm_Pin" [disabled]="userdisabled" (ngModelChange)="StateDistrictChange2(objemployee.Perm_Pin)" [ngClass]="{ 'clearance':EmployeeFormSubmitted && Pincode2.errors?.required} "
                                         required>
                                 </div>
                                 <div class="col-sm-4">
@@ -164,7 +164,7 @@
                                 </i> &nbsp;<strong>Personal Details:</strong></h5>
                                 <div class="col-sm-3 ">
                                     <label class="control-label">Nationality<sup class="text-danger ">*</sup></label>
-                                    <select class="form-control" name="Nationality" #Nationality="ngModel" [(ngModel)]="objemployee.Nationality" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Nationality.errors?.required}" required>
+                                    <select class="form-control" name="Nationality" #Nationality="ngModel" [(ngModel)]="objemployee.Nationality" [disabled]="userdisabled" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Nationality.errors?.required}" required>
                                         <option  [ngValue]="undefined ">Select</option>
                                     <option  *ngFor="let option of NationalityList" value="{{option}} ">
                                       {{option}}
@@ -173,7 +173,7 @@
                                 </div>
                                 <div class="col-sm-3 ">
                                     <label class="control-label">Gender<sup class="text-danger ">*</sup></label>
-                                    <select class="form-control" name="Gender" #Gender="ngModel" [(ngModel)]="objemployee.Sex" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Gender.errors?.required}" required>
+                                    <select class="form-control" name="Gender" #Gender="ngModel" [(ngModel)]="objemployee.Sex" [disabled]="userdisabled" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Gender.errors?.required}" required>
                                         <option  [ngValue]="undefined ">Select</option>
                                     <option  *ngFor="let option of GenderList" value="{{option}}">
                                       {{option}}
@@ -182,7 +182,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Marital Status<sup class="text-danger ">*</sup></label>
-                                    <select class="form-control" name="Marital" #Marital="ngModel" [(ngModel)]="objemployee.Material_Status" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Marital.errors?.required}" required>
+                                    <select class="form-control" name="Marital" #Marital="ngModel" [(ngModel)]="objemployee.Material_Status" [disabled]="userdisabled" [ngClass]="{ 'clearance': EmployeeFormSubmitted && Marital.errors?.required}" required>
                                         <option  [ngValue]="undefined ">Select</option>
                                     <option  *ngFor="let option of MaritalList" value="{{option}}">
                                       {{option}}
@@ -192,7 +192,7 @@
 
                                 <div class="col-sm-3 ">
                                     <label class="control-label">Blood Group</label>
-                                    <select class="form-control" name="Blood" #Blood="ngModel" [(ngModel)]="objemployee.Blood_Group">
+                                    <select class="form-control" name="Blood" #Blood="ngModel" [(ngModel)]="objemployee.Blood_Group" [disabled]="userdisabled">
                                         <option  [ngValue]="undefined ">Select</option>
                                     <option  *ngFor="let option of BloodGroupList" value="{{option}}">
                                       {{option}}
@@ -201,36 +201,36 @@
                                 </div>
                                 <div class="col-sm-3 ">
                                     <label class="control-label">Date Of Birth<sup class="text-danger">*</sup></label>
-                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='DOB' name="D_O_B"></ejs-datepicker>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='DOB' name="D_O_B" [enabled]="userdatedisabled"></ejs-datepicker>
                                 </div>
                                 <div class="col-sm-3 ">
                                     <label class="control-label">Father/Mother's Name<sup class="text-danger">*</sup></label>
-                                    <input class="form-control" placeholder="Father/Mother's Name" name="Father" #Father="ngModel" [(ngModel)]="objemployee.Gurdian_Name" [ngClass]="{'clearance ': EmployeeFormSubmitted && Father.errors?.required}" required>
+                                    <input class="form-control" placeholder="Father/Mother's Name" name="Father" #Father="ngModel" [(ngModel)]="objemployee.Gurdian_Name" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Father.errors?.required}" required>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Spouse Name</label>
-                                    <input class="form-control" placeholder="Spouse Name" name="Husband" #Husband="ngModel" [(ngModel)]="objemployee.Spouse_Wife_Name">
+                                    <input class="form-control" placeholder="Spouse Name" name="Husband" #Husband="ngModel" [(ngModel)]="objemployee.Spouse_Wife_Name" [disabled]="userdisabled">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Phone</label>
-                                    <input class="form-control" placeholder="Phone" name="Phone" #Phone="ngModel" CompacctDigitonly="true" [(ngModel)]="objemployee.Contact_Phone">
+                                    <input class="form-control" placeholder="Phone" name="Phone" #Phone="ngModel" CompacctDigitonly="true" [(ngModel)]="objemployee.Contact_Phone" [disabled]="userdisabled">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
-                                    <input class="form-control" placeholder="Mobile No" name="Mobile" #Mobile="ngModel" [(ngModel)]="objemployee.Contact_Mobile" CompacctDigitonly="true" minlength="10" maxlength="10" [ngClass]="{'clearance ': EmployeeFormSubmitted && Mobile.errors?.required}"
+                                    <input class="form-control" placeholder="Mobile No" name="Mobile" #Mobile="ngModel" [(ngModel)]="objemployee.Contact_Mobile" [disabled]="userdisabled" CompacctDigitonly="true" minlength="10" maxlength="10" [ngClass]="{'clearance ': EmployeeFormSubmitted && Mobile.errors?.required}"
                                         required>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Emergency Contact<sup class="text-danger">*</sup></label>
-                                    <input class="form-control" placeholder="Emergency Contact" name="Emergency" #Emergency="ngModel" [(ngModel)]="objemployee.Emergency_Contact" CompacctDigitonly="true" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emergency.errors?.required}" required>
+                                    <input class="form-control" placeholder="Emergency Contact" name="Emergency" #Emergency="ngModel" [(ngModel)]="objemployee.Emergency_Contact" [disabled]="userdisabled" CompacctDigitonly="true" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emergency.errors?.required}" required>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Email</label>
-                                    <input class="form-control" placeholder="Email" name="Email" #Email="ngModel" [(ngModel)]="objemployee.Contact_Email">
+                                    <input class="form-control" placeholder="Email" name="Email" #Email="ngModel" [(ngModel)]="objemployee.Contact_Email" [disabled]="userdisabled">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Physically Challenged<sup class="text-danger">*</sup></label>
-                                    <select class="form-control" name="Challenged" #Challenged="ngModel" [(ngModel)]="objemployee.Physically_Chalanged" [ngClass]="{'clearance ': EmployeeFormSubmitted && Challenged.errors?.required}" required>
+                                    <select class="form-control" name="Challenged" #Challenged="ngModel" [(ngModel)]="objemployee.Physically_Chalanged" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Challenged.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
                                       {{option}}
@@ -240,15 +240,19 @@
 
                                 <div class="col-sm-3">
                                     <label class="control-label">EPIC NO</label>
-                                    <input class="form-control" placeholder="EPIC NO" name="EPIC" #EPIC="ngModel" [(ngModel)]="objemployee.EPIC_No">
+                                    <input class="form-control" placeholder="EPIC NO" name="EPIC" #EPIC="ngModel" [(ngModel)]="objemployee.EPIC_No" [disabled]="userdisabled">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">AADHAAR NO</label>
-                                    <input class="form-control" placeholder="Aadhaar No" name="ADHAR" CompacctDigitonly="true" maxlength="12" minlength="12" #ADHAR="ngModel" [(ngModel)]="objemployee.Adhar_No">
+                                    <input class="form-control" placeholder="Aadhaar No" name="ADHAR" CompacctDigitonly="true" maxlength="12" minlength="12" #ADHAR="ngModel" [(ngModel)]="objemployee.Adhar_No" [disabled]="userdisabled">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">PAN NO</label>
-                                    <input class="form-control" id="txtPANCard" placeholder="Pan No" name="PAN" #PAN="ngModel" maxlength="10" minlength="10" [(ngModel)]="objemployee.PAN_No" (ngModelChange)='ValidatePAN() ' [ngClass]="{clearance:(PANvalidFlag) ||(PAN.errors?.minlength && PAN.touched)}">
+                                    <input class="form-control" id="txtPANCard" placeholder="Pan No" name="PAN" #PAN="ngModel" maxlength="10" minlength="10" [(ngModel)]="objemployee.PAN_No" [disabled]="userdisabled" (ngModelChange)='ValidatePAN() ' [ngClass]="{clearance:(PANvalidFlag) ||(PAN.errors?.minlength && PAN.touched)}">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Highest Qualification</label>
+                                    <input class="form-control" placeholder="Highest Qualification" name="highqualification" #highqualification="ngModel" [(ngModel)]="objemployee.Highest_Qualification" [disabled]="userdisabled"  [ngClass]="{'clearance ': EmployeeFormSubmitted && highqualification.errors?.required}">
                                 </div>
 
                             </div>
@@ -265,7 +269,7 @@
                                 </i> &nbsp;<strong>Posting Details:</strong></h5>
                                     <div class="col-sm-6">
                                         <label class="control-label">Working Company<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Working" #Working="ngModel" [(ngModel)]="objemployee.Comp_ID" [ngClass]="{'clearance ': EmployeeFormSubmitted && Working.errors?.required}" required>
+                                        <select class="form-control" name="Working" #Working="ngModel" [(ngModel)]="objemployee.Comp_ID" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Working.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of WorkingCompanyList" value="{{option.Comp_ID}}">
                                           {{option.Comp_Short_Code}}
@@ -274,7 +278,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Current Location<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Current" #Current="ngModel" [(ngModel)]="objemployee.Location_ID" [ngClass]="{'clearance ': EmployeeFormSubmitted && Current.errors?.required}" required>
+                                        <select class="form-control" name="Current" #Current="ngModel" [(ngModel)]="objemployee.Location_ID" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Current.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of LocationList" value="{{option.Location_ID}}">
                                           {{option.Location}}
@@ -283,11 +287,11 @@
                                     </div>
                                     <div class="col-sm-6" style="margin-top: 10px;">
                                         <label class="control-label">Department<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
+                                        <div class="pull-right" *ngIf="!userdisabled">
                                             <span (click)="ViewDepartmentType()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw fa-eye"></i> View</span> &nbsp;
                                             <span (click)="CreateDepartment()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw fa-plus"></i> Create</span>
                                         </div>
-                                        <select class="form-control" name="Department" #Department="ngModel" [(ngModel)]="objemployee.Dept_ID" [ngClass]="{'clearance ': EmployeeFormSubmitted && Department.errors?.required}" required>
+                                        <select class="form-control" name="Department" #Department="ngModel" [(ngModel)]="objemployee.Dept_ID" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Department.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of DeptList" value="{{option.Dept_ID}}">
                                           {{option.Dept_Name}}
@@ -297,11 +301,11 @@
 
                                     <div class="col-sm-6" style="margin-top: 10px;">
                                         <label class="control-label">Designation<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
+                                        <div class="pull-right" *ngIf="!userdisabled">
                                             <span (click)="ViewDesignationType()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
                                             <span (click)="CreateDesignation()" class="btn-vk createPatient" style="cursor:pointer"><i class="fa fa-fw  fa-plus"></i> Create</span>
                                         </div>
-                                        <select class="form-control" name="Designation" #Designation="ngModel" [(ngModel)]="objemployee.Desig_ID" [ngClass]="{'clearance ': EmployeeFormSubmitted && Designation.errors?.required}" required>
+                                        <select class="form-control" name="Designation" #Designation="ngModel" [(ngModel)]="objemployee.Desig_ID" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Designation.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of DesignationList" value="{{option.Desig_ID}}">
                                           {{option.Designation}}
@@ -310,11 +314,11 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">State</label>
-                                        <input class="form-control" placeholder="State" name="Posting_State" #Posting_State="ngModel" [(ngModel)]="objemployee.Posting_State">
+                                        <input class="form-control" placeholder="State" name="Posting_State" #Posting_State="ngModel" [(ngModel)]="objemployee.Posting_State" [disabled]="userdisabled">
                                     </div>
                                     <div class="col-sm-2" style="margin-top: 1px;">
                                         <label class="control-label">Is HOD</label>
-                                        <p-checkbox [(ngModel)]="objemployee.Is_HOD" name="Hold_Bill_Flag" [binary]="true"></p-checkbox>
+                                        <p-checkbox [(ngModel)]="objemployee.Is_HOD" [disabled]="userdisabled" name="Hold_Bill_Flag" [binary]="true"></p-checkbox>
                                     </div>
                                 </div>
                             </div>
@@ -331,7 +335,7 @@
                                     </i> &nbsp;<strong>Salary payments Details:</strong></h5>
                                     <div class="col-sm-4">
                                         <label class="control-label">Salary Paid By<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Salary_Paid" #Salary_Paid="ngModel" [(ngModel)]="objemployee.Salary_Paid_By" (change)="Bankinfo()" [ngClass]="{'clearance ': EmployeeFormSubmitted && Salary_Paid.errors?.required}" required>
+                                        <select class="form-control" name="Salary_Paid" #Salary_Paid="ngModel" [(ngModel)]="objemployee.Salary_Paid_By" [disabled]="userdisabled" (change)="Bankinfo()" [ngClass]="{'clearance ': EmployeeFormSubmitted && Salary_Paid.errors?.required}" required>
                                              <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of SalaryPaidList" value="{{option}}">
                                           {{option}}
@@ -385,11 +389,11 @@
                             </i> &nbsp;<strong>Joining Details:</strong></h5>
                                     <div class="col-sm-12">
                                         <label class="control-label">Joining Date</label>
-                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Joining_Dt' name="joining_date"></ejs-datepicker>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Joining_Dt' name="joining_date" [enabled]="userdatedisabled"></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Employment Status<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Emp_Status" #Emp_Status="ngModel" [(ngModel)]="objemployee.Present_Status" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emp_Status.errors?.required}" required>
+                                        <select class="form-control" name="Emp_Status" #Emp_Status="ngModel" [(ngModel)]="objemployee.Present_Status" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emp_Status.errors?.required}" required>
                                  <option  [ngValue]="undefined">Select</option>
                             <option  *ngFor="let option of Statuslist" value="{{option}}">
                               {{option}}
@@ -398,7 +402,7 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Left On</label>
-                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Leave_Dt' name="left_on"></ejs-datepicker>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Leave_Dt' name="left_on" [enabled]="userdatedisabled"></ejs-datepicker>
                                     </div>
                                 </div>
                             </div>
@@ -415,7 +419,7 @@
                                 </i> &nbsp;<strong>Attendance Details:</strong></h5>
                                     <div class="col-sm-12">
                                         <label class="control-label"> 1St Weekly Off<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Weekoff1" #Weekoff1="ngModel" [(ngModel)]="objemployee.Off_Day" [ngClass]="{'clearance ': EmployeeFormSubmitted && Weekoff1.errors?.required}" required>
+                                        <select class="form-control" name="Weekoff1" #Weekoff1="ngModel" [(ngModel)]="objemployee.Off_Day" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Weekoff1.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of weakofflist" value="{{option}}">
                                       {{option}}
@@ -424,7 +428,7 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">2nd Weekly Off</label>
-                                        <select class="form-control" name="Weekoff2" #Weekoff2="ngModel" [(ngModel)]="objemployee.Second_Off_Day">
+                                        <select class="form-control" name="Weekoff2" #Weekoff2="ngModel" [(ngModel)]="objemployee.Second_Off_Day" [disabled]="userdisabled">
                                      <option  [ngValue]="undefined">Select</option>
                                 <option  *ngFor="let option of weakofflist2" value="{{option}}">
                                   {{option}}
@@ -433,11 +437,11 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Duty Start Time</label>
-                                        <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_In_Time" name="Off_In_Time" #Off_In_Time="ngModel" [ngModel]="objemployee.Off_In_Time" [format]="'hh:mm a'" [value]='TimeValue ' (change)="CalculateTime()"></ejs-timepicker>
+                                        <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_In_Time" name="Off_In_Time" #Off_In_Time="ngModel" [ngModel]="objemployee.Off_In_Time" [enabled]="userdatedisabled" [format]="'hh:mm a'" [value]='TimeValue ' (change)="CalculateTime()"></ejs-timepicker>
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Duty End Time</label>
-                                        <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_Out_Time" name="Off_Out_Time" #Off_Out_Time="ngModel" [ngModel]="objemployee.Off_Out_Time" [format]="'hh:mm a'" [value]='TimeValue ' (change)="CalculateTime()"></ejs-timepicker>
+                                        <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_Out_Time" name="Off_Out_Time" #Off_Out_Time="ngModel" [ngModel]="objemployee.Off_Out_Time" [enabled]="userdatedisabled" [format]="'hh:mm a'" [value]='TimeValue ' (change)="CalculateTime()"></ejs-timepicker>
                                     </div>
                                     <div class="col-sm-12">
                                          <label class="control-label">Working Hours (In Mins)</label>
@@ -445,13 +449,13 @@
                                         <input class="form-control" placeholder="Working Hours (In Mins)" name="Working_Hours_Mins" #Working_Hours_Mins="ngModel" [(ngModel)]="objemployee.Working_Hours_Mins" [disabled]="true">
                                     </div>
                                     <div class="col-sm-12" style="padding-top: 10px;">
-                                        <p-checkbox label="Eligible For OT" [(ngModel)]="objemployee.OT_Avail" name="otavail" binary="true"></p-checkbox>
+                                        <p-checkbox label="Eligible For OT" [(ngModel)]="objemployee.OT_Avail" [disabled]="userdisabled" name="otavail" binary="true"></p-checkbox>
                                     </div>
                                     <div class="col-sm-12" style="padding-top: 10px;">
-                                        <p-checkbox label="Late Deduction" [(ngModel)]="objemployee.Late_Ded_Tag" name="Late_Deduct" binary="true"></p-checkbox>
+                                        <p-checkbox label="Late Deduction" [(ngModel)]="objemployee.Late_Ded_Tag" [disabled]="userdisabled" name="Late_Deduct" binary="true"></p-checkbox>
                                     </div>
                                     <div class="col-sm-12" style="padding-top: 10px;">
-                                        <p-checkbox label="Attendance Using Biometric" [(ngModel)]="objemployee.Is_Biometric" name="Biometric" binary="true"></p-checkbox>
+                                        <p-checkbox label="Attendance Using Biometric" [(ngModel)]="objemployee.Is_Biometric" [disabled]="userdisabled" name="Biometric" binary="true"></p-checkbox>
                                     </div>
                                 </div>
                             </div>
@@ -470,7 +474,7 @@
                                     <label class="control-label">ESIC Details</label>
                                     <div class="input-group ">
                                         <div class="input-group-addon">
-                                            <p-checkbox label="ESIC No" [(ngModel)]="objemployee.ESI_Avail" name="ESI" #ESI="ngModel" binary="true" (ngModelChange)="Esicheck(objemployee.ESI_Avail)"></p-checkbox>
+                                            <p-checkbox label="ESIC No" [(ngModel)]="objemployee.ESI_Avail" [disabled]="userdisabled" name="ESI" #ESI="ngModel" binary="true" (ngModelChange)="Esicheck(objemployee.ESI_Avail)"></p-checkbox>
                                         </div>
                                         <input class="form-control" name="Esi_No" #Esi_No="ngModel" [(ngModel)]="objemployee.ESI_No" [disabled]="!objemployee.ESI_Avail">
                                     </div>
@@ -479,20 +483,20 @@
                                     <label class="control-label">PF Details</label>
                                     <div class="input-group ">
                                         <div class="input-group-addon">
-                                            <p-checkbox label="PF No" [(ngModel)]="objemployee.PF_Avail" name="PF" binary="true" #PF="ngModel" (ngModelChange)="pfcheck(objemployee.PF_Avail)"></p-checkbox>
+                                            <p-checkbox label="PF No" [(ngModel)]="objemployee.PF_Avail" [disabled]="userdisabled" name="PF" binary="true" #PF="ngModel" (ngModelChange)="pfcheck(objemployee.PF_Avail)"></p-checkbox>
                                         </div>
-                                        <input class="form-control" name="PF_No" #PF_No="ngModel" [(ngModel)]="objemployee.PF_Ac_No" [disabled]="!objemployee.PF_Avail">
+                                        <input class="form-control" name="PF_No" #PF_No="ngModel" [(ngModel)]="objemployee.PF_Ac_No" [disabled]="!objemployee.PF_Avail" [disabled]="userdisabled">
                                         <span class="input-group-btn" style="width:0px;"></span>
 
                                         <div class="input-group-addon">
                                             <label>UAN No</label>
                                         </div>
-                                        <input class="form-control" name="UNA" #UNA="ngModel" [(ngModel)]="objemployee.UAN_NO" [disabled]="!objemployee.PF_Avail">
+                                        <input class="form-control" name="UNA" #UNA="ngModel" [(ngModel)]="objemployee.UAN_NO" [disabled]="!objemployee.PF_Avail" [disabled]="userdisabled">
                                     </div>
 
                                 </div>
                                 <div class="col-sm-2" style="margin-top: 31px;">
-                                    <p-checkbox label="P.TAX Deduct" [(ngModel)]="objemployee.PTax_Avail" name="P_tax" #P_tax="ngModel" binary="true"></p-checkbox>
+                                    <p-checkbox label="P.TAX Deduct" [(ngModel)]="objemployee.PTax_Avail" [disabled]="userdisabled" name="P_tax" #P_tax="ngModel" binary="true"></p-checkbox>
                                 </div>
                             </div>
                             <div class="form-group" style="padding: 1em;">
@@ -507,10 +511,10 @@
                                 </i> &nbsp;<strong>Managers</strong></h5>
                                 <div class="col-sm-6">
                                     <label class="control-label">Reporting Managers</label>
-                                    <div class="pull-right">
+                                    <div class="pull-right" *ngIf="!userdisabled">
                                         <span (click)="RefreshReporting()" class="btn-vk  createPatient" style="cursor: pointer;"><i class="fa fa-refresh"></i> Refresh</span>
                                     </div>
-                                    <select class="form-control" name="Reporting" #Reporting="ngModel" [(ngModel)]="objemployee.Report_Manager">
+                                    <select class="form-control" name="Reporting" #Reporting="ngModel" [(ngModel)]="objemployee.Report_Manager" [disabled]="userdisabled">
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of ReportingList" value="{{option.Emp_ID}}">
                                       {{option.NAME}}
@@ -518,11 +522,11 @@
                                    </select>
                                 </div>
                                 <div class="col-sm-6">
-                                    <div class="pull-right">
+                                    <div class="pull-right" *ngIf="!userdisabled">
                                         <span (click)="RefreshReporting()" class="btn-vk  createPatient" style="cursor: pointer;"><i class="fa fa-refresh"></i> Refresh</span>
                                     </div>
                                     <label class="control-label">Business Managers</label>
-                                    <select class="form-control" name="Business" #Business="ngModel" [(ngModel)]="objemployee.Business_Manager">
+                                    <select class="form-control" name="Business" #Business="ngModel" [(ngModel)]="objemployee.Business_Manager" [disabled]="userdisabled">
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of ReportingList" value="{{option.Emp_ID}}">
                                       {{option.NAME}}
@@ -543,7 +547,7 @@
                                 </i> &nbsp;<strong>Remarks:</strong></h5>
                                 <div class="col-sm-6">
                                     <label class="control-label">Remarks About This Employee</label>
-                                    <textarea name="Remarks" placeholder="Remarks" row='1 ' class="form-control" [(ngModel)]="objemployee.Remarks"> </textarea>
+                                    <textarea name="Remarks" placeholder="Remarks" row='1 ' class="form-control" [(ngModel)]="objemployee.Remarks" [disabled]="userdisabled"> </textarea>
                                 </div>
                             </div>
                         </form>
@@ -560,14 +564,14 @@
                                     <strong>Atteched Document Details:</strong></h5>
                                 <div class="col-sm-4">
                                     <label class="control-label">Document Details<sup class="text-danger">*</sup></label>
-                                    <input class="form-control" placeholder="Document Details" name="Document" #Document="ngModel" [(ngModel)]="objemployee.Document_Name" [ngClass]="{'clearance ': DocvalidSubmit && Document.errors?.required}" required>
+                                    <input class="form-control" placeholder="Document Details" name="Document" #Document="ngModel" [(ngModel)]="objemployee.Document_Name" [disabled]="userdisabled" [ngClass]="{'clearance ': DocvalidSubmit && Document.errors?.required}" required>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Add Documents<sup class="text-danger">*</sup></label>
-                                    <p-fileUpload #fileInput name="aFile" accept="image/*,application/pdf" [chooseLabel]="'Browse '" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)"></p-fileUpload>
+                                    <p-fileUpload #fileInput name="aFile" accept="image/*,application/pdf" [chooseLabel]="'Browse '" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" [disabled]="userdisabled"></p-fileUpload>
                                 </div>
                                 <div class="col-sm-4">
-                                    <button class="btn btn-primary custombutton1" style="margin-top: 31px; margin-left: 56px;" (click)="addDocuments()" [disabled]="SpinnerDoc">
+                                    <button class="btn btn-primary custombutton1" style="margin-top: 31px; margin-left: 56px;" (click)="addDocuments()" [disabled]="userdisabled" [disabled]="SpinnerDoc">
                                         <p-progressSpinner *ngIf="SpinnerDoc"[style]="{width: '15px ', height: '15px '}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                 <span *ngIf="!SpinnerDoc" class="glyphicon glyphicon-save">Upload Document</span>
                                             
@@ -617,7 +621,7 @@
                             </i> &nbsp;<strong>ERP Settings</strong></h5>
                             <div class="col-sm-6">
                                 <label class="control-label">ERP User ID</label>
-                                <select class="form-control" name="Reporting" #Reporting="ngModel" [(ngModel)]="objemployee.Login_User_ID">
+                                <select class="form-control" name="Reporting" #Reporting="ngModel" [(ngModel)]="objemployee.Login_User_ID" [disabled]="userdisabled">
                                     <option  [ngValue]="undefined">Select</option>
                                 <option  *ngFor="let option of UserList" value="{{option.User_ID}}">
                                   {{option.Name}}
@@ -627,7 +631,7 @@
                         </div>
 
                         <div class="box-footer">
-                            <button class="btn btn-primary pull-right" id="load" (click)="saveemployeemaster(EmployeeForm.form.valid)" [disabled]="Spinner">
+                            <button [disabled]="userdisabled" class="btn btn-primary pull-right" id="load" (click)="saveemployeemaster(EmployeeForm.form.valid)" [disabled]="Spinner">
                                                 <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px ', height: '15px '}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
                                         </button>
@@ -640,6 +644,7 @@
         </div>
     </div>
 </div>
+
 <p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="100">
 
