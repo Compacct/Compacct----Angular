@@ -146,7 +146,12 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   TaskViewObj:any = {};
   taskUpdate = false;
   updateDataList = [];
-
+  EditTaskDateModal = false;
+  TaskDateEditObj = new tasskDate();
+  TaskEditFormSubmit = false;
+  SpinnerEditDate = false;
+  EditTaskPlannedStartDate = new Date();
+  EditTaskPlannedEndtDate = new Date();
   @ViewChild('gantt', {
     static: true
   })
@@ -173,7 +178,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
       },
     ];
   }
-
+  
   ngOnInit() {
     
     this.dayWorkingTime = [{ from: 0, to: 24 }]; 
@@ -483,6 +488,66 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     console.log(e);
   }
 
+  // EDIT TASK PLANNED DATE 
+  EditTaskDate(obj) {
+    this.TaskDateEditObj = new tasskDate();
+    this.TaskEditFormSubmit = false;
+    this.SpinnerEditDate = false;
+    this.EditTaskPlannedStartDate = new Date();
+    this.EditTaskPlannedEndtDate = new Date();
+    if(obj.Task_Txn_ID) {
+      this.EditTaskPlannedStartDate = new Date(obj.Planned_Start_Date);
+      this.EditTaskPlannedEndtDate =new Date(obj.Planned_End_Date);
+      this.TaskDateEditObj.Task_Txn_ID = obj.Task_Txn_ID;
+      this.TaskDateEditObj.Planned_Start_Date = obj.Planned_Start_Date;
+      this.TaskDateEditObj.Planned_End_Date =obj.Planned_End_Date;
+      this.EditTaskDateModal= true;
+    }
+  }
+  UpdateEditTaskDate(valid) {
+    this.TaskEditFormSubmit = true;
+    if (valid && this.TaskDateEditObj.Task_Txn_ID) {
+      this.SpinnerEditDate = true;
+      this.TaskDateEditObj.Planned_Start_Date = this.DateService.dateConvert(new Date(this.EditTaskPlannedStartDate));
+      this.TaskDateEditObj.Planned_End_Date = this.DateService.dateConvert(new Date(this.EditTaskPlannedEndtDate));
+      console.log("Site Save Data", this.TaskDateEditObj);
+      const obj = {
+        "SP_String": "SP_Task_GNATT",
+        "Report_Name_String": "Edit_Task_GNATT_Plan_Date_Only",
+        "Json_Param_String": JSON.stringify([this.TaskDateEditObj])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          console.log(data)
+          if (data[0].message) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "",
+              detail: "Succesfully Date Updated"
+            });
+            this.TaskDateEditObj = new tasskDate();
+            this.TaskEditFormSubmit = false;
+            this.EditTaskDateModal= false;
+            this.TaskModalFlag = false;
+            this.EditTaskPlannedStartDate = new Date();
+            this.EditTaskPlannedEndtDate = new Date();     
+            this.GetGanttTaskList();
+          } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+            this.SpinnerEditDate = false;
+          }
+        });
+    }
+  }
 
   // SITE CREATE 
   ToggleSite() {
@@ -1425,4 +1490,9 @@ class ProdPlan {
   Product_Description: string;
   Qty: string;
   Job_ID: string;
+}
+class tasskDate {
+  Task_Txn_ID:string;
+  Planned_Start_Date:any;
+  Planned_End_Date:any;
 }

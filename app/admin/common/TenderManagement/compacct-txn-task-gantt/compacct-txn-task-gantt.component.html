@@ -783,11 +783,16 @@
                         <td>{{d.Task_Status}}</td>
                         <td>
                           <div style="display: flex;">
-                            <button (click)="EditTask(d)" *ngIf="d.Doc_ID.toString() != '0' && commonApi.CompacctCookies.User_ID == d.User_ID"
+                            <button (click)="EditTask(d)"
+                             *ngIf="d.Doc_ID.toString() != '0' && commonApi.CompacctCookies.User_ID == d.User_ID && d.Approve_Final_Status == 'Pending'"
                              class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></button>
                             &nbsp;
+                            <button (click)="EditTaskDate(d)"
+                            *ngIf="commonApi.CompacctCookies.User_ID == d.User_ID && d.Approve_Final_Status == 'Approved'"
+                            class="btn btn-xs btn-primary"><i class="fa fa-calender"></i> Edit Date</button>
+                           &nbsp;
                             <button (click)="DeleteTask(index)" 
-                            *ngIf="commonApi.CompacctCookies.User_ID == d.User_ID"
+                            *ngIf="commonApi.CompacctCookies.User_ID == d.User_ID && d.Approve_Final_Status == 'Pending'"
                              class="btn btn-xs btn-danger"><i
                                 class="fa fa-trash"></i></button>
 
@@ -1302,3 +1307,52 @@
  
   </p-footer>
   </p-dialog>
+  <!-- TASK STATUS VIEW -->
+<p-dialog
+[header]="'Task Date Update'"
+[appendTo]="'body'"
+[visible]="EditTaskDateModal"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '50%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+ 
+  <form name="TaskEditDateModalUpdate" #TaskEditDateModalUpdate="ngForm" novalidate>
+    <div class="col-sm-12">
+      <label class="control-label"> Planned Start Date<sup class="text-danger">*</sup></label>
+      <input type="date" class="form-control" id="StartdateEdit" #StartdateEdit="ngModel"
+        name="StartdateEdit" [ngModel]="EditTaskPlannedStartDate | date:'yyyy-MM-dd'"
+        (ngModelChange)="EditTaskPlannedStartDate = $event"
+        [ngClass]="{'clearance':TaskEditFormSubmit && StartdateEdit?.errors?.required}" required>
+    </div>
+    <div class="col-sm-12">
+      <label class="control-label"> Planned End Date<sup class="text-danger">*</sup></label>
+      <input type="date" class="form-control" id="eNDdateEdit" #eNDdateEdit="ngModel"
+        name="eNDdateEdit" [ngModel]="EditTaskPlannedEndtDate | date:'yyyy-MM-dd'"
+        (ngModelChange)="EditTaskPlannedEndtDate = $event"
+        [ngClass]="{'clearance':TaskEditFormSubmit && eNDdateEdit?.errors?.required}" required>
+    </div>
+    </form>
+</div>
+<p-footer>
+<button
+  type="button"
+  (click)="EditTaskDateModal = false"
+  class="btn btn-default"
+>
+  CANCEL
+</button>
+<button type="button" class="btn btn-primary" 
+(click)="UpdateEditTaskDate(TaskEditDateModalUpdate.form.valid)">
+<p-progressSpinner *ngIf="SpinnerEditDate" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+  animationDuration=".5s"></p-progressSpinner> <i class="fa fa-fw  fa-save"></i>&nbsp;UPDATE
+</button>
+</p-footer>
+</p-dialog>
