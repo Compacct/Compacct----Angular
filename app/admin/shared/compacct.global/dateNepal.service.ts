@@ -19,7 +19,29 @@ export class DateNepalConvertService {
     const EngDateObj = NepaliFunctions.BS2AD({year: dateObj.year, month: Number(dateObj.month) , day: dateObj.day});
     return new Date(EngDateObj.year,(EngDateObj.month -1),EngDateObj.day);
   }
-
+  convertNewEngToNepaliDateObj = function (_Date) {
+    const EnglishDate = new Date(_Date);
+    var month = EnglishDate.getUTCMonth() + 1;
+    var day = EnglishDate.getDate();
+    var year = EnglishDate.getUTCFullYear();
+    const NepalDateObj = NepaliFunctions.AD2BS({ year: year, month: month, day: day });
+    return NepalDateObj.day+'/'+NepalDateObj.month+'/'+NepalDateObj.year;
+ 
+  }
+  convertEngToNepaliFormatDateObj = function (_Date) {
+    const EnglishDate = new Date(_Date);
+    var month = EnglishDate.getUTCMonth() + 1;
+    var day = EnglishDate.getDate();
+    var year = EnglishDate.getUTCFullYear();
+    const NepalDateObj = NepaliFunctions.AD2BS({
+      year: year,
+      month: month,
+      day: day
+    });
+    const d1 = new NepaliDate(NepalDateObj.year, Number(NepalDateObj.month) - 1, NepalDateObj.day)
+    return d1.format('dd mmmm, yyyy');
+   
+  }
 
   GetNepaliCurrentDateNew(){
     return NepaliFunctions.GetCurrentBsDate().day+'/'+NepaliFunctions.GetCurrentBsDate().month+'/'+NepaliFunctions.GetCurrentBsDate().year;

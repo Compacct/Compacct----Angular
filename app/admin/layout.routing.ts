@@ -261,6 +261,8 @@ import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/b
 import { ProjectPlanApproveComponent } from "./common/Harbauer/project-plan-approve/project-plan-approve.component";
 import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authorization-harbauer/po-authorization-harbauer.component";
 import { HarbProjectDesignApprovalComponent } from "./common/Harbauer/harb-project-design-approval/harb-project-design-approval.component";
+import { NepalRequisitionFromSalesmanComponent } from "./common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component";
+import { NepalPurchaseRequestComponent } from "./common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1931,6 +1933,30 @@ data: {
                     data: {
                       title: 'Project Design Approval'
                 }
+                },
+                {
+                  path: 'Nepal_Bl_Txn_Requisition_From_Salesman',
+                   component: NepalRequisitionFromSalesmanComponent,
+                    data: {
+                      title: 'Requisition From Salesman'
+                }
+                },
+                {
+                  path: 'Nepal_BL_Txn_Purchase_Request',
+                   component: NepalPurchaseRequestComponent,
+                    data: {
+                      title: 'Purchase Request'
+                }
+                },
+                {
+                  path: "Project_Dashboard",
+                  loadChildren: () =>
+                    import(
+                      "./common/Harbauer/project-dashboard/project-dashboard.module"
+                    ).then(m => m.ProjectDashboardModule),
+                  data: {
+                    title: "Project Dashboard"
+                  }
                 },
                 
       

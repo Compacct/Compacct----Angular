@@ -356,6 +356,8 @@ import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/b
 import { ProjectPlanApproveComponent } from "./common/Harbauer/project-plan-approve/project-plan-approve.component";
 import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authorization-harbauer/po-authorization-harbauer.component";
 import { HarbProjectDesignApprovalComponent } from './common/Harbauer/harb-project-design-approval/harb-project-design-approval.component';
+import { NepalRequisitionFromSalesmanComponent } from './common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component';
+import { NepalPurchaseRequestComponent } from './common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component';
 
 
 @NgModule({
@@ -630,7 +632,9 @@ import { HarbProjectDesignApprovalComponent } from './common/Harbauer/harb-proje
     BOMAuthorizationComponent,
     ProjectPlanApproveComponent,
     POAuthorizationHarbauerComponent,
-    HarbProjectDesignApprovalComponent
+    HarbProjectDesignApprovalComponent,
+    NepalRequisitionFromSalesmanComponent,
+    NepalPurchaseRequestComponent
   ],
   imports: [
     CommonModule,
