@@ -72,7 +72,28 @@
                                     <div class="col-sm-2"></div>
                                 </div>
                             </form>
+                            <div class="form-group" *ngIf='getAllDataList.length' style="padding:15px">
 
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Ref No <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="distRefNo" [(ngModel)]="selectDistRefNo" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Ref_No"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Customer Name <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="distCustomerName" [(ngModel)]="seleteDistCustomerName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Customer_Name"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Project Description <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistProjectDescription" [(ngModel)]="seleteDistProjectDescription" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Project_Description"></p-multiSelect>
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
                             <div class="no-padding">
                                 <p-table [value]="getAllDataList"
                                 [paginator]="getAllDataList.length ? true : false"
@@ -293,6 +314,7 @@
                                                  #Percentage_claimed_Previous_Bills = "ngModel"
                                                  [(ngModel)]="ObjProjectBill.Percentage_claimed_Previous_Bills"
                                                  CompacctDigitonly="true"
+                                                 (ngModelChange)="CalClaimupto()"
                                                 [disabled]="addProductList.length">
                                                 <span class="input-group-addon">%</span>
                                             </div>
@@ -307,6 +329,7 @@
                                                 name="Percentage_claimed_This_Bill" 
                                                 #Percentage_claimed_This_Bill = "ngModel"
                                                 [(ngModel)]="ObjProjectBill.Percentage_claimed_This_Bill"
+                                                (ngModelChange)="CalClaimupto()"
                                                 [disabled]="addProductList.length">
                                                 <span class="input-group-addon">%</span>
                                             </div>
@@ -320,7 +343,7 @@
                                                         name="Percentage_claimed_upto_date"
                                                         #Percentage_claimed_upto_date="ngModel"
                                                         [(ngModel)]="ObjProjectBill.Percentage_claimed_upto_date"
-                                                        [disabled]="addProductList.length">
+                                                        disabled>
                                                 <span class="input-group-addon">%</span>
                                             </div>
                                         </div>
@@ -432,7 +455,7 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-6">
-                                        <label class="control-label">Work Detalis <sup class="text-danger">*</sup> </label>
+                                        <label class="control-label">Work Details <sup class="text-danger">*</sup> </label>
                                         <select class="form-control" 
                                         name="Work_Details" 
                                         #Work_Details="ngModel" 
@@ -615,7 +638,7 @@
                                         <tr style="background-color:#3c8dbc;color:white;">
                                     <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Sl. No.</th>
                                     <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Project</th>
-                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Work Detalis</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Work Details</th>
                                     <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Actual Billing item</th>
                                     <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">HSN / SAC Code</th>
                                     <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Unit Rate</th>
@@ -690,7 +713,7 @@
                                     <th>SGST Amount :</th>
                                     <td class="amt-td">{{getTofix(grSGST)}}</td>
                                     <th>Net Amount : </th>
-                                    <td class="amt-td">{{RoundOff(this.grNetAMt)}}</td>
+                                    <td class="amt-td">{{RoundOff(grNetAMt)}}</td>
                                     </tr>
                                     <tr>
                                         <th>Taxable Amount:</th>

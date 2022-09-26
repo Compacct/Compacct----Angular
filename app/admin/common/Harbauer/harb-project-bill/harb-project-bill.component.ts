@@ -44,6 +44,7 @@ export class HarbProjectBillComponent implements OnInit {
   grNetAMt:number = 0;
   grTotalAmt:number = 0
   getAllDataList:any = [];
+  backUpgetAllDataList:any = []
   DynamicHeader:any = []
   fullAddress:string = ""
   ShippingStateCode:any = undefined
@@ -56,6 +57,12 @@ export class HarbProjectBillComponent implements OnInit {
   seachSpinner:boolean = false
   initDate:any = [];
   DocNo:any = undefined
+  distRefNo:any = []
+  selectDistRefNo:any = []
+  distCustomerName:any = []
+  seleteDistCustomerName:any = []
+  DistProjectDescription:any =[]
+  seleteDistProjectDescription:any = []
   constructor(
     public $http: HttpClient,
     public commonApi: CompacctCommonApi,
@@ -310,8 +317,6 @@ export class HarbProjectBillComponent implements OnInit {
     }
     console.log("this.ObjProductDetalis.Discount_Type_Amount",this.ObjProductDetalis.Discount_Type_Amount)
   }
-  
-
   addProductDetalis(BillingAddressvalid:any,
                     ShippingAddressvalid:any,
                     RunningAccountDetailsvalid:any,
@@ -394,10 +399,11 @@ export class HarbProjectBillComponent implements OnInit {
       this.grSGST = xz.SGST_Amount ? this.grSGST + Number(xz.SGST_Amount) : 0;
       this.grIGST = xz.IGST_Amount ?  this.grIGST + Number(xz.IGST_Amount) : 0;
       this.grTaxable = xz.Taxable_Amount ? this.grTaxable + Number(xz.Taxable_Amount) : 0;
-      this.grNetAMt = xz.Line_Total ? this.grNetAMt + Number(xz.Line_Total) : 0;
+     // this.grNetAMt = xz.Line_Total ? this.grNetAMt + Number(xz.Line_Total) : 0;
       this.grDiscount = xz.Discount_Type_Amount ? this.grDiscount + Number(xz.Discount_Type_Amount) : 0
       this.grTotalAmt = xz.Amount ? this.grTotalAmt + Number(xz.Amount) : 0
     });
+    this.grNetAMt = this.grIGST ? this.getTofix(Number(this.grTaxable)) + this.getTofix(Number(this.grIGST)) : this.getTofix(Number(this.grTaxable)) + this.getTofix(Number(this.grCGST)) + this.getTofix(Number(this.grSGST))
    }
    getTofix(key){
     return Number(Number(key).toFixed(2))
@@ -414,66 +420,63 @@ export class HarbProjectBillComponent implements OnInit {
       });
      }
    }
-
-
   createProjectBill(){
-   
-      const AllSubledgerFilter = this.AllSubledger.find((x:any)=>Number(x.Sub_Ledger_ID) == Number(this.ObjProjectBill.Sub_Ledger_ID))
-      const costCenterListFilter = this.costCenterList.find((x:any)=> Number(x.Cost_Cen_ID) == Number(this.ObjProjectBill.Cost_Cen_ID))
-      this.ObjProjectBill.Doc_Date = this.DateService.dateConvert(new Date(this.Doc_Date))
-      this.ObjProjectBill.Sub_Ledger_Billing_Name = AllSubledgerFilter ? AllSubledgerFilter.Sub_Ledger_Name : "NA"
-      this.ObjProjectBill.Cost_Cen_Name = costCenterListFilter ? costCenterListFilter.Cost_Cen_Name : "NA"
-      this.ObjProjectBill.Bill_Gross_Amt = this.getTofix(Number(this.grTotalAmt))
-      this.ObjProjectBill.Bill_Net_Amt = this.getTofix(Number(this.grNetAMt))
-      this.ObjProjectBill.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
-      this.ObjProjectBill.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID;
-      this.ObjProjectBill.Total_Discount = Number(this.getTofix(this.grDiscount))
-      this.ObjProjectBill.Taxable_Amount = Number(this.getTofix(this.grTaxable))
-      this.ObjProjectBill.Total_CGST_Amount = Number(this.getTofix(this.grCGST))
-      this.ObjProjectBill.Total_SGST_Amount = Number(this.getTofix(this.grSGST))
-      this.ObjProjectBill.Total_IGST_Amount = Number(this.getTofix(this.grIGST))
-      this.ObjProjectBill.Tax_Amt = this.getTofix(Number(this.grCGST) + Number(this.grIGST) + Number(this.grSGST))
-      this.ObjProjectBill.Term_Amt = 0
-      this.ObjProjectBill.Rounded_Off = this.getTofix( Math.round(Number((Number(this.grNetAMt).toFixed(2)))) - Number((Number(this.grNetAMt).toFixed(2))))
-      this.ObjProjectBill.Ref_Date = this.DateService.dateConvert(this.Ref_Date)
-      this.ObjProjectBill.Percentage_claimed_Previous_Bills = Number(this.ObjProjectBill.Percentage_claimed_Previous_Bills)
-      this.ObjProjectBill.Percentage_claimed_This_Bill = Number(this.ObjProjectBill.Percentage_claimed_This_Bill)
-      this.ObjProjectBill.Percentage_claimed_upto_date = Number(this.ObjProjectBill.Percentage_claimed_upto_date)
-      this.ObjProjectBill.Total_Work_Order_Value = Number(this.ObjProjectBill.Total_Work_Order_Value)
-      this.ObjProjectBill.Shipping_State_Code = this.ShippingStateCode
-      this.ObjProjectBill.L_element = this.addProductList
-
-      const obj = {
-        "SP_String": "SP_Sale_Bill",
-        "Report_Name_String":"Sale_Bill_Create",
-        "Json_Param_String": JSON.stringify([this.ObjProjectBill])
-      }
-      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-        console.log("After Save",data)
-        if(data[0].Success == "True"){
-          this.clearData();
-          this.compacctToast.clear();
-           this.compacctToast.add({
-           key: "compacct-toast",
-           severity: "success",
-           summary: "Sale Bill Project",
-           detail: "Succesfully Created " 
-         });
+        const AllSubledgerFilter = this.AllSubledger.find((x:any)=>Number(x.Sub_Ledger_ID) == Number(this.ObjProjectBill.Sub_Ledger_ID))
+        const costCenterListFilter = this.costCenterList.find((x:any)=> Number(x.Cost_Cen_ID) == Number(this.ObjProjectBill.Cost_Cen_ID))
+        this.ObjProjectBill.Doc_Date = this.DateService.dateConvert(new Date(this.Doc_Date))
+        this.ObjProjectBill.Sub_Ledger_Billing_Name = AllSubledgerFilter ? AllSubledgerFilter.Sub_Ledger_Name : "NA"
+        this.ObjProjectBill.Cost_Cen_Name = costCenterListFilter ? costCenterListFilter.Cost_Cen_Name : "NA"
+        this.ObjProjectBill.Bill_Gross_Amt = this.getTofix(Number(this.grTotalAmt))
+        this.ObjProjectBill.Bill_Net_Amt = this.RoundOff(Number(this.grNetAMt))
+        this.ObjProjectBill.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
+        this.ObjProjectBill.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID;
+        this.ObjProjectBill.Total_Discount = Number(this.getTofix(this.grDiscount))
+        this.ObjProjectBill.Taxable_Amount = Number(this.getTofix(this.grTaxable))
+        this.ObjProjectBill.Total_CGST_Amount = Number(this.getTofix(this.grCGST))
+        this.ObjProjectBill.Total_SGST_Amount = Number(this.getTofix(this.grSGST))
+        this.ObjProjectBill.Total_IGST_Amount = Number(this.getTofix(this.grIGST))
+        this.ObjProjectBill.Tax_Amt = this.getTofix(Number(this.grCGST) + Number(this.grIGST) + Number(this.grSGST))
+        this.ObjProjectBill.Term_Amt = 0
+        this.ObjProjectBill.Rounded_Off = this.getTofix( Math.round(Number((Number(this.grNetAMt).toFixed(2)))) - Number((Number(this.grNetAMt).toFixed(2))))
+        this.ObjProjectBill.Ref_Date = this.DateService.dateConvert(this.Ref_Date)
+        this.ObjProjectBill.Percentage_claimed_Previous_Bills = Number(this.ObjProjectBill.Percentage_claimed_Previous_Bills)
+        this.ObjProjectBill.Percentage_claimed_This_Bill = Number(this.ObjProjectBill.Percentage_claimed_This_Bill)
+        this.ObjProjectBill.Percentage_claimed_upto_date = Number(this.ObjProjectBill.Percentage_claimed_upto_date)
+        this.ObjProjectBill.Total_Work_Order_Value = Number(this.ObjProjectBill.Total_Work_Order_Value)
+        this.ObjProjectBill.Shipping_State_Code = this.ShippingStateCode
+        this.ObjProjectBill.L_element = this.addProductList
+      console.log("ObjProjectBill",this.ObjProjectBill)
+        const obj = {
+          "SP_String": "SP_Sale_Bill",
+          "Report_Name_String":"Sale_Bill_Create",
+          "Json_Param_String": JSON.stringify([this.ObjProjectBill])
         }
-        else{
-          this.onReject()
-          this.compacctToast.clear();
-           this.compacctToast.add({
-             key: "compacct-toast",
-             severity: "error",
-             summary: "Warn Message",
-             detail: data[1].Error
-           })
-        }
-       
-      })
-    
-  }
+        this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+          console.log("After Save",data)
+          if(data[0].Success == "True"){
+            this.clearData();
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Sale Bill Project",
+            detail: "Succesfully Created " 
+          });
+          }
+          else{
+            this.onReject()
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: data[1].Error
+            })
+          }
+        
+        })
+      
+    }
  
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -500,9 +503,13 @@ export class HarbProjectBillComponent implements OnInit {
       console.log("data",JSON.parse(data[0].Data))
       if(data[0].Success == "True"){  
         this.getAllDataList = data[0].Data ? JSON.parse(data[0].Data) : []
+        this.backUpgetAllDataList = this.getAllDataList
+        this.GetDistinct()
         if(this.getAllDataList.length){
-          this.DynamicHeader = Object.keys(this.getAllDataList[0]);
+          this.DynamicHeader = Object.keys(this.getAllDataList[this.getAllDataList.length - 1]);
+          console.log("DynamicHeader",this.DynamicHeader)
         }
+        
       }
       else{
         
@@ -517,6 +524,67 @@ export class HarbProjectBillComponent implements OnInit {
       this.seachSpinner = false
     })
   }
+
+  // DISTINCT & FILTER
+  GetDistinct() {
+    console.log("DISTINCT")
+    let RefNo:any = [];
+    let CustomerName:any = [];
+    let ProjectDescription:any = []
+    this.distRefNo =[];
+    this.selectDistRefNo =[];
+    this.distCustomerName =[];
+    this.seleteDistCustomerName =[];
+    this.DistProjectDescription = []
+    this.seleteDistProjectDescription = []
+   let SearchFields:any =[];
+    this.getAllDataList.forEach((item) => {
+   if (RefNo.indexOf(item.Ref_No) === -1) {
+    RefNo.push(item.Ref_No);
+   this.distRefNo.push({ label: item.Ref_No, value: item.Ref_No });
+   }
+  if (CustomerName.indexOf(item.Customer_Name) === -1) {
+    CustomerName.push(item.Customer_Name);
+    this.distCustomerName.push({ label: item.Customer_Name, value: item.Customer_Name });
+    }
+    if (ProjectDescription.indexOf(item.Project_Description) === -1) {
+      ProjectDescription.push(item.Project_Description);
+      this.DistProjectDescription.push({ label: item.Project_Description, value: item.Project_Description });
+      }
+  });
+     this.backUpgetAllDataList = [...this.getAllDataList];
+  }
+  FilterDist() {
+    let RefNo:any = [];
+    let CustomerName:any = [];
+    let ProjectDescription:any = []
+    let SearchFields:any =[];
+  if (this.selectDistRefNo.length) {
+    SearchFields.push('Ref_No');
+    RefNo = this.selectDistRefNo;
+  }
+  if (this.seleteDistCustomerName.length) {
+    SearchFields.push('Customer_Name');
+    CustomerName = this.seleteDistCustomerName;
+  }
+  if (this.seleteDistProjectDescription.length) {
+    SearchFields.push('Project_Description');
+    ProjectDescription = this.seleteDistProjectDescription;
+  }
+  this.getAllDataList = [];
+  if (SearchFields.length) {
+    let LeadArr = this.backUpgetAllDataList.filter(function (e) {
+      return (RefNo.length ? RefNo.includes(e['Ref_No']) : true)
+      && (CustomerName.length ? CustomerName.includes(e['Customer_Name']) : true)
+      && (ProjectDescription.length ? ProjectDescription.includes(e['Project_Description']) : true)
+    });
+  this.getAllDataList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.getAllDataList = [...this.backUpgetAllDataList] ;
+  }
+  }
+
+
   DeleteProjectBill(col:any){
    if(col.Doc_No){
      this.DocNo = col.Doc_No
@@ -571,6 +639,14 @@ export class HarbProjectBillComponent implements OnInit {
   }
   roundOffValue(){
     return this.getTofix( Math.round(Number((Number(this.grNetAMt).toFixed(2)))) - Number((Number(this.grNetAMt).toFixed(2))))
+  }
+  CalClaimupto(){
+    if(this.ObjProjectBill.Percentage_claimed_Previous_Bills && this.ObjProjectBill.Percentage_claimed_This_Bill){
+      this.ObjProjectBill.Percentage_claimed_upto_date = this.getTofix(Number(this.ObjProjectBill.Percentage_claimed_Previous_Bills) + Number(this.ObjProjectBill.Percentage_claimed_This_Bill))
+    }
+    else{
+      this.ObjProjectBill.Percentage_claimed_upto_date = undefined
+    }
   }
 }
 class ProjectBill{
