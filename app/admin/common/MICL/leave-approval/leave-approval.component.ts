@@ -100,8 +100,9 @@ export class LeaveApprovalComponent implements OnInit {
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Leave_Application",
-      "Report_Name_String": "Get_Leave_Apply_Data",
-      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"PENDING APPROVAL"}])
+      // "Report_Name_String": "Get_Leave_Apply_Data",
+      "Report_Name_String": "PENDING APPROVAL",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid}]) //, Heading:"PENDING APPROVAL"
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -248,7 +249,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
         key: "compacct-toast",
         severity: "error",
         summary: "Warn Message",
-        detail: "Something Wrong"
+        detail: "Enter Remarks"
       });
     }
   }
@@ -271,8 +272,8 @@ this.ApprovalList = [...this.BackupApprovalList] ;
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Leave_Application",
-      "Report_Name_String": "Get_Leave_Apply_Data",
-      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"APPROVED APPROVAL"}])
+      "Report_Name_String": "APPROVED APPROVAL",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid}]) // , Heading:"APPROVED APPROVAL"
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -325,8 +326,8 @@ this.ApprovedApprovalList = [...this.BackupApprovedApprovalList] ;
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Leave_Application",
-      "Report_Name_String": "Get_Leave_Apply_Data",
-      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"DISAPPROVED APPROVAL"}])
+      "Report_Name_String": "DISAPPROVED APPROVAL",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid}]) // , Heading:"DISAPPROVED APPROVAL"
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{

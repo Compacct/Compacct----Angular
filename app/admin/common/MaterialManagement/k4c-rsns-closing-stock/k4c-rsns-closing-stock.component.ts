@@ -390,8 +390,23 @@ GetDataForSave(){
   }
 }
 SaveBeforeCheck(){
-  this.Spinner = true;
-   if (this.ProductList.length) {
+    this.Spinner = true;
+  if (this.ProductList.length) {
+const tempo = {
+  Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
+  Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID,
+  Godown_ID : this.ObjBrowse.godown_id,
+  Material_Type : this.MaterialType_Flag
+}
+const obj = {
+  "SP_String": "SP_K4C_RSNS_Closing_Stock",
+  "Report_Name_String": "Check_K4C_RSNS_Closing_Stock_Exit_Or_Not",
+  "Json_Param_String": JSON.stringify([tempo])
+}
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  if (this.buttonname === "Save") {
+   if (data[0].Column1 === "OK"){
+    // this.SaveBeforeCheck();
     this.compacctToast.clear();
     this.compacctToast.add({
       key: "s",
@@ -400,8 +415,44 @@ SaveBeforeCheck(){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+   }
+   else {
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Already Saved ! ",
+      detail: "Please go to browse and update  "
+    });
+   }
   }
+   else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "s",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+   }
+ })
 }
+}
+// SaveBeforeCheck(){
+//    this.Spinner = true;
+//    if (this.ProductList.length) {
+//     this.compacctToast.clear();
+//     this.compacctToast.add({
+//       key: "s",
+//       sticky: true,
+//       severity: "warn",
+//       summary: "Are you sure?",
+//       detail: "Confirm to proceed"
+//     });
+//   }
+// }
 Save(){
   //if(valid){
     const obj = {

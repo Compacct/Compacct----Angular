@@ -88,8 +88,8 @@ export class HrLeaveApplyComponent implements OnInit {
     ];
    
     this.header.pushHeader({
-      Header: "HR Leave Apply",
-      Link: " MICL -> HR-leave-apply"
+      Header: "Leave Application",
+      Link: " MICL -> Leave Application"
     })
   // this.minDateTo_Time = this.From_Time
     this.FromDatevalue = new Date(this.currentdate);

@@ -45,7 +45,7 @@ export class MICLJournalVoucherComponent implements OnInit {
   projectDataList : any = [];
   DRSum : any = 0;
   CRSum : any = 0;
-  Sl_No : any = 0;
+  SL_NO : any = 0;
   DrList : any = ["DR", "CR"];
   balance : any;
   JournalList : any = [];
@@ -58,6 +58,7 @@ export class MICLJournalVoucherComponent implements OnInit {
   docTypeList : any = [];
   doNoList : any = [];
   IsEnabled : any = false;
+  searchid : any;
   constructor(
     private $http : HttpClient, 
     private commonApi : CompacctCommonApi,
@@ -81,6 +82,7 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.GetCostHead();
     this.getProject();
     this.GetCompany();
+    this.Finyear();
     this.objJournal.DR = "DR";
     this.User_Type = this.commonApi.CompacctCookies.User_Type ;
     console.log('A=',this.User_Type);
@@ -260,7 +262,7 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.JournalFormSubmitted = true;
     if(valid){
       const LedgerFilter = this.LedgerdataList.filter((el :any)=> Number(el.Ledger_ID)=== Number(this.objJournal.Ledger_ID));
-      const SubLedgerFilter = this.SubLedgerDataListlow.filter((el :any)=> Number(el.Sub_Ledger_ID)=== Number(this.objJournal.Sub_Ledger_ID));
+      const SubLedgerFilter = this.SubLedgerDataListlow.filter((el :any)=> Number(el.value)=== Number(this.objJournal.Sub_Ledger_ID));
       const CostHeadFilter = this.costHeadDataList.filter((el : any)=> Number(el.Cost_Head_ID)=== Number(this.objJournal.Cost_Head_ID));
       this.objJournal.Ref_Doc_Date = this.DateService.dateConvert(this.Ref_Doc_Date);
       this.objJournal.Voucher_Date = this.DateService.dateConvert(this.Voucher_Date);
@@ -272,12 +274,12 @@ export class MICLJournalVoucherComponent implements OnInit {
       console.log(this.DRSum);
       
       this.JournalListAdd.push({
-        Sl_No : this.JournalListAdd.length + 1,
+        SL_NO : this.JournalListAdd.length + 1,
         Voucher_No : this.VoucherNo? this.VoucherNo : 'A',
         Company_ID : this.objJournal.Company_ID,
         Ledger_Name : LedgerFilter.length?LedgerFilter[0].Ledger_Name : "",
         Ledger_ID : this.objJournal.Ledger_ID,
-        Sub_Ledger_Name : SubLedgerFilter.length? SubLedgerFilter[0].Sub_Ledger_Name : "",
+        Sub_Ledger_Name : SubLedgerFilter.length? SubLedgerFilter[0].label : "",
         Sub_Ledger_ID : this.objJournal.Sub_Ledger_ID,
         Cost_Head_ID : this.objJournal.Cost_Head_ID,
         Cost_Head_Name : CostHeadFilter.length? CostHeadFilter[0].Cost_Head_Name : "",
@@ -396,13 +398,13 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.balance = Math.abs(Number(this.DRSum) - Number(this.CRSum));
     if(this.DRSum > this.CRSum){
       //this.balance = Number(this.DRSum) - Number(this.CRSum);
-      this.objJournal.Amount = this.balance;
+      this.objJournal.Amount = Number(Number(this.balance).toFixed(2));
       console.log(this.balance);
       this.objJournal.DR = "CR"
     }
     else if(this.DRSum < this.CRSum){
       //this.balance = Number(this.CRSum) - Number(this.DRSum);
-      this.objJournal.Amount = this.balance;
+      this.objJournal.Amount = Number(Number(this.balance).toFixed(2));
       this.objJournal.DR = "DR"
     }
     else{
@@ -422,8 +424,11 @@ export class MICLJournalVoucherComponent implements OnInit {
     DeleteProduct(index) {
       this.JournalListAdd.splice(index,1);
       this.getTotalDRCR();
-      this. getBalance();
+      this.getBalance();
       this.Retrivedata();
+      this.JournalListAdd.forEach((el:any, ind) => {
+        el.SL_NO = ind + 1
+      });
     }
 
    
@@ -535,6 +540,18 @@ export class MICLJournalVoucherComponent implements OnInit {
     //  });
 
   }
+  Finyear(){
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.commonApi.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+    //  this.MBDatemaxDate = new Date(data[0].Fin_Year_End);
+    //  this.MBDateminDate = new Date(data[0].Fin_Year_Start);
+    //  this.Projecteddata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End);
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+     //this.initDate2 =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+      });
+  }
   getDateRange(dateRangeObj){
     if (dateRangeObj.length) {
       console.log("dateRangeObj",dateRangeObj);
@@ -552,6 +569,7 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.objsearch.End_date = this.objsearch.End_date
     ? this.DateService.dateConvert(new Date(this.objsearch.End_date))
     : this.DateService.dateConvert(new Date());
+    
     let TempData = {
       
       Cost_Cen_ID: Number(this.objsearch.Cost_Cen_ID),
@@ -657,6 +675,7 @@ export class MICLJournalVoucherComponent implements OnInit {
          }
       });
       this.clearData();
+      this.ShowSearchData(true);
     }
 
   }
@@ -688,7 +707,8 @@ export class MICLJournalVoucherComponent implements OnInit {
         GST_Per : el.GST_Per,
         JV_Type : el.JV_Type,
         Adj_Doc_Type : el.Adj_Doc_Type,
-        Doc_No : el.Doc_No
+        Doc_No : el.Doc_No,
+        SL_NO : el.SL_NO
 
 
         
@@ -717,6 +737,7 @@ export class MICLJournalVoucherComponent implements OnInit {
       //this.getList();
      // this.PaymentRequisitionActionPOPUP = false;
       this.clearData();
+      this.ShowSearchData(true);
       this.JournalListAdd = [];
       this.SaveData = [];
       this.DRSum = undefined;
@@ -747,18 +768,18 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.objJournal.Company_ID = this.companyList.length?this.companyList[0].Company_ID: 0;
     this.objJournal.DR = "DR";
     this.JournalFormSubmitted = false;
-    this.objsearch = new Search();
+    //this.objsearch = new Search();
     this.JournalSearchFormSubmit = false;
-    this.AlljournalData = [];
+    //this.AlljournalData = [];
     this.VoucherNo = undefined;
     this.SaveData = [];
     this.SubLedgerListlow = [];
     this.SubLedgerDataListlow = [];
     this.objJournal.Cost_Cen_ID_Trn = this.commonApi.CompacctCookies.Cost_Cen_ID;
-    this.objsearch.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
+    //this.objsearch.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
     this.IsEnabled = false;
    this.doNoList = [];
-    this.initDate = [new Date(),new Date()];
+    //this.initDate = [new Date(),new Date()];
  }
 
 }
