@@ -68,19 +68,21 @@
                                      <th style="background-color: #f0f8ff!important;"></th>
                                      <th style="background-color: #f0f8ff!important;"></th>
                                      <th style="background-color: #f0f8ff!important;">
-                                    <span style="color: #000;" >Value > {{PlanedDaysFilter}}</span>   
+                                    <!-- <span style="color: #000;" >Value > {{PlanedDaysFilter}}</span>   
                                         <p-slider [style]="{'width':'100%','margin-top':'8px'}" 
                                         [(ngModel)]="PlanedDaysFilter"
                                          [min]="0" [max]="89" 
-                                         (onChange)="onYearChange($event, dt)"></p-slider></th>
+                                         (onChange)="onYearChange($event, dt)"></p-slider> -->
+                                        </th>
                                      <th style="background-color: #f0f8ff!important;"></th>
                                      <th style="background-color: #f0f8ff!important;"></th>
                                      <th style="background-color: #f0f8ff!important;">
-                                        <span style="color: #000;" >Value > {{PlanedDaysFilter}}</span> 
+                                        <!-- <span style="color: #000;" >Value > {{PlanedDaysFilter}}</span> 
                                         <p-slider [style]="{'width':'100%','margin-top':'8px'}" 
                                         [(ngModel)]="PlanedDaysFilter"
                                          [min]="0" [max]="89" 
-                                         (onChange)="onYearChange($event, dt)"></p-slider></th>
+                                         (onChange)="onYearChange($event, dt)"></p-slider> -->
+                                        </th>
                                      <th style="background-color: #f0f8ff!important;">
                                         <p-multiSelect 
                                         [options]="distAssing" 
@@ -162,11 +164,11 @@
                                      <th style="background-color: #f0f8ff!important;"></th>
                                      <th style="background-color: #f0f8ff!important;"></th>
                                      <th style="background-color: #f0f8ff!important;">
-                                    <span style="color: #000;" >Value > {{PlanedDaysFilterActual}}</span>   
+                                    <!-- <span style="color: #000;" >Value > {{PlanedDaysFilterActual}}</span>   
                                         <p-slider [style]="{'width':'100%','margin-top':'8px'}" 
                                         [(ngModel)]="PlanedDaysFilterActual"
                                          [min]="0" [max]="89" 
-                                         (onChange)="onYearChange($event, dt)"></p-slider></th>
+                                         (onChange)="onYearChange($event, dt)"></p-slider></th> -->
                                      <th style="background-color: #f0f8ff!important;"></th>
                                      <th style="background-color: #f0f8ff!important;"></th>
                                      <th style="background-color: #f0f8ff!important;">
@@ -215,7 +217,7 @@
                                         <td>{{col.Planned_vs_Actual}}</td>
 
                                         <td>{{col.Assigned_To}}</td>
-                                        <td> {{col.Assigned_To}} </td>
+                                        <td>{{col.Current_Status}} </td>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="paginatorright" let-state>
@@ -224,10 +226,9 @@
                             </p-table>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-piggy-bank">
-                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-credit-card">
-                                <p-table [value]="costList"
+                             <p-table [value]="costList"
                                 [paginator]="true"
-                               [rows]="100" 
+                                [rows]="100" 
                                 [rowHover]="true" 
                                 [autoLayout]="true" 
                                 sortMode="multiple" 
@@ -244,51 +245,53 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th nowrap>Work Details</th>
-                                            <th nowrap>Projected Date</th>
-                                            <th nowrap>Projected Amount</th>
-                                            <th nowrap>Actual Billing Done</th>
-                                            <th nowrap >Difference Amt</th>
-                                            <th nowrap>Current Dealay</th>
-                                           
+                                            <th nowrap><p style="border-bottom: 1px solid" >SUB GROUP </p> <p>GROUP WORK</p></th>
+                                           <th nowrap>Material Type</th>
+                                            <th nowrap>Product Name</th>
+                                            <th nowrap><p style="border-bottom: 1px solid" >Original BOM Qty</p> <p>Actual Qty</p></th>
+                                            <th nowrap>Difference QTY</th>
+                                            <th nowrap><p style="border-bottom: 1px solid" > Original Amount</p> <p>Actual Amount</p></th>
+                                            <th nowrap>Difference Amt</th>
+                                            <th nowrap><p style="border-bottom: 1px solid" >Amount Used</p> <p>Unutilized Amount</p></th>
                                         </tr>
-                                       <!-- <tr style="background-color: #f0f8ff!important;"  *ngIf='OverdueList.length' >
-                                         <th style="background-color: #f0f8ff!important;" nowrap ></th>
+                                       <tr style="background-color: #f0f8ff!important;"  *ngIf='costList.length' >
+                                         <th style="background-color: #f0f8ff!important;" nowrap >
+                                            <p-multiSelect 
+                                            [options]="distSub" 
+                                            [(ngModel)]="seleteSub" 
+                                            itemSize="30"
+                                            defaultLabel="All SUB GROUP"
+                                            [style]="{'width':'15rem'}"
+                                            (onChange)='FilterCost()' 
+                                             name="site">
+                                        </p-multiSelect>
+                                        </th>
                                          <th style="background-color: #f0f8ff !important;">
                                             </th>
                                          <th style="background-color: #f0f8ff!important;"></th>
                                          <th style="background-color: #f0f8ff!important;"></th>
                                          <th style="background-color: #f0f8ff!important;"></th>
-                                         <th style="background-color: #f0f8ff!important;">
-                                        <span style="color: #000;" >Value > {{PlanedDaysFilter}}</span>   
-                                            <p-slider [style]="{'width':'100%','margin-top':'8px'}" 
-                                            [(ngModel)]="PlanedDaysFilter"
-                                             [min]="0" [max]="89" 
-                                             (onChange)="onYearChange($event, dt)"></p-slider></th>
-                                         <th style="background-color: #f0f8ff!important;">
-                                            <span style="color: #000;" >Value > {{PlanedDaysFilter}}</span>  
-                                            <p-slider [style]="{'width':'100%','margin-top':'8px'}" 
-                                            [(ngModel)]="PlanedDaysFilter"
-                                             [min]="0" [max]="89" 
-                                             (onChange)="onYearChange($event, dt)"></p-slider>
-                                        </th> 
-                                       </tr> -->
+                                         <th style="background-color: #f0f8ff!important;"> </th>
+                                         <th style="background-color: #f0f8ff!important;"></th>
+                                         <th style="background-color: #f0f8ff!important;"></th> 
+                                       </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
-                                            <td>{{col.Work_Details}}</td>
-                                            <td>{{col.Proj_Date}}</td>
-                                            <td>{{col.Proj_Amt}}</td>
-                                            <td>{{col.Billed_Amt}}</td>
+                                            <td><p style="border-bottom: 1px solid #0000" >{{col.Budget_Group_Name}}</p><p>{{ col.Budget_Sub_Group_Name}}</p></td>
+                                            <td>{{col.Type_Of_Product}}</td>
+                                            <td>{{col.Product_Description}}</td>
+                                            <td><p style="border-bottom: 1px solid #0000" >{{col.Planned_Qty}}</p><p>{{ col.Actual_Qty}}</p></td>
+                                            <td>{{getTofix(col.Diff_Qty)}}</td>
+                                            <td><p style="border-bottom: 1px solid #0000" >{{col.Planned_Amt}}</p><p>{{ col.Actual_Amt}}</p></td>
                                             <td>{{getTofix(col.Diff_Amt)}}</td>
-                                            <td>{{col.Delay_Days}}</td>
+                                            <td><p style="border-bottom: 1px solid #0000" >{{col.Used_Amt}}</p><p>{{ col.Unutilized_Amt}}</p></td>
                                          </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
                                         Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
                                     </ng-template>
                                 </p-table>
-                            </p-tabPanel>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-credit-card">
                             <p-table [value]="InflowList"

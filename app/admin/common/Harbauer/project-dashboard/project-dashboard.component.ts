@@ -42,7 +42,10 @@ export class ProjectDashboardComponent implements OnInit {
   InflowList:any = []
   Inflowheader:any = []
   costList:any = []
+  bckUpcostList:any = []
   costListHeader:any = []
+  distSub:any = []
+  seleteSub:any = []
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -114,16 +117,20 @@ export class ProjectDashboardComponent implements OnInit {
         this.preparedInflow(Inflow)
         this.preparedOverdue(Overdue)
         this.preparedActual(Actual)
+        this.preparedCost(cost)
 
       })
     }
   
   }
   preparedOverdue(Overdue){
+    this.OverdueList = []
+    this.bckupOverdueList = []
+    this.cols = {}
    if(Overdue.length){
      this.OverdueList = Overdue
      this.bckupOverdueList = Overdue
-     this.cols = 
+     this.cols = Object.keys(Overdue[0])
      this.GetDistinct()
     
    }
@@ -176,6 +183,9 @@ export class ProjectDashboardComponent implements OnInit {
  
 }
 preparedActual(Actual:any){
+  this.ActualList = []
+  this.bckUpActualList = []
+  this.ActualListheader = []
  if(Actual.length){
   this.ActualList = Actual
   this.bckUpActualList = Actual
@@ -205,7 +215,10 @@ if (plan.indexOf(item.Planned_vs_Actual) === -1) {
   plan.push(item.Planned_vs_Actual);
   this.distPlanActual.push({ label: item.Planned_vs_Actual, value: item.Planned_vs_Actual });
   }
-
+  if (current.indexOf(item.Current_Status) === -1) {
+    current.push(item.Current_Status);
+    this.distcurrent.push({ label: item.Current_Status, value: item.Current_Status });
+    }
 });
 this.bckUpActualList = [...this.ActualList];
 }
@@ -227,12 +240,17 @@ if (this.seletePlanActual.length) {
   SearchFields.push('Planned_vs_Actual');
   plan = this.seletePlanActual;
 }
+if (this.seleteAssingCurrent.length) {
+  SearchFields.push('Current_Status');
+  current = this.seleteAssingCurrent;
+}
 this.ActualList = [];
 if (SearchFields.length) {
   let LeadArr = this.bckUpActualList.filter(function (e) {
     return (Site.length ? Site.includes(e['Site']) : true)
     && (Assing.length ? Assing.includes(e['Assigned_To']) : true)
     && (plan.length ? plan.includes(e['Planned_vs_Actual']) : true)
+    && (current.length ? current.includes(e['Current_Status']) : true)
   
   });
 this.ActualList = LeadArr.length ? LeadArr : [];
@@ -240,7 +258,6 @@ this.ActualList = LeadArr.length ? LeadArr : [];
 this.ActualList = [...this.bckUpActualList] ;
 }
 }
-
 preparedInflow(Inflow:any){
  if(Inflow.length){
   this.InflowList = Inflow
@@ -248,9 +265,49 @@ preparedInflow(Inflow:any){
  }
 }
 preparedCost(cost:any){
+  this.costList = []
+  this.bckUpcostList = []
+  this.costListHeader = []
 if(cost.length){
  this.costList = cost
+ this.bckUpcostList = cost
  this.costListHeader = Object.keys([0])
+ this.GetDistCost()
+}
+
+}
+GetDistCost() {
+   
+let sub:any = [];
+ this.distSub =[];
+  this.distAssing =[];
+  this.costList.forEach((item) => {
+ if (sub.indexOf(item.Budget_Group_Name) === -1) {
+  sub.push(item.Budget_Group_Name);
+ this.distSub.push({ label: item.Budget_Group_Name, value: item.Budget_Group_Name });
+ }
+
+});
+this.bckUpcostList = [...this.costList];
+}
+FilterCost(){
+  let sub:any = [];
+ 
+  let SearchFields:any =[];
+if (this.seleteSub.length) {
+  SearchFields.push('Budget_Group_Name');
+  sub = this.seleteSub;
+}
+
+
+this.OverdueList = [];
+if (SearchFields.length) {
+  let LeadArr = this.bckUpcostList.filter(function (e) {
+    return (sub.length ? sub.includes(e['Budget_Group_Name']) : true)
+  });
+this.costList = LeadArr.length ? LeadArr : [];
+} else {
+this.costList = [...this.bckUpcostList] ;
 }
 }
 getTofix(n:any){
