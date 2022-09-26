@@ -36,6 +36,9 @@ export class ProcessSalaryComponent implements OnInit {
   CheckFinalizedOrNot: any;
   empid: any;
 
+  processSalarydisabled = false;
+  bankregdisabled = false;
+
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -290,6 +293,8 @@ export class ProcessSalaryComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.CheckFinalizedOrNot = data ? data[0].Column1 : undefined;
+      this.processSalarydisabled = this.CheckFinalizedOrNot === "Finalized" ? true : false;
+      this.bankregdisabled = this.CheckFinalizedOrNot === "Finalized" ? false : true;
     })
   }
   exportoexcel2(fileName){

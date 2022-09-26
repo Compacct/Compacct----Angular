@@ -265,6 +265,7 @@ import { NepalRequisitionFromSalesmanComponent } from "./common/MaterialManageme
 import { NepalPurchaseRequestComponent } from "./common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component";
 import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
 import { BLTxnWorkOrderSaleBillComponent } from "./common/Harbauer/bl-txn-work-order-sale-bill/bl-txn-work-order-sale-bill.component";
+import { HREventUploadComponent } from './common/Attendance/hr-event-upload/hr-event-upload.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1972,6 +1973,13 @@ data: {
                   component: BLTxnWorkOrderSaleBillComponent,
                   data: {
                     title: 'BL Txn Work Order Sale Bill'
+                }
+                },
+                {
+                  path: 'HR_Event_Upload',
+                  component: HREventUploadComponent,
+                  data: {
+                    title: 'HR Event Upload'
                 }
                 },
                 

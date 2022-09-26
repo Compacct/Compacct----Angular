@@ -128,8 +128,8 @@ export class MeterialInspectionOfRDBComponent implements OnInit {
   // For Done
   getDateRangeDone(dateRangeObj) {
     if (dateRangeObj.length) {
-      this.ObjPending.From_date = dateRangeObj[0];
-      this.ObjPending.To_date = dateRangeObj[1];
+      this.ObjDone.From_date = dateRangeObj[0];
+      this.ObjDone.To_date = dateRangeObj[1];
     }
   }
   GetDoneData(){
