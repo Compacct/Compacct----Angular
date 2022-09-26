@@ -359,6 +359,7 @@ import { HarbProjectDesignApprovalComponent } from './common/Harbauer/harb-proje
 import { NepalRequisitionFromSalesmanComponent } from './common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component';
 import { NepalPurchaseRequestComponent } from './common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component';
 import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
+import { BLTxnWorkOrderSaleBillComponent } from "./common/Harbauer/bl-txn-work-order-sale-bill/bl-txn-work-order-sale-bill.component";
 
 
 @NgModule({
@@ -636,7 +637,8 @@ import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspect
     HarbProjectDesignApprovalComponent,
     NepalRequisitionFromSalesmanComponent,
     NepalPurchaseRequestComponent,
-    MeterialInspectionOfRDBComponent
+    MeterialInspectionOfRDBComponent,
+    BLTxnWorkOrderSaleBillComponent
   ],
   imports: [
     CommonModule,

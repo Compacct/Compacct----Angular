@@ -264,6 +264,7 @@ import { HarbProjectDesignApprovalComponent } from "./common/Harbauer/harb-proje
 import { NepalRequisitionFromSalesmanComponent } from "./common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component";
 import { NepalPurchaseRequestComponent } from "./common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component";
 import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
+import { BLTxnWorkOrderSaleBillComponent } from "./common/Harbauer/bl-txn-work-order-sale-bill/bl-txn-work-order-sale-bill.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1964,6 +1965,13 @@ data: {
                    component: MeterialInspectionOfRDBComponent,
                     data: {
                       title: 'Meterial Inspection Of RDB'
+                }
+                },
+                {
+                  path: 'BL_Txn_Work_Order_Sale_Bill',
+                  component: BLTxnWorkOrderSaleBillComponent,
+                  data: {
+                    title: 'BL Txn Work Order Sale Bill'
                 }
                 },
                 
