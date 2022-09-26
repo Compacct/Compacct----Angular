@@ -358,6 +358,7 @@ import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authoriza
 import { HarbProjectDesignApprovalComponent } from './common/Harbauer/harb-project-design-approval/harb-project-design-approval.component';
 import { NepalRequisitionFromSalesmanComponent } from './common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component';
 import { NepalPurchaseRequestComponent } from './common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component';
+import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
 
 
 @NgModule({
@@ -634,7 +635,8 @@ import { NepalPurchaseRequestComponent } from './common/MaterialManagement/Outwa
     POAuthorizationHarbauerComponent,
     HarbProjectDesignApprovalComponent,
     NepalRequisitionFromSalesmanComponent,
-    NepalPurchaseRequestComponent
+    NepalPurchaseRequestComponent,
+    MeterialInspectionOfRDBComponent
   ],
   imports: [
     CommonModule,

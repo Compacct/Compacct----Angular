@@ -1129,6 +1129,7 @@ export class GrnComponent implements OnInit {
       this.ObjGRN1.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
       this.GetRDBNo();
       this.ObjGRN1.RDB_No = data[0].RDB_No;
+      this.ObjGRN2.Quality_Rejection_Remarks = data[0].Ins_Remarks;
       setTimeout(() => {
       this.GetProductDetails()
       }, 200);

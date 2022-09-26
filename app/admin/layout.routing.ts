@@ -263,6 +263,7 @@ import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authoriza
 import { HarbProjectDesignApprovalComponent } from "./common/Harbauer/harb-project-design-approval/harb-project-design-approval.component";
 import { NepalRequisitionFromSalesmanComponent } from "./common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component";
 import { NepalPurchaseRequestComponent } from "./common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component";
+import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1957,6 +1958,13 @@ data: {
                   data: {
                     title: "Project Dashboard"
                   }
+                },
+                {
+                  path: 'Meterial_Inspection_Of_RDB',
+                   component: MeterialInspectionOfRDBComponent,
+                    data: {
+                      title: 'Meterial Inspection Of RDB'
+                }
                 },
                 
       

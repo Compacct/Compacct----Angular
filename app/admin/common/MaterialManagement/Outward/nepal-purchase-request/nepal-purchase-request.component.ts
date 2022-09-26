@@ -31,6 +31,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
   objpurchaseRequest:purchaseRequest = new purchaseRequest()
   productList:any = []
   purchaseRequestFormSubmit:boolean = false
+  addpurchaList:any = []
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -61,6 +62,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.tabIndexToView = 0
     this.buttonname = "Save"
     this.objpurchaseRequest = new purchaseRequest()
+    this.addpurchaList = []
   }
   onConfirm(){}
   onReject(){
@@ -68,13 +70,15 @@ export class NepalPurchaseRequestComponent implements OnInit {
   }
   GetproductList(){
     const obj = {
-      "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
-      "Report_Name_String": "Browse_Requisition_From_Salesman"
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Get_Product_Purchase_Request"
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("data",data)
       if(data.length){
+
         data.forEach((xy:any) => {
-         xy['label'] = xy.Product_Description
+         xy['label'] = xy.Product_Name
          xy['value'] = xy.Product_ID
         });
        this.productList = data
@@ -84,15 +88,40 @@ export class NepalPurchaseRequestComponent implements OnInit {
   }
   getUOM(){
     if(this.objpurchaseRequest.Product_ID){
-      this.objpurchaseRequest.UOM = undefined
-     const FilterproductList = this.productList.find((xz:any)=> Number(xz.Product_ID) == Number(this.objpurchaseRequest.Product_ID))
-      this.objpurchaseRequest.UOM = FilterproductList ? FilterproductList.UOM : undefined
-      this.objpurchaseRequest.Requisition_Qty = FilterproductList ? FilterproductList.Requisition_Qty : undefined
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Get_Data_From_Requisition_Salesman",
+        "Json_Param_String": JSON.stringify([{Product_ID : this.objpurchaseRequest.Product_ID}])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+       if(data.length){
+        this.objpurchaseRequest.Requisition_Qty = data[0].Requisition_Qty
+        this.objpurchaseRequest.UOM = data[0].UOM
+       }
+      })
     }
     else{
      this.objpurchaseRequest.UOM = undefined
     }
    }
+   addpur(valid:any){
+    this.purchaseRequestFormSubmit = true
+    if(valid){
+      const filterproductList = this.productList.find((x:any)=> Number(x.Product_ID) == Number(this.objpurchaseRequest.Product_ID) )
+       this.addpurchaList.push({
+        Product_ID : Number(this.objpurchaseRequest.Product_ID),
+        Product_Description : filterproductList ? filterproductList.Product_Name : "",            
+        Requisition_Qty: this.objpurchaseRequest.Requisition_Qty,
+        UOM : this.objpurchaseRequest.UOM,
+        Purchase_Request_Qty: this.objpurchaseRequest.Purchase_Request_Qty
+       })
+       this.objpurchaseRequest = new purchaseRequest()
+       this.purchaseRequestFormSubmit = false
+    }
+   }
+   DeleteAddPurchase(index) {
+    this.addpurchaList.splice(index,1);
+  }
 }
 class purchaseRequest{
   Purchase_Request_No:any

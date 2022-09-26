@@ -70,14 +70,44 @@
                                             <input class="form-control" 
                                                 name="Purchase_Request_Qty" 
                                                 #Purchase_Request_Qty="ngModel" 
-                                                [(ngModel)]="objreq.Purchase_Request_Qty" 
+                                                [(ngModel)]="objpurchaseRequest.Purchase_Request_Qty" 
                                                 placeholder="Purchase Request Qty"
                                                 [ngClass]="{'clearance': purchaseRequestFormSubmit && Purchase_Request_Qty?.errors?.required}" 
                                                 required
                                                 >
                                     </div>
                                     </div>
+                                    <div class="box-footer">
+                                        <button type="button" class="btn btn-primary pull-right" (click)="addpur(purchaseRequestForm.form.valid)" >
+                                         <span  class="glyphicon glyphicon-save"></span> Add
+                                    </button>
+                                    </div>
                                 </form>
+                                <div class="no-padding">
+                                    <p-table [value]="addpurchaList"  [rowHover]="true" [autoLayout]="true" >
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Product Description</th>
+                                                <th>Requisition QTY</th>
+                                                <th>UOM</th>
+                                                <th>QTY</th>
+                                                <th></th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>{{col.Product_Description}}</td>
+                                                <td>{{col.Requisition_Qty}}</td>
+                                                <td>{{col.UOM}}</td>
+                                                <td>{{col.Purchase_Request_Qty}}</td>
+                                                <td><a class="btn btn-sm btn-danger" (click)="DeleteAddPurchase(i)"
+                                                    ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                                  </a></td>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
                         </p-tabPanel>
                     </p-tabView>
                 </div>
