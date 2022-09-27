@@ -266,6 +266,9 @@ import { NepalPurchaseRequestComponent } from "./common/MaterialManagement/Outwa
 import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
 import { BLTxnWorkOrderSaleBillComponent } from "./common/Harbauer/bl-txn-work-order-sale-bill/bl-txn-work-order-sale-bill.component";
 import { HREventUploadComponent } from './common/Attendance/hr-event-upload/hr-event-upload.component';
+import { MasterSubContractorComponent } from './common/MICL/SubContractor/master-sub-contractor/master-sub-contractor.component';
+import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContractor/sub-contractor-employee-master/sub-contractor-employee-master.component';
+import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1980,6 +1983,27 @@ data: {
                   component: HREventUploadComponent,
                   data: {
                     title: 'HR Event Upload'
+                }
+                },
+                {
+                  path: 'Master_Sub_Contractor',
+                   component: MasterSubContractorComponent,
+                    data: {
+                      title: 'Master Sub Contractor'
+                }
+                },
+                {
+                  path: 'Sub_Contractor_Employee_Master',
+                  component: SubContractorEmployeeMasterComponent,
+                  data: {
+                    title: 'Sub Contractor Employee Master'
+                }
+                },
+                {
+                  path: 'Sub_Contractor_Attendance',
+                  component: SubContractorAttendanceComponent,
+                  data: {
+                    title: 'Sub Contractor Attendance'
                 }
                 },
                 

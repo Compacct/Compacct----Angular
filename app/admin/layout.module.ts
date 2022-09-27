@@ -361,6 +361,9 @@ import { NepalPurchaseRequestComponent } from './common/MaterialManagement/Outwa
 import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
 import { BLTxnWorkOrderSaleBillComponent } from "./common/Harbauer/bl-txn-work-order-sale-bill/bl-txn-work-order-sale-bill.component";
 import { HREventUploadComponent } from './common/Attendance/hr-event-upload/hr-event-upload.component';
+import { MasterSubContractorComponent } from './common/MICL/SubContractor/master-sub-contractor/master-sub-contractor.component';
+import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContractor/sub-contractor-employee-master/sub-contractor-employee-master.component';
+import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
 
 
 @NgModule({
@@ -640,7 +643,10 @@ import { HREventUploadComponent } from './common/Attendance/hr-event-upload/hr-e
     NepalPurchaseRequestComponent,
     MeterialInspectionOfRDBComponent,
     BLTxnWorkOrderSaleBillComponent,
-    HREventUploadComponent
+    HREventUploadComponent,
+    MasterSubContractorComponent,
+    SubContractorEmployeeMasterComponent,
+    SubContractorAttendanceComponent
   ],
   imports: [
     CommonModule,

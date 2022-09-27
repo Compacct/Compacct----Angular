@@ -29,6 +29,11 @@ export class HREventUploadComponent implements OnInit {
   ObjHrEvent : HrEvent = new HrEvent()
   eventFormSubmitted = false;
 
+  PDFViewFlag = false;
+  PDFFlag = false;
+  PDFFile:any = {};
+  ProductPDFLink = undefined;
+
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -52,7 +57,39 @@ export class HREventUploadComponent implements OnInit {
   }
   onConfirm(){}
   SaveEvent(valid){}
-  FetchPDFFile(event){}
+  FetchPDFFile(event){
+    // this.PDFViewFlag = true;
+    // this.PDFFile={};
+    // if (event) {
+    //  this.PDFViewFlag = false;
+    //  this.PDFFile= event.files[0];
+    // }
+  }
+  // FetchPDFFile(event) {
+//   this.PDFViewFlag = true;
+//   this.PDFFile={};
+//   if (event) {
+//     this.PDFViewFlag = false;
+//     this.PDFFile= event.files[0];
+//   }
+// }
+// async upload(){
+ 
+//   console.log("file",this.PDFFile);
+  
+//   const formData: FormData = new FormData();
+//   formData.append("pan", this.PDFFile);
+//   const requestHeaders: HeadersInit = new Headers();
+//   requestHeaders.set('x-functions-key', 'CdiqMVWYkfRuKLdqeVe3CSFYjHCzWM2A5/OVeIplauq5vnePb4voyA==');
+//   let response = await fetch('https://urbanmoney.azurewebsites.net/api/PAN_Update?lead_id=1353&doc_type_id=1&doc_ID=BDBPA5086P',{ 
+//    method: 'POST',
+//    headers:  requestHeaders,
+//    body: formData // This is your file object
+//  });
+//  let responseText = await response.text();
+//  console.log("responseText",responseText);
+ 
+//  }
 
 }
 class HrEvent {
