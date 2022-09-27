@@ -226,6 +226,7 @@
                                                 #QTY="ngModel" 
                                                 [(ngModel)]="objreq.Qty" 
                                                 placeholder="Qty"
+                                                CompacctDigitonly="true"
                                                 [ngClass]="{'clearance': requisitionFormSubmit && QTY?.errors?.required}" 
                                                 required
                                                 >

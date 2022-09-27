@@ -107,13 +107,13 @@ export class HarbProjectBillComponent implements OnInit {
       this.GlobalAPI.getData(objCostCenter),
     ]).subscribe(([dataSubledger,dataProject,dataState,dataCostCenter])=>{
       this.AllSubledger = dataSubledger
-     // console.log("AllSubledger",this.AllSubledger)
+     // // console.log("AllSubledger",this.AllSubledger)
       this.projectList = dataProject
-      //console.log("projectList",this.projectList)
+      //// console.log("projectList",this.projectList)
       this.stateList = dataState
-      //console.log("stateList",this.stateList)
+      //// console.log("stateList",this.stateList)
       this.costCenterList = dataCostCenter;
-     // console.log("costCenterList",this.costCenterList)
+     // // console.log("costCenterList",this.costCenterList)
       this.ObjProjectBill.Cost_Cen_ID = this.costCenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined
       this.changeCostCenter(this.ObjProjectBill.Cost_Cen_ID)
     })
@@ -166,7 +166,7 @@ export class HarbProjectBillComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{Sub_Ledger_ID : Number(this.ObjProjectBill.Sub_Ledger_ID)}])
     }
     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-       console.log(data)
+       // console.log(data)
        this.fullAddress = data[0].Address_1 + data[0].Address_2 + data[0].Address_3
        this.ObjProjectBill.Sub_Ledger_Address_1 = data[0].Address_1 
        this.ObjProjectBill.Sub_Ledger_Address_2 = data[0].Address_2
@@ -206,14 +206,16 @@ export class HarbProjectBillComponent implements OnInit {
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
          this.WorkDetalisList = data
-         console.log("WorkDetalisList",this.WorkDetalisList)
+         // console.log("WorkDetalisList",this.WorkDetalisList)
        })
        this.getProduct()
+       this.getWorkWithDetalis()
     }
     else {
       this.WorkDetalisList = []
       this.ObjProductDetalis.Work_Details_ID = undefined
       this.getProduct()
+      this.getWorkWithDetalis()
     }
    
   } 
@@ -232,7 +234,7 @@ export class HarbProjectBillComponent implements OnInit {
     if(CostCenID){
     const costCenterListFilter = this.costCenterList.find((x:any)=> Number(x.Cost_Cen_ID) == Number(CostCenID) )
      if(costCenterListFilter){
-      console.log("costCenterListFilter",costCenterListFilter)
+      // console.log("costCenterListFilter",costCenterListFilter)
        this.ObjProjectBill.Cost_Cen_State = costCenterListFilter.State;
        this.CostCenCode = costCenterListFilter.State_Code
      }
@@ -244,6 +246,7 @@ export class HarbProjectBillComponent implements OnInit {
   }
   getProduct(){
     if(this.ObjProductDetalis.Project_ID && this.ObjProductDetalis.Work_Details_ID){
+      this.getWorkWithDetalis()
       const tempobj = {
         Project_ID: this.ObjProductDetalis.Project_ID,
 				Work_Details_ID:this.ObjProductDetalis.Work_Details_ID
@@ -260,12 +263,45 @@ export class HarbProjectBillComponent implements OnInit {
         });
         this.ProductList = data
 
-        console.log("ProductList",this.ProductList)
+        // console.log("ProductList",this.ProductList)
       })
     }
     else {
       this.ProductList = [];
       this.ObjProductDetalis.Product_ID = undefined
+      this.ObjProductDetalis.UOM = undefined;
+      this.ObjProductDetalis.MRP = undefined;
+      this.ObjProductDetalis.Qty = undefined;
+    }
+  }
+
+  getWorkWithDetalis(){
+    if(this.ObjProductDetalis.Project_ID && this.ObjProductDetalis.Work_Details_ID){
+      this.ObjProductDetalis.UOM = undefined;
+      this.ObjProductDetalis.MRP = undefined;
+      this.ObjProductDetalis.Qty = undefined;
+      const tempobj = {
+        Project_ID: this.ObjProductDetalis.Project_ID,
+				Work_Details_ID:this.ObjProductDetalis.Work_Details_ID
+      }
+      const obj = {
+        "SP_String": "SP_Work_Order_Sale_Bill",
+        "Report_Name_String":"Get_Details_With_Work_Details_ID",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        if(data.length){
+          this.ObjProductDetalis.UOM = data[0].UOM;
+          this.ObjProductDetalis.MRP = data[0].Rate;
+          this.ObjProductDetalis.Qty = data[0].Qty;
+        }
+        
+      })
+    }
+    else {
+          this.ObjProductDetalis.UOM = undefined;
+          this.ObjProductDetalis.MRP = undefined;
+          this.ObjProductDetalis.Qty = undefined;
     }
   }
   getTaxableValue(){
@@ -289,9 +325,7 @@ export class HarbProjectBillComponent implements OnInit {
       const ProductListFilter = this.ProductList.find((x:any)=> Number(x.Product_ID) == Number(this.ObjProductDetalis.Product_ID))
       if(ProductListFilter){
         this.ObjProductDetalis.HSL_No = ProductListFilter.HSN_No;
-        this.ObjProductDetalis.UOM = ProductListFilter.UOM;
-        this.ObjProductDetalis.MRP = ProductListFilter.Sale_Rate;
-      }
+       }
     }
   }
   DiscountCalculator(){
@@ -315,7 +349,7 @@ export class HarbProjectBillComponent implements OnInit {
       this.ObjProductDetalis.Discount = undefined
       this.ObjProductDetalis.Discount_Type_Amount = undefined
     }
-    console.log("this.ObjProductDetalis.Discount_Type_Amount",this.ObjProductDetalis.Discount_Type_Amount)
+    // console.log("this.ObjProductDetalis.Discount_Type_Amount",this.ObjProductDetalis.Discount_Type_Amount)
   }
   addProductDetalis(BillingAddressvalid:any,
                     ShippingAddressvalid:any,
@@ -373,7 +407,7 @@ export class HarbProjectBillComponent implements OnInit {
       Bill_Gross_Amt: Number(this.grNetAMt),
       Claim_in_RA : this.ObjProductDetalis.Claim_in_RA
      })
-     console.log("addProductList",this.addProductList)
+     // console.log("addProductList",this.addProductList)
      const tempObjProductDetalis = {...this.ObjProductDetalis}
      this.ObjProductDetalis = new ProductDetalis()
      this.ObjProductDetalis.Project_ID = tempObjProductDetalis.Project_ID
@@ -445,14 +479,14 @@ export class HarbProjectBillComponent implements OnInit {
         this.ObjProjectBill.Total_Work_Order_Value = Number(this.ObjProjectBill.Total_Work_Order_Value)
         this.ObjProjectBill.Shipping_State_Code = this.ShippingStateCode
         this.ObjProjectBill.L_element = this.addProductList
-      console.log("ObjProjectBill",this.ObjProjectBill)
+      // console.log("ObjProjectBill",this.ObjProjectBill)
         const obj = {
           "SP_String": "SP_Sale_Bill",
           "Report_Name_String":"Sale_Bill_Create",
           "Json_Param_String": JSON.stringify([this.ObjProjectBill])
         }
         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-          console.log("After Save",data)
+          // console.log("After Save",data)
           if(data[0].Success == "True"){
             this.clearData();
             this.compacctToast.clear();
@@ -499,15 +533,15 @@ export class HarbProjectBillComponent implements OnInit {
       "Json_Param_String": JSON.stringify([this.ObjBrowse])
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log(data)
-      console.log("data",JSON.parse(data[0].Data))
+      // console.log(data)
+      // console.log("data",JSON.parse(data[0].Data))
       if(data[0].Success == "True"){  
         this.getAllDataList = data[0].Data ? JSON.parse(data[0].Data) : []
         this.backUpgetAllDataList = this.getAllDataList
         this.GetDistinct()
         if(this.getAllDataList.length){
           this.DynamicHeader = Object.keys(this.getAllDataList[this.getAllDataList.length - 1]);
-          console.log("DynamicHeader",this.DynamicHeader)
+          // console.log("DynamicHeader",this.DynamicHeader)
         }
         
       }
@@ -527,7 +561,7 @@ export class HarbProjectBillComponent implements OnInit {
 
   // DISTINCT & FILTER
   GetDistinct() {
-    console.log("DISTINCT")
+    // console.log("DISTINCT")
     let RefNo:any = [];
     let CustomerName:any = [];
     let ProjectDescription:any = []
@@ -583,8 +617,6 @@ export class HarbProjectBillComponent implements OnInit {
   this.getAllDataList = [...this.backUpgetAllDataList] ;
   }
   }
-
-
   DeleteProjectBill(col:any){
    if(col.Doc_No){
      this.DocNo = col.Doc_No
@@ -646,6 +678,19 @@ export class HarbProjectBillComponent implements OnInit {
     }
     else{
       this.ObjProjectBill.Percentage_claimed_upto_date = undefined
+    }
+  }
+  Print(col:any) {
+    if(col.Doc_No) {
+    const objtemp = {
+      "SP_String": "SP_Work_Order_Sale_Bill",
+      "Report_Name_String": "Print_Sale_bill"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + col.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      // // console.log("doc===",DocNo.Doc_No)
+    })
     }
   }
 }

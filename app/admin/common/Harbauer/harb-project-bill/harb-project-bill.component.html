@@ -134,12 +134,12 @@
                                                                 <a (click)="Edit(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
-                                                            </li>
-                                                        <li>
-                                                            <a (click)="Print(col.Doc_No)">
+                                                            </li>-->
+                                                        <li> 
+                                                            <a (click)="Print(col)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
-                                                        </li>-->
+                                                        </li>
                                                         <li>
                                                             <a (click)="DeleteProjectBill(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
@@ -471,16 +471,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Actual Billing item<sup class="text-danger">*</sup></label>
-                                        <!-- <select class="form-control" name="Product" #Product="ngModel" 
-                                        [(ngModel)]="ObjProductDetalis.Product_ID"
-                                        (change)="productChange()"
-                                        [ngClass]="{'clearance': ProductDetailsFormSubmit && Product?.errors?.required }"
-                                        required>
-                                            <option  [ngValue]="undefined">Select</option>
-                                            <option  *ngFor="let option of ProductList" [ngValue]="option.Product_ID">
-                                                {{option.Product_Description}}
-                                            </option>
-                                         </select> -->
+                                      
                                          <p-dropdown 
                                             [options]="ProductList" 
                                             name="Product_ID"

@@ -187,7 +187,7 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
           this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
-          detail:  "Succesfully "+ this.DocNo? "Update" : "Save"
+          detail:  "Succesfully "+ this.buttonname
         });
         this.clearData()
         }
@@ -292,9 +292,8 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
       this.TotalProductQty = data[0].Total_Product_Qty
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Doc_Date)
       this.reqAddList = data
-      this.ngxService.stop();
-     }
-    
+      }
+     this.ngxService.stop();
     })
   }
   DeleteReq(col:any){
