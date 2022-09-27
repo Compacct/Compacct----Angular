@@ -22,6 +22,7 @@ export class HarbProjectDesignApprovalComponent implements OnInit {
   items:any = []
   buttonname:string = "Create"
   objdesignApproval:designApproval = new designApproval()
+  ObjdesignDisApproval:designDisApproval = new designDisApproval()
   pendingFormSubmit:boolean = false
   projectList:any = []
   SiteList:any = []
@@ -38,6 +39,9 @@ export class HarbProjectDesignApprovalComponent implements OnInit {
   DynamicHeader:any = []
   ProjectDesignID:any = undefined
   SiteListApproval:any = []
+  SiteListDisApproval:any = []
+  DynamicHeaderDisapprova:any = []
+  DisapprovalList:any = []
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private Header: CompacctHeader,
@@ -55,18 +59,18 @@ export class HarbProjectDesignApprovalComponent implements OnInit {
       Header: "Project Design Approval", 
       Link: "Project Management -> Project Design Approval"
     });
-    this.items = ["PENDING","APPROVE"];
+    this.items = ["PENDING","APPROVE","DISAPPROVE"];
     this.getProject()
     this.getPendingValue()
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["PENDING","APPROVE"];
+    this.items = ["PENDING","APPROVE","DISAPPROVE"];
     this.buttonname = "Create";
     this.clearData();
   }
   clearData(){
-    this.items = ["PENDING","APPROVE"];
+    this.items = ["PENDING","APPROVE","DISAPPROVE"];
     this.buttonname = "Create";
     this.pendingFormSubmit = false
     this.uploadDialog = false
@@ -77,6 +81,7 @@ export class HarbProjectDesignApprovalComponent implements OnInit {
     this.ProjectDesignID = undefined
     this.getApproval()
     this.getPendingValue()
+    this.getDisApproval()
   }
  
   onReject() {
@@ -178,6 +183,43 @@ export class HarbProjectDesignApprovalComponent implements OnInit {
 
     }
     this.getApproval()
+  }
+  getSiteDisApproval(){
+    if(this.ObjdesignDisApproval.Project_ID){
+      this.SiteID = undefined
+      this.SiteListApproval = []
+      const projectFilter = this.projectList.find((xz:any)=> Number(xz.Project_ID) == Number(this.ObjdesignDisApproval.Project_ID))
+      if(projectFilter){
+        const tempObj = {
+          Project_ID: Number(this.ObjdesignDisApproval.Project_ID),
+          Tender_Doc_ID:projectFilter.Tender_Doc_ID
+        }
+        
+        const obj = {
+          "SP_String": "SP_Tender_Management_All",
+          "Report_Name_String": "Get_Site_For_Project_Planning",
+          "Json_Param_String": JSON.stringify([tempObj])
+          }
+        this.GlobalAPI
+        .getData(obj)
+        .subscribe((data:any)=>{
+          console.log("site",data)
+         if(data.length){
+            data.forEach((x:any) => {
+              x['label'] = x.Site_Description
+             x['value'] = x.Site_ID
+            });
+            this.SiteListDisApproval = data
+         }
+        })
+      }
+     
+    }
+    else {
+      this.ObjdesignDisApproval.Site_ID = undefined;
+      this.SiteListDisApproval = []
+     }
+    this.getDisApproval()
   }
   getPendingValue(){
     if(this.objdesignApproval.Project_ID && this.objdesignApproval.Site_ID){
@@ -423,8 +465,38 @@ export class HarbProjectDesignApprovalComponent implements OnInit {
   showImg(img:any){
     window.open(img)
   }
+  getDisApproval(){
+    if(this.ObjdesignDisApproval.Project_ID && this.ObjdesignDisApproval.Site_ID){
+      const tempObj = {
+        Project_ID:	Number(this.ObjdesignDisApproval.Project_ID),
+        Site_ID	: Number(this.ObjdesignDisApproval.Site_ID)
+  }
+  const obj = {
+    "SP_String": "SP_Project_Design_Approval",
+    "Report_Name_String": "Get_Disaproved_Design",
+    "Json_Param_String": JSON.stringify([tempObj])
+    }
+  this.GlobalAPI
+  .getData(obj)
+  .subscribe((data:any)=>{
+    if(data.length){
+      this.DynamicHeader = Object.keys(data[0])
+      this.DisapprovalList = data
+    }
+  })
+    }
+    else{
+      this.DynamicHeaderDisapprova = [];
+      this.DisapprovalList = []
+
+    }
+  }
 }
 class designApproval{
   Project_ID:any;
   Site_ID:any
+}
+class designDisApproval{
+  Project_ID:any
+  Site_ID:any	
 }

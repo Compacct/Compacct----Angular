@@ -32,6 +32,18 @@ export class NepalPurchaseRequestComponent implements OnInit {
   productList:any = []
   purchaseRequestFormSubmit:boolean = false
   addpurchaList:any = []
+  DocDate:any=  {}
+  Spinner:boolean = false
+  PurchaseRequestNo:any = undefined
+  Searchedlist:any = []
+  seachSpinner:boolean = false
+  BrowseStartDate:any = {}
+  BrowseEndDate:any = {}
+  SearchFormSubmit:boolean = false
+  ReqQtyList:any = []
+  Requisitionpopup:boolean = false
+  viewPurchasePopup:boolean = false
+  viewPurchaseList:any = []
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -50,6 +62,10 @@ export class NepalPurchaseRequestComponent implements OnInit {
      Link: "Material Management -> Outward -> Purchase Request"
    });
    this.GetproductList()
+   this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+   this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
+   this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+   this.tabIndexToView = 0
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -58,15 +74,24 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.clearData();
   }
   clearData(){
+    console.log("call")
     this.items = ["BROWSE", "CREATE"];
-    this.tabIndexToView = 0
+   // this.tabIndexToView = 0
     this.buttonname = "Save"
     this.objpurchaseRequest = new purchaseRequest()
     this.addpurchaList = []
+    this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+    this.PurchaseRequestNo = undefined
+    this.ReqQtyList = []
+    this.Requisitionpopup = false
+    this.viewPurchasePopup = false
+    this.GetSearchedList(true)
+    this.GetproductList()
   }
-  onConfirm(){}
+ 
   onReject(){
     this.compacctToast.clear("c");
+    this.compacctToast.clear("s");
   }
   GetproductList(){
     const obj = {
@@ -109,11 +134,14 @@ export class NepalPurchaseRequestComponent implements OnInit {
     if(valid){
       const filterproductList = this.productList.find((x:any)=> Number(x.Product_ID) == Number(this.objpurchaseRequest.Product_ID) )
        this.addpurchaList.push({
+        Purchase_Request_No:"A",
         Product_ID : Number(this.objpurchaseRequest.Product_ID),
+        Purchase_Request_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
         Product_Description : filterproductList ? filterproductList.Product_Name : "",            
         Requisition_Qty: this.objpurchaseRequest.Requisition_Qty,
         UOM : this.objpurchaseRequest.UOM,
-        Purchase_Request_Qty: this.objpurchaseRequest.Purchase_Request_Qty
+        Purchase_Request_Qty: this.objpurchaseRequest.Purchase_Request_Qty,
+        User_ID : this.$CompacctAPI.CompacctCookies.User_ID
        })
        this.objpurchaseRequest = new purchaseRequest()
        this.purchaseRequestFormSubmit = false
@@ -121,6 +149,190 @@ export class NepalPurchaseRequestComponent implements OnInit {
    }
    DeleteAddPurchase(index) {
     this.addpurchaList.splice(index,1);
+  }
+  ConfirmSave(){
+     if(this.addpurchaList.length){
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "s",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+      });
+     }
+   
+  }
+  SavePur(){
+     this.addpurchaList.forEach((xz:any) => {
+      xz.Purchase_Request_No = this.PurchaseRequestNo ? this.PurchaseRequestNo : "A"
+     });
+     const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Create_Purchase_Request",
+      "Json_Param_String": JSON.stringify(this.addpurchaList)
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("data",data)
+      if(data[0].Column1){
+        this.GetSearchedList(true)
+        this.GetproductList()
+        this.onReject()
+        console.log("PurchaseRequestNo",this.PurchaseRequestNo)
+        if(this.PurchaseRequestNo){
+         this.tabIndexToView = 0
+        }
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        detail:  "Succesfully "+ this.buttonname
+      });
+      this.clearData()
+      }
+      else if(data[0].Success == "False"){
+        this.onReject()
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: data[1].Error
+        });
+      }
+      
+    })
+  }
+  GetSearchedList(valid){
+    this.SearchFormSubmit = true
+    if(valid){
+      this.seachSpinner = true
+      this.Searchedlist = []
+      const tempobj = {
+        From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
+        To_Date  : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
+      }
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Browse_Purchase_Request",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("search Data",data)
+        if(data.length){
+         data.forEach((y:any) => {
+          y.Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Date);
+          });
+         this.Searchedlist = data
+         console.log("Searchedlist",this.Searchedlist)
+        }
+        this.seachSpinner = false
+      })
+    }
+  }
+  EditPur(col:any){
+    if(col.Purchase_Request_No){
+      this.ngxService.start();
+      this.items = ["BROWSE", "UPDATE"];
+      this.buttonname = "Update";
+      this.tabIndexToView = 1
+      this.PurchaseRequestNo = undefined
+      this.PurchaseRequestNo = col.Purchase_Request_No
+      this.getEditData(col.Purchase_Request_No)
+     }
+  }
+  getEditData(PurchaseRequestNo:any){
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Get_Data_From_Purchase_Request",
+      "Json_Param_String": JSON.stringify([{ Purchase_Request_No :PurchaseRequestNo}])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     console.log("Edit",data)
+     if(data.length){
+      this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Purchase_Request_Date)
+      this.addpurchaList = data
+     
+     }
+     this.ngxService.stop();
+    })
+  }
+  DetailsReqQty(){
+   if(this.objpurchaseRequest.Product_ID){
+    this.ReqQtyList = []
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Show_Data_PopUp_Requisition_Salesman",
+      "Json_Param_String": JSON.stringify([{Product_ID :Number(this.objpurchaseRequest.Product_ID)}])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.Requisitionpopup = true
+      if(data.length){
+        this.ReqQtyList = data
+        this.ReqQtyList.forEach(ele => {
+          ele.Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(ele.Date);
+        });
+      }
+      
+      console.log("ReqQtyList",this.ReqQtyList)
+     
+    })
+   }
+  }
+  
+  viewPurchase(col){
+   if(col.Purchase_Request_No){
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Get_Data_From_Purchase_Request",
+      "Json_Param_String": JSON.stringify([{ Purchase_Request_No :col.Purchase_Request_No}])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("view",data)
+    this.viewPurchaseList = data
+    setTimeout(() => {
+      this.viewPurchasePopup = true
+    }, 300);
+    })
+   }
+  }
+
+  Deletepur(col:any){
+    if(col.Purchase_Request_No){
+      this.PurchaseRequestNo = undefined
+      this.PurchaseRequestNo = col.Purchase_Request_No
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirm(){
+    if(this.PurchaseRequestNo){
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Delete_Purchase_Request",
+        "Json_Param_String": JSON.stringify([{Purchase_Request_No : this.PurchaseRequestNo}])
+       }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if(data[0].Column1 =="Done"){
+          this.onReject()
+          this.GetSearchedList(true)
+          this.GetproductList()
+          this.PurchaseRequestNo = undefined
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          detail:  "Succesfully Delete"
+        })
+        }
+      })
+    }
   }
 }
 class purchaseRequest{
