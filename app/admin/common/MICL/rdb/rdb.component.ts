@@ -79,6 +79,13 @@ export class RdbComponent implements OnInit {
   SelectedDistProductType:any = [];
   DistProductType:any = [];
 
+  objDeptUser: DeptUser = new DeptUser();
+  DeptUserModel = false;
+  DeptUserFormSubmitted = false;
+  DeptUserSpinner = false;
+  DepartmentList:any = [];
+  UsertList:any = [];
+
    constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -626,16 +633,68 @@ export class RdbComponent implements OnInit {
         //   Autho_One_Staus : "NO"
 
         // }
-        tempArr.push(obj);
+        tempArr.push({...obj,...this.objDeptUser});
       });
       console.log(tempArr)
       return JSON.stringify(tempArr);
 
     }
    }
-   SaveRDB(valid){
+   ShowDeptUserPopUp(valid){
+    this.GetDepartment();
+    this.GetUser();
+    this.DeptUserModel = false;
     this.Spinner = true;
     this.RDBFormSubmit2 = true;
+    this.DeptUserFormSubmitted = false;
+    this.objDeptUser = new DeptUser();
+    if (valid && this.RDBListAdd.length) {
+      this.DeptUserModel = true;
+    }
+    else{
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
+    }
+   }
+   Cancle(){
+    this.DeptUserModel = false;
+    this.DeptUserSpinner = false;
+    this.DeptUserFormSubmitted = false;
+    this.objDeptUser = new DeptUser();
+    this.Spinner = false;
+   }
+   GetDepartment(){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_Department",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.DepartmentList = data
+    //  console.log("DepartmentList",this.DepartmentList)
+    })
+   }
+   GetUser(){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_User",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.UsertList = data
+    //  console.log("UsertList",this.UsertList)
+    })
+   }
+   SaveRDB(valid){
+    // this.Spinner = true;
+    // this.RDBFormSubmit2 = true;
+    this.DeptUserSpinner = true;
+    this.DeptUserFormSubmitted = true;
     this.ngxService.start();
     this.Save = false;
     this.Del = false;
@@ -706,6 +765,7 @@ export class RdbComponent implements OnInit {
     }
     else{
       this.Spinner = false;
+      this.DeptUserSpinner = false; 
       this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -755,11 +815,16 @@ export class RdbComponent implements OnInit {
               this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
               this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;  
-              this.deleteError = false        
+              this.deleteError = false;
+              this.DeptUserSpinner = false;   
+              this.DeptUserFormSubmitted = false;
+              this.objDeptUser = new DeptUser();
+              this.DeptUserModel = false;
       } 
       else{
         this.Spinner = false;
         this.ngxService.stop();
+        this.DeptUserSpinner = false; 
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -887,6 +952,7 @@ export class RdbComponent implements OnInit {
     this.Spinner = false;
     this.ngxService.stop();
     this.deleteError = false;
+    this.DeptUserSpinner = false;
   }
   Printrdb(DocNo) {
     if(DocNo) {
@@ -1135,5 +1201,9 @@ export class RdbComponent implements OnInit {
   class RDBRegister {
     start_date : Date;
     end_date : Date;
+  }
+  class DeptUser {
+    Ins_Dept_ID : any;
+    Ins_USER_ID : any;
   }
 

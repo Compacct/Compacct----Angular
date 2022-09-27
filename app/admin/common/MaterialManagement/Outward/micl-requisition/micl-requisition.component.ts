@@ -94,6 +94,7 @@ export class MiclRequisitionComponent implements OnInit {
   SelectedDistProductType:any = [];
   DistDepartment:any = [];
   DistProductType:any = [];
+  mrodisabled = false;
 
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -176,7 +177,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.ProductCatList = [];
     this.productTypeList = [];
     this.Requisition_ID = undefined;
-    this.Material_Type_ID = undefined;
+    this.getMaterialType();
    }
   addMaterials(valid){
   console.log("valid",valid);
@@ -586,13 +587,29 @@ export class MiclRequisitionComponent implements OnInit {
      })
   }
   getMaterialType(){
+    this.MaterialTypeList = [];
     const obj = {
       "SP_String": "SP_Txn_Requisition",
       "Report_Name_String": "Get_Material_Type"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.MaterialTypeList = data;
+      // this.MaterialTypeList = data;
+      var materiallist = data;
      console.log("MaterialTypeList",this.MaterialTypeList);
+     if (this.headerText === "Maintenance Indent") {
+      this.MaterialTypeList = materiallist;
+      this.Material_Type_ID = "M.R.O";
+      this.mrodisabled = true;
+      this.getProductCategory();
+     } 
+     else {
+      var matdata = materiallist.filter(function(value){
+        return value.Material_Type != "M.R.O";
+      });
+      this.MaterialTypeList = matdata;
+      this.Material_Type_ID = undefined;
+      this.mrodisabled = false;
+     }
      })
   }
   getProductCategory(){
@@ -615,7 +632,8 @@ export class MiclRequisitionComponent implements OnInit {
     const obj = {
       "SP_String": "SP_Txn_Requisition",
       "Report_Name_String": "Get_product_Type_Details",
-      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify({...this.objProjectRequi,...materialtype}) : JSON.stringify([{PROJECT_ID : 0,Type_Of_Product : this.objmaterial.Product_Category}])
+      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify({...this.objProjectRequi,...materialtype}) 
+                           : JSON.stringify([{PROJECT_ID : 0,Type_Of_Product : this.objmaterial.Product_Category,Material_Type : this.headerText === "Maintenance Indent" ? 'MRO' : ''}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach(el => {
@@ -714,7 +732,9 @@ export class MiclRequisitionComponent implements OnInit {
         Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID ? this.ObjBrowseData.Cost_Cen_ID : 0,
         Godown_ID : this.ObjBrowseData.Godown_ID ? this.ObjBrowseData.Godown_ID : 0,
         proj : this.openProject ? this.openProject : "N",
-        To_Cost_Cen_ID : this.toCostCenter
+        To_Cost_Cen_ID : this.toCostCenter,
+        Material_Type : this.headerText === "Maintenance Indent" ? 'MRO' : '',
+        Created_By : this.$CompacctAPI.CompacctCookies.User_ID
       }
       const obj = {
         "SP_String": "SP_Txn_Requisition",

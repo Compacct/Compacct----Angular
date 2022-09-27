@@ -261,6 +261,14 @@ import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/b
 import { ProjectPlanApproveComponent } from "./common/Harbauer/project-plan-approve/project-plan-approve.component";
 import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authorization-harbauer/po-authorization-harbauer.component";
 import { HarbProjectDesignApprovalComponent } from "./common/Harbauer/harb-project-design-approval/harb-project-design-approval.component";
+import { NepalRequisitionFromSalesmanComponent } from "./common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component";
+import { NepalPurchaseRequestComponent } from "./common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component";
+import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
+import { BLTxnWorkOrderSaleBillComponent } from "./common/Harbauer/bl-txn-work-order-sale-bill/bl-txn-work-order-sale-bill.component";
+import { HREventUploadComponent } from './common/Attendance/hr-event-upload/hr-event-upload.component';
+import { MasterSubContractorComponent } from './common/MICL/SubContractor/master-sub-contractor/master-sub-contractor.component';
+import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContractor/sub-contractor-employee-master/sub-contractor-employee-master.component';
+import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1930,6 +1938,72 @@ data: {
                    component: HarbProjectDesignApprovalComponent,
                     data: {
                       title: 'Project Design Approval'
+                }
+                },
+                {
+                  path: 'Nepal_Bl_Txn_Requisition_From_Salesman',
+                   component: NepalRequisitionFromSalesmanComponent,
+                    data: {
+                      title: 'Requisition From Salesman'
+                }
+                },
+                {
+                  path: 'Nepal_BL_Txn_Purchase_Request',
+                   component: NepalPurchaseRequestComponent,
+                    data: {
+                      title: 'Purchase Request'
+                }
+                },
+                {
+                  path: "Project_Dashboard",
+                  loadChildren: () =>
+                    import(
+                      "./common/Harbauer/project-dashboard/project-dashboard.module"
+                    ).then(m => m.ProjectDashboardModule),
+                  data: {
+                    title: "Project Dashboard"
+                  }
+                },
+                {
+                  path: 'Meterial_Inspection_Of_RDB',
+                   component: MeterialInspectionOfRDBComponent,
+                    data: {
+                      title: 'Meterial Inspection Of RDB'
+                }
+                },
+                {
+                  path: 'BL_Txn_Work_Order_Sale_Bill',
+                  component: BLTxnWorkOrderSaleBillComponent,
+                  data: {
+                    title: 'BL Txn Work Order Sale Bill'
+                }
+                },
+                {
+                  path: 'HR_Event_Upload',
+                  component: HREventUploadComponent,
+                  data: {
+                    title: 'HR Event Upload'
+                }
+                },
+                {
+                  path: 'Master_Sub_Contractor',
+                   component: MasterSubContractorComponent,
+                    data: {
+                      title: 'Master Sub Contractor'
+                }
+                },
+                {
+                  path: 'Sub_Contractor_Employee_Master',
+                  component: SubContractorEmployeeMasterComponent,
+                  data: {
+                    title: 'Sub Contractor Employee Master'
+                }
+                },
+                {
+                  path: 'Sub_Contractor_Attendance',
+                  component: SubContractorAttendanceComponent,
+                  data: {
+                    title: 'Sub Contractor Attendance'
                 }
                 },
                 

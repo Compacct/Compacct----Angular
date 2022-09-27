@@ -205,7 +205,7 @@
                                             name="materialtype" 
                                             #materialtype="ngModel"
                                              [(ngModel)]='Material_Type_ID' 
-                                             [disabled]="AddMaterialsList.length"
+                                             [disabled]="headerText === 'Maintenance Indent' ? mrodisabled : AddMaterialsList.length"
                                              [ngClass]="{'clearance': requisitionmaterialFormSubmit && materialtype?.errors?.required}" 
                                              (change)="getProductCategory()"
                                               required>
@@ -288,14 +288,15 @@
                                             <div class="label-t">{{productFilterObj?.Can_Be_Used_Qty ? productFilterObj?.Can_Be_Used_Qty : 0}}</div>
                                          </div>
                                          
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-3">
                                             <label class="control-label" *ngIf="headerText === 'Purchase Indent'">Indent QTY<sup class="text-danger">*</sup></label>
                                             <label class="control-label" *ngIf="headerText === 'Issue Requisition' || headerText === 'Requisition for Project'">Requisition QTY<sup class="text-danger">*</sup></label>
+                                            <label class="control-label" *ngIf="headerText === 'Maintenance Indent'">Maintenance Indent QTY<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
                                             name="Req_Qty" 
                                             #Req_Qty="ngModel" 
                                             [(ngModel)]="objmaterial.Req_Qty" 
-                                            placeholder="Requisition QTY"
+                                            placeholder="{{headerText}} Qty"
                                             CompacctDigitonly="true"
                                             (ngModelChange)="reqiValid(objmaterial.Req_Qty)"
                                             [ngClass]="{'clearance':reqValid}" 
@@ -323,7 +324,7 @@
                                                 >
                                         </div>
                                         <!-- <div class="clearfix"  *ngIf="openProject == 'N'"></div> -->
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-2">
                                             <label class="control-label">Purpose<sup class="text-danger"></sup></label>
                                             <textarea 
                                             class="form-control" 

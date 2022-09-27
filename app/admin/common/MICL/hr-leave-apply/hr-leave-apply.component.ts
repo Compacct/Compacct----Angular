@@ -88,8 +88,8 @@ export class HrLeaveApplyComponent implements OnInit {
     ];
    
     this.header.pushHeader({
-      Header: "HR Leave Apply",
-      Link: " MICL -> HR-leave-apply"
+      Header: "Leave Application",
+      Link: " MICL -> Leave Application"
     })
   // this.minDateTo_Time = this.From_Time
     this.FromDatevalue = new Date(this.currentdate);
@@ -239,7 +239,7 @@ this.AllData = [...this.BackupAllData] ;
     if(valid){
       console.log("HrleaveId==",this.HrleaveId);
       this.Spinner = true
-      if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
+      // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
      this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.FromDatevalue));
      this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
      this.ObjHrleave.Issued_From_Date = this.ObjHrleave.Apply_From_Date;
@@ -249,7 +249,7 @@ this.AllData = [...this.BackupAllData] ;
      this.ObjHrleave.HR_Remarks = this.ObjHrleave.Remarks
      //this.ObjHrleave.Leave_Month = "NA"
     // this.ObjHrleave.Leave_Year = "NA"
-      }
+      // }
       
         const obj = {
           "SP_String": "SP_Leave_Application",

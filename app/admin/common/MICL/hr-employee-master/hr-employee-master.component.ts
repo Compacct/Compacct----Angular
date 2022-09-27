@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { FileUpload } from "primeng/primeng";
 import { data, escapeSelector } from "jquery";
-import { Console } from "console";
+import { Console, timeStamp } from "console";
 import { ActivatedRoute } from "@angular/router";
 import { takeUntil } from "rxjs/operators";
 import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.service";
@@ -63,7 +63,7 @@ export class HREmployeeMasterComponent implements OnInit {
   ischeckaddress : boolean = false;
   Employeeid: any;
   Joining_Dt = new Date();
-  Leave_Dt = new Date();
+  Leave_Dt:any = new Date();
   DOB = new Date();
   checkcode : any;
   flag : boolean = false;
@@ -96,6 +96,7 @@ export class HREmployeeMasterComponent implements OnInit {
   @ViewChild ("preview", { static : false}) preview : FileUpload;
   userdisabled = false;
   userdatedisabled = true;
+  leftdisabled = true;
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -133,11 +134,27 @@ export class HREmployeeMasterComponent implements OnInit {
     this.getBankName();
     this.getReportingList();
     this.getUser();
+    this.leftdatechange();
     this.objemployee.Bank_ID = 1;
     
   }
 
-
+leftdatechange(){
+  if(this.objemployee.Present_Status === "RESIGNED") {
+    this.Leave_Dt = new Date();
+    this.leftdisabled = true;
+  }
+  else {
+    // var currentdate = new Date();
+    // var date = currentdate.getDate();
+    // var month = currentdate.getMonth();
+    // var month = currentdate.toLocaleString('en-us', { month: 'short' })
+    // var finaldate = date+"/"+month+"/"+"2099";//this.DateService.dateConvert(new Date(date+"/"+month+"/"+"2099"));
+    this.Leave_Dt = "01/Jan/2099";
+    // console.log("this.Leave_Dt ===",this.Leave_Dt)
+    this.leftdisabled = false;
+  }
+}
 onReject(){
     this.compacctToast.clear("c");
 }
@@ -400,6 +417,8 @@ getEmployeeDetails(Emp_ID){
          this.objemployee.Is_HOD = data[0].Is_HOD == "Y"? true : false;
          this.Joining_Dt = new Date(data[0].Emp_Joining_Dt);
          this.Leave_Dt = new Date(data[0].Emp_Leave_Dt) ;
+         this.objemployee.Present_Status = data[0].Present_Status;
+         this.leftdisabled = this.objemployee.Present_Status === "RESIGNED" ? true : false;
          this.DOB = new Date(data[0].D_O_B);
          this.imagePath = data[0].Person_Photo ? data[0].Person_Photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3_qIHtXBZ7vZeMQhyD8qLC1VRB9ImHadL09KET_iSQEX6ags4ICknfmqEKz8Nf6IOsA&usqp=CAU "
          this.ProductViewFalg = data[0].Person_Photo ? true : false
@@ -664,7 +683,9 @@ GetNewEmployee(){
   this.objemployee.Present_Country = "India";
   this.objemployee.Perm_Country = "India";
   this.Joining_Dt = new Date();
-  this.Leave_Dt = new Date();
+  // this.Leave_Dt = new Date();
+  this.objemployee.Present_Status = undefined;
+  this.leftdatechange();
   this.DOB = new Date();
   this.EmployeeFormSubmitted = false;
   this.buttonname   = 'Create';
@@ -1109,7 +1130,8 @@ clearData(){
   this.objemployee = new Employee();
   this.objselect = new Select();
   this.Joining_Dt = new Date();
-  this.Leave_Dt = new Date();
+  // this.Leave_Dt = new Date();
+  this.leftdatechange();
   this.DOB = new Date();
   this.objemployee.Present_Country = "India";
   this.objemployee.Perm_Country = "India";

@@ -49,7 +49,7 @@ DocmaxDate = new Date();
 DocminDate = new Date();
 showTost = true;
 Spinner = false;
-DocNoId:any =[];
+DocNoId:any;
 createListObj:any={};
 lowerAddList:any = [];
 SelectedDistVendor:any = [];
@@ -62,6 +62,17 @@ DistGodown:any = [];
 deleteError:boolean = false;
 Save = false;
 Del = false;
+validatation = false;
+PandingFormSubmitted = false;
+seachBroSpinner = false;
+seachPendSpinner = false;
+SubLedgerList:any = [];
+SubLedgerDataList:any = [];
+Requlist:any = [];
+deldocno: undefined;
+editdocno: any;
+addReturnGatePassInputField:any = {};
+addPurchaseListInput:boolean = false
 
 constructor(
     private header:CompacctHeader,
@@ -76,20 +87,22 @@ constructor(
 ){}
 
 ngOnInit() {
-this.items = ["BROWSE", "CREATE","PENDING WORK ORDER"];
-
+this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
 this.header.pushHeader({
       Header: "Returnable Gate Pass",
       Link: "Material Management -> Repair & Maintenance -> Returnable Gate Pass"
   })
   this.Finyear();
   this.GetNumberOfdays();
+  this.getCostCenter();
+  this.getsubLedger();
 }
 TabClick(e) {
   this.tabIndexToView = e.index;
-  this.items = ["BROWSE", "CREATE","PENDING WORK ORDER"];
+  this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
   this.buttonname = "Save";
   this.clearData();
+  this.addPurchaseListInput = false
 }
 clearData(){
   this.Expected_Return_Date = this.voucherdata;
@@ -100,8 +113,8 @@ clearData(){
   this.Expected_Return_Date = this.voucherdata;
   this.Doc_Date =this.Docdata;
   this.createListObj = {};
-  this.SearchedlistPanding =[];
-  this.SearchedlistBrowse =[];
+  // this.SearchedlistPanding =[];
+  // this.SearchedlistBrowse =[];
   this.lowerAddList = [];
   this.gatePassFromSubmit = false;
   this.gatePassFromSubmited = false;
@@ -112,8 +125,28 @@ clearData(){
   this.DistVendor= [];
   this.DistCostCenter = [];
   this.DistGodown = [];
-  this.backUPSearchedlistBrowse = []
+  this.backUPSearchedlistBrowse = [];
+  this.getCostCenter();
 }
+getsubLedger(){
+  this.SubLedgerList = [];
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Get_Sub_Ledger_Dropdown",
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // console.log(data);
+      this.SubLedgerDataList = data;
+     
+      console.log("SubLedgerDataList",this.SubLedgerDataList);
+      this.SubLedgerDataList.forEach(el => {
+        this.SubLedgerList.push({
+            label: el.Sub_Ledger_Name,
+            value: el.Sub_Ledger_ID
+          });
+         });
+      })
+  }
 getDateRange(dateRangeObj:any){
   if(dateRangeObj.length) {
    this.ObjPanding.From_Date = dateRangeObj[0];
@@ -131,9 +164,9 @@ getDateRangeBrowse(dateRangeObj:any){
   }
 }
 GetNumberOfdays(){
-  if(this.Doc_Date && this.Expected_Return_Date){
-    this.DocminDate = this.Expected_Return_Date
-  }
+  // if(this.Doc_Date && this.Expected_Return_Date){
+  //   this.DocminDate = this.Expected_Return_Date
+  // }
 }
 Finyear(){
   this.$http
@@ -164,8 +197,11 @@ getCostCenter(){
      });
      this.costCenterList = data;
      this.ObjGatePass.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.ObjPanding.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      if(this.ObjGatePass.Cost_Cen_ID){
-      this.getGodown()
+      this.Getgodown();
+      this.GetMainIndentNo();
      }
     } 
    else {
@@ -174,7 +210,7 @@ getCostCenter(){
  console.log("costCenterList======",this.costCenterList);
  });
 }
-getGodown(){
+Getgodown(){
 this.godownList = [];
  const tempObj ={
   Cost_Cen_ID : this.ObjGatePass.Cost_Cen_ID
@@ -197,6 +233,29 @@ this.godownList = [];
       this.godownList = []; 
     }
   }) 
+}
+GetMainIndentNo(){
+  const obj = {
+    "SP_String": "Sp_Returnable_Gate_Pass",
+    "Report_Name_String": "Get_Pending_Maintenance_Indent_No",
+    "Json_Param_String": JSON.stringify([{To_Cost_Cen_ID : this.ObjGatePass.Cost_Cen_ID}])
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log("data",data)
+    // this.Requlist = data
+    if(data.length) {
+      data.forEach(element => {
+        element['label'] = element.Indent_No,
+        element['value'] = element.Indent_No
+      });
+     this.Requlist = data;
+   // console.log("Requlist======",this.Requlist);
+    }
+     else {
+      this.Requlist = [];
+
+    }
+  })
 }
 getProTyp(){
   this.ProTypeList = [];
@@ -221,11 +280,11 @@ getProTyp(){
 getProduct(){
   this.productList = [];
    const tempObj ={
-    Product_Type_ID : this.ObjGatePass.Product_Type_ID
+    Req_No : this.ObjGatePass.Req_No
    }
     const obj = {
     "SP_String": "Sp_Returnable_Gate_Pass",
-    "Report_Name_String": "Get_Products",
+    "Report_Name_String": "Get_Product_Against_Requisition_No",
     "Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -248,46 +307,67 @@ getUOM(){
     const ctrl = this;
     const productObj = $.grep(ctrl.productList,function(item:any) {return Number(item.Product_ID) === Number(ctrl.ObjGatePass.Product_ID)})[0];
     console.log(productObj);
+    this.ObjGatePass.Qty = productObj.Qty;
     this.ObjGatePass.UOM = productObj.UOM;
   
   }
 }
-GetPandingSearch(){
+GetPandingSearch(valid){
   this.SearchedlistPanding = [];
+  this.PandingFormSubmitted = true;
+  this.seachPendSpinner = true;
   const start = this.ObjPanding.From_Date
   ? this.DateService.dateConvert(new Date(this.ObjPanding.From_Date))
   : this.DateService.dateConvert(new Date());
   const end = this.ObjPanding.To_Date
   ? this.DateService.dateConvert(new Date(this.ObjPanding.To_Date))
   : this.DateService.dateConvert(new Date());
+  if (valid){
   const tempobj = {
+    To_Cost_Cen_ID : this.ObjPanding.Cost_Cen_ID,
     From_Date : start,
     To_Date : end,
   }
   //console.log("tempobj==",tempobj)
   const obj = {
   "SP_String": "Sp_Returnable_Gate_Pass",
-  "Report_Name_String": "PENDING_WORK_ORDER_BROWSE",
+  "Report_Name_String": "Browse_Pending_Maintenance_Indent",
   "Json_Param_String": JSON.stringify([tempobj])
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     if(data.length){
       this.SearchedlistPanding = data;
       this.DynamicHeader = Object.keys(data[0]);
-    
     }
- 
+    this.PandingFormSubmitted = false;
+    this.seachPendSpinner = false;
    console.log('SearchedlistPanding===',this.SearchedlistPanding)
   })
+  }
 }
-GetBrowseSearch(){
+Print(DocNo) {
+  if(DocNo) {
+  const objtemp = {
+    "SP_String": "SP_Txn_Requisition",
+    "Report_Name_String": "Requisition_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  })
+  }
+}
+GetBrowseSearch(valid){
   this.SearchedlistBrowse = [];
+  this.validatation = true;
+  this.seachBroSpinner = true;
   const start = this.ObjBrowse.From_Date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.From_Date))
   : this.DateService.dateConvert(new Date());
   const end = this.ObjBrowse.To_Date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.To_Date))
   : this.DateService.dateConvert(new Date());
+  if(valid){
   const tempobj = {
     From_Date : start,
     To_Date : end,
@@ -305,9 +385,11 @@ GetBrowseSearch(){
       this.backUPSearchedlistBrowse = data;
       this.GetDistinct()
     }
- 
+    this.validatation = false;
+    this.seachBroSpinner = false;
    console.log('SearchedlistBrowse===',this.SearchedlistBrowse)
   }) 
+  }
 }
 GetDistinct(){
   let vendor:any = [];
@@ -366,81 +448,112 @@ this.SearchedlistBrowse = [...this.backUPSearchedlistBrowse] ;
 }
 createIssue(DocnoObj:any){
   this.DocNoId= undefined
+  this.clearData();
   if (DocnoObj.Doc_No) {
-    this.DocNoId= undefined;
     this.tabIndexToView = 1;
-    this.items = ["BROWSE", "CREATE","PENDING WORK ORDER"];
+    this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
     this.buttonname = "Save";
-    this.clearData();
     this.DocNoId = DocnoObj.Doc_No;
-    this.createListObj = {};
-   this.GetcreateIssueMaster();
-   this.getCostCenter();
-   this.getProTyp();
+    this.ObjGatePass.Req_No = DocnoObj.Doc_No;
+    this.getProduct();
+    // this.createListObj = {};
+   // this.GetcreateIssueMaster();
+  //  this.getCostCenter();
+  //  this.getProTyp();
    }    
 }
-GetcreateIssueMaster(){
-const tempobj = {
-  Doc_No : this.DocNoId,
-}
-const obj = {
-  "SP_String": "Sp_Returnable_Gate_Pass",
-  "Report_Name_String":"Get_Data_For_Create_Returnable_Gate_Pass",
-  "Json_Param_String": JSON.stringify([tempobj]) 
- }
- this.GlobalAPI.getData(obj).subscribe((res:any)=>{
-  console.log("CreatForm==>>",res)
-  //let data = JSON.parse(res[0].topper);
- //this.createList= data
- if(res.length){
-  this.createListObj = res[0]
-  //this.objproject = data[0];
-  this.SearchedlistPanding.Doc_No = res[0].Doc_No;
- }
+// GetcreateIssueMaster(){
+// const tempobj = {
+//   Doc_No : this.DocNoId,
+// }
+// const obj = {
+//   "SP_String": "Sp_Returnable_Gate_Pass",
+//   "Report_Name_String":"Get_Data_For_Create_Returnable_Gate_Pass",
+//   "Json_Param_String": JSON.stringify([tempobj]) 
+//  }
+//  this.GlobalAPI.getData(obj).subscribe((res:any)=>{
+//   console.log("CreatForm==>>",res)
+//   //let data = JSON.parse(res[0].topper);
+//  //this.createList= data
+//  if(res.length){
+//   this.createListObj = res[0]
+//   //this.objproject = data[0];
+//   this.SearchedlistPanding.Doc_No = res[0].Doc_No;
+//  }
 
   
-  //this.lowerAddList = data[0].bottom
- // console.log("create==",this.createListObj)
- })
-}
+//   //this.lowerAddList = data[0].bottom
+//  // console.log("create==",this.createListObj)
+//  })
+// }
 Delete(index){
   this.lowerAddList.splice(index, 1);
 }
 AddData(valid:any){
-  this.gatePassFromSubmit = true;
+  this.gatePassFromSubmited = true;
   if(valid){
-    this.gatePassFromSubmit = false
-    this.showTost = true;
-    const ProductTypFilter:any = this.ProTypeList.filter((el:any)=> Number(el.value) === Number(this.ObjGatePass.Product_Type_ID	))[0]
+    // const ProductTypFilter:any = this.ProTypeList.filter((el:any)=> Number(el.value) === Number(this.ObjGatePass.Product_Type_ID	))[0]
     const ProductFilter:any = this.productList.filter((el:any)=> Number(el.value) === Number(this.ObjGatePass.Product_ID))[0]
     const addTempObj = {
-      Product_Type: ProductTypFilter.label,
-      Product_Description : ProductFilter.label,
-      Product_Type_ID : Number(this.ObjGatePass.Product_Type_ID),
+      Req_No : this.ObjGatePass.Req_No,
+      Product_Description : this.addPurchaseListInput ? this.addReturnGatePassInputField.Product_Description : ProductFilter.label,
+      // Product_Type_ID : Number(this.ObjGatePass.Product_Type_ID),
       Product_ID: Number(this.ObjGatePass.Product_ID),
-      Work_Details: this.ObjGatePass.Work_Details,
       Qty : this.ObjGatePass.Qty,
       UOM : this.ObjGatePass.UOM,
-      Expected_Return_Date : this.DateService.dateConvert(new Date(this.Expected_Return_Date)),
-      Remarks : this.ObjGatePass.Remarks,
+      Expected_Return_Date : //this.addPurchaseListInput ? 
+                             //this.DateService.dateConvert(new Date(this.addReturnGatePassInputField.Expected_Return_Date)) :
+                             this.DateService.dateConvert(new Date(this.Expected_Return_Date)),
+      Purpose : this.ObjGatePass.Purpose,
     }
-    this.lowerAddList.push(addTempObj);
-    let backUPobj = {...this.ObjGatePass};
-    this.ObjGatePass = new GatePass()
-    this.ObjGatePass.Cost_Cen_ID=  backUPobj.Cost_Cen_ID,
-    this.ObjGatePass.Godown_ID = backUPobj.Godown_ID,
-    this.ObjGatePass.Sub_Ledger_Name = this.createListObj.Sub_Ledger_Name,
-    this.ObjGatePass.Doc_No = this.createListObj .Doc_No
+    
+    if(this.lowerAddList.length && this.addPurchaseListInput){
+      this.lowerAddList.forEach((xz:any,i) => {
+        // console.log(i)
+        if( xz.Req_No == this.ObjGatePass.Req_No && xz.Product_ID == this.ObjGatePass.Product_ID){
+          this.lowerAddList[i] = {...this.ObjGatePass}
+          this.lowerAddList[i].Product_Description = this.addReturnGatePassInputField.Product_Description
+          this.lowerAddList[i].Expected_Return_Date = this.DateService.dateConvert(new Date(this.Expected_Return_Date))
+        }
+       });
+     }
+     else{
+      this.gatePassFromSubmited = false;
+      this.showTost = true;
+      this.lowerAddList.push(addTempObj);
+      let backUPobj = {...this.ObjGatePass};
+      this.ObjGatePass = new GatePass()
+      this.ObjGatePass.Sub_Ledger_ID=  backUPobj.Sub_Ledger_ID;
+      this.ObjGatePass.Cost_Cen_ID=  backUPobj.Cost_Cen_ID;
+      this.ObjGatePass.Godown_ID = backUPobj.Godown_ID;
+      // this.ObjGatePass.Sub_Ledger_Name = this.createListObj.Sub_Ledger_Name;
+      // this.ObjGatePass.Doc_No = this.createListObj .Doc_No;
+      this.Expected_Return_Date = new Date();
+      this.ObjGatePass.Req_No = backUPobj.Req_No;
+     }
+    
+    // this.gatePassFromSubmited = false;
+    // this.showTost = true;
+    // this.lowerAddList.push(addTempObj);
+    // let backUPobj = {...this.ObjGatePass};
+    // this.ObjGatePass = new GatePass()
+    // this.ObjGatePass.Sub_Ledger_ID=  backUPobj.Sub_Ledger_ID;
+    // this.ObjGatePass.Cost_Cen_ID=  backUPobj.Cost_Cen_ID;
+    // this.ObjGatePass.Godown_ID = backUPobj.Godown_ID;
+    // // this.ObjGatePass.Sub_Ledger_Name = this.createListObj.Sub_Ledger_Name;
+    // // this.ObjGatePass.Doc_No = this.createListObj .Doc_No;
+    // this.Expected_Return_Date = new Date();
+    // this.ObjGatePass.Req_No = backUPobj.Req_No;
     }
     console.log("AddData....>>",this.ObjGatePass,this.lowerAddList)
 }
-saveData(valid:any){
-  console.log("valid",valid)
-  this.gatePassFromSubmited = true;
+saveData(){
+  // console.log("valid",valid)
+  // this.gatePassFromSubmited = true;
   // let ArrData:any =[];
   this.Save = false;
   this.Del = false;
-  if(valid){
+  if(this.lowerAddList.length){
     this.Save = true;
     this.Del = false;
     this.Spinner = true;
@@ -520,21 +633,23 @@ onConfirmSave(){
   if (this.lowerAddList.length) {
     this.lowerAddList.forEach(element => {
       const Data ={
-      Product_Type: element.Product_Type,
-      Product_Description : element.Product_Description,
-      Product_Type_ID : Number(element.Product_Type_ID),
-      Product_ID: Number(element.Product_ID),
-      Work_Details: element.Work_Details,
-      Qty : element.Qty,
-      UOM : element.UOM,
-      Expected_Return_Date : this.DateService.dateConvert(new Date(element.Expected_Return_Date)),
-      Remarks : element.Remarks, 
-      Doc_Date :this.DateService.dateConvert(new Date(this.Doc_Date)),
-      Cost_Cen_ID : Number(this.ObjGatePass.Cost_Cen_ID),
-      Godown_ID :Number(this.ObjGatePass.Godown_ID),
-      Sub_Ledger_ID :this.createListObj.Sub_Ledger_ID,
-      Work_Order_No :this.createListObj.Doc_No,
-      Created_By :this.$CompacctAPI.CompacctCookies.User_ID,
+        Doc_No: this.editdocno ? this.editdocno : "A",
+        Sub_Ledger_ID :this.ObjGatePass.Sub_Ledger_ID,
+        Doc_Date :this.DateService.dateConvert(new Date(this.Doc_Date)),
+        Cost_Cen_ID : Number(this.ObjGatePass.Cost_Cen_ID),
+        Godown_ID :Number(this.ObjGatePass.Godown_ID),
+
+        Req_No: element.Req_No,
+        Product_ID: Number(element.Product_ID),
+        Product_Description : element.Product_Description,
+        Qty : element.Qty,
+        UOM : element.UOM,
+        Expected_Return_Date : this.DateService.dateConvert(new Date(element.Expected_Return_Date)),
+        Purpose: element.Purpose,
+      // Work_Order_No :this.createListObj.Doc_No,
+
+        Remarks : this.ObjGatePass.Remarks, 
+        Created_By :this.$CompacctAPI.CompacctCookies.User_ID,
     }
       ArrData.push(Data)
     });
@@ -552,17 +667,26 @@ onConfirmSave(){
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
-          summary: "Succesfully Create ",
-          detail: "Succesfully "
+          summary: "Returnable Gate Pass No " + data[0].Column1,
+          detail: this.buttonname === "Update" ? "Succesfully Update " : "Succesfully Create "
         });
         this.Spinner = false;
-        this.tabIndexToView = 0;
+        // this.tabIndexToView = 0;
         this.gatePassFromSubmited = false;
-        this.ObjGatePass.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+        this.getCostCenter();
         this.ObjGatePass =new GatePass();
         this.Expected_Return_Date = new Date();
         this.Doc_Date = new Date();
         this.lowerAddList = [];
+        this.DocNoId = undefined;
+        this.GetBrowseSearch(true);
+        this.GetPandingSearch(true);
+        this.editdocno = undefined;
+        this.addPurchaseListInput = false;
+        if(this.buttonname === "Update") {
+          this.tabIndexToView = 0;
+          this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
+        }
         }
         else {
           this.Spinner = false; 
@@ -579,15 +703,134 @@ onConfirmSave(){
       });
   }
 }
-onConfirmDel(){}
+DeleteRGP(obj){
+  this.deldocno = undefined;
+  if(obj.Doc_No){
+    this.deldocno = obj.Doc_No;
+    this.ngxService.start();
+   this.compacctToast.clear();
+   this.compacctToast.add({
+     key: "s",
+     sticky: true,
+     closable: false,
+     severity: "warn",
+     summary: "Are you sure?",
+     detail: "Confirm to proceed"
+   });
+  }
+}
+onConfirmDel(){
+  const objdel = {
+    Doc_No: this.deldocno,
+    Created_By: this.$CompacctAPI.CompacctCookies.User_ID
+  }
+  const obj = {
+    "SP_String": "Sp_Returnable_Gate_Pass",
+    "Report_Name_String": 'Delete_Returnable_Gate_Pass',
+    "Json_Param_String": JSON.stringify(objdel)
+   }
+   this.GlobalAPI.getData(obj)
+   .subscribe((data:any)=>{
+    if (data[0].Column1 === "Done"){
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Message ",
+        detail: "Succesfully Deleted "
+      });
+      this.deldocno = undefined;
+      this.GetBrowseSearch(true);
+      this.GetPandingSearch(true);
+      }
+      else {
+        this.deldocno = undefined; 
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail: "Something Wrong"
+        });
+      } 
+    });
+}
 onReject(){
   this.ngxService.stop();
   this.compacctToast.clear("c");
+  this.deldocno = undefined;
+  this.compacctToast.clear("s");
   this.Spinner = false;
   this.deleteError = false;
 }
+// Edit
+Edit(col){
+  this.clearData();
+  this.editdocno = undefined;
+  if(col.Doc_No){
+    this.editdocno = col.Doc_No;
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "UPDATE", "PENDING MAINTENANCE INDENT"];
+    this.buttonname = "Update";
+    this.geteditmaster();
+   
+   }
+ }
+ geteditmaster(){
+  const obj = {
+    "SP_String": "Sp_Returnable_Gate_Pass",
+    "Report_Name_String": "Get_Data_For_Returnable_Gate_Pass",
+    "Json_Param_String": JSON.stringify([{Doc_No : this.editdocno}])
+ }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // let data = JSON.parse(res[0].Column1)
+    console.log("Edit data",data);
+    this.ObjGatePass.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+    this.Doc_Date = new Date(data[0].Doc_Date);
+    this.ObjGatePass.Cost_Cen_ID = data[0].Cost_Cen_ID;
+    this.GetMainIndentNo();
+    this.ObjGatePass.Godown_ID = data[0].Godown_ID;
+    // this.ObjGatePass.Req_No = data[0].Req_No;
+    this.Expected_Return_Date = new Date(data[0].Expected_Return_Date);
+    this.ObjGatePass.Remarks = data[0].Remarks;
+    // console.log("addPurchaseList",this.addPurchaseList)
+    data.forEach(element => {
+      const  productObj = {
+       Req_No : element.Req_No,
+       Product_ID: element.Product_ID,
+       Product_Description : element.Product_Description,
+       Qty : element.Qty,
+       UOM : element.UOM,
+       Expected_Return_Date : new Date(element.Expected_Return_Date),
+       Purpose : element.Purpose,
+     };
+      this.lowerAddList.push(productObj);
+    });
+  })
+ }
+ // Edit Add RG 
+ EditReturnGatePass(inx:any){
+  // console.log(this.addPurchaseList[inx])
+  this.ObjGatePass.Req_No = this.lowerAddList[inx].Req_No;
+  this.addReturnGatePassInputField = this.lowerAddList[inx];
+  setTimeout(() => {
+    this.getProduct();
+  }, 300);
+   this.ObjGatePass.Product_ID = this.lowerAddList[inx].Product_ID;
+  //  this.ObjGatePass = {...this.lowerAddList[inx]}
+   this.ObjGatePass.UOM = this.lowerAddList[inx].UOM;
+   this.ObjGatePass.Qty = this.lowerAddList[inx].Qty;
+   this.Expected_Return_Date = new Date(this.lowerAddList[inx].Expected_Return_Date);
+   this.ObjGatePass.Purpose = this.lowerAddList[inx].Purpose;
+  //  this.ObjGatePass.Product_ID = this.lowerAddList[inx].Product_Description
+   this.addPurchaseListInput = true;
+  //  this.disable = false
+}
 }
 class GatePass{
+  Req_No:any;
   Cost_Cen_ID:any;
   Godown_ID:any;
   Product_Type_ID:any;
@@ -595,7 +838,7 @@ class GatePass{
   Doc_Date:any;			
   Sub_Ledger_ID:any;
   Sub_Ledger_Name :any;
-  Work_Details:any;
+  Purpose:any;
   Qty:any;
   UOM:any;
   Expected_Return_Date:any;
@@ -606,10 +849,12 @@ class GatePass{
   bottom:any;
 }
 class Browse{
+  Cost_Cen_ID:any;
   From_Date:any;
   To_Date :any
 }
 class Panding{
+  Cost_Cen_ID:any;
   From_Date:any;
   To_Date :any
 }

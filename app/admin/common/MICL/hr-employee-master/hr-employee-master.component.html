@@ -393,7 +393,7 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Employment Status<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Emp_Status" #Emp_Status="ngModel" [(ngModel)]="objemployee.Present_Status" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emp_Status.errors?.required}" required>
+                                        <select class="form-control" name="Emp_Status" #Emp_Status="ngModel" [(ngModel)]="objemployee.Present_Status" (change)="leftdatechange()" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emp_Status.errors?.required}" required>
                                  <option  [ngValue]="undefined">Select</option>
                             <option  *ngFor="let option of Statuslist" value="{{option}}">
                               {{option}}
@@ -402,7 +402,7 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Left On</label>
-                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Leave_Dt' name="left_on" [enabled]="userdatedisabled"></ejs-datepicker>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Leave_Dt' name="left_on" [enabled]="leftdisabled"></ejs-datepicker>
                                     </div>
                                 </div>
                             </div>

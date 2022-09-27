@@ -71,6 +71,8 @@
                                             <th style="width:5em">Action</th>
                                             <th nowrap>Voucher No</th>
                                             <th nowrap>Voucher Date</th>
+                                            <th nowrap>Ref Doc No</th>
+                                            <th nowrap>Ref Doc Date</th>
                                             <th nowrap>Ledger Name</th>
                                             <th nowrap>Sub Ledger Name</th>
                                             <!-- <th nowrap>Adjustment Doc No</th>
@@ -112,6 +114,8 @@
                                             </td>
                                             <td nowrap>{{col.Voucher_No ? col.Voucher_No : '-'}}</td>
                                             <td nowrap>{{col.Dated | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Ref_Doc_No ? col.Ref_Doc_No : '-'}}</td>
+                                            <td nowrap>{{col.Ref_Doc_Date | date: "dd/MMM/yyyy"}}</td>
                                             <td nowrap>{{col.Ledger_Name ? col.Ledger_Name : '-'}} </td>
                                             <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
                                             <!-- <td nowrap>{{col.Adjustment_Doc_No ? col.Adjustment_Doc_No : '-'}}</td>
@@ -304,7 +308,7 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let col of JournalListAdd let i = index">
-                                            <td nowrap="nowrap">{{ i +1 }}</td>
+                                            <td nowrap="nowrap">{{col.SL_NO}}</td>
                                             <td nowrap="nowrap">{{col.Ledger_Name}}</td>
                                             <td nowrap="nowrap">{{col.Sub_Ledger_Name}}</td>
                                             <td nowrap="nowrap">{{col.Cost_Head_Name}}</td>
