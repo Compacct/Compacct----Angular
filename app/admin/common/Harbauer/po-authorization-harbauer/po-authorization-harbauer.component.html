@@ -91,7 +91,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                              <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeaderPanding | slice:1">{{option.replaceAll('_',' ')}}</th> 
+                                            <th *ngFor="let option of GetSlicedArr()">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -122,8 +122,11 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeaderPanding | slice:1" data->
-                                                <td>{{col[option] ? col[option] : "_" }}</td>
+                                            <ng-container *ngFor="let option of GetSlicedArr()">
+                                                <td *ngIf="option != 'Work_Details'" >{{col[option] ? col[option] : "_" }}</td>
+                                                <td *ngIf="option == 'Work_Details'" >
+                                                    <div (click)="selectWork($event,col,op)" class="txt" >{{col[option]}}</div>
+                                                </td>
                                             </ng-container>
                                         </tr>     
                                     </ng-template>
@@ -132,7 +135,7 @@
                                     </ng-template> -->
                                 </p-table>
                             </div>
-                        </p-tabPanel>
+                        </p-tabPanel>               
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-ok-sign">
                                  <!-- <form name="Authorized" #Authorized="ngForm" novalidate>
                                     <div class="form-group">
@@ -192,7 +195,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeaderAuthorized | slice:2">{{option.replaceAll('_',' ')}}</th> 
+                                            <th *ngFor="let option of GetSlicedArrAproved()">{{option.replaceAll('_',' ')}}</th> 
                                                 
                                             </tr>
                                         </ng-template>
@@ -214,8 +217,11 @@
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                <ng-container *ngFor="let option of DynamicHeaderAuthorized | slice:2" data->
-                                                    <td>{{col[option] ? col[option] :"_" }}</td>
+                                                <ng-container *ngFor="let option of GetSlicedArrAproved() ">
+                                                    <td *ngIf="option != 'Work_Details'" >{{col[option] ? col[option] : "_" }}</td>
+                                                    <td *ngIf="option == 'Work_Details'" >
+                                                        <div (click)="selectWorkAproved($event,col,op)" class="txt" >{{col[option]}}</div>
+                                                    </td>
                                                 </ng-container>
                                         </ng-template>
                                         <!-- <ng-template pTemplate="paginatorright" let-state>
@@ -284,7 +290,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeaderNOTAuthorized | slice:2">{{option.replaceAll('_',' ')}}</th> 
+                                            <th *ngFor="let option of GetSlicedArrNotAproved()">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -304,8 +310,11 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeaderNOTAuthorized | slice:2" data->
-                                                <td>{{col[option] ? col[option] : "-" }}</td>
+                                            <ng-container *ngFor="let option of GetSlicedArrNotAproved()">
+                                                <td *ngIf="option != 'Work_Details'" >{{col[option] ? col[option] : "_" }}</td>
+                                                    <td *ngIf="option == 'Work_Details'" >
+                                                        <div (click)="selectWorkNapproved($event,col,op)" class="txt" >{{col[option]}}</div>
+                                                    </td>
                                             </ng-container>
                                          </tr>
                                     </ng-template>
@@ -323,7 +332,33 @@
     </div>
 </div>
 
+<!-- Pending Work Pop -->
+<p-overlayPanel 
+[dismissable]="true" 
+[showCloseIcon]="true" 
+[appendTo]="'body'" 
+[baseZIndex]="9999999" #op>
+<p style="width: 160px;" >{{ObjCol.Work_Details_Full}}</p>
+</p-overlayPanel>
+<!-- Approved Work Pop -->
+<p-overlayPanel 
+[dismissable]="true" 
+[showCloseIcon]="true" 
+[appendTo]="'body'" 
+[baseZIndex]="9999999" #Aop>
+<p style="width: 160px;" >{{ObjColApproved.Work_Details_Full}}</p>
+</p-overlayPanel>
+<!-- NotApproved Work Pop -->
+<p-overlayPanel 
+[dismissable]="true" 
+[showCloseIcon]="true" 
+[appendTo]="'body'" 
+[baseZIndex]="9999999" #Nop>
+<p style="width: 160px;" >{{ObjColNApproved.Work_Details_Full}}</p>
+</p-overlayPanel>
 
+
+  
 
 
 
