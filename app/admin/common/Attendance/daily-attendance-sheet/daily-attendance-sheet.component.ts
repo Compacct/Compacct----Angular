@@ -33,6 +33,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
   empid: any;
   Atten_Type: any;
   employeename: any;
+  checkbuttonname: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -73,6 +74,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
   }
    GetEmpData(){
     this.seachSpinner = true;
+    this.checkbuttonname = undefined;
     const AtObj = {
       Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date)),
     }
@@ -84,6 +86,13 @@ export class DailyAttendanceSheetComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.EmpDailyAttenList = data;
       this.seachSpinner = false;
+      this.checkbuttonname = data[0].Btn_Name;
+      if (this.checkbuttonname === "Update") {
+        this.buttonname = "Update";
+      }
+      else{
+        this.buttonname = "Save";
+      }
       this.EmpDailyAttenList.forEach((val) => {
         val["OTdisabled"] = false;
         val["Work_Minute"] = 0;//val.Work_Minute;

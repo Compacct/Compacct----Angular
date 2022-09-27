@@ -1,3 +1,4 @@
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 import { CompacctCommonApi } from './../../../shared/compacct.services/common.api.service';
 import { DateTimeConvertService } from './../../../shared/compacct.global/dateTime.service';
 import { CompacctGlobalApiService } from './../../../shared/compacct.services/compacct.global.api.service';
@@ -49,6 +50,7 @@ export class HearingCaseHistoryComponent implements OnInit {
   SelectedMedicalProblems = [];
   MedicalProblemsList:any =[];
   footFallId:any = undefined
+  TotalValue:Number = 0
   constructor(
     private header:CompacctHeader,
     private $http: HttpClient,
@@ -184,7 +186,7 @@ const obj = {
   if(data.length){
    this.patientSearchList = data;
   //this.DynamicHeader2 = Object.keys(data[0]);
-   console.log('patientSearchList=====',this.patientSearchList)
+   //console.log('patientSearchList=====',this.patientSearchList)
    this.ObjMiddle.Contact_Name = this.patientSearchList[0].Contact_Name;
    this.ObjMiddle.Foot_Fall_ID = this.patientSearchList[0].Foot_Fall_ID;
    this.ObjMiddle.Gender = this.patientSearchList[0].Gender;
@@ -218,7 +220,7 @@ const obj = {
    this.ObjLast.Medical_Problems_Other = this.patientSearchList[0].Medical_Problems_Other;
    this.ObjLast.Is_Treatment = this.patientSearchList[0].Is_Treatment;
    this.ObjLast.Treatment_Side = this.patientSearchList[0].Treatment_Side;
-   this.ObjLast.Communication_Total_Score = this.patientSearchList[0].Communication_Total_Score;
+   this.TotalValue = this.patientSearchList[0].Communication_Total_Score;
    this.ObjLast.Comm_1 = this.patientSearchList[0].Comm_1;
    this.ObjLast.Comm_2 = this.patientSearchList[0].Comm_2;
    this.ObjLast.Comm_3 = this.patientSearchList[0].Comm_3;
@@ -277,7 +279,7 @@ const obj = {
   if(data.length){
    this.patientSearchList = data;
   //this.DynamicHeader2 = Object.keys(data[0]);
-   console.log('patientSearchList=====',this.patientSearchList)
+   //console.log('patientSearchList=====',this.patientSearchList)
    this.ObjMiddle.Contact_Name = this.patientSearchList[0].Contact_Name;
    this.ObjMiddle.Foot_Fall_ID = this.patientSearchList[0].Foot_Fall_ID;
    this.ObjMiddle.Gender = this.patientSearchList[0].Gender;
@@ -311,7 +313,7 @@ const obj = {
    this.ObjLast.Medical_Problems_Other = this.patientSearchList[0].Medical_Problems_Other;
    this.ObjLast.Is_Treatment = this.patientSearchList[0].Is_Treatment;
    this.ObjLast.Treatment_Side = this.patientSearchList[0].Treatment_Side;
-   this.ObjLast.Communication_Total_Score = this.patientSearchList[0].Communication_Total_Score;
+   this.TotalValue = this.patientSearchList[0].Communication_Total_Score;
    this.ObjLast.Comm_1 = this.patientSearchList[0].Comm_1;
    this.ObjLast.Comm_2 = this.patientSearchList[0].Comm_2;
    this.ObjLast.Comm_3 = this.patientSearchList[0].Comm_3;
@@ -525,7 +527,7 @@ Medical_Problems: this.SelectedMedicalProblems.toString(),
 Medical_Problems_Other: this.ObjLast.Medical_Problems_Other,
 Is_Treatment: this.ObjLast.Is_Treatment,
 Treatment_Side: this.ObjLast.Treatment_Side,
-Communication_Total_Score:this.ObjLast.Communication_Total_Score, 
+Communication_Total_Score:this.TotalValue, 
 Comm_1:this.ObjLast.Comm_1,
 Comm_2:this.ObjLast.Comm_2,
 Comm_3:this.ObjLast.Comm_3, 
@@ -573,6 +575,7 @@ if(valid){
      this.ObjFirst.Foot_Fall_ID = undefined;
      this.Active =true;
      this.SaveAfter = false;
+     this.TotalValue = 0
      this.SelectedMedicalProblems =undefined;
      this.CustomerRadioChange()
       }
@@ -585,7 +588,25 @@ GetPrint(){
     'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
     );
   }
-  }
+}
+Calculation(){
+    this.TotalValue = 0
+    let arrYes:any = [];
+    let arrSometimes:any = [];
+     this.ObjLast.Comm_1 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_1 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+     this.ObjLast.Comm_2 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_2 == "Sometimes" ? arrSometimes.push("Sometimes") : "" 
+     this.ObjLast.Comm_3 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_3 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+     this.ObjLast.Comm_4 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_4 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+     this.ObjLast.Comm_5 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_5 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+     this.ObjLast.Comm_6 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_6 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+     this.ObjLast.Comm_7 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_7 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+     this.ObjLast.Comm_8 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_8 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+     this.ObjLast.Comm_9 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_9 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+     this.ObjLast.Comm_10 == "Yes" ? arrYes.push("Yes") : this.ObjLast.Comm_10 == "Sometimes" ? arrSometimes.push("Sometimes") : ""
+    //console.log("arrYes",arrYes)  
+    //console.log("arrSometimes",arrSometimes)
+    this.TotalValue = Number(arrYes.length * 4) + Number(arrSometimes.length * 2)  
+}
 }
 class First{
 Lead_Details:any;

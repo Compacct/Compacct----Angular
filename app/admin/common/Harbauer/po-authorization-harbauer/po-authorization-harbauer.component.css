@@ -51,3 +51,11 @@ legend
   padding: 0px 10px 0px 10px;
   background-color: #ffffff;
       }
+.txt{
+  cursor: pointer;
+  color: rgb(0 0 255);
+}
+.txt:hover {
+    text-decoration: underline;
+   
+}

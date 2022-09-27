@@ -34,16 +34,16 @@
                                     <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name" (change)="GetBrowseData()">
                                 </div>
                                 <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
-                                    <button  class="btn btn-warning" (click)="UpdateSPBrowseData()" >Process salary</button>
+                                    <button  class="btn btn-warning" (click)="UpdateSPBrowseData()" [disabled]="processSalarydisabled" >Process salary</button>
                                 </div>
                                 <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
                                     <button  class="btn btn-success" (click)="exportoexcel('Process_Salary')" [disabled]="!BrowseList.length">Salary Register</button>
                                 </div>
                                 <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
-                                    <button  class="btn btn-primary" (click)="Finalized()" >Finalized</button>
+                                    <button  class="btn btn-primary" (click)="Finalized()" [disabled]="processSalarydisabled">Finalized</button>
                                 </div>
                                 <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
-                                    <button  class="btn btn-success" (click)="exportoexcel2('Bank_Register')" [disabled]="!BrowseList.length">Bank Register</button>
+                                    <button  class="btn btn-success" (click)="exportoexcel2('Bank_Register')" [disabled]="bankregdisabled">Bank Register</button>
                                 </div>
                                 <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'U'">
                                     <button  class="btn btn-success" (click)="SalarySlip()">Print Salary Slip</button>

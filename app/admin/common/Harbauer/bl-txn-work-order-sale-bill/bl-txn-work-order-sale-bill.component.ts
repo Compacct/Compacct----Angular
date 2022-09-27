@@ -143,6 +143,19 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
       this.objWorkOrder.Doc_Date = this.DateService.dateConvert(this.Doc_Date);
       this.objWorkOrder.FinYearid = this.commonApi.CompacctCookies.Fin_Year_ID;
       const workFilter = this.WorkDetailsList.filter((el :any)=> Number(el.Work_Details_ID)=== Number(this.objWorkOrder.Work_Details_ID));
+      // if(this.WorkOrderAdd.forEach((el:any)=>Number(el.Work_Details_ID) != Number(this.objWorkOrder.Work_Details_ID)))
+      // {
+        const WorkOrderAddFilter = this.WorkOrderAdd.filter((el :any)=> Number(el.Work_Details_ID)=== Number(this.objWorkOrder.Work_Details_ID));
+        if(WorkOrderAddFilter.length){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Please give other Work Details"
+      });
+      return
+        }
       this.WorkOrderAdd.push({
         Doc_No : this.DocNo? this.DocNo : 'A',
         Doc_Date : this.DateService.dateConvert(this.objWorkOrder.Doc_Date),
@@ -157,6 +170,8 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
         Amount : Number(Number(this.Amount).toFixed(2)),
         Fin_Year_ID : this.objWorkOrder.FinYearid
       })
+    
+   
       console.log('this.WorkOrderAdd=',this.WorkOrderAdd);
       this.objWorkOrder = new WorkOrder();
       this.WorkFormSubmit = false;
@@ -169,7 +184,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
   Retrivedata(){
     if(this.WorkOrderAdd.length){
       this.objWorkOrder.Project_ID = this.WorkOrderAdd.length? this.WorkOrderAdd[0].Project_ID : 0;
-      
+     
     }
     else{
       this.objWorkOrder.Project_ID = undefined;
@@ -283,6 +298,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
        
         
         this.objWorkOrder.Project_ID = data[0].Project_ID;
+       
         
          
          this.DocNo = data[0].Doc_No;
