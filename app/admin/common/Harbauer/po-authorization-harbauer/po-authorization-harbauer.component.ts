@@ -1,3 +1,4 @@
+import { filter } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -7,6 +8,7 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { ActivatedRoute } from '@angular/router';
 import { CompacctProjectComponent } from '../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-po-authorization-harbauer',
@@ -47,6 +49,9 @@ export class POAuthorizationHarbauerComponent implements OnInit {
   SelectedNauthSite :any =[];
   NotAuthProject:any =[];
   NotAuthSite:any =[];
+  ObjCol:any= {} ;
+  ObjColApproved :any ={};
+  ObjColNApproved :any ={};
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -55,6 +60,7 @@ export class POAuthorizationHarbauerComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService 
   ) {  this.route.queryParams.subscribe(params => {
     this.openProject = params['proj'];
      // console.log("openProject",this.openProject);
@@ -82,6 +88,7 @@ onReject(){
 }
 // Panding Authorization List 
 getListPandingAuth(){
+  this.ngxService.start();
   const tempobj = {
     User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
     proj :this.openProject ? this.openProject : "N",
@@ -93,20 +100,22 @@ getListPandingAuth(){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.SearchedlistPanding = data;
-
    if (this.SearchedlistPanding.length){
+    this.ngxService.stop();
     this.DynamicHeaderPanding = Object.keys(data[0]);
     this.backUPSearchedlistPanding = data;
      this.GetDistinct()
    }
   else {
     this.DynamicHeaderPanding = [];
+    this.ngxService.stop();
   }
    //console.log('SearchedlistPanding=====',this.SearchedlistPanding)
   })
 }
 // Authorized PO Serch Button fn
 AuthorizationSearchButton(){
+  this.ngxService.start();
   this.ApprovedSearchedlist = [];
   const tempobj = {
     proj :this.openProject ? this.openProject : "N",
@@ -121,12 +130,14 @@ AuthorizationSearchButton(){
    this.ApprovedSearchedlist = data;
    //console.log('ApprovedSearchedlist=====',this.ApprovedSearchedlist)
    if (this.ApprovedSearchedlist.length){
+    this.ngxService.stop();
     this.DynamicHeaderAuthorized = Object.keys(data[0]);
     this.backUPSearchedlistAuthor = data;
     this.GetDistinctAuth();
    }
   else {
     this.DynamicHeaderAuthorized = [];
+    this.ngxService.stop();
   } 
   })
 }
@@ -257,11 +268,11 @@ GetDistinct() {
   this.SelectedDistSite = [];
  
   this.SearchedlistPanding.forEach((item) => {
- if (Project.indexOf(item.Project_Description)) {
+ if (Project.indexOf(item.Project_Description) === -1) {
   Project.push(item.Project_Description);
  this.DistProject.push({ label: item.Project_Description, value: item.Project_Description });
  }
-if (Site.indexOf(item.Site_Description)) {
+if (Site.indexOf(item.Site_Description) === -1) {
   Site.push(item.Site_Description);
   this.DistSite.push({ label: item.Site_Description, value: item.Site_Description });
   }
@@ -303,11 +314,11 @@ GetDistinctAuth() {
   this.SelectedAuthSite = [];
  
   this.ApprovedSearchedlist.forEach((item) => {
- if (Project.indexOf(item.Project_Description)) {
+ if (Project.indexOf(item.Project_Description) === -1) {
   Project.push(item.Project_Description);
  this.AuthProject.push({ label: item.Project_Description, value: item.Project_Description });
  }
-if (Site.indexOf(item.Site_Description)) {
+if (Site.indexOf(item.Site_Description) === -1) {
   Site.push(item.Site_Description);
   this.AuthSite.push({ label: item.Site_Description, value: item.Site_Description });
   }
@@ -349,11 +360,11 @@ GetDistinctNotAuth() {
   this.SelectedNauthSite = [];
  
   this.NotApprovedSearchedlist.forEach((item) => {
- if (Project.indexOf(item.Project_Description)) {
+ if (Project.indexOf(item.Project_Description) === -1) {
   Project.push(item.Project_Description);
  this.NotAuthProject.push({ label: item.Project_Description, value: item.Project_Description });
  }
-if (Site.indexOf(item.Site_Description)) {
+if (Site.indexOf(item.Site_Description) === -1) {
   Site.push(item.Site_Description);
   this.NotAuthSite.push({ label: item.Site_Description, value: item.Site_Description });
   }
@@ -428,7 +439,108 @@ PrintNotAuthorized(DocNot:any) {
       })
     }
 }
+//Pending work detels pop
+selectWork(event,col, overlaypanel) {
+//console.log("col",col)
+this.ObjCol = {}
+this.ObjCol = col
+overlaypanel.toggle(event);
+ 
 }
+//Pending work detels pop
+selectWorkAproved(event,col, overlaypanel) {
+  //console.log("col",col)
+  this.ObjColApproved = {}
+  this.ObjCol = col
+  overlaypanel.toggle(event);  
+}
+  //Pending work detels pop
+selectWorkNapproved(event,col, overlaypanel) {
+  //console.log("col",col)
+  this.ObjCol = {}
+  this.ObjColNApproved = col
+  overlaypanel.toggle(event); 
+}
+//dynamic heder filter
+GetSlicedArr () {
+  let TempArr:any = [];
+  this.DynamicHeaderPanding.forEach((item:any)=>{
+    if(item ==="PO No" || 
+    item === "PO_Date"|| 
+    item ==="Req_No" || 
+    item === "Vendor_Name"|| 
+    item === "Cost_Cen_Name"|| 
+    item === "Gross Amount"|| 
+    item === "Product_Taxable"|| 
+    item === "Term Amount"|| 
+    item === "Total Taxable"|| 
+    item === "Total GST"|| 
+    item === "Rounded_Off"|| 
+    item === "Net Amount"|| 
+    item === "Project_Description"|| 
+    item === "Site_Description"|| 
+    item === "Budget_Group_Name"|| 
+    item === "Work_Details"){
+      TempArr.push(item)
+    }
+  })
+  //console.log(TempArr)
+  return TempArr ;
+}
+// Dyn Aroved filter
+GetSlicedArrAproved () {
+  let TempArr:any = [];
+  this.DynamicHeaderAuthorized.forEach((item:any)=>{
+    if(item ==="PO No" || 
+    item === "PO_Date"|| 
+    item ==="Req_No" || 
+    item === "Vendor_Name"|| 
+    item === "Cost_Cen_Name"|| 
+    item === "Gross Amount"|| 
+    item === "Product_Taxable"|| 
+    item === "Term Amount"|| 
+    item === "Total Taxable"|| 
+    item === "Total GST"|| 
+    item === "Rounded_Off"|| 
+    item === "Net Amount"|| 
+    item === "Project_Description"|| 
+    item === "Site_Description"|| 
+    item === "Budget_Group_Name"|| 
+    item === "Work_Details"){
+      TempArr.push(item)
+    }
+  })
+  //console.log(TempArr)
+  return TempArr ;
+}
+// Dyn Not Approved Filter
+GetSlicedArrNotAproved () {
+  let TempArr:any = [];
+  this.DynamicHeaderNOTAuthorized.forEach((item:any)=>{
+    if(item ==="PO No" || 
+    item === "PO_Date"|| 
+    item ==="Req_No" || 
+    item === "Vendor_Name"|| 
+    item === "Cost_Cen_Name"|| 
+    item === "Gross Amount"|| 
+    item === "Product_Taxable"|| 
+    item === "Term Amount"|| 
+    item === "Total Taxable"|| 
+    item === "Total GST"|| 
+    item === "Rounded_Off"|| 
+    item === "Net Amount"|| 
+    item === "Project_Description"|| 
+    item === "Site_Description"|| 
+    item === "Budget_Group_Name"|| 
+    item === "Work_Details"){
+      TempArr.push(item)
+    }
+  })
+  //console.log(TempArr)
+  return TempArr ;
+}
+}
+
 // class Authorized{
 // From_Date:any;
 // To_Date:any;

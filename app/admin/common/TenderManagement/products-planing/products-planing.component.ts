@@ -82,6 +82,7 @@ export class ProductsPlaningComponent implements OnInit {
   doctypeFormSubmit:boolean = false;
   multipalDocTypeList:any = [];
   SiteDocID = undefined;
+  TenderDocID = undefined;
   cols = [{
       field: 'SL_No',
       header: 'SL No.'
@@ -186,7 +187,7 @@ export class ProductsPlaningComponent implements OnInit {
         el['value'] = el.Tender_Doc_ID;
       });
       this.ProjectList = data;
-      console.log("SUB", data);
+      //console.log("SUB", data);
     })
   }
   GetWorkDetails() {
@@ -215,7 +216,7 @@ export class ProductsPlaningComponent implements OnInit {
     if (this.ObjProdPlan.Tender_Doc_ID) {
       const arr = this.ProjectList.filter(o => o.Tender_Doc_ID == this.ObjProdPlan.Tender_Doc_ID);
       this.ObjProdPlan.work_name = arr.length ? arr[0].label : undefined;
-      console.log("arr",arr)
+     // //console.log("arr",arr)
       this.GetGroupNameList();
       const obj = {
         "SP_String": "SP_Tender_Management_All",
@@ -263,7 +264,7 @@ export class ProductsPlaningComponent implements OnInit {
       this.GlobalAPI
         .getData(obj)
         .subscribe((data: any) => {
-          //console.log("Group list==",data)
+          ////console.log("Group list==",data)
           data.forEach(el => {
             el['label'] = el.Budget_Group_Name;
             el['value'] = el.Budget_Group_ID;
@@ -291,7 +292,7 @@ export class ProductsPlaningComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{Budget_Group_ID:this.ObjProdPlan.Budget_Group_ID}])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log("Sub group==",data)
+      ////console.log("Sub group==",data)
       data.forEach(el => {
        // el['work_name'] = el.Project_Description;
         el['label'] = el.Budget_Sub_Group_Name;
@@ -362,7 +363,7 @@ export class ProductsPlaningComponent implements OnInit {
         "Json_Param_String": JSON.stringify([tempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log(data)
+       // //console.log(data)
         if(data.length) {
           this.ExsitData = data;
           this.IfPlanExist();
@@ -419,7 +420,7 @@ export class ProductsPlaningComponent implements OnInit {
         Site_Description: this.siteCreate,
         Budget_Short_Description: this.ObjProdPlan.work_name
       }
-      console.log("Site Save Data", temp);
+    //  //console.log("Site Save Data", temp);
       const obj = {
         "SP_String": "SP_Tender_Management_All",
         "Report_Name_String": "Add Site For Project Planning",
@@ -428,7 +429,7 @@ export class ProductsPlaningComponent implements OnInit {
       this.GlobalAPI
         .getData(obj)
         .subscribe((data: any) => {
-          console.log(data)
+        //  //console.log(data)
           if (data[0].Site_ID) {
             this.compacctToast.clear();
             this.compacctToast.add({
@@ -500,7 +501,7 @@ export class ProductsPlaningComponent implements OnInit {
            }
         });
       }
-      console.log("save", this.AddedPlanedProductList)
+     // //console.log("save", this.AddedPlanedProductList)
       if(this.ObjProdPlan.Tender_Doc_ID && flg){
         const project:any = this.ProjectList.filter((el:any)=>Number(el.Tender_Doc_ID) === Number(this.ObjProdPlan.Tender_Doc_ID))[0]
         this.AddedPlanedProductList.forEach((el:any)=>{
@@ -546,6 +547,7 @@ export class ProductsPlaningComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         this.PlanedProductList = data;
+    //    //console.log("PlanedProductList ", this.PlanedProductList)
         this.SearchSniper = false;
       })
     }
@@ -575,7 +577,7 @@ export class ProductsPlaningComponent implements OnInit {
         "Json_Param_String": JSON.stringify([tempObj])
       }
       this.GlobalAPI.getData(obj1).subscribe((data: any) => {
-        console.log(data)
+        //console.log(data)
         if(data.length) {
           this.AddedPlanedProductList = [...data,];
           this.ObjProdPlan = new ProdPlan();
@@ -648,6 +650,7 @@ export class ProductsPlaningComponent implements OnInit {
   }
   onReject() {
     this.compacctToast.clear("c");
+     this.compacctToast.clear("c3");
   }
   //Product Details
   onSort() {
@@ -693,7 +696,7 @@ export class ProductsPlaningComponent implements OnInit {
         .subscribe((data: any) => {
           if (data.length) {
             this.ShowAddedEstimateProductList = data;
-            console.log(data)
+            //console.log(data)
             this.ProductsModal =  true;
           }
         });
@@ -748,7 +751,7 @@ export class ProductsPlaningComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj1).subscribe((data: any) => {
-      console.log(data)
+      //console.log(data)
       if(data.length) {
         this.viewList = [...data,];
         this.ViewModel = true
@@ -785,7 +788,7 @@ export class ProductsPlaningComponent implements OnInit {
 }
   // Upload Doc
 UploadDoc(col:any){
-    // console.log(col)
+    // //console.log(col)
     if(col.Tender_Doc_ID && col.Site_ID){
       this.DocTenderDocID = undefined;
       this.SiteDocID = undefined;
@@ -822,7 +825,7 @@ handleFileSelect(event:any) {
   this.PDFFlag = false;
   this.ProductPDFFile = {};
   if (event) {
-    //console.log(event)
+    ////console.log(event)
     this.ProductPDFFile = event.files[0];
     this.PDFFlag = true;
  }
@@ -868,7 +871,7 @@ saveDocFinal(fileUrl){
     "Json_Param_String": JSON.stringify(tempSaveDataObj)
   }
   this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log(data)
+      //console.log(data)
       if(data[0].message == "Update done"){
         this.PDFFlag = false;
         this.ProductPDFFile = {};
@@ -913,10 +916,53 @@ GetTenderDocMultiple(){
     "Json_Param_String": JSON.stringify(tempSaveDataObj)
   }
   this.GlobalAPI.postData(obj).subscribe((data: any) => {
-   console.log("multi Data",data)
+   //console.log("multi Data",data)
    this.multipalDocTypeList = data;
   })
-}
+  }
+  //final aproved
+  AprovedFinal(col) {
+    this.TenderDocID = undefined;
+     this.SiteDocID = undefined;
+    if(col.Tender_Doc_ID && col.Site_ID){
+      this.TenderDocID = col.Tender_Doc_ID;
+     this.SiteDocID = col.Site_ID;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c3",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    } 
+  }
+  onConfirm3() {
+     if(this.TenderDocID && this.SiteDocID){
+      const tempObj = {
+        Tender_Doc_ID: Number(this.TenderDocID),
+        Site_ID : Number(this.SiteDocID)
+       }
+      const obj = {
+        "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer_Bill_Planning",
+        "Report_Name_String": "Update_Final_Save",
+        "Json_Param_String": JSON.stringify([tempObj])      
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if (data[0].Column1){
+          this.onReject();
+          this.GetPlanedProductList(true);
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Approved Id: " + this.TenderDocID.toString(),
+            detail: "Succesfully Save"
+          });
+        }
+      })
+     }
+  } 
 }
 class ProdPlan {
   Tender_Doc_ID: String;
