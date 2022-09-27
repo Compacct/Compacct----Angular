@@ -49,11 +49,31 @@
                                     </div>
                                 </div>
                             </form>
+                            <!-- <div class="box-footer" *ngIf='AllPendingSearchList.length'>
+                                <button class="btn btn-primary pull-left" id="load" (click)="SaveApproved()" [disabled]="Spinner" [disabled]="buttonDis" [disabled]="disabled" [disabled]="CheckCreate === 'N'">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Approve
+                                </button>
+                                <button class="btn btn-primary pull-left" id="load" (click)="SaveApproved()" [disabled]="Spinner" [disabled]="buttonDis" [disabled]="disabled" [disabled]="CheckCreate === 'N'">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Dispprove
+                                </button>
+                            </div> -->
                             <div class=" no-padding">
                                 <p-table [value]="AllPendingSearchList" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Type_Of_Work','Tender_Group','Summary_Task','Task_Name','Remarks', 'Expected_Start_Date', 'Expected_End_Date']"
                                     [rowHover]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
+                                            <div class="col-sm-3 custombutton1">
+                                                <button class="btn btn-primary" (click)="SaveApproved()" id="load" [disabled]="Spinner">
+                                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                         Approve
+                                                    </button>&nbsp;&nbsp;&nbsp;
+                                                    <button class="btn btn-primary" (click)="SaveDisApproved()" id="load" [disabled]="DisSpinner">
+                                                        <p-progressSpinner *ngIf="DisSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                         Disapprove
+                                                    </button>
+                                                </div>
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
@@ -63,6 +83,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
+                                            <th>Select</th>
                                             <th nowrap>Type Of Work</th>
                                             <th nowrap> Tender Group</th>
                                             <th nowrap>Summery Task</th>
@@ -103,6 +124,9 @@
                                                     </ul>
                                                 </div>
                                             </td>
+                                            <td class="text-center">
+                                                <p-checkbox [(ngModel)]="col['Select_Flag']" [binary]="true"></p-checkbox>
+                                            </td>
                                             <td nowrap>{{col.Type_Of_Work ? col.Type_Of_Work : '-' }}</td>
                                             <td nowrap>{{col.Tender_Group ? col.Tender_Group : '-'}}</td>
                                             <td nowrap>{{col.Summary_Task ? col.Summary_Task : '-'}}</td>
@@ -119,6 +143,31 @@
                                         Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
                                     </ng-template>
                                 </p-table>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="box-footer" *ngIf="AllPendingSearchList.length">
+                                <div class="text-right">
+                                <button class="btn btn-primary" (click)="SaveApproved()" id="load" [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         Approve
+                                    </button>&nbsp;&nbsp;&nbsp;
+                                    <button class="btn btn-primary" (click)="SaveDisApproved()" id="load" [disabled]="DisSpinner">
+                                        <p-progressSpinner *ngIf="DisSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         Disapprove
+                                    </button>
+                                </div>
+                                    <!-- <div class="col-sm-1">
+                                        <button class="btn btn-success custombutton1" (click)="SaveApproved()">
+                                           <span  class="glyphicon glyphicon-save"></span> Approve
+                                        </button> 
+                                        <button class="btn btn-success custombutton1" (click)="SaveApproved()" >
+                                            <span  class="glyphicon glyphicon-save"></span> Disapprove
+                                         </button>
+                                    </div> -->
                             </div>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-ok-sign">

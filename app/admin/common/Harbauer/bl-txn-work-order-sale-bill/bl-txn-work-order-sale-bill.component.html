@@ -124,16 +124,16 @@
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Work Details<sup *ngIf = "WorkDetailsList.length" class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Work_Details" #Work_Details="ngModel" [(ngModel)]="objWorkOrder.Work_Details_ID" [ngClass]="{'clearance ': WorkFormSubmit && Work_Details.errors?.required && validcheck()}" [required]="validcheck()" >
+                                        <select class="form-control" name="Work_Details" #Work_Details="ngModel" [(ngModel)]="objWorkOrder.Work_Details_ID" [ngClass]="{'clearance ': WorkFormSubmit && Work_Details.errors?.required && validcheck()}" [required]="validcheck()"  >
                                         <option  [ngValue]="undefined">Select</option>
-                                    <option  *ngFor="let option of WorkDetailsList" value="{{option.Work_Details_ID}}">
+                                    <option  *ngFor="let option of WorkDetailsList" value="{{option.Work_Details_ID}}" >
                                       {{option.Work_Details}}
                                     </option>
                                    </select>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Qty<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" placeholder="Qty" name="Qty" #Qty="ngModel" [(ngModel)]="objWorkOrder.Qty" [ngClass]="{'clearance ': WorkFormSubmit && Qty.errors?.required}" required >
+                                        <input class="form-control" placeholder="Qty" name="Qty" #Qty="ngModel" [(ngModel)]="objWorkOrder.Qty" CompacctDigitonly="true" [ngClass]="{'clearance ': WorkFormSubmit && Qty.errors?.required}" required >
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">UOM<sup class="text-danger">*</sup></label>
@@ -141,7 +141,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Rate<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" placeholder="Rate" name="Rate" #Rate="ngModel" [(ngModel)]="objWorkOrder.Rate" [ngClass]="{'clearance ': WorkFormSubmit && Rate.errors?.required}" required >
+                                        <input class="form-control" placeholder="Rate" name="Rate" #Rate="ngModel" [(ngModel)]="objWorkOrder.Rate" CompacctDigitonly="true" [ngClass]="{'clearance ': WorkFormSubmit && Rate.errors?.required}" required >
                                     </div>
                                 </div>
                                 <div class="box-footer">

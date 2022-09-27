@@ -33,13 +33,19 @@ export class ProjectPlanApproveComponent implements OnInit {
   DisApproved :boolean = false;
   MasterdisApproveId = undefined;
 
+  Spinner = false;
+  approve = "Approve";
+  disapprove = "Disapprove";
+  DisSpinner = false;
+
   constructor(
     private $http : HttpClient,
     private commonApi : CompacctCommonApi,
     private GlobalAPI : CompacctGlobalApiService,
     private Header : CompacctHeader,
     private DateService : DateTimeConvertService,
-    private compacctToast : MessageService
+    private compacctToast : MessageService,
+    public $CompacctAPI: CompacctCommonApi,
   ) { }
 
   ngOnInit() {
@@ -312,7 +318,113 @@ onConfirm2(){
   }
 
 }
+DataForSave(){
+  if(this.AllPendingSearchList.length) {
+    let tempArr:any =[]
+    this.AllPendingSearchList.forEach(item => {
+      if(item.Select_Flag) {
+      const obj = {
+          Task_Txn_ID : item.Task_Txn_ID,
+          User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+          Status : "Approved"
+      }
+      tempArr.push(obj);
+    }
+    });
+    console.log(tempArr)
+    return JSON.stringify(tempArr);
 
+  }
+ }
+SaveApproved(){
+  this.Spinner = true;
+  const obj = {
+    "SP_String": "SP_Project_Plan_Approve",
+    "Report_Name_String":"Update_Plan_Approve",
+   "Json_Param_String": this.DataForSave()
+
+  }
+  this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    console.log(data);
+    var tempID = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+      //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: "Success",
+       detail: "Succesfully Approved" //+ mgs
+     });
+     this.Spinner = false;
+     this.GetPendingSearchedList();
+    } 
+    else{
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
+    }
+  })
+ }
+ DataForSaveDis(){
+  if(this.AllPendingSearchList.length) {
+    let tempArr:any =[]
+    this.AllPendingSearchList.forEach(item => {
+      if(item.Select_Flag) {
+      const obj = {
+          Task_Txn_ID : item.Task_Txn_ID,
+          User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+          Status : "Disapproved",
+          Select_Flag : item.Select_Flag
+      }
+      tempArr.push(obj);
+    }
+    });
+    console.log(tempArr)
+    return JSON.stringify(tempArr);
+
+  }
+ }
+SaveDisApproved(){
+  this.DisSpinner = true;
+  const obj = {
+    "SP_String": "SP_Project_Plan_Approve",
+    "Report_Name_String":"Update_Plan_Approve",
+   "Json_Param_String": this.DataForSaveDis() 
+
+  }
+  this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    console.log(data);
+    var tempID = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+      //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: "Success",
+       detail: "Succesfully Disapproved" //+ mgs
+     });
+     this.DisSpinner = false;
+     this.GetPendingSearchedList();
+    } 
+    else{
+      this.DisSpinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
+    }
+  })
+ }
 }
 
 class Project{

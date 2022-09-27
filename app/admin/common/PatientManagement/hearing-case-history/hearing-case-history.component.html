@@ -374,8 +374,8 @@
                                 <strong >Have you ever been expose to loud noise?</strong>
                                 </div>
                                 <div class="col-sm-3">
-                                    <p-radioButton value="R"  label="Right"name="loud"[(ngModel)]="ObjLast.Is_Loud_Noise" ></p-radioButton> &nbsp;&nbsp;&nbsp;
-                                    <p-radioButton value="L" label="Left"name="loud"[(ngModel)]="ObjLast.Is_Loud_Noise" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Y"  label="Yes"name="loud"[(ngModel)]="ObjLast.Is_Loud_Noise" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="loud"[(ngModel)]="ObjLast.Is_Loud_Noise" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
                                 </div> 
                         </div>
                     </div>
@@ -454,11 +454,9 @@
                                 <div class="col-sm-2">
                                 <strong>Total Score</strong>
                                 </div>
-                                <div class="col-sm-4" style="margin-top: -1em;">
-                                    <input class="form-control"id="Designe"
-                                    name=" communication"
-                                    #communication="ngModel" [(ngModel)]="ObjLast.Communication_Total_Score"
-                                    placeholder="Type Score" > 
+                                <div class="col-sm-4">
+                                    <Strong>{{TotalValue}}</Strong>
+                                    
                                 </div>
                         </div>
                     </div>
@@ -475,13 +473,13 @@
                             <strong>1. Does a hearing problem cause you to feel embarrassed when you meet new people?</strong>
                             </div>
                             <div class="col-sm-2" >
-                                <select class="form-control" id="Select"name="Comm_1"
+                                <select class="form-control" id="Select"name="Comm_1" (change)="Calculation()"
                                 #Comm_1="ngModel"
                                 [(ngModel)]="ObjLast.Comm_1" >
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>
                        </div>
@@ -493,13 +491,13 @@
                             </strong>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_2"
+                                <select class="form-control" id="Select"name="Comm_2" (change)="Calculation()"
                                 #Comm_2="ngModel"
                                 [(ngModel)]="ObjLast.Comm_2"  >
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>
                        </div>
@@ -510,13 +508,13 @@
                             <strong>3. Do you have difficulty hearing when someone speaks in a whisper?</strong>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_3"
+                                <select class="form-control" id="Select"name="Comm_3" (change)="Calculation()"
                                 #Comm_3="ngModel"
                                 [(ngModel)]="ObjLast.Comm_3"  >
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>
                        </div>
@@ -527,13 +525,13 @@
                             <strong>4. Do you feel handicapped by a hearing problem?</strong>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_4"
+                                <select class="form-control" id="Select"name="Comm_4" (change)="Calculation()"
                                 #Comm_4="ngModel"
                                 [(ngModel)]="ObjLast.Comm_4"  >
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>
                        </div>
@@ -545,13 +543,13 @@
                             </strong>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_5"
+                                <select class="form-control" id="Select"name="Comm_5" (change)="Calculation()"
                                 #Comm_5="ngModel"
                                 [(ngModel)]="ObjLast.Comm_5"  >
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>          
                        </div>
@@ -563,13 +561,13 @@
                             </strong>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_6"
+                                <select class="form-control" id="Select"name="Comm_6" (change)="Calculation()"
                                 #Comm_6="ngModel"
                                 [(ngModel)]="ObjLast.Comm_6">
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>                   
                        </div>
@@ -582,13 +580,13 @@
                             </strong>
                         </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_7"
+                                <select class="form-control" id="Select"name="Comm_7" (change)="Calculation()"
                                 #Comm_7="ngModel"
                                 [(ngModel)]="ObjLast.Comm_7"  >
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>
                        </div>
@@ -600,13 +598,13 @@
                             </strong>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_8"
+                                <select class="form-control" id="Select"name="Comm_8" (change)="Calculation()"
                                 #Comm_8="ngModel"
                                 [(ngModel)]="ObjLast.Comm_8"  >
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>                      
                        </div>
@@ -618,13 +616,13 @@
                             </strong>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_9"
+                                <select class="form-control" id="Select"name="Comm_9" (change)="Calculation()"
                                 #Comm_9="ngModel"
                                 [(ngModel)]="ObjLast.Comm_9">
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>                  
                        </div>
@@ -636,13 +634,13 @@
                             </strong>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" id="Select"name="Comm_10"
+                                <select class="form-control" id="Select"name="Comm_10" (change)="Calculation()"
                                 #Comm_10="ngModel"
                                 [(ngModel)]="ObjLast.Comm_10">
                                     <option  [ngValue]="undefined">Select</option>
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Sometimes</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
                             </select>
                             </div>                     
                        </div>
@@ -767,7 +765,7 @@
                  </button>
                  </div> 
                  <div class="col-sm-2">
-                    <button class="btn btn-success " (click)="GetPrint()" [disabled]="!ObjFirst.Foot_Fall_ID">
+                    <button class="btn btn-success " (click)="GetPrint()" [disabled]="SaveAfter">
                         <span class="glyphicon glyphicon-print"></span> Print
                     </button>
                 </div>
