@@ -56,6 +56,7 @@ export class NonReturnableGatePassComponent implements OnInit {
     });
     this.getSubLedger();
     this.getUom();
+    this.Finyear();
   }
 
   TabClick(e) {
@@ -96,6 +97,19 @@ export class NonReturnableGatePassComponent implements OnInit {
        console.log("UOMDataList ==>",data);
        this.UOMDataList = data;
      })
+  }
+
+  Finyear(){
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.commonApi.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+    //  this.MBDatemaxDate = new Date(data[0].Fin_Year_End);
+    //  this.MBDateminDate = new Date(data[0].Fin_Year_Start);
+    //  this.Projecteddata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End);
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+     //this.initDate2 =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+      });
   }
 
 
