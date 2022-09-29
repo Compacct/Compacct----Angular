@@ -36,6 +36,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
   SaveData : any = [];
   Doc_Date = new Date();
   DocNo : any;
+  TabSpinner = false;
 
   constructor(
     private $http : HttpClient,

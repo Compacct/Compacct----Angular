@@ -30,51 +30,51 @@ export class K4cPurchasePlaningComponent implements OnInit {
   PurchaseFormSubmitted = false;
   localpurchaseFLag = false;
   Productlist:any = [];
-  productaddSubmit = [];
+  productaddSubmit:any = [];
   vendordisabled = false;
   vendorlist :any = [];
-  materialtypelist = [];
-  producttypelist = [];
-  SelectedProductType :any = [];
-  productListFilter = [];
-  backUpproductList = [];
+  materialtypelist:any = [];
+  producttypelist:any = [];
+  SelectedProductType:any = [];
+  productListFilter:any = [];
+  backUpproductList:any = [];
   data = "(Show Requisition Products)";
 
   ObjBrowse : Browse = new Browse ();
-  Searchedlist = [];
+  Searchedlist:any = [];
   ApprovedFLag = false;
   AuthPoppup = false;
   Doc_no = undefined;
   Doc_date = undefined;
   AuthorizedList : any= [];
-  BackupSearchedlist = [];
+  BackupSearchedlist:any = [];
   todayDate : any = new Date();
   LastPurDate : any = new Date();
   ovaldisabled = false;
   stockqtydisabled = false;
   ViewPoppup = false;
-  ViewList = [];
-  exceldataList = [];
+  ViewList:any = [];
+  exceldataList:any = [];
   //filteredData = [];
   ObjStockLevel : StockLevel = new StockLevel ();
   StockLevelFormSubmitted = false;
-  costcenlist = [];
-  GodownList = [];
-  StockReportSearchlist = [];
-  Orderlist = [];
+  costcenlist:any = [];
+  GodownList:any = [];
+  StockReportSearchlist:any = [];
+  Orderlist:any = [];
   productdisabled = false;
-  BackupStockReportSearchlist = [];
-  DistMaterialType = [];
-  SelectedDistMaterialType = [];
-  DistProductType = [];
-  SelectedDistProductType = [];
-  SearchFields = [];
+  BackupStockReportSearchlist:any = [];
+  DistMaterialType:any = [];
+  SelectedDistMaterialType:any = [];
+  DistProductType:any = [];
+  SelectedDistProductType:any = [];
+  SearchFields:any = [];
   Appbuttonname = "Approved"
 
   Vendor_ID : any;
   Credit_Days : number;
   PPdoc_no : any;
-  EditList = [];
+  EditList:any = [];
   
 
   constructor(
@@ -1013,7 +1013,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
     // this.ObjSaveForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     if(this.AuthorizedList.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.AuthorizedList.forEach(item => {
         const Obj = {
             //Product_Type : item.Product_Type,
@@ -1132,10 +1132,10 @@ export class K4cPurchasePlaningComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      const Red = [];
-      const Orange = [];
-      const Blue = [];
-      const Other = [];
+      const Red:any = [];
+      const Orange:any = [];
+      const Blue:any = [];
+      const Other:any = [];
       data.forEach(e=>{
         if(e.Color_Code === 'Red'){
           e['textClass'] = 'text-red';

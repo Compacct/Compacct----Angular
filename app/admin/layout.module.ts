@@ -364,6 +364,7 @@ import { HREventUploadComponent } from './common/Attendance/hr-event-upload/hr-e
 import { MasterSubContractorComponent } from './common/MICL/SubContractor/master-sub-contractor/master-sub-contractor.component';
 import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContractor/sub-contractor-employee-master/sub-contractor-employee-master.component';
 import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
+import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
 
 
 @NgModule({
@@ -646,7 +647,8 @@ import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/su
     HREventUploadComponent,
     MasterSubContractorComponent,
     SubContractorEmployeeMasterComponent,
-    SubContractorAttendanceComponent
+    SubContractorAttendanceComponent,
+    NonReturnableGatePassComponent
   ],
   imports: [
     CommonModule,

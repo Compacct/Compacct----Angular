@@ -1,0 +1,230 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Del && !Save">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="nonReturnableSearchForm" #nonReturnableSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="subLedgerList" name="Vendor2" #Vendor2="ngModel" 
+                                        [(ngModel)]="objsearch.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'"
+                                        [virtualScroll]="true" itemSize="30" 
+                                        [styleClass]="nonReturnableSearchFormSubmit && Vendor2.errors?.required ? 'clearance': ''" [required]="true">
+                                        </p-dropdown>
+                                    </div>
+
+
+                                    <!-- <div class="col-sm-3"> -->
+                                    <div>
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="ShowSearchData(nonReturnableSearchForm.form.valid)" id="load" [disabled]="seachSpinner" style="margin-top: 27px;">
+                                              <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                              <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span> Search
+                                           </button>
+                                    </div>
+                                    <!-- </div> -->
+                                </div>
+
+                            </form>
+                            <div class="table-responsive no-padding productTable">
+                                <p-table #dt [value]="Allreturnabledata" [globalFilterFields]="['Doc_No', 'Doc_Date', 'Vendor', 'Total_Qty', 'Created_By']" [paginator]="AllnonReturnableData.length ? true:false"
+                                    [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap>Doc No</th>
+                                            <th nowrap>Doc Date</th>
+                                            <th nowrap>Vendor</th>
+                                            <th nowrap>Total Qty</th>
+                                            <!-- <th nowrap>Adjustment Doc No</th>
+                                            <th nowrap>Adjustment Amt</th> -->
+                                            <th nowrap>Created By</th>
+                                            <!-- <th nowrap>CR Amt</th>
+                                            <th nowrap>Cost Cen Name</th>
+                                            <th nowrap>Cost Cen trn Name</th>
+                                            <th nowrap>Fin Year Name</th> -->
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Is_Visiable === "N" ? "text-red-active" : ""'>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                                <span class="caret"></span>
+                                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="EditnonReturnable(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li *ngIf="User_Type =='A'">
+                                                            <a (click)="DeleteJournal(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li *ngIf="col.Is_Visiable == 'N'">
+                                                            <a (click)="Active(col)">
+                                                                <i class="fa fa-power-off"></i> Active
+                                                            </a>
+                                                        </li> -->
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td nowrap>{{col.Doc_No ? col.Doc_No : '-'}}</td>
+                                            <td nowrap>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Vendor ? col.Vendor : '-'}} </td>
+                                            <td nowrap>{{col.Total_Qty ? col.Total_Qty : '-'}}</td>
+                                            <!-- <td nowrap>{{col.Adjustment_Doc_No ? col.Adjustment_Doc_No : '-'}}</td>
+                                            <td nowrap>{{col.Adjustment_Amt ? col.Adjustment_Amt : '-'}}</td> -->
+                                            <td nowrap>{{col.Created_By ? col.Created_By : '-'}}</td>
+                                            <!-- <td nowrap>{{col.CR_Amt ? col.CR_Amt : '-'}}</td>
+                                            <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <td nowrap>{{col.Cost_Cen_trn_Name ? col.Cost_Cen_trn_Name : '-'}}</td>
+                                            <td nowrap>{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td> -->
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="nonReturnableForm" #nonReturnableForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Doc_Date' name="Ref_Date" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-6" style=" height: 77px;">
+                                        <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="subLedgerList" name="Vendor" #Vendor="ngModel" 
+                                        [(ngModel)]="objNonReturnable.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'"
+                                        [virtualScroll]="true" itemSize="30" 
+                                        [styleClass]="nonReturnableFormSubmit && Vendor.errors?.required ? 'clearance': ''" [required]="true" [disabled]="ReturnableListAdd.length? true : false">
+                                        </p-dropdown>
+                                    </div>
+                                    
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" placeholder="Product" name="Product" #Product="ngModel" [(ngModel)]="objNonReturnable.Product_Description" [ngClass]="{'clearance ': nonReturnableFormSubmit && Product.errors?.required}" required >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="UOM" #UOM="ngModel" [(ngModel)]="objNonReturnable.UOM" [ngClass]="{'clearance ': nonReturnableFormSubmit && UOM.errors?.required}" required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of UOMDataList" value="{{option.UOM}}">
+                                      {{option.UOM}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" placeholder="Qty" name="Qty" #Qty="ngModel" [(ngModel)]="objNonReturnable.Qty" CompacctDigitonly="true" [ngClass]="{'clearance ': nonReturnableFormSubmit && Qty.errors?.required}" required >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" placeholder="Remarks" name="Remarks" #Remarks="ngModel" [(ngModel)]="objNonReturnable.Remarks" [ngClass]="{'clearance ': nonReturnableFormSubmit && Remarks.errors?.required}" required >
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary custombutton pull-right" style="margin-top: 11px;" (click)="AddnonReturnable(nonReturnableForm.form.valid)"><span class="glyphicon glyphicon-plus"></span>Add </button>
+                                </div>
+                            </form>
+                            <div class="table-responsive no-padding" style="margin-top: 16px;">
+                                <table class="table table-bordered">
+                                    <thead style="background-color:#4fa1d1;color:white;">
+                                        <tr>
+                                            <th nowrap="nowrap">Sl.No.</th>
+                                            <th nowrap="nowrap">Product</th>
+                                            <th nowrap="nowrap">UOM</th>
+                                            <th nowrap="nowrap">Qty</th>
+                                            <th nowrap="nowrap">Remarks</th>
+                                            <!-- <th nowrap="nowrap">Amount(CR)</th>
+                                            <th nowrap="nowrap">Ref Doc No</th>
+                                            <th nowrap="nowrap">Ref Doc Date</th>
+                                            <th nowrap="nowrap">HSN NO</th>
+                                            <th nowrap="nowrap">ITC Eligibility</th>
+                                            <th nowrap="nowrap">GST Per</th>
+                                            <th nowrap="nowrap">Adjustment Doc Type</th>
+                                            <th nowrap="nowrap">Adjustment Doc No</th> -->
+                                            <th nowrap="nowrap"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let col of ReturnableListAdd let i = index">
+                                            <td nowrap="nowrap">{{ i +1 }}</td>
+                                            <td nowrap="nowrap">{{col.Product_Description}}</td>
+                                            <td nowrap="nowrap">{{col.UOM}}</td>
+                                            <td nowrap="nowrap">{{col.Qty}}</td>
+                                            <td nowrap="nowrap">{{col.Remarks}}</td>
+                                            <!-- <td nowrap="nowrap">{{col.CR_Amt? col.CR_Amt : ""}}</td>
+                                            <td nowrap="nowrap">{{col.Ref_Doc_No}}</td>
+                                            <td nowrap="nowrap">{{col.Ref_Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap="nowrap">{{col.HSN_NO}}</td>
+                                            <td nowrap="nowrap">{{col.ITC_Eligibility}}</td>
+                                            <td nowrap="nowrap">{{col.GST_Per}}</td>
+                                            <td nowrap="nowrap">{{col.Adj_Doc_Type}}</td>
+                                            <td nowrap="nowrap">{{col.Doc_No}}</td> -->
+                                            <td><button (click)="DeleteNonReturnable(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" (click)="NonReturnableSave()" id="load" [disabled]="Spinner ||  !ReturnableListAdd.length? true : false">
+                                   <p-progressSpinner *ngIf="TabSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                  <span *ngIf="!TabSpinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                                </button>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

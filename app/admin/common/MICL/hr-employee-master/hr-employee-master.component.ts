@@ -140,7 +140,7 @@ export class HREmployeeMasterComponent implements OnInit {
   }
 
 leftdatechange(){
-  if(this.objemployee.Present_Status === "RESIGNED") {
+  if(this.objemployee.Present_Status === "RESIGNED" || this.objemployee.Present_Status === "SUSPENDED" || this.objemployee.Present_Status === "ABSCONDED") {
     this.Leave_Dt = new Date();
     this.leftdisabled = true;
   }
@@ -418,7 +418,9 @@ getEmployeeDetails(Emp_ID){
          this.Joining_Dt = new Date(data[0].Emp_Joining_Dt);
          this.Leave_Dt = new Date(data[0].Emp_Leave_Dt) ;
          this.objemployee.Present_Status = data[0].Present_Status;
-         this.leftdisabled = this.objemployee.Present_Status === "RESIGNED" ? true : false;
+         this.leftdisabled = this.objemployee.Present_Status === "RESIGNED" || 
+                             this.objemployee.Present_Status === "SUSPENDED" || 
+                             this.objemployee.Present_Status === "ABSCONDED" ? true : false;
          this.DOB = new Date(data[0].D_O_B);
          this.imagePath = data[0].Person_Photo ? data[0].Person_Photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3_qIHtXBZ7vZeMQhyD8qLC1VRB9ImHadL09KET_iSQEX6ags4ICknfmqEKz8Nf6IOsA&usqp=CAU "
          this.ProductViewFalg = data[0].Person_Photo ? true : false
