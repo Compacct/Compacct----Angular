@@ -115,6 +115,8 @@ export class HarbProjectBillComponent implements OnInit {
       this.costCenterList = dataCostCenter;
      // // console.log("costCenterList",this.costCenterList)
       this.ObjProjectBill.Cost_Cen_ID = this.costCenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined
+      this.ObjBrowse.Cost_Cen_ID = this.costCenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined
+      this.getAllData()
       this.changeCostCenter(this.ObjProjectBill.Cost_Cen_ID)
     })
   }
