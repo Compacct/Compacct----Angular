@@ -41,7 +41,9 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
   BrowseEndDate:any = {}
   SearchFormSubmit:boolean = false
   seachSpinner:boolean = false
-  Searchedlist:any = []
+  Searchedlist: any = [];
+  BrandList: any = [];
+  UomList: any = [];
   
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -63,8 +65,8 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
-    this.getSalesMan()
-    this.GetproductList()
+    this.getSalesMan();
+    this.GetBrandList();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -83,7 +85,8 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
    this.TotalProductQty = undefined
    this.GetSearchedList(true)
    this.DocNo = undefined
-   console.log("DocDate",this.DocDate)
+   //console.log("DocDate",this.DocDate)
+  this.productList = [];
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -96,30 +99,55 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
      this.SalesmanList = data ? data : [];
      });
   }
-  GetproductList(){
-    this.$http
-    .get("/Master_Product_New/GetAllData")
-    .subscribe((res: any) => {
-      let data = res ? res : []
+  GetBrandList() {
+    this.BrandList =[]
+   const obj = {
+        "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+        "Report_Name_String": "Get_Brand_Product",
+   }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // this.BrandList = data;
       if(data.length){
         data.forEach((xy:any) => {
-         xy['label'] = xy.Product_Description
+         xy['label'] = xy.Brand_Name
+         xy['value'] = xy.Product_Mfg_Comp_ID
+        });
+        this.BrandList = data
+        // console.log("BrandList==",this.BrandList)
+      }
+   
+     });
+  }
+  GetproductList(){
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+      "Report_Name_String": "Get_Product_Purchase_Request ",
+      "Json_Param_String": JSON.stringify([{Product_Mfg_Comp_ID : this.objreq.Product_Mfg_Comp_ID}])
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length){
+        data.forEach((xy:any) => {
+         xy['label'] = xy.Product_Name
          xy['value'] = xy.Product_ID
         });
-       this.productList = data
+        this.productList = data
+        //console.log("productList==",this.productList)
       }
    
      });
   }
   getUOM(){
-   if(this.objreq.Product_ID){
-     this.objreq.UOM = undefined
-    const FilterproductList = this.productList.find((xz:any)=> Number(xz.Product_ID) == Number(this.objreq.Product_ID))
-     this.objreq.UOM = FilterproductList ? FilterproductList.UOM : undefined
-   }
-   else{
-    this.objreq.UOM = undefined
-   }
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+      "Report_Name_String": "Get_Data_From_Requisition_Salesman ",
+      "Json_Param_String": JSON.stringify([{ Product_ID: this.objreq.Product_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+     // console.log("UomList==", data)
+      if (data.length) {
+        this.objreq.UOM = data[0].UOM
+      }
+    });
   }
   addreq(valid:any){
    this.requisitionFormSubmit = true
@@ -130,7 +158,7 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
       Doc_No: this.DocNo ? this.DocNo : "A",
       Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
       Product_ID : Number(this.objreq.Product_ID),
-      Product_Description: FilterproductList ? FilterproductList.Product_Description : "",
+      Product_Description: FilterproductList ? FilterproductList.Product_Name : "",
       Qty: Number(this.objreq.Qty),
       UOM : this.objreq.UOM,
       Total_Product_Qty: this.TotalProductQty,
@@ -341,7 +369,8 @@ class req{
 	UOM :any
 	Total_Product_Qty:any 
 	Sales_Man_ID:any
-	Used:any
+  Used: any
+  Product_Mfg_Comp_ID :any
 }
 class browse{
   Sales_Man_ID:any
