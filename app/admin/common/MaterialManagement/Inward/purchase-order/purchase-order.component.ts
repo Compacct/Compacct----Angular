@@ -156,7 +156,9 @@ export class PurchaseOrderComponent implements OnInit {
   editorDis:boolean = false
   GrTermAmount:number = 0
   GrGstTermAmt:number = 0
-  grNetTerm:number = 0
+  grNetTerm: number = 0
+  DocNoFinal = undefined
+  ObjCol:any = {}
   @ViewChild('vender',{static:false}) vender:ElementRef;
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -179,7 +181,7 @@ export class PurchaseOrderComponent implements OnInit {
        })
      }
 
-  ngOnInit() {
+ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
     this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.menuList = [
@@ -211,11 +213,11 @@ export class PurchaseOrderComponent implements OnInit {
        this.GetRequlist()
      }
      this.GetReportNameList();
-  } 
-  GetFreightType(){
+} 
+GetFreightType(){
     this.FreightTypeList = [{FreightType : "%"},{FreightType: "AMT"}]
-  }
-  TabClick(e) {
+}
+TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.buttonname = "Create";
@@ -229,8 +231,8 @@ export class PurchaseOrderComponent implements OnInit {
       //   const elem:any  = document.getElementById('creditdays');
       //   elem.focus();
       // },500)
-  }
-  clearData(){
+}
+clearData(){
     this.gettermsdetails();
     
     this.viewHeader = "";
@@ -275,7 +277,8 @@ export class PurchaseOrderComponent implements OnInit {
     this.AddTermList = []
     this.GrTermAmount = 0
     this.GrGstTermAmt = 0
-    this.grNetTerm = 0
+  this.grNetTerm = 0
+  this.ObjCol = {}
     this.getAllTotal()
     // this.initDate = [new Date(),new Date()];
     
@@ -292,14 +295,15 @@ export class PurchaseOrderComponent implements OnInit {
     setTimeout(() => {
       this.editorDis = false
     }, 500);
-   }
-  onReject() {
+}
+onReject() {
     this.compacctToast.clear("c");
+    this.compacctToast.clear("c1");
     this.Spinner = false;
     this.ngxService.stop();
     this.deleteError = false;
-  }
-  onConfirmDel(){
+}
+onConfirmDel(){
    if(this.DocNo){
     const obj = {
       "SP_String": "Sp_Purchase_Order",
@@ -335,8 +339,8 @@ export class PurchaseOrderComponent implements OnInit {
         this.getAllData(true);
        });
    }
-  }
-  getsubLedger(){
+}
+getsubLedger(){
     this.SubLedgerList = [];
       const obj = {
         "SP_String": "sp_Comm_Controller",
@@ -354,8 +358,8 @@ export class PurchaseOrderComponent implements OnInit {
             });
            });
         })
-    }
-  GetCostCenter(){
+}
+GetCostCenter(){
   const obj = {
     "SP_String": "sp_Comm_Controller",
     "Report_Name_String": "Get_Cost_Center_Details_Dropdown",
@@ -370,8 +374,8 @@ export class PurchaseOrderComponent implements OnInit {
       // console.log("Cost Center",this.costCenterList);
       // console.log("compacct Cookies",this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
   })
-  }
-  getCostCenterDetalis(){
+}
+getCostCenterDetalis(){
     if(this.objpurchase.Cost_Cen_ID){
       this.DetalisObj = {};
       this.getreq();
@@ -379,16 +383,16 @@ export class PurchaseOrderComponent implements OnInit {
        this.DetalisObj = tempVal[0]
       // console.log("DetalisObj",this.DetalisObj);
     }
-  }
-  getSubLedgerDetalis(){
+}
+getSubLedgerDetalis(){
     if(this.objpurchase.Sub_Ledger_ID){
       this.DetalisObj = {};
       const tempVal = this.SubLedgerDataList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.objpurchase.Sub_Ledger_ID))
        this.DetalisObj = tempVal[0]
       // console.log("DetalisObj",this.DetalisObj);
     }
-  }
-  getDetalis(header){
+}
+getDetalis(header){
      if(this.DetalisObj && (this.objpurchase.Sub_Ledger_ID || this.objpurchase.Cost_Cen_ID)){
        this.DetalisView = true
        this.viewHeader = header === "Vendor" ? "Vendor Detalis" : "Deliver Detalis";
@@ -399,8 +403,8 @@ export class PurchaseOrderComponent implements OnInit {
          this.getCostCenterDetalis();
        }
      }
-  }
-  GetCurrency(){
+}
+GetCurrency(){
     const obj = {
       "SP_String": "sp_Comm_Controller",
       "Report_Name_String": "Get_Currency_Dropdown",
@@ -410,8 +414,8 @@ export class PurchaseOrderComponent implements OnInit {
         this.objpurchase.Currency_ID = 1;
       // console.log("currencyList",this.currencyList);
     })
-  }
-  GetOrderType(){
+}
+GetOrderType(){
     const obj = {
       "SP_String": "sp_Comm_Controller",
       "Report_Name_String": "Get_Order_Type_Dropdown",
@@ -421,8 +425,8 @@ export class PurchaseOrderComponent implements OnInit {
         this.objpurchase.Type_ID = 1;
       // console.log("OrderTypeList",this.OrderTypeList);
     })
-  }
-  GetProject(){
+}
+GetProject(){
     const obj = {
       "SP_String": "sp_Comm_Controller",
       "Report_Name_String": "Get_Master_Project_Detail_Dropdown",
@@ -431,8 +435,8 @@ export class PurchaseOrderComponent implements OnInit {
         this.projectList = data;
       // console.log("projectList",this.projectList);
     })
-  }
-  getProduct(id?,uom?,psc?){
+}
+getProduct(id?,uom?,psc?){
   
     if(this.objaddPurchacse.Req_No){
       this.objaddPurchacse.Product_Type_ID = undefined;
@@ -478,7 +482,7 @@ export class PurchaseOrderComponent implements OnInit {
     }
  
     }
-  GetProductSpecification(){
+GetProductSpecification(){
     const tempAddObj = {...this.objaddPurchacse}
   this.objaddPurchacse = new addPurchacse()
   this.ExpectedDeliverydate = new Date();
@@ -506,9 +510,9 @@ export class PurchaseOrderComponent implements OnInit {
     this.objaddPurchacse.Product_Spec = undefined;
     
    } 
-  }
+}
   
-  getAo(ProductID){
+getAo(ProductID){
     const obj = {
       "SP_String": "sp_Comm_Controller",
       "Report_Name_String": "Get_Product_Wise_Ao",
@@ -518,8 +522,8 @@ export class PurchaseOrderComponent implements OnInit {
       // console.log("Aolist",this.Aolist);
        this.Aolist = data
     })
-  }
-  getProductDetalis(){
+}
+getProductDetalis(){
      if(this.objaddPurchacse.Product_ID){
         let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
          this.objaddPurchacse.Unit = tempVal.length ? tempVal[0].UOM : undefined
@@ -547,8 +551,8 @@ export class PurchaseOrderComponent implements OnInit {
       }
     
    
-  }
-  changeQTY(){
+}
+changeQTY(){
       this.objaddPurchacse.Rate = undefined;
       this.objaddPurchacse.Gross_Amt = undefined;
       this.objaddPurchacse.Excise_Tax_Percentage = undefined;
@@ -561,8 +565,8 @@ export class PurchaseOrderComponent implements OnInit {
       this.objaddPurchacse.GST_AMT = undefined;
       this.objaddPurchacse.Total_Amount = undefined;
       this.objaddPurchacse.Unit = undefined;
-  }
-  GetRateY(){
+}
+GetRateY(){
     if(this.objpurchase.Sub_Ledger_ID && this.objaddPurchacse.Product_ID){
       let sendData = {
             Sub_Ledger_ID: Number(this.objpurchase.Sub_Ledger_ID),
@@ -584,9 +588,9 @@ export class PurchaseOrderComponent implements OnInit {
          
        })
     }
-  }
+}
 
-  getRateN(id){
+getRateN(id){
     this.rate = undefined
     const obj = {
       "SP_String": "sp_Comm_Controller",
@@ -601,8 +605,8 @@ export class PurchaseOrderComponent implements OnInit {
       }
         
      })
-  }
-  GetTaxDetalis(ProductID){
+}
+GetTaxDetalis(ProductID){
     const obj = {
       "SP_String": "sp_Comm_Controller",
       "Report_Name_String": "Dropdown_Tax",
@@ -614,8 +618,8 @@ export class PurchaseOrderComponent implements OnInit {
         this.getGrsAmt();
        // this.getTotalForTax();
      })
-  }
-  getGrsAmt(){
+}
+getGrsAmt(){
     if(this.rate || this.objaddPurchacse.Rate){
       this.objaddPurchacse.Qty = this.objaddPurchacse.Qty ? this.objaddPurchacse.Qty : 0
       if(this.objaddPurchacse.Qty){
@@ -642,7 +646,7 @@ export class PurchaseOrderComponent implements OnInit {
       }
     }
    
-  }
+}
 
   getTotalForTax(){
     if(this.objaddPurchacse.Tax_Rate){
@@ -654,9 +658,9 @@ export class PurchaseOrderComponent implements OnInit {
     else {
       this.objaddPurchacse.taxable_AMT = this.totalbackUp ? Number((this.totalbackUp).toFixed(2)) : Number((this.totalRate).toFixed(2))
     }
-  }
+}
   
-  DisClear(){
+DisClear(){
     if(!this.objaddPurchacse.Discount_Type){
       this.objaddPurchacse.taxable_AMT = ((Number(this.objaddPurchacse.Excise_Tax) ? Number(this.objaddPurchacse.Excise_Tax) + Number(this.totalRate) : Number(this.totalRate))).toFixed(2)
       this.objaddPurchacse.Discount_AMT = undefined;
@@ -670,8 +674,8 @@ export class PurchaseOrderComponent implements OnInit {
       this.GetGSTAmt();
      
     }
-  }
-  getDis(){
+}
+getDis(){
     if(this.objaddPurchacse.Discount_Type === 'AMT'){
         if(this.objaddPurchacse.Discount){
           this.objaddPurchacse.Discount_AMT = undefined;
@@ -725,11 +729,11 @@ export class PurchaseOrderComponent implements OnInit {
       this.objaddPurchacse.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
       this.GetGSTAmt();
     }
-  }
-  getTaxAble(){
+}
+getTaxAble(){
  
-  }
-  AddPurchase(valid){
+}
+AddPurchase(valid){
     this.purChaseAddFormSubmit = true
   if(valid && this.GetSameProWithInd() && this.GetSameReqMatType()){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
@@ -777,8 +781,8 @@ export class PurchaseOrderComponent implements OnInit {
      
      
    }
- }
- addClear(){
+}
+addClear(){
   this.projectDisable = true
       this.objaddPurchacse = new addPurchacse();
       this.Requisiton_Type = undefined;
@@ -792,8 +796,8 @@ export class PurchaseOrderComponent implements OnInit {
       this.addPurchaseListInputField = {}
       // console.log("addPurchaseList",this.addPurchaseList);
       this.getAllTotal();
- }
- GetSameProWithInd () {
+}
+GetSameProWithInd () {
   if(!this.addPurchaseListInput){
     const sameproductwithindent = this.addPurchaseList.filter(item=> item.Req_No === this.objaddPurchacse.Req_No && item.Product_ID === this.objaddPurchacse.Product_ID );
     if(sameproductwithindent.length) {
@@ -883,7 +887,7 @@ AddTerm(valid){this.TermFormSubmitted = true;
     
   }
 }
- TeramChek(){
+TeramChek(){
   if(this.AddTermList.length){
     const FilterAddTermList = this.AddTermList.find((el:any)=> Number(el.Term_ID) == Number(this.ObjTerm.Term_ID))
     if(FilterAddTermList){
@@ -903,12 +907,12 @@ AddTerm(valid){this.TermFormSubmitted = true;
   else{
     return true;
   }
- }
+}
 DeteteTerm(index) {
   this.AddTermList.splice(index,1)
   this.getAllTotal()
 }
- async savePurchase(valid){
+async savePurchase(valid){
    this.purchaseFormSubmitted = true
    this.validatation.required = true
     this.falg = true
@@ -933,8 +937,8 @@ DeteteTerm(index) {
    else {
 
    }
- }
- onConfirmSave(){
+}
+onConfirmSave(){
  this.Spinner = true
  this.ngxService.start();
  let msg = "";
@@ -1111,7 +1115,7 @@ async TermSave(doc:any){
 //   }
 //   return flg
 //  }
- checkreq(){
+checkreq(){
   let flg = false
   if(this.openProject === "Y" && this.projectMand === "Y"){
     let getArrValue = Object.values(this.objProjectRequi);
@@ -1132,7 +1136,7 @@ async TermSave(doc:any){
     flg = true
   }
   return flg
- }
+}
 Finyear() {
   this.$http
     .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
@@ -1144,13 +1148,13 @@ Finyear() {
    this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
     });
 }
- getDateRange(dateRangeObj) {
+getDateRange(dateRangeObj) {
   if (dateRangeObj.length) {
     this.ObjBrowse.start_date = dateRangeObj[0];
     this.ObjBrowse.end_date = dateRangeObj[1];
   }
-  }
- getAllData(valid){
+}
+getAllData(valid){
   this.SearchFormSubmitted = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
@@ -1183,9 +1187,9 @@ if (valid) {
     // console.log("Get All Data",this.getAllDataList);
   })
 }
- }
+}
  // DISTINCT & FILTER
- GetDistinct() {
+GetDistinct() {
   let DSubledgerName:any = [];
   let DCostCentreName:any = [];
   this.DistSubledgerName =[];
@@ -1228,7 +1232,7 @@ this.getAllDataList = LeadArr.length ? LeadArr : [];
 this.getAllDataList = [...this.BackupSearchedlist] ;
 }
 }
- Edit(col){
+Edit(col){
   if(col.Doc_No){
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
@@ -1242,8 +1246,8 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     }
    
    }
- }
- geteditmaster(Dno){
+}
+geteditmaster(Dno){
   const obj = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Purchase_Order_Get",
@@ -1267,8 +1271,8 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
       this.editorDis = false
     }, 700);
   })
- }
- getEditProject(DocNo){
+}
+getEditProject(DocNo){
   if(DocNo){
     const obj = {
       "SP_String": "SP_BL_CRM_TXN_Project_Doc",
@@ -1283,8 +1287,8 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
        
         })
   }
- }
- Print(DocNo) {
+}
+Print(DocNo) {
   if(DocNo) {
   const objtemp = {
     "SP_String": "Sp_Purchase_Order",
@@ -1308,7 +1312,7 @@ PrintREQ(DocNo) {
   })
   }
 }
- Delete(col){
+Delete(col){
   // console.log("Delete Col",col);
   this.DocNo = undefined;
   this.Del = false;
@@ -1326,8 +1330,8 @@ PrintREQ(DocNo) {
      detail: "Confirm to proceed"
    });
   }
- }
- DeleteAddPurchase(index) {
+}
+DeleteAddPurchase(index) {
   this.addPurchaseList.splice(index,1);
   this.projectDisable = this.addPurchaseList.length ? true :false
   this.getAllTotal();
@@ -1597,7 +1601,7 @@ getCostcenter(){
     this.objpendingreq.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.objpendingPurIndPro.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
   })
- }
+}
 getPendingReq(valid){
   this.RequistionPendingFormSubmit = true;
   const start = this.objpendingreq.From_Date
@@ -1717,7 +1721,7 @@ getdataforview(col,row){
         })
       }
       }
-    }
+}
 gettermsdetails(){
       const obj = {
         "SP_String": "Sp_Purchase_Order",
@@ -1788,7 +1792,7 @@ UpdateTerms(){
       });
     }
   })
-  }
+}
 GetReportNameList(){
 this.ReportNameList = [
   {Report_Name : "Pending Indent Details"},
@@ -1847,7 +1851,7 @@ exportoexcel(Arr,fileName): void {
   XLSX.writeFile(workbook, fileName+'.xlsx');
 }
   // DISTINCT & FILTER
- GetDistinctReport() {
+GetDistinctReport() {
   let DVendorName:any = [];
   let DMaterialType:any = [];
   let DProductType:any = [];
@@ -1874,6 +1878,7 @@ exportoexcel(Arr,fileName): void {
 });
    this.BackupMisReport = [...this.misReportList];
 }
+  
 FilterDistReport() {
   let DVendorName:any = [];
   let DMaterialType:any = [];
@@ -1903,6 +1908,7 @@ this.misReportList = LeadArr.length ? LeadArr : [];
 this.misReportList = [...this.BackupMisReport] ;
 }
 }
+  
 getPONoforview(col,row){
   // console.log("col",col);
     if(col === "PO_No" && this.ObjMIS.Report_Name === "Pending PO - Not Delivered - Summary") {
@@ -1929,10 +1935,10 @@ getPONoforview(col,row){
         })
       }
       }
-    }
+}
 
 // Edit Add Purchase 
- EditAddPurchase(inx:any){
+EditAddPurchase(inx:any){
   // console.log(this.addPurchaseList[inx])
   this.objaddPurchacse.Req_No = this.addPurchaseList[inx].Req_No
   this.addPurchaseListInputField = this.addPurchaseList[inx]
@@ -1956,8 +1962,70 @@ getPONoforview(col,row){
 
 getRoundedOff(){
   return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) - Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) 
-} 
-
+}
+  
+FinalSave(col) {
+  this.DocNoFinal = undefined;
+  if(col.Doc_No){
+   this.DocNoFinal = col.Doc_No
+   this.compacctToast.clear();
+   this.compacctToast.add({
+     key: "c1",
+     sticky: true,
+     severity: "warn",
+     summary: "Are you sure?",
+     detail: "Confirm to proceed"
+   });
+  }   
+}
+  
+onFinalSave() {
+ if(this.DocNoFinal){
+      const tempObj = {
+        DOC_No: this.DocNoFinal,
+       }
+      const obj = {
+        "SP_String": "Sp_Purchase_Order",
+        "Report_Name_String": "Update_Final_Save",
+        "Json_Param_String": JSON.stringify([tempObj])      
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if (data[0].Column1){
+          this.onReject();
+          this.getAllData(true);
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Final Save Id: " + this.DocNoFinal.toString(),
+            detail: "Succesfully Save"
+          });
+        }
+      })
+     }
+}
+stringShort(str,wh) {
+    let retuObj:any = {}
+    if (str.length > 30) {
+      retuObj = {
+        field: str.substring(0, 30) + " ...",
+        cssClass : "txt"
+      }
+    }
+    else {
+       retuObj = {
+        field: str,
+        cssClass : ""
+      }
+    }
+return wh == "css" ? retuObj.cssClass : retuObj.field
+}
+selectWork(event,col, overlaypanel) {
+//console.log("col",col)
+this.ObjCol = {}
+this.ObjCol = col
+overlaypanel.toggle(event); 
+}
 }
 class purchase {
         Doc_No:any;
