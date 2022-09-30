@@ -44,3 +44,19 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
   border-radius: 3px !important;
   margin-top: 5px !important;
 }
+.ui-table-frozen-view>.ui-table-scrollable-body>table>.ui-table-tbody>tr>td {
+  height: 52px !important;
+  width: 335px !important;
+}
+
+body .scrolltable .ui-table .ui-table-tbody > tr > td {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  height: 52px !important;
+}
+
+body  .scrolltable .ui-table .ui-table-tbody > tr>td:hover {
+  overflow: auto !important;
+  text-overflow: initial !important;
+}
