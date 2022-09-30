@@ -352,6 +352,7 @@ const obj = {
   //}
    this.CustomerRadioChange();
    this.Active = false;
+   
   }
  })
  this.PatientFormSubmitted = false;
