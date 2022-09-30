@@ -583,8 +583,8 @@ if(valid){
   )}
 } 
 GetPrint(){
-  if (this.ObjFirst.Foot_Fall_ID) {
-    window.open("/Report/Crystal_Files/CRM/joh_Form/Case_History.aspx?Foot_Fall_ID=" + this.ObjFirst.Foot_Fall_ID, 
+  if (this.patientSearchList[0].Foot_Fall_ID) {
+    window.open("/Report/Crystal_Files/CRM/joh_Form/Case_History.aspx?Foot_Fall_ID=" + this.patientSearchList[0].Foot_Fall_ID, 
     'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
     );
   }
