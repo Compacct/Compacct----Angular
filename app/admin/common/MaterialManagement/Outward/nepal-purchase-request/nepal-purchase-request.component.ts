@@ -30,6 +30,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
   buttonname = "Save"
   objpurchaseRequest:purchaseRequest = new purchaseRequest()
   productList:any = []
+  productListHeader:any = []
   purchaseRequestFormSubmit:boolean = false
   addpurchaList:any = []
   DocDate:any=  {}
@@ -44,6 +45,12 @@ export class NepalPurchaseRequestComponent implements OnInit {
   Requisitionpopup:boolean = false
   viewPurchasePopup:boolean = false
   viewPurchaseList:any = []
+  BrandList:any = []
+  BrandId:any = undefined
+  scrollableCols:any = [];
+  frozenCols:any = [];
+  ProductSpinner:Boolean = false
+  editDisdate:boolean = false
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -61,11 +68,15 @@ export class NepalPurchaseRequestComponent implements OnInit {
      Header: "Purchase Request",
      Link: "Material Management -> Outward -> Purchase Request"
    });
-   this.GetproductList()
+   
+   this.getBrand()
    this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.tabIndexToView = 0
+   this.frozenCols = [
+    { field: 'Product_Description', header: 'Product Description' },
+];
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -85,32 +96,79 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.ReqQtyList = []
     this.Requisitionpopup = false
     this.viewPurchasePopup = false
+    this.BrandId = undefined
+    this.purchaseRequestFormSubmit = false
     this.GetSearchedList(true)
-    this.GetproductList()
+    this.scrollableCols = [];
+    this.productListHeader = []
+    this.ProductSpinner = false
+    this.frozenCols = []
+    this.editDisdate = false
   }
  
   onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
   }
-  GetproductList(){
+  getBrand(){
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
-      "Report_Name_String": "Get_Product_Purchase_Request"
+      "Report_Name_String": "Get_Brand_Product"
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log("data",data)
+      console.log("BrandList",data)
       if(data.length){
 
         data.forEach((xy:any) => {
-         xy['label'] = xy.Product_Name
-         xy['value'] = xy.Product_ID
+         xy['label'] = xy.Brand_Name
+         xy['value'] = xy.Product_Mfg_Comp_ID
         });
-       this.productList = data
+       this.BrandList = data
       }
    
      });
   }
+  GetproductList(){
+    this.purchaseRequestFormSubmit = true
+    if(this.BrandId){
+      this.ProductSpinner = true
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Get_Requistion_Product_List",
+        "Json_Param_String": JSON.stringify([{Product_Mfg_Comp_ID : Number(this.BrandId)}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("productList",data)
+        this.setProductListTable(data)
+        this.purchaseRequestFormSubmit = false
+        this.ProductSpinner = false
+        });
+    }
+    else{
+      this.productList = []
+    }
+  
+  }
+  setProductListTable(data:any){
+    if(data.length){
+      this.frozenCols = [
+        { field: 'Product_Description', header: 'Product Description' },
+    ];
+    this.productList = data
+    let dataHeader = Object.keys(data[0])
+    this.productListHeader = Object.keys(data[0])
+    dataHeader.forEach((ele:any) => {
+      if(ele != "Product_ID" && ele != "Product_Description"){
+        this.scrollableCols.push({
+          field : ele,
+          header: ele
+        })
+      }
+    });
+  }
+  }
+
+
   getUOM(){
     if(this.objpurchaseRequest.Product_ID){
       const obj = {
@@ -127,10 +185,12 @@ export class NepalPurchaseRequestComponent implements OnInit {
     }
     else{
      this.objpurchaseRequest.UOM = undefined
+     this.objpurchaseRequest.Requisition_Qty = undefined
     }
    }
    addpur(valid:any){
     this.purchaseRequestFormSubmit = true
+    console.log(valid)
     if(valid){
       const filterproductList = this.productList.find((x:any)=> Number(x.Product_ID) == Number(this.objpurchaseRequest.Product_ID) )
        this.addpurchaList.push({
@@ -151,6 +211,22 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.addpurchaList.splice(index,1);
   }
   ConfirmSave(){
+    let saveData:any = []
+    this.addpurchaList = []
+     this.productList.forEach((xz:any) => {
+     
+      if(xz.Purchase_Request_Qty){
+       let saveTemp = {
+        Purchase_Request_No: this.PurchaseRequestNo ? this.PurchaseRequestNo : "A",
+        Purchase_Request_Date :  this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
+        User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+      }
+      xz.Purchase_Request_Qty = Number(xz.Purchase_Request_Qty)
+        this.addpurchaList.push({...xz,...saveTemp})
+      }
+      
+     });
+   
      if(this.addpurchaList.length){
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -164,9 +240,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
    
   }
   SavePur(){
-     this.addpurchaList.forEach((xz:any) => {
-      xz.Purchase_Request_No = this.PurchaseRequestNo ? this.PurchaseRequestNo : "A"
-     });
+    
      const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
       "Report_Name_String": "Create_Purchase_Request",
@@ -176,7 +250,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       console.log("data",data)
       if(data[0].Column1){
         this.GetSearchedList(true)
-        this.GetproductList()
+       
         this.onReject()
         console.log("PurchaseRequestNo",this.PurchaseRequestNo)
         if(this.PurchaseRequestNo){
@@ -238,6 +312,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       this.tabIndexToView = 1
       this.PurchaseRequestNo = undefined
       this.PurchaseRequestNo = col.Purchase_Request_No
+      this.editDisdate = true
       this.getEditData(col.Purchase_Request_No)
      }
   }
@@ -251,7 +326,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
      console.log("Edit",data)
      if(data.length){
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Purchase_Request_Date)
-      this.addpurchaList = data
+      this.setProductListTable(data)
      
      }
      this.ngxService.stop();
@@ -322,8 +397,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
         if(data[0].Column1 =="Done"){
           this.onReject()
           this.GetSearchedList(true)
-          this.GetproductList()
-          this.PurchaseRequestNo = undefined
+         this.PurchaseRequestNo = undefined
           this.compacctToast.clear();
           this.compacctToast.add({
           key: "compacct-toast",

@@ -92,7 +92,7 @@
                                 <p-dropdown [options]="SubContractorList" 
                                 name="subcontractor" [(ngModel)]="Sub_Contractor_ID" [showClear]="true" [emptyFilterMessage]="' No Sub Contractor Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Sub Contractor'"
                                     [virtualScroll]="true" itemSize="30" #subcontractor="ngModel" [styleClass]="MasterSubContEmpFormSubmit && subcontractor.errors?.required? 'clearance': ''" [required]="true"
-                                    (onChange)="ProductDetailsChange(ObjRdb1.Product_ID)">
+                                    >
                                 </p-dropdown>
                             </div>
                             <div class="col-sm-4">

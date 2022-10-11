@@ -270,6 +270,7 @@ import { MasterSubContractorComponent } from './common/MICL/SubContractor/master
 import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContractor/sub-contractor-employee-master/sub-contractor-employee-master.component';
 import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
 import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
+import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2012,6 +2013,13 @@ data: {
                   component: NonReturnableGatePassComponent,
                   data: {
                     title: 'Non Returnable Gate Pass'
+                }
+                },
+                {
+                  path: 'Master_Raw_Material',
+                  component: MiclRawMaterialComponent,
+                  data: {
+                    title: 'Master Raw Material'
                 }
                 },
                 
