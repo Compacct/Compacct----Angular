@@ -26,6 +26,25 @@
         </div>
     </ng-template>
 </p-toast>
+
+<p-toast position="center" key="c1" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" >
+            <div class="ui-g-6" >
+                <button type="button" pButton (click)="onFinalSave()" label="Yes" class="ui-button-success"></button>
+            </div>           
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -106,7 +125,13 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
+                                                        <li *ngIf="col.Approve_Status =='Insert'">
+                                                            <a (click)="FinalSave(col)">
+                                                            <i class="fa fa-save"></i> Final Save
+                                                            </a>
+                                                        </li>
                                                         <li>
+                                                        <li *ngIf="col.Approve_Status =='Insert'">
                                                                 <a (click)="Edit(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
@@ -116,7 +141,7 @@
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="col.Approve_Status =='Insert'">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
@@ -125,7 +150,10 @@
                                                 </div>
                                             </td>
                                             <ng-container *ngFor="let option of DynamicHeader |  slice:1">
-                                                <td>{{col[option]}}</td>
+                                                <td *ngIf="option != 'Work_Details'" >{{col[option]}}</td>
+                                                <td *ngIf="option == 'Work_Details'">
+                                                    <div (click)="selectWork($event,col,op)" [ngClass]="stringShort(col[option],'css')">{{stringShort(col[option],'ff')}}</div>
+                                                </td>
                                             </ng-container>
                                             
                                         </tr>
@@ -1482,6 +1510,7 @@
          </div>
     </div>
 </div>
+
 <p-dialog
 [header]="viewHeader"
 [appendTo]="'body'"
@@ -1654,6 +1683,7 @@ style="text-align: center;"
 
 </p-footer>
 </p-dialog>
+
 <p-dialog
 [header]="'Product Detalis'"
 [appendTo]="'body'"
@@ -1881,3 +1911,7 @@ style="text-align: center;"
 
 </p-footer>
 </p-dialog>
+
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" [baseZIndex]="9999999" #op>
+    <p style="width: 160px;">{{ObjCol.Work_Details}}</p>
+</p-overlayPanel>

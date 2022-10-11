@@ -956,7 +956,7 @@ GetTenderDocMultiple(){
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
-            summary: "Approved Id: " + this.TenderDocID.toString(),
+            summary: "Final Save Id: " + this.TenderDocID.toString(),
             detail: "Succesfully Save"
           });
         }

@@ -128,9 +128,9 @@ export class NepalPurchaseRequestComponent implements OnInit {
    
      });
   }
-  GetproductList(valid){
+  GetproductList(){
     this.purchaseRequestFormSubmit = true
-    if(valid){
+    if(this.BrandId){
       this.ProductSpinner = true
       const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Request",

@@ -56,7 +56,7 @@
 
                             </form>
                             <div class="table-responsive no-padding productTable">
-                                <p-table #dt [value]="AlljournalData" [globalFilterFields]="['Voucher_No', 'Dated', 'Ledger_Name', 'Sub_Ledger_Name', 'Adjustment_Doc_No', 'Adjustment_Amt', 'DR_Amt', 'CR_Amt', 'Cost_Cen_Name', 'Cost_Cen_trn_Name', 'Fin_Year_Name']" [paginator]="AlljournalData.length ? true:false"
+                                <p-table #dt [value]="AlljournalData" [globalFilterFields]="['Voucher_No', 'Dated','Ref_Doc_No','Ref_Doc_Date', 'Ledger_Name', 'Sub_Ledger_Name', 'DR_Amt', 'CR_Amt', 'Cost_Cen_Name', 'Cost_Cen_trn_Name', 'Fin_Year_Name']" [paginator]="AlljournalData.length ? true:false"
                                     [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
