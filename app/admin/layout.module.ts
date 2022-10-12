@@ -366,6 +366,7 @@ import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContracto
 import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
 import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
 import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
+import { MICLMasterConsumbleComponent } from './common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component';
 
 
 @NgModule({
@@ -650,7 +651,8 @@ import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/m
     SubContractorEmployeeMasterComponent,
     SubContractorAttendanceComponent,
     NonReturnableGatePassComponent,
-    MiclRawMaterialComponent
+    MiclRawMaterialComponent,
+    MICLMasterConsumbleComponent
   ],
   imports: [
     CommonModule,
