@@ -139,6 +139,19 @@
                                                                     Adult Assessment
                                                                 </a>
                                                             </li>
+                                                            <li *ngIf="col.Status=='Consultancy Done' && ShowOtherTestPrintOpt">
+                                                                <a (click)="OtherTestEntryPrint(col)">
+                                                                    <i class="fa fa-fw fa-print"></i>
+                                                                    Other Test Print
+                                                                </a>
+                                                            </li>
+
+                                                            <li *ngIf="(col.Status=='Appointment' || col.Status=='Consultancy Done') && ShowOtherTestPrintOpt && checkDate(col.Appo_Dt)">
+                                                                <a (click)="OtherTestEntry(col)">
+                                                                    <i class="fa fa-fw fa-road"></i>
+                                                                    Other Test Entry
+                                                                </a>
+                                                            </li>
                                                         </ul>
                                                     </div>
                                                 </td>
