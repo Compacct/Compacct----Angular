@@ -44,7 +44,7 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
   Searchedlist: any = [];
   BrandList: any = [];
   UomList: any = [];
-  
+  ProductCategoryList:any = []
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -66,7 +66,8 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
     this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.getSalesMan();
-    this.GetBrandList();
+   // this.GetBrandList();
+    this.getProductCategory()
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -119,27 +120,31 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
      });
   }
   GetproductList(){
-    const obj = {
-      "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
-      "Report_Name_String": "Get_Product_Purchase_Request ",
-      "Json_Param_String": JSON.stringify([{Product_Mfg_Comp_ID : this.objreq.Product_Mfg_Comp_ID}])
-   }
-   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      if(data.length){
-        data.forEach((xy:any) => {
-         xy['label'] = xy.Product_Name
-         xy['value'] = xy.Product_ID
-        });
-        this.productList = data
-        //console.log("productList==",this.productList)
-      }
+    this.productList = []
+    if(this.objreq.Cat_ID){
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+        "Report_Name_String": "Get_Product_Purchase_Request_With_Product_category",
+        "Json_Param_String": JSON.stringify([{Cat_ID : this.objreq.Cat_ID}])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if(data.length){
+          data.forEach((xy:any) => {
+           xy['label'] = xy.Product_Name
+           xy['value'] = xy.Product_ID
+          });
+          this.productList = data
+          console.log("productList==",this.productList)
+        }
+     
+       });
+    }
    
-     });
   }
   getUOM(){
     const obj = {
       "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
-      "Report_Name_String": "Get_Data_From_Requisition_Salesman ",
+      "Report_Name_String": "Get_Data_From_Requisition_Salesman",
       "Json_Param_String": JSON.stringify([{ Product_ID: this.objreq.Product_ID}])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
@@ -154,6 +159,7 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
   if(valid){
     const FilterproductList = this.productList.find((xz:any)=> Number(xz.Product_ID) == Number(this.objreq.Product_ID))
     const FilterSalesmanList = this.SalesmanList.find((xz:any)=> Number(xz.Member_ID) == Number(this.objreq.Sales_Man_ID))
+    const FilterProductCategoryList = this.ProductCategoryList.find((xz:any)=> Number(xz.Cat_ID) == Number(this.objreq.Cat_ID))
      this.reqAddList.push({
       Doc_No: this.DocNo ? this.DocNo : "A",
       Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
@@ -163,6 +169,8 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
       UOM : this.objreq.UOM,
       Total_Product_Qty: this.TotalProductQty,
       Sales_Man_ID: this.objreq.Sales_Man_ID,
+      Cat_ID: Number(this.objreq.Cat_ID),
+      Cat_Name: FilterProductCategoryList ? FilterProductCategoryList.Cat_Name : undefined
      })
      console.log("reqAddList",this.reqAddList)
      const bckup = {...this.objreq}
@@ -252,7 +260,6 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
           console.log("search Data",data)
           if(data.length){
            data.forEach((y:any) => {
-            // y.Doc_Date = this.DateNepalConvertService.convertEngDateToNepaliDateObj((y.Doc_Date))
             y.Doc_Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Doc_Date);
            });
            this.Searchedlist = data
@@ -317,9 +324,10 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
      console.log("Edit",data)
      if(data.length){
       this.objreq.Sales_Man_ID = data[0].Sales_Man_ID
-      this.TotalProductQty = data[0].Total_Product_Qty
+      //this.TotalProductQty = data[0].Total_Product_Qty
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Doc_Date)
       this.reqAddList = data
+      this.getTotalQty()
       }
      this.ngxService.stop();
     })
@@ -360,6 +368,29 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
       })
     }
   }
+  getProductCategory(){
+    this.ProductCategoryList =[]
+    const obj = {
+         "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+         "Report_Name_String": "Get_Product_Category",
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       // this.BrandList = data;
+       console.log("ProductCategoryList==",data)
+       if(data.length){
+         data.forEach((xy:any) => {
+          xy['label'] = xy.Cat_Name
+          xy['value'] = xy.Cat_ID
+         });
+         this.ProductCategoryList = data
+         // console.log("BrandList==",this.BrandList)
+       }
+       else{
+        this.ProductCategoryList = []
+       }
+    
+      });
+  }
 }
 class req{
   Doc_No:any
@@ -371,6 +402,7 @@ class req{
 	Sales_Man_ID:any
   Used: any
   Product_Mfg_Comp_ID :any
+  Cat_ID:any
 }
 class browse{
   Sales_Man_ID:any

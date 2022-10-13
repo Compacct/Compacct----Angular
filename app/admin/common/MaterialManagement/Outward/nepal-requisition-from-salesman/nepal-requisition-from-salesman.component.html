@@ -330,24 +330,24 @@
                 <div class="form-group">
                   <div class="col-sm-3">
                     <label class="control-label"
-                      >Brand<sup class="text-danger">*</sup></label
+                      >Product Category<sup class="text-danger">*</sup></label
                     >
                     <p-dropdown
-                      [options]="BrandList"
-                      name="Product_Mfg_Comp_ID"
-                      [(ngModel)]="objreq.Product_Mfg_Comp_ID"
+                      [options]="ProductCategoryList"
+                      name="Cat_ID"
+                      [(ngModel)]="objreq.Cat_ID"
                       [showClear]="true"
-                      [emptyFilterMessage]="' No Brand Found'"
+                      [emptyFilterMessage]="' No Product Category Found'"
                       [filter]="true"
                       filterBy="label,value"
                       [resetFilterOnHide]="true"
-                      [placeholder]="'Brand'"
+                      [placeholder]="'Product Category'"
                       [virtualScroll]="true"
-                      #Product_Mfg_Comp_ID="ngModel"
+                      #Cat_ID="ngModel"
                       (ngModelChange)="GetproductList()"
                       [styleClass]="
                         requisitionFormSubmit &&
-                        Product_Mfg_Comp_ID.errors?.required
+                        Cat_ID.errors?.required
                           ? 'clearance'
                           : ''
                       "
@@ -435,6 +435,7 @@
                   <thead>
                     <tr style="background-color: #4fa1d1; color: white">
                       <th>Sl No.</th>
+                      <th>Product Category</th>
                       <th>Product</th>
                       <th>QTY</th>
                       <th>UOM</th>
@@ -444,6 +445,7 @@
                   <tbody>
                     <tr *ngFor="let obj of reqAddList; let ind = index">
                       <td>{{ ind + 1 }}.</td>
+                      <td>{{obj.Cat_Name}}</td>
                       <td>{{ obj.Product_Description }}</td>
                       <td>{{ obj.Qty }}</td>
                       <td>{{ obj.UOM }}</td>
@@ -455,7 +457,7 @@
                     </tr>
                     <tr>
                       <td></td>
-                      <td colspan="2" *ngIf="reqAddList.length">
+                      <td colspan="3" *ngIf="reqAddList.length">
                         <div class="pull-right">
                           <strong> Total QTY :</strong>
                           <span style="margin-left: 20px; margin-right: 45px">{{

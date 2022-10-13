@@ -39,10 +39,23 @@ export class DateNepalConvertService {
       day: day
     });
     const d1 = new NepaliDate(NepalDateObj.year, Number(NepalDateObj.month) - 1, NepalDateObj.day)
-    return d1.format('dd mmmm, yyyy');
+    return d1.format('DD/MMMM/YYYY');
    
   }
-
+  convertEngToNepaliFormatmonthObj = function (_Date) {
+    const EnglishDate = new Date(_Date);
+    var month = EnglishDate.getUTCMonth() + 1;
+    var day = EnglishDate.getDate();
+    var year = EnglishDate.getUTCFullYear();
+    const NepalDateObj = NepaliFunctions.AD2BS({
+      year: year,
+      month: month,
+      day: day
+    });
+    const d1 = new NepaliDate(NepalDateObj.year, Number(NepalDateObj.month) - 1, NepalDateObj.day)
+    return d1.format('MMMM YYYY');
+   
+  }
   GetNepaliCurrentDateNew(){
     return NepaliFunctions.GetCurrentBsDate().day+'/'+NepaliFunctions.GetCurrentBsDate().month+'/'+NepaliFunctions.GetCurrentBsDate().year;
   }

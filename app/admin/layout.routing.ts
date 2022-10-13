@@ -271,6 +271,8 @@ import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContracto
 import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
 import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
 import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
+import { NepalPurchaseRequestVendorSelectionComponent } from "./common/Procurement/nepal-purchase-request-vendor-selection/nepal-purchase-request-vendor-selection.component";
+import { NepalPurchaseRequestNegotiatePriceComponent } from "./common/Procurement/nepal-purchase-request-negotiate-price/nepal-purchase-request-negotiate-price.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2020,6 +2022,20 @@ data: {
                   component: MiclRawMaterialComponent,
                   data: {
                     title: 'Master Raw Material'
+                }
+                },
+                {
+                  path: 'Nepal_BL_Txn_Purchase_Request_Vendor_Selection',
+                  component: NepalPurchaseRequestVendorSelectionComponent,
+                  data: {
+                    title: 'Purchase Request Vendor Selection'
+                }
+                },
+                {
+                  path: 'Nepal_BL_Txn_Purchase_Request_Negotiate_Price',
+                  component: NepalPurchaseRequestNegotiatePriceComponent,
+                  data: {
+                    title: 'Purchase Request Negotiate Price'
                 }
                 },
                 

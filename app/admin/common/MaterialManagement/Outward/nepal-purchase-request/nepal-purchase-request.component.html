@@ -179,27 +179,27 @@
                                           </div>
                                     </div>
                                     <div class="col-sm-4" >
-                                        <label class="control-label">Brand<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="BrandList" 
-                                        name="Brand" 
-                                        [(ngModel)]="BrandId"
+                                        <label class="control-label">Product Category<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="ProductCategoryList" 
+                                        name="Cat_ID" 
+                                        [(ngModel)]="objpurchaseRequest.Cat_ID"
                                         [showClear]="true" 
-                                        [emptyFilterMessage]="' No Brand Found'" 
+                                        [emptyFilterMessage]="' No Product Category Found'" 
                                         [filter]="true" 
                                         filterBy="label,value" 
                                         [resetFilterOnHide]="true"
-                                        [placeholder]="'Brand'" 
+                                        [placeholder]="'Product Category'" 
                                         [virtualScroll]="true" 
-                                        #Brand="ngModel"
+                                        #Cat_ID="ngModel"
                                         (ngModelChange) = "GetproductList()"
-                                        [styleClass]="purchaseRequestFormSubmit && Brand.errors?.required ? 'clearance': ''" 
+                                        [styleClass]="purchaseRequestFormSubmit && Cat_ID.errors?.required ? 'clearance': ''" 
                                         required>
                                     </p-dropdown>
                                     </div>
                                     <div class="col-sm-2" >
-                                        <button type="button" class="btn btn-primary custombutton" (click)="GetproductList()" >
+                                        <!-- <button type="button" class="btn btn-primary custombutton" (click)="GetproductList()" >
                                             <span  class="glyphicon glyphicon-save"></span> Search
-                                            </button>
+                                            </button> -->
                                     </div>
                                    </div>
                                    
@@ -209,7 +209,7 @@
                                 #dt1
                                 [columns]="scrollableCols"
                                 [frozenColumns]="frozenCols"
-                                 *ngIf="productList.length"
+                                *ngIf="productList.length"
                                 [scrollable]="true"
                                 [globalFilterFields]="productListHeader"
                                 scrollHeight="550px"
@@ -227,10 +227,11 @@
                                         class="col-sm-3 pull-right"
                                         style="text-align: right"
                                     >
-                                        <input
+                                        <input 
                                         type="text"
                                         pInputText
                                         size="50"
+                                        *ngIf="productList.length"
                                         placeholder="Search"
                                         (input)="
                                             dt1.filterGlobal($event.target.value, 'contains')
