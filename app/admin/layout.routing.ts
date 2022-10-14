@@ -273,6 +273,8 @@ import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gat
 import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
 import { NepalPurchaseRequestVendorSelectionComponent } from "./common/Procurement/nepal-purchase-request-vendor-selection/nepal-purchase-request-vendor-selection.component";
 import { NepalPurchaseRequestNegotiatePriceComponent } from "./common/Procurement/nepal-purchase-request-negotiate-price/nepal-purchase-request-negotiate-price.component";
+import { MICLMasterConsumbleComponent } from "./common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component";
+import { MICLCostCenterMasterComponent } from "./common/MICL/micl-cost-center-master/micl-cost-center-master.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -1707,340 +1709,351 @@ data: {
 }
 },
 {
-  path: 'Contra_Voucher',
-  component: ContractVoucherV2Component,
+path: 'Contra_Voucher',
+component: ContractVoucherV2Component,
+data: {
+title: 'Contra Voucher'
+}
+},
+{
+path: 'Issue_Challan',
+  component: IssueChallanComponent,
+data: {
+  title: 'Issue Challan'
+}
+},
+{
+  path: 'HR_Txn_Special_Allowance_Deduction',
+  component: HRTxnSpecialAllowanceDeductionComponent,
   data: {
-    title: 'Contra Voucher'
-  }
-  },
-  {
-    path: 'Issue_Challan',
-      component: IssueChallanComponent,
+    title: 'HR Txn Special Allowance Deduction'
+}
+},
+{
+  path: 'Process_Salary',
+  component: ProcessSalaryComponent,
+  data: {
+    title: 'Process Salary'
+}
+},
+{
+  path: 'Leave_Approval',
+  component: LeaveApprovalComponent,
+  data: {
+    title: 'Leave Approval'
+}
+},
+{
+  path: 'Consumption',
+  component: ConsumptionComponent,
+  data: {
+    title: 'Consumption'
+}
+},
+{
+  path: 'Debit_Note_WO_Stock',
+  component: DebitNoteWoStockComponent,
+  data: {
+    title: 'Debit Note Without Stock'
+}
+},
+{
+  path: 'Financial_Reminder',
+  component: FinancialReminderComponent,
+  data: {
+    title: 'Financial Reminder'
+}
+},
+{
+path: 'Inflow_Planing',
+component: InflowPlaningComponent,
+data: {
+title: 'Inflow Planing'
+}
+},
+{
+path: 'Work_Order',
+component: WorkOrderComponent,
+data: {
+title: 'Work Order'
+}
+},
+{
+path: 'Returnable_Gate_Pass',
+component: ReturnableGatePassComponent,
+data: {
+title: 'Returnable Gate Pass '
+}
+},
+{
+path: 'Repair_And_Maintenance_RDB',
+component: RepairAndMaintenanceRdbComponent,
+data: {
+title: 'Repair And Maintenance RDB'
+}
+},
+{
+path: 'Production_Closing_Stock',
+component: K4cProductionClosingStockComponent,
+data: {
+title: 'Production Closing Stock'
+}
+},
+{
+path: 'Employee_Salary_Master_MICL',
+component: EmployeeSalaryMasterMiclComponent,
+data: {
+  title: 'Employee Salary Master'
+}
+},
+{
+path: 'Employee_Salary_Master_Harbauer',
+  component: HrEmployeeSalaryMasterHarbComponent,
+  data: {
+    title: 'Employee Salary_Master'
+}
+},
+{
+  path: 'Repair_And_Maintenance_GRN',
+    component: RepairAndMantainceGRNComponent,
     data: {
-      title: 'Issue Challan'
-    }
-    },
-    {
-      path: 'HR_Txn_Special_Allowance_Deduction',
-      component: HRTxnSpecialAllowanceDeductionComponent,
-      data: {
-        title: 'HR Txn Special Allowance Deduction'
-    }
-    },
-    {
-      path: 'Process_Salary',
-      component: ProcessSalaryComponent,
-      data: {
-        title: 'Process Salary'
-    }
-    },
-    {
-      path: 'Leave_Approval',
-      component: LeaveApprovalComponent,
-      data: {
-        title: 'Leave Approval'
-    }
-    },
-    {
-      path: 'Consumption',
-      component: ConsumptionComponent,
-      data: {
-        title: 'Consumption'
-    }
-    },
-    {
-      path: 'Debit_Note_WO_Stock',
-      component: DebitNoteWoStockComponent,
-      data: {
-        title: 'Debit Note Without Stock'
-    }
-    },
-    {
-      path: 'Financial_Reminder',
-      component: FinancialReminderComponent,
-      data: {
-        title: 'Financial Reminder'
-    }
-    },
-    {
-      path: 'Inflow_Planing',
-       component: InflowPlaningComponent,
-        data: {
-          title: 'Inflow Planing'
-      }
-      },
-      {
-        path: 'Work_Order',
-         component: WorkOrderComponent,
-          data: {
-            title: 'Work Order'
-        }
-        },
-        {
-          path: 'Returnable_Gate_Pass',
-           component: ReturnableGatePassComponent,
-            data: {
-              title: 'Returnable Gate Pass '
-          }
-          },
-        {
-          path: 'Repair_And_Maintenance_RDB',
-           component: RepairAndMaintenanceRdbComponent,
-            data: {
-              title: 'Repair And Maintenance RDB'
-          }
-          },
-          {
-            path: 'Production_Closing_Stock',
-             component: K4cProductionClosingStockComponent,
-              data: {
-                title: 'Production Closing Stock'
-            }
-            },
-            {
-              path: 'Employee_Salary_Master_MICL',
-               component: EmployeeSalaryMasterMiclComponent,
-                data: {
-                  title: 'Employee Salary Master'
-              }
-              },
-              {
-                path: 'Employee_Salary_Master_Harbauer',
-                 component: HrEmployeeSalaryMasterHarbComponent,
-                  data: {
-                    title: 'Employee Salary_Master'
-                }
-                },
-                {
-                  path: 'Repair_And_Maintenance_GRN',
-                   component: RepairAndMantainceGRNComponent,
-                    data: {
-                      title: 'Repair and Maintenance GRN '
-                }
-                },
-                {
-                  path: 'HR_Employee_Master',
-                  component:HREmployeeMasterComponent,
-                  data: {
-                    title: 'HR Employee Master'
-                }
-                },
-                {
-                  path: 'Project_Bill',
-                  component:HarbProjectBillComponent,
-                  data: {
-                    title: 'Sale Bill Project'
-                }
-                },
-                {
-                  path: 'Nepal_Subledger_Alias_Category',
-                  component:NepalSubledgerAliasCategoryComponent,
-                  data: {
-                    title: 'Subledger Slias Category'
-                }
-                },
-                {
-                  path: 'Patient_Coupon',
-                  component:PatientCouponComponent,
-                  data: {
-                    title: 'Patient Coupon'
-                }
-                },
-                {
-                  path: 'Hearing_Case_History',
-                   component: HearingCaseHistoryComponent,
-                    data: {
-                      title: 'Hearing Case History'
-                }
-                },
-                {
-                  path: 'Good_Receive_Details',
-                   component: GoodReceiveDetailsComponent,
-                    data: {
-                      title: 'Good Receive Details'
-                }
-                },
-                {
-                  path: 'Master_Holiday',
-                  component:MasterHolidayComponent,
-                  data: {
-                    title: 'Master Holiday'
-                }
-                },
-                {
-                  path: 'MICL_Dispatch_Challan_Chargeable',
-                   component: MICLDispatchChallanChargeableComponent,
-                    data: {
-                      title: 'MICL Dispatch Challan Chargeable '
-                }
-                },
-                {
-                  path: 'Daily_Attendance_Sheet',
-                   component: DailyAttendanceSheetComponent,
-                    data: {
-                      title: 'Daily Attendance Sheet '
-                }
-                },
-                {
-                  path: 'BL_CRM_Master_Consultancy_V3',
-                   component: MasterConsultancyV3Component,
-                    data: {
-                      title: 'BL CRM Master Consultancy '
-                }
-                },
-                {
-                  path: 'MICL_Journal_Voucher',
-                  component:MICLJournalVoucherComponent,
-                  data: {
-                    title: 'MICL Journal Voucher'
-                }
-                },
-                {
-                  path: 'PO_Authorization',
-                   component: POAuthorizationComponent,
-                    data: {
-                      title: 'PO Authorization '
-                }
-                },
-                {
-                  path: 'BL_Txn_Branch_Requisition',
-                   component: BranchRequisitionComponent,
-                    data: {
-                      title: 'Branch_Requisition'
-                }
-                },
-                {
-                  path: 'Requisition_Authorization',
-                  component: RequisitionAuthorizationComponent,
-                  data: {
-                    title: 'Requisition Authorization'
-                }
-                },
-                {
-                  path: 'BOM_Authorization',
-                   component: BOMAuthorizationComponent,
-                    data: {
-                      title: 'BOM Authorization '
-                }
-                },
-                {
-                  path: 'Project_Plan_Approve',
-                  component: ProjectPlanApproveComponent,
-                  data: {
-                    title: 'Project Plan Approve'
-                }
-                }, 
-                {
-                  path: 'PO_Authorization_Harbauer',
-                  component: POAuthorizationHarbauerComponent,
-                  data: {
-                    title: 'PO Authorization Harbauer'
-                }
-                },
-                 {
-                  path: 'Harbauer_Project_Design_Approval',
-                   component: HarbProjectDesignApprovalComponent,
-                    data: {
-                      title: 'Project Design Approval'
-                }
-                },
-                {
-                  path: 'Nepal_Bl_Txn_Requisition_From_Salesman',
-                   component: NepalRequisitionFromSalesmanComponent,
-                    data: {
-                      title: 'Requisition From Salesman'
-                }
-                },
-                {
-                  path: 'Nepal_BL_Txn_Purchase_Request',
-                   component: NepalPurchaseRequestComponent,
-                    data: {
-                      title: 'Purchase Request'
-                }
-                },
-                {
-                  path: "Project_Dashboard",
-                  loadChildren: () =>
-                    import(
-                      "./common/Harbauer/project-dashboard/project-dashboard.module"
-                    ).then(m => m.ProjectDashboardModule),
-                  data: {
-                    title: "Project Dashboard"
-                  }
-                },
-                {
-                  path: 'Meterial_Inspection_Of_RDB',
-                   component: MeterialInspectionOfRDBComponent,
-                    data: {
-                      title: 'Meterial Inspection Of RDB'
-                }
-                },
-                {
-                  path: 'BL_Txn_Work_Order_Sale_Bill',
-                  component: BLTxnWorkOrderSaleBillComponent,
-                  data: {
-                    title: 'BL Txn Work Order Sale Bill'
-                }
-                },
-                {
-                  path: 'HR_Event_Upload',
-                  component: HREventUploadComponent,
-                  data: {
-                    title: 'HR Event Upload'
-                }
-                },
-                {
-                  path: 'Master_Sub_Contractor',
-                   component: MasterSubContractorComponent,
-                    data: {
-                      title: 'Master Sub Contractor'
-                }
-                },
-                {
-                  path: 'Sub_Contractor_Employee_Master',
-                  component: SubContractorEmployeeMasterComponent,
-                  data: {
-                    title: 'Sub Contractor Employee Master'
-                }
-                },
-                {
-                  path: 'Sub_Contractor_Attendance',
-                  component: SubContractorAttendanceComponent,
-                  data: {
-                    title: 'Sub Contractor Attendance'
-                }
-                },
-                {
-                  path: 'Non_Returnable_Gate_Pass',
-                  component: NonReturnableGatePassComponent,
-                  data: {
-                    title: 'Non Returnable Gate Pass'
-                }
-                },
-                {
-                  path: 'Master_Raw_Material',
-                  component: MiclRawMaterialComponent,
-                  data: {
-                    title: 'Master Raw Material'
-                }
-                },
-                {
-                  path: 'Nepal_BL_Txn_Purchase_Request_Vendor_Selection',
-                  component: NepalPurchaseRequestVendorSelectionComponent,
-                  data: {
-                    title: 'Purchase Request Vendor Selection'
-                }
-                },
-                {
-                  path: 'Nepal_BL_Txn_Purchase_Request_Negotiate_Price',
-                  component: NepalPurchaseRequestNegotiatePriceComponent,
-                  data: {
-                    title: 'Purchase Request Negotiate Price'
-                }
-                },
-                
-                
-      
+      title: 'Repair and Maintenance GRN '
+}
+},
+{
+  path: 'HR_Employee_Master',
+  component:HREmployeeMasterComponent,
+  data: {
+    title: 'HR Employee Master'
+}
+},
+{
+  path: 'Project_Bill',
+  component:HarbProjectBillComponent,
+  data: {
+    title: 'Sale Bill Project'
+}
+},
+{
+  path: 'Nepal_Subledger_Alias_Category',
+  component:NepalSubledgerAliasCategoryComponent,
+  data: {
+    title: 'Subledger Slias Category'
+}
+},
+{
+  path: 'Patient_Coupon',
+  component:PatientCouponComponent,
+  data: {
+    title: 'Patient Coupon'
+}
+},
+{
+  path: 'Hearing_Case_History',
+    component: HearingCaseHistoryComponent,
+    data: {
+      title: 'Hearing Case History'
+}
+},
+{
+  path: 'Good_Receive_Details',
+    component: GoodReceiveDetailsComponent,
+    data: {
+      title: 'Good Receive Details'
+}
+},
+{
+  path: 'Master_Holiday',
+  component:MasterHolidayComponent,
+  data: {
+    title: 'Master Holiday'
+}
+},
+{
+  path: 'MICL_Dispatch_Challan_Chargeable',
+    component: MICLDispatchChallanChargeableComponent,
+    data: {
+      title: 'MICL Dispatch Challan Chargeable '
+}
+},
+{
+  path: 'Daily_Attendance_Sheet',
+    component: DailyAttendanceSheetComponent,
+    data: {
+      title: 'Daily Attendance Sheet '
+}
+},
+{
+  path: 'BL_CRM_Master_Consultancy_V3',
+    component: MasterConsultancyV3Component,
+    data: {
+      title: 'BL CRM Master Consultancy '
+}
+},
+{
+  path: 'MICL_Journal_Voucher',
+  component:MICLJournalVoucherComponent,
+  data: {
+    title: 'MICL Journal Voucher'
+}
+},
+{
+  path: 'PO_Authorization',
+    component: POAuthorizationComponent,
+    data: {
+      title: 'PO Authorization '
+}
+},
+{
+  path: 'BL_Txn_Branch_Requisition',
+    component: BranchRequisitionComponent,
+    data: {
+      title: 'Branch_Requisition'
+}
+},
+{
+  path: 'Requisition_Authorization',
+  component: RequisitionAuthorizationComponent,
+  data: {
+    title: 'Requisition Authorization'
+}
+},
+{
+  path: 'BOM_Authorization',
+    component: BOMAuthorizationComponent,
+    data: {
+      title: 'BOM Authorization '
+}
+},
+{
+  path: 'Project_Plan_Approve',
+  component: ProjectPlanApproveComponent,
+  data: {
+    title: 'Project Plan Approve'
+}
+}, 
+{
+  path: 'PO_Authorization_Harbauer',
+  component: POAuthorizationHarbauerComponent,
+  data: {
+    title: 'PO Authorization Harbauer'
+}
+},
+{
+  path: 'Harbauer_Project_Design_Approval',
+  component: HarbProjectDesignApprovalComponent,
+  data: {
+    title: 'Project Design Approval'
+}
+},
+{
+  path: 'Nepal_Bl_Txn_Requisition_From_Salesman',
+    component: NepalRequisitionFromSalesmanComponent,
+    data: {
+      title: 'Requisition From Salesman'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Purchase_Request',
+    component: NepalPurchaseRequestComponent,
+    data: {
+      title: 'Purchase Request'
+}
+},
+{
+  path: "Project_Dashboard",
+  loadChildren: () =>
+    import(
+      "./common/Harbauer/project-dashboard/project-dashboard.module"
+    ).then(m => m.ProjectDashboardModule),
+  data: {
+    title: "Project Dashboard"
+  }
+},
+{
+  path: 'Meterial_Inspection_Of_RDB',
+    component: MeterialInspectionOfRDBComponent,
+    data: {
+      title: 'Meterial Inspection Of RDB'
+}
+},
+{
+  path: 'BL_Txn_Work_Order_Sale_Bill',
+  component: BLTxnWorkOrderSaleBillComponent,
+  data: {
+    title: 'BL Txn Work Order Sale Bill'
+}
+},
+{
+  path: 'HR_Event_Upload',
+  component: HREventUploadComponent,
+  data: {
+    title: 'HR Event Upload'
+}
+},
+{
+  path: 'Master_Sub_Contractor',
+    component: MasterSubContractorComponent,
+    data: {
+      title: 'Master Sub Contractor'
+}
+},
+{
+  path: 'Sub_Contractor_Employee_Master',
+  component: SubContractorEmployeeMasterComponent,
+  data: {
+    title: 'Sub Contractor Employee Master'
+}
+},
+{
+  path: 'Sub_Contractor_Attendance',
+  component: SubContractorAttendanceComponent,
+  data: {
+    title: 'Sub Contractor Attendance'
+}
+},
+{
+  path: 'Non_Returnable_Gate_Pass',
+  component: NonReturnableGatePassComponent,
+  data: {
+    title: 'Non Returnable Gate Pass'
+}
+},
+{
+  path: 'Master_Raw_Material',
+  component: MiclRawMaterialComponent,
+  data: {
+    title: 'Master Raw Material'
+}
+},
+{
+   path: 'Nepal_BL_Txn_Purchase_Request_Vendor_Selection',
+   component: NepalPurchaseRequestVendorSelectionComponent,
+   data: {
+     title: 'Purchase Request Vendor Selection'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Purchase_Request_Negotiate_Price',
+  component: NepalPurchaseRequestNegotiatePriceComponent,
+  data: {
+    title: 'Purchase Request Negotiate Price'
+}
+},
+{        
+path: 'Master_Consumable',
+  component: MICLMasterConsumbleComponent,
+  data: {
+    title: 'Master Consumable'
+}
+},
+{        
+path: 'MICL_Cost_Center_Master',
+  component: MICLCostCenterMasterComponent,
+  data: {
+    title: 'MICL Cost Center Master'
+}
+},
     
 
     /*{
