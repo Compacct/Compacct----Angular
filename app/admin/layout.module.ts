@@ -370,6 +370,7 @@ import { NepalPurchaseRequestVendorSelectionComponent } from './common/Procureme
 import { NepalPurchaseRequestNegotiatePriceComponent } from './common/Procurement/nepal-purchase-request-negotiate-price/nepal-purchase-request-negotiate-price.component';
 import { MICLMasterConsumbleComponent } from './common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component';
 import { MICLCostCenterMasterComponent } from './common/MICL/micl-cost-center-master/micl-cost-center-master.component';
+import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh-ear-mold.component";
 
 
 @NgModule({
@@ -658,7 +659,8 @@ import { MICLCostCenterMasterComponent } from './common/MICL/micl-cost-center-ma
     NepalPurchaseRequestVendorSelectionComponent,
     NepalPurchaseRequestNegotiatePriceComponent,
     MICLMasterConsumbleComponent,
-    MICLCostCenterMasterComponent
+    MICLCostCenterMasterComponent,
+    JOHEarMoldComponent 
   ],
   imports: [
     CommonModule,

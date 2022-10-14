@@ -386,9 +386,11 @@
                     <th>Product Sub Type</th>
                     <th>Product Name</th>
                     <th>UOM</th>
-                    <th>Batch No</th>
+                    <th *ngIf="Report_Type === 'Closing_Stock_Report' && Report_Type === 'Closing_Stock_With_Value'">
+                        Batch No</th>
                     <th>Balance Qty</th>
-                    <th>Rate</th>
+                    <th *ngIf="Report_Type === 'Closing_Stock_Report' && Report_Type === 'Closing_Stock_With_Value'">
+                        Rate</th>
                     <th>Pro Value</th>
                     <th>Rack_NO</th>
                 </tr>
@@ -400,9 +402,11 @@
                     <td>{{col.Product_Sub_Type}}</td>
                     <td>{{col.Product_Description}}</td>
                     <td>{{col.UOM}}</td>
-                    <td>{{col.Batch_No }}</td>
+                    <td *ngIf="Report_Type === 'Closing_Stock_Report' && Report_Type === 'Closing_Stock_With_Value'">
+                        {{col.Batch_No }}</td>
                     <td>{{col.Balance_Qty}}</td>
-                    <td>{{col.Rate}}</td>
+                    <td *ngIf="Report_Type === 'Closing_Stock_Report' && Report_Type === 'Closing_Stock_With_Value'">
+                        {{col.Rate}}</td>
                     <td>{{col.Pro_Value}}</td>
                     <td>{{col.Rack_NO}}</td>
                     <!-- <td style="text-align: center;">

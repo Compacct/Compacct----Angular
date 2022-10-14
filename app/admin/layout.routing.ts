@@ -275,6 +275,7 @@ import { NepalPurchaseRequestVendorSelectionComponent } from "./common/Procureme
 import { NepalPurchaseRequestNegotiatePriceComponent } from "./common/Procurement/nepal-purchase-request-negotiate-price/nepal-purchase-request-negotiate-price.component";
 import { MICLMasterConsumbleComponent } from "./common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component";
 import { MICLCostCenterMasterComponent } from "./common/MICL/micl-cost-center-master/micl-cost-center-master.component";
+import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh-ear-mold.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2052,6 +2053,13 @@ path: 'MICL_Cost_Center_Master',
   component: MICLCostCenterMasterComponent,
   data: {
     title: 'MICL Cost Center Master'
+}
+},
+{
+  path: 'JOH_Ear_Mold',
+  component: JOHEarMoldComponent,
+  data: {
+    title: 'JOH Ear Mold'
 }
 },
     
