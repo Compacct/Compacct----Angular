@@ -272,6 +272,7 @@ import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/su
 import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
 import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
 import { MICLMasterConsumbleComponent } from "./common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component";
+import { MICLCostCenterMasterComponent } from "./common/MICL/micl-cost-center-master/micl-cost-center-master.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2023,16 +2024,21 @@ path: 'Employee_Salary_Master_Harbauer',
     title: 'Master Raw Material'
 }
 },
-{
+{        
 path: 'Master_Consumable',
   component: MICLMasterConsumbleComponent,
   data: {
     title: 'Master Consumable'
 }
 },
-                
-                
-      
+{        
+path: 'MICL_Cost_Center_Master',
+  component: MICLCostCenterMasterComponent,
+  data: {
+    title: 'MICL Cost Center Master'
+}
+},
+    
     
 
     /*{
