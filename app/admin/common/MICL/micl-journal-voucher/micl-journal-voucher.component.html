@@ -77,8 +77,8 @@
                                             <th nowrap>Sub Ledger Name</th>
                                             <!-- <th nowrap>Adjustment Doc No</th>
                                             <th nowrap>Adjustment Amt</th> -->
-                                            <th nowrap>DR Amt</th>
-                                            <th nowrap>CR Amt</th>
+                                            <th nowrap>Amount</th>
+                                            
                                             <th nowrap>Cost Cen Name</th>
                                             <th nowrap>Cost Cen trn Name</th>
                                             <th nowrap>Fin Year Name</th>
@@ -120,8 +120,8 @@
                                             <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
                                             <!-- <td nowrap>{{col.Adjustment_Doc_No ? col.Adjustment_Doc_No : '-'}}</td>
                                             <td nowrap>{{col.Adjustment_Amt ? col.Adjustment_Amt : '-'}}</td> -->
-                                            <td nowrap>{{col.DR_Amt ? col.DR_Amt : '-'}}</td>
-                                            <td nowrap>{{col.CR_Amt ? col.CR_Amt : '-'}}</td>
+                                            
+                                            <td nowrap>{{col.Amount ? col.Amount : '-'}}</td>
                                             <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
                                             <td nowrap>{{col.Cost_Cen_trn_Name ? col.Cost_Cen_trn_Name : '-'}}</td>
                                             <td nowrap>{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
@@ -139,7 +139,8 @@
                                 <div class="form-group">
                                     <div class="col-sm-6">
                                         <label class="control-label">Company<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Company" #Company="ngModel" [(ngModel)]="objJournal.Company_ID" [ngClass]="{'clearance ': JournalFormSubmitted && Company.errors?.required}" required [disabled]="JournalListAdd.length? true : false">
+                                        <select class="form-control" name="Company" #Company="ngModel" [(ngModel)]="objJournal.Company_ID" 
+                                        [ngClass]="{'clearance ': JournalFormSubmitted && Company.errors?.required}" required  [disabled]="buttonname == 'Create' ? JournalListAdd.length : false" >
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of companyList" value="{{option.Company_ID}}">
                                       {{option.Company_Name}}
@@ -155,11 +156,14 @@
 
                                     <div class="col-sm-6">
                                         <label class="control-label">Voucher Date<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Voucher_Date' name="Date_Voucher" [enabled]="JournalListAdd.length? false : true" (change)="getDocNo()"></ejs-datepicker>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Voucher_Date' name="Date_Voucher"  (change)="getDocNo()" [enabled]="buttonname == 'Update' ? true : !JournalListAdd.length" ></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Cost Cent Trn<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Cost_Cent_Trn" #Cost_Cent_Trn="ngModel" [(ngModel)]="objJournal.Cost_Cen_ID_Trn" [ngClass]="{'clearance ': JournalFormSubmitted && Cost_Cent_Trn.errors?.required}" required [disabled]="JournalListAdd.length? true : false">
+                                        <select class="form-control" name="Cost_Cent_Trn" #Cost_Cent_Trn="ngModel" 
+                                        [(ngModel)]="objJournal.Cost_Cen_ID_Trn" [ngClass]="{'clearance ': JournalFormSubmitted && Cost_Cent_Trn.errors?.required}" 
+                                        [disabled]="buttonname == 'Create' ? JournalListAdd.length : false"
+                                        required >
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of costHeadList" value="{{option.Cost_Cen_ID}}">
                                       {{option.Cost_Cen_Name}}
@@ -170,11 +174,15 @@
                                 <div class="form-group">
                                     <div class="col-sm-8">
                                         <label class="control-label">Naration</label>
-                                        <input class="form-control" placeholder="Naration" name="Naration" #Naration="ngModel" [(ngModel)]="objJournal.Naration" [disabled]="JournalListAdd.length? true : false">
+                                        <input class="form-control" placeholder="Naration" name="Naration" #Naration="ngModel" [(ngModel)]="objJournal.Naration" [disabled]="buttonname == 'Create' ? JournalListAdd.length : false" >
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Journal Type<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="journal_type" #journal_type="ngModel" [(ngModel)]="objJournal.JV_Type" (change)="getDocType(objJournal.JV_Type)" [ngClass]="{'clearance ': JournalFormSubmitted && journal_type.errors?.required}" required [disabled]="JournalListAdd.length? true : false">
+                                        <select class="form-control" name="journal_type" #journal_type="ngModel" [(ngModel)]="objJournal.JV_Type" 
+                                        (change)="getDocType(objJournal.JV_Type)"
+                                         [ngClass]="{'clearance ': JournalFormSubmitted && journal_type.errors?.required}" 
+                                         [disabled]="buttonname == 'Create' ? JournalListAdd.length : false"
+                                         required>
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of JournalList" value="{{option}}">
                                       {{option}}
@@ -308,7 +316,7 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let col of JournalListAdd let i = index">
-                                            <td nowrap="nowrap">{{col.SL_NO}}</td>
+                                            <td nowrap="nowrap">{{i + 1}}</td>
                                             <td nowrap="nowrap">{{col.Ledger_Name}}</td>
                                             <td nowrap="nowrap">{{col.Sub_Ledger_Name}}</td>
                                             <td nowrap="nowrap">{{col.Cost_Head_Name}}</td>

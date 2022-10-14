@@ -366,8 +366,11 @@ import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContracto
 import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
 import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
 import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
+import { NepalPurchaseRequestVendorSelectionComponent } from './common/Procurement/nepal-purchase-request-vendor-selection/nepal-purchase-request-vendor-selection.component';
+import { NepalPurchaseRequestNegotiatePriceComponent } from './common/Procurement/nepal-purchase-request-negotiate-price/nepal-purchase-request-negotiate-price.component';
 import { MICLMasterConsumbleComponent } from './common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component';
 import { MICLCostCenterMasterComponent } from './common/MICL/micl-cost-center-master/micl-cost-center-master.component';
+import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh-ear-mold.component";
 
 
 @NgModule({
@@ -653,8 +656,11 @@ import { MICLCostCenterMasterComponent } from './common/MICL/micl-cost-center-ma
     SubContractorAttendanceComponent,
     NonReturnableGatePassComponent,
     MiclRawMaterialComponent,
+    NepalPurchaseRequestVendorSelectionComponent,
+    NepalPurchaseRequestNegotiatePriceComponent,
     MICLMasterConsumbleComponent,
-    MICLCostCenterMasterComponent
+    MICLCostCenterMasterComponent,
+    JOHEarMoldComponent 
   ],
   imports: [
     CommonModule,

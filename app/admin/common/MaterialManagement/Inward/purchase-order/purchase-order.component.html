@@ -125,13 +125,13 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf="col.Approve_Status =='Insert'">
+                                                        <li *ngIf="col.Approve_Status =='Pending' && companyname == 'HARBAUER India [P] Ltd'">
                                                             <a (click)="FinalSave(col)">
                                                             <i class="fa fa-save"></i> Final Save
                                                             </a>
                                                         </li>
                                                         <li>
-                                                        <li *ngIf="col.Approve_Status =='Insert'">
+                                                        <li *ngIf="col.Approve_Status =='Pending'">
                                                                 <a (click)="Edit(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
@@ -141,7 +141,7 @@
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Approve_Status =='Insert'">
+                                                        <li *ngIf="col.Approve_Status =='Pending' && companyname == 'HARBAUER India [P] Ltd'">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>

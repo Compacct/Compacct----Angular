@@ -334,7 +334,8 @@
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.UOM}}</td>
                                             <td>{{col.Batch_No ? col.Batch_No : '-'}}</td>
-                                            <td>{{col.Expiry_Date | date :"dd-MMM-yyyy hh:mm aa"}}</td>
+                                            <!-- <td>{{col.Expiry_Date ? (col.Expiry_Date | date :"dd-MMM-yyyy hh:mm aa") : '-'}}</td> -->
+                                            <td>{{col.Expiry_Date}}</td>
                                             <td>{{col.batch_Qty}}</td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Closing_Qty' (ngModelChange)='VarianceqtyChq(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
                                                 /></td>

@@ -160,6 +160,7 @@ export class PurchaseOrderComponent implements OnInit {
   DocNoFinal = undefined
   ObjCol:any = {}
   @ViewChild('vender',{static:false}) vender:ElementRef;
+  companyname="";
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -207,6 +208,8 @@ ngOnInit() {
       this.getCostcenter();
       this.GettermAmt()
      this.userType = this.$CompacctAPI.CompacctCookies.User_Type
+     this.companyname = this.$CompacctAPI.CompacctCookies.Company_Name
+    //  console.log("companyname ===",this.companyname)
      // console.log("proj",this.openProject);
      if(this.openProject !== "Y"){
        this.getProductType()

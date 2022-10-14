@@ -51,6 +51,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
   frozenCols:any = [];
   ProductSpinner:Boolean = false
   editDisdate:boolean = false
+  ProductCategoryList:any = []
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -69,7 +70,8 @@ export class NepalPurchaseRequestComponent implements OnInit {
      Link: "Material Management -> Outward -> Purchase Request"
    });
    
-   this.getBrand()
+   //this.getBrand()
+   this.getProductCategory()
    this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
@@ -130,12 +132,12 @@ export class NepalPurchaseRequestComponent implements OnInit {
   }
   GetproductList(){
     this.purchaseRequestFormSubmit = true
-    if(this.BrandId){
+    if(this.objpurchaseRequest.Cat_ID){
       this.ProductSpinner = true
       const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Request",
         "Report_Name_String": "Get_Requistion_Product_List",
-        "Json_Param_String": JSON.stringify([{Product_Mfg_Comp_ID : Number(this.BrandId)}])
+        "Json_Param_String": JSON.stringify([{Cat_ID : Number(this.objpurchaseRequest.Cat_ID)}])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log("productList",data)
@@ -150,6 +152,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
   
   }
   setProductListTable(data:any){
+    this.scrollableCols = []
     if(data.length){
       this.frozenCols = [
         { field: 'Product_Description', header: 'Product Description' },
@@ -220,6 +223,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
         Purchase_Request_No: this.PurchaseRequestNo ? this.PurchaseRequestNo : "A",
         Purchase_Request_Date :  this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+        Cat_ID : Number(this.objpurchaseRequest.Cat_ID)
       }
       xz.Purchase_Request_Qty = Number(xz.Purchase_Request_Qty)
         this.addpurchaList.push({...xz,...saveTemp})
@@ -327,7 +331,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
      if(data.length){
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Purchase_Request_Date)
       this.setProductListTable(data)
-     
+      this.objpurchaseRequest.Cat_ID = data[0].Cat_ID
      }
      this.ngxService.stop();
     })
@@ -371,7 +375,29 @@ export class NepalPurchaseRequestComponent implements OnInit {
     })
    }
   }
-
+  getProductCategory(){
+    this.ProductCategoryList =[]
+    const obj = {
+         "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+         "Report_Name_String": "Get_Product_Category",
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       // this.BrandList = data;
+       console.log("ProductCategoryList==",data)
+       if(data.length){
+         data.forEach((xy:any) => {
+          xy['label'] = xy.Cat_Name
+          xy['value'] = xy.Cat_ID
+         });
+         this.ProductCategoryList = data
+         // console.log("BrandList==",this.BrandList)
+       }
+       else{
+        this.ProductCategoryList = []
+       }
+    
+      });
+  }
   Deletepur(col:any){
     if(col.Purchase_Request_No){
       this.PurchaseRequestNo = undefined
@@ -417,4 +443,5 @@ class purchaseRequest{
   Requisition_Qty:any
   UOM :any
   Purchase_Request_Qty:any
+  Cat_ID:any
 }

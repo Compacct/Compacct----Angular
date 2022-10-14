@@ -269,11 +269,7 @@ export class MICLJournalVoucherComponent implements OnInit {
       this.objJournal.Fin_Year_ID = this.commonApi.CompacctCookies.Fin_Year_ID;
       this.objJournal.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
       this.objJournal.User_ID = this.commonApi.CompacctCookies.User_ID;
-      
-      
-      console.log(this.DRSum);
-      
-      this.JournalListAdd.push({
+       this.JournalListAdd.push({
         SL_NO : this.JournalListAdd.length + 1,
         Voucher_No : this.VoucherNo? this.VoucherNo : 'A',
         Company_ID : this.objJournal.Company_ID,
@@ -292,7 +288,6 @@ export class MICLJournalVoucherComponent implements OnInit {
         User_ID : this.objJournal.User_ID,
         Adjustment_Doc_No : this.objJournal.Adjustment_Doc_No,
         Prev_doc_no : this.objJournal.Adjustment_Doc_No,
-
         Ref_Doc_No : this.objJournal.Ref_Doc_No,
         Voucher_Date : this.DateService.dateConvert(this.objJournal.Voucher_Date),
         Reconsil_Date : this.DateService.dateConvert(this.objJournal.Voucher_Date),
@@ -302,43 +297,17 @@ export class MICLJournalVoucherComponent implements OnInit {
         GST_Per : this.objJournal.GST_Per,
         JV_Type : this.objJournal.JV_Type,
         Adj_Doc_Type : this.objJournal.Adj_Doc_Type,
-         
-
-
-      });
+  }); 
+  this.JournalListAdd.forEach(el=>{
+    el.Company_ID  = Number(this.objJournal.Company_ID),
+    el.Cost_Cen_ID_Trn = Number(this.objJournal.Cost_Cen_ID_Trn),
+    el.Naration = this.objJournal.Naration,
+    el.JV_Type = this.objJournal.JV_Type,
+    el.Voucher_Date = this.DateService.dateConvert(this.Voucher_Date),
+    el.Reconsil_Date = this.DateService.dateConvert(this.Voucher_Date),
+    el.Adj_Doc_Type = this.objJournal.Adj_Doc_Type
+});
       console.log("JournalListAdd",this.JournalListAdd);
-      
-      
-      
-      // this.SaveData.push({
-      //   Voucher_No : this.VoucherNo? this.objJournal.Voucher_No : 'A',
-      //   Company_ID : this.objJournal.Company_ID,
-      //   Ledger_ID : this.objJournal.Ledger_ID,
-      //   Sub_Ledger_ID : this.objJournal.Sub_Ledger_ID,
-      //   Cost_Head_ID : this.objJournal.Cost_Head_ID,
-      //   Fin_Year_ID :  this.objJournal.Fin_Year_ID,
-      //   Naration : this.objJournal.Naration,
-      //   DR_Amt : this.objJournal.DR == 'DR'? Number(Number(this.objJournal.Amount).toFixed(2)) : 0,
-      //   CR_Amt : this.objJournal.DR == 'CR'? Number(Number(this.objJournal.Amount).toFixed(2)) : 0,
-      //   Cost_Cen_ID : this.objJournal.Cost_Cen_ID,
-      //   Cost_Cen_ID_Trn : this.objJournal.Cost_Cen_ID_Trn,
-      //   User_ID : this.objJournal.User_ID,
-      //   Adjustment_Doc_No : this.objJournal.Ref_Doc_No,
-      //   Prev_doc_no : this.objJournal.Ref_Doc_No,
-
-      //   Ref_Doc_No : this.objJournal.Ref_Doc_No,
-      //   Voucher_Date : this.objJournal.Voucher_Date,
-      //   Reconsil_Date : this.objJournal.Voucher_Date,
-      //   Ref_Doc_Date : this.objJournal.Ref_Doc_Date,
-      //   HSN_NO : this.objJournal.HSN_NO,
-      //   ITC_Eligibility : this.objJournal.ITC_Eligibility,
-      //   GST_Per : this.objJournal.GST_Per,
-      //   JV_Type : this.objJournal.JV_Type
-
-
-      // });
-     
-      this.objJournal = new Journal();
       this.JournalFormSubmitted = false;
       this.Retrivedata();
       this.IsEnabled = false;
@@ -358,25 +327,16 @@ export class MICLJournalVoucherComponent implements OnInit {
    }
 
    Retrivedata(){
-    if(this.JournalListAdd.length){
-      this.objJournal.Company_ID = this.JournalListAdd.length?this.JournalListAdd[0].Company_ID :0;
-      this.objJournal.Cost_Cen_ID_Trn = this.JournalListAdd.length?Number(this.JournalListAdd[0].Cost_Cen_ID_Trn) : 0;
-      this.objJournal.Naration = this.JournalListAdd.length?this.JournalListAdd[0].Naration : "";
-      this.objJournal.JV_Type = this.JournalListAdd.length? this.JournalListAdd[0].JV_Type : undefined;
-      this.Voucher_Date =new Date(this.JournalListAdd[0].Voucher_Date); 
-       this.objJournal.Adj_Doc_Type =this.JournalListAdd.length? this.JournalListAdd[0].Adj_Doc_Type : undefined
-      }
-      else{
-        this.objJournal.Company_ID = undefined
-        this.objJournal.Cost_Cen_ID_Trn = undefined
-        this.objJournal.Naration = undefined;
-        this.objJournal.JV_Type = undefined;
-        this.objJournal.Adj_Doc_Type = undefined;
-        this.Voucher_Date =new Date();
-
-      }
-
-   }
+      const bckUPObj = {...this.objJournal}
+      this.objJournal = new Journal()
+      this.objJournal.Company_ID = bckUPObj.Company_ID;
+      this.objJournal.Cost_Cen_ID_Trn =  bckUPObj.Cost_Cen_ID_Trn;
+      this.objJournal.Naration =  bckUPObj.Naration;
+      this.objJournal.JV_Type =  bckUPObj.JV_Type;
+      this.objJournal.Voucher_No = bckUPObj.Voucher_No;
+      this.objJournal.Adj_Doc_Type = bckUPObj.Adj_Doc_Type
+      
+    }
 
    getTotalDRCR(){
     this.DRSum = 0;
@@ -424,8 +384,10 @@ export class MICLJournalVoucherComponent implements OnInit {
     DeleteProduct(index) {
       this.JournalListAdd.splice(index,1);
       this.getTotalDRCR();
-      this.getBalance();
+      // this.getBalance();
+      // this.Retrivedata();
       this.Retrivedata();
+      this.getBalance();
       this.JournalListAdd.forEach((el:any, ind) => {
         el.SL_NO = ind + 1
       });
@@ -463,81 +425,6 @@ export class MICLJournalVoucherComponent implements OnInit {
      detail: "Confirm to proceed"
    });
  
-
-    // this.JournalListAdd.forEach(el=>{
-    //   this.SaveData.push({
-    //     Company_ID : el.Company_ID, 
-    //     Voucher_No : el.Voucher_No,
-    //     Ledger_ID : el.Ledger_ID,
-    //     Sub_Ledger_ID : el.Sub_Ledger_ID,
-    //     Cost_Head_ID : el.Cost_Head_ID,
-    //     Fin_Year_ID :  el.Fin_Year_ID,
-    //     Naration : el.Naration,
-    //     DR_Amt : el.DR_Amt,
-    //     CR_Amt : el.CR_Amt,
-    //     Cost_Cen_ID : el.Cost_Cen_ID,
-    //     Cost_Cen_ID_Trn : el.Cost_Cen_ID_Trn,
-    //     User_ID : el.User_ID,
-    //     Adjustment_Doc_No : el.Adjustment_Doc_No,
-    //     Prev_doc_no : el.Prev_doc_no,
-
-    //     Ref_Doc_No : el.Ref_Doc_No,
-    //     Voucher_Date : el.Voucher_Date,
-    //     Reconsil_Date : el.Reconsil_Date,
-    //     Ref_Doc_Date : el.Ref_Doc_Date,
-    //     HSN_NO : el.HSN_NO,
-    //     ITC_Eligibility : el.ITC_Eligibility,
-    //     GST_Per : el.GST_Per,
-    //     JV_Type : el.JV_Type
-
-        
-    //   })
-    // });
-    
-    // const obj = {
-    //   "SP_String": "Sp_MICL_Journal_Voucher",
-    //   "Report_Name_String":"BL_Txn_Acc_Journal_Insert",
-    //   "Json_Param_String": JSON.stringify(this.SaveData) 
-    //  }
-    //  this.GlobalAPI.getData(obj).subscribe((data : any)=>
-    //  {
-    //    console.log('data=',data);
-       
-    //    if(data[0].Column1)
-    //    {
-         
-    //     this.compacctToast.clear();
-    //     this.compacctToast.add({
-    //     key: "compacct-toast",
-    //     severity: "success",
-    //     summary: "Journal Voucher Create Succesfully ",
-    //     detail: "Succesfully Created"
-    //   });
-    //   //this.getList();
-    //  // this.PaymentRequisitionActionPOPUP = false;
-    //   this.clearData();
-    //   this.JournalListAdd = [];
-    //   this.SaveData = [];
-    //   this.DRSum = undefined;
-    //   this.CRSum = undefined;
-    //   this.balance = undefined;
-    //   //this.HolidayListAdd = [];
-    //   this.Spinner = false;
-    //   this.tabIndexToView = 0;
-    //    this.items = ["BROWSE", "CREATE"];
-    //   }
-    //   else{
-    //     this.compacctToast.clear();
-    //     this.compacctToast.add({
-    //     key: "compacct-toast",
-    //     severity: "error",
-    //     summary: "Error",
-    //     detail: "Something Wrong"
-    //   });
-    //   this.clearData();
-    //   this.Spinner = false;
-    //   }
-    //  });
 
   }
   Finyear(){
@@ -618,7 +505,7 @@ export class MICLJournalVoucherComponent implements OnInit {
         this.Voucher_Date = new Date(data[0].Voucher_Date);
         this.objJournal.JV_Type = data[0].JV_Type;
         this.objJournal.Adj_Doc_Type = data[0].Adj_Doc_Type;
-        
+        this.getDocType(data[0].JV_Type)
         this.getTotalDRCR();
         
 
@@ -682,43 +569,20 @@ export class MICLJournalVoucherComponent implements OnInit {
 
   onConfirm2(){
     this.JournalListAdd.forEach(el=>{
-      this.SaveData.push({
-        Company_ID : el.Company_ID, 
-        Voucher_No : el.Voucher_No,
-        Ledger_ID : el.Ledger_ID,
-        Sub_Ledger_ID : el.Sub_Ledger_ID,
-        Cost_Head_ID : el.Cost_Head_ID,
-        Fin_Year_ID :  el.Fin_Year_ID,
-        Naration : el.Naration,
-        DR_Amt : el.DR_Amt,
-        CR_Amt : el.CR_Amt,
-        Cost_Cen_ID : el.Cost_Cen_ID,
-        Cost_Cen_ID_Trn : el.Cost_Cen_ID_Trn,
-        User_ID : el.User_ID,
-        Adjustment_Doc_No : el.Adjustment_Doc_No,
-        Prev_doc_no : el.Prev_doc_no,
-
-        Ref_Doc_No : el.Ref_Doc_No,
-        Voucher_Date : el.Voucher_Date?this.DateService.dateConvert(el.Voucher_Date) : null,
-        Reconsil_Date : el.Reconsil_Date? this.DateService.dateConvert(el.Reconsil_Date) : null,
-        Ref_Doc_Date : el.Ref_Doc_Date? this.DateService.dateConvert(el.Ref_Doc_Date) : null,
-        HSN_NO : el.HSN_NO,
-        ITC_Eligibility : el.ITC_Eligibility,
-        GST_Per : el.GST_Per,
-        JV_Type : el.JV_Type,
-        Adj_Doc_Type : el.Adj_Doc_Type,
-        Doc_No : el.Doc_No,
-        SL_NO : el.SL_NO
-
-
-        
-      })
-    });
-    
+      el.Company_ID  = Number(this.objJournal.Company_ID),
+      el.Cost_Cen_ID_Trn = Number(this.objJournal.Cost_Cen_ID_Trn),
+      el.Naration = this.objJournal.Naration,
+      el.JV_Type = this.objJournal.JV_Type,
+      el.Voucher_Date = this.DateService.dateConvert(this.Voucher_Date),
+      el.Reconsil_Date = this.DateService.dateConvert(this.Voucher_Date),
+      el.Adj_Doc_Type = this.objJournal.Adj_Doc_Type
+  });
+  
+   console.log("JournalListAdd",this.JournalListAdd)
     const obj = {
       "SP_String": "Sp_MICL_Journal_Voucher",
       "Report_Name_String":"BL_Txn_Acc_Journal_Insert",
-      "Json_Param_String": JSON.stringify(this.SaveData) 
+      "Json_Param_String": JSON.stringify(this.JournalListAdd) 
      }
      this.GlobalAPI.getData(obj).subscribe((data : any)=>
      {
@@ -768,6 +632,7 @@ export class MICLJournalVoucherComponent implements OnInit {
     this.objJournal.Company_ID = this.companyList.length?this.companyList[0].Company_ID: 0;
     this.objJournal.DR = "DR";
     this.JournalFormSubmitted = false;
+    this.Voucher_Date = new Date();
     //this.objsearch = new Search();
     this.JournalSearchFormSubmit = false;
     //this.AlljournalData = [];

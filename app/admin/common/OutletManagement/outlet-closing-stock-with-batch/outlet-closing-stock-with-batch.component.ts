@@ -256,9 +256,10 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
        this.OTclosingstockwithbatchFormSubmitted = false;
        for(let i = 0; i < this.productlist.length ; i++){
         this.productlist[i].Closing_Qty = this.productlist[i].batch_Qty
+        this.productlist[i].Expiry_Date = this.DateService.dateTimeConverterForSearch(new Date(this.productlist[i].Expiry_Date))
        }
+       console.log("Date===",this.productlist)
     })
- // }
   }
   getTotalValue(key){
     let Amtval = 0;

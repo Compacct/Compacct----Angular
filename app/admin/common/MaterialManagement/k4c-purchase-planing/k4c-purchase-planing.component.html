@@ -191,8 +191,8 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Material Type</th>
-                                            <th>Product Type</th>
+                                            <!-- <th>Material Type</th>
+                                            <th>Product Type</th> -->
                                             <th>Product Description</th>
                                             <th>Weekly Avg. Cons</th>
                                             <th>Weekly Cons Value</th>
@@ -201,9 +201,9 @@
                                             <th>Last Purchase Rate</th>
                                             <!-- <th>Last Purchase With Gst</th> -->
                                             <th>Current Stock</th>
-                                            <th>Due Payment</th>
+                                            <!-- <th>Due Payment</th> -->
                                             <!-- <th>Monthly Req Value</th> -->
-                                            <th>Indent Qty</th>
+                                            <!-- <th>Indent Qty</th> -->
                                             <th>Stock Qty</th>
                                             <th>Order Qty</th>
                                             <th>Rate</th>
@@ -222,8 +222,8 @@
                                     <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                         <tr [class]='textcolor(col)'>
 
-                                            <td>{{col.Material_Type}}</td>
-                                            <td>{{col.Product_Type}}</td>
+                                            <!-- <td>{{col.Material_Type}}</td>
+                                            <td>{{col.Product_Type}}</td> -->
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.Weekly_Avg_Cons}}</td>
                                             <td>{{col.Weekly_Cons_Value}}</td>
@@ -232,9 +232,9 @@
                                             <td>{{col.Last_Purchase_Rate}}</td>
                                             <!-- <td>{{col.Last_Purchase_With_GST}}</td> -->
                                             <td>{{col.Current_Stock}}</td>
-                                            <td>{{col.Due_Payment}}</td>
+                                            <!-- <td>{{col.Due_Payment}}</td> -->
                                             <!-- <td>{{col.Weekly_Avg_Cons}}</td> -->
-                                            <td>{{col.Indent_Qty}}</td>
+                                            <!-- <td>{{col.Indent_Qty}}</td> -->
                                             <td>{{col.Order_Stock_Qty}} {{col.Order_Stock_UOM}}</td>
                                             <td>{{col.Order_Qty}} {{col.Order_UOM}}</td>
                                             <td>{{col.Rate}}</td>
