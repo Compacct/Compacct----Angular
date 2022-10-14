@@ -363,6 +363,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.DispatchFormSubmit = true;
      if(valid){
       this.SpinnerShow = true;
+      if(Number(this.Objdispatch.F_Godown_ID) !== Number(this.Objdispatch.To_Godown_ID)){
      const TempObj = {
        Req_Date : this.DateService.dateConvert(new Date(this.ReqDate)),
        Cost_Cen_ID : this.Objdispatch.To_Cost_Cen_ID,
@@ -401,6 +402,17 @@ export class MiclDispatchChallanComponent implements OnInit {
     console.log("this.Indentlist======",this.IndentNoList);
     this.GetIndent();
    })
+  }
+  else{
+    this.SpinnerShow = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "can't use same stock point"
+    });
+  }
   }
    }
    GetIndent(){

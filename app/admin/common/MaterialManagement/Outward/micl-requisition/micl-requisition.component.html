@@ -117,6 +117,11 @@
                                                                 <i class="fa fa-fw fa-power-off"></i> Active
                                                             </a>
                                                         </li> -->
+                                                        <li *ngIf="companyname != 'HARBAUER India [P] Ltd'">
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.Cancel_Requisition == 'N'">
                                                             <a (click)="Active(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete

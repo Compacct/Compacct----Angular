@@ -599,7 +599,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
     // this.ObjSaveForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     if(this.productaddSubmit.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.productaddSubmit.forEach(item => {
         const obj = {
             //Product_Type_ID : item.Product_Type_ID,
@@ -1163,8 +1163,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
   }
   // DISTINCT & FILTER
   GetDistinct() {
-    let DMaterialType = [];
-    let DProductType = [];
+    let DMaterialType:any = [];
+    let DProductType:any = [];
     this.DistMaterialType =[];
     this.SelectedDistMaterialType =[];
     this.DistProductType =[];
@@ -1183,8 +1183,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
      this.BackupStockReportSearchlist = [...this.StockReportSearchlist];
   }
   FilterDist() {
-    let DMaterialType = [];
-    let DProductType = [];
+    let DMaterialType:any = [];
+    let DProductType:any = [];
     this.SearchFields =[];
   if (this.SelectedDistMaterialType.length) {
     this.SearchFields.push('Material_Type');
@@ -1254,7 +1254,10 @@ export class K4cPurchasePlaningComponent implements OnInit {
        this.ObjPurchasePlan.Stock_UOM = data[0].UOM;
        this.ObjPurchasePlan.UOM_Qty = data[0].UOM_Qty;
        this.ObjPurchasePlan.Due_Payment = data[0].Due_Payment;
+       this.ObjPurchasePlan.Order_Qty = data[0].Last_Purchase_Qty;
        this.ObjPurchasePlan.Sale_rate = data[0].Last_Purchase_Rate;
+       this.OrderValueChange();
+       this.Vendor_ID = data[0].Sub_Ledger_ID;
 
      })
   }

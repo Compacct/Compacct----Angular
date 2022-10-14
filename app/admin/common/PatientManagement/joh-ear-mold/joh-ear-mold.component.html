@@ -1,0 +1,507 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Del && !Save">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="costCenterList" name="Cost_Center" #Cost_Center="ngModel" 
+                                        [(ngModel)]="objSearch.Cost_Center_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                        [virtualScroll]="true" itemSize="30" 
+                                        [styleClass]="searchFormsubmit && Cost_Center.errors?.required ? 'clearance': ''" [required]="true" >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAlldata(SearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class=" no-padding">
+                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Mould_Request_ID','Mould_Request_Date','Patient_Name','Mobile','Audologist_Name']"
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap> Mold Request ID</th>
+                                            <th nowrap> Request Date</th>
+                                            <th nowrap>Patient Name</th>
+                                            <th nowrap>Mobile</th>
+                                            <th nowrap>Audologist Name </th>
+                                            
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="EditEarMold(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf = "DelRight == 'Y'">
+                                                            <a (click)="DeleteEarMold(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td style="text-align: center ;" nowrap>{{col.Mould_Request_ID ? col.Mould_Request_ID : '-' }}</td>
+                                            <td nowrap>{{col.Mould_Request_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Patient_Name ? col.Patient_Name : '-'}}</td>
+                                            <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
+                                            <td nowrap>{{col.Audologist_Name ? col.Audologist_Name : '-'}}</td>
+                                           
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="earMoldForm" #earMoldForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Mould_Request_Date' name="Ref_Date" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3" style=" height: 77px;">
+                                        <label class="control-label">Sub Ledger<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="subledgerList" name="Sub_Ledger" #Sub_Ledger="ngModel" 
+                                        [(ngModel)]="objEarMold.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Sub Ledger'"
+                                        [virtualScroll]="true" itemSize="30" 
+                                        [styleClass]="earMoldFormSubmit && Sub_Ledger.errors?.required ? 'clearance': ''" [required]="true" >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3" style=" height: 77px;">
+                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="costCenterList" name="Cost_Center" #Cost_Center="ngModel" 
+                                        [(ngModel)]="objEarMold.Cost_Center_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                        [virtualScroll]="true" itemSize="30" 
+                                        [styleClass]="earMoldFormSubmit && Cost_Center.errors?.required ? 'clearance': ''" [required]="true" >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3" style=" height: 77px;">
+                                        <label class="control-label">Patient<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="patientList" name="Patient" #Patient="ngModel" 
+                                        [(ngModel)]="objEarMold.Foot_Fall_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Patient '"
+                                        [virtualScroll]="true" itemSize="30" 
+                                        [styleClass]="earMoldFormSubmit && Patient.errors?.required ? 'clearance': ''" [required]="true" >
+                                        </p-dropdown>
+                                    </div>
+
+                                </div>
+                                <br>
+                            <div class="clearfix"></div>
+                   <div class="form-group">
+                    <div class="col-sm-4">
+      
+                        <div class="form-group" style="padding: 1em;">
+                            <h5 style="
+                            padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: -4px;
+                            "><strong>Preference:</strong></h5>
+                                    <div class="col-sm-12">
+                                        <p-radioButton name="Preference" value="Comfort" label="Comfort" [(ngModel)]="Preference" inputId="preopt1" ></p-radioButton>&nbsp;&nbsp;
+                                        <p-radioButton name="Preference" value="Compact" label="Compact" [(ngModel)]="Preference" inputId="preopt2"></p-radioButton>
+                                       
+                                    </div>
+                                </div>
+                                  
+                                
+                    </div>
+                        <div class="col-sm-4">
+
+                                <div class="form-group" style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: -4px;
+                                    "><strong>User type:</strong></h5>
+                                    <div class="col-sm-12">
+
+                                        <p-radioButton name="User_type" value="Naive" label="Naive" [(ngModel)]="User_type"  ></p-radioButton>&nbsp;&nbsp;
+                                        <p-radioButton name="User_type" value="Experienced" label="Experienced" [(ngModel)]="User_type" ></p-radioButton>
+                                       
+                                        
+                                    </div>
+                                 
+                            </div>
+                         
+                        </div>
+                        <div class="col-sm-4">
+
+                            <div class="form-group" style="padding: 1em;">
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: -4px;
+                                "><strong>Priority:</strong></h5>
+                                <div class="col-sm-12">
+
+                                <p-radioButton name="Priority" value="Normal" label="Normal" [(ngModel)]="Priority"  ></p-radioButton>&nbsp;&nbsp;
+                                <p-radioButton name="Priority" value="Urgent" label="Urgent" [(ngModel)]="Priority" ></p-radioButton>
+                                   
+                                    
+                                </div>
+                             
+                        </div>
+                     
+                    </div>
+                   </div>
+            <div class="clearfix"></div>
+
+            <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: -4px;
+                "><strong>PRODUCT SELECTION</strong></h5>
+                    <div class="col-sm-3">     
+                        <div class="form-group" style="padding: 1em;">                         
+                            <h5 style="
+                            padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: -4px;
+                            "><strong>Device/ Mold type(EAR)</strong></h5>
+                                    <div class="col-sm-12">
+                                        <label class="control-label">RIGHT</label>
+                                        <select class="form-control" name="RIGHT" #RIGHT="ngModel" [(ngModel)]="objEarMold.Right_Product_ID">
+                                        <option  [ngValue]="undefined">Select</option>
+                                          <option>YES</option>
+                                       </select>
+                                    </div> 
+                                    <div class="col-sm-12">
+                                        <label class="control-label">LEFT</label>
+                                        <select class="form-control" name="LEFT" #LEFT="ngModel" [(ngModel)]="objEarMold.Left_Product_ID">
+                                        <option  [ngValue]="undefined">Select</option>
+                                          <option>YES</option>
+                                       </select>
+                                    </div>             
+                        </div>
+
+                                  
+                                
+                    </div>
+                        <div class="col-sm-3">
+
+                                <div class="form-group" style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: -4px;
+                                    "><strong>Type/ Style</strong></h5>
+                                    <div class="col-sm-12">
+                                        <p-radioButton name="Type" value="ITE" label="ITE" [(ngModel)]="Type" ></p-radioButton><br>
+                                        <p-radioButton name="Type" value="ITC" label="ITC" [(ngModel)]="Type" ></p-radioButton><br>
+                                        <p-radioButton name="Type" value="CIC" label="CIC" [(ngModel)]="Type" ></p-radioButton><br>
+                                        <p-radioButton name="Type" value="IIC" label="IIC" [(ngModel)]="Type" ></p-radioButton><br>
+                                        <p-radioButton name="Type" value="mCIC" label="mCIC" [(ngModel)]="Type" ></p-radioButton><br>
+                                        <p-radioButton name="Type" value="Hollow Shell" label="Hollow Shell" [(ngModel)]="Type" ></p-radioButton><br>
+                                        <p-radioButton name="Type" value="Full Shell" label="Full Shell" [(ngModel)]="Type" ></p-radioButton>
+                                       
+                                        
+                                    </div>
+                                 
+                            </div>
+                         
+                        </div>
+                        <div class="col-sm-3">
+
+                            <div class="form-group" style="padding: 1em;">
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: -4px;
+                                "><strong>User Preferences / 
+                                            Receiver Preference</strong></h5>
+                                <div class="col-sm-12">
+                                    <p-radioButton name="user_preference" value="Volume Control" label="Volume Control" [(ngModel)]="user_preference" ></p-radioButton><br>
+                                    <p-radioButton name="user_preference" value="Program Switch" label="Program Switch" [(ngModel)]="user_preference" ></p-radioButton><br>
+                                   
+                                    
+
+                                      <hr class="box boxboxDivide-primary">
+                                      <h5><strong>Right</strong></h5>
+                                    
+                                    <p-radioButton name="receiver_right" value="Receiver Length" label="Receiver Length" [(ngModel)]="receiver_right"></p-radioButton><br>
+                                    <p-radioButton name="receiver_right" value="Receiver Type" label="Receiver Type" [(ngModel)]="receiver_right"></p-radioButton><br>
+
+                                     
+                                      <h5><strong>Left</strong></h5>
+                                    <p-radioButton name="receiver_left" value="Receiver Length" label="Receiver Length" [(ngModel)]="receiver_left"></p-radioButton><br>
+                                    <p-radioButton name="receiver_left" value="Receiver Type" label="Receiver Type" [(ngModel)]="receiver_left"></p-radioButton><br>
+
+                                      
+
+                                </div>
+                             
+                        </div>
+                     
+                    </div>
+                    <div class="col-sm-3">
+
+                        <div class="form-group" style="padding: 1em;">
+                            <h5 style="
+                            padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: -4px;
+                            "><strong>Venting and Mold Material</strong></h5>
+                            <div class="col-sm-12">
+                                <p-radioButton name="venting" value="Open" label="Open" [(ngModel)]="venting" ></p-radioButton><br>
+                                <p-radioButton name="venting" value="Large" label="Large" [(ngModel)]="venting" ></p-radioButton><br>
+                                <p-radioButton name="venting" value="Medium" label="Medium" [(ngModel)]="venting" ></p-radioButton><br>
+                                <p-radioButton name="venting" value="Small" label="Small" [(ngModel)]="venting" ></p-radioButton><br>
+                                <p-radioButton name="venting" value="Relief" label="Relief" [(ngModel)]="venting" ></p-radioButton><br>
+                                <hr class="box boxboxDivide-primary">
+                                <p-radioButton name="Mold_Material" value="Soft" label="Soft" [(ngModel)]="Mold_Material" ></p-radioButton><br>
+                                <p-radioButton name="Mold_Material" value="Hard" label="Hard" [(ngModel)]="Mold_Material" ></p-radioButton><br>
+                                
+                                
+                            </div>
+                         
+                    </div>
+                 
+                </div>
+            </div>
+                <div class="col-sm-3">
+                    <div class="form-group">                                        
+                    <table>                      
+                        <tr style="padding: 0.5em;" >
+                            <th class="TableRow">Right</th>
+                            <th class="TableRow">Style</th>
+                            <th class="TableRow">Left</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="Full Concha" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Full Concha</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="Full Concha" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="Half Concha" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Half Concha</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="Half Concha" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="TIP Mold" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> TIP Mold</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="TIP Mold" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="RIE Micro Mold" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> RIE Micro Mold</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="RIE Micro Mold" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="HP Micro Mold" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> HP Micro Mold</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="HP Micro Mold" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="Musicians Plug" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Musicians Plug</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="Musicians Plug" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="Swimmers Plug" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Swimmers Plug</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="Swimmers Plug" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
+                        
+                    </table>
+                    </div>
+               </div>
+               <div class="clearfix"></div>
+               <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: -4px;
+                "><strong>HEARING THRESHOLDS</strong> </h5>
+                        
+                            <div class="table-responsive no-padding">
+                                <table class="table table-bordered">
+                                    <thead style="background-color:#4fa1d1;color:white;">
+                                        <tr>
+                                            <th></th>
+                                            <th>250Hz</th>
+                                            <th>500Hz</th>
+                                            <th>1000Hz</th>
+                                            <th>2000Hz</th>
+                                            <th>4000Hz</th>
+                                            <th >8000Hz</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td >RIGHT</td>
+                                            <td ><input class="form-control" name="Right_250" #Right_250="ngModel" [(ngModel)]="objEarMold.Right_250" CompacctDigitonly="true" placeholder="250Hz"></td>
+                                            <td ><input class="form-control" name="Right_500" #Right_500="ngModel" [(ngModel)]="objEarMold.Right_500" CompacctDigitonly="true" placeholder="500Hz"></td>
+                                            <td ><input class="form-control" name="Right_1000" #Right_1000="ngModel" [(ngModel)]="objEarMold.Right_1000" CompacctDigitonly="true" placeholder="1000Hz"></td>
+                                            <td ><input class="form-control" name="Right_2000" #Right_2000="ngModel" [(ngModel)]="objEarMold.Right_2000" CompacctDigitonly="true"  placeholder="2000Hz"></td>
+                                            <td ><input class="form-control" name="Right_4000" #Right_4000="ngModel" [(ngModel)]="objEarMold.Right_4000" CompacctDigitonly="true" placeholder="4000Hz"></td>
+                                            <td ><input class="form-control" name="Right_8000" #Right_8000="ngModel" [(ngModel)]="objEarMold.Right_8000" CompacctDigitonly="true" placeholder="8000Hz"></td>
+                                        </tr>
+                                        <tr>
+                                            <td >LEFT</td>
+                                             <td ><input class="form-control" name="Left_250" #Left_250="ngModel" [(ngModel)]="objEarMold.Left_250" CompacctDigitonly="true" placeholder="250Hz"></td>
+                                             <td ><input class="form-control" name="Left_500" #Left_500="ngModel" [(ngModel)]="objEarMold.Left_500" CompacctDigitonly="true" placeholder="500Hz"></td>
+                                             <td ><input class="form-control" name="Left_1000" #Left_1000="ngModel" [(ngModel)]="objEarMold.Left_1000" CompacctDigitonly="true" placeholder="1000Hz"></td>
+                                             <td ><input class="form-control" name="Left_2000" #Left_2000="ngModel" [(ngModel)]="objEarMold.Left_2000" CompacctDigitonly="true" placeholder="2000Hz"></td>
+                                             <td ><input class="form-control" name="Left_4000" #Left_4000="ngModel" [(ngModel)]="objEarMold.Left_4000" CompacctDigitonly="true" placeholder="4000Hz"></td>
+                                             <td ><input class="form-control" name="Left_8000" #Left_8000="ngModel" [(ngModel)]="objEarMold.Left_8000" CompacctDigitonly="true" placeholder="8000Hz"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                      </div>
+                      <div class="clearfix"></div>
+                      <div class="form-group">
+                        <div class="col-sm-6">
+          
+                            <div class="form-group" style="padding: 1em;">
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: -4px;
+                                "><strong>NOTES & REMARKS</strong></h5>
+                                        <div class="col-sm-12">
+                                       
+                                            <textarea class="form-control" name="Remarks" [(ngModel)]="objEarMold.Remarks" rows="2" placeholder="Remarks"></textarea>
+                                        </div>
+                                        <div class="col-sm-5 pull-right">
+                                            <label class="control-label">Audiologist<sup class="text-danger">*</sup></label>
+                                            <select class="form-control" name="Audiologist_User_ID" #Audiologist_User_ID="ngModel" [(ngModel)]="objEarMold.Audiologist_User_ID"
+                                            [ngClass]="{'clearance ': earMoldFormSubmit && Audiologist_User_ID.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                        <option  *ngFor="let option of doctorList" value="{{option.Doctor_ID}}">
+                                          {{option.Audologist_Name}}
+                                        </option>
+                                       </select>
+                                        </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+          
+                            <div class="form-group" style="padding: 1em;">
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: -4px;
+                                "><strong>MODIFICATION</strong></h5>
+                                        <div class="col-sm-12">
+                                            <p-radioButton name="modifiction" value="Remake Shell" label="Remake Shell" [(ngModel)]="modifiction" ></p-radioButton>&nbsp;&nbsp;
+                                            <p-radioButton name="modifiction" value="Tight" label="Tight" [(ngModel)]="modifiction" ></p-radioButton>&nbsp;&nbsp;
+                                            <p-radioButton name="modifiction" value="Loose" label="Loose" [(ngModel)]="modifiction" ></p-radioButton><br>
+                                       
+                                            
+                                              <div class="col-sm-6">
+                                                <label class="control-label">Add Vent (mention Size)</label>
+                                                <input class="form-control"  name="Add_Vent" #Add_Vent="ngModel"  [(ngModel)]="objEarMold.Add_Vent">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="control-label">Reduce Vent </label>
+                                                <input class="form-control"  name="Reduce_Vent" #Reduce_Vent="ngModel"  [(ngModel)]="objEarMold.Reduce_Vent">
+                                            </div>
+
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-footer">
+                        <button class="btn btn-primary pull-right" (click)="SaveEarMold(earMoldForm.form.valid)" id="load" [disabled]="Spinner">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                           <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                         </button>
+                    </div> 
+                    
+                     </form>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
