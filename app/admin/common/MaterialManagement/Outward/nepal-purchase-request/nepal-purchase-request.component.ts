@@ -106,6 +106,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.ProductSpinner = false
     this.frozenCols = []
     this.editDisdate = false
+    this.productList =[]
   }
  
   onReject(){
