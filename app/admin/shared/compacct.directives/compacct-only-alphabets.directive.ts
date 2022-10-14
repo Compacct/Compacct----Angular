@@ -18,7 +18,6 @@ export class CompacctOnlyAlphabetsDirective {
     this.autocomplete = 'off';
   }
   @HostListener('keypress', ['$event']) public disableKeys(e: any) {
-    console.log('appOnlyAlphabets', typeof(this.CompacctOnlyAlphabets));
     if (this.CompacctOnlyAlphabets) {
       this.document.all ? e.keyCode : e.keyCode;
       return (
