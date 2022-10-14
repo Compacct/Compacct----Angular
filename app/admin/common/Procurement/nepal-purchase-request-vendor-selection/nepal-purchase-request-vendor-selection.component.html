@@ -1,0 +1,245 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal" style="margin-top: 8px">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"
+                            leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">From Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="BSdate" name="BSdate" #BSdate="ngModel"
+                                            Class="form-control" (ngModelChange)="BrowseStartDate= $event"
+                                            [(ngModel)]="BrowseStartDate" 
+                                            [ngClass]="{'clearance': SearchFormSubmit && BSdate?.errors?.required}" 
+                                            required
+                                            />
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">To Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="BEdate" name="BEdate" #BEdate="ngModel"
+                                             Class="form-control" (ngModelChange)="BrowseEndDate= $event"
+                                             [(ngModel)]="BrowseEndDate"
+                                             [ngClass]="{'clearance': SearchFormSubmit && BEdate?.errors?.required}" 
+                                            required/>
+                                           
+                                        </div>
+                                    </div>
+                                  <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" 
+                                        data-toggle="modal" 
+                                        (click)="GetSearchedList(SearchForm.form.valid)" 
+                                        id="search" [disabled]="seachSpinner">
+                                        <p-progressSpinner
+                                        *ngIf="seachSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                        ></p-progressSpinner>
+                                        <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                        ></span
+                                        >&nbsp;Search
+                                    </button>
+                                    </div>
+                                    <div class="col-sm-3" ></div>
+                                </div>
+
+                            </form>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="Searchedlist" 
+                                #dt [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[10,25,50,100]" 
+                                [rowHover]="true" 
+                                [globalFilterFields]='["Doc_No","Doc_Date","Sub_Ledger_Name"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Purchase Request No</th>
+                                            <th>Date</th>
+                                            <th>Vender</th>
+                                           
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr >
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                      <i class="fa fa-fw fa-bars"></i>
+                                                      <span class="caret"></span>
+                                                  </button>
+                                                    <ul class="dropdown-menu">
+                                                      <li>
+                                                            <a (click)="EditVender(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Purchase_Request_No}}</td>
+                                            <td>{{col.Date }}</td>
+                                            <td>{{col.Sub_Ledger_Name}}</td>
+                                          </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                             </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"
+                            leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="vendorSelectionForm" #vendorSelectionForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-md-6">
+                                        <label class="control-label">Purchase Request No<sup class="text-danger"></sup></label>
+                                        <p-dropdown [options]="poRequestList" 
+                                        name="Purchase_Request_No" 
+                                        [(ngModel)]="objvendorSelection.Purchase_Request_No" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Purchase Request No Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Purchase Request No'" 
+                                        [virtualScroll]="true"
+                                        itemSize="30" #Purchase_Request_No="ngModel" 
+                                        (ngModelChange)="purchaseRequestChange()"
+                                        >
+                                    </p-dropdown>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="control-label">Purchase Request Date</label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="DPo" name="DPo" #PDate="ngModel"
+                                             Class="form-control" (ngModelChange)="PoDate= $event"
+                                             [(ngModel)]="PoDate"
+                                             disabled />
+                                          </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="prList" 
+                                #dt1 [paginator]="true"
+                                *ngIf="prList.length"
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[10,25,50,100]" 
+                                [rowHover]="true" 
+                                [globalFilterFields]='["Product_Description","UOM","Purchase_Request_Qty"]' >
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                        <div class="col-sm-3 pull-right" style="text-align: right" >
+                                        <p-dropdown [options]="Venderlist" 
+                                        name="Vender" 
+                                        [(ngModel)]="VenderSelect" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Vender Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Vender'" 
+                                        [virtualScroll]="true"
+                                        itemSize="30" #Vender="ngModel" 
+                                        [styleClass]="'textAlign'"
+                                        >
+                                    </p-dropdown>
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Product Description</th>
+                                                <th>UOM</th>
+                                                <th>Purchase Request Qty</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                            <tr >
+                                                <td>{{col.Product_Description}}</td>
+                                                <td>{{col.UOM}}</td>
+                                                <td>{{col.Purchase_Request_Qty}}</td>
+                                                </tr>
+                                        </ng-template>
+                                                        
+                                </p-table>
+                      
+                            </div>
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" 
+                                                (click)="SavevendorSeletction()" 
+                                                id="Saveload"
+                                                *ngIf="VenderSelect && objvendorSelection.Purchase_Request_No"
+                                                [disabled]="SaveSpinner">
+                                            <p-progressSpinner 
+                                            *ngIf="SaveSpinner" 
+                                            [style]="{width: '15px', height: '15px'}" 
+                                            strokeWidth="8"  
+                                            animationDuration=".5s">
+                                        </p-progressSpinner>
+                                        <span *ngIf="!SaveSpinner" 
+                                        class="glyphicon glyphicon-save">
+                                        </span>{{buttonname}}
+                                </button>
+                        </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

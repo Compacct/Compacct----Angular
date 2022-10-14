@@ -271,6 +271,8 @@ import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContracto
 import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
 import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
 import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
+import { NepalPurchaseRequestVendorSelectionComponent } from "./common/Procurement/nepal-purchase-request-vendor-selection/nepal-purchase-request-vendor-selection.component";
+import { NepalPurchaseRequestNegotiatePriceComponent } from "./common/Procurement/nepal-purchase-request-negotiate-price/nepal-purchase-request-negotiate-price.component";
 import { MICLMasterConsumbleComponent } from "./common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component";
 import { MICLCostCenterMasterComponent } from "./common/MICL/micl-cost-center-master/micl-cost-center-master.component";
 
@@ -1937,11 +1939,11 @@ path: 'Employee_Salary_Master_Harbauer',
     title: 'PO Authorization Harbauer'
 }
 },
-  {
+{
   path: 'Harbauer_Project_Design_Approval',
-    component: HarbProjectDesignApprovalComponent,
-    data: {
-      title: 'Project Design Approval'
+  component: HarbProjectDesignApprovalComponent,
+  data: {
+    title: 'Project Design Approval'
 }
 },
 {
@@ -2024,6 +2026,20 @@ path: 'Employee_Salary_Master_Harbauer',
     title: 'Master Raw Material'
 }
 },
+{
+   path: 'Nepal_BL_Txn_Purchase_Request_Vendor_Selection',
+   component: NepalPurchaseRequestVendorSelectionComponent,
+   data: {
+     title: 'Purchase Request Vendor Selection'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Purchase_Request_Negotiate_Price',
+  component: NepalPurchaseRequestNegotiatePriceComponent,
+  data: {
+    title: 'Purchase Request Negotiate Price'
+}
+},
 {        
 path: 'Master_Consumable',
   component: MICLMasterConsumbleComponent,
@@ -2038,7 +2054,6 @@ path: 'MICL_Cost_Center_Master',
     title: 'MICL Cost Center Master'
 }
 },
-    
     
 
     /*{
