@@ -62,6 +62,7 @@ TabClick(e) {
     this.clearData();
     this.productid = undefined;
 }
+onReject(){}
 clearData() {
     this.Spinner = false;
     this.ObjMaster = new Master();
