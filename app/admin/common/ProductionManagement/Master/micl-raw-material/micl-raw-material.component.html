@@ -44,31 +44,34 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <!-- <th style="width:5em">Action</th> -->
+                                             <th style="width:5em">Action</th>
+                                            <th>S/L No</th> 
                                             <th>Material Type</th>
                                             <th>Grade</th>
                                             <th>PLC Code</th>
                                             <th>Remarks</th>
                                             <th>UOM</th>
+                                            <th>GST Category</th>
+                                            <th>HSN Code</th>
                                             <!-- <th>Make (Multiple)</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr [class]='col.Is_Visiable == "N" ? "text-red-active" : ""'>
 
-                                            <!-- <td>
+                                             <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                                 <i class="fa fa-fw fa-bars"></i>
                                                                                 <span class="caret"></span>
                                                                             </button>
-                                                    <ul class="dropdown-menu"> -->
-                                                        <!-- <li *ngIf="col.Is_Visiable == 'Y'">
+                                                    <ul class="dropdown-menu"> 
+                                                         <li *ngIf="col.Is_Visiable == 'Y'">
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
-                                                        </li> -->
-                                                        <!-- <li *ngIf="col.Is_Visiable == 'N'">
+                                                        </li> 
+                                                         <!-- <li *ngIf="col.Is_Visiable == 'N'">
                                                             <a (click)="Active(col)">
                                                                 <i class="fa fa-power-off"></i> Active
                                                             </a>
@@ -77,20 +80,23 @@
                                                             <a (click)="Inactive(col)">
                                                                 <i class="fa fa-times"></i> Inactive
                                                             </a>
-                                                        </li> -->
-                                                        <!-- <li>
+                                                        </li> 
+                                                         <li>
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
-                                                        </li> -->
-                                                    <!-- </ul>
+                                                        </li>  -->
+                                                     </ul>
                                                 </div>
-                                            </td> -->
+                                            </td> 
+                                            <td>{{col.SL_No ? col.SL_No : '-'}}</td>
                                             <td>{{col.Material_Type ? col.Material_Type : '-'}}</td>
                                             <td>{{col.Product_Description ? col.Product_Description : '-'}}</td>
                                             <td>{{col.Product_Code ? col.Product_Code : '-'}}</td>
                                             <td>{{col.Remarks ? col.Remarks : '-'}}</td>
                                             <td>{{col.UOM ? col.UOM : '-'}}</td>
+                                            <td>{{col.Cat_Name ? col.Cat_Name : '-'}}</td>
+                                            <td>{{col.HSN_NO ? col.HSN_NO : '-'}}</td>
                                             <!-- <td>{{col.Mfg_Company ? col.Mfg_Company : '-' }}</td> -->
                                         </tr>
                                     </ng-template>
@@ -158,11 +164,10 @@
                                     ">
                                     <i class="fa fa-fw fa-fax">
                                     </i> &nbsp;<strong>Financial Details:</strong></h5>
-                                    <app-compacct-financial-details
-                                            [requirFinancial]="MasterRawMaterialFormSubmitted"
-                                            
-                                            (FinacialDetailsObj)="FinancialDetailsData($event)"
-                                             #FinacialDetails><!-- [Edit]="objproduct" -->
+                                    <app-compacct-financial-details 
+                                    [requirFinancial]="MasterConsumbleFormSubmitted" 
+                                    [Edit]="ObjFinancialComponentData"
+                                    (FinacialDetailsObj)="FinancialDetailsData($event)" #FinacialDetails>
                                     </app-compacct-financial-details>
                                  </div>
                                 <div class="form-group"style="padding: 1em;">
