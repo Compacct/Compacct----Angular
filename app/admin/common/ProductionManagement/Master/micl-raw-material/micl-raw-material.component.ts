@@ -83,6 +83,7 @@ export class MiclRawMaterialComponent implements OnInit {
   ViewMetTypeModal = false;
   EXCELSpinner:boolean = false
   DescriptionCheck: any;
+  MasterConsumbleFormSubmitted = false;
 
   constructor(
     private $http: HttpClient,
@@ -115,6 +116,7 @@ TabClick(e) {
     this.clearData();
     // this.productid = undefined;
 }
+onReject(){}
 clearData() {
     this.Spinner = false;
    // this.TenderSearchForm = false;
