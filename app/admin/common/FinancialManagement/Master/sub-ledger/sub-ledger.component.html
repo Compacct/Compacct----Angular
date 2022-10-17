@@ -235,7 +235,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">PAN<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="PAN" #PAN="ngModel" [(ngModel)]="objSubLedger.PAN_No" placeholder="PAN" minlength="10" maxlength="10" [ngClass]="{'clearance': SubLedgerFormSubmit && PAN.errors?.required}" required>
+                                        <input class="form-control" name="PAN" #PAN="ngModel" [(ngModel)]="objSubLedger.PAN_No" placeholder="PAN" maxlength="10" [ngClass]="{'clearance': SubLedgerFormSubmit && PAN.errors?.required}" required>
                                     </div>
                                 </div>
 
