@@ -594,6 +594,7 @@ export class RdbComponent implements OnInit {
                   this.RDBListAdd[i].Total_Amount = Number(totalamount).toFixed(2)
                 }
                });
+               console.log("Product Update",this.RDBListAdd);
                this.addClear()
              }
              else{
@@ -687,7 +688,7 @@ addClear(){
     if(this.RDBListAdd.length) {
       let tempArr:any =[]
       this.RDBListAdd.forEach(item => {
-        const obj = {
+         tempArr.push({
             RDB_No : this.DocNo ? this.DocNo : 'A',
             Product_ID : item.Product_ID,
             //Product_Description : item.Product_Description,
@@ -723,9 +724,11 @@ addClear(){
             LR_No_Date : this.ObjRdb.LR_No_Date,
             Vehicle_No : this.ObjRdb.Vehicle_No,
             Created_By : this.commonApi.CompacctCookies.User_ID,
-            Status : "PENDING"
-        }
-
+            Status : "PENDING",
+            Ins_Dept_ID : this.objDeptUser.Ins_Dept_ID,
+            Ins_USER_ID : this.objDeptUser.Ins_USER_ID,
+        })
+      // console.log("obj",obj)
         // const TempObj = {
         // UOM : "PCS",
         //   Doc_No : this.PPdoc_no ? this.PPdoc_no : "A",
@@ -736,7 +739,7 @@ addClear(){
         //   Autho_One_Staus : "NO"
 
         // }
-        tempArr.push({...obj,...this.objDeptUser});
+        //tempArr.push({...obj,...this.objDeptUser});
       });
       console.log(tempArr)
       return JSON.stringify(tempArr);
@@ -885,7 +888,7 @@ addClear(){
 
    }
    onConfirmSave(){
-    const obj = {
+   const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
       "Report_Name_String":"Create_BL_Txn_Purchase_Challan_RDB",
      "Json_Param_String": this.DataForSaveProduct()
