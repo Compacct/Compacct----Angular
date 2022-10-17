@@ -740,6 +740,7 @@ addClear(){
 
         // }
         //tempArr.push({...obj,...this.objDeptUser});
+        console.log("objDeptUser",this.objDeptUser)
       });
       console.log(tempArr)
       return JSON.stringify(tempArr);

@@ -1271,7 +1271,7 @@ CreateChallan(row){
   if(row.Req_No) {
     this.tabIndexToView = 1;
     this.inputBoxDisabled = false;
-    this.createchallandisabled = true;
+    // this.createchallandisabled = true;
     this.indentlistdisabled = true;
     this.indentdateDisabled = false;
     this.createChallanflag = false;

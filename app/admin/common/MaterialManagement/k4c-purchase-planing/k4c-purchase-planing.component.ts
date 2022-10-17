@@ -811,6 +811,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
      //console.log('Search list=====',this.Searchedlist)
      this.seachSpinner = false;
     // this.SearchFactoryFormSubmit = false;
+    for(let i = 0; i < this.Searchedlist.length ; i++){
+      this.Searchedlist[i].Doc_Date = this.DateService.dateConvert(new Date(this.Searchedlist[i].Doc_Date))
+     }
    })
   // }
    }

@@ -42,7 +42,18 @@ export class JOHEarMoldComponent implements OnInit {
   Preference : any;
   User_type : any;
   Priority : any;
-  Type : any;
+  Type : any
+  Type_R : any;
+  Type_L : any;
+  User_Preferences_R : any;
+  User_Preferences_L : any;
+  Receiver_Preference_R_Details : any;
+  Receiver_Preference_R : any;
+  Receiver_Preference_L_Details : any;
+  Receiver_Preference_L : any;
+  Venting_R : any;
+  Venting_L : any;
+  Audiologist_User_ID : any;
   user_preference : any;
   receiver_right : any;
   receiver_left : any;
@@ -55,6 +66,8 @@ export class JOHEarMoldComponent implements OnInit {
   MouldNo : any;
   DelMouldNo : any;
   DelRight : any;
+  deviceList : any = [];
+  ReceiverLengthList : any = [];
 
   constructor(
     private $http : HttpClient,
@@ -67,6 +80,7 @@ export class JOHEarMoldComponent implements OnInit {
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
+    this.ReceiverLengthList = ["0", "1", "2", "3", "4", "5"]
     this.Header.pushHeader({
       Header: "CUSTOM PRODUCT/EAR MOLD ORDER FORM",
       Link: " PatientManagement --> JOH Ear Mold"
@@ -77,6 +91,7 @@ export class JOHEarMoldComponent implements OnInit {
     this.getCostCenter();
     this.getPatient();
     this.getDoctor();
+    this.getDevice();
   }
 
   TabClick(e) {
@@ -173,6 +188,22 @@ export class JOHEarMoldComponent implements OnInit {
           
       })
   
+    }
+
+    getDevice(){
+      const obj = {
+        "SP_String": "sp_JOH_Ear_Mold",
+        "Report_Name_String": "Get_Product_Name",   
+        
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        // console.log(data);
+        this.deviceList = data ;
+        console.log("deviceList=",this.deviceList);
+          
+      })
+  
+
     }
 
     SaveEarMold(valid){
@@ -497,6 +528,8 @@ class EarMold{
   
   Receiver_Length_L : any;
   Receiver_Type_L : any;
+  Receiver_Preference_R_Details : any;
+  Receiver_Preference_L_Details : any;
   Audiologist_User_ID : any;
 }
 

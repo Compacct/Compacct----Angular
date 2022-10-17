@@ -181,8 +181,17 @@ export class MiclRequisitionComponent implements OnInit {
     this.ProductCatList = [];
     this.productTypeList = [];
     this.Requisition_ID = undefined;
-    this.Material_Type_ID = undefined;
+    // this.Material_Type_ID = undefined;
     // this.getMaterialType();
+    if (this.headerText === "Maintenance Indent") {
+      this.Material_Type_ID = "M.R.O";
+      this.mrodisabled = true;
+      this.getProductCategory();
+     } 
+     else {
+      this.Material_Type_ID = undefined;
+      this.mrodisabled = false;
+     }
    }
   addMaterials(valid){
   console.log("valid",valid);
@@ -212,7 +221,8 @@ export class MiclRequisitionComponent implements OnInit {
         Created_By: this.$CompacctAPI.CompacctCookies.User_ID,
         Product_Type_ID : this.objmaterial.Product_Type_ID,
         Product_Type : productTypeFilter[0].Product_Type,
-        Product_Category : this.objmaterial.Product_Category
+        Product_Category : this.objmaterial.Product_Category,
+        Challan_No : null
       })
       this.requisitionmaterialFormSubmit = false;
       this.objmaterial = new material();
@@ -377,7 +387,8 @@ export class MiclRequisitionComponent implements OnInit {
          To_Cost_Cen_ID : Number(this.toCostCenter),
          Remarks : this.objreqi.Remarks,
          Requisiton_Type : this.Requisition_ID,
-         Material_Type : this.Material_Type_ID
+         Material_Type : this.Material_Type_ID,
+         Challan_No : el.Challan_No
         }
         saveData.push(save)
         })
@@ -978,7 +989,8 @@ export class MiclRequisitionComponent implements OnInit {
            Product_Code :  element.Product_Code,
            Req_Qty : Number(element.Req_Qty),
            UOM :  element.UOM,
-           Purpose : element.Purpose
+           Purpose : element.Purpose,
+           Challan_No : element.Challan_No
          };
           this.AddMaterialsList.push(productObj);
         });
