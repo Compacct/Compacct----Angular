@@ -14,6 +14,7 @@ import { DateTimeConvertService } from "../../../../shared/compacct.global/dateT
 import { CompacctProjectComponent } from "../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component";
 import { ActivatedRoute } from "@angular/router";
 import { DateNepalConvertService } from "../../../../shared/compacct.global/dateNepal.service"
+import { map } from "rxjs/operators";
 declare var NepaliFunctions: any;
 const NepaliDate = require('nepali-date');
 
@@ -131,21 +132,39 @@ export class NepalPurchaseRequestComponent implements OnInit {
    
      });
   }
+  dateConvert(dateParam: Date) {
+    let currentDate = new Date(dateParam);
+    return`${currentDate.getDate().toString().length === 1 ?'0'+currentDate.getDate():currentDate.getDate()}/${
+      currentDate.getMonth().toString().length === 1 ?'0'+currentDate.getMonth():currentDate.getMonth()
+    }/${currentDate.getFullYear()}`;
+  }
+
   GetproductList(){
     this.purchaseRequestFormSubmit = true
     if(this.objpurchaseRequest.Cat_ID){
       this.ProductSpinner = true
-      const obj = {
-        "SP_String": "sp_Bl_Txn_Purchase_Request",
-        "Report_Name_String": "Get_Requistion_Product_List",
-        "Json_Param_String": JSON.stringify([{Cat_ID : Number(this.objpurchaseRequest.Cat_ID)}])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.ngxService.start();
+      // const obj = {
+      //   "SP_String": "sp_Bl_Txn_Purchase_Request",
+      //   "Report_Name_String": "Get_Requistion_Product_List",
+      //   "Json_Param_String": JSON.stringify([{Cat_ID : Number(this.objpurchaseRequest.Cat_ID)}])
+      // }
+      // this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      //   console.log("productList",data)
+      //   this.setProductListTable(data)
+      //   this.purchaseRequestFormSubmit = false
+      //   this.ProductSpinner = false
+      //   });
+      console.log(this.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)))
+      this.$http.get('Nepal_BL_Txn_Purchase_Request/Get_All_Data_For_Purchase_Request?to_date='+this.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate))+'&Cat_ID='+Number(this.objpurchaseRequest.Cat_ID)).pipe(map((data:any) => data ? JSON.parse(data) : []))
+        .subscribe((data:any)=>{
         console.log("productList",data)
         this.setProductListTable(data)
         this.purchaseRequestFormSubmit = false
         this.ProductSpinner = false
-        });
+        
+           })
+      
     }
     else{
       this.productList = []
@@ -169,7 +188,9 @@ export class NepalPurchaseRequestComponent implements OnInit {
         })
       }
     });
+
   }
+  this.ngxService.stop();
   }
 
 
