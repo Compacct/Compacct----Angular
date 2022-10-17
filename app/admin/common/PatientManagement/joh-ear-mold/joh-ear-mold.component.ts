@@ -497,6 +497,7 @@ class EarMold{
   
   Receiver_Length_L : any;
   Receiver_Type_L : any;
+  Audiologist_User_ID : any;
 }
 
 class Search{
