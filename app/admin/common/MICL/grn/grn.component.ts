@@ -851,10 +851,18 @@ export class GrnComponent implements OnInit {
     // this.getAllTotal()
   }
   async TermSave(doc:any){
-    if(doc && this.AddTermList.length){
-       this.AddTermList.forEach((ele:any) => {
-         ele['DOC_No'] = doc
-       });
+    if(doc){
+       if(this.AddTermList.length){
+        this.AddTermList.forEach((ele:any) => {
+          ele['DOC_No'] = doc
+        });
+       }
+       else{
+        this.AddTermList.push({
+          "DOC_No": doc,
+          "Term_ID":0
+        })
+       }
       const obj = {
         "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
         "Report_Name_String": "Insert_Term_Details",

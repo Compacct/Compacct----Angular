@@ -39,6 +39,8 @@ ngOnInit(){
     this.getFinYear();
     this.getSubledger();
 }
+onReject(){}
+TabClick(e){}
 getDateRange(dateRangeObj: any) {
     if (dateRangeObj.length) {
       this.objSubledger.from_date = dateRangeObj[0];

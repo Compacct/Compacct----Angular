@@ -97,6 +97,7 @@ export class HREmployeeMasterComponent implements OnInit {
   userdisabled = false;
   userdatedisabled = true;
   leftdisabled = true;
+  GradeList:any = [];
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -129,6 +130,7 @@ export class HREmployeeMasterComponent implements OnInit {
     this.getDepartment();
     this.getWorkingCompany();
     this.getDesignation();
+    this.GetGrade();
     this.getLocation();
     this.getEmployee();
     this.getBankName();
@@ -320,6 +322,19 @@ getDesignation(){
    })
 
 }
+GetGrade(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+     "Report_Name_String":"Get_Grade"
+      }
+        this.GlobalAPI.getData(obj).subscribe((data)=>{
+          this.GradeList = data;
+          this.objemployee.Personal_Area = "HALDIA";
+          console.log("GradeList=",this.GradeList);
+        });
+
+
+}
 
 getLocation(){
   const obj = {
@@ -410,6 +425,7 @@ getEmployeeDetails(Emp_ID){
          this.objemployee = editlist;
          this.CalculateTime();
          this.objemployee.Dept_ID = data[0].Dept_ID ? data[0].Dept_ID : undefined;
+         this.objemployee.Personal_Area = data[0].Personal_Area ? data[0].Personal_Area : "HALDIA";
          this.objemployee.Bank_Ac_Type = data[0].Bank_Ac_Type ? data[0].Bank_Ac_Type : undefined;
          this.objemployee.Physically_Chalanged = data[0].Physically_Chalanged === 1 ? 'YES' : 'NO';
          this.objemployee.Is_Biometric = data[0].Is_Biometric == "Y"? true : false;
@@ -540,8 +556,8 @@ saveEmp(){
     this.objemployee.Is_Biometric = this.objemployee.Is_Biometric? 'Y' : 'N';
     this.objemployee.Is_HOD = this.objemployee.Is_HOD? 'Y' : 'N';
     this.objemployee.Login_User_ID = this.objemployee.Login_User_ID ? this.objemployee.Login_User_ID : 0;
-    this.objemployee.Off_In_Time = this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time));
-    this.objemployee.Off_Out_Time = this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time));
+    this.objemployee.Off_In_Time = this.objemployee.Off_In_Time ? this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)) : undefined;
+    this.objemployee.Off_Out_Time = this.objemployee.Off_Out_Time ? this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)) : undefined;
     this.objemployee.OT_Avail = this.objemployee.OT_Avail === true ? 1 : 0;
      if(this.Employeeid){
      console.log("Update");
@@ -1137,6 +1153,7 @@ clearData(){
   this.DOB = new Date();
   this.objemployee.Present_Country = "India";
   this.objemployee.Perm_Country = "India";
+  this.objemployee.Personal_Area = "HALDIA";
   this.ischeckaddress = false;
   this.Employeeid = undefined;
   this.objemployee.Bank_ID = 1;
@@ -1243,7 +1260,10 @@ class Employee{
   Person_Photo:any;
   Login_User_ID : any;
   Salary_Paid_By : any;
-  Posting_State : any
+  Posting_State : any;
+  Grade : any;
+  Personal_Area : any;
+  Grade_ID : any;
 }
 class Select{
   name : any;

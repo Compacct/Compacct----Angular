@@ -117,7 +117,7 @@
                                                                 <i class="fa fa-fw fa-power-off"></i> Active
                                                             </a>
                                                         </li> -->
-                                                        <li *ngIf="companyname != 'HARBAUER India [P] Ltd'">
+                                                        <li *ngIf="companyname != 'HARBAUER India [P] Ltd' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && col.Approve_Status === 'Not Approved'">
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>

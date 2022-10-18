@@ -109,7 +109,7 @@ export class MiclRequisitionComponent implements OnInit {
     private route: ActivatedRoute,
     private ngxService: NgxUiLoaderService) {
       this.route.queryParams.subscribe(params => {
-        console.log(params);
+        //console.log(params);
         this.openProject = params['proj'];
         this.validatation.projectMand = params['mand'];
         this.projectMand = params['mand'];
@@ -121,6 +121,7 @@ export class MiclRequisitionComponent implements OnInit {
      }
 
   ngOnInit() {
+    //console.log('Del_Right ==',this.$CompacctAPI.CompacctCookies.Del_Right)
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
     this.items =  ["BROWSE", "CREATE", "STOCK", "STATUS"];
     this.menuList = [
@@ -194,12 +195,12 @@ export class MiclRequisitionComponent implements OnInit {
      }
    }
   addMaterials(valid){
-  console.log("valid",valid);
+  //console.log("valid",valid);
   this.requisitionmaterialFormSubmit = true;
   this.reqValid = true
   if(valid && this.GetSameProduct()){
      if(this.projectMand == 'Y' && (Number(this.productFilterObj.Can_Be_Used_Qty)< Number(this.objmaterial.Req_Qty) || 0 == Number(this.objmaterial.Req_Qty))){
-      console.log("done");
+      //console.log("done");
       this.reqValid = true
       return
      }
@@ -209,7 +210,7 @@ export class MiclRequisitionComponent implements OnInit {
      
     const productFilter:any = this.productListview.filter((el:any)=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
     const productTypeFilter:any = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID));
-     console.log("productFilter",productFilter);
+     //console.log("productFilter",productFilter);
     if(productFilter.length){
       this.AddMaterialsList.push({
         Product_ID: this.objmaterial.Product_ID,
@@ -252,7 +253,7 @@ export class MiclRequisitionComponent implements OnInit {
     }
     }
   SaveRequi(valid){ 
-   console.log("valid",valid);
+   //console.log("valid",valid);
    this.reqiFormSubmitted = true;
    this.validatation.required = true;
    this.ngxService.start();
@@ -392,7 +393,7 @@ export class MiclRequisitionComponent implements OnInit {
         }
         saveData.push(save)
         })
-        console.log("Save Data",saveData);
+        //console.log("Save Data",saveData);
         const obj = {
          "SP_String": "SP_Txn_Requisition",
          "Report_Name_String": "Create_Requisition",
@@ -400,7 +401,7 @@ export class MiclRequisitionComponent implements OnInit {
    
        }
        this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
-         console.log("After Data",data)
+         //console.log("After Data",data)
          this.docno = data[0].Column1;
          if(data[0].Column1){
           var mgs = this.buttonname === "Save" ? "Save" : "Update"
@@ -472,7 +473,7 @@ export class MiclRequisitionComponent implements OnInit {
     let flg = false
     if(this.openProject === "Y" && this.projectMand === "Y"){
       let getArrValue = Object.values(this.objProjectRequi);
-      console.log("getArrValue",getArrValue.length);
+      //console.log("getArrValue",getArrValue.length);
       if(getArrValue.indexOf(undefined) == -1){
         if(getArrValue.length === 5 || getArrValue.length > 5){
           flg = true
@@ -514,7 +515,7 @@ export class MiclRequisitionComponent implements OnInit {
       "Report_Name_String": "Get_Cost_Center",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("costcenterList  ===",data);
+      //console.log("costcenterList  ===",data);
      this.costcenterList = data;
      this.objreqi.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
      this.ObjBrowseData.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
@@ -542,7 +543,7 @@ export class MiclRequisitionComponent implements OnInit {
           this.objreqi.Godown_ID = this.GodownList.length === 1 ? this.GodownList[0].Godown_ID : undefined;
         }
         
-        console.log("this.toGodownList",this.GodownList);
+        //console.log("this.toGodownList",this.GodownList);
         })
     }
     else{
@@ -563,7 +564,7 @@ export class MiclRequisitionComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownBrowseList = data;
-        console.log("this.GodownBrowseList",this.GodownBrowseList);
+        //console.log("this.GodownBrowseList",this.GodownBrowseList);
         // if(this.headerText === "Purchase Indent") {
         this.ObjBrowseData.Godown_ID = this.GodownBrowseList.length ? this.GodownBrowseList[0].Godown_ID : undefined
         this.searchData()
@@ -588,7 +589,7 @@ export class MiclRequisitionComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownReqStatusList = data;
-        console.log("this.GodownReqStatusList",this.GodownReqStatusList);
+        //console.log("this.GodownReqStatusList",this.GodownReqStatusList);
         // if(this.headerText === "Purchase Indent") {
         this.ObjReqStatusData.Godown_ID = this.GodownReqStatusList.length ? this.GodownReqStatusList[0].Godown_ID : undefined
         this.searchData()
@@ -609,7 +610,7 @@ export class MiclRequisitionComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ReqTypeList = data;
-     console.log("ReqTypeList",this.ReqTypeList);
+     //console.log("ReqTypeList",this.ReqTypeList);
      })
   }
   getMaterialType(){
@@ -621,7 +622,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // this.MaterialTypeList = data;
       var materiallist = data;
-     console.log("MaterialTypeList",this.MaterialTypeList);
+     //console.log("MaterialTypeList",this.MaterialTypeList);
      if (this.headerText === "Maintenance Indent") {
       this.MaterialTypeList = materiallist;
       this.Material_Type_ID = "M.R.O";
@@ -647,7 +648,7 @@ export class MiclRequisitionComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ProductCatList = data;
-     console.log("ProductCatList",this.ProductCatList);
+     //console.log("ProductCatList",this.ProductCatList);
      })
   }
   getProductType(){
@@ -668,7 +669,7 @@ export class MiclRequisitionComponent implements OnInit {
       });
        
       this.productTypeList = data;
-     console.log("productTypeList",this.productTypeList);
+     //console.log("productTypeList",this.productTypeList);
      })
   }
 
@@ -684,7 +685,7 @@ export class MiclRequisitionComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.productListview = data;
-       console.log("productListview",this.productListview);
+       //console.log("productListview",this.productListview);
         this.productListview.forEach(el => {
           this.productList.push({
             label: el.Product_Description,
@@ -703,7 +704,7 @@ export class MiclRequisitionComponent implements OnInit {
   getUOM(){
     if(this.objmaterial.Product_ID){
       const ProductFilter = this.productListview.filter((el:any)=> Number(el.Product_ID) === Number(this.objmaterial.Product_ID))
-      console.log("ProductFilter",ProductFilter);
+      //console.log("ProductFilter",ProductFilter);
       this.productFilterObj = ProductFilter[0];
        this.objmaterial.UOM = ProductFilter[0].UOM
        this.GetCurrentStock();
@@ -723,7 +724,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.currentstocklist = data;
       this.Current_Stock = data[0].Bln_Qty;
-     console.log("ProductCatList",this.ProductCatList);
+     //console.log("ProductCatList",this.ProductCatList);
      })
   }
   reqiValid(id:any){
@@ -774,7 +775,7 @@ export class MiclRequisitionComponent implements OnInit {
         }
         this.RequistionSearchFormSubmit = false;
         this.seachSpinner = false
-        console.log("this.allRequDataList",this.allRequDataList);
+        //console.log("this.allRequDataList",this.allRequDataList);
       })
   
  
@@ -783,7 +784,7 @@ export class MiclRequisitionComponent implements OnInit {
   return header === "Req_No" ? this.headerText+" No" : header.replaceAll('_',' ')
   }
   Active(col){
-    console.log("col",col);
+    //console.log("col",col);
     this.can_popup = false;
     this.Del = false;
     this.Save = false;
@@ -894,7 +895,7 @@ export class MiclRequisitionComponent implements OnInit {
 }
   }
   getProjectData(e){
-    console.log("e",e)
+    //console.log("e",e)
     this.objproject = e
     this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
     this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
@@ -934,7 +935,7 @@ export class MiclRequisitionComponent implements OnInit {
     "Json_Param_String": JSON.stringify([this.objproject]) 
     }
     const projectData = await  this.GlobalAPI.getData(obj).toPromise();
-    console.log("projectData",projectData);
+    //console.log("projectData",projectData);
     return projectData
   }
   //Edit
@@ -961,7 +962,7 @@ export class MiclRequisitionComponent implements OnInit {
    }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // let data = JSON.parse(res[0].Column1)
-      console.log("Edit data",data);
+      //console.log("Edit data",data);
       this.requi_Date = new Date(data[0].Req_Date);
       this.objreqi = data[0];
       this.Getgodown(data[0].Cost_Cen_ID,data[0].Godown_ID);
@@ -1019,7 +1020,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.$http
     .get("/common/Get_Server_Date")
     .subscribe((data: any) => {
-     console.log("ServerDate",data)
+     //console.log("ServerDate",data)
      this.requi_Date  = new Date(data)
      
     })
@@ -1028,12 +1029,12 @@ export class MiclRequisitionComponent implements OnInit {
     this.$http
     .get("/Common/Get_Allowed_Entry_Days?User_ID=" + this.$CompacctAPI.CompacctCookies.User_ID)
     .subscribe((rec: any) => {
-      console.log("AllowedEntryDays",rec)
+      //console.log("AllowedEntryDays",rec)
      let data = JSON.parse(rec)
       let days = Number(data[0].Allowed_Entry_Day)
-      console.log("days",days)
+      //console.log("days",days)
      this.minFromDate = new Date(this.requi_Date.getTime()-(days*24*60*60*1000));
-     console.log("minFromDate",this.minFromDate)
+     //console.log("minFromDate",this.minFromDate)
       
     })
   }
@@ -1119,7 +1120,7 @@ export class MiclRequisitionComponent implements OnInit {
           this.backUpReqStatusDataList = data;
           this.GetDistinctStatus();
           this.reqstatusSpinner = false
-          console.log("this.ReqStatusDataList",this.ReqStatusDataList);
+          //console.log("this.ReqStatusDataList",this.ReqStatusDataList);
         })
     
    

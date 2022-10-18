@@ -33,7 +33,7 @@
                                     [paginator]="BrowseData.length ? true : false"[rows]="100"  [loading]="seachSpinner"
                                     [rowHover]="true" [autoLayout]="true" [responsive]="true" sortMode="multiple"
                                     [rowsPerPageOptions]="[100,200,300,500]" [rowHover]="true"
-                                    [globalFilterFields]="['Cat_Name','IGST_Input_ledger_Name','CGST_Input_Ledger_Name','SGST_Input_Ledger_Name','IGST_Output_Ledger_Name','CGST_Output_Ledger_Name','SGST_Output_Ledger_Name']" #dt1>
+                                    [globalFilterFields]="['Cost_Cen_Name','Cost_Cen_Code','godown_name']" #dt1>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -106,7 +106,7 @@
                                                             [CompacctOnlyAlphabets]="true"
                                                             placeholder="Type Code(Unique)"
                                                             name="Cost_Cen_Code" 
-                                                            #Cost_Cen_Ini="ngModel"
+                                                            #Cost_Cen_Code="ngModel"
                                                             [(ngModel)]="ObjCostUpper.Cost_Cen_Code"
                                                             [ngClass]="{'clearance': CostCenterFormSubmitted && Cost_Cen_Code?.errors?.required}"required>
                                                 </div>                                        

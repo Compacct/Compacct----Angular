@@ -51,7 +51,7 @@
                                 </div>
                             </form>
                             <div class=" no-padding">
-                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Mould_Request_ID','Mould_Request_Date','Patient_Name','Mobile','Audologist_Name']"
+                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Mould_Request_ID','Mould_Request_Date','Patient_Name','Mobile','Audologist_Name', 'Cost_Cen_Name', 'Patient_ID', 'Sub_Ledger_Name' ]"
                                     [rowHover]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -335,7 +335,7 @@
                                     </tr>
                                     <tr>
                                         <td style="text-align: center;display: flex; margin-top: 14px;">
-                                            <select class="form-control" name="Receiver_Preference_R_Detail" #Receiver_Preference_R_Detail="ngModel" [(ngModel)]="objEarMold.Receiver_Preference_R_Details" style="width: 64%;">
+                                            <select class="form-control" name="Receiver_Preference_R_Detail" #Receiver_Preference_R_Detail="ngModel" [(ngModel)]="RightRl" [disabled]="ReceiverPreferenceR" style="width: 64%;">
                                                 <option  [ngValue]="undefined">Select</option>
                                                 <option  *ngFor="let option of ReceiverLengthList" value="{{option}}">
                                                   {{option}}
@@ -345,28 +345,36 @@
                                             name="Receiver_Preference_R" 
                                             value="Receiver Length"
                                              [(ngModel)]="Receiver_Preference_R" 
-                                             [style]="{'margin-left': '7px'}"></p-radioButton></td>
+                                             [style]="{'margin-left': '7px'}" (onClick)="getEnable(Receiver_Preference_R)"></p-radioButton></td>
+
                                         <td style="text-align: center; width: 30%; font-size: 1.2rem;"><strong> Receiver Length</strong></td>
+
                                         <td style="text-align: center; display: flex; flex-direction: row-reverse;">
-                                            <select class="form-control" name="Receiver_Preference_L_Detail" #Receiver_Preference_L_Detail="ngModel" [(ngModel)]="objEarMold.Receiver_Preference_L_Details" style="width: 70%;">
+                                            <select class="form-control" name="Receiver_Preference_L_Detail" #Receiver_Preference_L_Detail="ngModel" [(ngModel)]="LeftRl" [disabled]="ReceiverPreferenceL" style="width: 70%;">
                                                 <option  [ngValue]="undefined">Select</option>
                                                 <option  *ngFor="let option of ReceiverLengthList" value="{{option}}">
                                                     {{option}}
                                                   </option>
                                                </select>
+
                                              <p-radioButton name="Receiver_Preference_L" 
                                              value="Receiver Length" 
                                              [(ngModel)]="Receiver_Preference_L"
-                                             [style]="{'margin-right': '5px'}" ></p-radioButton></td>
+                                             [style]="{'margin-right': '5px'}" (onClick)="getEnable2(Receiver_Preference_L)" ></p-radioButton></td>
                                     </tr>
                                     <tr>
                                         <td style="text-align: center;display: flex; margin-top: 14px;">
-                                            <input class="form-control"  name="Reduce_Vent" #Reduce_Vent="ngModel"  [(ngModel)]="objEarMold.Reduce_Vent" style="width: 64%;">
-                                             <p-radioButton name="Receiver_Preference_R" value="Receiver Type" [(ngModel)]="Receiver_Preference_R" [style]="{'margin-left': '7px'}" ></p-radioButton></td>
+                                            <input class="form-control"  name="Receiver_type_desc_R" #Receiver_type_desc_R="ngModel"  [(ngModel)]="RightRt" [disabled]="ReceiverTypeR" style="width: 64%;">
+
+                                             <p-radioButton name="Receiver_Preference_R" value="Receiver Type" [(ngModel)]="Receiver_Preference_R" [style]="{'margin-left': '7px'}" (onClick)="getEnable(Receiver_Preference_R)" ></p-radioButton></td>
+
                                         <td style="text-align: center; width: 30%; font-size: 1.2rem;"><strong> Receiver Type</strong></td>
+
                                         <td style="text-align: center; display: flex; flex-direction: row-reverse;">
-                                            <input class="form-control"  name="Reduce_Vent" #Reduce_Vent="ngModel"  [(ngModel)]="objEarMold.Reduce_Vent" style="width: 70%;"> 
-                                            <p-radioButton name="Receiver_Preference_L" value="Receiver Type" [(ngModel)]="Receiver_Preference_L" [style]="{'margin-right': '5px'}"></p-radioButton></td>
+
+                                            <input class="form-control"  name="Receiver_type_desc_L" #Receiver_type_desc_L="ngModel"  [(ngModel)]="LeftRt" [disabled]="ReceiverTypeL" style="width: 70%;"> 
+
+                                            <p-radioButton name="Receiver_Preference_L" value="Receiver Type" [(ngModel)]="Receiver_Preference_L" [style]="{'margin-right': '5px'}" (onClick)="getEnable2(Receiver_Preference_L)"></p-radioButton></td>
                                     </tr>
                                 </table>
                             </div>
@@ -423,14 +431,14 @@
                         <th class="TableRow">Left</th>
                     </tr>
                     <tr>
-                        <td style="text-align: center;"> <p-radioButton name="Mold_Material" value="Soft" [(ngModel)]="Mold_Material" ></p-radioButton></td>
+                        <td style="text-align: center;"> <p-radioButton name="Mold_Material_R" value="Soft" [(ngModel)]="Mold_Material_R" ></p-radioButton></td>
                         <td style="text-align: center;"><strong> Soft</strong></td>
-                        <td style="text-align: center;"> <p-radioButton name="Mold_Material" value="Soft" [(ngModel)]="Mold_Material" ></p-radioButton></td>
+                        <td style="text-align: center;"> <p-radioButton name="Mold_Material_L" value="Soft" [(ngModel)]="Mold_Material_L" ></p-radioButton></td>
                     </tr>
                     <tr>
-                        <td style="text-align: center;"> <p-radioButton name="Mold_Material" value="Hard" [(ngModel)]="Mold_Material" ></p-radioButton></td>
+                        <td style="text-align: center;"> <p-radioButton name="Mold_Material_R" value="Hard" [(ngModel)]="Mold_Material_R" ></p-radioButton></td>
                         <td style="text-align: center;"><strong> Hard</strong></td>
-                        <td style="text-align: center;"> <p-radioButton name="Mold_Material" value="Hard" [(ngModel)]="Mold_Material" ></p-radioButton></td>
+                        <td style="text-align: center;"> <p-radioButton name="Mold_Material_L" value="Hard" [(ngModel)]="Mold_Material_L" ></p-radioButton></td>
                     </tr>
                     </table>
 
