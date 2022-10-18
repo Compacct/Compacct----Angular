@@ -14,7 +14,7 @@ import { DateTimeConvertService } from "../../../../shared/compacct.global/dateT
 import { CompacctProjectComponent } from "../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component";
 import { ActivatedRoute } from "@angular/router";
 import { DateNepalConvertService } from "../../../../shared/compacct.global/dateNepal.service"
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 declare var NepaliFunctions: any;
 const NepaliDate = require('nepali-date');
 
@@ -53,6 +53,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
   ProductSpinner:Boolean = false
   editDisdate:boolean = false
   ProductCategoryList:any = []
+  editFlg:boolean = false
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -108,6 +109,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.frozenCols = []
     this.editDisdate = false
     this.productList =[]
+    this.editFlg = false
   }
  
   onReject(){
@@ -132,16 +134,9 @@ export class NepalPurchaseRequestComponent implements OnInit {
    
      });
   }
-  dateConvert(dateParam: Date) {
-    let currentDate = new Date(dateParam);
-    return`${currentDate.getDate().toString().length === 1 ?'0'+currentDate.getDate():currentDate.getDate()}/${
-      currentDate.getMonth().toString().length === 1 ?'0'+currentDate.getMonth():currentDate.getMonth()
-    }/${currentDate.getFullYear()}`;
-  }
-
-  GetproductList(){
+ GetproductList(editData?){
     this.purchaseRequestFormSubmit = true
-    if(this.objpurchaseRequest.Cat_ID){
+    if(this.objpurchaseRequest.Cat_ID || editData[0].Cat_ID){
       this.ProductSpinner = true
       this.ngxService.start();
       // const obj = {
@@ -155,15 +150,26 @@ export class NepalPurchaseRequestComponent implements OnInit {
       //   this.purchaseRequestFormSubmit = false
       //   this.ProductSpinner = false
       //   });
-      console.log(this.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)))
-      this.$http.get('Nepal_BL_Txn_Purchase_Request/Get_All_Data_For_Purchase_Request?to_date='+this.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate))+'&Cat_ID='+Number(this.objpurchaseRequest.Cat_ID)).pipe(map((data:any) => data ? JSON.parse(data) : []))
+      this.$http.get('Nepal_BL_Txn_Purchase_Request/Get_All_Data_For_Purchase_Request?to_date='+this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate))+'&Cat_ID='+Number(this.objpurchaseRequest.Cat_ID)).pipe(map((data:any) => data ? JSON.parse(data) : []))
         .subscribe((data:any)=>{
+          this.ngxService.start();
         console.log("productList",data)
-        this.setProductListTable(data)
+        if(data.length){
+          if(editData.length){
+            data.forEach((ele:any) => {
+             const filterEdit = editData.find((z:any)=> Number(z.Product_ID) == Number(ele.Product_ID))
+             if(filterEdit){
+              ele.Purchase_Request_Qty = filterEdit.Purchase_Request_Qty
+             }
+            });
+          }
+          this.setProductListTable(data)
+        }
+       
         this.purchaseRequestFormSubmit = false
         this.ProductSpinner = false
         
-           })
+         })
       
     }
     else{
@@ -188,9 +194,9 @@ export class NepalPurchaseRequestComponent implements OnInit {
         })
       }
     });
-
+    this.ngxService.stop();
   }
-  this.ngxService.stop();
+  
   }
 
 
@@ -252,7 +258,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       }
       
      });
-   
+      console.log("addpurchaList",this.addpurchaList)
      if(this.addpurchaList.length){
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -266,7 +272,6 @@ export class NepalPurchaseRequestComponent implements OnInit {
    
   }
   SavePur(){
-    
      const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
       "Report_Name_String": "Create_Purchase_Request",
@@ -339,6 +344,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       this.PurchaseRequestNo = undefined
       this.PurchaseRequestNo = col.Purchase_Request_No
       this.editDisdate = true
+      this.editFlg = true
       this.getEditData(col.Purchase_Request_No)
      }
   }
@@ -352,10 +358,11 @@ export class NepalPurchaseRequestComponent implements OnInit {
      console.log("Edit",data)
      if(data.length){
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Purchase_Request_Date)
-      this.setProductListTable(data)
+      //this.setProductListTable(data)
       this.objpurchaseRequest.Cat_ID = data[0].Cat_ID
+      this.GetproductList(data)
      }
-     this.ngxService.stop();
+    
     })
   }
   DetailsReqQty(){

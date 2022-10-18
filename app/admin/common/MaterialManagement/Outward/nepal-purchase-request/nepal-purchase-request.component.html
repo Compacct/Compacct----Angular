@@ -174,7 +174,7 @@
                                              Class="form-control" (ngModelChange)="DocDate= $event"
                                              [(ngModel)]="DocDate"
                                              [ngClass]="{'clearance': purchaseRequestFormSubmit && Ddoc?.errors?.required}" 
-                                            required [disabled]="addpurchaList.length" />
+                                            required [disabled]="addpurchaList.length" [disabled]="editFlg" />
                                              
                                           </div>
                                     </div>
@@ -193,7 +193,8 @@
                                         #Cat_ID="ngModel"
                                         (ngModelChange) = "GetproductList()"
                                         [styleClass]="purchaseRequestFormSubmit && Cat_ID.errors?.required ? 'clearance': ''" 
-                                        required>
+                                        required
+                                        [disabled]="editFlg" >
                                     </p-dropdown>
                                     </div>
                                     <div class="col-sm-2" >
