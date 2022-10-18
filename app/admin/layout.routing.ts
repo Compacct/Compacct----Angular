@@ -276,7 +276,7 @@ import { NepalPurchaseRequestNegotiatePriceComponent } from "./common/Procuremen
 import { MICLMasterConsumbleComponent } from "./common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component";
 import { MICLCostCenterMasterComponent } from "./common/MICL/micl-cost-center-master/micl-cost-center-master.component";
 import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh-ear-mold.component";
-
+import { SubledgerReportForFranchiseComponent } from "./common/FinancialManagement/Master/subledger-report-for-franchise/subledger-report-for-franchise.component";
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -2060,6 +2060,13 @@ path: 'MICL_Cost_Center_Master',
   component: JOHEarMoldComponent,
   data: {
     title: 'JOH Ear Mold'
+}
+},
+{
+  path: 'Subledger_Report_For_Franchise',
+  component: SubledgerReportForFranchiseComponent,
+  data: {
+    title: 'Subledger Report For Franchise'
 }
 },
     
