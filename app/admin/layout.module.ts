@@ -371,7 +371,7 @@ import { NepalPurchaseRequestNegotiatePriceComponent } from './common/Procuremen
 import { MICLMasterConsumbleComponent } from './common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component';
 import { MICLCostCenterMasterComponent } from './common/MICL/micl-cost-center-master/micl-cost-center-master.component';
 import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh-ear-mold.component";
-
+import { SubledgerReportForFranchiseComponent } from "./common/FinancialManagement/Master/subledger-report-for-franchise/subledger-report-for-franchise.component";
 
 @NgModule({
   declarations: [
@@ -660,7 +660,8 @@ import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh
     NepalPurchaseRequestNegotiatePriceComponent,
     MICLMasterConsumbleComponent,
     MICLCostCenterMasterComponent,
-    JOHEarMoldComponent 
+    JOHEarMoldComponent,
+    SubledgerReportForFranchiseComponent
   ],
   imports: [
     CommonModule,
