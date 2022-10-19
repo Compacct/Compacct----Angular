@@ -372,6 +372,7 @@ import { MICLMasterConsumbleComponent } from './common/ProductionManagement/Mast
 import { MICLCostCenterMasterComponent } from './common/MICL/micl-cost-center-master/micl-cost-center-master.component';
 import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh-ear-mold.component";
 import { SubledgerReportForFranchiseComponent } from "./common/FinancialManagement/Master/subledger-report-for-franchise/subledger-report-for-franchise.component";
+import { K4CStockDetailsComponent } from './common/FinancialManagement/Master/k4-c-stock-details/k4-c-stock-details.component';
 
 @NgModule({
   declarations: [
@@ -661,7 +662,8 @@ import { SubledgerReportForFranchiseComponent } from "./common/FinancialManageme
     MICLMasterConsumbleComponent,
     MICLCostCenterMasterComponent,
     JOHEarMoldComponent,
-    SubledgerReportForFranchiseComponent
+    SubledgerReportForFranchiseComponent,
+    K4CStockDetailsComponent
   ],
   imports: [
     CommonModule,
