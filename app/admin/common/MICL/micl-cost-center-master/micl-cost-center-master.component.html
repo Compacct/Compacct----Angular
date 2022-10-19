@@ -1,1 +1,174 @@
-<p>micl-cost-center-master works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"leftIcon="glyphicon glyphicon-list-alt">                         
+                            <div class="table-id">
+                                <p-table [value]="BrowseData" 
+                                    [paginator]="BrowseData.length ? true : false"[rows]="100"  [loading]="seachSpinner"
+                                    [rowHover]="true" [autoLayout]="true" [responsive]="true" sortMode="multiple"
+                                    [rowsPerPageOptions]="[100,200,300,500]" [rowHover]="true"
+                                    [globalFilterFields]="['Cost_Cen_Name','Cost_Cen_Code','godown_name']" #dt1>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Cost Center Name</th>
+                                            <th>Cost Center Code</th>
+                                            <th>Stock Point</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">                                                       
+                                                        <li>
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-edit"></i>
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container >
+                                                <td>{{col.Cost_Cen_Name ? col.Cost_Cen_Name:"-"}}</td>
+                                                <td>{{col.Cost_Cen_Code ? col.Cost_Cen_Code:"-"}}</td>
+                                                <td>{{col.godown_name ? col.godown_name:"-"}}</td>
+                                            </ng-container>
+                                        </tr>
+                                    </ng-template>                                 
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"leftIcon="glyphicon glyphicon-floppy-save" >
+                            <div class="panel-group">
+                                <div class="panel panel-primary">
+                                    <div class="panel-body">
+                                        <form name="MasterForm" #MasterForm="ngForm" novalidate>
+                                            <div class="form-group">
+                                                <div class="col-sm-6">
+                                                    <label class="control-label">Cost Center Name<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                            type="text" 
+                                                            name="Cost_Cen_Name"
+                                                            placeholder="Type Cost Center Name"
+                                                            #Cost_Cen_Name="ngModel"
+                                                            [(ngModel)]="ObjCostUpper.Cost_Cen_Name"
+                                                            [ngClass]="{'clearance': CostCenterFormSubmitted && Cost_Cen_Name?.errors?.required}"required>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Code(Unique)<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                            type="text"
+                                                            maxlength="2" 
+                                                            [disabled] ="IsDisabled"
+                                                            [CompacctOnlyAlphabets]="true"
+                                                            placeholder="Type Code(Unique)"
+                                                            name="Cost_Cen_Code" 
+                                                            #Cost_Cen_Code="ngModel"
+                                                            [(ngModel)]="ObjCostUpper.Cost_Cen_Code"
+                                                            [ngClass]="{'clearance': CostCenterFormSubmitted && Cost_Cen_Code?.errors?.required}"required>
+                                                </div>                                        
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                        <form name="LowerForm" #LowerForm="ngForm" novalidate>
+                                            <div class="col-sm-6">
+                                                <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" type="text" name="godown_name" 
+                                                    placeholder="Type Stock Point" #godown_name="ngModel" [(ngModel)]="ObjGodown.godown_name"
+                                                    [ngClass]="{'clearance': StockPointFormSubmitted && godown_name?.errors?.required}" required>
+                                            </div>
+                                            <div class="col-sm-1"></div>
+                                            <div class="col-sm-1">
+                                                <button id="row-Add" class="btn btn-primary custombutton" (click)="Add(LowerForm.form.valid)">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; Add
+                                                </button>
+                                            </div>
+                                        </form>
+                            </div>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <div class="table-responsive no-padding">
+                                <table class="table table-bordered">
+                                    <thead style="background-color:#4fa1d1;color:white;">
+                                        <tr>
+                                            <th>SL No</th>
+                                            <th>Stock Point</th>
+                                            <th style="text-align: center;">Delete</th>
+                                            
+                                        </tr>                                       
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of StockAdd ; let ind = index;">
+                                            <td>{{ind + 1}}</td> 
+                                            <td>{{obj.godown_name}}</td>
+                                            <td style="text-align: center;" *ngIf="StockAdd.length">
+                                                <button type="button" class="btn btn-danger"(click)="delete(ind)"[disabled]="obj.godown_id" ><i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" (click)="SaveMasterCost(MasterForm.form.valid)"
+                                    id="load" [disabled]="Spinner || !StockAdd.length">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}"
+                                        strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                            </div>
+                        </p-tabPanel>
+                        
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

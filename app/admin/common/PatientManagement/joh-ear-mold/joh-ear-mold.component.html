@@ -51,7 +51,7 @@
                                 </div>
                             </form>
                             <div class=" no-padding">
-                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Mould_Request_ID','Mould_Request_Date','Patient_Name','Mobile','Audologist_Name']"
+                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Mould_Request_ID','Mould_Request_Date','Patient_Name','Mobile','Audologist_Name', 'Cost_Cen_Name', 'Patient_ID', 'Sub_Ledger_Name' ]"
                                     [rowHover]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -69,6 +69,9 @@
                                             <th nowrap>Patient Name</th>
                                             <th nowrap>Mobile</th>
                                             <th nowrap>Audologist Name </th>
+                                            <th nowrap>Cost Cen Name</th>
+                                            <th nowrap>Patient ID</th>
+                                            <th nowrap>Sub Ledger Name</th>
                                             
 
                                         </tr>
@@ -101,8 +104,9 @@
                                             <td nowrap>{{col.Patient_Name ? col.Patient_Name : '-'}}</td>
                                             <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
                                             <td nowrap>{{col.Audologist_Name ? col.Audologist_Name : '-'}}</td>
-                                           
-
+                                            <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <td nowrap>{{col.Patient_ID ? col.Patient_ID : '-'}}</td>
+                                            <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -222,7 +226,7 @@
                 border-bottom: 1px solid #c6c6c6;
                 margin-top: -4px;
                 "><strong>PRODUCT SELECTION</strong></h5>
-                    <div class="col-sm-3">     
+                    <div class="col-sm-4">     
                         <div class="form-group" style="padding: 1em;">                         
                             <h5 style="
                             padding: 0.5em 1em;
@@ -234,15 +238,19 @@
                                     <div class="col-sm-12">
                                         <label class="control-label">RIGHT</label>
                                         <select class="form-control" name="RIGHT" #RIGHT="ngModel" [(ngModel)]="objEarMold.Right_Product_ID">
-                                        <option  [ngValue]="undefined">Select</option>
-                                          <option>YES</option>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of deviceList" value="{{option.Product_ID}}">
+                                              {{option.Product_Name}}
+                                            </option>
                                        </select>
                                     </div> 
                                     <div class="col-sm-12">
                                         <label class="control-label">LEFT</label>
                                         <select class="form-control" name="LEFT" #LEFT="ngModel" [(ngModel)]="objEarMold.Left_Product_ID">
-                                        <option  [ngValue]="undefined">Select</option>
-                                          <option>YES</option>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of deviceList" value="{{option.Product_ID}}">
+                                              {{option.Product_Name}}
+                                            </option>
                                        </select>
                                     </div>             
                         </div>
@@ -250,95 +258,199 @@
                                   
                                 
                     </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
+                            <div class="form-group">                                        
+                                <table style="margin-top: 10px">                      
+                                    <tr style="padding: 0.5em;" >
+                                        <th class="TableRow">Right</th>
+                                        <th class="TableRow">Style/Type</th>
+                                        <th class="TableRow">Left</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_R" value="ITE" [(ngModel)]="Type_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> ITE</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_L" value="ITE" [(ngModel)]="Type_L" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_R" value="ITC" [(ngModel)]="Type_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> ITC</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_L" value="ITC" [(ngModel)]="Type_L" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_R" value="CIC" [(ngModel)]="Type_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> CIC</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_L" value="CIC" [(ngModel)]="Type_L" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_R" value="IIC" [(ngModel)]="Type_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> IIC</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_L" value="IIC" [(ngModel)]="Type_L" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_R" value="mCIC" [(ngModel)]="Type_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> mCIC</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_L" value="mCIC" [(ngModel)]="Type_L" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_R" value="Hollow Shell" [(ngModel)]="Type_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> Hollow Shell</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_L" value="Hollow Shell" [(ngModel)]="Type_L" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_R" value="Full Shell" [(ngModel)]="Type_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> Full Shell</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_L" value="Full Shell" [(ngModel)]="Type_L" ></p-radioButton></td>
+                                    </tr>
 
-                                <div class="form-group" style="padding: 1em;">
-                                    <h5 style="
-                                    padding: 0.5em 1em;
-                                    background: #c1c1c185;
-                                    border-top: 5px solid #3c8dbc;
-                                    border-bottom: 1px solid #c6c6c6;
-                                    margin-top: -4px;
-                                    "><strong>Type/ Style</strong></h5>
-                                    <div class="col-sm-12">
-                                        <p-radioButton name="Type" value="ITE" label="ITE" [(ngModel)]="Type" ></p-radioButton><br>
-                                        <p-radioButton name="Type" value="ITC" label="ITC" [(ngModel)]="Type" ></p-radioButton><br>
-                                        <p-radioButton name="Type" value="CIC" label="CIC" [(ngModel)]="Type" ></p-radioButton><br>
-                                        <p-radioButton name="Type" value="IIC" label="IIC" [(ngModel)]="Type" ></p-radioButton><br>
-                                        <p-radioButton name="Type" value="mCIC" label="mCIC" [(ngModel)]="Type" ></p-radioButton><br>
-                                        <p-radioButton name="Type" value="Hollow Shell" label="Hollow Shell" [(ngModel)]="Type" ></p-radioButton><br>
-                                        <p-radioButton name="Type" value="Full Shell" label="Full Shell" [(ngModel)]="Type" ></p-radioButton>
-                                       
-                                        
-                                    </div>
-                                 
-                            </div>
+                            </table>
+                        </div>
                          
-                        </div>
-                        <div class="col-sm-3">
-
-                            <div class="form-group" style="padding: 1em;">
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: -4px;
-                                "><strong>User Preferences / 
-                                            Receiver Preference</strong></h5>
-                                <div class="col-sm-12">
-                                    <p-radioButton name="user_preference" value="Volume Control" label="Volume Control" [(ngModel)]="user_preference" ></p-radioButton><br>
-                                    <p-radioButton name="user_preference" value="Program Switch" label="Program Switch" [(ngModel)]="user_preference" ></p-radioButton><br>
-                                   
-                                    
-
-                                      <hr class="box boxboxDivide-primary">
-                                      <h5><strong>Right</strong></h5>
-                                    
-                                    <p-radioButton name="receiver_right" value="Receiver Length" label="Receiver Length" [(ngModel)]="receiver_right"></p-radioButton><br>
-                                    <p-radioButton name="receiver_right" value="Receiver Type" label="Receiver Type" [(ngModel)]="receiver_right"></p-radioButton><br>
-
-                                     
-                                      <h5><strong>Left</strong></h5>
-                                    <p-radioButton name="receiver_left" value="Receiver Length" label="Receiver Length" [(ngModel)]="receiver_left"></p-radioButton><br>
-                                    <p-radioButton name="receiver_left" value="Receiver Type" label="Receiver Type" [(ngModel)]="receiver_left"></p-radioButton><br>
-
-                                      
-
-                                </div>
-                             
-                        </div>
-                     
                     </div>
-                    <div class="col-sm-3">
-
-                        <div class="form-group" style="padding: 1em;">
-                            <h5 style="
-                            padding: 0.5em 1em;
-                            background: #c1c1c185;
-                            border-top: 5px solid #3c8dbc;
-                            border-bottom: 1px solid #c6c6c6;
-                            margin-top: -4px;
-                            "><strong>Venting and Mold Material</strong></h5>
-                            <div class="col-sm-12">
-                                <p-radioButton name="venting" value="Open" label="Open" [(ngModel)]="venting" ></p-radioButton><br>
-                                <p-radioButton name="venting" value="Large" label="Large" [(ngModel)]="venting" ></p-radioButton><br>
-                                <p-radioButton name="venting" value="Medium" label="Medium" [(ngModel)]="venting" ></p-radioButton><br>
-                                <p-radioButton name="venting" value="Small" label="Small" [(ngModel)]="venting" ></p-radioButton><br>
-                                <p-radioButton name="venting" value="Relief" label="Relief" [(ngModel)]="venting" ></p-radioButton><br>
+                        <div class="col-sm-4">
+                            <div class="form-group" style="margin-left: 2px;">                                        
+                                <table style="margin-top: 10px;
+                                ">                      
+                                    <tr style="padding: 0.5em;" >
+                                        <th class="TableRow">Right</th>
+                                        <th class="TableRow">User Preferences / Receiver Preference</th>
+                                        <th class="TableRow">Left</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="User_Preferences_R" value="Volume Control" [(ngModel)]="User_Preferences_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> Volume Control</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="User_Preferences_L" value="Volume Control" [(ngModel)]="User_Preferences_L" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="User_Preferences_R" value="Program Switch" [(ngModel)]="User_Preferences_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> Program Switch</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="User_Preferences_L" value="Program Switch" [(ngModel)]="User_Preferences_L" ></p-radioButton></td>
+                                    </tr>
+                                </table>
                                 <hr class="box boxboxDivide-primary">
-                                <p-radioButton name="Mold_Material" value="Soft" label="Soft" [(ngModel)]="Mold_Material" ></p-radioButton><br>
-                                <p-radioButton name="Mold_Material" value="Hard" label="Hard" [(ngModel)]="Mold_Material" ></p-radioButton><br>
-                                
-                                
+                                <table>                      
+                                    <tr>
+                                        <th class="TableRow">Right</th>
+                                        <th class="TableRow"></th>
+                                        <th class="TableRow">Left</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;display: flex; margin-top: 14px;">
+                                            <select class="form-control" name="Receiver_Preference_R_Detail" #Receiver_Preference_R_Detail="ngModel" [(ngModel)]="RightRl" [disabled]="ReceiverPreferenceR" style="width: 64%;">
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of ReceiverLengthList" value="{{option}}">
+                                                  {{option}}
+                                                </option>
+                                                </select>
+                                            <p-radioButton 
+                                            name="Receiver_Preference_R" 
+                                            value="Receiver Length"
+                                             [(ngModel)]="Receiver_Preference_R" 
+                                             [style]="{'margin-left': '7px'}" (onClick)="getEnable(Receiver_Preference_R)"></p-radioButton></td>
+
+                                        <td style="text-align: center; width: 30%; font-size: 1.2rem;"><strong> Receiver Length</strong></td>
+
+                                        <td style="text-align: center; display: flex; flex-direction: row-reverse;">
+                                            <select class="form-control" name="Receiver_Preference_L_Detail" #Receiver_Preference_L_Detail="ngModel" [(ngModel)]="LeftRl" [disabled]="ReceiverPreferenceL" style="width: 70%;">
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of ReceiverLengthList" value="{{option}}">
+                                                    {{option}}
+                                                  </option>
+                                               </select>
+
+                                             <p-radioButton name="Receiver_Preference_L" 
+                                             value="Receiver Length" 
+                                             [(ngModel)]="Receiver_Preference_L"
+                                             [style]="{'margin-right': '5px'}" (onClick)="getEnable2(Receiver_Preference_L)" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;display: flex; margin-top: 14px;">
+                                            <input class="form-control"  name="Receiver_type_desc_R" #Receiver_type_desc_R="ngModel"  [(ngModel)]="RightRt" [disabled]="ReceiverTypeR" style="width: 64%;">
+
+                                             <p-radioButton name="Receiver_Preference_R" value="Receiver Type" [(ngModel)]="Receiver_Preference_R" [style]="{'margin-left': '7px'}" (onClick)="getEnable(Receiver_Preference_R)" ></p-radioButton></td>
+
+                                        <td style="text-align: center; width: 30%; font-size: 1.2rem;"><strong> Receiver Type</strong></td>
+
+                                        <td style="text-align: center; display: flex; flex-direction: row-reverse;">
+
+                                            <input class="form-control"  name="Receiver_type_desc_L" #Receiver_type_desc_L="ngModel"  [(ngModel)]="LeftRt" [disabled]="ReceiverTypeL" style="width: 70%;"> 
+
+                                            <p-radioButton name="Receiver_Preference_L" value="Receiver Type" [(ngModel)]="Receiver_Preference_L" [style]="{'margin-right': '5px'}" (onClick)="getEnable2(Receiver_Preference_L)"></p-radioButton></td>
+                                    </tr>
+                                </table>
                             </div>
-                         
-                    </div>
-                 
-                </div>
+                        </div>
+
+
+                            
+                     
+                  
+                
             </div>
-                <div class="col-sm-3">
-                    <div class="form-group">                                        
+            <div class="col-sm-4">
+                <div class="form-group">                                        
+                    <table>                      
+                        <tr style="padding: 0.5em;" >
+                            <th class="TableRow">Right</th>
+                            <th class="TableRow">Venting and Mold Material</th>
+                            <th class="TableRow">Left</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_R" value="Open" [(ngModel)]=" Venting_R" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Open</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_L" value="Open" [(ngModel)]="Venting_L" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_R" value="Large" [(ngModel)]=" Venting_R" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Large</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_L" value="Large" [(ngModel)]="Venting_L" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_R" value="Medium" [(ngModel)]=" Venting_R" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Medium</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_L" value="Medium" [(ngModel)]="Venting_L" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_R" value="Small" [(ngModel)]=" Venting_R" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Small</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_L" value="Small" [(ngModel)]="Venting_L" ></p-radioButton></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_R" value="Relief" [(ngModel)]=" Venting_R" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Relief</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_L" value="Relief" [(ngModel)]="Venting_L" ></p-radioButton></td>
+                        </tr>
+                        
+                       
+
+                </table>
+                <hr class="box boxboxDivide-primary">
+                <table>                      
+                    <tr>
+                        <th class="TableRow">Right</th>
+                        <th class="TableRow"></th>
+                        <th class="TableRow">Left</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;"> <p-radioButton name="Mold_Material_R" value="Soft" [(ngModel)]="Mold_Material_R" ></p-radioButton></td>
+                        <td style="text-align: center;"><strong> Soft</strong></td>
+                        <td style="text-align: center;"> <p-radioButton name="Mold_Material_L" value="Soft" [(ngModel)]="Mold_Material_L" ></p-radioButton></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;"> <p-radioButton name="Mold_Material_R" value="Hard" [(ngModel)]="Mold_Material_R" ></p-radioButton></td>
+                        <td style="text-align: center;"><strong> Hard</strong></td>
+                        <td style="text-align: center;"> <p-radioButton name="Mold_Material_L" value="Hard" [(ngModel)]="Mold_Material_L" ></p-radioButton></td>
+                    </tr>
+                    </table>
+
+                <!-- <hr class="box boxboxDivide-primary">
+                        <p-radioButton name="Mold_Material" value="Soft" label="Soft" [(ngModel)]="Mold_Material" ></p-radioButton><br>
+                        <p-radioButton name="Mold_Material" value="Hard" label="Hard" [(ngModel)]="Mold_Material" ></p-radioButton><br> -->
+            </div>
+
+
+        </div>
+                <div class="col-sm-4">
+                    <div class="form-group" style="margin-left: 2px;">                                        
                     <table>                      
                         <tr style="padding: 0.5em;" >
                             <th class="TableRow">Right</th>
@@ -380,10 +492,17 @@
                             <td style="text-align: center;"><strong> Swimmers Plug</strong></td>
                             <td style="text-align: center;"> <p-radioButton name="Style_Left" value="Swimmers Plug" [(ngModel)]="Style_Left" ></p-radioButton></td>
                         </tr>
+
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="Noise Plug" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Noise Plug</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="Noise Plug" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
                         
                     </table>
                     </div>
                </div>
+
                <div class="clearfix"></div>
                <div class="form-group" style="padding: 1em;">
                 <h5 style="
@@ -448,8 +567,8 @@
                                         </div>
                                         <div class="col-sm-5 pull-right">
                                             <label class="control-label">Audiologist<sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="Audiologist_User_ID" #Audiologist_User_ID="ngModel" [(ngModel)]="objEarMold.Audiologist_User_ID"
-                                            [ngClass]="{'clearance ': earMoldFormSubmit && Audiologist_User_ID.errors?.required}" required>
+                                            <select class="form-control" name="Audiologist_User_id" #Audiologist_User_id="ngModel" [(ngModel)]="objEarMold.Audiologist_User_ID"
+                                            [ngClass]="{'clearance ': earMoldFormSubmit && Audiologist_User_id.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of doctorList" value="{{option.Doctor_ID}}">
                                           {{option.Audologist_Name}}

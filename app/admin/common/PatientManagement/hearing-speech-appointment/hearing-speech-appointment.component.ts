@@ -101,7 +101,7 @@ export class HearingSpeechAppointmentComponent implements OnInit {
   }
   clearData() { 
      this.End_Date = new Date();
-     this.MaterialDataList = [];
+     this.MaterialDataList =  [];
    }
 
    checkDate  (appodate) {
