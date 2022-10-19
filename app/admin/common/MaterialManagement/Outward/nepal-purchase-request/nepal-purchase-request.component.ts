@@ -155,7 +155,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
           this.ngxService.start();
         console.log("productList",data)
         if(data.length){
-          if(editData.length){
+          if(editData ? editData.length : false){
             data.forEach((ele:any) => {
              const filterEdit = editData.find((z:any)=> Number(z.Product_ID) == Number(ele.Product_ID))
              if(filterEdit){
