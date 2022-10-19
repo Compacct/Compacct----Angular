@@ -519,30 +519,11 @@ export class RdbComponent implements OnInit {
 //     }
 
 //   }
-checkingpoqty(){
-  if (this.buttonname === "Create") {
-  if(Number(this.ObjRdb1.Challan_Qty)  <= Number(this.ObjRdb1.PO_QTY)) {
-    return true;
-  }
-  else {
-    this.compacctToast.clear();
-    this.compacctToast.add({
-      key: "compacct-toast",
-      severity: "error",
-      summary: "Warn Message",
-      detail: "Challan Qty is more than PO Qty "
-    });
-  }
-  }
-  else {
-    return true;
-  }
-}
   Add(valid){
     this.RDBFormSubmit = true;
-    if(valid && this.checkingpoqty()){
+    if(valid){
       if (new Date(this.RDB_Date).toISOString() >= new Date(this.PO_Doc_Date).toISOString()) {
-      // if (Number(this.ObjRdb1.Challan_Qty)  <= Number(this.ObjRdb1.PO_QTY)) {
+      if (Number(this.ObjRdb1.Challan_Qty)  <= Number(this.ObjRdb1.PO_QTY)) {
       if (Number(this.ObjRdb1.Received_Qty) <= Number(this.ObjRdb1.Challan_Qty)){
         const productFilter = this.ProductList.filter(el=> Number(el.Product_ID) === Number(this.ObjRdb1.Product_ID))[0];
         const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRdb.Sub_Ledger_ID))[0]
@@ -552,7 +533,7 @@ checkingpoqty(){
           var PO_QTY = this.ObjRdb1.PO_QTY ? Number(this.ObjRdb1.PO_QTY) : 0;
           var FreightPFPerc = 0;
         var apidiscountamt = Number(productFilter.Discount_Amount);
-        //var qtydis = apidiscountamt || PO_QTY ? Number(apidiscountamt / PO_QTY).toFixed(2) : 0;
+        // var qtydis = apidiscountamt || PO_QTY ? Number(apidiscountamt / PO_QTY).toFixed(2) : 0;
         var qtydis = PO_QTY === 0 ? Number(apidiscountamt).toFixed(2) : Number(apidiscountamt / PO_QTY).toFixed(2);
         // var discountamt = Number(Number(qtydis) * this.ObjRdb1.Received_Qty).toFixed(2);
         // var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
@@ -577,7 +558,7 @@ checkingpoqty(){
                     // Vehicle_No : this.ObjRdb.Vehicle_No,
                     Product_ID : Number(this.ObjRdb1.Product_ID),
                     Product_Name : productFilter.Product_Name,
-                    HSN_Code : productFilter.HSN_Code,
+                    HSN_Code : this.ObjRdb1.HSN_Code,
                     UOM : productFilter.UOM,
                     PO_QTY : this.ObjRdb1.PO_QTY,
                     Pending_PO_QTY : this.ObjRdb1.Pending_PO_QTY,
@@ -613,6 +594,7 @@ checkingpoqty(){
                   this.RDBListAdd[i].Total_Amount = Number(totalamount).toFixed(2)
                 }
                });
+               console.log("Product Update",this.RDBListAdd);
                this.addClear()
              }
              else{
@@ -637,16 +619,16 @@ checkingpoqty(){
             detail: "Received Qty is more than Challan Qty "
           });
         }
-      // }
-      // else {
-      //   this.compacctToast.clear();
-      //   this.compacctToast.add({
-      //     key: "compacct-toast",
-      //     severity: "error",
-      //     summary: "Warn Message",
-      //     detail: "Challan Qty is more than PO Qty "
-      //   });
-      // }
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Challan Qty is more than PO Qty "
+        });
+      }
     }
     else {
       this.compacctToast.clear();
@@ -673,7 +655,7 @@ checkingpoqty(){
              Product_Name : this.RDBListAdd[inx].Product_Name,
              Product_ID : this.RDBListAdd[inx].Product_ID,
              Rate : this.RDBListAdd[inx].Rate,
-             Discount_Amount : this.RDBListAdd[inx].Discount_Amount,
+             Discount_Amount : Number(this.RDBListAdd[inx].PO_Discount_Amount),
              GST_Percentage : this.RDBListAdd[inx].Tax_Percentage
            });
    this.ObjRdb1.Product_ID = this.RDBListAdd[inx].Product_ID
@@ -706,7 +688,7 @@ addClear(){
     if(this.RDBListAdd.length) {
       let tempArr:any =[]
       this.RDBListAdd.forEach(item => {
-        const obj = {
+         tempArr.push({
             RDB_No : this.DocNo ? this.DocNo : 'A',
             Product_ID : item.Product_ID,
             //Product_Description : item.Product_Description,
@@ -742,9 +724,11 @@ addClear(){
             LR_No_Date : this.ObjRdb.LR_No_Date,
             Vehicle_No : this.ObjRdb.Vehicle_No,
             Created_By : this.commonApi.CompacctCookies.User_ID,
-            Status : "PENDING"
-        }
-
+            Status : "PENDING",
+            Ins_Dept_ID : this.objDeptUser.Ins_Dept_ID,
+            Ins_USER_ID : this.objDeptUser.Ins_USER_ID,
+        })
+      // console.log("obj",obj)
         // const TempObj = {
         // UOM : "PCS",
         //   Doc_No : this.PPdoc_no ? this.PPdoc_no : "A",
@@ -755,7 +739,8 @@ addClear(){
         //   Autho_One_Staus : "NO"
 
         // }
-        tempArr.push({...obj,...this.objDeptUser});
+        //tempArr.push({...obj,...this.objDeptUser});
+        console.log("objDeptUser",this.objDeptUser)
       });
       console.log(tempArr)
       return JSON.stringify(tempArr);
@@ -904,7 +889,7 @@ addClear(){
 
    }
    onConfirmSave(){
-    const obj = {
+   const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
       "Report_Name_String":"Create_BL_Txn_Purchase_Challan_RDB",
      "Json_Param_String": this.DataForSaveProduct()
@@ -989,7 +974,8 @@ addClear(){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.editlist = data;
       console.log("Edit data",data);
-      this.ObjRdb = data[0],
+      this.ObjRdb = data[0];
+      this.objRdb2 = data[0];
       this.objDeptUser = data[0];
       this.getStockPoint(data[0].Cost_Cen_ID,data[0].godown_id);
       this.RDB_Date = new Date(data[0].RDB_Date);
@@ -1012,12 +998,15 @@ addClear(){
             Product_Name : element.Product_Description,
             HSN_Code : element.HSN_Code,
             UOM : element.UOM,
+            PO_QTY : element.PO_QTY,
+            Pending_PO_QTY : element.Pending_PO_QTY,
             Challan_Qty : Number(element.Challan_Qty),
             Received_Qty : element.Received_Qty,
             Rate :  Number(element.Rate),
             Discount_Amount : Number(element.Discount_Amount).toFixed(2),
+            PO_Discount_Amount : Number(element.PO_Discount_Amount).toFixed(2),
             Taxable_Value : Number(element.Taxable_Value).toFixed(2),
-            Tax_Percentage : Number(element.Tax_Percentage),
+            Tax_Percentage : Number(element.Tax_Percentage).toFixed(2),
             Total_Tax_Amount : Number(element.Total_Tax_Amount).toFixed(2),
             Total_Amount : Number(element.Total_Amount).toFixed(2)
           };

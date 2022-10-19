@@ -385,7 +385,7 @@ export class MiclDispatchChallanComponent implements OnInit {
       // this.adDisabled = false;
       if (!this.createchallandisabled) {
       this.inputBoxDisabled = true;
-      this.docdateDisabled = false;
+      this.docdateDisabled = true;
       this.indentlistdisabled = false;
       }
       this.createchallandisabled = true;
@@ -908,6 +908,7 @@ saveqty(){
             Accepted_Qty: el.Delivery_Qty,
             // Rate: 0,
             UOM: el.UOM,
+            Req_No: this.SelectedIndent
             // User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
             // REMARKS: this.Objdispatch.REMARKS ? this.Objdispatch.REMARKS : "NA",
             // Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
@@ -1271,7 +1272,7 @@ CreateChallan(row){
   if(row.Req_No) {
     this.tabIndexToView = 1;
     this.inputBoxDisabled = false;
-    this.createchallandisabled = true;
+    // this.createchallandisabled = true;
     this.indentlistdisabled = true;
     this.indentdateDisabled = false;
     this.createChallanflag = false;

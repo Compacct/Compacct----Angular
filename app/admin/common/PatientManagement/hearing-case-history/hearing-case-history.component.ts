@@ -80,6 +80,8 @@ ngOnInit(){
   this.GetCenter();
   this.getState();
 }
+onReject(){}
+GetPatientSearch(valid?){}
 CustomerRadioChange(){
 if(this.ObjLast.Is_Hearing_Check === "Y"){
   this.IfYes = true;

@@ -17,6 +17,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 export class MICLCostCenterMasterComponent implements OnInit {
 items:any = [];
 Spinner = false;
+seachSpinner = false;
 tabIndexToView = 0;
 buttonname = "Save";
 BrowseData: any = [];
