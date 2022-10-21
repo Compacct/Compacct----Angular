@@ -34,12 +34,11 @@
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-4" style=" height: 77px;">
-                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">Cost Center</label>
                                         <p-dropdown [options]="costCenterList" name="Cost_Center" #Cost_Center="ngModel" 
                                         [(ngModel)]="objSearch.Cost_Center_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
-                                        [virtualScroll]="true" itemSize="30" 
-                                        [styleClass]="searchFormsubmit && Cost_Center.errors?.required ? 'clearance': ''" [required]="true" >
+                                        [virtualScroll]="true" itemSize="30" [disabled]="this.userType == 'U'"  >
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-4">
@@ -94,6 +93,16 @@
                                                         <li *ngIf = "DelRight == 'Y'">
                                                             <a (click)="DeleteEarMold(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PODUpdate(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> POD Update
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="GetPrint(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -236,22 +245,34 @@
                             margin-top: -4px;
                             "><strong>Device/ Mold type(EAR)</strong></h5>
                                     <div class="col-sm-12">
-                                        <label class="control-label">RIGHT</label>
+                                        <!-- <label class="control-label">RIGHT</label>
                                         <select class="form-control" name="RIGHT" #RIGHT="ngModel" [(ngModel)]="objEarMold.Right_Product_ID">
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  *ngFor="let option of deviceList" value="{{option.Product_ID}}">
                                               {{option.Product_Name}}
-                                            </option>
-                                       </select>
+                                            </option> -->
+                                        <label class="control-label">RIGHT</label>
+                                        <p-dropdown [options]="deviceDataList" name="RIGHT" #RIGHT="ngModel" 
+                                        [(ngModel)]="objEarMold.Right_Product_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Device'"
+                                        [virtualScroll]="true" itemSize="30"  >
+                                        </p-dropdown>
+
+                                       
                                     </div> 
                                     <div class="col-sm-12">
                                         <label class="control-label">LEFT</label>
-                                        <select class="form-control" name="LEFT" #LEFT="ngModel" [(ngModel)]="objEarMold.Left_Product_ID">
+                                        <p-dropdown [options]="deviceDataList" name="LEFT" #LEFT="ngModel" 
+                                        [(ngModel)]="objEarMold.Left_Product_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Device'"
+                                        [virtualScroll]="true" itemSize="30"  >
+                                        </p-dropdown>
+                                        <!-- <select class="form-control" name="LEFT" #LEFT="ngModel" [(ngModel)]="objEarMold.Left_Product_ID">
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  *ngFor="let option of deviceList" value="{{option.Product_ID}}">
                                               {{option.Product_Name}}
                                             </option>
-                                       </select>
+                                       </select> -->
                                     </div>             
                         </div>
 
@@ -301,6 +322,11 @@
                                         <td style="text-align: center;"><strong> Full Shell</strong></td>
                                         <td style="text-align: center;"> <p-radioButton name="Type_L" value="Full Shell" [(ngModel)]="Type_L" ></p-radioButton></td>
                                     </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_R" value="Not Applicable" [(ngModel)]="Type_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong> Not Applicable</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="Type_L" value="Not Applicable" [(ngModel)]="Type_L" ></p-radioButton></td>
+                                    </tr>
 
                             </table>
                         </div>
@@ -324,6 +350,11 @@
                                         <td style="text-align: center;"> <p-radioButton name="User_Preferences_R" value="Program Switch" [(ngModel)]="User_Preferences_R" ></p-radioButton></td>
                                         <td style="text-align: center;"><strong> Program Switch</strong></td>
                                         <td style="text-align: center;"> <p-radioButton name="User_Preferences_L" value="Program Switch" [(ngModel)]="User_Preferences_L" ></p-radioButton></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;"> <p-radioButton name="User_Preferences_R" value="Not Applicable" [(ngModel)]="User_Preferences_R" ></p-radioButton></td>
+                                        <td style="text-align: center;"><strong>Not Applicable</strong></td>
+                                        <td style="text-align: center;"> <p-radioButton name="User_Preferences_L" value="Not Applicable" [(ngModel)]="User_Preferences_L" ></p-radioButton></td>
                                     </tr>
                                 </table>
                                 <hr class="box boxboxDivide-primary">
@@ -419,6 +450,11 @@
                             <td style="text-align: center;"><strong> Relief</strong></td>
                             <td style="text-align: center;"> <p-radioButton name="Venting_L" value="Relief" [(ngModel)]="Venting_L" ></p-radioButton></td>
                         </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_R" value="Not Applicable" [(ngModel)]=" Venting_R" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong>Not Applicable</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Venting_L" value="Not Applicable" [(ngModel)]="Venting_L" ></p-radioButton></td>
+                        </tr>
                         
                        
 
@@ -498,6 +534,11 @@
                             <td style="text-align: center;"><strong> Noise Plug</strong></td>
                             <td style="text-align: center;"> <p-radioButton name="Style_Left" value="Noise Plug" [(ngModel)]="Style_Left" ></p-radioButton></td>
                         </tr>
+                        <tr>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Right" value="Not Applicable" [(ngModel)]="Style_Right" ></p-radioButton></td>
+                            <td style="text-align: center;"><strong> Not Applicable</strong></td>
+                            <td style="text-align: center;"> <p-radioButton name="Style_Left" value="Not Applicable" [(ngModel)]="Style_Left" ></p-radioButton></td>
+                        </tr>
                         
                     </table>
                     </div>
@@ -565,15 +606,22 @@
                                        
                                             <textarea class="form-control" name="Remarks" [(ngModel)]="objEarMold.Remarks" rows="2" placeholder="Remarks"></textarea>
                                         </div>
-                                        <div class="col-sm-5 pull-right">
+                                        <div class="col-sm-8 pull-right">
                                             <label class="control-label">Audiologist<sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="Audiologist_User_id" #Audiologist_User_id="ngModel" [(ngModel)]="objEarMold.Audiologist_User_ID"
+                                            <p-dropdown [options]="doctorDataList" name="Audiologist_User_id" #Audiologist_User_id="ngModel" 
+                                        [(ngModel)]="objEarMold.Audiologist_User_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                        [virtualScroll]="true" itemSize="30" 
+                                        [styleClass]="earMoldFormSubmit && Audiologist_User_id.errors?.required ? 'clearance': ''" [required]="true" >
+                                        </p-dropdown>
+                                            <!-- <select class="form-control" name="Audiologist_User_id" #Audiologist_User_id="ngModel" [(ngModel)]="objEarMold.Audiologist_User_ID"
                                             [ngClass]="{'clearance ': earMoldFormSubmit && Audiologist_User_id.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of doctorList" value="{{option.Doctor_ID}}">
                                           {{option.Audologist_Name}}
                                         </option>
-                                       </select>
+                                       </select> -->
+
                                         </div>
                             </div>
                         </div>
@@ -609,11 +657,27 @@
                     </div>
 
                     <div class="box-footer">
+                        
                         <button class="btn btn-primary pull-right" (click)="SaveEarMold(earMoldForm.form.valid)" id="load" [disabled]="Spinner">
                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                          </button>
                     </div> 
+                    <!-- <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-primary pull-right" (click)="SaveEarMold(earMoldForm.form.valid)" id="load" [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                              </button> 
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-success " (click)="GetPrint()" [disabled]="SaveAfter">
+                                <span class="glyphicon glyphicon-print"></span> Print
+                            </button>
+                        </div>
+
+                    </div> -->
                     
                      </form>
                         </p-tabPanel>
@@ -623,4 +687,41 @@
         </div>
     </div>
 </div>
+
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="PODForm" #PODForm="ngForm" novalidate>
+<div class="form-group">
+        <div class="col-sm-12">
+            <label class="control-label">Date<sup class="text-danger">*</sup></label>
+            <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='POD_Request_Date' name="POD_Date" ></ejs-datepicker>
+        </div> 
+        <div class="col-sm-12">
+            <label class="control-label">POD No<sup class="text-danger">*</sup></label>
+            <input class="form-control" name="Pod_No" #Pod_No="ngModel" [(ngModel)]="objPod.POD_No"  placeholder="POD NO" [ngClass]="{'clearance': PODformsubmit && Pod_No.errors?.required}" required>
+        </div>
+    
+        <div class="col-sm-12">
+            <label class="control-label">Courrier No<sup class="text-danger">*</sup></label>
+            <input class="form-control" name="Courrier_No" #Courrier_No="ngModel" [(ngModel)]="objPod.Courrier_No"  placeholder="Courrier No" [ngClass]="{'clearance': PODformsubmit && Courrier_No.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            
+           <p-checkbox name="group2"  label="Received" [(ngModel)]="checked" binary="true" [style]="{'margin-top': '2px'}"></p-checkbox>
+      </div>
+     <div class="col-sm-12">
+        <label class="control-label">Received On<sup class="text-danger">*</sup></label>
+        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Received_On_Date' name="Received_Date" [enabled]="checked" ></ejs-datepicker>
+    </div>
+</div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="GetPodSave(PODForm.form.valid)" class="btn btn-primary">
+       <span class="glyphicon glyphicon-save"></span>Save
+    </button>
+        <button type="button" (click)="ViewProTypeModal = false" class="btn btn-info">
+            <i class="fa fa-close"></i>Close
+   </button>
+    </p-footer>
+</p-dialog>
 

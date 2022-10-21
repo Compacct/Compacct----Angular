@@ -24,8 +24,11 @@ export class JOHEarMoldComponent implements OnInit {
   Save = false;
   items : any= [];
   Mould_Request_Date : any = new Date();
+  POD_Request_Date : any = new Date();
+  Received_On_Date : any = new Date();
   objEarMold : EarMold = new EarMold();
   objSearch : Search = new Search();
+  objPod : Pod = new Pod();
   earMoldFormSubmit : any = false;
   searchFormsubmit : any = false;
   subledgerList : any = [];
@@ -35,6 +38,7 @@ export class JOHEarMoldComponent implements OnInit {
   patientList : any = [];
   patientdataList : any = [];
   doctorList : any = [];
+  doctorDataList : any = [];
   initDate : any = [];
   Searchedlist : any = [];
   getEarMoldData : any = [];
@@ -64,12 +68,18 @@ export class JOHEarMoldComponent implements OnInit {
   Style_Left : any;
   Style_Right : any;
   modifiction : any;
+  ViewProTypeModal : boolean = false;
+  PODformsubmit : any = false;
 
   MouldNo : any;
   DelMouldNo : any;
   DelRight : any;
   deviceList : any = [];
+  deviceDataList : any = [];
   ReceiverLengthList : any = [];
+  getPODData : any = [];
+  userType : any;
+  checked : boolean = false;
 
   RightRl :any = undefined;
   LeftRl :any = undefined;
@@ -98,7 +108,10 @@ export class JOHEarMoldComponent implements OnInit {
       Header: "CUSTOM PRODUCT/EAR MOLD ORDER FORM",
       Link: " PatientManagement --> JOH Ear Mold"
     });
+    
     this.DelRight = this.commonApi.CompacctCookies.Del_Right;
+    this.userType = this.commonApi.CompacctCookies.User_Type;
+    console.log('userType=', this.userType);
     console.log("this.DelRight=",this.DelRight);
     this.GetSubledger();
     this.getCostCenter();
@@ -158,8 +171,15 @@ export class JOHEarMoldComponent implements OnInit {
             label: el.Cost_Cen_Name,
             value: el.Cost_Cen_ID
           });
+        
          
         });
+        if(this.userType == "U"){
+        this.objSearch.Cost_Center_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
+      }
+      else{
+        this.objSearch.Cost_Center_ID = undefined;
+      }
         
     })
 
@@ -189,6 +209,7 @@ export class JOHEarMoldComponent implements OnInit {
     }
 
     getDoctor(){
+      this.doctorDataList = [];
       const obj = {
         "SP_String": "sp_JOH_Ear_Mold",
         "Report_Name_String": "Get_Doctor_Name",   
@@ -198,12 +219,21 @@ export class JOHEarMoldComponent implements OnInit {
         // console.log(data);
         this.doctorList = data ;
         console.log("doctorList=",this.doctorList);
+        this.doctorList.forEach(el => {
+          this.doctorDataList.push({
+            label: el.Audologist_Name,
+            value: el.Doctor_ID
+          });
+         
+        });
+
           
       })
   
     }
 
     getDevice(){
+      this.deviceDataList = [];
       const obj = {
         "SP_String": "sp_JOH_Ear_Mold",
         "Report_Name_String": "Get_Product_Name",   
@@ -213,11 +243,23 @@ export class JOHEarMoldComponent implements OnInit {
         // console.log(data);
         this.deviceList = data ;
         console.log("deviceList=",this.deviceList);
+        this.deviceList.forEach(el => {
+          this.deviceDataList.push({
+            label: el.Product_Name,
+            value: el.Product_ID
+          });
+         
+        });
           
       })
-  
+ 
+    }
+
+    GetPodUpdate(){
 
     }
+
+    
 
     getEnable(value : any){
       //console.log("Enabled");
@@ -296,6 +338,98 @@ export class JOHEarMoldComponent implements OnInit {
       }
     }
 
+    PODUpdate(col){
+      this.PODformsubmit = false;
+      let MoldId = col.Mould_Request_ID;
+      const obj = {
+        "SP_String": "sp_JOH_Ear_Mold",
+        "Report_Name_String":"Retrieve_POD_From_JOH_Ear_Mold",
+        "Json_Param_String": JSON.stringify([{ Mould_Request_ID: MoldId}]) 
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          console.log('Data=',data);
+          this.objPod = data[0];
+          this.getPODData = data;
+          this.checked = data[0].Received == 'Y'? true : false;
+          this.POD_Request_Date =data[0].POD_Date== null?new Date(): new Date(data[0].POD_Date);
+          this.Received_On_Date = data[0].POD_Date== null? new Date():new Date(data[0].Received_Date);
+          this.MouldNo = data[0].Mould_Request_ID;
+        
+    });
+      setTimeout(() => {
+        this.ViewProTypeModal = true;
+      }, 300);
+
+    }
+
+  
+
+    GetPodSave(valid){
+      this.PODformsubmit = true;
+      if(valid){
+        this.objPod.POD_Date = this.DateService.dateConvert(this.POD_Request_Date);
+        this.objPod.Received_Date = this.DateService.dateConvert(this.Received_On_Date);
+        this.objPod.Received = this.checked == true? 'Y' : 'N';
+        this.objPod.Mould_Request_ID = this.MouldNo;
+        const obj = {
+          "SP_String": "sp_JOH_Ear_Mold",
+          "Report_Name_String":"update_POD_JOH_Ear_Mold",
+          "Json_Param_String": JSON.stringify([this.objPod]) 
+         }
+         this.GlobalAPI.getData(obj).subscribe((data : any)=>
+         {
+           console.log('data=',data);
+           
+           if(data[0].Column1)
+           {
+             
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "POD Update Succesfully ",
+            detail: "Succesfully Updated"
+          });
+          this.ViewProTypeModal = false
+          
+          this.getAlldata(true);
+         // this.PaymentRequisitionActionPOPUP = false;
+          this.clearData();
+          
+          //this.HolidayListAdd = [];
+          this.Spinner = false;
+          this.tabIndexToView = 0;
+           this.items = ["BROWSE", "CREATE"];
+          }
+          else{
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Wrong"
+          });
+          // this.clearData();
+          this.Spinner = false;
+          }
+         });
+         
+  
+
+      }
+
+    }
+
+    GetPrint(col){
+      if (col.Mould_Request_ID) {
+        window.open("/Report/Crystal_Files/CRM/joh_Form/Ear_Mold_Print.aspx?Mould_Request_ID=" + col.Mould_Request_ID, 
+        'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+        );
+
+      }
+
+    }
+
     getEarMold(Mould_Request_ID){
       const obj = {
         "SP_String": "sp_JOH_Ear_Mold",
@@ -306,6 +440,7 @@ export class JOHEarMoldComponent implements OnInit {
           console.log('Data=',data);
           this.objEarMold = data[0];
           this.getEarMoldData = data;
+          this.Mould_Request_Date = new Date(data[0].Mould_Request_Date);
           this.Preference = data[0].Preference;
           this.User_type = data[0].User_type;
           this.Priority = data[0].Priority;
@@ -326,6 +461,8 @@ export class JOHEarMoldComponent implements OnInit {
           this.Style_Left = data[0].Style_Left;
           this.Style_Right = data[0].Style_Right;
           this.modifiction = data[0].Remake;
+          this.objEarMold.Right_Product_ID = data[0].Right_Product_ID;
+          this.objEarMold.Left_Product_ID = data[0].Left_Product_ID;
           if(data[0].Receiver_Preference_R == "Receiver Length")
           {
             this.RightRl = data[0].Receiver_Preference_R_Details? data[0].Receiver_Preference_R_Details : undefined;
@@ -388,6 +525,7 @@ export class JOHEarMoldComponent implements OnInit {
        this.GlobalAPI.getData(obj).subscribe((data : any)=>
        {
          console.log('data=',data);
+         console.log(data[0].Column1)
          
          if(data[0].Column1)
          {
@@ -396,9 +534,14 @@ export class JOHEarMoldComponent implements OnInit {
           this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
-          summary: "Journal Voucher Create Succesfully ",
+          summary: "Ear Mold Update Succesfully ",
           detail: "Succesfully Updated"
         });
+        if (data[0].Column1) {
+          window.open("/Report/Crystal_Files/CRM/joh_Form/Ear_Mold_Print.aspx?Mould_Request_ID=" + data[0].Column1, 
+          'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+          );
+        }
         this.getAlldata(true);
        // this.PaymentRequisitionActionPOPUP = false;
         this.clearData();
@@ -441,9 +584,14 @@ export class JOHEarMoldComponent implements OnInit {
         this.compacctToast.add({
         key: "compacct-toast",
         severity: "success",
-        summary: "Journal Voucher Create Succesfully ",
+        summary: "Ear Mold Create Succesfully ",
         detail: "Succesfully Created"
       });
+      if (this.objEarMold.Foot_Fall_ID) {
+        window.open("/Report/Crystal_Files/CRM/joh_Form/Ear_Mold_Print.aspx?Mould_Request_ID=" + data[0].Column1, 
+        'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+        );
+      }
       this.getAlldata(true);
      // this.PaymentRequisitionActionPOPUP = false;
       this.clearData();
@@ -524,7 +672,7 @@ export class JOHEarMoldComponent implements OnInit {
   const tempobj = {
     FromDate : start,
     ToDate : end,
-    Cost_Center_ID : this.objSearch.Cost_Center_ID,
+    Cost_Center_ID : this.objSearch.Cost_Center_ID ? this.objSearch.Cost_Center_ID : 0,
   
   }
   const obj = {
@@ -546,6 +694,7 @@ export class JOHEarMoldComponent implements OnInit {
   }
  clearData(){
   this.objEarMold = new EarMold();
+  this.objPod = new Pod();
   this.Preference = undefined;
   this.User_type = undefined;
   this.Priority = undefined;
@@ -559,8 +708,11 @@ export class JOHEarMoldComponent implements OnInit {
   this.Style_Right = undefined;
   this.modifiction = undefined;
   this.Mould_Request_Date  = new Date();
+  this.POD_Request_Date  = new Date();
+  this.Received_On_Date = new Date();
   this.earMoldFormSubmit = false;
   this.searchFormsubmit = false;
+  this.PODformsubmit = false;
   this.MouldNo = undefined;
   this.DelMouldNo = undefined;
 
@@ -646,4 +798,12 @@ class Search{
   To_Date : any;
   Cost_Center_ID : any;
 
+}
+class Pod{
+  POD_No : any;
+  POD_Date : any;
+  Courrier_No : any;
+  Received : any;
+  Received_Date : any;
+  Mould_Request_ID : any;
 }

@@ -323,5 +323,20 @@ export class ProcessSalaryComponent implements OnInit {
         });
     }
   }
+  salaryregforAdmin(fileName){
+    var firstDate = this.Month_Name+'-'+'01'
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Browse Salary Register For Admin",
+      "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+      
+    })
+  }
 
 }
