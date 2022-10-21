@@ -135,6 +135,10 @@ export class WorkOrderComponent implements OnInit {
   GrTermAmount:number = 0
   GrGstTermAmt:number = 0
   grNetTerm:number = 0
+  SearchedlistPanding:any = [];
+  PandingFormSubmitted = false;
+  seachPendSpinner = false;
+  disBackUp:any = undefined;
 
   constructor(
     private $http: HttpClient ,
@@ -160,7 +164,7 @@ export class WorkOrderComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items = [ 'BROWSE', 'CREATE'];
+    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -175,8 +179,9 @@ export class WorkOrderComponent implements OnInit {
       this.GetCostCenter();
       this.GetCurrency();
       this.GetOrderType();
-      this.GetProductsDetalis();
+      // this.GetProductsDetalis();
      // this.getProduct();
+      this.GetRequlist();
       this.GettermAmt();
       this.getAllData(true);
       this.getcompany();
@@ -190,7 +195,7 @@ export class WorkOrderComponent implements OnInit {
   } 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = [ 'BROWSE', 'CREATE'];
+    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
     this.buttonname = "Create";
     this.clearData();
     this.GetCostCenter();
@@ -234,6 +239,7 @@ export class WorkOrderComponent implements OnInit {
     this.objpendingPurIndPro.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.ObjWorkOrder.Billing_To  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.ObjWorkOrder.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.GetRequlist();
     this.ObjWorkOrder.Credit_Days = 0;
     this.ObjWorkOrder.Currency_ID = 1;
     this.ObjWorkOrder.Type_ID = 1;
@@ -324,6 +330,7 @@ export class WorkOrderComponent implements OnInit {
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.costCenterList = data;
       this.ObjWorkOrder.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.objpendingreq.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       if(this.ObjWorkOrder.Cost_Cen_ID){
         this.getCostCenterDetalis();
       }
@@ -335,6 +342,7 @@ export class WorkOrderComponent implements OnInit {
   getCostCenterDetalis(){
     if(this.ObjWorkOrder.Cost_Cen_ID){
       this.DetalisObj = {};
+      // this.getreq();
        const tempVal = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.ObjWorkOrder.Cost_Cen_ID))
        this.DetalisObj = tempVal[0]
       console.log("DetalisObj",this.DetalisObj);
@@ -382,6 +390,41 @@ export class WorkOrderComponent implements OnInit {
       console.log("OrderTypeList",this.OrderTypeList);
     })
   }
+  getreq(){
+    // if(this.openProject == 'N'){
+      if(this.objProjectRequi.Billing_To && this.objProjectRequi.Cost_Cen_ID){
+        this.GetRequlist();
+      }
+      else {
+        this.Requlist = []
+        this.objProjectRequi.Req_No = undefined
+      }
+    // }
+   
+  }
+  GetRequlist(){
+    const obj = {
+      "SP_String": "Sp_Work_Order",
+      "Report_Name_String": "Get_Requisition_No",
+      "Json_Param_String": JSON.stringify([{To_Cost_Cen_ID : this.ObjWorkOrder.Billing_To,F_Cost_Cen_ID:this.ObjWorkOrder.Cost_Cen_ID}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // console.log("data",data)
+      // this.Requlist = data
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Req_No,
+          element['value'] = element.Req_No
+        });
+       this.Requlist = data;
+     // console.log("Requlist======",this.Requlist);
+      }
+       else {
+        this.Requlist = [];
+  
+      }
+    })
+  }
   GetProductsDetalis(){
     // if(this.ObjaddWorkOrder.Product_Type_ID){
       // this.ObjaddWorkOrder.Req_No = undefined;
@@ -393,7 +436,7 @@ export class WorkOrderComponent implements OnInit {
       const obj = {
         "SP_String": "Sp_Work_Order",
         "Report_Name_String": "Get_Product",
-        // "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Product_Type_ID : Number(this.ObjaddWorkOrder.Product_Type_ID)}}]) : JSON.stringify([{Product_Type_ID : Number(this.ObjaddWorkOrder.Product_Type_ID)}])
+        "Json_Param_String": JSON.stringify([{Req_No : this.ObjaddWorkOrder.Req_No}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         // this.productDataList = data;
@@ -424,6 +467,76 @@ export class WorkOrderComponent implements OnInit {
     // }
   
   }
+  getProduct(id?,uom?,psc?){
+    if(this.ObjaddWorkOrder.Req_No){
+      this.productDataList = [];
+      this.productList = [];
+      this.ObjaddWorkOrder.Product_ID = undefined;
+      this.ObjaddWorkOrder.Product_Spec = undefined;
+      this.ObjaddWorkOrder.Unit = undefined
+      // let tempData:any = {}
+      // tempData = this.ObjaddWorkOrder.Req_No ? {Req_No : this.ObjaddWorkOrder.Req_No} : {Product_Type_ID : this.ObjaddWorkOrder.Product_Type_ID}
+      const obj = {
+        "SP_String": "Sp_Purchase_Order",
+        "Report_Name_String": "Get_Product_Against_Requisition_No",
+        "Json_Param_String": JSON.stringify([{Req_No : this.ObjaddWorkOrder.Req_No}])
+       }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        //console.log(data);
+        // this.productDataList = data;
+       
+        // console.log("productDataList",this.productDataList);
+        if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Product_Description,
+            element['value'] = element.Product_ID
+          });
+          this.productDataList = data;
+        } else {
+            this.productDataList = [];
+        }
+           if(id){
+            this.ObjaddWorkOrder.Product_ID = id ? id : 0
+
+           }
+          
+           this.ObjaddWorkOrder.Product_Spec = psc ? psc : undefined
+           this.ObjaddWorkOrder.Unit = uom ? uom : undefined;
+         
+        })
+    }
+    else {
+      this.productDataList = [];
+      this.productList = [];
+      let tempObj = {...this.ObjaddWorkOrder}
+      this.ObjaddWorkOrder = new addWorkOrder()
+      this.ObjaddWorkOrder.Req_No = tempObj.Req_No
+    }
+ 
+    }
+    RequisitionChange(){
+      // this.Requisiton_Type = undefined;
+      // this.Material_Type = undefined;
+      const tempAddObj = {...this.ObjaddWorkOrder}
+      this.ObjaddWorkOrder = new addWorkOrder()
+      this.ExpectedDeliverydate = new Date();
+      this.grTotal = 0;
+      this.taxAblTotal = 0;
+      this.disTotal = 0;
+      this.ExciTotal = 0;
+      this.GSTTotal  = 0;
+      this.NetTotal  = 0;
+      this.disBackUp = undefined
+      this.ObjaddWorkOrder.Req_No = tempAddObj.Req_No
+      if (this.ObjaddWorkOrder.Req_No) {
+        // const ctrl = this;
+        // const ReqNoObj = $.grep(ctrl.Requlist,function(item: any) {return item.Req_No == ctrl.objaddPurchacse.Req_No})[0];
+        // console.log(ReqNoObj);
+        // this.Requisiton_Type = ReqNoObj.Requisiton_Type;
+        // this.Material_Type = ReqNoObj.Material_Type;
+        this.getProduct();
+      }
+    }
   GetProductSpecification(){
     const tempAddObj = {...this.ObjaddWorkOrder}
   this.ObjaddWorkOrder = new addWorkOrder()
@@ -434,8 +547,8 @@ export class WorkOrderComponent implements OnInit {
   this.ExciTotal = 0;
   this.GSTTotal  = 0;
   this.NetTotal  = 0;
-  // this.disBackUp = undefined
-  // this.ObjaddWorkOrder.Req_No = tempAddObj.Req_No
+  this.disBackUp = undefined
+  this.ObjaddWorkOrder.Req_No = tempAddObj.Req_No
   this.ObjaddWorkOrder.Product_Type_ID = tempAddObj.Product_Type_ID
   this.ObjaddWorkOrder.Product_ID = tempAddObj.Product_ID
    if(this.ObjaddWorkOrder.Product_ID){
@@ -469,7 +582,9 @@ export class WorkOrderComponent implements OnInit {
   getProductDetalis(){
      if(this.ObjaddWorkOrder.Product_ID){
         let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID))
+        if (!this.addPurchaseListInput) {
          this.ObjaddWorkOrder.Unit = tempVal[0].UOM
+        }
          console.log("tempVal",tempVal);
          this.GetTaxDetalis(this.ObjaddWorkOrder.Product_ID);
          if(this.ObjaddWorkOrder.Rate){
@@ -749,7 +864,7 @@ export class WorkOrderComponent implements OnInit {
      console.log("productFilter",productFilter[0])
      let saveData = {
         Product_ID: Number(this.ObjaddWorkOrder.Product_ID),
-        // Req_No: this.ObjaddWorkOrder.Req_No ? this.ObjaddWorkOrder.Req_No : "NA",
+        Req_No: this.ObjaddWorkOrder.Req_No ? this.ObjaddWorkOrder.Req_No : "NA",
         Product_Name:  this.addPurchaseListInput ? this.addPurchaseListInputField.Product_Name: productFilter[0].Product_Description, //productFilter[0].Product_Description,
         Product_Spec: this.ObjaddWorkOrder.Product_Spec,
         Exp_Delivery: this.DateService.dateConvert(new Date(this.ExpectedDeliverydate)),
@@ -836,9 +951,9 @@ export class WorkOrderComponent implements OnInit {
   // console.log(this.addPurchaseList[inx])
   // this.ObjaddWorkOrder.Req_No = this.addPurchaseList[inx].Req_No
   this.addPurchaseListInputField = this.addPurchaseList[inx]
-  // setTimeout(() => {
-  //   this.getProduct(this.addPurchaseList[inx].Product_ID,this.addPurchaseList[inx].UOM,this.addPurchaseList[inx].Product_Spec)
-  // }, 300);
+  setTimeout(() => {
+    this.getProduct(this.addPurchaseList[inx].Product_ID,this.addPurchaseList[inx].UOM,this.addPurchaseList[inx].Product_Spec)
+  }, 300);
    this.ObjaddWorkOrder.Product_ID = this.addPurchaseList[inx].Product_ID
    this.ObjaddWorkOrder = {...this.addPurchaseList[inx]}
    this.ObjaddWorkOrder.Unit = this.addPurchaseList[inx].UOM
@@ -1089,17 +1204,18 @@ this.ObjWorkOrder.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + thi
 }
 this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
   // this.validatation.required = false;
+  var won = data[0].Column1;
   if(data[0].Column1){
     const constSaveData = await this.TermSave(data[0].Column1);
     if(constSaveData){
     this.ngxService.stop();
       this.Spinner = false;
-      this.showTost(msg,"Work order")
+      this.showTost(msg,won)
       this.getAllData(true);
   if(this.DocNo){
     this.ngxService.stop();
     this.tabIndexToView = 0;
-    this.items = [ 'BROWSE', 'CREATE'];
+    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
     this.buttonname = "Create";
   }
   this.ngxService.stop();
@@ -1109,14 +1225,27 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
   }
   else {
     this.ngxService.stop();
-    this.Spinner = false;
-    this.compacctToast.clear();
-    this.compacctToast.add({
-      key: "compacct-toast",
-      severity: "error",
-      summary: "Warn Message",
-      detail: "Error Occured "
-    });
+      this.Spinner = false;
+      this.showTost(msg,won)
+      this.getAllData(true);
+  if(this.DocNo){
+    this.ngxService.stop();
+    this.tabIndexToView = 0;
+    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
+    this.buttonname = "Create";
+  }
+  this.ngxService.stop();
+  this.clearData();
+  this.getAllData(true);
+    // this.ngxService.stop();
+    // this.Spinner = false;
+    // this.compacctToast.clear();
+    // this.compacctToast.add({
+    //   key: "compacct-toast",
+    //   severity: "error",
+    //   summary: "Warn Message",
+    //   detail: "Error Occured "
+    // });
   }
   }
   else {
@@ -1150,13 +1279,13 @@ async TermSave(doc:any){
       this.AddTermList.forEach((ele:any) => {
         ele['DOC_No'] = doc
       });
-     }
-     else{
-      this.AddTermList.push({
-        "DOC_No": doc,
-        "Term_ID":0
-      })
-     }
+    //  }
+    //  else{
+    //   this.AddTermList.push({
+    //     "DOC_No": doc,
+    //     "Term_ID":0
+    //   })
+    //  }
       
      const obj = {
        "SP_String": "Sp_Work_Order",
@@ -1167,6 +1296,7 @@ async TermSave(doc:any){
     
      return TermData
    }
+  }
   
  
 }
@@ -1271,7 +1401,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'UPDATE'];
+    this.items = [ 'BROWSE', 'UPDATE', 'PENDING MAINTENANCE INDENT'];
     this.buttonname = "Update";
     this.geteditmaster(col.Doc_No);
    }
@@ -1289,6 +1419,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     console.log("Edit data",data);
     this.ObjWorkOrder = data[0],
     this.DocDate = new Date(data[0].Doc_Date);
+    this.GetRequlist();
     this.RefDate = new Date(data[0].Supp_Ref_Date)
     this.addPurchaseList = data[0].L_element;
     this.AddTermList = data[0].Term_element ? data[0].Term_element : [] ;
@@ -1430,12 +1561,12 @@ getcompany(){
    this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
   })
 }
-showTost(msg,summary){
+showTost(msg,won){
   this.compacctToast.clear();
   this.compacctToast.add({
     key: "compacct-toast",
     severity: "success",
-    summary: summary,
+    summary: "Work Order No " +won,//summary,
     detail: "Succesfully "+msg
   });
 }
@@ -1564,6 +1695,58 @@ gettermsdetails(){
   //    }
   //  })
    }
+   // PenDing Maintanance Indent
+   getDateRangePen(dateRangeObj:any){
+    if(dateRangeObj.length) {
+     this.objpendingreq.From_Date = dateRangeObj[0];
+     this.objpendingreq.To_Date = dateRangeObj[1];
+    }
+    }
+   GetPandingSearch(valid){
+    this.SearchedlistPanding = [];
+    this.PandingFormSubmitted = true;
+    this.seachPendSpinner = true;
+    const start = this.objpendingreq.From_Date
+    ? this.DateService.dateConvert(new Date(this.objpendingreq.From_Date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.objpendingreq.To_Date
+    ? this.DateService.dateConvert(new Date(this.objpendingreq.To_Date))
+    : this.DateService.dateConvert(new Date());
+    if (valid){
+    const tempobj = {
+      To_Cost_Cen_ID : this.objpendingreq.Cost_Cen_ID,
+      From_Date : start,
+      To_Date : end,
+    }
+    //console.log("tempobj==",tempobj)
+    const obj = {
+    "SP_String": "Sp_Returnable_Gate_Pass",
+    "Report_Name_String": "Browse_Pending_Maintenance_Indent",
+    "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length){
+        this.SearchedlistPanding = data;
+        this.DynamicHeader = Object.keys(data[0]);
+      }
+      this.PandingFormSubmitted = false;
+      this.seachPendSpinner = false;
+     console.log('SearchedlistPanding===',this.SearchedlistPanding)
+    })
+    }
+  }
+  PrintPenInd(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Requisition_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
 
 }
 class WorkOrder {

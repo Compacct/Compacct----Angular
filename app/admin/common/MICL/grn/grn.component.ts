@@ -83,6 +83,8 @@ export class GrnComponent implements OnInit {
   TermList:any = [];
   TermFormSubmitted = false;
   AddTermList:any = [];
+  termeditlist:any = [];
+  addPurchaseListInput:boolean = false;
 
 
   constructor(
@@ -148,6 +150,8 @@ export class GrnComponent implements OnInit {
      this.INV_No_Date = undefined;
      this.ObjTerm = new Term();
      this.AddTermList = [];
+     this.addPurchaseListInput = false;
+     this.DocNo = undefined;
    }
    clearData(){
    this.Spinner = false;
@@ -240,7 +244,7 @@ export class GrnComponent implements OnInit {
      this.GetGodown();
    });
  }
- GetGodown(){
+ GetGodown(editcostgodown?){
   this.Godownlist = [];
   const obj = {
     "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
@@ -251,7 +255,12 @@ export class GrnComponent implements OnInit {
  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.Godownlist = data;
    console.log("Godownlist======",this.Godownlist);
-   this.ObjGRN1.godown_id = this.Godownlist.length ? this.Godownlist[0].godown_id : undefined;
+   if(editcostgodown){
+    this.ObjGRN1.godown_id = editcostgodown;
+  }
+  else{
+    this.ObjGRN1.godown_id = this.Godownlist.length ? this.Godownlist[0].godown_id : undefined;
+  }
  });
 }
    GetRDBNo(){
@@ -419,17 +428,54 @@ export class GrnComponent implements OnInit {
       Tax :  Number(taxsgstcgst).toFixed(2),
       Total_Amount : Number(totalamount).toFixed(2)
     };
-    this.productaddSubmit.push(productObj);
-    console.log("Product Submit",this.productaddSubmit);
-    this.GRNFormSubmitted = false;
-    // this.clearData();
-    this.ObjGRN = new GRN();
-    this.ObjGRN.Rate = undefined;
-    this.ObjGRN.Product_Details = undefined;
-    this.ObjGRN.GST_Tax_Per = undefined;
-    this.disabledflaguom = false;
-    this.disabledflaghsn = false;
+    // this.productaddSubmit.push(productObj);
+    // console.log("Product Submit",this.productaddSubmit);
+    // this.GRNFormSubmitted = false;
+    // // this.clearData();
+    // this.ObjGRN = new GRN();
+    // this.ObjGRN.Rate = undefined;
+    // this.ObjGRN.Product_Details = undefined;
+    // this.ObjGRN.GST_Tax_Per = undefined;
+    // this.disabledflaguom = false;
+    // this.disabledflaghsn = false;
     //this.localpurchaseFLag = false;
+    if(this.productaddSubmit.length && this.addPurchaseListInput){
+      this.productaddSubmit.forEach((xz:any,i) => {
+        // console.log(i)
+        if(xz.Product_ID == this.ObjGRN.Product_ID){
+          const productFilter = this.ProductDetailslist.filter(el=> Number(el.Product_ID) === Number(this.ObjGRN.Product_ID))[0];
+          // this.addPurchaseList[i] = {...this.objaddPurchacse}
+          this.productaddSubmit[i].Product_ID =  Number(this.ObjGRN.Product_ID)
+          this.productaddSubmit[i].Product_Name = this.ObjGRN.Product_Details
+          this.productaddSubmit[i].Unit = this.ObjGRN.Unit
+          this.productaddSubmit[i].HSN_Code = this.ObjGRN.HSN_Code
+          // this.productaddSubmit[i].Rate = Number(productFilter.Rate),
+          this.productaddSubmit[i].Challan  = Number(this.ObjGRN.Challan_Qty)
+          this.productaddSubmit[i].Received = Number(this.ObjGRN.Received_Qty)
+          this.productaddSubmit[i].Accepted  = Number(this.ObjGRN.Accepted_Qty)
+          this.productaddSubmit[i].Rejected = Number(this.ObjGRN.Rejected_Qty)
+          this.productaddSubmit[i].Discount_Amount = Number(discountamt).toFixed(2)
+          this.productaddSubmit[i].Taxable_Value = Number(taxable).toFixed(2)
+          this.productaddSubmit[i].GST_Tax_Per = Number(this.ObjGRN.GST_Tax_Per)
+          this.productaddSubmit[i].Tax = Number(taxsgstcgst).toFixed(2)
+          this.productaddSubmit[i].Total_Amount = Number(totalamount).toFixed(2)
+        }
+       });
+       console.log("Product Update",this.productaddSubmit);
+       this.addClear()
+     }
+     else{
+      this.productaddSubmit.push(productObj);
+      console.log("Product Submit",this.productaddSubmit);
+      this.GRNFormSubmitted = false;
+      this.ObjGRN = new GRN();
+      this.ObjGRN.Rate = undefined;
+      this.ObjGRN.Product_Details = undefined;
+      this.ObjGRN.GST_Tax_Per = undefined;
+      this.disabledflaguom = false;
+      this.disabledflaghsn = false;
+      this.addClear()
+     }
         }
          else {
           this.compacctToast.clear();
@@ -462,6 +508,48 @@ export class GrnComponent implements OnInit {
     }
    }
    }
+    // Edit Add RDB 
+  EditAdd(inx:any){
+    this.ProductDetailslist = [];
+    // console.log(this.addPurchaseList[inx])
+    // this.objaddPurchacse.Req_No = this.addPurchaseList[inx].Req_No
+    // this.addPurchaseListInputField = this.addPurchaseList[inx]
+    // setTimeout(() => {
+      // this.getProductDetails(this.ObjRdb.PO_Doc_No)
+    // }, 300);
+    setTimeout(() => {
+             this.ProductDetailslist.push({
+               Product_ID : this.productaddSubmit[inx].Product_ID,
+               Product_Description : this.productaddSubmit[inx].Product_Details,
+              //  Rate : this.productaddSubmit[inx].Rate,
+              //  Discount_Amount : Number(this.productaddSubmit[inx].PO_Discount_Amount),
+              //  GST_Percentage : this.productaddSubmit[inx].Tax_Percentage
+             });
+    }, 300);
+     this.ObjGRN.Product_ID = this.productaddSubmit[inx].Product_ID
+    //  this.objaddPurchacse = {...this.addPurchaseList[inx]}
+     this.ObjGRN.Unit = this.productaddSubmit[inx].Unit;
+     this.ObjGRN.Rate = Number(this.productaddSubmit[inx].Rate);
+     this.DiscountAmount = Number(this.productaddSubmit[inx].RDB_Discount_Amount);
+     this.ObjGRN.GST_Tax_Per = Number(this.productaddSubmit[inx].GST_Tax_Per);
+     this.ObjGRN.HSN_Code = this.productaddSubmit[inx].HSN_Code;
+     this.addPurchaseListInput = true;
+     this.ObjGRN.Challan_Qty =  this.productaddSubmit[inx].Challan;
+     this.ObjGRN.Received_Qty = this.productaddSubmit[inx].Received;
+     this.ObjGRN.Accepted_Qty =  this.productaddSubmit[inx].Accepted;
+     this.ObjGRN.Rejected_Qty = this.productaddSubmit[inx].Rejected;
+  
+  }
+  addClear(){
+        this.ObjGRN = new GRN();
+        this.GRNFormSubmitted = false;
+        if(this.buttonname === "Update") {
+        this.ProductDetailslist = [];
+        }
+        this.addPurchaseListInput = false
+        // this.addPurchaseListInputField = {}
+        // console.log("addPurchaseList",this.addPurchaseList);
+  }
    delete(index) {
     this.productaddSubmit.splice(index,1)
 
@@ -475,6 +563,7 @@ export class GrnComponent implements OnInit {
       let tempArr:any =[]
       this.productaddSubmit.forEach(item => {
         const obj = {
+            GRN_No : this.DocNo ? this.DocNo : 'A',
             Product_ID : item.Product_ID,
             //Product_Description : item.Product_Description,
             HSN_Code : item.HSN_Code,
@@ -492,6 +581,7 @@ export class GrnComponent implements OnInit {
             Total_Tax_Amount : Number(item.Tax).toFixed(2),
             Total_Amount : Number(item.Total_Amount).toFixed(2),
             Remarks : item.Remarks,
+            Batch_Number : item.Batch_No ? item.Batch_No :  "A"
         }
 
         // const TempObj = {
@@ -611,12 +701,12 @@ export class GrnComponent implements OnInit {
         const constSaveData = await this.TermSave(data[0].Column1);
         if(constSaveData){
         this.compacctToast.clear();
-        //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+        const mgs = this.buttonname === 'Save' ? "Saved" : "Updated";
         this.compacctToast.add({
          key: "compacct-toast",
          severity: "success",
          summary: "Return_ID  " + tempID,
-         detail: "Succesfully Saved" //+ mgs
+         detail: "Succesfully " + mgs
        });
        this.PrintPGRN(data[0].Column1);
        this.ObjGRN1 = new GRN1();
@@ -646,6 +736,12 @@ export class GrnComponent implements OnInit {
        this.INV_No_Date = undefined;
        this.ObjTerm = new Term();
        this.AddTermList = [];
+       if (this.buttonname === "Update") {
+        this.tabIndexToView = 0;
+        this.items = ["BROWSE", "CREATE", "PENDING RDB", "PENDING RDB PRODUCT WISE", "GRN REGISTER"];
+        this.buttonname = "Save";
+        this.DocNo = undefined;
+       }
 
       } 
       else{
@@ -673,58 +769,94 @@ export class GrnComponent implements OnInit {
     }
     })
    }
-  //  Edit(col){
-  //   this.clearData();
-  //   this.DocNo = undefined;
-  //   if(col.Doc_No){
-  //     this.DocNo = col.Doc_No;
-  //     this.tabIndexToView = 1;
-  //     this.items = ["BROWSE", "UPDATE", "PENDING RDB"];
-  //     this.buttonname = "Update";
-  //     this.getedit(col.Doc_No);
-  //    }
-  //  }
-  //  getedit(Dno){
-  //   this.editlist = [];
-  //   const obj = {
-  //     "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
-  //     "Report_Name_String": "Purchase_Order_Get",
-  //     "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+   Edit(col){
+    this.clearData();
+    this.DocNo = undefined;
+    if(col.GRN_No){
+      this.DocNo = col.GRN_No;
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE", "PENDING RDB", "PENDING RDB PRODUCT WISE", "GRN REGISTER"];
+      this.buttonname = "Update";
+      this.getedit(col.GRN_No);
+      setTimeout(() => {
+        this.gettermedit(col.GRN_No);
+      }, 200);
+     }
+   }
+   getedit(Dno){
+    this.editlist = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "Get_GRN_Details",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
   
-  //   }
-  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //     this.editlist = data;
-  //     console.log("Edit data",data);
-  //     this.ObjGRN1 = data[0],
-  //     this.GRNDate = new Date(data[0].GRN_Date);
-  //     this.PODate = new Date(data[0].RDB_Date);
-  //     this.SENo = data[0].SE_No;
-  //     this.SE_No_Date = new Date(data[0].PO_Doc_Date);
-  //     this.INVNo = data[0].INV_No;
-  //     this.INV_No_Date = new Date(data[0].PO_Doc_Date);
-  //     // this.RDBListAdd = data[0].L_element;
-  //     data.forEach(element => {
-  //       const  productObj = {
-  //           Product_ID : element.Product_ID,
-  //           Product_Description : element.Product_Description,
-  //           HSN_Code : element.HSN_Code,
-  //           UOM : element.UOM,
-  //           Challan_Qty : Number(element.Challan_Qty),
-  //           Received_Qty : Number(element.Received_Qty),
-  //           Rejected_Qty : Number(element.Rejected_Qty),
-  //           Accepted_Qty : Number(element.Accepted_Qty),
-  //           Rate :  Number(element.Rate),
-  //           Taxable_Value : Number(element.Taxable_Value).toFixed(2),
-  //           Tax_Percentage : Number(element.Tax_Percentage),
-  //           Total_Tax_Amount : Number(element.Total_Tax_Amount).toFixed(2),
-  //           Total_Amount : Number(element.Total_Amount).toFixed(2),
-  //           Remarks : element.Remarks,
-  //         };
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editlist = data;
+      console.log("Edit data",data);
+      this.ObjGRN1 = data[0];
+      this.ObjGRN2 = data[0];
+      this.GetGodown(data[0].godown_id);
+      this.GRNDate = new Date(data[0].GRN_Date);
+      this.ObjGRN1.RDB_No = data[0].RDB_No;
+      this.PODate = new Date(data[0].RDB_Date);
+      this.SENo = data[0].SE_No + "&";
+      this.SE_No_Date = new Date(data[0].SE_Date);
+      this.INVNo = data[0].Inv_No + "&";
+      this.INV_No_Date = new Date(data[0].Inv_Date);
+      this.AddTermList = data[0].Term_element ? data[0].Term_element : [];
+      // this.RDBListAdd = data[0].L_element;
+      data.forEach(element => {
+        const  productObj = {
+            Product_ID : element.Product_ID,
+            Product_Details : element.Product_Description,
+            HSN_Code : element.HSN_Code,
+            Unit : element.UOM,
+            Challan : Number(element.Challan_Qty),
+            Received : Number(element.Received_Qty),
+            Rejected : Number(element.Rejected_Qty),
+            Accepted : Number(element.Accepted_Qty),
+            Rate :  Number(element.Rate),
+            Discount_Amount : Number(element.Discount_Amount).toFixed(2),
+            RDB_Discount_Amount : Number(element.RDB_Discount_Amount).toFixed(2),
+            Taxable_Value : Number(element.Taxable_Value).toFixed(2),
+            GST_Tax_Per : Number(element.Tax_Percentage),
+            Tax : Number(element.Total_Tax_Amount).toFixed(2),
+            Total_Amount : Number(element.Total_Amount).toFixed(2),
+            Remarks : element.Remarks,
+            Batch_No : element.Batch_No
+          };
     
-  //         this.productaddSubmit.push(productObj);
-  //       });
-  //   })
-  //  }
+          this.productaddSubmit.push(productObj);
+        });
+    })
+   }
+   gettermedit(Dno){
+    this.termeditlist = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "Get_GRN_Details_Term",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.termeditlist = data;
+      console.log("termeditlist data",data);
+      data.forEach(element => {
+        const  termObj = {
+            Sale_Pur : element.Sale_Pur,
+            Term_ID : element.Term_ID,
+            Term_Name : element.Term_Name,
+            HSN_No : element.HSN_No,
+            Term_Amount : element.Term_Amount,
+            GST_Per : Number(element.GST_Per),
+            GST_Amount : Number(element.GST_Amount)
+          };
+    
+          this.AddTermList.push(termObj);
+        });
+    })
+   }
    GetDataforUpdate(){
   //    this.EditList = [];
   //   //console.log(this.ObjBrowse.Doc_No);
@@ -813,8 +945,8 @@ export class GrnComponent implements OnInit {
       Sale_Pur : this.ObjTerm.Sale_Pur,
       Term_ID : this.ObjTerm.Term_ID,
       Term_Name : this.ObjTerm.Term_Name,
-      Term_Amount : Number(this.ObjTerm.Term_Amount),
-      GST_Per : this.ObjTerm.GST_Per,
+      Term_Amount : Number(this.ObjTerm.Term_Amount).toFixed(2),
+      GST_Per : Number(this.ObjTerm.GST_Per).toFixed(2),
       GST_Amount:  Number(Number(Number(this.ObjTerm.Term_Amount) * Number(this.ObjTerm.GST_Per) / 100).toFixed(2)),
       HSN_No : this.ObjTerm.HSN_No,
     };

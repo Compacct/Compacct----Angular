@@ -128,28 +128,17 @@
                                                                 <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
                                                             </a>
                                                         </li>
-                                                        <li *ngIf= "col.Toyal_Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.F_Cost_Cen_ID">
-                                                                  <a (click)="edit(col)">
-                                                                    <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
-                                                                    Edit
-                                                                </a>
-                                                            </li>
-                                                        <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'M'  && col.Autho_One_Staus == 'NO'">
-                                                            <a (click)="Authorized(col)">
-                                                                <i class="fa fa-check"></i> Authorized
-                                                            </a>
-                                                        </li>
-                                                        <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'A'">
-                                                            <a (click)="Authorized(col)">
-                                                                <i class="fa fa-check"></i> Authorized
-                                                            </a>
-                                                        </li>
-
                                                         <li>
                                                             <a (click)="exportoexcel2(col,'Purchase_Planning')">
                                                                 <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
                                                             </a>
                                                         </li> -->
+                                                        <li>
+                                                            <a (click)="Edit(col)">
+                                                              <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
+                                                              Edit
+                                                          </a>
+                                                        </li>
                                                         <li>
                                                             <a (click)="PrintPGRN(col.GRN_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
@@ -266,12 +255,13 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">R.D.B No<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="poorder" #poorder="ngModel" [(ngModel)]="ObjGRN1.RDB_No" (change)='GetProductDetails()' [ngClass]="{'clearance': GRNFormSubmitted && poorder?.errors?.required}" required>
+                                                    <select *ngIf="buttonname != 'Update'" class="form-control" name="poorder" #poorder="ngModel" [(ngModel)]="ObjGRN1.RDB_No" (change)='GetProductDetails()' [ngClass]="{'clearance': GRNFormSubmitted && poorder?.errors?.required}" required>
                                                      <option  [ngValue]="undefined">Select</option>
                                                          <option *ngFor = "let option of RDBNolist" value= "{{option.RDB_No}}">
                                                             {{option.RDB_No}}
                                                         </option>
                                                     </select>
+                                                    <div class="label-t" *ngIf="buttonname === 'Update'">{{ObjGRN1.RDB_No}} </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">R.D.B Date  <sup class="text-danger">*</sup></label>
@@ -386,7 +376,8 @@
                                             <th rowspan="2">Tax</th>
                                             <th rowspan="2">Total Amount (Rs.)</th>
                                             <th rowspan="2">Remarks</th>
-                                            <th rowspan="2">Delete</th>
+                                            <th rowspan="2" *ngIf="buttonname === 'Update'">Edit</th>
+                                            <th rowspan="2" *ngIf="buttonname != 'Update'">Delete</th>
                                         </tr>
                                         <tr>
                                             <th>Challan</th>
@@ -417,7 +408,13 @@
                                             <td>{{obj.Tax}}</td>
                                             <td>{{ obj.Total_Amount}}</td>
                                             <td><input type="text" [name]="obj.Product_ID" [(ngModel)]='obj.Remarks' class="form-control" style="width: 200px;" /></td> 
-                                            <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                            <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAdd(ind)"
+                                                ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                              </a></td>
+                                              <td *ngIf="buttonname != 'Update'"> <a class="btn btn-sm btn-danger" (click)="delete(ind)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a></td>
+                                            <!-- <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
                                         </tr>
                                     </tbody>
                                 </table>
