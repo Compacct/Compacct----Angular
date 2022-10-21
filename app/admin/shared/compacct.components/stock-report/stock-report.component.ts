@@ -71,6 +71,10 @@ export class StockReportComponent implements OnInit {
   allTotalObj:any = {}
   TotalProValue:any = undefined
   AgeingList:any = []
+  clst_Cost_Cen_ID:any = undefined;
+  clst_Godown_ID:any = undefined;
+  costCenterClStkList:any = [];
+  GodownClstkList:any = [];
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -91,6 +95,7 @@ export class StockReportComponent implements OnInit {
    this.userType =this.$CompacctAPI.CompacctCookies.User_Type
    this.getCosCenter();
    this.getProductType();
+   this.getCosCenterClStk();
    this.Finyear()
    this.getAgeingList()
   }
@@ -100,6 +105,8 @@ export class StockReportComponent implements OnInit {
     //this.ObjBrowseData = new BrowseData ()
     this.getclosingTotal(this.ClosingReportList);
     this.getTotal(this.stockList)
+    this.getCosCenter();
+    this.getCosCenterClStk();
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -144,7 +151,8 @@ export class StockReportComponent implements OnInit {
       el['value'] = el.Cost_Cen_ID
     });
      this.costCenterList = data
-     this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+     this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.clst_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
      this.GetgodownBrowse(this.ObjBrowse.Cost_Cen_ID);
     })
   }
@@ -160,7 +168,8 @@ export class StockReportComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownList = data;
         console.log("this.GodownList",this.GodownList);
-        this.ObjBrowse.Godown_ID = this.GodownList.length ? this.GodownList[0].Godown_ID : undefined
+        this.ObjBrowse.Godown_ID = this.GodownList.length ? this.GodownList[0].Godown_ID : undefined;
+        this.clst_Godown_ID = this.GodownList.length ? this.GodownList[0].Godown_ID : undefined;
         })
     }
     else{
@@ -417,6 +426,44 @@ export class StockReportComponent implements OnInit {
      console.log("productTypeList",this.productTypeList);
      })
   }
+  getCosCenterClStk(){
+    const obj = {
+      "SP_String": "sp_Comm_Controller",
+      "Report_Name_String": "Get_Master_Cost_Center_Dropdown"
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     console.log("Cost Center",data)
+     data.forEach(el => {
+      el['label'] = el.Cost_Cen_Name
+      el['value'] = el.Cost_Cen_ID
+    });
+     this.costCenterClStkList = data;
+     this.clst_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.GetgodownClStk(this.clst_Cost_Cen_ID);
+    })
+  }
+  GetgodownClStk(CostIDClstk){
+    if(CostIDClstk){
+      this.GodownList = [];
+      const obj = {
+        "SP_String": "SP_Txn_Requisition",
+        "Report_Name_String": "Get_Cost_Center_Godown",
+        "Json_Param_String": JSON.stringify([{Cost_Cen_ID : CostIDClstk}])
+  
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.GodownClstkList = data;
+        // console.log("this.GodownClstkList",this.GodownClstkList);
+        this.clst_Godown_ID = this.GodownClstkList.length ? this.GodownClstkList[0].Godown_ID : undefined;
+        })
+    }
+    else{
+      this.GodownClstkList = [];
+      this.clst_Godown_ID = undefined;
+    }
+
+   
+  }
   getDateRangeClosingReport(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjClosingStockBrowse.Start_Date = dateRangeObj[0];
@@ -457,7 +504,9 @@ export class StockReportComponent implements OnInit {
       else {
       const CCTempobj={
         StDate: start,
-        EndDate: end
+        EndDate: end,
+        from_cost_id: this.clst_Cost_Cen_ID,
+        vendor_id: this.clst_Godown_ID
       }
       const obj = {
         "SP_String": "REP_Stock_Report",
