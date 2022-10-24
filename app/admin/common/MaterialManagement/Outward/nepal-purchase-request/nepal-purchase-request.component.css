@@ -5,6 +5,9 @@
     width: auto !important;
     min-height: 170px !important;
 }
+.addtable .ui-table .ui-table-thead > tr > th{
+  padding: 0.25em 0.5em !important;
+}
   .custombutton {
     margin-top: 25px;
   }
