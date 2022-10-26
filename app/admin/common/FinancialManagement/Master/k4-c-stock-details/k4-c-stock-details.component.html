@@ -1,1 +1,250 @@
-<p>k4-c-stock-details works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                        <form name="StockForm" #StockForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period<sup class="text-danger">*</sup></label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"
+                                        [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Cost Center Name</label>
+                                    <p-dropdown [options]="CostCenterList"
+                                     name="Cost_Center" 
+                                     #Cost_Center="ngModel"
+                                     [(ngModel)]="objsearch.Cost_Cen_ID"
+                                     [showClear]="true"
+                                     [emptyFilterMessage]="' No Cost Center'" 
+                                     [filter]="true" filterBy="label,value.name" 
+                                     [resetFilterOnHide]="true"
+                                     [placeholder]="'Select Cost Center Name'" 
+                                     [virtualScroll]="true" itemSize="30"
+                                     (onChange)="getStockDetails()"
+                                     [disabled]="DisablePop">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Stock Point Name</label>
+                                <p-dropdown [options]="StockList" 
+                                name="Stock_List" 
+                                #Stock_List="ngModel"
+                                [(ngModel)]="objsearch.Godown_ID"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Stock Point'"
+                                [filter]="true"
+                                filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Stock Point Name'"
+                                [virtualScroll]="true" itemSize="30">
+                                </p-dropdown>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Product Category</label>
+                                    <p-dropdown [options]="ProductList"
+                                    name="Product_List"
+                                    #Product_List="ngModel"
+                                    [(ngModel)]="objsearch.CAT_ID"
+                                    [showClear]="true" 
+                                    [emptyFilterMessage]="' No Product Category'"
+                                    [filter]="true"
+                                    filterBy="label,value.name"
+                                    [resetFilterOnHide]="true" 
+                                    [placeholder]="'Select Product Category'"
+                                    [virtualScroll]="true" itemSize="30">
+                                    </p-dropdown>
+                                
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal"
+                                        (click)="getAlldata(StockForm.form.valid)" id="load" style="margin-top:27px;"
+                                        [disabled]="seachSpinner">
+                                        <p-progressSpinner *ngIf="seachSpinner"
+                                            [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                                            animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner"
+                                            class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                </div>
+                                <div class="col-sm-3" *ngIf="SearchedlistBrowse.length">
+                                        <button type="button" class="btn btn-success custombutton" data-toggle="modal" (click)="GetExcelSheet(SearchedlistBrowse)" id="load"
+                                            style="margin-top:27px;"><i class="fa fa-file-excel-o"></i>&nbsp;Export to Excel
+                                        </button>
+                                </div>                                                           
+                            </div>
+                        </form>
+                        <br>
+<div class="box-body table-responsive">
+<p-table [value]="SearchedlistBrowse"
+[paginator]="SearchedlistBrowse.length ? true : false "
+[rows]="10" 
+[rowHover]="true" 
+[autoLayout]="true"
+sortMode="multiple"
+*ngIf="SearchedlistBrowse.length"
+[rowsPerPageOptions]="[100,200,300]"
+[globalFilterFields]="['PRODUCT_DESCRIPTION','OPENING_QTY','RECV_QTY','ISSUE_QTY','CLOSING_QTY','Reorder_level']"
+[rowHover]="true" #dt>
+    <ng-template pTemplate="caption">
+        <div class="row">
+            <div class="col-sm-3 pull-right" style="text-align: right">
+                <input type="text" pInputText size="50" placeholder="Search"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+            </div>
+        </div>
+
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+        <th>PRODUCT DESCRIPTION</th>
+        <th>OPENING QTY</th>
+        <th>RECEIVE QTY</th>
+        <th>ISSUE QTY</th>
+        <th>CLOSING QTY</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-col>
+        <tr>
+        <td>{{col.PRODUCT_DESCRIPTION}}</td>
+        <td>
+            <div (click)="viewOpeningQTY(col)"class="txt">{{col.OPENING_QTY}}</div>
+        </td>
+        <td>
+            <div (click)="viewReceiveQTY(col)" class="txt">{{col.RECV_QTY}}</div>
+        </td>
+        <td>
+            <div (click)="viewIssueQTY(col)" class="txt">{{col.ISSUE_QTY}}</div>
+        </td>
+        <td>
+            <div (click)="viewClosingQTY(col)" class="txt">{{col.CLOSING_QTY}}</div>
+        </td>
+        </tr>
+    </ng-template>
+</p-table>
+</div>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OPENING QTY POP -->
+<p-dialog [header]="'OPENING QTY ( '+titleHeder+' )'" [appendTo]="'body'" [visible]="ViewOPQTYModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '60%', minWidth: '300px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+<p-table [value]="opningQTYlist" 
+    *ngIf='opningQTYlist.length' [autoLayout]="true" sortMode="multiple"
+     [rowHover]="true">
+    <ng-template pTemplate="header">
+        <tr>
+            <th *ngFor="let option of DynamicHeaderOpningQTY">{{option.replaceAll('_',' ')}}</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-col>
+        <tr>
+            <ng-container *ngFor="let option of DynamicHeaderOpningQTY" data->
+                <td>{{col[option] ? col[option] :"-" }}</td>
+            </ng-container>
+        </tr>
+    </ng-template>
+</p-table>
+    <p-footer>
+        <!-- <button type="button" pButton icon="pi pi-check" (click)="UpdateRemarks(Remarks)" label="OK"></button> -->
+        <button type="button" (click)="ViewOPQTYModal = false" class="btn btn-info">Close</button>
+    </p-footer>
+</p-dialog>
+<!-- RECEIVE QTY POP -->
+<p-dialog [header]="'RECEIVE QTY ( '+titleHeder+' )'" [appendTo]="'body'" [visible]="ViewRECQTYModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '60%', minWidth: '300px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <p-table [value]="ReceiveQTYlist" *ngIf='ReceiveQTYlist.length' [autoLayout]="true" sortMode="multiple" [rowHover]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let option of DynamicHeaderReceiveQTYlist">{{option.replaceAll('_',' ')}}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col>
+            <tr>
+                <ng-container *ngFor="let option of DynamicHeaderReceiveQTYlist" data->
+                    <td>{{col[option] ? col[option] :"-" }}</td>
+                </ng-container>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-footer>
+        <!-- <button type="button" pButton icon="pi pi-check" (click)="UpdateRemarks(Remarks)" label="OK"></button> -->
+        <button type="button" (click)="ViewRECQTYModal = false" class="btn btn-info">Close</button>
+    </p-footer>
+</p-dialog>
+<!-- ISSUE QTY POP -->
+<p-dialog [header]="'ISSUE QTY ( '+titleHeder+' )'" [appendTo]="'body'" [visible]="ViewISSUQTYModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <p-table [value]="IssueQTYlist" *ngIf='IssueQTYlist.length' [autoLayout]="true" sortMode="multiple"
+        [rowHover]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let option of DynamicHeaderIssueQTYlist">{{option.replaceAll('_',' ')}}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col>
+            <tr>
+                <ng-container *ngFor="let option of DynamicHeaderIssueQTYlist" data->
+                    <td>{{col[option] ? col[option] :"-" }}</td>
+                </ng-container>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-footer>
+        <!-- <button type="button" pButton icon="pi pi-check" (click)="UpdateRemarks(Remarks)" label="OK"></button> -->
+        <button type="button" (click)="ViewISSUQTYModal = false" class="btn btn-info">Close</button>
+    </p-footer>
+</p-dialog>
+<!-- CLOSING QTY POP -->
+<p-dialog [header]="'CLOSING QTY ( '+titleHeder+' )'" [appendTo]="'body'" [visible]="ViewCLOSQTYModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <p-table [value]="ClosingQTYlist" *ngIf='ClosingQTYlist.length' [autoLayout]="true" sortMode="multiple" [rowHover]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let option of DynamicHeaderClosingQTYlist">{{option.replaceAll('_',' ')}}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col>
+            <tr>
+                <ng-container *ngFor="let option of DynamicHeaderClosingQTYlist" data->
+                    <td>{{col[option] ? col[option] :"-" }}</td>
+                </ng-container>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-footer>
+        <!-- <button type="button" pButton icon="pi pi-check" (click)="UpdateRemarks(Remarks)" label="OK"></button> -->
+        <button type="button" (click)="ViewCLOSQTYModal = false" class="btn btn-info">Close</button>
+    </p-footer>
+</p-dialog>
+
+
