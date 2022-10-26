@@ -88,6 +88,7 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
    this.DocNo = undefined
    //console.log("DocDate",this.DocDate)
   this.productList = [];
+  this.seachSpinner = false
   }
   onReject(){
     this.compacctToast.clear("c");
