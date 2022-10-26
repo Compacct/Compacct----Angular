@@ -82,12 +82,12 @@ const end = this.objSubledger.to_date
 ? this.DateService.dateConvert(new Date(this.objSubledger.to_date))
 : this.DateService.dateConvert(new Date());
 
-  const url =  'Report_type=' + this.objSubledger.Report_type + ' Print' +
+  const url =  'Report_type=' + this.objSubledger.Report_type +' Print'+
                 '&from_date=' + start +
                 '&to_date=' + end +
-                '&Cost_Cen_ID=' + this.$CompacctAPI.CompacctCookies.Cost_Cen_ID +
-                '&Cost_Cen_Name=' + this.$CompacctAPI.CompacctCookies.Company_Name +
-                '&Sub_LedgerID=' +this.SubData.Sub_Ledger_ID +
+                '&Cost_Cen_ID=2'+
+                '&Cost_Cen_Name="Kolkata(Factory/HO)"' +
+                '&Sub_LedgerID='+this.SubData.Sub_Ledger_ID +
                 '&Sub_LedgerName='+this.SubData.Sub_Ledger_Name +
                 '&SelectedFinYearID='+this.$CompacctAPI.CompacctCookies.Fin_Year_ID +
     '&State=';
