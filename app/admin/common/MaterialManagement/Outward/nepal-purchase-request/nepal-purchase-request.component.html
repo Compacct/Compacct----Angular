@@ -221,6 +221,7 @@
                                 [autoLayout]="true"
                                 sortMode="multiple"
                                 [rowHover]="true"
+                                [styleClass]="'addtable'"
                                 >
                                 <ng-template pTemplate="caption">
                                     <div class="row">
@@ -244,7 +245,7 @@
                                 </ng-template>
                                 <ng-template pTemplate="colgroup" let-columns>
                                     <colgroup>
-                                    <col *ngFor="let col of columns" style="width:180px;">
+                                    <col *ngFor="let col of columns" [ngStyle]="{'width': tableWidthCal(col.field)}">
                                     </colgroup>
                                 </ng-template>
                                 <ng-template pTemplate="header" let-columns>
@@ -257,8 +258,8 @@
                                 <ng-template pTemplate="body" let-rowData let-columns="columns">
                                     <tr>
                                         <ng-container *ngFor="let col of columns">
-                                            <td  *ngIf="col.field != 'Purchase_Request_Qty'" >{{rowData[col.field]}}</td>
-                                            <td *ngIf="col.field == 'Purchase_Request_Qty'" >
+                                            <td  *ngIf="col.field != 'Purchase_Req_Qty'" >{{rowData[col.field]}}</td>
+                                            <td *ngIf="col.field == 'Purchase_Req_Qty'" >
                                                 <input type="text" 
                                                 [name]="rowData.Product_ID" 
                                                 [(ngModel)]='rowData[col.field]' 

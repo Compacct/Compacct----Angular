@@ -159,27 +159,48 @@
                     </select>
                   </div>
                   <div class="col-sm-3">
+                    <label class="control-label"
+                    >Status<span class="text-danger">*</span></label
+                  >
+                  <select
+                    class="form-control"
+                    name="Status"
+                    #Status="ngModel"
+                    [(ngModel)]="objbrowse.Status"
+                    [ngClass]="{
+                      clearance:
+                        SearchFormSubmit && Status?.errors?.required
+                    }"
+                  >
+                    <option [ngValue]="undefined">Select</option>
+                    <option value="All">All</option>
+                    <option value="Used"> Used</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                  </div>
+                  <div class="col-sm-2" >
                     <button
-                      class="btn btn-primary custombutton"
-                      data-toggle="modal"
-                      (click)="GetSearchedList(SearchForm.form.valid)"
-                      id="search"
-                      [disabled]="seachSpinner"
-                    >
-                      <p-progressSpinner
-                        *ngIf="seachSpinner"
-                        [style]="{ width: '15px', height: '15px' }"
-                        strokeWidth="8"
-                        animationDuration=".5s"
-                      ></p-progressSpinner>
-                      <span
-                        *ngIf="!seachSpinner"
-                        class="glyphicon glyphicon-search"
-                      ></span
-                      >&nbsp;Search
-                    </button>
+                    class="btn btn-primary custombutton"
+                    data-toggle="modal"
+                    (click)="GetSearchedList(SearchForm.form.valid)"
+                    id="search"
+                    [disabled]="seachSpinner"
+                  >
+                    <p-progressSpinner
+                      *ngIf="seachSpinner"
+                      [style]="{ width: '15px', height: '15px' }"
+                      strokeWidth="8"
+                      animationDuration=".5s"
+                    ></p-progressSpinner>
+                    <span
+                      *ngIf="!seachSpinner"
+                      class="glyphicon glyphicon-search"
+                    ></span
+                    >&nbsp;Search
+                  </button>
                   </div>
                 </div>
+              
               </form>
               <div class="table-responsive table-id">
                 <p-table

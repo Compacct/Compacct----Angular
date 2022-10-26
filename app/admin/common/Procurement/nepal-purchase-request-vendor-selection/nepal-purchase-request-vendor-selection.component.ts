@@ -89,10 +89,9 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
       if(data.length) {
         data.forEach(element => {
           element['label'] = element.Purchase_Request_No,
-          element['value'] = element.Purchase_Request_No
+          element['value'] = element.Purchase_Request_No_Actual
         });
        this.poRequestList = data;
-     // console.log("Requlist======",this.Requlist);
       }
        else {
         this.poRequestList = [];
@@ -104,7 +103,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
    purchaseRequestChange(){
     if(this.objvendorSelection.Purchase_Request_No){
       this.getPr()
-      const poRequestListFilter = this.poRequestList.filter((y:any)=> y.Purchase_Request_No == this.objvendorSelection.Purchase_Request_No)[0]
+      const poRequestListFilter = this.poRequestList.filter((y:any)=> y.Purchase_Request_No_Actual == this.objvendorSelection.Purchase_Request_No)[0]
       if(poRequestListFilter){
         this.PoDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(poRequestListFilter.Purchase_Request_Date)
       }
@@ -128,9 +127,12 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
      }
   GetVender() {
   this.$http
-    .get("Common/Get_Subledger_DR_for_Nepal_with_User_ID?user_id=4")
-    .pipe(map((data:any) => data ? JSON.parse(data) : []))
-    .subscribe((data: any) => {
+  const obj = {
+    "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+    "Report_Name_String": "Get_Sub_Ledger_For_Purchase"
+  }
+  this.GlobalAPI.getData(obj)
+  .subscribe((data: any) => {
       if(data.length) {
         data.forEach(element => {
           element['label'] = element.Sub_Ledger_Name,
