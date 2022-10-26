@@ -89,6 +89,7 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
    //console.log("DocDate",this.DocDate)
   this.productList = [];
   this.seachSpinner = false
+  this.SearchFormSubmit = false
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -245,31 +246,33 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
   GetSearchedList(valid:any){
     this.SearchFormSubmit = true
     if(valid){
-      this.seachSpinner = true
-      this.Searchedlist = []
-      const tempobj = {
-        Sales_Man_ID: this.objbrowse.Sales_Man_ID ? this.objbrowse.Sales_Man_ID : 0 ,
-        From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
-        To_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
-        Status: this.objbrowse.Status
+      if(this.objbrowse.Sales_Man_ID && this.objbrowse.Status){
+        this.seachSpinner = true
+        this.Searchedlist = []
+        const tempobj = {
+          Sales_Man_ID: this.objbrowse.Sales_Man_ID ? this.objbrowse.Sales_Man_ID : 0 ,
+          From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
+          To_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
+          Status: this.objbrowse.Status
+        }
+        const obj = {
+          "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+          "Report_Name_String": "Browse_Requisition_From_Salesman",
+          "Json_Param_String": JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data: any) => {
+            console.log("search Data",data)
+            if(data.length){
+             data.forEach((y:any) => {
+              y.Doc_Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Doc_Date);
+             });
+             this.Searchedlist = data
+             console.log("Searchedlist",this.Searchedlist)
+            }
+            this.seachSpinner = false
+        })
       }
-      const obj = {
-        "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
-        "Report_Name_String": "Browse_Requisition_From_Salesman",
-        "Json_Param_String": JSON.stringify([tempobj])
       }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-          console.log("search Data",data)
-          if(data.length){
-           data.forEach((y:any) => {
-            y.Doc_Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Doc_Date);
-           });
-           this.Searchedlist = data
-           console.log("Searchedlist",this.Searchedlist)
-          }
-          this.seachSpinner = false
-      })
-    }
 
   }
   convertToNepaliDateObj = function (_Date) {
