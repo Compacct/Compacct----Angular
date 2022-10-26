@@ -250,6 +250,7 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
         Sales_Man_ID: this.objbrowse.Sales_Man_ID ? this.objbrowse.Sales_Man_ID : 0 ,
         From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
         To_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
+        Status: this.objbrowse.Status
       }
       const obj = {
         "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
@@ -406,6 +407,7 @@ class req{
 }
 class browse{
   Sales_Man_ID:any
+  Status:string
   From_Date:any
   To_Date:any
 }
