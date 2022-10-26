@@ -66,7 +66,9 @@
                                             <th nowrap> Mold Request ID</th>
                                             <th nowrap> Request Date</th>
                                             <th nowrap>Patient Name</th>
-                                            <th nowrap>Mobile</th>
+                                            <th nowrap>Status</th>
+                                            <th nowrap>Received Date</th>
+                                            <!-- <th nowrap>Mobile</th> -->
                                             <th nowrap>Audologist Name </th>
                                             <th nowrap>Cost Cen Name</th>
                                             <th nowrap>Patient ID</th>
@@ -111,7 +113,9 @@
                                             <td style="text-align: center ;" nowrap>{{col.Mould_Request_ID ? col.Mould_Request_ID : '-' }}</td>
                                             <td nowrap>{{col.Mould_Request_Date | date: "dd/MMM/yyyy"}}</td>
                                             <td nowrap>{{col.Patient_Name ? col.Patient_Name : '-'}}</td>
-                                            <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
+                                            <td nowrap>{{col.status ? col.status : '-'}}</td>
+                                            <td nowrap>{{col.Received_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <!-- <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td> -->
                                             <td nowrap>{{col.Audologist_Name ? col.Audologist_Name : '-'}}</td>
                                             <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
                                             <td nowrap>{{col.Patient_ID ? col.Patient_ID : '-'}}</td>
@@ -366,46 +370,50 @@
                                     </tr>
                                     <tr>
                                         <td style="text-align: center;display: flex; margin-top: 14px;">
-                                            <select class="form-control" name="Receiver_Preference_R_Detail" #Receiver_Preference_R_Detail="ngModel" [(ngModel)]="RightRl" [disabled]="ReceiverPreferenceR" style="width: 64%;">
+                                            <select class="form-control" name="Receiver_Preference_R_Detail" #Receiver_Preference_R_Detail="ngModel" [(ngModel)]="objEarMold.Receiver_Length_R"  style="width: 64%;">
                                                 <option  [ngValue]="undefined">Select</option>
                                                 <option  *ngFor="let option of ReceiverLengthList" value="{{option}}">
                                                   {{option}}
                                                 </option>
                                                 </select>
-                                            <p-radioButton 
+                                            <!-- <p-radioButton 
                                             name="Receiver_Preference_R" 
                                             value="Receiver Length"
                                              [(ngModel)]="Receiver_Preference_R" 
-                                             [style]="{'margin-left': '7px'}" (onClick)="getEnable(Receiver_Preference_R)"></p-radioButton></td>
+                                             [style]="{'margin-left': '7px'}" (onClick)="getEnable(Receiver_Preference_R)"></p-radioButton> -->
+                                            </td>
 
                                         <td style="text-align: center; width: 30%; font-size: 1.2rem;"><strong> Receiver Length</strong></td>
 
                                         <td style="text-align: center; display: flex; flex-direction: row-reverse;">
-                                            <select class="form-control" name="Receiver_Preference_L_Detail" #Receiver_Preference_L_Detail="ngModel" [(ngModel)]="LeftRl" [disabled]="ReceiverPreferenceL" style="width: 70%;">
+                                            <select class="form-control" name="Receiver_Preference_L_Detail" #Receiver_Preference_L_Detail="ngModel" [(ngModel)]="objEarMold.Receiver_Length_L"  style="width: 70%;">
                                                 <option  [ngValue]="undefined">Select</option>
                                                 <option  *ngFor="let option of ReceiverLengthList" value="{{option}}">
                                                     {{option}}
                                                   </option>
                                                </select>
 
-                                             <p-radioButton name="Receiver_Preference_L" 
+                                             <!-- <p-radioButton name="Receiver_Preference_L" 
                                              value="Receiver Length" 
                                              [(ngModel)]="Receiver_Preference_L"
-                                             [style]="{'margin-right': '5px'}" (onClick)="getEnable2(Receiver_Preference_L)" ></p-radioButton></td>
+                                             [style]="{'margin-right': '5px'}" (onClick)="getEnable2(Receiver_Preference_L)" ></p-radioButton> -->
+                                            </td>
                                     </tr>
                                     <tr>
                                         <td style="text-align: center;display: flex; margin-top: 14px;">
-                                            <input class="form-control"  name="Receiver_type_desc_R" #Receiver_type_desc_R="ngModel"  [(ngModel)]="RightRt" [disabled]="ReceiverTypeR" style="width: 64%;">
+                                            <input class="form-control"  name="Receiver_type_desc_R" #Receiver_type_desc_R="ngModel"  [(ngModel)]="objEarMold.Receiver_Type_R"  style="width: 64%;">
 
-                                             <p-radioButton name="Receiver_Preference_R" value="Receiver Type" [(ngModel)]="Receiver_Preference_R" [style]="{'margin-left': '7px'}" (onClick)="getEnable(Receiver_Preference_R)" ></p-radioButton></td>
+                                             <!-- <p-radioButton name="Receiver_Preference_R" value="Receiver Type" [(ngModel)]="Receiver_Preference_R" [style]="{'margin-left': '7px'}" (onClick)="getEnable(Receiver_Preference_R)" ></p-radioButton> -->
+                                            </td>
 
                                         <td style="text-align: center; width: 30%; font-size: 1.2rem;"><strong> Receiver Type</strong></td>
 
                                         <td style="text-align: center; display: flex; flex-direction: row-reverse;">
 
-                                            <input class="form-control"  name="Receiver_type_desc_L" #Receiver_type_desc_L="ngModel"  [(ngModel)]="LeftRt" [disabled]="ReceiverTypeL" style="width: 70%;"> 
+                                            <input class="form-control"  name="Receiver_type_desc_L" #Receiver_type_desc_L="ngModel"  [(ngModel)]="objEarMold.Receiver_Type_L"  style="width: 70%;"> 
 
-                                            <p-radioButton name="Receiver_Preference_L" value="Receiver Type" [(ngModel)]="Receiver_Preference_L" [style]="{'margin-right': '5px'}" (onClick)="getEnable2(Receiver_Preference_L)"></p-radioButton></td>
+                                            <!-- <p-radioButton name="Receiver_Preference_L" value="Receiver Type" [(ngModel)]="Receiver_Preference_L" [style]="{'margin-right': '5px'}" (onClick)="getEnable2(Receiver_Preference_L)"></p-radioButton> -->
+                                        </td>
                                     </tr>
                                 </table>
                             </div>
@@ -610,7 +618,7 @@
                                             <label class="control-label">Audiologist<sup class="text-danger">*</sup></label>
                                             <p-dropdown [options]="doctorDataList" name="Audiologist_User_id" #Audiologist_User_id="ngModel" 
                                         [(ngModel)]="objEarMold.Audiologist_User_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Audiologist'"
                                         [virtualScroll]="true" itemSize="30" 
                                         [styleClass]="earMoldFormSubmit && Audiologist_User_id.errors?.required ? 'clearance': ''" [required]="true" >
                                         </p-dropdown>
@@ -697,8 +705,13 @@
             <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='POD_Request_Date' name="POD_Date" ></ejs-datepicker>
         </div> 
         <div class="col-sm-12">
-            <label class="control-label">POD No<sup class="text-danger">*</sup></label>
-            <input class="form-control" name="Pod_No" #Pod_No="ngModel" [(ngModel)]="objPod.POD_No"  placeholder="POD NO" [ngClass]="{'clearance': PODformsubmit && Pod_No.errors?.required}" required>
+            <label class="control-label">POD No(Clinic)<sup class="text-danger">*</sup></label>
+            <input class="form-control" name="Pod_No" #Pod_No="ngModel" [(ngModel)]="objPod.POD_No"  placeholder="POD NO(Clinic)" [ngClass]="{'clearance': PODformsubmit && Pod_No.errors?.required}" required>
+        </div>
+
+        <div class="col-sm-12">
+            <label class="control-label">POD No(Ho)<sup class="text-danger">*</sup></label>
+            <input class="form-control" name="POD_No_HO" #POD_No_HO="ngModel" [(ngModel)]="objPod.POD_No_HO"  placeholder="POD NO(Ho)" [ngClass]="{'clearance': PODformsubmit && POD_No_HO.errors?.required}" required>
         </div>
     
         <div class="col-sm-12">

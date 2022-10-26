@@ -552,7 +552,7 @@ style="text-align: center;"
 [maximizable]="true"
 [baseZIndex]="10000"
 >
-<div class="form-horizontal">
+<div class="form-horizontal"> 
     <div class="no-padding">
         <p-table [value]="popUpList" #dt2 
         [paginator]="true" 
@@ -592,9 +592,11 @@ style="text-align: center;"
                  </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col>
-                <ng-container *ngFor="let option of popUpListHeader">
-                    <td >{{col[option]}}</td>
-                </ng-container>
+                <tr>
+                    <ng-container *ngFor="let option of popUpListHeader">
+                        <td nowrap="nowrap">{{col[option]}}</td>
+                    </ng-container>
+                </tr>
             </ng-template>
             <ng-template pTemplate="paginatorright" let-state>
                 Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
