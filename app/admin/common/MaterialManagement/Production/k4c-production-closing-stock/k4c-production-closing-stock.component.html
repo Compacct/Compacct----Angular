@@ -209,6 +209,11 @@
                                 <div class="col-sm-3">
                                     <label class="control-label">Select Product Type</label>
                                     <p-multiSelect [options]="productListFilter" [(ngModel)]="SelectedProductType" [styleClass]="'compacct-multiselect'" name="ProductTypefilter" (onChange)="filterProduct()"></p-multiSelect>
+                                </div> 
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-success custombutton3" (click)="exportexcel(productlistforexcel,'Product_List')" [disabled]="!ProductList.length">
+                                    <span class="glyphicon glyphicon-save"></span> Export to excel
+                                 </button>
                                 </div>
                             </div>
                             <div class="table-responsive no-padding">

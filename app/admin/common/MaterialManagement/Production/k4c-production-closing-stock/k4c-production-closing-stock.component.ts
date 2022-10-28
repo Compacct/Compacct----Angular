@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-production-closing-stock',
@@ -65,6 +66,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
   EditList:any = [];
   BackupProList:any = [];
   Doc_Date: any;
+  productlistforexcel:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -234,6 +236,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
 
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.productlistforexcel = data;
    const tempData = data
    tempData.forEach(element => {
     // element['Issue_Qty'] = undefined;
@@ -250,6 +253,28 @@ export class K4cProductionClosingStockComponent implements OnInit {
    console.log("this.ProductList======",this.ProductList);
    })
   }
+  }
+  exportexcel(Arr,fileName): void {
+    let temp:any = [];
+     Arr.forEach(element => {
+       const obj = {
+        Product_ID : element.Product_ID,
+        Product_Description : element.Product_Description,
+        Product_Type_ID : element.Product_Type_ID,
+        UOM : element.UOM,
+        Product_Type : element.Product_Type,
+        Opening_Qty : element.Opening_Qty,
+        Receive_Qty : element.Receive_Qty,
+        Closing_Qty : element.Closing_Qty,
+        Wastage_Qty : element.Wastage_Qty,
+        Remarks : element.Remarks,
+        Brand : element.Brand
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   // product Filter
 

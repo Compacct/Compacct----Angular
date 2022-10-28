@@ -89,7 +89,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE", "PENDING RETURNABLE GATE PASS"];
+    this.items = ["BROWSE", "CREATE", "PENDING WORK ORDER"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -107,7 +107,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "PENDING RETURNABLE GATE PASS"];
+    this.items = ["BROWSE", "CREATE", "PENDING WORK ORDER"];
     this.buttonname = "Create";
     this.clearData();
   }

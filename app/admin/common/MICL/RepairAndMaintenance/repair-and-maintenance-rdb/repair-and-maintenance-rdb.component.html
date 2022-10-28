@@ -209,9 +209,9 @@
                                                     <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="INV_Date" name="Inv_Date" [enabled]= "!RDBListAdd.length" required></ejs-datepicker>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <label class="control-label">Returnable Gate Pass Number<sup class="text-danger">*</sup></label>
+                                                    <label class="control-label">Work Order No.<sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="ReturnableGPNList" 
-                                                    name="Po_Order" 
+                                                    name="Wo_Order" 
                                                     [(ngModel)]="ObjRepaAndMaintRdb.Return_Gate_Pass_No" 
                                                     [showClear]="true" 
                                                     [emptyFilterMessage]="' No Item Found'" 
@@ -221,8 +221,8 @@
                                                     [placeholder]="'Select Item'"
                                                      [virtualScroll]="true"
                                                     itemSize="30" 
-                                                    #Po_Order="ngModel" 
-                                                    [styleClass]="RepairAndMaintRDBFormSubmit && Po_Order.errors?.required ? 'clearance': ''" 
+                                                    #Wo_Order="ngModel" 
+                                                    [styleClass]="RepairAndMaintRDBFormSubmit && Wo_Order.errors?.required ? 'clearance': ''" 
                                                     [required]="true" 
                                                     (onChange)="getProductDetails(ObjRepaAndMaintRdb.Return_Gate_Pass_No)"
                                                     [disabled]="RDBListAdd.length"
@@ -231,8 +231,8 @@
                                                     </p-dropdown>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                 <label class="control-label">Returnable Gate Pass Date<sup class="text-danger">*</sup></label>
-                                                 <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="Return_Gate_Pass_Date" name="Po_date" [enabled]= "dateDis" required></ejs-datepicker>
+                                                 <label class="control-label">Work Order Date<sup class="text-danger">*</sup></label>
+                                                 <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="Return_Gate_Pass_Date" name="Wo_date" [enabled]= "dateDis" required></ejs-datepicker>
                                                 </div>
                                                 <div class="col-sm-2">
                                                  <label class="control-label">Mode Of Transport<sup class="text-danger">*</sup></label>
@@ -275,10 +275,10 @@
                                                  disabled>
                                             </div> 
                                            <div class="col-sm-3">
-                                            <label class="control-label">Returnable Gate Pass QTY<sup class="text-danger">*</sup></label>
+                                            <label class="control-label">Work Order QTY<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
-                                            name="PO_QTY" 
-                                            #PO_QTY="ngModel" 
+                                            name="WO_QTY" 
+                                            #WO_QTY="ngModel" 
                                             [(ngModel)]="ObjRepaAndMaintRdb1.PO_QTY" 
                                             placeholder="Returnable Gate Pass QTY"
                                             disabled>

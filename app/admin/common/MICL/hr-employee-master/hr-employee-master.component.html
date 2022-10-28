@@ -313,8 +313,8 @@
                                        </select>
                                     </div>
                                     <div class="col-sm-6">
-                                        <label class="control-label">Grade<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="grade" #grade="ngModel" [(ngModel)]="objemployee.Grade_ID " [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && grade.errors?.required}" required>
+                                        <label class="control-label">Grade</label>
+                                        <select class="form-control" name="grade" #grade="ngModel" [(ngModel)]="objemployee.Grade_ID " [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && grade.errors?.required}" >
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of GradeList" value="{{option.Grade_ID}}">
                                           {{option.Grade_Desc}}

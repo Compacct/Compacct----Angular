@@ -168,7 +168,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
        
         this.purchaseRequestFormSubmit = false
         this.ProductSpinner = false
-        
+        this.ngxService.stop();
          })
       
     }
@@ -462,6 +462,41 @@ export class NepalPurchaseRequestComponent implements OnInit {
         }
       })
     }
+  }
+  tableWidthCal(str:any){
+  let flg = ''
+   if(this.productList.length){
+   let ObjproductList = this.productList[0]
+   if(typeof(ObjproductList[str]) == 'number'){
+    let checkL = str.length
+    this.productList.forEach((ele:any)=> {
+     if(typeof(ele[str]) == 'number'){
+      if(ele[str]){
+        checkL = ele[str].toString().length > checkL ? ele[str].toString().length : checkL
+      }
+      else{
+        checkL = str.length
+      }
+        
+      }
+    });
+    console.log(checkL)
+    let l = checkL * 9.5
+    flg = l.toString()+'px'
+    return flg
+    
+   }
+   else if(typeof(ObjproductList[str]) == 'string'){
+    flg = '180px'
+    return flg
+   }
+   else {
+    flg = '180px'
+    return flg
+   }
+   }
+  
+ //  return flg
   }
 }
 class purchaseRequest{
