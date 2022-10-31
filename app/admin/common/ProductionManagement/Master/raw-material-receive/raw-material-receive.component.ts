@@ -36,7 +36,7 @@ tabIndexToView = 0
 TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
-    this.buttonname = "Create";
+    this.buttonname = "Create";   
 }
 
 }
