@@ -945,7 +945,7 @@ export class GrnComponent implements OnInit {
       Sale_Pur : this.ObjTerm.Sale_Pur,
       Term_ID : this.ObjTerm.Term_ID,
       Term_Name : this.ObjTerm.Term_Name,
-      Term_Amount : Number(this.ObjTerm.Term_Amount).toFixed(2),
+      Term_Amount : Number(this.ObjTerm.Term_Amount),
       GST_Per : Number(this.ObjTerm.GST_Per).toFixed(2),
       GST_Amount:  Number(Number(Number(this.ObjTerm.Term_Amount) * Number(this.ObjTerm.GST_Per) / 100).toFixed(2)),
       HSN_No : this.ObjTerm.HSN_No,
@@ -957,6 +957,9 @@ export class GrnComponent implements OnInit {
       
     }
   }
+  getTofix(key){
+    return Number(Number(key).toFixed(2))
+   }
    TeramChek(){
     if(this.AddTermList.length){
       const FilterAddTermList = this.AddTermList.find((el:any)=> Number(el.Term_ID) == Number(this.ObjTerm.Term_ID))

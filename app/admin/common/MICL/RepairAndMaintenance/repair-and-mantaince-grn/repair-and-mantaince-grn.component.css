@@ -122,3 +122,7 @@ legend {
     padding: 0px 10px 0px 10px;
     background-color: #ffffff;
 }
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}
