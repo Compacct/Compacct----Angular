@@ -529,7 +529,7 @@ GetshowProduct(){
       this.BackUpproductDetails = [...this.productDetails];
       console.log("this.productDetails",this.productDetails);
       this.productDetails.forEach(element => {
-        element.Delivery_Qty = 0;
+        element.Delivery_Qty = element.Req_Qty;
       });
       this.backupTotalReq()
       // this.inputBoxDisabled = true;
@@ -659,6 +659,28 @@ saveqty(){
  for(let i = 0; i < this.productDetails.length ; i++){
   if(Number(this.productDetails[i].Batch_Qty) <  Number(this.productDetails[i].Delivery_Qty)){
     flag = false;
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Quantity can't be more than in batch available quantity "
+      });
+    break;
+  }
+  else if(Number(this.productDetails[i].Req_Qty) <  Number(this.productDetails[i].Delivery_Qty)){
+    flag = false;
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Quantity can't be more than Requisition quantity "
+      });
     break;
   }
  }
@@ -783,7 +805,8 @@ saveqty(){
   saveDispatch(){
    console.log("saveqty",this.saveqty());
    console.log("this.BackUpproductDetails",this.BackUpproductDetails);
-  if(this.BackUpproductDetails.length && this.saveqty()){
+  if(this.BackUpproductDetails.length){
+    if(this.saveqty()) {
     // this.ngxService.start();
     // this.displaysavepopup = false;
     // if(this.doc_no){
@@ -993,6 +1016,7 @@ saveqty(){
      })
 
     // }
+  }
   }
   else{
     this.Spinner = false;

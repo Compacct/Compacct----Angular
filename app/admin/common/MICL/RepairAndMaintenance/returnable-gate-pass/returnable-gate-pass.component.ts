@@ -102,7 +102,8 @@ TabClick(e) {
   this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
   this.buttonname = "Save";
   this.clearData();
-  this.addPurchaseListInput = false
+  this.addPurchaseListInput = false;
+  this.DocNoId = undefined;
 }
 clearData(){
   this.Expected_Return_Date = this.voucherdata;
@@ -227,7 +228,9 @@ this.godownList = [];
         element['value'] = element.Godown_ID	});
         this.godownList = data;
         console.log('godownList=====',this.godownList)
+        if (this.buttonname != "Update"){
         this.ObjGatePass.Godown_ID = this.godownList.length ? this.godownList[0].Godown_ID : undefined
+        }
     }
     else{
       this.godownList = []; 
@@ -448,12 +451,17 @@ this.SearchedlistBrowse = [...this.backUPSearchedlistBrowse] ;
 }
 createIssue(DocnoObj:any){
   this.DocNoId= undefined
-  this.clearData();
+  // this.clearData();
   if (DocnoObj.Doc_No) {
     this.tabIndexToView = 1;
     this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
     this.buttonname = "Save";
     this.DocNoId = DocnoObj.Doc_No;
+    // var costcenid = this.costCenterList.filter(item=> item.Cost_Cen_Name === DocnoObj.Cost_Cen_Name);
+    // this.ObjGatePass.Cost_Cen_ID = costcenid[0].Cost_Cen_ID;
+    // this.Getgodown();
+    // var godownid = this.godownList.filter(item=> item.Godown_Name === DocnoObj.Stock_Point);
+    // this.ObjGatePass.Godown_ID = godownid[0].Godown_ID;
     this.ObjGatePass.Req_No = DocnoObj.Doc_No;
     this.getProduct();
     // this.createListObj = {};
@@ -791,6 +799,7 @@ Edit(col){
     this.Doc_Date = new Date(data[0].Doc_Date);
     this.ObjGatePass.Cost_Cen_ID = data[0].Cost_Cen_ID;
     this.GetMainIndentNo();
+    this.Getgodown();
     this.ObjGatePass.Godown_ID = data[0].Godown_ID;
     // this.ObjGatePass.Req_No = data[0].Req_No;
     this.Expected_Return_Date = new Date(data[0].Expected_Return_Date);

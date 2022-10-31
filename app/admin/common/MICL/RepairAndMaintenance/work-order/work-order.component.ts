@@ -242,7 +242,7 @@ export class WorkOrderComponent implements OnInit {
     this.GetRequlist();
     this.ObjWorkOrder.Credit_Days = 0;
     this.ObjWorkOrder.Currency_ID = 1;
-    this.ObjWorkOrder.Type_ID = 1;
+    this.ObjWorkOrder.Type_ID = this.OrderTypeList.length ? this.OrderTypeList[0].Type_ID : undefined;
     this.seachPendingReqSpinner = false;
     this.AddTermList = []
     this.GrTermAmount = 0
@@ -382,11 +382,11 @@ export class WorkOrderComponent implements OnInit {
   GetOrderType(){
     const obj = {
       "SP_String": "sp_Comm_Controller",
-      "Report_Name_String": "Get_Order_Type_Dropdown",
+      "Report_Name_String": "Get_Work_Order_Type_Dropdown",
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.OrderTypeList = data;
-        this.ObjWorkOrder.Type_ID = 1;
+        this.ObjWorkOrder.Type_ID = data[0].Type_ID;
       console.log("OrderTypeList",this.OrderTypeList);
     })
   }
