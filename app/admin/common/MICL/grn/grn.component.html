@@ -472,13 +472,13 @@
                                           <td>{{ TermTableList.Term_Amount }}</td>
                                           <td>{{ TermTableList.GST_Per }}</td>
                                           <td>{{ TermTableList.GST_Amount }}</td>
-                                          <td>{{TermTableList.Term_Amount + TermTableList.GST_Amount}}</td>
+                                          <td>{{getTofix(TermTableList.Term_Amount + TermTableList.GST_Amount)}}</td>
                                           <td><button (click)="DeteteTerm(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
                                    </table>
                                 </div>
-                           </form>
+                                </form>
                             <br>
                             <br>
 

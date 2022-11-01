@@ -1115,7 +1115,7 @@ addClear(){
     this.ObjRdb1.UOM = productFilter.UOM ? productFilter.UOM : " ";
     this.ObjRdb1.HSN_Code = productFilter.HSN_NO ? productFilter.HSN_NO : " ";
     this.ObjRdb1.PO_QTY = productFilter.PO_Qty ? productFilter.PO_Qty : " ";
-    this.ObjRdb1.Pending_PO_QTY = productFilter.Pending_PO_QTY ? productFilter.Pending_PO_QTY : " ";;
+    this.ObjRdb1.Pending_PO_QTY = productFilter.Pending_PO_QTY ? productFilter.Pending_PO_QTY : " ";
     // this.ObjRdb1.Challan_Qty = productFilter.PO_Qty;
     // this.ObjRdb1.Received_Qty = productFilter.PO_Qty;
    }
