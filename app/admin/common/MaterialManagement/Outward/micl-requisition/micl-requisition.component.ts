@@ -99,6 +99,20 @@ export class MiclRequisitionComponent implements OnInit {
   projectEditData:any = [];
   companyname="";
 
+  seachSpinnerMis = false;
+  MIS_start_date: Date;
+  MIS_end_date: Date;
+  MISList:any = [];
+  DynamicHeaderforMISList:any = [];
+  allTotalObj:any = {}
+  BackupMISList:any = [];
+  SelectedDistDepartmentmis:any = [];
+  SelectedDistCostCen:any = [];
+  DistDepartmentmis:any = [];
+  DistCostCen:any = [];
+  DistStockPoint:any =[];
+  SelectedDistStockPoint:any = [];
+
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -123,7 +137,7 @@ export class MiclRequisitionComponent implements OnInit {
   ngOnInit() {
     //console.log('Del_Right ==',this.$CompacctAPI.CompacctCookies.Del_Right)
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items =  ["BROWSE", "CREATE", "STOCK", "STATUS"];
+    this.items =  ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -152,7 +166,7 @@ export class MiclRequisitionComponent implements OnInit {
   TabClick(e) {
    
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "STOCK", "STATUS"];
+    this.items = ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
     this.buttonname = "Save";
     this.clearData();
     this.Current_Stock = undefined;
@@ -435,7 +449,7 @@ export class MiclRequisitionComponent implements OnInit {
             this.Spinner = false;
             this.searchData(true);
             this.tabIndexToView = 0;
-            this.items = ["BROWSE", "CREATE", "STOCK", "STATUS"];
+            this.items = ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
             this.buttonname = "Save";
             this.reqDocNo = undefined;
             } else{
@@ -945,7 +959,7 @@ export class MiclRequisitionComponent implements OnInit {
     if(col.Req_No){
       this.reqDocNo = col.Req_No;
       this.tabIndexToView = 1;
-      this.items = ["BROWSE", "UPDATE", "STOCK", "STATUS"];
+      this.items = ["BROWSE", "UPDATE", "STOCK", "STATUS", "MIS"];
       this.buttonname = "Update";
       this.geteditmaster(col.Req_No);
       if(this.openProject === "Y"){
@@ -1182,6 +1196,133 @@ export class MiclRequisitionComponent implements OnInit {
     });
        this.backUpReqStatusDataList = [...this.ReqStatusDataList];
     }
+
+    // PENDING INDENT
+getDateRangeMis(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.MIS_start_date = dateRangeObj[0];
+    this.MIS_end_date = dateRangeObj[1];
+  }
+}
+GetMIS(){
+    // this.PendingIndentFormSubmitted = true;
+    this.seachSpinnerMis = true;
+    const start = this.MIS_start_date
+    ? this.DateService.dateConvert(new Date(this.MIS_start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.MIS_end_date
+    ? this.DateService.dateConvert(new Date(this.MIS_end_date))
+    : this.DateService.dateConvert(new Date());
+    if (start && end) {
+    const tempobj = {
+     From_Date : start,
+     To_Date : end,
+    //  To_Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
+    //  proj : "N"
+    }
+    // if (valid) {
+    const obj = {
+      "SP_String": "SP_MICL_Dispatch_Challan",
+      "Report_Name_String": "Dispatch_MIS",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.MISList = data;
+      this.BackupMISList = data;
+      this.GetDistinctMis();
+      if(this.MISList.length){
+        this.DynamicHeaderforMISList = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforMISList = [];
+      }
+      this.seachSpinnerMis = false;
+      this.TotalValue(this.MISList);
+      // console.log("DynamicHeaderforMISList",this.DynamicHeaderforMISList);
+    })
+    }
+    else {
+      this.seachSpinnerMis = false;
+      // this.ngxService.stop();
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
+    }
+}
+exportexcelmis(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
+FilterDistMis() {
+  let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  let SearchFieldsMis:any =[];
+if (this.SelectedDistDepartmentmis.length) {
+  SearchFieldsMis.push('Dept_Name');
+  department = this.SelectedDistDepartmentmis;
+}
+if (this.SelectedDistCostCen.length) {
+  SearchFieldsMis.push('Cost_Cen_Name');
+  costcen = this.SelectedDistCostCen;
+}
+if (this.SelectedDistStockPoint.length) {
+  SearchFieldsMis.push('Stock_Point');
+  stockpoint = this.SelectedDistStockPoint;
+}
+this.MISList = [];
+if (SearchFieldsMis.length) {
+  let LeadArr = this.BackupMISList.filter(function (e) {
+    return (department.length ? department.includes(e['Dept_Name']) : true)
+    && (costcen.length ? costcen.includes(e['Cost_Cen_Name']) : true)
+    && (stockpoint.length ? stockpoint.includes(e['Stock_Point']) : true)
+  });
+this.MISList = LeadArr.length ? LeadArr : [];
+} else {
+this.MISList = [...this.BackupMISList] ;
+}
+this.TotalValue(this.MISList);
+}
+GetDistinctMis() {
+  let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  this.DistDepartmentmis =[];
+  this.SelectedDistDepartmentmis =[];
+  this.DistCostCen =[];
+  this.SelectedDistCostCen =[];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.MISList.forEach((item) => {
+if (department.indexOf(item.Dept_Name) === -1) {
+  department.push(item.Dept_Name);
+  this.DistDepartmentmis.push({ label: item.Dept_Name, value: item.Dept_Name });
+  }
+ if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+  costcen.push(item.Cost_Cen_Name);
+ this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+ }
+ if (stockpoint.indexOf(item.Stock_Point) === -1) {
+  stockpoint.push(item.Stock_Point);
+ this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+ }
+});
+   this.BackupMISList = [...this.MISList];
+}
+TotalValue(arrList:any){
+  if(arrList.length){
+    this.allTotalObj.Value =0
+    arrList.forEach(ele => {
+      this.allTotalObj.Value = Number(Number(ele.Value) + Number(this.allTotalObj.Value)).toFixed(2)
+    });
+  }
+  console.log(this.allTotalObj)
+}
 }
 
 class reqi{

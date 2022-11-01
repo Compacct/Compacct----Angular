@@ -676,7 +676,27 @@
                                     margin-top: 15px;
                                     ">
                                     <i class="fa fa-fw fa-fax">
-                                    </i> &nbsp;<strong>PO Header :</strong>
+                                    </i> &nbsp;<strong>Subject :</strong>
+                                  </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "Terms_Of_Price"
+                                        #Terms_Of_Price="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Terms_Of_Price"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
+                                       >
+                                          
+                                        </p-editor>
+                                    </div>
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>WO Header :</strong>
                                   </h5>
                                     <div class="form-group" style="margin-left:3px;margin-right: 0px;">
                                         <p-editor name= "PO_Header"
@@ -982,7 +1002,7 @@
                                 *ngIf='SearchedlistPanding.length'
                                  [autoLayout]="true" sortMode="multiple" 
                                  [rowsPerPageOptions]="[10,50,100,150]" 
-                                 [globalFilterFields]='DynamicHeader'
+                                 [globalFilterFields]='DynamicHeaderPen'
                                 [rowHover]="true">
                                 <ng-template pTemplate="caption">
                                 <div class="row">
@@ -995,7 +1015,7 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th style="width:5em">Action</th>
-                                        <th *ngFor="let option of DynamicHeader | slice:1">{{option.replaceAll('_',' ')}}</th> 
+                                        <th *ngFor="let option of DynamicHeaderPen | slice:1">{{option.replaceAll('_',' ')}}</th> 
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
@@ -1021,7 +1041,7 @@
                                                 </ul>
                                             </div>
                                         </td>
-                                         <ng-container *ngFor="let option of DynamicHeader | slice:1" data->
+                                         <ng-container *ngFor="let option of DynamicHeaderPen | slice:1" data->
                                             <td>{{col[option]}}</td>
                                         </ng-container>
                                     </tr>

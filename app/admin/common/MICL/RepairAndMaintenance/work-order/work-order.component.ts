@@ -140,6 +140,8 @@ export class WorkOrderComponent implements OnInit {
   seachPendSpinner = false;
   disBackUp:any = undefined;
 
+  DynamicHeaderPen:any = [];
+
   constructor(
     private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -206,7 +208,7 @@ export class WorkOrderComponent implements OnInit {
       // },500)
   }
   clearData(){
-    this.gettermsdetails();
+    // this.gettermsdetails();
     this.viewHeader = "";
     this.DetalisObj = {};
     this.ObjWorkOrder = new WorkOrder();
@@ -1727,7 +1729,7 @@ gettermsdetails(){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       if(data.length){
         this.SearchedlistPanding = data;
-        this.DynamicHeader = Object.keys(data[0]);
+        this.DynamicHeaderPen = Object.keys(data[0]);
       }
       this.PandingFormSubmitted = false;
       this.seachPendSpinner = false;

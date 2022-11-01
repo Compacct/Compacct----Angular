@@ -240,7 +240,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
    if(this.DocNo){
     const obj = {
       "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
-      "Report_Name_String":"Purchase_Order_Raw_Material_Delete'",
+      "Report_Name_String":"Purchase_Order_Raw_Material_Delete",
       "Json_Param_String": JSON.stringify([{Doc_No : this.DocNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
       }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -258,13 +258,14 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
           this.onReject();
           this.deleteError = true;
           this.compacctToast.clear();
-          this.compacctToast.clear();
           this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-           detail: "Error Occured "
-         });
+            key: "c",
+            sticky: true,
+            closable: false,
+            severity: "warn", // "info",
+            summary: data[0].Column1
+            // detail: data[0].Column1
+          });
          this.DocNo = undefined;
          
         }
@@ -1465,6 +1466,7 @@ PrintREQ(DocNo) {
   this.DocNo = undefined;
   this.Del = false;
   this.Save = false;
+  this.deleteError = false;
   if(col.Doc_No){
    this.Del = true;
    this.Save = false;

@@ -177,6 +177,8 @@ export class MiclDispatchChallanComponent implements OnInit {
   SelectedDistCostCen:any = [];
   DistDepartment:any = [];
   DistCostCen:any = [];
+  DistStockPoint:any =[];
+  SelectedDistStockPoint:any = [];
 
   constructor(
     private $http: HttpClient,
@@ -1390,6 +1392,7 @@ exportexcel(Arr,fileName): void {
 FilterDistMis() {
   let department:any = [];
   let costcen:any = [];
+  let stockpoint:any = [];
   let SearchFieldsMis:any =[];
 if (this.SelectedDistDepartment.length) {
   SearchFieldsMis.push('Dept_Name');
@@ -1399,11 +1402,16 @@ if (this.SelectedDistCostCen.length) {
   SearchFieldsMis.push('Cost_Cen_Name');
   costcen = this.SelectedDistCostCen;
 }
+if (this.SelectedDistStockPoint.length) {
+  SearchFieldsMis.push('Stock_Point');
+  stockpoint = this.SelectedDistStockPoint;
+}
 this.MISList = [];
 if (SearchFieldsMis.length) {
   let LeadArr = this.BackupMISList.filter(function (e) {
     return (department.length ? department.includes(e['Dept_Name']) : true)
     && (costcen.length ? costcen.includes(e['Cost_Cen_Name']) : true)
+    && (stockpoint.length ? stockpoint.includes(e['Stock_Point']) : true)
   });
 this.MISList = LeadArr.length ? LeadArr : [];
 } else {
@@ -1414,10 +1422,13 @@ this.TotalValue(this.MISList);
 GetDistinctMis() {
   let department:any = [];
   let costcen:any = [];
+  let stockpoint:any = [];
   this.DistDepartment =[];
   this.SelectedDistDepartment =[];
   this.DistCostCen =[];
   this.SelectedDistCostCen =[];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
   this.MISList.forEach((item) => {
 if (department.indexOf(item.Dept_Name) === -1) {
   department.push(item.Dept_Name);
@@ -1426,6 +1437,10 @@ if (department.indexOf(item.Dept_Name) === -1) {
  if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
   costcen.push(item.Cost_Cen_Name);
  this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+ }
+ if (stockpoint.indexOf(item.Stock_Point) === -1) {
+  stockpoint.push(item.Stock_Point);
+ this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
  }
 });
    this.BackupMISList = [...this.MISList];
