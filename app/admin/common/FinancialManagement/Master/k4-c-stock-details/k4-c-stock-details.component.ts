@@ -61,6 +61,7 @@ export class K4CStockDetailsComponent implements OnInit {
     this.getProdDetails();
     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
   }
+  onReject(){}
 getDateRange(dateRangeObj){
     if (dateRangeObj.length) {
       console.log("dateRangeObj",dateRangeObj);

@@ -76,6 +76,14 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
   DocNo: any;
   editlist:any = [];
   createrdbdisabled = false;
+  addPurchaseListInput = false;
+
+  objDeptUser = new DeptUser();
+  DeptUserModel:boolean = false;
+  DeptUserFormSubmitted:boolean = false;
+  DeptUserSpinner:boolean = false;
+  DepartmentList:any = [];
+  UsertList:any = [];
 
   constructor(
     private $http: HttpClient,
@@ -110,6 +118,8 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
     this.items = ["BROWSE", "CREATE", "PENDING WORK ORDER"];
     this.buttonname = "Create";
     this.clearData();
+    this.DocNo = undefined;
+    this.addPurchaseListInput = false
   }
   clearData(){
     this.dateDis = true;
@@ -218,7 +228,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
     if(Sub_Ledger_ID){
     const obj = {
       "SP_String": "SP_Repair_And_Maintenance_RDB",
-      "Report_Name_String":"Get_Pending_Returnable_Gate_Pass",
+      "Report_Name_String":"Get_Pending_WO_Order_Nos",
       "Json_Param_String": JSON.stringify([{Sub_Ledger_ID: Sub_Ledger_ID}]) 
      }
      this.GlobalAPI.getData(obj)
@@ -264,13 +274,23 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
          
          this.Allproduct = data;
          console.log('Productdetails=',this.Allproduct);
-         this.Allproduct.forEach((el : any)=>
-         {
-           this.ProductList.push({
-             label : el.Product_Description,
-             value : el.Product_ID
-           });
-         });
+        //  this.Allproduct.forEach((el : any)=>
+        //  {
+        //    this.ProductList.push({
+        //      label : el.Product_Description,
+        //      value : el.Product_ID
+        //    });
+        //  });
+         if(data.length) {
+          data.forEach((el:any)=>{
+            el['label'] = el.Product_Description,
+            el['value'] = el.Product_ID
+          })
+          this.ProductList = data;
+        }
+        else {
+          this.ProductList = [];
+        }
        });
     }
     else {
@@ -314,20 +334,32 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
        .subscribe((data : any)=>
        {
          this.AllStockList = data;
-         console.log('AllStockList=',this.AllStockList);
-         this.AllStockList.forEach((el : any)=>
-         {
-            this.StockList.push({
-              label : el.godown_name,
-              value : el.godown_id
-            });
-         });
+        //  console.log('AllStockList=',this.AllStockList);
+        //  this.AllStockList.forEach((el : any)=>
+        //  {
+        //     this.StockList.push({
+        //       label : el.godown_name,
+        //       value : el.godown_id
+        //     });
+        //  });
+        if(data.length) {
+          data.forEach((el:any)=>{
+            el['label'] = el.godown_name,
+            el['value'] = el.godown_id
+          })
+          this.StockList = data;
+        }
+        else {
+          this.StockList = [];
+        }
+        if (this.buttonname != "Update") {
          this.ObjRepaAndMaintRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+        }
        });
     }
-    else{
-      this.ObjRepaAndMaintRdb.godown_id = undefined;
-    }
+    // else{
+    //   this.ObjRepaAndMaintRdb.godown_id = undefined;
+    // }
   
   }
 //  SaveTabCommon(valid, value){
@@ -477,13 +509,22 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
   Add(valid){
     this.RepairAndMaintRDBFormSubmit = true;
     if(valid){
+      if (new Date(this.RDB_Date).toISOString() >= new Date(this.Return_Gate_Pass_Date).toISOString()) {
       if (Number(this.ObjRepaAndMaintRdb1.Challan_Qty)  <= Number(this.ObjRepaAndMaintRdb1.PO_QTY)) {
       if (Number(this.ObjRepaAndMaintRdb1.Received_Qty) <= Number(this.ObjRepaAndMaintRdb1.Challan_Qty)){
-        const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(this.ObjRepaAndMaintRdb1.Product_ID))[0];
+        const productFilter = this.ProductList.filter(el=> Number(el.Product_ID) === Number(this.ObjRepaAndMaintRdb1.Product_ID))[0];
         const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRepaAndMaintRdb.Sub_Ledger_ID))[0]
         console.log("productFilter",productFilter);
-        if(Object.keys(productFilter).length){
-        var amount = Number(Number(this.ObjRepaAndMaintRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
+        // if(Object.keys(productFilter).length){
+        var PO_QTY = this.ObjRepaAndMaintRdb1.PO_QTY ? Number(this.ObjRepaAndMaintRdb1.PO_QTY) : 0;
+        var FreightPFPerc = 0;
+        var apidiscountamt = Number(productFilter.Discount_Amount);
+        var qtydis = PO_QTY === 0 ? Number(apidiscountamt).toFixed(2) : Number(apidiscountamt / PO_QTY).toFixed(2);
+        var discountamt = Number(Number(qtydis) * this.ObjRepaAndMaintRdb1.Challan_Qty).toFixed(2);
+        var amount = Number(Number(this.ObjRepaAndMaintRdb1.Challan_Qty) * Number(productFilter.Rate)).toFixed(2);
+        var FreightPFCharges = (Number(amount) * (Number(FreightPFPerc) / 100)).toFixed(2);
+        var amtwithfreightcharges = (Number(amount) + Number(FreightPFCharges)).toFixed(2);
+        var taxable = Number(amtwithfreightcharges) - Number(discountamt); //Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
         var taxsgstcgst =  (Number(Number(amount) * Number(productFilter.GST_Percentage)) / 100).toFixed(2);
         var totalamount = (Number(amount) + Number(taxsgstcgst)).toFixed(2);
         var productObj = {
@@ -491,14 +532,41 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
                     Product_Name : productFilter.Product_Description,
                     HSN_Code : this.ObjRepaAndMaintRdb1.HSN_Code,
                     UOM : this.ObjRepaAndMaintRdb1.UOM,
+                    PO_QTY : this.ObjRepaAndMaintRdb1.PO_QTY,
+                    Pending_PO_QTY : this.ObjRepaAndMaintRdb1.Pending_PO_QTY,
                     Challan_Qty : Number(this.ObjRepaAndMaintRdb1.Challan_Qty),
                     Received_Qty : Number(this.ObjRepaAndMaintRdb1.Received_Qty),
                     Rate : productFilter.Rate,
-                    Taxable_Value :  Number(amount).toFixed(2),
+                    Discount_Amount : Number(discountamt).toFixed(2),
+                    Taxable_Value :  Number(taxable).toFixed(2),
                     Tax_Percentage : productFilter.GST_Percentage,
                     Total_Tax_Amount : Number(taxsgstcgst).toFixed(2),
                     Total_Amount : Number(totalamount).toFixed(2)
         };
+        if(this.RDBListAdd.length && this.addPurchaseListInput){
+          this.RDBListAdd.forEach((xz:any,i) => {
+            // console.log(i)
+            if(xz.Product_ID == this.ObjRepaAndMaintRdb1.Product_ID){
+              const productFilter = this.ProductList.filter(el=> Number(el.Product_ID) === Number(this.ObjRepaAndMaintRdb1.Product_ID))[0];
+              // this.addPurchaseList[i] = {...this.objaddPurchacse}
+              this.RDBListAdd[i].Product_ID =  Number(this.ObjRepaAndMaintRdb1.Product_ID)
+              this.RDBListAdd[i].Product_Name = productFilter.Product_Name
+              this.RDBListAdd[i].UOM = this.ObjRepaAndMaintRdb1.UOM
+              this.RDBListAdd[i].HSN_Code = this.ObjRepaAndMaintRdb1.HSN_Code
+              this.RDBListAdd[i].Rate = Number(productFilter.Rate),
+              this.RDBListAdd[i].Challan_Qty  = Number(this.ObjRepaAndMaintRdb1.Challan_Qty)
+              this.RDBListAdd[i].Received_Qty = Number(this.ObjRepaAndMaintRdb1.Received_Qty)
+              this.RDBListAdd[i].Discount_Amount = Number(discountamt).toFixed(2)
+              this.RDBListAdd[i].Taxable_Value = Number(taxable).toFixed(2)
+              this.RDBListAdd[i].Tax_Percentage = Number(productFilter.GST_Percentage)
+              this.RDBListAdd[i].Total_Tax_Amount = Number(taxsgstcgst).toFixed(2)
+              this.RDBListAdd[i].Total_Amount = Number(totalamount).toFixed(2)
+            }
+           });
+           console.log("Product Update",this.RDBListAdd);
+           this.addClear()
+         }
+         else {
             this.RDBListAdd.push(productObj);
             console.log("Product Submit",this.RDBListAdd);
             this.RepairAndMaintRDBFormSubmit = false;
@@ -508,7 +576,9 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
             // this.RDB_Date = new Date();
             // this.SE_Date = new Date();
             this.dateDis = true;
-        }
+            this.addClear()
+         }
+        // }
         }
         else {
           this.compacctToast.clear();
@@ -528,8 +598,56 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
           summary: "Warn Message",
           detail: "Challan Qty is more than PO Qty "
         });
+       }
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "PO Date can't be greater than RDB Date "
+        });
       }
   }
+  }
+  // Edit Add RDB 
+  EditAdd(inx:any){
+    // console.log(this.addPurchaseList[inx])
+    // this.objaddPurchacse.Req_No = this.addPurchaseList[inx].Req_No
+    // this.addPurchaseListInputField = this.addPurchaseList[inx]
+    // setTimeout(() => {
+      // this.getProductDetails(this.ObjRdb.PO_Doc_No)
+    // }, 300);
+             this.ProductList.push({
+               label : this.RDBListAdd[inx].Product_Name,
+               value : this.RDBListAdd[inx].Product_ID,
+               Product_Name : this.RDBListAdd[inx].Product_Name,
+               Product_ID : this.RDBListAdd[inx].Product_ID,
+               Rate : this.RDBListAdd[inx].Rate,
+               Discount_Amount : Number(this.RDBListAdd[inx].PO_Discount_Amount),
+               GST_Percentage : this.RDBListAdd[inx].Tax_Percentage
+             });
+     this.ObjRepaAndMaintRdb1.Product_ID = this.RDBListAdd[inx].Product_ID
+    //  this.objaddPurchacse = {...this.addPurchaseList[inx]}
+     this.ObjRepaAndMaintRdb1.UOM = this.RDBListAdd[inx].UOM
+     this.ObjRepaAndMaintRdb1.HSN_Code = this.RDBListAdd[inx].HSN_Code;
+     this.addPurchaseListInput = true
+     this.ObjRepaAndMaintRdb1.PO_QTY =  this.RDBListAdd[inx].PO_QTY
+     this.ObjRepaAndMaintRdb1.Pending_PO_QTY = this.RDBListAdd[inx].Pending_PO_QTY
+     this.ObjRepaAndMaintRdb1.Challan_Qty =  this.RDBListAdd[inx].Challan_Qty
+     this.ObjRepaAndMaintRdb1.Received_Qty = this.RDBListAdd[inx].Received_Qty
+  
+  }
+  addClear(){
+        this.ObjRepaAndMaintRdb1 = new RepaAndMaintRdb1();
+        this.RepairAndMaintRDBFormSubmit = false;
+        if(this.buttonname === "Update") {
+        this.ProductList = [];
+        }
+        this.addPurchaseListInput = false
+        // this.addPurchaseListInputField = {}
+        // console.log("addPurchaseList",this.addPurchaseList);
   }
   delete(index) {
     this.RDBListAdd.splice(index,1)
@@ -541,13 +659,17 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
       let tempArr:any =[]
       this.RDBListAdd.forEach(item => {
         const obj = {
+            RDB_No : this.DocNo ? this.DocNo : 'A',
             Product_ID : item.Product_ID,
             //Product_Description : item.Product_Description,
             HSN_Code : item.HSN_Code,
             UOM : item.UOM,
+            PO_QTY : item.PO_QTY,
+            Pending_PO_QTY : item.Pending_PO_QTY,
             Challan_Qty : Number(item.Challan_Qty),
             Received_Qty : Number(item.Received_Qty),
             Rate : Number(item.Rate),
+            Discount_Amount : Number(item.Discount_Amount).toFixed(2),
             Taxable_Value : Number(item.Taxable_Value).toFixed(2),
             Tax_Percentage : Number(item.Tax_Percentage),
             Total_Tax_Amount : Number(item.Total_Tax_Amount).toFixed(2),
@@ -564,13 +686,15 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
             SE_Date : this.SE_Date ? this.DateService.dateConvert(this.SE_Date) : new Date(),
             Inv_No : this.ObjRepaAndMaintRdb.Inv_No,
             Inv_Date : this.INV_Date ? this.DateService.dateConvert(this.INV_Date) : new Date(),
-            Return_Gate_Pass_No : this.ObjRepaAndMaintRdb.Return_Gate_Pass_No,
-            Return_Gate_Pass_Date : this.Return_Gate_Pass_Date ? this.DateService.dateConvert(this.Return_Gate_Pass_Date) : new Date(),
+            PO_Doc_No : this.ObjRepaAndMaintRdb.Return_Gate_Pass_No,
+            PO_Doc_Date : this.Return_Gate_Pass_Date ? this.DateService.dateConvert(this.Return_Gate_Pass_Date) : new Date(),
             Mode_Of_transport : this.ObjRepaAndMaintRdb.Mode_Of_transport,
             LR_No_Date : this.ObjRepaAndMaintRdb.LR_No_Date,
             Vehicle_No : this.ObjRepaAndMaintRdb.Vehicle_No,
             Created_By : this.commonApi.CompacctCookies.User_ID,
-            Status : "PENDING"
+            Status : "PENDING",
+            Ins_Dept_ID : this.objDeptUser.Ins_Dept_ID,
+            Ins_USER_ID : this.objDeptUser.Ins_USER_ID,
         }
 
         // const TempObj = {
@@ -590,9 +714,65 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
 
     }
    }
-   SaveRDB(valid){
+   ShowDeptUserPopUp(valid){
+    this.GetDepartment();
+    this.GetUser();
+    this.DeptUserModel = false;
     this.Spinner = true;
     this.RDBFormSubmit2 = true;
+    this.DeptUserFormSubmitted = false;
+    if (this.buttonname === "Create"){
+    this.objDeptUser = new DeptUser();
+    }
+    if (valid && this.RDBListAdd.length) {
+      this.DeptUserModel = true;
+    }
+    else{
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
+    }
+   }
+   Cancle(){
+    this.DeptUserModel = false;
+    this.DeptUserSpinner = false;
+    this.DeptUserFormSubmitted = false;
+    if (this.buttonname === "Create") {
+      this.objDeptUser = new DeptUser();
+    }
+    this.Spinner = false;
+   }
+   GetDepartment(){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_Department",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.DepartmentList = data
+    //  console.log("DepartmentList",this.DepartmentList)
+    })
+   }
+   GetUser(){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_User",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.UsertList = data
+    //  console.log("UsertList",this.UsertList)
+    })
+   }
+   SaveRDB(valid){
+    // this.Spinner = true;
+    // this.RDBFormSubmit2 = true;
+    this.DeptUserSpinner = true;
+    this.DeptUserFormSubmitted = true;
     this.ngxService.start();
     this.Save = false;
     this.Del = false;
@@ -663,6 +843,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
     }
     else{
       this.Spinner = false;
+      this.DeptUserSpinner = false; 
       this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -712,8 +893,19 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
               this.ObjRepaAndMaintRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjRepaAndMaintRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+              this.getStockPoint();
               this.ObjRepaAndMaintRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;  
-              this.deleteError = false        
+              this.deleteError = false 
+              this.DeptUserSpinner = false;   
+              this.DeptUserFormSubmitted = false;
+              this.objDeptUser = new DeptUser();
+              this.DeptUserModel = false;     
+              this.DocNo = undefined;
+              if(this.buttonname === "Update") {
+                this.tabIndexToView = 0;
+                this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
+                this.buttonname = "Create";
+              }  
       } 
       else{
         this.Spinner = false;
@@ -728,53 +920,71 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
       }
     })
    }
-  //  Edit(col){
-    // this.clearData();
-    // this.DocNo = undefined;
-    // if(col.Doc_No){
-    //   this.DocNo = col.Doc_No;
-    //   this.tabIndexToView = 1;
-    //   this.items = ["BROWSE", "UPDATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
-    //   this.buttonname = "Update";
-    //   this.getedit(col.Doc_No);
-    //  }
-  //  }
-  //  getedit(Dno){
-  //   this.editlist = [];
-  //   const obj = {
-  //     "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
-  //     "Report_Name_String": "Purchase_Order_Get",
-  //     "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+   Edit(col){
+    this.clearData();
+    this.DocNo = undefined;
+    if(col.RDB_No){
+      this.DocNo = col.RDB_No;
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE", "PENDING WORK ORDER"];
+      this.buttonname = "Update";
+      this.getedit(col.RDB_No);
+     }
+   }
+   getedit(Dno){
+    this.editlist = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_Data_For_RDB_Edit",
+      "Json_Param_String": JSON.stringify([{RDB_No : Dno}])
   
-  //   }
-  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //     this.editlist = data;
-  //     console.log("Edit data",data);
-  //     this.ObjRdb = data[0],
-  //     this.RDB_Date = new Date(data[0].RDB_Date);
-  //     this.SE_Date = new Date(data[0].SE_Date);
-  //     this.INV_Date = new Date(data[0].INV_Date);
-  //     this.PO_Doc_Date = new Date(data[0].PO_Doc_Date);
-  //     // this.RDBListAdd = data[0].L_element;
-  //     data.forEach(element => {
-  //       const  productObj = {
-  //           Product_ID : element.Product_ID,
-  //           Product_Name : element.Product_Description,
-  //           HSN_Code : element.HSN_Code,
-  //           UOM : element.UOM,
-  //           Challan_Qty : Number(element.RateChallan_Qty),
-  //           Received_Qty : element.Received_Qty,
-  //           Rate :  Number(element.Rate),
-  //           Taxable_Value : Number(element.Taxable_Value).toFixed(2),
-  //           Tax_Percentage : Number(element.Tax_Percentage),
-  //           Total_Tax_Amount : Number(element.Total_Tax_Amount).toFixed(2),
-  //           Total_Amount : Number(element.Total_Amount).toFixed(2)
-  //         };
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editlist = data;
+      console.log("Edit data",data);
+      this.ObjRepaAndMaintRdb = data[0];
+      this.objRepAndMaintRdb2 = data[0];
+      this.objDeptUser = data[0];
+      // this.getStockPoint(data[0].Cost_Cen_ID,data[0].godown_id);
+      this.getStockPoint();
+      this.ObjRepaAndMaintRdb.godown_id = data[0].godown_id;
+      this.RDB_Date = new Date(data[0].RDB_Date);
+      this.SE_Date = new Date(data[0].SE_Date);
+      this.INV_Date = new Date(data[0].Inv_Date);
+      // this.RDBListAdd = data[0].L_element;
+      if(this.editlist.length) {
+        this.editlist.forEach(element => {
+          element['label'] = element.PO_Doc_No,
+          element['value'] = element.PO_Doc_No
+        });
+       this.ReturnableGPNList = data;
+      }
+      this.ObjRepaAndMaintRdb.Return_Gate_Pass_No = data[0].PO_Doc_No;
+      this.Return_Gate_Pass_Date = new Date(data[0].PO_Doc_Date);
+      this.dateDis = false;
+      data.forEach(element => {
+        const  productObj = {
+            Product_ID : element.Product_ID,
+            Product_Name : element.Product_Description,
+            HSN_Code : element.HSN_Code,
+            UOM : element.UOM,
+            PO_QTY : element.PO_QTY,
+            Pending_PO_QTY : element.Pending_PO_QTY,
+            Challan_Qty : Number(element.Challan_Qty),
+            Received_Qty : element.Received_Qty,
+            Rate :  Number(element.Rate),
+            Discount_Amount : Number(element.Discount_Amount).toFixed(2),
+            PO_Discount_Amount : Number(element.PO_Discount_Amount).toFixed(2),
+            Taxable_Value : Number(element.Taxable_Value).toFixed(2),
+            Tax_Percentage : Number(element.Tax_Percentage).toFixed(2),
+            Total_Tax_Amount : Number(element.Total_Tax_Amount).toFixed(2),
+            Total_Amount : Number(element.Total_Amount).toFixed(2)
+          };
     
-  //         this.RDBListAdd.push(productObj);
-  //       });
-  //   })
-  //  }
+          this.RDBListAdd.push(productObj);
+        });
+    })
+   }
   Deleterdb(obj){
     this.RDBNo = undefined;
     this.Del = false;
@@ -845,6 +1055,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
     this.Spinner = false;
     this.ngxService.stop();
     this.deleteError = false;
+    this.DeptUserSpinner = false;
   }
   Printrdb(DocNo) {
     if(DocNo) {
@@ -869,11 +1080,12 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
     this.ObjRepaAndMaintRdb1.UOM = undefined;
     this.ObjRepaAndMaintRdb1.HSN_Code = undefined;
     this.ObjRepaAndMaintRdb1.PO_QTY = undefined;
-    const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(productID))[0];
+    const productFilter = this.ProductList.filter(el=> Number(el.Product_ID) === Number(productID))[0];
     console.log(productFilter);
     this.ObjRepaAndMaintRdb1.UOM = productFilter.UOM ? productFilter.UOM : " ";
     this.ObjRepaAndMaintRdb1.HSN_Code = productFilter.HSN_NO ? productFilter.HSN_NO : " ";
     this.ObjRepaAndMaintRdb1.PO_QTY = productFilter.Qty ? productFilter.Qty : " ";
+    this.ObjRepaAndMaintRdb1.Pending_PO_QTY = productFilter.Pending_PO_QTY ? productFilter.Pending_PO_QTY : " ";
     this.ObjRepaAndMaintRdb1.Challan_Qty = productFilter.Qty;
     this.ObjRepaAndMaintRdb1.Received_Qty = productFilter.Qty;
    }
@@ -911,7 +1123,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
       if (valid) {
       const obj = {
         "SP_String": "SP_Repair_And_Maintenance_RDB",
-        "Report_Name_String": "PENDING_Returnable_Gate_Pass_BROWSE",
+        "Report_Name_String": "PENDING_WORK_ORDER_BROWSE",
         "Json_Param_String": JSON.stringify([tempobj])
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -1043,6 +1255,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
     UOM : any;
     HSN_Code : any;
     PO_QTY:any;
+    Pending_PO_QTY:any;
     Challan_Qty : any;
     Received_Qty : any;
   }
@@ -1064,4 +1277,8 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
   class RDBRegister {
     start_date : Date;
     end_date : Date;
+  }
+  class DeptUser {
+    Ins_Dept_ID : any;
+    Ins_USER_ID : any;
   }

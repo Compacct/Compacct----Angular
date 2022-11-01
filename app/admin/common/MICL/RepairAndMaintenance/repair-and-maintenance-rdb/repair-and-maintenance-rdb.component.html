@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="99999">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -93,8 +93,8 @@
                                             <th nowrap="nowrap">Supplier</th>
                                             <th nowrap="nowrap">Cost Center</th>
                                             <th nowrap="nowrap">Godown</th>
-                                            <th nowrap="nowrap">PO Doc No</th>
-                                            <th nowrap="nowrap">PO Doc Date</th>
+                                            <th nowrap="nowrap">WO Doc No</th>
+                                            <th nowrap="nowrap">WO Doc Date</th>
                                             <th nowrap="nowrap">Mode Of Transport</th>
                                             <th nowrap="nowrap">LR No Date</th>
                                             <th nowrap="nowrap">Vehicle No</th>
@@ -116,6 +116,11 @@
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li> -->
+                                                        <li>
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
                                                         <li >
                                                             <a (click)="Deleterdb(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
@@ -129,8 +134,8 @@
                                             <td nowrap="nowrap">{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
                                             <td nowrap="nowrap">{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
                                             <td nowrap="nowrap">{{col.godown_name ? col.godown_name : '-'}}</td>
-                                            <td nowrap="nowrap">{{col.Return_Gate_Pass_No ? col.Return_Gate_Pass_No : '-'}}</td>
-                                            <td nowrap="nowrap">{{col.Return_Gate_Pass_Date | date : 'dd/MMM/yyyy' }}</td>
+                                            <td nowrap="nowrap">{{col.PO_Doc_No ? col.PO_Doc_No : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.PO_Doc_Date | date : 'dd/MMM/yyyy' }}</td>
                                             <td nowrap="nowrap">{{col.Mode_Of_transport ? col.Mode_Of_transport : '-'}}</td>
                                             <td nowrap="nowrap">{{col.LR_No_Date ? col.LR_No_Date : '-'}}</td>
                                             <td nowrap="nowrap">{{col.Vehicle_No ? col.Vehicle_No : '-'}}</td>
@@ -274,13 +279,22 @@
                                                  placeholder="HSN code" 
                                                  disabled>
                                             </div> 
-                                           <div class="col-sm-3">
-                                            <label class="control-label">Work Order QTY<sup class="text-danger">*</sup></label>
+                                           <div class="col-sm-2">
+                                            <label class="control-label">WO QTY<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
                                             name="WO_QTY" 
                                             #WO_QTY="ngModel" 
                                             [(ngModel)]="ObjRepaAndMaintRdb1.PO_QTY" 
-                                            placeholder="Returnable Gate Pass QTY"
+                                            placeholder="WO QTY"
+                                            disabled>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Pending WO QTY<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="Pending_WO_QTY" 
+                                            #Pending_WO_QTY="ngModel" 
+                                            [(ngModel)]="ObjRepaAndMaintRdb1.Pending_PO_QTY" 
+                                            placeholder="Pending WO QTY"
                                             disabled>
                                         </div>
                                                 <div class="col-sm-2">
@@ -291,8 +305,8 @@
                                                     <label class="control-label">Received Qty<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Received_Qty" #Received_Qty="ngModel" [(ngModel)]="ObjRepaAndMaintRdb1.Received_Qty" placeholder="Received Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && Received_Qty.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-2">
-                                                    <button class="btn btn-primary pull-left custombutton" (click)="Add(RepairAndMaintRDBForm.form.valid)">
+                                                <div class="col-sm-1">
+                                                    <button class="btn btn-primary custombuttons" (click)="Add(RepairAndMaintRDBForm.form.valid)">
                                                         <span class="glyphicon glyphicon-plus"> </span>Add
                                                         </button>
                                                 </div>
@@ -311,10 +325,12 @@
                                             <th rowspan="2">Unit</th>
                                             <th colspan="2" style="text-align:center;">Quantity</th>
                                             <th rowspan="2">Rate</th>
+                                            <th rowspan="2">Discount Amt</th>
                                             <th rowspan="2">Taxable Value (Rs.)</th>
                                             <th rowspan="2">Gst%</th>
                                             <th rowspan="2">Tax</th>
                                             <th rowspan="2">Total Amount (Rs.)</th>
+                                            <th rowspan="2" *ngIf="buttonname === 'Update'">Edit</th>
                                             <th rowspan="2">Delete</th>
                                         </tr>
                                         <tr>
@@ -332,11 +348,18 @@
                                             <td>{{obj.Challan_Qty}}</td>
                                             <td>{{obj.Received_Qty}}</td>
                                             <td>{{obj.Rate}}</td>
+                                            <td>{{obj.Discount_Amount}}</td>
                                             <td>{{getTofix(obj.Taxable_Value)}}</td>
                                             <td>{{obj.Tax_Percentage}}</td>
                                             <td>{{getTofix(obj.Total_Tax_Amount)}}</td>
                                             <td>{{getTofix(obj.Total_Amount)}}</td>
-                                            <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                            <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAdd(ind)"
+                                                ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                              </a></td>
+                                              <td> <a class="btn btn-sm btn-danger" (click)="delete(ind)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a></td>
+                                            <!-- <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
                                         </tr>
                                     </tbody>
                                 </table>
@@ -349,7 +372,7 @@
                                     </div>
                                  </div>
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" (click)="SaveRDB(RepAndMaintRDBForm2.form.valid)" id="load" [disabled]="Spinner">
+                                    <button class="btn btn-primary pull-right" (click)="ShowDeptUserPopUp(RepAndMaintRDBForm2.form.valid)" id="load" [disabled]="Spinner">
                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                     </button>
@@ -421,7 +444,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO">{{option.replace('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO | slice:1">{{option.replace('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -457,7 +480,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeaderforPPO">
+                                            <ng-container *ngFor="let option of DynamicHeaderforPPO | slice:1">
                                                 <td nowrap="nowrap">{{col[option]}}</td>
                                             </ng-container>
                                             
@@ -476,3 +499,60 @@
         </div>
     </div>
 </div>
+
+<p-dialog  [appendTo]="'body'" [visible]="DeptUserModel" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="DeptUserForm" #DeptUserForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Department<sup class="text-danger">*</sup></label>
+                    <select class="form-control" 
+                            name="department" 
+                            #department="ngModel" 
+                            [(ngModel)]="objDeptUser.Ins_Dept_ID"
+                            [ngClass]="{'clearance': DeptUserFormSubmitted && department.errors?.required}"
+                            required>
+                            <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor = "let option of DepartmentList" [value] ="option.Dept_ID">
+                                  {{option.Dept_Name}}
+                                </option>
+                    </select>
+                </div>
+                <div class="col-sm-12">
+                    <label class="control-label">User<sup class="text-danger">*</sup></label>
+                    <select class="form-control" 
+                            name="user" 
+                            #user="ngModel" 
+                            [(ngModel)]="objDeptUser.Ins_USER_ID"
+                            [ngClass]="{'clearance': DeptUserFormSubmitted && user.errors?.required}"
+                            required>
+                            <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor = "let option of UsertList" [value] ="option.User_ID">
+                                  {{option.Name}}
+                                </option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="Cancle()" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="SaveRDB(DeptUserForm.form.valid)" id="load2" [disabled]="DeptUserSpinner">
+<p-progressSpinner
+  *ngIf="DeptUserSpinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!DeptUserSpinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{buttonname}}
+</button>
+    </p-footer>
+</p-dialog>

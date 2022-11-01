@@ -374,6 +374,8 @@ import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh
 import { SubledgerReportForFranchiseComponent } from "./common/FinancialManagement/Master/subledger-report-for-franchise/subledger-report-for-franchise.component";
 import { K4CStockDetailsComponent } from './common/FinancialManagement/Master/k4-c-stock-details/k4-c-stock-details.component';
 import { RawMaterialReceiveComponent } from './common/ProductionManagement/Master/raw-material-receive/raw-material-receive.component';
+import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
+
 
 @NgModule({
   declarations: [
@@ -665,7 +667,8 @@ import { RawMaterialReceiveComponent } from './common/ProductionManagement/Maste
     JOHEarMoldComponent,
     SubledgerReportForFranchiseComponent,
     K4CStockDetailsComponent,
-    RawMaterialReceiveComponent
+    RawMaterialReceiveComponent,
+    PurchaseOrderRawMaterialComponent
   ],
   imports: [
     CommonModule,

@@ -1106,9 +1106,19 @@ export class MiclRequisitionComponent implements OnInit {
           proj : this.openProject ? this.openProject : "N",
           To_Cost_Cen_ID : this.toCostCenter
         }
+        let ReportName = "";
+        if (this.headerText === "Purchase Indent") {
+          ReportName = "Get_Purchase_Indent_Status";
+        }
+        else if (this.headerText === "Issue Requisition") {
+          ReportName = "Get_Issue_Requisition_Status";
+        }
+        else {
+          ReportName = "Get_MRO_Indent_Status";
+        }
         const obj = {
           "SP_String": "SP_Txn_Requisition",
-          "Report_Name_String": this.headerText === "Purchase Indent" ? "Get_Purchase_Indent_Status" :  "Get_Issue_Requisition_Status",
+          "Report_Name_String": ReportName,
           "Json_Param_String": JSON.stringify([tempDate])
         }
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{

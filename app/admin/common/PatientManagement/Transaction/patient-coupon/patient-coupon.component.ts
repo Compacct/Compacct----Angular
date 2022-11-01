@@ -94,13 +94,12 @@ export class PatientCouponComponent implements OnInit {
     
 
   }
-
-  onConfirm(){
-
-  }
-
-  onConfirm2(){
-
+  GetPrint(){ 
+      if (this.Footfallid) {
+        window.open("/Report/Crystal_Files/CRM/joh_Form/Ear_Mold_coupon_Print.aspx?Foot_Fall_ID=" + this.Footfallid, 
+        'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+        );
+    } 
   }
 
 }

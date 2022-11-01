@@ -53,8 +53,8 @@
                                     <h4> Coupon Id:- {{Footfallid}} </h4>
                                 </div>
                                 <div class="col-sm-3" *ngIf="Footfallid != null">
-                                    <button class="btn btn-success custombutton " data-toggle="modal" id="load2">
-                                    <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Print Coupon
+                                    <button class="btn btn-success custombutton "(click)="GetPrint()" data-toggle="modal" id="load2">
+                                    <span  class="glyphicon glyphicon-print"></span>&nbsp;Print Coupon
                                     </button>
                                 </div>
                             </div>

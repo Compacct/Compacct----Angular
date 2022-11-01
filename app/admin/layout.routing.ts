@@ -279,6 +279,8 @@ import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh
 import { SubledgerReportForFranchiseComponent } from "./common/FinancialManagement/Master/subledger-report-for-franchise/subledger-report-for-franchise.component";
 import { K4CStockDetailsComponent } from "./common/FinancialManagement/Master/k4-c-stock-details/k4-c-stock-details.component";
 import { RawMaterialReceiveComponent } from "./common/ProductionManagement/Master/raw-material-receive/raw-material-receive.component";
+import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -2083,6 +2085,13 @@ path: 'MICL_Cost_Center_Master',
   component: RawMaterialReceiveComponent,
   data: {
     title: 'Raw Material Receive'
+}
+},
+{
+  path: 'Purchase_Order_Raw_Material',
+    component: PurchaseOrderRawMaterialComponent,
+    data: {
+      title: 'Purchase Order Raw Material '
 }
 },
     

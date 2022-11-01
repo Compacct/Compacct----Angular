@@ -705,19 +705,20 @@
             <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='POD_Request_Date' name="POD_Date" ></ejs-datepicker>
         </div> 
         <div class="col-sm-12">
-            <label class="control-label">POD No(Clinic)<sup class="text-danger">*</sup></label>
-            <input class="form-control" name="Pod_No" #Pod_No="ngModel" [(ngModel)]="objPod.POD_No"  placeholder="POD NO(Clinic)" [ngClass]="{'clearance': PODformsubmit && Pod_No.errors?.required}" required>
+            <label class="control-label">Courrier Name<sup class="text-danger">*</sup></label>
+            <input class="form-control" name="Courrier_No" #Courrier_No="ngModel" [(ngModel)]="objPod.Courrier_No"  placeholder="Courrier Name" [ngClass]="{'clearance': PODformsubmit && Courrier_No.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">POD No(Clinic)</label>
+            <input class="form-control" name="Pod_No" #Pod_No="ngModel" [(ngModel)]="objPod.POD_No"  placeholder="POD NO(Clinic)"  >
         </div>
 
         <div class="col-sm-12">
-            <label class="control-label">POD No(Ho)<sup class="text-danger">*</sup></label>
-            <input class="form-control" name="POD_No_HO" #POD_No_HO="ngModel" [(ngModel)]="objPod.POD_No_HO"  placeholder="POD NO(Ho)" [ngClass]="{'clearance': PODformsubmit && POD_No_HO.errors?.required}" required>
+            <label class="control-label">POD No(Ho)</label>
+            <input class="form-control" name="POD_No_HO" #POD_No_HO="ngModel" [(ngModel)]="objPod.POD_No_HO"  placeholder="POD NO(Ho)"  >
         </div>
     
-        <div class="col-sm-12">
-            <label class="control-label">Courrier No<sup class="text-danger">*</sup></label>
-            <input class="form-control" name="Courrier_No" #Courrier_No="ngModel" [(ngModel)]="objPod.Courrier_No"  placeholder="Courrier No" [ngClass]="{'clearance': PODformsubmit && Courrier_No.errors?.required}" required>
-        </div>
+        
         <div class="col-sm-12">
             
            <p-checkbox name="group2"  label="Received" [(ngModel)]="checked" binary="true" [style]="{'margin-top': '2px'}"></p-checkbox>

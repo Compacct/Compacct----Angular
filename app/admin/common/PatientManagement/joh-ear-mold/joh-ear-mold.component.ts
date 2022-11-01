@@ -661,7 +661,7 @@ export class JOHEarMoldComponent implements OnInit {
 
   getAlldata(valid){
     this.searchFormsubmit = true;
-    if(valid){
+    // if(valid){
     const start = this.objSearch.From_Date
     ? this.DateService.dateConvert(new Date(this.objSearch.From_Date))
     : this.DateService.dateConvert(new Date());
@@ -690,7 +690,7 @@ export class JOHEarMoldComponent implements OnInit {
      
      
    })
-  }
+  // }
   
   }
  clearData(){
