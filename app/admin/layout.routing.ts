@@ -280,6 +280,7 @@ import { SubledgerReportForFranchiseComponent } from "./common/FinancialManageme
 import { K4CStockDetailsComponent } from "./common/FinancialManagement/Master/k4-c-stock-details/k4-c-stock-details.component";
 import { RawMaterialReceiveComponent } from "./common/ProductionManagement/Master/raw-material-receive/raw-material-receive.component";
 import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
+import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2091,7 +2092,14 @@ path: 'MICL_Cost_Center_Master',
   path: 'Purchase_Order_Raw_Material',
     component: PurchaseOrderRawMaterialComponent,
     data: {
-      title: 'Purchase Order Raw Material '
+      title: 'Purchase Order Raw Material'
+}
+},
+{
+  path: 'Raw_Material_Requisition',
+    component: RawMaterialRequisitionComponent,
+    data: {
+      title: 'Raw Material Requisition'
 }
 },
     
