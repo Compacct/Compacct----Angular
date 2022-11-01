@@ -375,6 +375,7 @@ import { SubledgerReportForFranchiseComponent } from "./common/FinancialManageme
 import { K4CStockDetailsComponent } from './common/FinancialManagement/Master/k4-c-stock-details/k4-c-stock-details.component';
 import { RawMaterialReceiveComponent } from './common/ProductionManagement/Master/raw-material-receive/raw-material-receive.component';
 import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
+import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
 
 
 @NgModule({
@@ -668,7 +669,8 @@ import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement
     SubledgerReportForFranchiseComponent,
     K4CStockDetailsComponent,
     RawMaterialReceiveComponent,
-    PurchaseOrderRawMaterialComponent
+    PurchaseOrderRawMaterialComponent,
+    RawMaterialRequisitionComponent
   ],
   imports: [
     CommonModule,
