@@ -692,9 +692,16 @@ export class MiclRequisitionComponent implements OnInit {
       this.productListview = [];
       this.productList = [];
       this.objmaterial.Product_ID = undefined;
+      let reportname = '';
+      if(this.headerText === "Maintenance Indent") {
+        reportname = "Get_product_Details_MRO";
+      }
+      else {
+        reportname = "Get_product_Details";
+      }
       const obj = {
         "SP_String": "SP_Txn_Requisition",
-        "Report_Name_String": "Get_product_Details",
+        "Report_Name_String": reportname,
         "Json_Param_String":  Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Product_Type_ID : Number(this.objmaterial.Product_Type_ID)}}]) : JSON.stringify([{Product_Type_ID : Number(this.objmaterial.Product_Type_ID)}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
