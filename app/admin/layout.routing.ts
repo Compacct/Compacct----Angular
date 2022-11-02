@@ -281,6 +281,7 @@ import { K4CStockDetailsComponent } from "./common/FinancialManagement/Master/k4
 import { RawMaterialReceiveComponent } from "./common/ProductionManagement/Master/raw-material-receive/raw-material-receive.component";
 import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
 import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
+import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-raw-material-issue/micl-raw-material-issue.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2100,6 +2101,13 @@ path: 'MICL_Cost_Center_Master',
     component: RawMaterialRequisitionComponent,
     data: {
       title: 'Raw Material Requisition'
+}
+},
+{
+  path: 'MICL_Raw_Material_Issue',
+    component: MiclRawMaterialIssueComponent,
+    data: {
+      title: 'Raw Material Issue'
 }
 },
     
