@@ -203,7 +203,7 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
-                                                        <select class="form-control" name="FromGodown" #FromGodown="ngModel" [(ngModel)]="Objdispatch.F_Godown_ID" [disabled]="inputBoxDisabled" [ngClass]="{'clearance': DispatchFormSubmit && FromGodown?.errors?.required}" required>
+                                                        <select class="form-control" name="FromGodown" #FromGodown="ngModel" [(ngModel)]="Objdispatch.F_Godown_ID" [disabled]="formstockpointDisabled" [ngClass]="{'clearance': DispatchFormSubmit && FromGodown?.errors?.required}" required>
                                                                 <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let option of FromGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                                                         </select>
