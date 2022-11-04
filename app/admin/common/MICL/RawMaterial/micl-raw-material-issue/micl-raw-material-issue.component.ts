@@ -30,11 +30,13 @@ export class MiclRawMaterialIssueComponent implements OnInit {
   menuList:any = [];
   objRMissue:RMissue = new RMissue();
   objRMissueadd:RMissueadd = new RMissueadd();
-  RM_requi_Date = new Date();
+  RM_Issue_Date = new Date();
   RMissueFormSubmit = false;
   ReqNoList:any = [];
-  costcenterList:any = [];
-  GodownList:any = [];
+  FcostcenterList:any = [];
+  FGodownList:any = [];
+  TocostcenterList:any = [];
+  ToGodownList:any = [];
   productList:any = [];
   RMissueaddFormSubmit = false;
   AddRMissueList:any = [];
@@ -53,6 +55,13 @@ export class MiclRawMaterialIssueComponent implements OnInit {
   RMrewBrowseList:any = [];
   RMrewBrowseListDynamicHeader:any = [];
 
+  ObjPendingIndent = new PendingIndent();
+  PendingIndentFormSubmitted = false;
+  PendingIndentList:any = [];
+  DynamicHeaderforPIndent:any = [];
+  costcenterListPeding:any = [];
+  godownListPeding:any = [];
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -68,7 +77,7 @@ export class MiclRawMaterialIssueComponent implements OnInit {
   ngOnInit() {
     //console.log('Del_Right ==',this.$CompacctAPI.CompacctCookies.Del_Right)
     // $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items =  ["BROWSE", "CREATE"];
+    this.items =  ["BROWSE", "CREATE", "PENDING REQUISITION"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -78,16 +87,20 @@ export class MiclRawMaterialIssueComponent implements OnInit {
       Link: "Raw Material Issue"
     });
     this.Finyear();
-    this.GetRequisitionNo();
-    this.getCostcenter();
-    this.Getgodown();
-    this.GetProductsDetalis();
+    // this.GetRequisitionNo();
+    this.getFCostcenter();
+    this.GetFgodown();
+    this.getToCostcenter();
+    this.GetTogodown();
+    // this.GetProductsDetalis();
+    this.getCostcenterPenReq();
+    this.getgodownPenReq();
     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
     // this.companyname = this.$CompacctAPI.CompacctCookies.Company_Name
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING REQUISITION"];
     this.buttonname = "Save";
     this.clearData();
     // this.Current_Stock = undefined;
@@ -95,9 +108,10 @@ export class MiclRawMaterialIssueComponent implements OnInit {
   clearData(){
     this.objRMissue = new RMissue();
     this.objRMissueadd = new RMissueadd();
-    this.RM_requi_Date = new Date();
-    this.objRMissue.Cost_Cen_ID = 4;
+    this.RM_Issue_Date = new Date();
+    this.objRMissue.F_Cost_Cen_ID = 36;
     this.ObjBrowseData.Cost_Cen_ID = 4;
+    this.objRMissue.To_Cost_Cen_ID = 4;
     this.RMissueFormSubmit = false;
     this.RMissueaddFormSubmit = false;
     this.AddRMissueList = [];
@@ -114,76 +128,132 @@ export class MiclRawMaterialIssueComponent implements OnInit {
      this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
       });
   }
-  GetRequisitionNo(){
-    this.ReqNoList = [];
+  getFCostcenter(){
     const obj = {
-      "SP_String": "SP_Txn_Raw_Material_Requisition",
-      "Report_Name_String": "Get_product_Details"
-    }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     if(data.length) {
-        data.forEach(element => {
-          // element['label'] = element.Req_No,
-          // element['value'] = element.Req_No
-          element['label'] = element.Product_Description,
-          element['value'] = element.Product_ID
-        });
-        this.ReqNoList = data;
-     //console.log("productList",this.productList);
-        }
-      else {
-        this.ReqNoList = [];
-  }
-  })
-}
-  getCostcenter(){
-    const obj = {
-       "SP_String": "SP_Txn_Raw_Material_Requisition",
-       "Report_Name_String": "Get_Cost_Center",
+       "SP_String": "SP_MICL_Raw_Material_Issue",
+       "Report_Name_String": "Get_F_Cost_Center",
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        //console.log("costcenterList  ===",data);
-      this.costcenterList = data;
-      this.objRMissue.Cost_Cen_ID = 4;
-      this.ObjBrowseData.Cost_Cen_ID = 4;
-      // this.ObjReqStatusData.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
-      //  this.Getgodown(this.objRMreqi.Cost_Cen_ID);
-      // this.GetgodownBrowse(this.ObjBrowseData.Cost_Cen_ID);
-      // this.GetgodownReqStatus(this.ObjReqStatusData.Cost_Cen_ID);
-      // this.searchData()
+      this.FcostcenterList = data;
+      this.objRMissue.F_Cost_Cen_ID = 36;
+      // this.ObjBrowseData.Cost_Cen_ID = 4;
    })
    }
-   Getgodown(){
+   GetFgodown(){
        const obj = {
-         "SP_String": "SP_Txn_Raw_Material_Requisition",
-         "Report_Name_String": "Get_Cost_Center_Godown"
+        "SP_String": "SP_MICL_Raw_Material_Issue",
+        "Report_Name_String": "Get_F_Cost_Center_Godown"
        }
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-         this.GodownList = data;
+         this.FGodownList = data;
           //  this.objRMreqi.Godown_ID = this.GodownList.length === 1 ? this.GodownList[0].Godown_ID : undefined;
          
          //console.log("this.toGodownList",this.GodownList);
          })
    }
-  GetProductsDetalis(){
+  getToCostcenter(){
+    const obj = {
+       "SP_String": "SP_MICL_Raw_Material_Issue",
+       "Report_Name_String": "Get_Cost_Center",
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       //console.log("costcenterList  ===",data);
+      this.TocostcenterList = data;
+      this.objRMissue.To_Cost_Cen_ID = 4;
+   })
+   }
+   GetTogodown(){
+       const obj = {
+        "SP_String": "SP_MICL_Raw_Material_Issue",
+        "Report_Name_String": "Get_Cost_Center_Godown"
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         this.ToGodownList = data;
+          //  this.objRMreqi.Godown_ID = this.GodownList.length === 1 ? this.GodownList[0].Godown_ID : undefined;
+         
+         //console.log("this.toGodownList",this.GodownList);
+         })
+   }
+   GetRequisitionNo(){
+     this.ReqNoList = [];
+     if (this.objRMissue.To_Godown_ID) {
+     const tempobj = {
+       Cost_Cen_ID : this.objRMissue.To_Cost_Cen_ID,
+       Godown_ID : this.objRMissue.To_Godown_ID
+      }
+     const obj = {
+       "SP_String": "SP_MICL_Raw_Material_Issue",
+       "Report_Name_String": "Get_Requisition_List",
+       "Json_Param_String": JSON.stringify([tempobj])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length) {
+         data.forEach(element => {
+           element['label'] = element.Req_No,
+           element['value'] = element.Req_No
+         });
+         this.ReqNoList = data;
+      //console.log("productList",this.productList);
+         }
+       else {
+         this.ReqNoList = [];
+   }
+   })
+   }
+ }
+  GetProductsDetalis(valid){
       this.productList = [];
+      this.RMissueFormSubmit = true;
+      this.SpinnerShow = true;
+      if (valid) {
+        if(Number(this.objRMissue.F_Godown_ID) !== Number(this.objRMissue.To_Godown_ID)){
+        const Dobj = {
+          F_Cost_Cen_ID: Number(this.objRMissue.F_Cost_Cen_ID),
+          F_Godown_ID : Number(this.objRMissue.F_Godown_ID),
+          To_Cost_Cen_ID: Number(this.objRMissue.To_Cost_Cen_ID),
+          To_Godown_ID : Number(this.objRMissue.To_Godown_ID),
+          Doc_Date : this.DateService.dateConvert(new Date(this.RM_Issue_Date)),
+          Req_No : this.objRMissue.Req_No,
+          // Req_Date : this.DateService.dateConvert(new Date(this.ReqDate))
+          }
       const obj = {
-        "SP_String": "SP_Txn_Raw_Material_Requisition",
-        "Report_Name_String": "Get_product_Details"
+        "SP_String": "SP_MICL_Raw_Material_Issue",
+        "Report_Name_String": "Get_product_Details",
+       "Json_Param_String": JSON.stringify([Dobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       if(data.length) {
+      //  if(data.length) {
           data.forEach(element => {
-            element['label'] = element.Product_Description,
-            element['value'] = element.Product_ID
+            var yard = this.FGodownList.filter(el => Number(el.Godown_ID) === Number(this.objRMissue.F_Godown_ID))
+            element['Yard'] = yard[0].godown_name
           });
           this.productList = data;
+          this.RMissueFormSubmit = false;
+          this.SpinnerShow = false;
        //console.log("productList",this.productList);
-          }
-        else {
-          this.productList = [];
-    }
+        //   }
+        // else {
+        //   this.productList = [];
+          this.RMissueFormSubmit = false;
+          this.SpinnerShow = false;
+    // }
     })
+    }
+    else{
+      this.SpinnerShow = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "can't use same stock point"
+      });
+    }
+  }
+    else {
+      this.SpinnerShow = false;
+    }
   }
   getUOM(){
     this.objRMissueadd.UOM = undefined;
@@ -219,12 +289,12 @@ export class MiclRawMaterialIssueComponent implements OnInit {
   delete(i){
     this.AddRMissueList.splice(i,1);
   }
-  SaveIssue(valid){ 
+  SaveIssue(){ 
     //console.log("valid",valid);
-    this.RMissueFormSubmit = true;
+    // this.RMissueFormSubmit = true;
     this.ngxService.start();
-    if(valid){
-      if(this.AddRMissueList.length){
+    if(this.productList.length){
+      // if(this.AddRMissueList.length){
        this.Spinner = true;
        this.ngxService.start();
       this.compacctToast.clear();
@@ -247,20 +317,20 @@ export class MiclRawMaterialIssueComponent implements OnInit {
          detail: "Error Occured "
        });
       }
-    }
-    else {
-      this.Spinner = false;
-      this.ngxService.stop();
-    }
+    // }
+    // else {
+    //   this.Spinner = false;
+    //   this.ngxService.stop();
+    // }
    }
    onConfirmSave(){
        let saveData:any = [];
-         const consCenterFilter:any = this.costcenterList.filter((el:any)=> Number(el.Cost_Cen_ID) === Number(this.objRMissue.Cost_Cen_ID))
+         const consCenterFilter:any = this.FcostcenterList.filter((el:any)=> Number(el.Cost_Cen_ID) === Number(this.objRMissue.F_Cost_Cen_ID))
          this.AddRMissueList.forEach((el:any)=>{
          let save = {
           Req_No: this.reqDocNo ? this.reqDocNo : "A",
-          Req_Date: this.RM_requi_Date ? this.DateService.dateConvert(new Date(this.RM_requi_Date)) : new Date(),
-          Cost_Cen_ID: Number(this.objRMissue.Cost_Cen_ID),
+          Req_Date: this.RM_Issue_Date ? this.DateService.dateConvert(new Date(this.RM_Issue_Date)) : new Date(),
+          Cost_Cen_ID: Number(this.objRMissue.F_Cost_Cen_ID),
           Cost_Cen_Name: consCenterFilter[0].Cost_Cen_Name,
           Godown_ID: this.objRMissue.Godown_ID,
           Product_ID: Number(el.Product_ID),
@@ -301,7 +371,7 @@ export class MiclRawMaterialIssueComponent implements OnInit {
              this.searchData(true);
             if (this.buttonname === "Update") {
              this.tabIndexToView = 0;
-             this.items = ["BROWSE", "CREATE"];
+             this.items = ["BROWSE", "CREATE", "PENDING REQUISITION"];
              this.buttonname = "Save";
              this.reqDocNo = undefined;
             }
@@ -359,14 +429,92 @@ export class MiclRawMaterialIssueComponent implements OnInit {
     this.Spinner = false;
     this.ngxService.stop();
   }
+  // PENDING INDENT
+getDateRange(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.ObjPendingIndent.start_date = dateRangeObj[0];
+    this.ObjPendingIndent.end_date = dateRangeObj[1];
+  }
+}
+getCostcenterPenReq(){
+  const obj = {
+     "SP_String": "SP_MICL_Raw_Material_Issue",
+     "Report_Name_String": "Get_Cost_Center",
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //  console.log("costcenterListPeding  ===",data);
+    this.costcenterListPeding = data;
+    this.ObjPendingIndent.Cost_Cen_ID = 4;
+  })
+ }
+ getgodownPenReq(){
+  const obj = {
+     "SP_String": "SP_MICL_Raw_Material_Issue",
+     "Report_Name_String": "Get_Cost_Center_Godown",
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //  console.log("godownListPeding  ===",data);
+    this.godownListPeding = data;
+  })
+ }
+GetPendingIndent(valid){
+    this.PendingIndentFormSubmitted = true;
+    const start = this.ObjPendingIndent.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjPendingIndent.start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.ObjPendingIndent.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjPendingIndent.end_date))
+    : this.DateService.dateConvert(new Date());
+    const tempobj = {
+     Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
+     Godown_ID : this.ObjPendingIndent.Godown_ID ? this.ObjPendingIndent.Godown_ID : 0,
+     From_Date : start,
+     To_Date : end,
+    }
+    if (valid) {
+    const obj = {
+      "SP_String": "SP_MICL_Raw_Material_Issue",
+      "Report_Name_String": "Browse_Raw_Material_Pending_Requisition",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.PendingIndentList = data;
+      // this.BackupSearchedlist = data;
+      // this.GetDistinct();
+      if(this.PendingIndentList.length){
+        this.DynamicHeaderforPIndent = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforPIndent = [];
+      }
+      this.seachSpinner = false;
+      this.PendingIndentFormSubmitted = false;
+      console.log("DynamicHeaderforPIndent",this.DynamicHeaderforPIndent);
+    })
+    }
+}
+PrintIndent(DocNo) {
+  if(DocNo) {
+  const objtemp = {
+    "SP_String": "SP_Txn_Requisition",
+    "Report_Name_String": "Requisition_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  })
+  }
+}
   
 
 }
 class RMissue{
   Req_No:any;
   Req_Date:any;
-  To_Furnace:any;
-  Cost_Cen_ID:any;
+  F_Cost_Cen_ID:any;
+  F_Godown_ID:any;
+  To_Cost_Cen_ID:any;
+  To_Godown_ID:any;
   Cost_Cen_Name:any;
   Godown_ID:any;
   Remarks:any;
@@ -386,4 +534,11 @@ class BrowseData {
   Cost_Cen_ID : any;
   Godown_ID : any;
   To_Cost_Cen_ID :any
+  }
+  class PendingIndent{
+    Company_ID : any;
+    start_date : Date;
+    end_date : Date;
+    Cost_Cen_ID : any;
+    Godown_ID : any;
   }

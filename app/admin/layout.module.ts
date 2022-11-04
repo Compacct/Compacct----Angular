@@ -378,6 +378,7 @@ import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement
 import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
 import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-raw-material-issue/micl-raw-material-issue.component';
 import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-txn-purchase-order/nepal-bl-txn-purchase-order.component";
+import { JOHRealisticExpectationFormComponent } from "./common/PatientManagement/joh-realistic-expectation-form/joh-realistic-expectation-form.component";
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -669,10 +670,11 @@ import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-
     SubledgerReportForFranchiseComponent,
     K4CStockDetailsComponent,
     RawMaterialReceiveComponent,
+    PurchaseOrderRawMaterialComponent,
     RawMaterialRequisitionComponent,
     MiclRawMaterialIssueComponent,
     NepalBLTxnPurchaseOrderComponent,
-    PurchaseOrderRawMaterialComponent,
+    JOHRealisticExpectationFormComponent
   ],
   imports: [
     CommonModule,

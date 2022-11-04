@@ -283,6 +283,8 @@ import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement
 import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
 import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-raw-material-issue/micl-raw-material-issue.component';
 import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-txn-purchase-order/nepal-bl-txn-purchase-order.component";
+import { JOHRealisticExpectationFormComponent } from "./common/PatientManagement/joh-realistic-expectation-form/joh-realistic-expectation-form.component";
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -2116,6 +2118,13 @@ path: 'MICL_Cost_Center_Master',
   component: NepalBLTxnPurchaseOrderComponent,
   data: {
     title: 'Nepal BL Txn Purchase Order'
+}
+},
+{
+  path: 'JOH_Realistic_Expectation_Form',
+    component: JOHRealisticExpectationFormComponent,
+    data: {
+      title: 'JOH Realistic Expectation Form '
 }
 },
     
