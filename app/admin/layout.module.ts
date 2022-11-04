@@ -374,11 +374,9 @@ import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh
 import { SubledgerReportForFranchiseComponent } from "./common/FinancialManagement/Master/subledger-report-for-franchise/subledger-report-for-franchise.component";
 import { K4CStockDetailsComponent } from './common/FinancialManagement/Master/k4-c-stock-details/k4-c-stock-details.component';
 import { RawMaterialReceiveComponent } from './common/ProductionManagement/Master/raw-material-receive/raw-material-receive.component';
-import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
 import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
 import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-raw-material-issue/micl-raw-material-issue.component';
-
-
+import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-txn-purchase-order/nepal-bl-txn-purchase-order.component";
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -670,9 +668,9 @@ import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-ra
     SubledgerReportForFranchiseComponent,
     K4CStockDetailsComponent,
     RawMaterialReceiveComponent,
-    PurchaseOrderRawMaterialComponent,
     RawMaterialRequisitionComponent,
-    MiclRawMaterialIssueComponent
+    MiclRawMaterialIssueComponent,
+    NepalBLTxnPurchaseOrderComponent,
   ],
   imports: [
     CommonModule,
