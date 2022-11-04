@@ -73,7 +73,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
 
   CustomerList =[];
   LeadList = [];
-  ManufactureList = [];
+  ManufactureList:any = [];
   InstallMachineList = [];
   SparePartsList =[];
 
@@ -290,6 +290,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   GetManufactureList(){
     this.InstallMachineList =[];
     this.SparePartsList =[];
+    this.ManufactureList = []
     this.ObjEnginnerQuoation.Product_Mfg_Comp_ID = undefined;
     this.ObjEnginnerQuoation.Mfg_Company = undefined;
     this.ObjEnginnerQuoation.Machine = undefined;
@@ -310,11 +311,16 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach((obj)=>{
-        obj.label = obj.Mfg_Company;
-        obj.value = obj.Product_Mfg_Comp_ID;
+        if(obj.Product_Mfg_Comp_ID == 94 || obj.Product_Mfg_Comp_ID == 171 || obj.Product_Mfg_Comp_ID == 165){
+         
+          this.ManufactureList.push({
+            label : obj.Mfg_Company,
+            value : obj.Product_Mfg_Comp_ID,
+          })
+        }
+        
       })
-    this.ManufactureList = data;  
-    });
+   });
    // }
   }
   GetInstallMachine(){
@@ -346,6 +352,9 @@ export class EngineeringQuotationNepalComponent implements OnInit {
       });
     }
     
+  }
+  QuotationTypeChange(){
+    this.ObjEnginnerQuoation.Spare_Parts_Product_ID = undefined
   }
   GetSpareParts(){
     this.ObjEnginnerQuoation.Spare_Parts_Product_ID = undefined;
@@ -1038,7 +1047,12 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     });
   }
   GetAssignTo() {
-    this.$http.get("/BL_CRM_Master_SalesTeam/Get_Sales_Man_for_napal").subscribe((data: any) => {
+    const obj = {
+      "SP_String": "SP_Support_Ticket_Nepal",
+      "Report_Name_String": "Get_Engineer",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("AssignToList",data)
       this.AssignToList = data ? data : [];
     });
   }
