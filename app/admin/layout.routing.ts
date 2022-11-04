@@ -282,7 +282,7 @@ import { RawMaterialReceiveComponent } from "./common/ProductionManagement/Maste
 import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
 import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
 import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-raw-material-issue/micl-raw-material-issue.component';
-
+import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-txn-purchase-order/nepal-bl-txn-purchase-order.component";
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -2088,7 +2088,8 @@ path: 'MICL_Cost_Center_Master',
   data: {
     title: 'Raw Material Receive'
 }
-},
+    },
+
 {
   path: 'Purchase_Order_Raw_Material',
     component: PurchaseOrderRawMaterialComponent,
@@ -2108,6 +2109,13 @@ path: 'MICL_Cost_Center_Master',
     component: MiclRawMaterialIssueComponent,
     data: {
       title: 'Raw Material Issue'
+}
+    },
+{
+  path: 'Nepal_BL_Txn_Purchase_Order',
+  component: NepalBLTxnPurchaseOrderComponent,
+  data: {
+    title: 'Nepal BL Txn Purchase Order'
 }
 },
     
