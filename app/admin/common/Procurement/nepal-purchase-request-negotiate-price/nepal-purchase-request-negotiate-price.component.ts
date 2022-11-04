@@ -38,6 +38,8 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   PurchaseTypeSelect:any = undefined
   PaymentMethodList:any = []
   PaymentMethodSelect:any = undefined
+  CurrencyList:any = []
+  CurrencySelect:any = []
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -59,7 +61,8 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
    this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.getPRno()
    this.getPurchaseType()
-  this.getPaymentMethod()
+   this.getPaymentMethod()
+   this.GetCurrency()
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -75,6 +78,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   this.SaveSpinner = false
   this.PurchaseTypeSelect = undefined
   this.PaymentMethodSelect = undefined
+  this.CurrencySelect = undefined
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -93,7 +97,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
       if(data.length) {
         data.forEach(element => {
           element['label'] = element.Purchase_Request_No,
-          element['value'] = element.Purchase_Request_No
+          element['value'] = element.Purchase_Request_No_Actual
         });
        this.poRequestList = data;
      // console.log("Requlist======",this.Requlist);
@@ -108,7 +112,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
    purchaseRequestChange(){
     if(this.ObjnegotiatePrice.Purchase_Request_No){
       this.getPr()
-      const poRequestListFilter = this.poRequestList.filter((y:any)=> y.Purchase_Request_No == this.ObjnegotiatePrice.Purchase_Request_No)[0]
+      const poRequestListFilter = this.poRequestList.filter((y:any)=> y.Purchase_Request_No_Actual == this.ObjnegotiatePrice.Purchase_Request_No)[0]
       if(poRequestListFilter){
         this.PoDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(poRequestListFilter.Purchase_Request_Date)
       }
@@ -116,6 +120,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
     else{
       this.prList = []
       this.VenderSelect = undefined
+      this.PoDate = null
     }
   
   }
@@ -176,16 +181,46 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
       console.log("PaymentMethodList",this.PaymentMethodList)
     })
   }
+  GetCurrency(){
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Get_Currency"
+    }
+    this.GlobalAPI.getData(obj)
+    .subscribe((data: any) => {
+      console.log("data",data)
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Currency,
+          element['value'] = element.Currency
+        });
+       this.CurrencyList = data;
+     // console.log("Requlist======",this.Requlist);
+      }
+       else {
+        this.CurrencyList = [];
+  
+      }
+      console.log("CurrencyList",this.CurrencyList)
+    })
+  }
+  CurrencyChange(){
+  this.prList.forEach((ele:any) => {
+    ele['Currency'] = this.CurrencySelect
+  }); 
+
+  }
   negotiateSave(){
-    if(this.PaymentMethodSelect && this.ObjnegotiatePrice.Purchase_Request_No && this.PurchaseTypeSelect){
+    if(this.PaymentMethodSelect && this.ObjnegotiatePrice.Purchase_Request_No && this.PurchaseTypeSelect && this.CurrencySelect){
       let saveData:any=[]
        this.prList.forEach((ele:any) => {
         saveData.push({
           Purchase_Request_No: this.ObjnegotiatePrice.Purchase_Request_No,
           Purchase_Type: this.PurchaseTypeSelect,
           Payment_Method: this.PaymentMethodSelect,
+          Currency : this.CurrencySelect,
           Negotiate_Price: Number(ele.Negotiate_Price),
-          Product_ID: ele.Product_ID
+          Product_ID: Number( ele.Product_ID)
         })
        });
       const obj = {

@@ -19,9 +19,9 @@
                                                     <div class="col-sm-12">
                                                         <label class="control-label">Quotation From&nbsp;</label> &nbsp;&nbsp;
                                                          <input type="radio" name="browsequotfrom" value="CustomerBrowse" [(ngModel)]="ObjBrowseQuotation.Quotation_From" (change)="radiobrowsechange()">
-                                                         <label style="font-weight: 400;">Customer</label>&nbsp;&nbsp;
-                                                         <input type="radio" name="browsequotfrom" value="LeadBrowse" [(ngModel)]="ObjBrowseQuotation.Quotation_From" (change)="radiobrowsechange()">
-                                                         <label style="font-weight: 400;">Lead</label>                                                  
+                                                         <label style="font-weight: 400;">Customer</label>&nbsp;&nbsp;
+                                                         <input type="radio" name="browsequotfrom" value="LeadBrowse" [(ngModel)]="ObjBrowseQuotation.Quotation_From" (change)="radiobrowsechange()">
+                                                       <label style="font-weight: 400;">Lead</label>                                                  
                                                     </div>
                                                     </div>
                                                     <div class="form-group">
@@ -217,7 +217,12 @@
                                     </div> -->
                                     <div class="col-sm-3">
                                         <label class="control-label">Quotation Type<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="quotype" #quotype="ngModel" [disabled]="EngQuoationProductList.length" [(ngModel)]="ObjEnginnerQuoation.Quotation_Type" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && quotype.errors?.required}" required>
+                                        <select class="form-control" 
+                                        name="quotype" #quotype="ngModel" 
+                                        [(ngModel)]="ObjEnginnerQuoation.Quotation_Type" 
+                                        [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted && quotype.errors?.required}" 
+                                        required
+                                        (onChange)="QuotationTypeChange()">
                                                               <option  [ngValue]="undefined">Select</option>
                                                               <option  value="Machine">Machine</option>
                                                               <option  value="Spare">Spare</option>
@@ -559,7 +564,7 @@
                         <label class="control-label">Assign To<sup class="text-danger">*</sup></label>
                         <select class="form-control" name="assignto" #assignto="ngModel" [(ngModel)]="ObjLeadCreation.Assign_To" [ngClass]="{'clearance': LeadcreateFormSubmitted && assignto.errors?.required}" required>
                             <option  [ngValue]="undefined">Select</option>
-                            <option *ngFor="let option of AssignToList" [ngValue]="option.Member_ID">
+                            <option *ngFor="let option of AssignToList" [ngValue]="option.User_ID">
                               {{option.Member_Name}}
                             </option>
                     </select>
