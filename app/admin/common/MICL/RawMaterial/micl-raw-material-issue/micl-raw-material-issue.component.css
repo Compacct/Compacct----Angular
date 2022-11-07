@@ -43,3 +43,7 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
 /* #ui-tabpanel-3 > div > p-table > div > p-paginator > div > p-dropdown{
   top: 41px !important;
 } */
+.pull-right1 {
+  margin-top: 30px;
+  margin-left: -40px;
+}

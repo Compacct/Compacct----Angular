@@ -61,6 +61,13 @@ export class MiclRawMaterialIssueComponent implements OnInit {
   DynamicHeaderforPIndent:any = [];
   costcenterListPeding:any = [];
   godownListPeding:any = [];
+  GodownList:any = [];
+  flag = false;
+  docdateDisabled = true;
+  Topfielddisabled = false;
+  editDis = false;
+  saveData:any = [];
+  ToFurnacebrowseList:any = [];
 
   constructor(
     private $http: HttpClient,
@@ -93,6 +100,7 @@ export class MiclRawMaterialIssueComponent implements OnInit {
     this.getToCostcenter();
     this.GetTogodown();
     // this.GetProductsDetalis();
+    this.GetTofurnacebrowse();
     this.getCostcenterPenReq();
     this.getgodownPenReq();
     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
@@ -115,7 +123,10 @@ export class MiclRawMaterialIssueComponent implements OnInit {
     this.RMissueFormSubmit = false;
     this.RMissueaddFormSubmit = false;
     this.AddRMissueList = [];
+    this.productList = [];
     this.reqDocNo = undefined;
+    this.docdateDisabled = true;
+    this.Topfielddisabled = false;
    }
    Finyear() {
     this.$http
@@ -206,6 +217,8 @@ export class MiclRawMaterialIssueComponent implements OnInit {
       this.productList = [];
       this.RMissueFormSubmit = true;
       this.SpinnerShow = true;
+      this.docdateDisabled = true;
+      this.Topfielddisabled = false;
       if (valid) {
         if(Number(this.objRMissue.F_Godown_ID) !== Number(this.objRMissue.To_Godown_ID)){
         const Dobj = {
@@ -237,6 +250,8 @@ export class MiclRawMaterialIssueComponent implements OnInit {
         //   this.productList = [];
           this.RMissueFormSubmit = false;
           this.SpinnerShow = false;
+          this.docdateDisabled = false;
+          this.Topfielddisabled = true;
     // }
     })
     }
@@ -255,46 +270,102 @@ export class MiclRawMaterialIssueComponent implements OnInit {
       this.SpinnerShow = false;
     }
   }
-  getUOM(){
-    this.objRMissueadd.UOM = undefined;
-    if(this.objRMissueadd.Product_ID){
-      const ProductFilter = this.productList.filter((el:any)=> Number(el.Product_ID) === Number(this.objRMissueadd.Product_ID))
-      //console.log("ProductFilter",ProductFilter);
-      // this.productFilterObj = ProductFilter[0];
-       this.objRMissueadd.UOM = ProductFilter[0].UOM;
-    }
+  clearbutton(){
+    this.objRMissue = new RMissue();
+    this.objRMissueadd = new RMissueadd();
+    this.RM_Issue_Date = new Date();
+    this.objRMissue.F_Cost_Cen_ID = 36;
+    this.ObjBrowseData.Cost_Cen_ID = 4;
+    this.objRMissue.To_Cost_Cen_ID = 4;
+    this.RMissueFormSubmit = false;
+    this.RMissueaddFormSubmit = false;
+    this.ReqNoList = [];
+    this.productList = [];
+    this.reqDocNo = undefined;
+    this.docdateDisabled = true;
+    this.Topfielddisabled = false;
   }
-  addRMissue(valid){
-    //console.log("valid",valid);
-    this.RMissueaddFormSubmit = true;
-    if(valid){
-      const productFilter:any = this.productList.filter((el:any)=>Number(el.Product_ID) === Number(this.objRMissueadd.Product_ID));
-       //console.log("productFilter",productFilter);
-      if(productFilter.length){
-        this.AddRMissueList.push({
-          Product_ID: this.objRMissueadd.Product_ID,
-          Product_Description: productFilter[0].Product_Description,
-          Yard: this.objRMissueadd.Yard,
-          Lot_No : this.objRMissueadd.Lot_No,
-          Qty: this.objRMissueadd.Qty,
+  // getUOM(){
+  //   this.objRMissueadd.UOM = undefined;
+  //   if(this.objRMissueadd.Product_ID){
+  //     const ProductFilter = this.productList.filter((el:any)=> Number(el.Product_ID) === Number(this.objRMissueadd.Product_ID))
+  //     //console.log("ProductFilter",ProductFilter);
+  //     // this.productFilterObj = ProductFilter[0];
+  //      this.objRMissueadd.UOM = ProductFilter[0].UOM;
+  //   }
+  // }
+  // addRMissue(valid){
+  //   //console.log("valid",valid);
+  //   this.RMissueaddFormSubmit = true;
+  //   if(valid){
+  //     const productFilter:any = this.productList.filter((el:any)=>Number(el.Product_ID) === Number(this.objRMissueadd.Product_ID));
+  //      //console.log("productFilter",productFilter);
+  //     if(productFilter.length){
+  //       this.AddRMissueList.push({
+  //         Product_ID: this.objRMissueadd.Product_ID,
+  //         Product_Description: productFilter[0].Product_Description,
+  //         Yard: this.objRMissueadd.Yard,
+  //         Lot_No : this.objRMissueadd.Lot_No,
+  //         Qty: this.objRMissueadd.Qty,
           
-          // Created_By: this.$CompacctAPI.CompacctCookies.User_ID
-          // Challan_No : null
-        })
-        this.RMissueaddFormSubmit = false;
-        this.objRMissueadd = new RMissueadd();
+  //         // Created_By: this.$CompacctAPI.CompacctCookies.User_ID
+  //         // Challan_No : null
+  //       })
+  //       this.RMissueaddFormSubmit = false;
+  //       this.objRMissueadd = new RMissueadd();
+  //     }
+  //   }
+  //   }
+  // delete(i){
+  //   this.AddRMissueList.splice(i,1);
+  // }
+  qtyChq(col){
+    this.flag = false;
+    console.log("col",col);
+    if(col.Delivery_Qty){
+      if(col.Delivery_Qty > col.Batch_Qty){
+      if(col.Delivery_Qty <=  col.Batch_Qty){
+        this.flag = false;
+        return true;
       }
+      else {
+        this.flag = true;
+        this.compacctToast.clear();
+             this.compacctToast.add({
+                 key: "compacct-toast",
+                 severity: "error",
+                 summary: "Warn Message",
+                 detail: "Quantity can't be more than in batch available quantity "
+               });
+  
+             }
+            }
+             else if(col.Delivery_Qty > col.Req_Qty){
+             if(col.Delivery_Qty <=  col.Req_Qty){
+                this.flag = false;
+                return true;
+              }
+              else {
+                this.flag = true;
+                this.compacctToast.clear();
+                     this.compacctToast.add({
+                         key: "compacct-toast",
+                         severity: "error",
+                         summary: "Warn Message",
+                         detail: "Quantity can't be more than Requisition quantity "
+                       });
+          
+                     }
+              }
     }
-    }
-  delete(i){
-    this.AddRMissueList.splice(i,1);
-  }
+   }
   SaveIssue(){ 
     //console.log("valid",valid);
     // this.RMissueFormSubmit = true;
     this.ngxService.start();
     if(this.productList.length){
       // if(this.AddRMissueList.length){
+      if(this.saveqty()) {
        this.Spinner = true;
        this.ngxService.start();
       this.compacctToast.clear();
@@ -307,6 +378,7 @@ export class MiclRawMaterialIssueComponent implements OnInit {
         detail: "Confirm to proceed"
       });
       }
+    }
       else{
         this.Spinner = false;
         this.ngxService.stop();
@@ -323,31 +395,103 @@ export class MiclRawMaterialIssueComponent implements OnInit {
     //   this.ngxService.stop();
     // }
    }
+   saveqty(){
+    let flag = true;
+   for(let i = 0; i < this.productList.length ; i++){
+    if(Number(this.productList[i].Batch_Qty) <  Number(this.productList[i].Delivery_Qty)){
+      flag = false;
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Quantity can't be more than in batch available quantity "
+        });
+      break;
+    }
+    else if(Number(this.productList[i].Req_Qty) <  Number(this.productList[i].Delivery_Qty)){
+      flag = false;
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Quantity can't be more than Requisition quantity "
+        });
+      break;
+    }
+   }
+   return flag;
+  }
    onConfirmSave(){
-       let saveData:any = [];
-         const consCenterFilter:any = this.FcostcenterList.filter((el:any)=> Number(el.Cost_Cen_ID) === Number(this.objRMissue.F_Cost_Cen_ID))
-         this.AddRMissueList.forEach((el:any)=>{
-         let save = {
-          Req_No: this.reqDocNo ? this.reqDocNo : "A",
-          Req_Date: this.RM_Issue_Date ? this.DateService.dateConvert(new Date(this.RM_Issue_Date)) : new Date(),
-          Cost_Cen_ID: Number(this.objRMissue.F_Cost_Cen_ID),
-          Cost_Cen_Name: consCenterFilter[0].Cost_Cen_Name,
-          Godown_ID: this.objRMissue.Godown_ID,
-          Product_ID: Number(el.Product_ID),
-          Product_Description: el.Product_Description,
-          Req_Qty: Number(el.Req_Qty),
-          UOM: el.UOM,
-          Remarks : this.objRMissue.Remarks,
-          Created_On : this.DateService.dateConvert(new Date()),
-          Created_By: el.Created_By ? el.Created_By : this.$CompacctAPI.CompacctCookies.User_ID
-         }
-         saveData.push(save)
-         })
+        //  const consCenterFilter:any = this.FcostcenterList.filter((el:any)=> Number(el.Cost_Cen_ID) === Number(this.objRMissue.F_Cost_Cen_ID))
+        //  this.AddRMissueList.forEach((el:any)=>{
+        //  let save = {
+        //   Req_No: this.reqDocNo ? this.reqDocNo : "A",
+        //   Doc_Date: this.DateService.dateConvert(new Date()),
+        //   Req_Date: this.RM_Issue_Date ? this.DateService.dateConvert(new Date(this.RM_Issue_Date)) : new Date(),
+        //   F_Cost_Cen_ID: Number(this.objRMissue.F_Cost_Cen_ID),
+        //   F_Godown_ID: this.objRMissue.F_Godown_ID,
+        //   To_Cost_Cen_ID: this.objRMissue.To_Cost_Cen_ID,
+        //   To_Godown_ID: this.objRMissue.To_Godown_ID,
+        //   Product_ID: Number(el.Product_ID),
+        //   Product_Description: el.Product_Description,
+        //   Req_Qty: Number(el.Req_Qty),
+        //   UOM: el.UOM,
+        //   Remarks : this.objRMissue.Remarks,
+        //   Created_On : this.DateService.dateConvert(new Date()),
+        //   Created_By: el.Created_By ? el.Created_By : this.$CompacctAPI.CompacctCookies.User_ID
+        //  }
+        //  saveData.push(save)
+        //  })
+         this.saveData = [];
+         this.objRMissue.Doc_Date = this.DateService.dateConvert(new Date(this.RM_Issue_Date));
+        //  this.objRMissue.Req_Date = this.DateService.dateConvert(new Date(this.RM_Issue_Date));
+         this.productList.forEach(el=>{
+          if(el.Delivery_Qty){      //&& Number(el.Delivery_Qty) !== 0
+            const saveObj = {
+              // Doc_No: "A",
+              // Accepted_Qty : this.Auto_Accepted == "N" ? 0 : el.Delivery_Qty,
+              // Doc_Date: this.DateService.dateTimeConvert(new Date(this.ChallanDate)),
+              // F_Cost_Cen_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+              // F_Godown_ID: this.Objdispatch.From_Godown_ID,
+              // To_Cost_Cen_ID: this.Objdispatch.Cost_Cen_ID,
+              // To_Godown_ID: this.Objdispatch.To_Godown_ID,
+              Product_ID: el.product_id,
+              Batch_No: el.Batch_No,
+              Req_Qty: el.Req_Qty,
+              // Purpose: el.Purpose,
+              Qty: el.Delivery_Qty,
+              Accepted_Qty: el.Delivery_Qty,
+              // Rate: 0,
+              UOM: el.UOM,
+              // Req_No: this.SelectedIndent,
+              Created_By: this.$CompacctAPI.CompacctCookies.User_ID,
+              // User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
+              // REMARKS: this.Objdispatch.REMARKS ? this.Objdispatch.REMARKS : "NA",
+              // Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+              // Vehicle_Details : this.Objdispatch.Vehicle_Details,
+              // Adv_Order_No : "NA",
+              // Indent_Date : this.DateService.dateConvert(new Date(this.todayDate)),
+              // Accept_Reason_ID : null,
+              // Accept_Reason : null,
+              // Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
+              // Material_Type : "Finished",
+              // Total_Qty : Number(this.totaldelqty),
+              // Total_Accepted_Qty  : this.Auto_Accepted == "N" ? 0 : Number(this.totaldelqty)
+            }
+            this.saveData.push({...saveObj,...this.objRMissue})
+          }
+        })
          //console.log("Save Data",saveData);
          const obj = {
-          "SP_String": "SP_Txn_Raw_Material_Requisition",
-          "Report_Name_String": "Create_Requisition",
-          "Json_Param_String": JSON.stringify(saveData)
+          "SP_String": "SP_MICL_Raw_Material_Issue",
+          "Report_Name_String": "Create_MICL_Raw_Material_Issue",
+          "Json_Param_String": JSON.stringify(this.saveData)
     
         }
         this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
@@ -367,6 +511,7 @@ export class MiclRawMaterialIssueComponent implements OnInit {
             // this.SaveNPrintBill();
             // this.Print(data[0].Column1)
              this.clearData();
+             this.ReqNoList = [];
              this.Spinner = false;
              this.searchData(true);
             if (this.buttonname === "Update") {
@@ -395,6 +540,18 @@ export class MiclRawMaterialIssueComponent implements OnInit {
       this.ObjBrowseData.To_Date = dateRangeObj[1];
     }
   }
+  GetTofurnacebrowse(){
+    const obj = {
+     "SP_String": "SP_MICL_Raw_Material_Issue",
+     "Report_Name_String": "Get_Cost_Center_Godown"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ToFurnacebrowseList = data;
+       //  this.objRMreqi.Godown_ID = this.GodownList.length === 1 ? this.GodownList[0].Godown_ID : undefined;
+      
+      //console.log("this.toGodownList",this.GodownList);
+      })
+}
    searchData(valid?){
     // this.RequistionSearchFormSubmit = true;
     this.seachSpinner = true
@@ -409,8 +566,8 @@ export class MiclRawMaterialIssueComponent implements OnInit {
         Godown_ID : this.ObjBrowseData.Godown_ID ? this.ObjBrowseData.Godown_ID : 0
       }
       const obj = {
-        "SP_String": "SP_Txn_Raw_Material_Requisition",
-        "Report_Name_String": "Browse_Requisition",
+        "SP_String": "SP_MICL_Raw_Material_Issue",
+        "Report_Name_String": "Browse_MICL_Dispatch_Challan",
         "Json_Param_String": JSON.stringify([tempDate])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -510,13 +667,15 @@ PrintIndent(DocNo) {
 }
 class RMissue{
   Req_No:any;
+  Doc_Date : any;
   Req_Date:any;
   F_Cost_Cen_ID:any;
   F_Godown_ID:any;
   To_Cost_Cen_ID:any;
   To_Godown_ID:any;
-  Cost_Cen_Name:any;
-  Godown_ID:any;
+  // Cost_Cen_Name:any;
+  // Godown_ID:any;
+  Vehicle_Details = "NA"
   Remarks:any;
  }
  class RMissueadd{
@@ -533,7 +692,6 @@ class BrowseData {
   To_Date: string;
   Cost_Cen_ID : any;
   Godown_ID : any;
-  To_Cost_Cen_ID :any
   }
   class PendingIndent{
     Company_ID : any;

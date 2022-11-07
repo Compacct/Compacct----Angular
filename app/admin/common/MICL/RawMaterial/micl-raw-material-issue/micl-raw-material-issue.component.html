@@ -62,15 +62,14 @@
                                       </select>
                                     </div> -->
                                     <div class="col-sm-3">
-                                        <label class="control-label">For Furnace
+                                        <label class="control-label">To Furnace
                                         </label>
                                         <select class="form-control" 
                                         name="Godown_ID_Browse" 
                                         #Godown_ID_Browse="ngModel" 
-                                        [(ngModel)]="ObjBrowseData.Godown_ID"
-                                        [disabled]="userType != 'A'">
+                                        [(ngModel)]="ObjBrowseData.Godown_ID">
                                             <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
+                                            <option *ngFor="let option of ToFurnacebrowseList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                                       </select>
 
                                     </div>
@@ -90,11 +89,11 @@
                                 [autoLayout]="true" sortMode="multiple" 
                                 [rowsPerPageOptions]="[100,200,300]" 
                                 [globalFilterFields]="RMrewBrowseListDynamicHeader"
-                                    [rowHover]="true" #dt2>
+                                    [rowHover]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
-                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
 
@@ -155,8 +154,8 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Date</label>
-                                        <ejs-datepicker  [(value)]="RM_Issue_Date" [min]='minFromDate' [format]="'dd/MMM/yyyy'" 
-                                        [class]="RMissueFormSubmit?.required && !RM_Issue_Date ? 'clearance': ''" ></ejs-datepicker>
+                                        <ejs-datepicker  [(value)]="RM_Issue_Date" [min]='minFromDate' [format]="'dd/MMM/yyyy'" [enabled]="docdateDisabled"
+                                        ></ejs-datepicker>
                                     </div> 
                                     <div class="col-sm-4">
                                         <label class="control-label">From Cost Center<sup class="text-danger">*</sup></label>
@@ -164,7 +163,7 @@
                                         name="F_Cost_Cen_ID" 
                                         #F_Cost_Cen_ID="ngModel"
                                          [(ngModel)]='objRMissue.F_Cost_Cen_ID' 
-                                         [ngClass]="{'clearance': RMissueFormSubmit?.required && F_Cost_Cen_ID?.errors?.required}" 
+                                         [ngClass]="{'clearance': RMissueFormSubmit && F_Cost_Cen_ID?.errors?.required}" 
                                          [disabled]="true"
                                          required>
                                          <option  [ngValue]="undefined">Select</option>
@@ -177,6 +176,7 @@
                                         name="F_Godown_ID" 
                                         #F_Godown_ID="ngModel" 
                                         [(ngModel)]="objRMissue.F_Godown_ID" 
+                                        [disabled]="Topfielddisabled"
                                         [ngClass]="{'clearance': RMissueFormSubmit && F_Godown_ID?.errors?.required}"
                                         required 
                                         >
@@ -192,6 +192,7 @@
                                         name="To_Godown_ID" 
                                         #To_Godown_ID="ngModel" 
                                         [(ngModel)]="objRMissue.To_Godown_ID" 
+                                        [disabled]="Topfielddisabled"
                                         [ngClass]="{'clearance': RMissueFormSubmit && To_Godown_ID?.errors?.required}" 
                                         (change)="GetRequisitionNo()"
                                         required 
@@ -213,14 +214,20 @@
                                         [placeholder]="'Product'" 
                                         [virtualScroll]="true" 
                                         #reqno="ngModel"
+                                        [disabled]="Topfielddisabled"
                                         [styleClass]="RMissueFormSubmit && reqno.errors?.required ? 'clearance': ''" 
                                         required>
                                     </p-dropdown>
                                     </div>
                                     <div class="col-sm-2">
-                                        <button type="button" class="btn btn-primary pull-right" style="margin-top: 30px; margin-right: 40px;" (click)="GetProductsDetalis(RMissueForm.form.valid)" id="load" [disabled]="SpinnerShow" [disabled]="inputBoxDisabled">
-                                                <p-progressSpinner *ngIf="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                             <span *ngIf="!SpinnerShow"></span> Get Product <!--class="glyphicon glyphicon-save" -->
+                                        <button type="button" class="btn btn-primary pull-right" style="margin-top: 30px; margin-right: 40px;" (click)="GetProductsDetalis(RMissueForm.form.valid)" [disabled]="productList.length" id="load" >
+                                                <!-- <p-progressSpinner *ngIf="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner> -->
+                                             <!-- <span *ngIf="!SpinnerShow"></span> --> Get Product <!-- class="glyphicon glyphicon-save" -->
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-primary pull-right1" (click)="clearbutton()" id="load" [disabled]="editDis">
+                                              <!-- <span class="glyphicon glyphicon glyphicon-remove"></span> --> Clear
                                         </button>
                                     </div>
                                     </div>
@@ -295,11 +302,11 @@
                                  <div class="clearfix"></div>
 
                                  <div class="no-padding">
-                                     <p-table [value]="productList" [globalFilterFields]="['Product_Description','Yard','Lot_No','Batch_Qty','Qty']" [rowHover]="true" [autoLayout]="true" #dt2>
+                                     <p-table [value]="productList" [globalFilterFields]="['Product_Description','Yard','Req_Qty','Batch_No','Batch_Qty','Delivery_Qty']" [rowHover]="true" [autoLayout]="true" #dt1>
                                          <ng-template pTemplate="caption">
                                              <div class="row">
                                                  <div class="col-sm-3 pull-right" style="text-align: right; margin-top: 31px;">
-                                                     <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                     <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                                  </div>
                                                  <!-- <div class="col-sm-4 pull-left" style="text-align: left">
                                                      <label class="control-label">Indent List<sup class="text-danger">*</sup> &nbsp;  </label>
@@ -314,6 +321,7 @@
                                              <tr>
                                                  <th>Product Description</th>
                                                  <th>Yard</th>
+                                                 <th>Req Qty</th>
                                                  <th>Lot No</th>
                                                  <th>Batch Qty</th>
                                                  <th>Qty</th>
@@ -324,6 +332,7 @@
                                              <tr>
                                                  <td>{{col.Product_Description}}</td>
                                                  <td>{{col.Yard}}</td>
+                                                 <td>{{col.Req_Qty}}</td>
                                                  <td>{{col.Batch_No}}</td>
                                                  <td>{{col.Batch_Qty}}</td>
                                                  <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
