@@ -106,6 +106,7 @@ export class MiclRequisitionComponent implements OnInit {
   DynamicHeaderforMISList:any = [];
   allTotalObj:any = {}
   BackupMISList:any = [];
+  BackupMISListFilter:any = []
   SelectedDistDepartmentmis:any = [];
   SelectedDistCostCen:any = [];
   DistDepartmentmis:any = [];
@@ -1236,7 +1237,11 @@ GetMIS(){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.MISList = data;
       this.BackupMISList = data;
-      this.GetDistinctMis();
+      this.BackupMISListFilter = data;
+      // this.GetDistinctMis();
+      this.GetDeptDist()
+      this.GetCostCenterDist()
+      this.getStockPoint()
       if(this.MISList.length){
         this.DynamicHeaderforMISList = Object.keys(data[0]);
       }
@@ -1265,7 +1270,7 @@ exportexcelmis(Arr,fileName): void {
   const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
   XLSX.writeFile(workbook, fileName+'.xlsx');
 }
-FilterDistMis() {
+FilterDistMis(v:any) {
   let department:any = [];
   let costcen:any = [];
   let stockpoint:any = [];
@@ -1273,6 +1278,7 @@ FilterDistMis() {
 if (this.SelectedDistDepartmentmis.length) {
   SearchFieldsMis.push('Dept_Name');
   department = this.SelectedDistDepartmentmis;
+  console.log("department",department)
 }
 if (this.SelectedDistCostCen.length) {
   SearchFieldsMis.push('Cost_Cen_Name');
@@ -1283,43 +1289,101 @@ if (this.SelectedDistStockPoint.length) {
   stockpoint = this.SelectedDistStockPoint;
 }
 this.MISList = [];
+console.log("SearchFieldsMis",SearchFieldsMis)
+console.log("BackupMISList",this.BackupMISList)
 if (SearchFieldsMis.length) {
   let LeadArr = this.BackupMISList.filter(function (e) {
     return (department.length ? department.includes(e['Dept_Name']) : true)
     && (costcen.length ? costcen.includes(e['Cost_Cen_Name']) : true)
     && (stockpoint.length ? stockpoint.includes(e['Stock_Point']) : true)
   });
+  console.log("LeadArr",LeadArr)
 this.MISList = LeadArr.length ? LeadArr : [];
+
 } else {
 this.MISList = [...this.BackupMISList] ;
 }
 this.TotalValue(this.MISList);
+if(v === "Dept_Name"){
+  this.getStockPoint()
+  this.GetCostCenterDist()
+  
+}
+if(v === "Cost_Cen_Name"){
+  this.getStockPoint()
+}
+if(v != "Stock_Point"){
+ // this.getStockPoint()
+}
+if(!this.SelectedDistDepartmentmis.length && !this.SelectedDistCostCen.length && !this.SelectedDistStockPoint.length){
+  this.GetDeptDist()
+  this.getStockPoint()
+  this.GetCostCenterDist()
+}
 }
 GetDistinctMis() {
-  let department:any = [];
+  //let department:any = [];
   let costcen:any = [];
   let stockpoint:any = [];
-  this.DistDepartmentmis =[];
-  this.SelectedDistDepartmentmis =[];
-  this.DistCostCen =[];
-  this.SelectedDistCostCen =[];
+  // this.DistDepartmentmis =[];
+  // this.SelectedDistDepartmentmis =[];
+  // this.DistCostCen =[];
+  // this.SelectedDistCostCen =[];
   this.DistStockPoint =[];
   this.SelectedDistStockPoint = [];
   this.MISList.forEach((item) => {
-if (department.indexOf(item.Dept_Name) === -1) {
-  department.push(item.Dept_Name);
-  this.DistDepartmentmis.push({ label: item.Dept_Name, value: item.Dept_Name });
-  }
- if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
-  costcen.push(item.Cost_Cen_Name);
- this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
- }
+// if (department.indexOf(item.Dept_Name) === -1) {
+//   department.push(item.Dept_Name);
+//   this.DistDepartmentmis.push({ label: item.Dept_Name, value: item.Dept_Name });
+//   }
+//  if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+//   costcen.push(item.Cost_Cen_Name);
+//  this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+//  }
  if (stockpoint.indexOf(item.Stock_Point) === -1) {
   stockpoint.push(item.Stock_Point);
  this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
  }
 });
    this.BackupMISList = [...this.MISList];
+}
+
+GetDeptDist(){
+  let department:any = [];
+  this.DistDepartmentmis =[];
+  this.SelectedDistDepartmentmis =[];
+  this.MISList.forEach((item) => {
+    if (department.indexOf(item.Dept_Name) === -1) {
+      department.push(item.Dept_Name);
+      this.DistDepartmentmis.push({ label: item.Dept_Name, value: item.Dept_Name });
+      }
+      this.BackupMISList = [...this.BackupMISListFilter];
+  })
+}
+GetCostCenterDist(){
+  let costcen:any = [];
+  this.DistCostCen =[];
+  this.SelectedDistCostCen =[];
+  console.log("MISList",this.MISList)
+  this.MISList.forEach((item) => {
+    if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+      costcen.push(item.Cost_Cen_Name);
+     this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+     }
+      this.BackupMISList = [...this.BackupMISListFilter];
+  })
+}
+getStockPoint(){
+  let stockpoint:any = [];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.MISList.forEach((item) => {
+    if (stockpoint.indexOf(item.Stock_Point) === -1) {
+      stockpoint.push(item.Stock_Point);
+     this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+     }
+      this.BackupMISList = [...this.BackupMISListFilter];
+  })
 }
 TotalValue(arrList:any){
   if(arrList.length){
