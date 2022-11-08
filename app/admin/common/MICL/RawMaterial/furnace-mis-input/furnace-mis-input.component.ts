@@ -26,9 +26,11 @@ export class FurnaceMisInputComponent implements OnInit {
   Doc_Date = new Date();
   tabIndexToView = 0;
   items:any = [];
+  Spinner = false;
   RawMatConsList:any = [];
   AddRMConsList:any = [];
   RMConsumptionvalid = false;
+  FurnaceNoList:any = [];
 
   ConsumableConsList:any = [];
   AddConsumableConsList:any = [];
@@ -64,6 +66,8 @@ export class FurnaceMisInputComponent implements OnInit {
     });
     // this.RawMatConsList = ["Raw_Material_Consumable"]
   }
+  onReject(){}
+  onConfirm(){}
   TabClick(e) {
     //console.log(e)
     this.tabIndexToView = e.index;

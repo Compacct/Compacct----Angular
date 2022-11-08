@@ -67,7 +67,7 @@
                             </button>
                         </div> -->
                         <div class=" no-padding">
-                            <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Coupon_No','Issue_Coupon_Date','Cost_Cen_Name','Issued_By' ]"
+                            <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Coupon_No','Issue_Coupon_Date','Cost_Cen_Name','Issued_By', 'Contact_Name' ]"
                                 [rowHover]="true" #dt>
                                 <ng-template pTemplate="caption">
                                     <div class="row">
@@ -83,6 +83,8 @@
                                         <th nowrap> Coupon No</th>
                                         <th nowrap> Issue Coupon Date</th>
                                         <th nowrap>Cost Cen Name</th>
+                                        <th nowrap>Patient Name</th>
+                                        <th nowrap>Patient ID</th>
                                         <th nowrap>Issued By</th>
                                         <!-- <th nowrap>Received Date</th> -->
                                         <!-- <th nowrap>Mobile</th> -->
@@ -130,6 +132,8 @@
                                         <td style="text-align: center ;" nowrap>{{col.Coupon_No ? col.Coupon_No : '-' }}</td>
                                         <td nowrap>{{col.Issue_Coupon_Date | date: "dd/MMM/yyyy"}}</td>
                                         <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                        <td nowrap>{{col.Contact_Name ? col.Contact_Name : '-'}}</td>
+                                        <td nowrap>{{col.Coupon_No ? col.Coupon_No : '-'}}</td>
                                         <td nowrap>{{col.Issued_By ? col.Issued_By : '-'}}</td>
                                         <!-- <td nowrap>{{col.Received_Date | date: "dd/MMM/yyyy"}}</td> -->
                                         <!-- <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td> -->

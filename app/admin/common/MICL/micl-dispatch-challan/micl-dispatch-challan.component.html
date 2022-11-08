@@ -190,7 +190,7 @@
                                                     <div class="col-sm-4">
                                                         <label class="control-label">Issue Date</label>
                                                         <!-- <div  class="label-t">{{myDate  | date :"dd/MMM/yyyy"}}</div> -->
-                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ChallanDate' [enabled]="docdateDisabled"></ejs-datepicker>
+                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ChallanDate' [enabled]="docdateDisabled" (change)="GetshowProduct()"></ejs-datepicker>
 
                                                     </div>
                                                     <div class="col-sm-4">
@@ -361,10 +361,10 @@
                                                 <p-multiSelect itemSize="30" [options]="IndentFilter" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedIndent" [disabled]="createchallandisabled" [filter]="true" filterBy="label,value.name" (onChange)="filterIndentList()" [resetFilterOnHide]="true">
                                                 </p-multiSelect>
                 
-                                            </div> -->
+                                            </div> --><!--indentlistdisabled -->
                                             <div class="col-sm-4 pull-left" style="text-align: left">
                                                 <label class="control-label">Requisition No.<span class="text-danger">*</span></label>
-                                                <select class="form-control" name="indent" #indent="ngModel" [(ngModel)]='SelectedIndent' [disabled]="indentlistdisabled" (change)="GetshowProduct()" 
+                                                 <select class="form-control" name="indent" #indent="ngModel" [(ngModel)]='SelectedIndent' [disabled]="productDetails.length" (change)="GetshowProduct()" 
                                                             >
                                                       <option  [ngValue]="undefined">Select</option>
                                                       <option *ngFor="let option of IndentNoList" [value]="option.Req_No">{{option.Req_No}}</option>

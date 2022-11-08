@@ -75,7 +75,7 @@ getReference(){
     console.log("ReferenceDataList",data)
     if(data.length) {
       data.forEach(element => {
-        element['label'] = element.Production_Ref_NO,
+        element['label'] = element.Doc_No +' '+ '('+element.Production_Ref_NO+')',
         element['value'] = element.Production_Ref_NO
       });
       this.ReferenceDataList = data;

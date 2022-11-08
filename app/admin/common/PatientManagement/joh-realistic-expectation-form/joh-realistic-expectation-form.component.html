@@ -136,22 +136,33 @@
                             <form name="realisticForm" #realisticForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3" style=" height: 77px;">
-                                        <label class="control-label">Cost Center</label>
+                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="costCenterList" name="Cost_Center" #Cost_Center="ngModel" 
                                         [(ngModel)]="objRealistic.Cost_Cen_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
                                         [virtualScroll]="true" itemSize="30" (onChange)="getCustomId()"
-                                         >
+                                        [styleClass]="RealisticFormSubmit && Cost_Center.errors?.required ? 'clearance': ''" [disabled]="JREId" [required]="true">
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Date PAA<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='DOPAA_Date' name="DOPAA" (change)="getCustomId()" ></ejs-datepicker>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='DOPAA_Date' name="DOPAA" (change)="getCustomId()" [enabled]="!JREId" ></ejs-datepicker>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-3" style=" height: 77px;" *ngIf = "!JREId">
+                                        <!-- <label class="control-label">Name</label>
+                                        <input class="form-control" name="Name" #Name="ngModel" [(ngModel)]="objRealistic.Name" placeholder="Name" disabled>-->
+                                        <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                 <p-dropdown [options]="customDataList" name="Name_Patient" #Name_Patient="ngModel" 
+                                 [(ngModel)]="objRealistic.Name" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                 [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Name'"
+                                 [virtualScroll]="true" itemSize="30" (onChange)="getCustomDetails()" [styleClass]="RealisticFormSubmit && Name_Patient.errors?.required ? 'clearance': ''" [required]="true" >
+                                </p-dropdown>
+ 
+                                      
+                                    </div>
+                                    <div class="col-sm-3" *ngIf = "JREId">
                                         <label class="control-label">Name</label>
-                                        <input class="form-control" name="Name" #Name="ngModel" [(ngModel)]="objRealistic.Name" placeholder="Name" disabled>
-    
+                                        <div class="label-t">{{PatientName}}</div>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Custom ID</label>
@@ -256,12 +267,12 @@
                     </select>
                 </div>
                 <div class="col-sm-4">
-                    <label class="control-label">Present Ability</label>
+                    <label class="control-label">Present Ability(in % or words)</label>
                   <input class="form-control" name="Present_Ability" #Present_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Present_Ability" >
 
                 </div>
                 <div class="col-sm-4">
-                    <label class="control-label">Expected Ability</label>
+                    <label class="control-label">Expected Ability(in % or words)</label>
                   <input class="form-control" name="Expected_Ability" #Expected_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Expected_Ability" >
 
                 </div>
@@ -269,16 +280,16 @@
             </div>
                <div class="form-group">
                 <div class="col-sm-4">
-                    <label class="control-label">Agreed Ability</label>
+                    <label class="control-label">Agreed Ability(in % or words)</label>
                   <input class="form-control" name="Agreed_Ability" #Agreed_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Agreed_Ability" >
 
                 </div>
-                <div class="col-sm-4">
-                    <label class="control-label">Final Ability</label>
+                <div class="col-sm-5">
+                    <label class="control-label">Final Ability(in % or words)(after using HAs for a week)</label>
                   <input class="form-control" name="Final_Ability" #Final_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Final_Ability" >
 
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <button class="btn btn-primary custombutton pull-right" style="margin-top: 27px;" (click)="AddRequirements(RequirementsForm.form.valid)"><span class="glyphicon glyphicon-plus"></span>Add </button>
                 </div>
 
@@ -347,7 +358,7 @@
                                     <!-- </select> -->
                                     <p-dropdown [options]="HearingReList" name="Good_Hearing_Aids_L" #Good_Hearing_Aids_L="ngModel" 
                                     [(ngModel)]="objRealistic.Good_Hearing_Aids_L" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
                                 
@@ -362,7 +373,7 @@
                                     <!-- </select> -->
                                     <p-dropdown [options]="HearingReList" name="Better_Hearing_Aids_L" #Better_Hearing_Aids_L="ngModel" 
                                     [(ngModel)]="objRealistic.Better_Hearing_Aids_L" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
 
@@ -381,7 +392,7 @@
 
                                     <p-dropdown [options]="HearingReList" name="Best_Hearing_Aids_L" #Best_Hearing_Aids_L="ngModel" 
                                     [(ngModel)]="objRealistic.Best_Hearing_Aids_L" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
                                 
@@ -402,7 +413,7 @@
                                     <!-- </select> -->
                                     <p-dropdown [options]="HearingReList" name="Good_Hearing_Aids_R" #Good_Hearing_Aids_R="ngModel" 
                                     [(ngModel)]="objRealistic.Good_Hearing_Aids_R" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
 
@@ -420,7 +431,7 @@
 
                                     <p-dropdown [options]="HearingReList" name="Better_Hearing_Aids_R" #Better_Hearing_Aids_R="ngModel" 
                                     [(ngModel)]="objRealistic.Better_Hearing_Aids_R" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
 
@@ -437,7 +448,7 @@
 
                                     <p-dropdown [options]="HearingReList" name="Best_Hearing_Aids_R" #Best_Hearing_Aids_R="ngModel" 
                                     [(ngModel)]="objRealistic.Best_Hearing_Aids_R" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
 
@@ -464,6 +475,7 @@
                             <tr>
                                 <th></th>
                                 <th>Hearing Aids</th>
+                                <th>Serial Number</th>
                                     
                                 
                                 
@@ -480,14 +492,15 @@
                                              {{option}}
                                         </option> -->
                                     <!-- </select> -->
-                                    <p-dropdown [options]="HearingAiList" name="Serial_Number_L" #Serial_Number_L="ngModel" 
+                                    <p-dropdown [options]="HearingReList" name="Earing_Aids_L" #Earing_Aids_L="ngModel" 
                                     [(ngModel)]="objRealistic.Earing_Aids_L" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
 
                                 
                                 </td>
+                                <td><input  class="form-control" name="Serial_Number_L" #Serial_Number_L="ngModel" [(ngModel)]="objRealistic.Serial_Number_L" ></td>
                             
                             </tr>
                             <tr>
@@ -500,13 +513,14 @@
                                              {{option}}
                                         </option> -->
                                     <!-- </select> -->
-                                    <p-dropdown [options]="HearingAiList" name="Serial_Number_R" #Serial_Number_R="ngModel" 
+                                    <p-dropdown [options]="HearingReList" name="Earing_Aids_R" #Earing_Aids_R="ngModel" 
                                     [(ngModel)]="objRealistic.Earing_Aids_R" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
                                 
                                 </td>
+                                <td><input  class="form-control" name="Serial_Number_R" #Serial_Number_R="ngModel" [(ngModel)]="objRealistic.Serial_Number_R"  ></td>
                             
                             </tr>
                             <tr>
@@ -519,14 +533,15 @@
                                              {{option}}
                                         </option> -->
                                     <!-- </select> -->
-                                    <p-dropdown [options]="HearingAiList" name="Serial_Number_A" #Serial_Number_A="ngModel" 
-                                    [(ngModel)]="objRealistic. Earing_Aids_A" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
-                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                    <p-dropdown [options]="HearingAiList" name="Earing_Aids_A" #Earing_Aids_A="ngModel" 
+                                    [(ngModel)]="objRealistic.Earing_Aids_A" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
                                     [virtualScroll]="true" itemSize="30" >
                                     </p-dropdown>
                                     
                                 
                                 </td>
+                                <td><input  class="form-control" name="Serial_Number_A" #Serial_Number_A="ngModel" [(ngModel)]="objRealistic.Serial_Number_A"  ></td>
                             
                             </tr>
                         </tbody>
