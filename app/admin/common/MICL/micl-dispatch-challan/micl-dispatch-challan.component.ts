@@ -179,6 +179,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   DistCostCen:any = [];
   DistStockPoint:any =[];
   SelectedDistStockPoint:any = [];
+  formstockpointDisabled = false;
 
   constructor(
     private $http: HttpClient,
@@ -223,6 +224,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.productDetails = [];
     this.BackUpproductDetails = [];
     this.inputBoxDisabled = false;
+    this.formstockpointDisabled = false;
     this.createchallandisabled = false;
     this.indentlistdisabled = false;
     this.indentdateDisabled = true;
@@ -387,6 +389,7 @@ export class MiclDispatchChallanComponent implements OnInit {
       // this.adDisabled = false;
       if (!this.createchallandisabled) {
       this.inputBoxDisabled = true;
+      this.formstockpointDisabled = this.createChallanflag ? true : false;
       this.docdateDisabled = true;
       this.indentlistdisabled = false;
       }
@@ -472,6 +475,7 @@ export class MiclDispatchChallanComponent implements OnInit {
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.inputBoxDisabled = false;
+     this.formstockpointDisabled = false;
      this.createchallandisabled = false;
      this.indentlistdisabled = false;
      this.indentdateDisabled = true;
@@ -980,6 +984,7 @@ saveqty(){
       this.tabIndexToView = 0;
       this.PrintDispatch(data[0].Column1);
       this.inputBoxDisabled = false;
+      this.formstockpointDisabled = false;
       this.createchallandisabled = false;
       this.indentlistdisabled = false;
       this.indentdateDisabled = true;
@@ -1294,10 +1299,12 @@ CreateChallan(row){
   // this.IndentNoList = [];
   // this.SelectedIndent = undefined;
   this.inputBoxDisabled = false;
+  this.formstockpointDisabled = false;
   this.ReqDate = new Date();
   if(row.Req_No) {
     this.tabIndexToView = 1;
     this.inputBoxDisabled = false;
+    this.formstockpointDisabled = false;
     // this.createchallandisabled = true;
     this.indentlistdisabled = true;
     this.indentdateDisabled = false;

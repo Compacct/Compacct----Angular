@@ -85,7 +85,7 @@ export class RawMaterialRequisitionComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
+    this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
     // this.Current_Stock = undefined;
@@ -212,6 +212,8 @@ export class RawMaterialRequisitionComponent implements OnInit {
       });
       }
       else{
+        this.Spinner = true;
+        this.ngxService.stop();
        this.compacctToast.add({
          key: "compacct-toast",
          severity: "error",
@@ -219,6 +221,10 @@ export class RawMaterialRequisitionComponent implements OnInit {
          detail: "Error Occured "
        });
       }
+    }
+    else{
+      this.Spinner = false;
+      this.ngxService.stop();
     }
    }
    onConfirmSave(){
@@ -269,7 +275,7 @@ export class RawMaterialRequisitionComponent implements OnInit {
              this.searchData(true);
             if (this.buttonname === "Update") {
              this.tabIndexToView = 0;
-             this.items = ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
+             this.items = ["BROWSE", "CREATE"];
              this.buttonname = "Save";
              this.reqDocNo = undefined;
             }

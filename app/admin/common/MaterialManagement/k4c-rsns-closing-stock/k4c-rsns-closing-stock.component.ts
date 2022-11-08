@@ -151,6 +151,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.ViewDoc_No = undefined;
      if (this.buttonname === "Save") {
       this.Doc_No = undefined;
+      this.Doc_date = undefined;
      }
    }
    GetBrowseCostCen(){
@@ -258,7 +259,9 @@ export class K4cRsnsClosingStockComponent implements OnInit {
       Godown_ID : this.ObjrsnsClosingStock.godown_id,
       Product_Type_ID : 0,
       Material_Type : this.MaterialType_Flag,
-      Doc_Type : this.buttonname === "Save" ? "Create" : "Edit"
+      Doc_Type : this.buttonname === "Save" ? "Create" : "Edit",
+      Doc_No : this.buttonname === "Save" ? "" : this.Doc_No,
+      Doc_Date : this.buttonname === "Save" ? "" : this.DateService.dateConvert(new Date(this.Date))
      }
    const obj = {
     "SP_String": "SP_K4C_RSNS_Closing_Stock",
@@ -483,6 +486,7 @@ Save(){
           this.GetDate();
           this.GetSearchedList(true);
           this.Doc_No = undefined;
+          this.Doc_date = undefined;
        }
        //this.clearData();
       // this.IssueStockFormSubmitted = false;

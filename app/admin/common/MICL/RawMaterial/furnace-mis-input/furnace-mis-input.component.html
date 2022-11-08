@@ -1,0 +1,868 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView>
+<div class="col-lg-12">
+    <div class="panel-group">
+        <div class="panel panel-primary">
+
+            <div class="panel-body">
+                <form name="FurnaceMISinputForm" #FurnaceMISinputForm="ngForm" novalidate>
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <label class="control-label">Furnace No<sup class="text-danger">*</sup></label>
+                            <select class="form-control" name="furnaceno" #furnaceno="ngModel" [(ngModel)]="ObjFurnaceMISinput.Furnace_No" [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && furnaceno?.errors?.required}"
+                                required>
+                                  <option  [ngValue]="undefined">Select</option>
+                              <option *ngFor="let option of FurnaceNoList" value="{{option.Furnace_No}}">
+                                  {{option.Furnace_No}}
+                                  </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Date</label>
+                            <ejs-datepicker  [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                        </div> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="col-lg-12">
+    <div class="panel-group">
+        <div class="panel panel-primary">
+
+            <div class="panel-body"> -->
+                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- <form name="RawMaterialForm" #RawMaterialForm="ngForm" novalidate> -->
+                        <div class="form-group">
+                            <!-- <div class="col-sm-3">
+                                <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistRMProductType" [(ngModel)]="SelectedDistRMProductType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type" [resetFilterOnHide]="true"></p-multiSelect>
+                            </div> -->
+                            <div class="col-sm-4">
+                            <label class="control-label">Furnace Power <sup class="text-danger">*</sup></label>
+                                <input class="form-control"
+                                        name="furnacepower"
+                                        #furnacepower="ngModel"
+                                        [(ngModel)]="ObjFurnaceMISinput.Furnace_Power"
+                                        [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && furnacepower?.errors?.required}"
+                                        required>
+                                      <!-- <option  [ngValue]="undefined">Select</option> -->
+                                      <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                         {{option.Product_Type}}
+                                      </option> -->
+                                <!-- </select> -->
+
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Auxiliary Power <sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                            name="auxpower"
+                                            #auxpower="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.Auxiliary_Power"
+                                            [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && auxpower?.errors?.required}"
+                                            required>
+                                          <!-- <option  [ngValue]="undefined">Select</option> -->
+                                          <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                             {{option.Product_Type}}
+                                          </option> -->
+                                    <!-- </select> -->
+    
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Average Load <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="avgload"
+                                                #avgload="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.Average_Load"
+                                                [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && avgload?.errors?.required}"
+                                                required>
+                                              <!-- <option  [ngValue]="undefined">Select</option> -->
+                                              <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                                 {{option.Product_Type}}
+                                              </option> -->
+                                        <!-- </select> -->
+        
+                                    </div>
+                        </div>
+                        <div class="form-group">
+                            <!-- <div class="col-sm-3">
+                                <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistRMProductType" [(ngModel)]="SelectedDistRMProductType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type" [resetFilterOnHide]="true"></p-multiSelect>
+                            </div> -->
+                            <div class="col-sm-4">
+                            <label class="control-label">Average Power Factor (%) <sup class="text-danger">*</sup></label>
+                                <input class="form-control"
+                                        name="avgpower"
+                                        #avgpower="ngModel"
+                                        [(ngModel)]="ObjFurnaceMISinput.Average_Power"
+                                        [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && avgpower?.errors?.required}"
+                                        required>
+                                      <!-- <option  [ngValue]="undefined">Select</option> -->
+                                      <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                         {{option.Product_Type}}
+                                      </option> -->
+                                <!-- </select> -->
+
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Load Factor (%) <sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                            name="loadfactor"
+                                            #loadfactor="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.Load_Factor"
+                                            CompacctDigitonly="true"
+                                            [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && loadfactor?.errors?.required}"
+                                            required>
+                                          <!-- <option  [ngValue]="undefined">Select</option> -->
+                                          <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                             {{option.Product_Type}}
+                                          </option> -->
+                                    <!-- </select> -->
+    
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Slipping (3 Electrodes) <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="slipping"
+                                                #slipping="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.slipping"
+                                                [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && slipping?.errors?.required}"
+                                                required>
+                                              <!-- <option  [ngValue]="undefined">Select</option> -->
+                                              <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                                 {{option.Product_Type}}
+                                              </option> -->
+                                        <!-- </select> -->
+        
+                                    </div>
+                        </div>
+                        <div class="form-group">
+                            <!-- <div class="col-sm-3">
+                                <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                <p-multiSelect [options]="DistRMProductType" [(ngModel)]="SelectedDistRMProductType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type" [resetFilterOnHide]="true"></p-multiSelect>
+                            </div> -->
+                            <div class="col-sm-4">
+                            <label class="control-label">No of Tapping <sup class="text-danger">*</sup></label>
+                                <input class="form-control"
+                                        name="nooftapping"
+                                        #nooftapping="ngModel"
+                                        [(ngModel)]="ObjFurnaceMISinput.No_of_Tapping"
+                                        [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && nooftapping?.errors?.required}"
+                                        required>
+                                      <!-- <option  [ngValue]="undefined">Select</option> -->
+                                      <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                         {{option.Product_Type}}
+                                      </option> -->
+                                <!-- </select> -->
+
+                            </div>
+                        </div>
+
+                        <!-- </form> -->
+                        <!-- <br>
+                        <div class="table-responsive table-id">
+                            <p-table [value]="getrawmaterialtabledata" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Product_Description","UOM"]'>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th>Product Type</th>
+                                        <th>Raw Material Description</th>
+                                        <th>UOM</th>
+                                        <th>Qty</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+
+                                        <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                        <td>{{col.Product_Type}}</td>
+                                        <td>{{col.Product_Description}}</td>
+                                        <td>{{col.UOM}}</td>
+                                        <td>
+                                            <input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' CompacctDigitonly="true" [ngClass]="{'clearance': CheckDecimal(col)}" class="form-control" style="width: 71px;" />
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+
+                        </div> -->
+
+
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- <form name="SemiFinishedForm" #SemiFinishedForm="ngForm" novalidate> -->
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="RawMatConsList" 
+                                name="rawmatcons" 
+                                [(ngModel)]="ObjFurnaceMISinput.Raw_Material_Consumable"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Data Found'" 
+                                [filter]="true" 
+                                filterBy="label,value" 
+                                [resetFilterOnHide]="true"
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true" 
+                                #rawmatcons="ngModel"
+                                [styleClass]="RMConsumptionvalid && rawmatcons.errors?.required ? 'clearance': ''" 
+                                required>
+                            </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="rmconbatchno"
+                                            #rmconbatchno="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.RMC_Batch_No"
+                                            [ngClass]="{'clearance': RMConsumptionvalid && rmconbatchno?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                          <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                             {{option.Product_Type}}
+                                          </option> -->
+                                    </select>
+    
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="rmconqty"
+                                                #rmconqty="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.RMC_Qty"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': RMConsumptionvalid && rmconqty?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary custombutton" 
+                                        (click)="addRMCons()">
+                                    <span class="glyphicon glyphicon-plus"></span> ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <div class="table-responsive no-padding" style="margin-top: 7px;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Product Description</th>
+                                            <th>Batch No</th>
+                                            <th>Qty</th>
+                                            <!-- <th>Remarks</th> -->
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of AddRMConsList; let ind = index;">
+                                            <td>{{obj.Raw_Material_Consumable}}</td>
+                                            <td>{{obj.RMC_Batch_No}}</td>
+                                            <td>{{obj.RMC_Qty}}</td>
+                                            <!-- <td>{{obj.Purpose ? obj.Purpose : '-'}}</td> -->
+                                            <td><button (click)="RMConsdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="ConsumableConsList" 
+                                name="consumablecons" 
+                                [(ngModel)]="ObjFurnaceMISinput.Consumable_Consumption"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Data Found'" 
+                                [filter]="true" 
+                                filterBy="label,value" 
+                                [resetFilterOnHide]="true"
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true" 
+                                #consumablecons="ngModel"
+                                [styleClass]="ConConsumptionvalid && consumablecons.errors?.required ? 'clearance': ''" 
+                                required>
+                            </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="cconbatchno"
+                                            #cconbatchno="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.CC_Batch_No"
+                                            [ngClass]="{'clearance': ConConsumptionvalid && cconbatchno?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                          <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                             {{option.Product_Type}}
+                                          </option> -->
+                                    </select>
+    
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="cconqty"
+                                                #cconqty="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.CC_Qty"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': ConConsumptionvalid && cconqty?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary custombutton" 
+                                        (click)="addConsumableCons()">
+                                    <span class="glyphicon glyphicon-plus"></span> ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <div class="table-responsive no-padding" style="margin-top: 7px;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Product Description</th>
+                                            <th>Batch No</th>
+                                            <th>Qty</th>
+                                            <!-- <th>Remarks</th> -->
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of AddConsumableConsList; let ind = index;">
+                                            <td>{{obj.Consumable_Consumption}}</td>
+                                            <td>{{obj.CC_Batch_No}}</td>
+                                            <td>{{obj.CC_Qty}}</td>
+                                            <!-- <td>{{obj.Purpose ? obj.Purpose : '-'}}</td> -->
+                                            <td><button (click)="ConsumableConsdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- <form name="SemiFinishedForm" #SemiFinishedForm="ngForm" novalidate> -->
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="ProductionList" 
+                                name="production" 
+                                [(ngModel)]="ObjFurnaceMISinput.Production"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Data Found'" 
+                                [filter]="true" 
+                                filterBy="label,value" 
+                                [resetFilterOnHide]="true"
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true" 
+                                #production="ngModel"
+                                [styleClass]="Productionvalid && production.errors?.required ? 'clearance': ''" 
+                                required>
+                            </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="rmconbatchno"
+                                            #rmconbatchno="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.Production_Batch_No"
+                                            [ngClass]="{'clearance': Productionvalid && rmconbatchno?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                          <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                             {{option.Product_Type}}
+                                          </option> -->
+                                    </select>
+    
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="rmconqty"
+                                                #rmconqty="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.Production_Qty"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': Productionvalid && rmconqty?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary custombutton" 
+                                        (click)="addProduction()">
+                                    <span class="glyphicon glyphicon-plus"></span> ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <div class="table-responsive no-padding" style="margin-top: 7px;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Product Description</th>
+                                            <th>Batch No</th>
+                                            <th>Qty</th>
+                                            <!-- <th>Remarks</th> -->
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of AddProductionList; let ind = index;">
+                                            <td>{{obj.Production}}</td>
+                                            <td>{{obj.Production_Batch_No}}</td>
+                                            <td>{{obj.Production_Qty}}</td>
+                                            <!-- <td>{{obj.Purpose ? obj.Purpose : '-'}}</td> -->
+                                            <td><button (click)="Productiondelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="glyphicon glyphicon-list-alt">
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="WasteSlagList" 
+                                name="wasteslag" 
+                                [(ngModel)]="ObjFurnaceMISinput.Waste_Slag"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Data Found'" 
+                                [filter]="true" 
+                                filterBy="label,value" 
+                                [resetFilterOnHide]="true"
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true" 
+                                #wasteslag="ngModel"
+                                [styleClass]="wasteslagvalid && wasteslag.errors?.required ? 'clearance': ''" 
+                                required>
+                            </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="wasteslagbatchno"
+                                            #wasteslagbatchno="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.WasteSlag_Batch_No"
+                                            [ngClass]="{'clearance': wasteslagvalid && wasteslagbatchno?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                          <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
+                                             {{option.Product_Type}}
+                                          </option> -->
+                                    </select>
+    
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="wasteslagqty"
+                                                #wasteslagqty="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.WasteSlag_Qty"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': wasteslagvalid && wasteslagqty?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary custombutton" 
+                                        (click)="addWasteSlag()">
+                                    <span class="glyphicon glyphicon-plus"></span> ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <div class="table-responsive no-padding" style="margin-top: 7px;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Product Description</th>
+                                            <th>Batch No</th>
+                                            <th>Qty</th>
+                                            <!-- <th>Remarks</th> -->
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of AddWasteSlagList; let ind = index;">
+                                            <td>{{obj.Waste_Slag}}</td>
+                                            <td>{{obj.WasteSlag_Batch_No}}</td>
+                                            <td>{{obj.WasteSlag_Qty}}</td>
+                                            <!-- <td>{{obj.Purpose ? obj.Purpose : '-'}}</td> -->
+                                            <td><button (click)="WasteSlagdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[5]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="RawMatConsList" 
+                                name="rawmatcons" 
+                                [(ngModel)]="ObjFurnaceMISinput.Raw_Material_Consumable"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Data Found'" 
+                                [filter]="true" 
+                                filterBy="label,value" 
+                                [resetFilterOnHide]="true"
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true" 
+                                #rawmatcons="ngModel"
+                                [styleClass]="RMConsumptionvalid && rawmatcons.errors?.required ? 'clearance': ''" 
+                                required>
+                            </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="rmconbatchno"
+                                            #rmconbatchno="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.RMC_Batch_No"
+                                            [ngClass]="{'clearance': RMConsumptionvalid && rmconbatchno?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                    </select>
+    
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="rmconqty"
+                                                #rmconqty="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.RMC_Qty"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': RMConsumptionvalid && rmconqty?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary custombutton" 
+                                        (click)="addRMCons()">
+                                    <span class="glyphicon glyphicon-plus"></span> ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <div class="table-responsive no-padding" style="margin-top: 7px;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Product Description</th>
+                                            <th>Batch No</th>
+                                            <th>Qty</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of AddRMConsList; let ind = index;">
+                                            <td>{{obj.Raw_Material_Consumable}}</td>
+                                            <td>{{obj.RMC_Batch_No}}</td>
+                                            <td>{{obj.RMC_Qty}}</td>
+                                            <td><button (click)="RMConsdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> -->
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="ConsumableConsList" 
+                                name="consumablecons" 
+                                [(ngModel)]="ObjFurnaceMISinput.Consumable_Consumption"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Data Found'" 
+                                [filter]="true" 
+                                filterBy="label,value" 
+                                [resetFilterOnHide]="true"
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true" 
+                                #consumablecons="ngModel"
+                                [styleClass]="ConConsumptionvalid && consumablecons.errors?.required ? 'clearance': ''" 
+                                required>
+                            </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="cconbatchno"
+                                            #cconbatchno="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.CC_Batch_No"
+                                            [ngClass]="{'clearance': ConConsumptionvalid && cconbatchno?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                    </select>
+    
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="cconqty"
+                                                #cconqty="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.CC_Qty"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': ConConsumptionvalid && cconqty?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary custombutton" 
+                                        (click)="addConsumableCons()">
+                                    <span class="glyphicon glyphicon-plus"></span> ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <div class="table-responsive no-padding" style="margin-top: 7px;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Product Description</th>
+                                            <th>Batch No</th>
+                                            <th>Qty</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of AddConsumableConsList; let ind = index;">
+                                            <td>{{obj.Consumable_Consumption}}</td>
+                                            <td>{{obj.CC_Batch_No}}</td>
+                                            <td>{{obj.CC_Qty}}</td>
+                                            <td><button (click)="ConsumableConsdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> -->
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[7]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="ProductionList" 
+                                name="production" 
+                                [(ngModel)]="ObjFurnaceMISinput.Production"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Data Found'" 
+                                [filter]="true" 
+                                filterBy="label,value" 
+                                [resetFilterOnHide]="true"
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true" 
+                                #production="ngModel"
+                                [styleClass]="Productionvalid && production.errors?.required ? 'clearance': ''" 
+                                required>
+                            </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="rmconbatchno"
+                                            #rmconbatchno="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.Production_Batch_No"
+                                            [ngClass]="{'clearance': Productionvalid && rmconbatchno?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                    </select>
+    
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="rmconqty"
+                                                #rmconqty="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.Production_Qty"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': Productionvalid && rmconqty?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary custombutton" 
+                                        (click)="addProduction()">
+                                    <span class="glyphicon glyphicon-plus"></span> ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <div class="table-responsive no-padding" style="margin-top: 7px;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Product Description</th>
+                                            <th>Batch No</th>
+                                            <th>Qty</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of AddProductionList; let ind = index;">
+                                            <td>{{obj.Production}}</td>
+                                            <td>{{obj.Production_Batch_No}}</td>
+                                            <td>{{obj.Production_Qty}}</td>
+                                            <td><button (click)="Productiondelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> -->
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[8]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="WasteSlagList" 
+                                name="wasteslag" 
+                                [(ngModel)]="ObjFurnaceMISinput.Waste_Slag"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Data Found'" 
+                                [filter]="true" 
+                                filterBy="label,value" 
+                                [resetFilterOnHide]="true"
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true" 
+                                #wasteslag="ngModel"
+                                [styleClass]="wasteslagvalid && wasteslag.errors?.required ? 'clearance': ''" 
+                                required>
+                            </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                            name="wasteslagbatchno"
+                                            #wasteslagbatchno="ngModel"
+                                            [(ngModel)]="ObjFurnaceMISinput.WasteSlag_Batch_No"
+                                            [ngClass]="{'clearance': wasteslagvalid && wasteslagbatchno?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                    </select>
+    
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="wasteslagqty"
+                                                #wasteslagqty="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.WasteSlag_Qty"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': wasteslagvalid && wasteslagqty?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary custombutton" 
+                                        (click)="addWasteSlag()">
+                                    <span class="glyphicon glyphicon-plus"></span> ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <div class="table-responsive no-padding" style="margin-top: 7px;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Product Description</th>
+                                            <th>Batch No</th>
+                                            <th>Qty</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of AddWasteSlagList; let ind = index;">
+                                            <td>{{obj.Waste_Slag}}</td>
+                                            <td>{{obj.WasteSlag_Batch_No}}</td>
+                                            <td>{{obj.WasteSlag_Qty}}</td>
+                                            <td><button (click)="WasteSlagdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> -->
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[9]" leftIcon="glyphicon glyphicon-list-alt">
+                         <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Critical Issue <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="criticalissue"
+                                                #criticalissue="ngModel"
+                                                [(ngModel)]="ObjFurnaceMISinput.Critical_Issue"
+                                                [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && criticalissue?.errors?.required}"
+                                                required>
+        
+                                    </div>
+                        </div>
+                    </p-tabPanel>
+                    <div class="box-footer">
+                        <button class="btn btn-primary pull-right"
+                                (click)="SaveFurnace(FurnaceMISinputForm.form.valid)"
+                                id="load"
+                                [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
+                        </button>
+                    </div>
+                </p-tabView>
+            <!-- </div>
+        </div>
+    </div>
+</div> -->
+</p-tabView>
+</div>
+</div>
+</div>
+</div>
+</div>

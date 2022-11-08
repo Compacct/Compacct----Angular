@@ -1,0 +1,612 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Del && !Save">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Cost Center</label>
+                                        <p-dropdown [options]="costCenterList" name="Cost_Center1" #Cost_Center1="ngModel" 
+                                        [(ngModel)]="objSearch.Cost_Cen_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                        [virtualScroll]="true" itemSize="30"  >
+                                        </p-dropdown>
+
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAlldata()" id="load" [disabled]="seachSpinner">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class=" no-padding">
+                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Customer_Id','Date_PAA','Date_FAA','Patient','Date_Of_Birth', 'Gender', 'Audiologist', 'Cost_Cen_Name' ]"
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap> Customer Id</th>
+                                            <th nowrap> Date PAA</th>
+                                            <th nowrap> Date FAA</th>
+                                            <th nowrap>Patient</th>
+                                            <th nowrap>Date Of Birth</th>
+                                            <th nowrap>Gender</th>
+                                            <!-- <th nowrap>Mobile</th> -->
+                                            <th nowrap>Audologist Name </th>
+                                            <th nowrap>Cost Cen Name</th>
+                                            <!-- <th nowrap>Patient ID</th>
+                                            <th nowrap>Sub Ledger Name</th> -->
+                                            
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="EditRealistic(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li *ngIf = "DelRight == 'Y'">
+                                                            <a (click)="DeleteEarMold(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li>
+                                                            <a (click)="PODUpdate(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> POD Update
+                                                            </a>
+                                                        </li> -->
+                                                        <li>
+                                                            <a (click)="GetPrint(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td style="text-align: center ;" nowrap>{{col.Customer_Id ? col.Customer_Id : '-' }}</td>
+                                            <td nowrap>{{col.Date_PAA | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Date_FAA | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Patient ? col.Patient : '-'}}</td>
+                                            <td nowrap>{{col.Date_Of_Birth | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Gender ? col.Gender : '-'}}</td>
+                                            <!-- <td nowrap>{{col.Received_Date | date: "dd/MMM/yyyy"}}</td> -->
+                                            <!-- <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td> -->
+                                            <td nowrap>{{col.Audiologist ? col.Audiologist : '-'}}</td>
+                                            <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <!-- <td nowrap>{{col.Patient_ID ? col.Patient_ID : '-'}}</td>
+                                            <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td> -->
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="realisticForm" #realisticForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3" style=" height: 77px;">
+                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="costCenterList" name="Cost_Center" #Cost_Center="ngModel" 
+                                        [(ngModel)]="objRealistic.Cost_Cen_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
+                                        [virtualScroll]="true" itemSize="30" (onChange)="getCustomId()"
+                                        [styleClass]="RealisticFormSubmit && Cost_Center.errors?.required ? 'clearance': ''" [disabled]="JREId" [required]="true">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date PAA<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='DOPAA_Date' name="DOPAA" (change)="getCustomId()" [enabled]="!JREId" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3" style=" height: 77px;" *ngIf = "!JREId">
+                                        <!-- <label class="control-label">Name</label>
+                                        <input class="form-control" name="Name" #Name="ngModel" [(ngModel)]="objRealistic.Name" placeholder="Name" disabled>-->
+                                        <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                 <p-dropdown [options]="customDataList" name="Name_Patient" #Name_Patient="ngModel" 
+                                 [(ngModel)]="objRealistic.Name" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                 [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Name'"
+                                 [virtualScroll]="true" itemSize="30" (onChange)="getCustomDetails()" [styleClass]="RealisticFormSubmit && Name_Patient.errors?.required ? 'clearance': ''" [required]="true" >
+                                </p-dropdown>
+ 
+                                      
+                                    </div>
+                                    <div class="col-sm-3" *ngIf = "JREId">
+                                        <label class="control-label">Name</label>
+                                        <div class="label-t">{{PatientName}}</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Custom ID</label>
+                                        <input class="form-control" name="Custom_ID" #Custom_ID="ngModel" [(ngModel)]="objRealistic.Foot_Fall_ID" placeholder="Custom ID" disabled>
+    
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">DOB<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='DOB_Date' name="DOB" [enabled]="DOBEnable" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Audiologist</label>
+                                        <input class="form-control" name="Audiologist_User_id" #Audiologist_User_id="ngModel" [(ngModel)]="objRealistic.Audiologist_User_ID" placeholder="Audiologist" disabled>
+
+                                        
+                                    </div>
+                                    <div class="col-sm-3" style="margin-top: 32px;">
+                                        <label class="control-label">Sex</label>&nbsp;&nbsp;
+                                        <p-radioButton name="Gender" value="Male" label="M" [(ngModel)]="Gender" inputId="preopt1" [disabled]="isDisabled" ></p-radioButton>&nbsp;&nbsp;
+                                        <p-radioButton name="Gender" value="Female" label="F" [(ngModel)]="Gender" inputId="preopt2" [disabled]="isDisabled"></p-radioButton>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date FAA<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='DOFAA_Date' name="DOFAA" ></ejs-datepicker>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+               <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: -4px;
+                "><strong>Speech Identification Score (In Quite)</strong> </h5>
+                <div class="table-responsive no-padding">
+                    <table class="table table-bordered">
+                        <thead style="background-color:#4fa1d1;color:white;">
+                            <tr>
+                                <th></th>
+                                <th>Right Ear</th>
+                                <th>Left Ear </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td >% at 20dB SL</td>
+                                <td >  
+                                
+                                    <input  class="form-control" name="Right_20" #Right_20="ngModel" [(ngModel)]="objRealistic.Speech_Iden_Score_20_R" CompacctDigitonly="true" >
+                                
+                                </td>
+                                <td >
+                                    
+                                    <input class="form-control" name="Left_20" #Left_20="ngModel" [(ngModel)]="objRealistic.Speech_Iden_Score_20_L" CompacctDigitonly="true" >
+                                    
+                                </td>
+                                
+                            
+                            </tr>
+                            <tr>
+                                <td >% at 40dB SL</td>
+                                <td >  
+                                
+                                    <input  class="form-control" name="Right_40" #Right_40="ngModel" [(ngModel)]="objRealistic.Speech_Iden_Score_40_R" CompacctDigitonly="true" >
+                                
+                                </td>
+                                <td >
+                                    
+                                    <input class="form-control" name="Left_40" #Left_40="ngModel" [(ngModel)]="objRealistic.Speech_Iden_Score_40_L" CompacctDigitonly="true" >
+                                    
+                                </td>
+                              
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+               </div>
+               <hr class="box boxboxDivide-primary">
+               
+               
+
+               <form name="RequirementsForm" #RequirementsForm="ngForm" novalidate>
+            <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: -4px;
+                "><strong>Listening Needs / Requirements</strong> </h5>
+                <div class="col-sm-4">
+                <label class="control-label">Listening Needs / Requirements<sup class="text-danger">*</sup></label>
+                    <select class="form-control" name="Requirements" #Requirements="ngModel" [(ngModel)]="objRequirements.Listening_Needs"  [ngClass]="{'clearance ': RequirementsFormSubmit && Requirements.errors?.required}" required>
+                        <option  [ngValue]="undefined">Select</option>
+                        <option  *ngFor="let option of ListingNeedList" value="{{option}}">
+                             {{option}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Present Ability(in % or words)</label>
+                  <input class="form-control" name="Present_Ability" #Present_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Present_Ability" >
+
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Expected Ability(in % or words)</label>
+                  <input class="form-control" name="Expected_Ability" #Expected_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Expected_Ability" >
+
+                </div>
+
+            </div>
+               <div class="form-group">
+                <div class="col-sm-4">
+                    <label class="control-label">Agreed Ability(in % or words)</label>
+                  <input class="form-control" name="Agreed_Ability" #Agreed_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Agreed_Ability" >
+
+                </div>
+                <div class="col-sm-5">
+                    <label class="control-label">Final Ability(in % or words)(after using HAs for a week)</label>
+                  <input class="form-control" name="Final_Ability" #Final_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Final_Ability" >
+
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-primary custombutton pull-right" style="margin-top: 27px;" (click)="AddRequirements(RequirementsForm.form.valid)"><span class="glyphicon glyphicon-plus"></span>Add </button>
+                </div>
+
+               </div>
+               </form>
+               <div class="table-responsive no-padding" style="margin-top: 16px;">
+                <table class="table table-bordered">
+                    <thead style="background-color:#4fa1d1;color:white;">
+                        <tr>
+                            <th nowrap="nowrap">Sl.No.</th>
+                            <th nowrap="nowrap">Listening Needs</th>
+                            <th nowrap="nowrap">Present Ability</th>
+                            <th nowrap="nowrap"> Expected Ability</th>
+                            <th nowrap="nowrap">Agreed Ability</th>
+                            <th nowrap="nowrap">Final Ability</th>
+                            
+                            <th nowrap="nowrap"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let col of RequirementsListAdd let i = index">
+                            <td nowrap="nowrap">{{i + 1}}</td>
+                            <td nowrap="nowrap">{{col.Listening_Needs}}</td>
+                            <td nowrap="nowrap">{{col.Present_Ability}}</td>
+                            <td nowrap="nowrap">{{col.Expected_Ability}}</td>
+                            <td nowrap="nowrap">{{col.Agreed_Ability}}</td>
+                            <td nowrap="nowrap">{{col.Final_Ability}}</td>
+                            
+                            <td><button (click)="DeleteRequirements(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: -4px;
+                "><strong>HEARING AIDS RECOMMENDED</strong> </h5>
+                <div class="table-responsive no-padding">
+                    <table class="table table-bordered">
+                        <thead style="background-color:#4fa1d1;color:white;">
+                            <tr>
+                                <th></th>
+                                <th>Good Hearing Aids for You</th>
+                                    
+                                <th>Better Hearing Aids for You </th>
+
+                                <th>Best Hearing Aids for You </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td >Left Ear</td>
+                                <td >  
+                                
+                                    <!-- <select class="form-control" name="Good_Hearing_Aids_L" #Good_Hearing_Aids_L="ngModel" [(ngModel)]="objRealistic.Good_Hearing_Aids_L"  >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+                                    <p-dropdown [options]="HearingReList" name="Good_Hearing_Aids_L" #Good_Hearing_Aids_L="ngModel" 
+                                    [(ngModel)]="objRealistic.Good_Hearing_Aids_L" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+                                
+                                </td>
+                                <td >
+                                    
+                                    <!-- <select class="form-control" name="Better_Hearing_Aids_L" #Better_Hearing_Aids_L="ngModel" [(ngModel)]="objRealistic.Better_Hearing_Aids_L"  >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+                                    <p-dropdown [options]="HearingReList" name="Better_Hearing_Aids_L" #Better_Hearing_Aids_L="ngModel" 
+                                    [(ngModel)]="objRealistic.Better_Hearing_Aids_L" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+
+                                
+                                    
+                                </td>
+                                
+                                <td >
+                                    
+                                    <!-- <select class="form-control" name="Best_Hearing_Aids_L" #Best_Hearing_Aids_L="ngModel" [(ngModel)]="objRealistic.Best_Hearing_Aids_L"  >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+
+                                    <p-dropdown [options]="HearingReList" name="Best_Hearing_Aids_L" #Best_Hearing_Aids_L="ngModel" 
+                                    [(ngModel)]="objRealistic.Best_Hearing_Aids_L" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+                                
+                                    
+                                </td>
+                                
+                            
+                            </tr>
+                            <tr>
+                                <td >Right Ear</td>
+                                <td >  
+                                
+                                    <!-- <select class="form-control" name="Good_Hearing_Aids_R" #Good_Hearing_Aids_R="ngModel" [(ngModel)]="objRealistic.Good_Hearing_Aids_R" >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+                                    <p-dropdown [options]="HearingReList" name="Good_Hearing_Aids_R" #Good_Hearing_Aids_R="ngModel" 
+                                    [(ngModel)]="objRealistic.Good_Hearing_Aids_R" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+
+
+                                
+                                </td>
+                                <td >
+                                    
+                                    <!-- <select class="form-control" name="Better_Hearing_Aids_R" #Better_Hearing_Aids_R="ngModel" [(ngModel)]="objRealistic.Better_Hearing_Aids_R" >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+
+                                    <p-dropdown [options]="HearingReList" name="Better_Hearing_Aids_R" #Better_Hearing_Aids_R="ngModel" 
+                                    [(ngModel)]="objRealistic.Better_Hearing_Aids_R" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+
+                                    
+                                </td>
+                                <td >
+                                    
+                                    <!-- <select class="form-control" name="Best_Hearing_Aids_R" #Best_Hearing_Aids_R="ngModel" [(ngModel)]="objRealistic.Best_Hearing_Aids_R"  >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+
+                                    <p-dropdown [options]="HearingReList" name="Best_Hearing_Aids_R" #Best_Hearing_Aids_R="ngModel" 
+                                    [(ngModel)]="objRealistic.Best_Hearing_Aids_R" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+
+                                    
+                                </td>
+                              
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+               </div>
+               <div class="clearfix"></div>
+               <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: -4px;
+                "><strong>HEARING AIDS PRESCRIBED</strong> </h5>
+                <div class="table-responsive no-padding">
+                    <table class="table table-bordered">
+                        <thead style="background-color:#4fa1d1;color:white;">
+                            <tr>
+                                <th></th>
+                                <th>Hearing Aids</th>
+                                <th>Serial Number</th>
+                                    
+                                
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td >Left Ear</td>
+                                <td >  
+                                
+                                    <!-- <select class="form-control" name="Serial_Number_L" #Serial_Number_L="ngModel" [(ngModel)]="objRealistic.Serial_Number_L" >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+                                    <p-dropdown [options]="HearingReList" name="Earing_Aids_L" #Earing_Aids_L="ngModel" 
+                                    [(ngModel)]="objRealistic.Earing_Aids_L" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+
+                                
+                                </td>
+                                <td><input  class="form-control" name="Serial_Number_L" #Serial_Number_L="ngModel" [(ngModel)]="objRealistic.Serial_Number_L" ></td>
+                            
+                            </tr>
+                            <tr>
+                                <td >Right Ear</td>
+                                <td >  
+                                
+                                    <!-- <select class="form-control" name="Serial_Number_R" #Serial_Number_R ="ngModel" [(ngModel)]="objRealistic.Serial_Number_R" >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+                                    <p-dropdown [options]="HearingReList" name="Earing_Aids_R" #Earing_Aids_R="ngModel" 
+                                    [(ngModel)]="objRealistic.Earing_Aids_R" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+                                
+                                </td>
+                                <td><input  class="form-control" name="Serial_Number_R" #Serial_Number_R="ngModel" [(ngModel)]="objRealistic.Serial_Number_R"  ></td>
+                            
+                            </tr>
+                            <tr>
+                                <td >Accessories </td>
+                                <td >  
+                                
+                                    <!-- <select class="form-control" name="Serial_Number_A" #Serial_Number_A="ngModel" [(ngModel)]="objRealistic.Serial_Number_A" >
+                                        <option  [ngValue]="undefined">Select</option> -->
+                                        <!-- <option  *ngFor="let option of physicallyChallanged" value="{{option}}">
+                                             {{option}}
+                                        </option> -->
+                                    <!-- </select> -->
+                                    <p-dropdown [options]="HearingAiList" name="Earing_Aids_A" #Earing_Aids_A="ngModel" 
+                                    [(ngModel)]="objRealistic.Earing_Aids_A" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                    [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Hearing Aids'"
+                                    [virtualScroll]="true" itemSize="30" >
+                                    </p-dropdown>
+                                    
+                                
+                                </td>
+                                <td><input  class="form-control" name="Serial_Number_A" #Serial_Number_A="ngModel" [(ngModel)]="objRealistic.Serial_Number_A"  ></td>
+                            
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+               </div>
+               <div class="clearfix"></div>
+               <div class="form-group" style="padding: 1em;">
+                <h5 style="
+                padding: 0.5em 1em;
+                background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                margin-top: -4px;
+                "><strong>Remarks</strong> </h5>
+                <div class="table-responsive no-padding">
+                    <table class="table table-bordered">
+                        <thead style="background-color:#4fa1d1;color:white;">
+                            <tr>
+                                <th></th>
+                                <th>Remarks</th>
+                                    
+                                
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td >Customer</td>
+                                <td >  
+                                
+                                    <textarea class="form-control" name="Customer_Remarks" [(ngModel)]="objRealistic.Customer_Remarks" rows="2" placeholder="Remarks"></textarea>
+                                
+                                </td>
+                            
+                            </tr>
+                            <tr>
+                                <td >Audiologist</td>
+                                <td >  
+                                
+                                    <textarea class="form-control" name="Audiologist_Remarks" [(ngModel)]="objRealistic.Audiologist_Remarks" rows="2" placeholder="Remarks"></textarea>
+                                
+                                </td>
+                            
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+               </div>
+               <div class="box-footer">
+                <button class="btn btn-primary pull-right" (click)="RealisticSave(realisticForm.form.valid)" id="load" [disabled]="Spinner ||  !RequirementsListAdd.length? true : false">
+                   <p-progressSpinner *ngIf="TabSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                  <span *ngIf="!TabSpinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                </button>
+            </div>
+
+
+
+
+                            </form>  
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
