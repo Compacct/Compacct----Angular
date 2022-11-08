@@ -185,7 +185,7 @@
                                         <div class="col-sm-3 pull-right" style="text-align: right">
                                             <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                         </div>
-                                        <div class="col-sm-3 pull-right" style="text-align: right" >
+                                        <div class="col-sm-2 pull-right" style="text-align: right" >
                                         <p-dropdown [options]="PurchaseTypeList" 
                                         name="PurchaseType" 
                                         [(ngModel)]="PurchaseTypeSelect" 
@@ -200,7 +200,7 @@
                                         >
                                     </p-dropdown>
                                         </div>
-                                        <div class="col-sm-3 pull-right" style="text-align: right" >
+                                        <div class="col-sm-2 pull-right" style="text-align: right" >
                                             <p-dropdown [options]="PaymentMethodList" 
                                             name="PaymentMethod" 
                                             [(ngModel)]="PaymentMethodSelect" 
@@ -214,7 +214,23 @@
                                             [styleClass]="'textAlign'"
                                             >
                                         </p-dropdown>
-                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 pull-right" style="text-align: right" >
+                                            <p-dropdown [options]="CurrencyList" 
+                                            name="Currency" 
+                                            [(ngModel)]="CurrencySelect" 
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Currency Found'" 
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Currency'" 
+                                            [virtualScroll]="true"
+                                            itemSize="30" #Currency="ngModel" 
+                                            [styleClass]="'textAlign'"
+                                            (ngModelChange)="CurrencyChange()"
+                                            >
+                                        </p-dropdown>
+                                        </div>
                                     </div>
 
                                 </ng-template>
@@ -231,12 +247,23 @@
                                                 <td>{{col.Product_Description}}</td>
                                                 <td>{{col.UOM}}</td>
                                                 <td>{{col.Purchase_Request_Qty}}</td>
-                                                <td> <input type="text" 
+                                                <!-- <td> <input type="text" 
                                                     [name]="col.Product_Description" 
                                                     [(ngModel)]='col.Negotiate_Price' 
                                                     CompacctDigitonly="true" 
                                                     class="form-control" 
-                                                    style="width: 71px;" /></td>
+                                                    style="width: 71px;" />{{col.Currency}}</td> -->
+                                                    <td>
+                                                        <div class="input-group" style="width: 100px;">
+                                                            <input type="text" 
+                                                            [name]="col.Product_Description" 
+                                                            [(ngModel)]='col.Negotiate_Price' 
+                                                            CompacctDigitonly="true" 
+                                                            class="form-control" 
+                                                            />
+                                                                <span *ngIf="col.Currency" style="width: 45px;" class="input-group-addon">{{col.Currency}}</span>
+                                                            </div>
+                                                    </td>
                                                 </tr>
                                         </ng-template>
                                                         
@@ -247,7 +274,7 @@
                                 <button class="btn btn-primary pull-right" 
                                                 (click)="negotiateSave()" 
                                                 id="Saveload"
-                                                *ngIf="PaymentMethodSelect && ObjnegotiatePrice.Purchase_Request_No && PurchaseTypeSelect"
+                                                *ngIf="PaymentMethodSelect && ObjnegotiatePrice.Purchase_Request_No && PurchaseTypeSelect && CurrencySelect"
                                                 [disabled]="SaveSpinner">
                                             <p-progressSpinner 
                                             *ngIf="SaveSpinner" 

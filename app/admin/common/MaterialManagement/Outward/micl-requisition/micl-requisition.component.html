@@ -580,15 +580,15 @@
                                     <div class="form-group">
                                         <div class="col-sm-3">
                                             <label class="control-label">Department <span class="text-danger"></span></label>
-                                            <p-multiSelect [options]="DistDepartmentmis" [(ngModel)]="SelectedDistDepartmentmis" itemSize="30" (onChange)='FilterDistMis()' [styleClass]="'compacct-multiselect'" name="Department"></p-multiSelect>
+                                            <p-multiSelect [options]="DistDepartmentmis" [(ngModel)]="SelectedDistDepartmentmis" itemSize="30" (onChange)='FilterDistMis("Dept_Name")' [styleClass]="'compacct-multiselect'" name="Department"></p-multiSelect>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Cost Center <span class="text-danger"></span></label>
-                                            <p-multiSelect [options]="DistCostCen" [(ngModel)]="SelectedDistCostCen" itemSize="30" (onChange)='FilterDistMis()' [styleClass]="'compacct-multiselect'" name="Cost_Cen_Name"></p-multiSelect>
+                                            <p-multiSelect [options]="DistCostCen" [(ngModel)]="SelectedDistCostCen" itemSize="30" (onChange)='FilterDistMis("Cost_Cen_Name")' [styleClass]="'compacct-multiselect'" name="Cost_Cen_Name"></p-multiSelect>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Stock Point <span class="text-danger"></span></label>
-                                            <p-multiSelect [options]="DistStockPoint" [(ngModel)]="SelectedDistStockPoint" itemSize="30" (onChange)='FilterDistMis()' [styleClass]="'compacct-multiselect'" name="Stock_Point"></p-multiSelect>
+                                            <p-multiSelect [options]="DistStockPoint" [(ngModel)]="SelectedDistStockPoint" itemSize="30" (onChange)='FilterDistMis("Stock_Point")' [styleClass]="'compacct-multiselect'" name="Stock_Point"></p-multiSelect>
                                         </div>
                                     </div>
                             

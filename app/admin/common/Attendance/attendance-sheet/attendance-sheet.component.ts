@@ -740,12 +740,12 @@ export class AttendanceSheetComponent implements OnInit {
    }
     })
   }
-  exportoexcel(fileName){
+  exportmonthlypro(fileName){
     var firstDate = this.Month_Name+'-'+'01'
     console.log('firstDate',firstDate)
     const obj = {
       "SP_String": "SP_Process_Monthly_Attendance_Sheet",
-      "Report_Name_String": "New Process Monthly Attendance Sheet",
+      "Report_Name_String": "Attendance Sheet Monthly Process",
       "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -754,6 +754,35 @@ export class AttendanceSheetComponent implements OnInit {
       const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
       XLSX.writeFile(workbook, fileName+'.xlsx');
       this.onReject();
+      this.exportoexcel();
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      
+    })
+  }
+  exportoexcel(){
+    var firstDate = this.Month_Name+'-'+'01'
+    console.log('firstDate',firstDate)
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "New Process Monthly Attendance Sheet",
+      "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if (data.length) {
+      // if (data[0].Success != 'False' || data[0].Remarks != 'Done'){
+      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      // XLSX.writeFile(workbook, fileName+'.xlsx');
+        this.onReject();
       }
       else {
         this.compacctToast.clear();

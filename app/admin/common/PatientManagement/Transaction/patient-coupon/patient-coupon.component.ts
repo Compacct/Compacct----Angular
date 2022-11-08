@@ -19,7 +19,7 @@ import { DateTimeConvertService } from '../../../../shared/compacct.global/dateT
   encapsulation: ViewEncapsulation.None
 })
 export class PatientCouponComponent implements OnInit {
-
+  seachSpinner : boolean = false;
   Del : boolean = false;
   Save : boolean = false;
   tabIndexToView : any = 0;

@@ -1439,14 +1439,15 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
  }
  Print(DocNo) {
   if(DocNo) {
-  const objtemp = {
-    "SP_String": "Sp_Purchase_Order",
-    "Report_Name_String": "Purchase_Order_Print"
-    }
-  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
-    var printlink = data[0].Column1;
-    window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-  })
+    window.open("/Report/Crystal_Files/MICL/Raw_Material_Purchase_Order.aspx?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  // const objtemp = {
+  //   "SP_String": "Sp_Purchase_Order",
+  //   "Report_Name_String": "Purchase_Order_Print"
+  //   }
+  // this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+  //   var printlink = data[0].Column1;
+    // window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  // })
   }
 }
 PrintREQ(DocNo) {

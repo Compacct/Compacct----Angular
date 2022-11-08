@@ -310,6 +310,7 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
+                    <th>Product ID</th>
                     <th>Product Type</th>
                     <th>Product Description</th>
                     <th>UOM</th>
@@ -322,7 +323,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                 <tr>
-
+                    <td>{{col.Product_ID}}</td>
                     <td>{{col.Product_Type}}</td>
                     <td>{{col.Product_Description}}</td>
                     <td>{{col.UOM}}</td>
