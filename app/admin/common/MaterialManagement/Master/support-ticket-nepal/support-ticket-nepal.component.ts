@@ -175,7 +175,8 @@ export class SupportTicketNepalComponent implements OnInit {
           {Name : "PM"},
           {Name : "Sales & Training"},
           {Name : "Breakdown"},
-          {Name : "courtesy visit"}
+          {Name : "courtesy visit"},
+          {Name : "courtesy Call"}
         ];
   }
   GetCustomer(){
@@ -606,7 +607,7 @@ export class SupportTicketNepalComponent implements OnInit {
         data.forEach((z:any) => {
           Arr.push({
             ['Support Ticket No'] : z.Support_Ticket_No,
-            ['Support Ticket Date'] : z.Support_Ticket_Date_Nepali,
+            ['Support Ticket Date'] : this.DateService.dateConvert(z.Support_Ticket_Date),
             ['Call Type'] : z.Call_Type,
             ['Customer Name'] : z.Sub_Ledger_Name,
             ['Location'] : z.Location_Name,
