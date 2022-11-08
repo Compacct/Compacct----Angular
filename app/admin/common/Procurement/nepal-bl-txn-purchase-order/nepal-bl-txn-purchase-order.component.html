@@ -1,1 +1,281 @@
-<p>nepal-bl-txn-purchase-order works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"
+                            leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="POFormsBrowse" #POFormsBrowse="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">From Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="BSdate" name="BSdate" #BSdate="ngModel" Class="form-control"
+                                                (ngModelChange)="BrowseStartDate= $event" [(ngModel)]="BrowseStartDate"
+                                                [ngClass]="{'clearance': SearchFormSubmit && BSdate?.errors?.required}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">To Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="Btdate" name="Btdate" #Btdate="ngModel" Class="form-control"
+                                                (ngModelChange)="BrowseEndDate= $event" [(ngModel)]="BrowseEndDate"
+                                                [ngClass]="{'clearance': SearchFormSubmit && Btdate?.errors?.required}" required>
+                                        </div>
+                                    </div>                              
+                                        <div class="col-sm-2">
+                                            <button class="btn btn-primary custombutton" type="button" (click)="BrowseSearch(POFormsBrowse.form.valid)" id="load">
+                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Search
+                                            </button>
+                                        </div>
+                                </div>
+                            </form>
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="Searchedlist"
+                                    [globalFilterFields]="['Doc_No','Godown','Purchase_Request_No','Grant_Total']"
+                                    [paginator]="" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Doc No</th>
+                                            <th>Doc Date</th>
+                                            <th>Godown</th>
+                                            <th>Sub Ledger Name</th>
+                                            <th>Purchase Request No</th>
+                                            <th>Grant Total</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Is_Visiable == "N" ? "text-red-active" : ""'>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                         <li >
+                                                            <a (click)="DeleteBrowse(col)">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Doc_No ? col.Doc_No : '-'}}</td>
+                                            <td>{{col.Doc_Date ? col.Doc_Date : '-'}}</td>
+                                            <td>{{col.Godown ? col.Godown : '-'}}</td>
+                                            <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td>{{col.Purchase_Request_No ? col.Purchase_Request_No : '-'}}</td>
+                                            <td>{{col.Grant_Total ? col.Grant_Total : '-'}}</td>                                        
+                                        </tr>
+                                    </ng-template>                                 
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"
+                            leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="POForms" #POForms="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Doc Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="BSdate" name="BSdate" #BSdate="ngModel" Class="form-control"
+                                                (ngModelChange)="DocDate= $event" [(ngModel)]="DocDate"
+                                                [ngClass]="{'clearance': PurchaseOrderForm && BSdate?.errors?.required}" 
+                                            required>                                      
+                                        </div>          
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Godown<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="GodownList"
+                                            name="Godown"
+                                            #Godown="ngModel" 
+                                            [(ngModel)]="ObjPurchase.Godown"  
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Godown Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            [resetFilterOnHide]="true"
+                                            [placeholder]="'Select Godown'" 
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Godown?.errors?.required}" required>
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="VendorList" 
+                                                name="Vendor"
+                                                #Vendor="ngModel" 
+                                                [(ngModel)]="ObjPurchase.Sub_Ledger_ID"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Vendor Found'" 
+                                                [filter]="true"
+                                                filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Vendor'"
+                                                [virtualScroll]="true" itemSize="30"
+                                                (onChange)="getPRno()"
+                                                [ngClass]="{'clearance': PurchaseOrderForm && Vendor?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label class="control-label">Purchase Request No<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="POnoList" 
+                                                name="Purchase_Request_No"
+                                                #Purchase_Request_No="ngModel" 
+                                                [(ngModel)]="ObjPurchase.Purchase_Request_No"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="'No Purchase Request No Found'"
+                                                [filter]="true"
+                                                filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Purchase Request No'"
+                                                [virtualScroll]="true" itemSize="30"
+                                                (onChange)="getPRoduct()"
+                                                [ngClass]="{'clearance': PurchaseOrderForm && Purchase_Request_No?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                </div>
+                                <br>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr style="background-color:#3c8dbc;color:white">
+                                                <th>Sl. No.</th>
+                                                <th>Product Description</th>
+                                                <th style="width: 10em;">QTY</th>
+                                                <th>Unit</th>
+                                                <th style="width: 13em;">Rate</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody *ngIf="ProductList.length">
+                                            <tr   *ngFor="let Alldata of ProductList; let i = index">
+                                                <td>{{i + 1}}</td>
+                                                <td>{{Alldata.Product_Description}}</td>
+                                                <td>
+                                                    <input Class="form-control"
+                                                    [name]="'Qty'+i"
+                                                    [(ngModel)]="Alldata.Purchase_Request_Qty" 
+                                                    CompacctDigitonly="true" 
+                                                    placeholder="Type QTY"
+                                                    (ngModelChange)="getTotalClc(i)"
+                                                    >  
+                                                </td>
+                                                <td>{{Alldata.UOM}}</td>
+                                                <td>
+                                                    <input Class="form-control"
+                                                    [name]="'Rate'+i"
+                                                    [(ngModel)]="Alldata.Rate" 
+                                                    CompacctDigitonly="true"
+                                                    placeholder="Type Rate"
+                                                    (ngModelChange)="getTotalClc(i)">
+                                                </td>
+                                                <td>{{Alldata.Line_Total}}</td>                                    
+                                            </tr>
+                                            <tr >
+                                                <td colspan="1"></td>
+                                                <td nowrap colspan="1" style="text-align: right; font-weight: 700;"><span>Total:</span></td>
+                                                <td colspan="1" style="text-align: left; font-weight: 700;">{{GetTotalPro()}}</td>
+                                                <td colspan="1"></td>
+                                                <td colspan="1"></td>
+                                                <td colspan="1" style="text-align: left; font-weight: 700;">{{getTotal()}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h5 style="padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;">
+                            <i class="fa fa-comment" aria-hidden="true"></i> &nbsp;<strong>Remarks :</strong>
+                                </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name="Remarks" 
+                                    #Remarks="ngModel" 
+                                    [(ngModel)]="ObjPurchase.Remarks" 
+                                    [style]="{'height':'200px'}"
+                                    [readonly]="editorDis">
+                                    </p-editor>
+                                </div>
+                                <h5 style="padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;">
+                            <i class="fa fa-commenting" aria-hidden="true"></i> &nbsp;<strong>Heading :</strong>
+                                </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name="Heading" 
+                                    #Heading="ngModel" 
+                                    [(ngModel)]="ObjPurchase.Heading" 
+                                    [style]="{'height':'200px'}"
+                                    [readonly]="editorDis">
+                                    </p-editor>
+                                </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" type="button"
+                                        (click)="SavePo(POForms.form.valid)" id="load">
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
