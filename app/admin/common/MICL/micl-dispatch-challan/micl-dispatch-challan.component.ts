@@ -491,7 +491,7 @@ export class MiclDispatchChallanComponent implements OnInit {
    }// TABLE DATA
   dataforShowproduct(){
     if(this.SelectedIndent) {
-      let Arr =[]
+      let Arr:any =[]
       // this.SelectedIndent.forEach(el => {
         // if(el){
           const Dobj = {
