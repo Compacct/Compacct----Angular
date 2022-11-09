@@ -82,7 +82,7 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
-    
+    this.RequirementsFormSubmit = false;
     this.clearData();
   }
 
@@ -306,6 +306,7 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
   }
 
   EditRealistic(Col){
+    this.RequirementsFormSubmit = false;
     if(Col.JRE_Id){
       this.JREId = Col.JRE_Id;
       this.tabIndexToView = 1;
@@ -514,7 +515,8 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
     this.RealisticFormSubmit = false;
     this.customDataList = [];
     this.customList = [];
-    this.PatientName = undefined
+    this.PatientName = undefined;
+    this.Requirementadd = [];
 
   }
 
