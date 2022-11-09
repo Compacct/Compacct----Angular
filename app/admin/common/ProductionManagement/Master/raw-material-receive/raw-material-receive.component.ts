@@ -32,6 +32,7 @@ export class RawMaterialReceiveComponent implements OnInit {
   seachSpinner:boolean = false
   BrowseList:any = []
   BrowseListHeader:any = []
+  recdatedisabled:boolean = true;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -56,6 +57,7 @@ TabClick(e) {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
      this.clearData()
+     this.recdatedisabled = true;
 }
 clearData(){
  this.AllMaterialName = []
@@ -101,6 +103,11 @@ GetMaterialName(RefNO:any){
           element['value'] = element.Product_ID
         });
         this.AllMaterialName = data;
+        this.changeMaterialName(this.ObjRawMatRev.Product_ID);
+        this.ObjRawMatRev.Receive_Qty = undefined;
+        this.ObjRawMatRev.Vehicle_No = undefined;
+        this.ObjRawMatRev.Godown_ID = undefined;
+        this.ObjRawMatRev.Purpose = undefined;
       } else {
         this.AllMaterialName = [];
       }
@@ -108,7 +115,7 @@ GetMaterialName(RefNO:any){
   }
   else {
    this.AllMaterialName = []
-   this.ObjRawMatRev.Product_ID = undefined
+   this.ObjRawMatRev.Product_ID = undefined;
   }
 
 }
@@ -118,6 +125,7 @@ changeMaterialName(ProductID:any){
     console.log("FilterAllMaterialName",FilterAllMaterialName)
     this.ObjRawMatRev.UOM = FilterAllMaterialName ? FilterAllMaterialName.UOM : ""
  }
+ this.ObjRawMatRev.Batch_Lot_No = undefined;
 }
 GetStockPoint(){
   const obj = {
@@ -164,9 +172,12 @@ AddRawMatRev(valid:any){
   })
   let bckupTempObj:any = {...this.ObjRawMatRev}
   this.ObjRawMatRev.Remarks = bckupTempObj.Remarks
-  this.ObjRawMatRev = new RawMatRev()
-  this.AllMaterialName = []
-  this.DocDate = new Date()
+  // this.ObjRawMatRev = new RawMatRev()
+  this.ObjRawMatRev.Batch_Lot_No = undefined;
+  this.ObjRawMatRev.Vehicle_No = undefined;
+  // this.AllMaterialName = []
+  // this.DocDate = new Date()
+  this.recdatedisabled = false;
   this.minFromDate = new Date('01/01/1990')
   this.RawMatRevFormSubmitted =false
  }

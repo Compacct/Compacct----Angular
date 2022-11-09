@@ -33,6 +33,10 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   QtyTotal: number = 0;
   Searchedlist: any = [];
   masterDoc = undefined;
+
+  Spinner:boolean = false;
+  editorDis:boolean = false;
+
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -61,6 +65,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
   }
+  onReject(){}
   clearData() {
     this.PurchaseOrderForm = false;
     this.ObjPurchase = new Purchase(); 
