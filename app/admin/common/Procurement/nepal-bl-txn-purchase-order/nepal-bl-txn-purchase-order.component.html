@@ -93,13 +93,18 @@
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a (click)="Edit(col)">
+                                                            <a (click)="EditBrowse(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
                                                          <li >
                                                             <a (click)="DeleteBrowse(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Print(col)">
+                                                            <i class="fa fa-print" aria-hidden="true"></i> Print
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -126,9 +131,9 @@
                                             <div class="input-group-addon">
                                                 <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input CompacctNepaliDatepicker id="BSdate" name="BSdate" #BSdate="ngModel" Class="form-control"
+                                            <input CompacctNepaliDatepicker id="Docdate" name="Docdate" #Docdate="ngModel" Class="form-control"
                                                 (ngModelChange)="DocDate= $event" [(ngModel)]="DocDate"
-                                                [ngClass]="{'clearance': PurchaseOrderForm && BSdate?.errors?.required}" 
+                                                [ngClass]="{'clearance': PurchaseOrderForm && Docdate?.errors?.required}" 
                                             required>                                      
                                         </div>          
                                     </div>
@@ -165,6 +170,7 @@
                                                 [placeholder]="'Select Vendor'"
                                                 [virtualScroll]="true" itemSize="30"
                                                 (onChange)="getPRno()"
+                                                [disabled]="buttonname == 'Update'"
                                                 [ngClass]="{'clearance': PurchaseOrderForm && Vendor?.errors?.required}" required>
                                             </p-dropdown>
                                         </div>
@@ -174,7 +180,8 @@
                                                 name="Purchase_Request_No"
                                                 #Purchase_Request_No="ngModel" 
                                                 [(ngModel)]="ObjPurchase.Purchase_Request_No"
-                                                [showClear]="true" 
+                                                [showClear]="true"
+                                                 *ngIf="buttonname == 'Save'" 
                                                 [emptyFilterMessage]="'No Purchase Request No Found'"
                                                 [filter]="true"
                                                 filterBy="label,value.name" 
@@ -184,6 +191,7 @@
                                                 (onChange)="getPRoduct()"
                                                 [ngClass]="{'clearance': PurchaseOrderForm && Purchase_Request_No?.errors?.required}" required>
                                             </p-dropdown>
+                                            <div class="label-t" *ngIf="buttonname == 'Update'">{{UpdatePono.Purchase_Request_No ? UpdatePono.Purchase_Request_No : "-"  }}</div>
                                         </div>
                                 </div>
                                 <br>
