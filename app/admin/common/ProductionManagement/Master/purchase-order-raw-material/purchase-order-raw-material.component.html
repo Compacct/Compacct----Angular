@@ -267,8 +267,8 @@
                                         <label class="control-label">Quotation Date</label>
                                         <ejs-datepicker  [(value)]="RefDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
                                     </div>
-                                </div>
-                                <div class="form-group">
+                                <!-- </div>
+                                <div class="form-group"> -->
                                    <div class="col-sm-3">
                                         <label class="control-label">Order Type<sup class="text-danger">*</sup></label>
                                         <select class="form-control" 
@@ -303,7 +303,7 @@
                                             <div *ngIf="addPurchaseListInput" class="label-t">{{ObjaddWorkOrder.Req_No}}</div>
 
                                        </div> -->
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-4">
                                             <label class="control-label">Product Details<sup class="text-danger">*</sup></label>
                                             <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "ObjaddWorkOrder.Product_ID" (click)="getProductPOPUPDetalis()"><i class="fa fa-fw  fa-info-circle"></i></a></span>
                                             <p-dropdown 
@@ -325,7 +325,7 @@
                                         </p-dropdown>
                                         <div *ngIf="addPurchaseListInput" class="label-t">{{addPurchaseListInputField.Product_Name}}</div>
                                         </div>
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-8">
                                             <label class="control-label">Product Specification</label>
                                             <!-- style="margin: 0px -16.6719px 0px 0px; width: 245px;height: 65px;"  -->
                                             <textarea class="form-control" 
@@ -336,10 +336,10 @@
                                             placeholder="Product Specification"
                                             [(ngModel)]="ObjaddWorkOrder.Product_Spec"></textarea>
                                         </div>
-                                        <div class="col-sm-3">
+                                        <!-- <div class="col-sm-3">
                                             <label class="control-label">Valid Till<sup class="text-danger">*</sup></label>
                                         <ejs-datepicker  [(value)]="ExpectedDeliverydate" (change)="getProductDetalis()"  [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
-                                        </div>
+                                        </div> -->
                                      </div>
                                     <div class="form-group">
                                         <div class="col-sm-3">

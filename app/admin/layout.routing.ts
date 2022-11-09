@@ -285,6 +285,7 @@ import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-ra
 import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-txn-purchase-order/nepal-bl-txn-purchase-order.component";
 import { JOHRealisticExpectationFormComponent } from "./common/PatientManagement/joh-realistic-expectation-form/joh-realistic-expectation-form.component";
 import { FurnaceMisInputComponent } from './common/MICL/RawMaterial/furnace-mis-input/furnace-mis-input.component';
+import { MiclRawMaterialIssueNewComponent } from './common/MICL/RawMaterial/micl-raw-material-issue-new/micl-raw-material-issue-new.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2133,6 +2134,13 @@ path: 'MICL_Cost_Center_Master',
     component: FurnaceMisInputComponent,
     data: {
       title: 'Furnace MIS Input'
+}
+},
+{
+  path: 'MICL_Raw_Material_Issue_New',
+    component: MiclRawMaterialIssueNewComponent,
+    data: {
+      title: 'Raw Material Issue'
 }
 },
     

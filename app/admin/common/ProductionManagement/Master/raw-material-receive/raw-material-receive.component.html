@@ -139,7 +139,8 @@
                                         <ejs-datepicker 
                                         [format]="'dd/MMM/yyyy'" 
                                         [(value)]='DocDate' 
-                                        [min]='minFromDate' >
+                                        [min]='minFromDate' 
+                                        [enabled]="recdatedisabled">
                                     </ejs-datepicker>
                                     </div>
                                 </div>
@@ -163,16 +164,6 @@
                                                 required>
                                         </p-dropdown>
                                     </div>
-                                    <div class="col-sm-2">
-                                        <label class="control-label">Unit<sup class="text-danger">*</sup></label>                             
-                                        <input class="form-control" 
-                                        type="text" 
-                                        name="UOM"  
-                                        #UOM="ngModel"
-                                        [(ngModel)]="ObjRawMatRev.UOM"
-                                        placeholder="Unit" 
-                                        disabled>
-                                    </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Receive QTY<sup class="text-danger">*</sup></label>                             
                                         <input class="form-control" 
@@ -184,6 +175,16 @@
                                         placeholder="Receive QTY"
                                         [ngClass]="{'clearance': RawMatRevFormSubmitted && Receive_Qty.errors?.required}"
                                         required>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Unit<sup class="text-danger">*</sup></label>                             
+                                        <input class="form-control" 
+                                        type="text" 
+                                        name="UOM"  
+                                        #UOM="ngModel"
+                                        [(ngModel)]="ObjRawMatRev.UOM"
+                                        placeholder="Unit" 
+                                        disabled>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Lot No<sup class="text-danger">*</sup></label>                                   
@@ -218,11 +219,11 @@
                                             #Godown_ID="ngModel"
                                             [(ngModel)]="ObjRawMatRev.Godown_ID"
                                             [showClear]="true" 
-                                            [emptyFilterMessage]="' No UOM Found'"
+                                            [emptyFilterMessage]="' No Stock Point Found'"
                                             [filter]="true" 
                                             filterBy="label,value.name" 
                                             [resetFilterOnHide]="true"
-                                            [placeholder]="'Select UOM'" 
+                                            [placeholder]="'Select Stock Point'" 
                                             [virtualScroll]="true" 
                                             itemSize="30"
                                             [styleClass]="RawMatRevFormSubmitted && Godown_ID.errors?.required ? 'clearance' : ''"
