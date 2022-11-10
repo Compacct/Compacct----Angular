@@ -40,8 +40,8 @@
         <div class="box box-primary">
             <div class="form-horizontal" style="margin-top: 8px;">
                 <div class="box-body">
-                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="RMReqSearchForm" #RMReqSearchForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -50,7 +50,7 @@
                                         </app-compacct-daterangepicker>
 
                                     </div>
-                                    <!-- <div class="col-sm-4">
+                                    <div class="col-sm-4">
                                         <label class="control-label">From Cost Center &nbsp;</label>
                                         <select class="form-control" 
                                         name="Cost_Cen_ID_Browse" 
@@ -60,7 +60,7 @@
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of costcenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                                       </select>
-                                    </div> -->
+                                    </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">To Furnace
                                         </label>
@@ -100,7 +100,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th style="width:5em">Action</th>
                                             <th nowrap="nowrap" *ngFor="let option of RMrewBrowseListDynamicHeader">{{option.replaceAll('_',' ')}}</th>
                                             
                                         </tr>
@@ -108,31 +108,31 @@
                                     <ng-template pTemplate="body" let-col>
                                         <tr [class]='col.Cancel_Requisition === "Y" ? "text-red-active" : ""'>
 
-                                            <!-- <td>
+                                            <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                     <i class="fa fa-fw fa-bars"></i>
                                                                     <span class="caret"></span>
                                                                 </button>
-                                                    <ul class="dropdown-menu"> -->
-                                                        <!-- <li *ngIf="companyname != 'HARBAUER India [P] Ltd' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && col.Approve_Status === 'Not Approved'">
+                                                    <ul class="dropdown-menu">
+                                                        <li *ngIf="companyname != 'HARBAUER India [P] Ltd' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && col.Approve_Status === 'Not Approved'">
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
-                                                        </li> -->
-                                                        <!-- <li>
+                                                        </li>
+                                                        <li>
                                                             <a (click)="Active(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
-                                                        </li> -->
-                                                        <!-- <li>
+                                                        </li>
+                                                        <li>
                                                             <a (click)="Print(col.Req_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
-                                                        </li> -->
-                                                    <!-- </ul>
+                                                        </li>
+                                                    </ul>
                                                 </div>
-                                            </td> -->
+                                            </td>
                                             <ng-container *ngFor="let option of RMrewBrowseListDynamicHeader">
                                                 <td nowrap="nowrap">{{col[option]}}</td>
                                             </ng-container>
@@ -143,8 +143,8 @@
                                     </ng-template>
                                 </p-table>
                             </div>
-                        </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                        </p-tabPanel> -->
+                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save"> -->
                             <div class="col-lg-12">
                             <div class="panel-group">
                             <div class="panel panel-primary">
@@ -220,7 +220,7 @@
                                     </p-dropdown>
                                     </div> -->
                                     <div class="col-sm-2">
-                                        <button type="button" class="btn btn-primary pull-right" style="margin-top: 30px; margin-right: 40px;" (click)="GetProductsDetalis(RMissueForm.form.valid)" [disabled]="productList.length" id="load" >
+                                        <button type="button" class="btn btn-primary pull-right" style="margin-top: 30px; margin-right: 40px;" (click)="GetProductsDetalis(RMissueForm.form.valid)" [disabled]="AddProDetails.length" id="load" >
                                                 <!-- <p-progressSpinner *ngIf="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner> -->
                                              <!-- <span *ngIf="!SpinnerShow"></span> --> Get Product <!-- class="glyphicon glyphicon-save" -->
                                         </button>
@@ -236,73 +236,88 @@
                             </div>
                             </div>
                             </div>
-                                <!-- <hr class="box boxboxDivide-primary"> -->
-                                <!-- <form name="RMissueaddForm" #RMissueaddForm="ngForm" novalidate>
+                                <div class="col-lg-12">
+                                <div class="panel-group">
+                                <div class="panel panel-primary">
+                                <!-- <div class="panel-heading">Select Outlet</div> -->
+                                <div class="panel-body">
+                                <form name="AddProDetailsForm" #AddProDetailsForm="ngForm" novalidate>
                                     <div class="form-group">
-                                        <div class="col-sm-4">
-                                            <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                            <p-dropdown [options]="productList" 
-                                            name="Product_ID" 
-                                            [(ngModel)]="objRMissueadd.Product_ID"
-                                            [showClear]="true" 
-                                            [emptyFilterMessage]="' No Product Found'" 
-                                            [filter]="true" 
-                                            filterBy="label,value" 
-                                            [resetFilterOnHide]="true"
-                                            [placeholder]="'Product'" 
-                                            [virtualScroll]="true" 
-                                            #Product_ID="ngModel"
-                                            (ngModelChange) = "getUOM()"
-                                            [styleClass]="RMissueaddFormSubmit && Product_ID.errors?.required ? 'clearance': ''" 
+                                      <div class="col-sm-4">
+                                          <label class="control-label"
+                                            >Product Name <sup class="text-danger">*</sup> &nbsp;
+                                          </label>
+                                          <p-dropdown
+                                            [options]= "ProductionlList"
+                                            name="Product_Name"
+                                            [(ngModel)] ="ObjproductAdd.Product_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="' No Product Found'"
+                                            (onChange)="ProductChange()"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            [placeholder]="'Select Product'"
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            #Product_Name="ngModel"
+                                            [required]="true"
+                                            [styleClass]="AddProDetailsFormSubmitted && Product_Name.errors?.required ? 'clearance': ''"
                                             required>
-                                        </p-dropdown>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <label class="control-label">Yard<sup class="text-danger">*</sup></label>
-                                            <input class="form-control" 
-                                                name="yard" 
-                                                #yard="ngModel" 
-                                                [(ngModel)]="objRMissueadd.Yard" 
-                                                placeholder="Yard"
-                                                [ngClass]="{'clearance': RMissueaddFormSubmit && yard?.errors?.required}" 
+                                          </p-dropdown>
+                                      </div>
+                                      <div class="col-sm-3">
+                                        <label class="control-label">Lot No <sup class="text-danger">*</sup> &nbsp;</label>
+                                        <select class="form-control"
+                                                name="Batch_No"
+                                                #Batch_No = "ngModel"
+                                                [(ngModel)] ="ObjproductAdd.Batch_No"
+                                                [disabled] = "BatchDisabled"
+                                                [ngClass]="{'clearance':AddProDetailsFormSubmitted && Batch_No?.errors?.required}"
                                                 required>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <label class="control-label">Lot No<sup class="text-danger">*</sup></label>
-                                            <input class="form-control" 
-                                                name="lotno" 
-                                                #lotno="ngModel" 
-                                                [(ngModel)]="objRMissueadd.Lot_No" 
-                                                placeholder="Lot No"
-                                                [ngClass]="{'clearance': RMissueaddFormSubmit && lotno?.errors?.required}" 
-                                                required>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <label class="control-label">QTY<sup class="text-danger">*</sup></label>
-                                            <input class="form-control" 
-                                            name="Qty" 
-                                            #Qty="ngModel" 
-                                            [(ngModel)]="objRMissueadd.Qty" 
-                                            placeholder="Qty"
-                                            CompacctDigitonly="true"
-                                            [ngClass]="{'clearance': RMissueaddFormSubmit && Qty?.errors?.required}" 
-                                            required>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <button type="button" 
-                                        class="btn btn-primary custombutton" 
-                                        (click)="addRMissue(RMissueaddForm.form.valid)" >
-                                            <span class="glyphicon glyphicon-plus"></span> ADD
-                                        </button>
-                                        </div>
-                                     </div>
-                                     <div class="box-footer">
+                                        <option  [ngValue]="undefined">Select</option>
+                                         <option *ngFor = "let option of BatchNoList" value="{{option.Batch_No}}">
+                                            {{option.Batch_No}} / {{option.Batch_Qty}}
+                                          </option>
+                                    </select>
+                                      </div>
+                                      <div class="col-sm-2">
+                                        <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                              name="Qty"
+                                              #Qty = "ngModel"
+                                              [(ngModel)] ="ObjproductAdd.Qty"
+                                              [ngClass]="{'clearance':AddProDetailsFormSubmitted && Qty?.errors?.required}"
+                                                required
+                                                CompacctDigitonly="true"
+                                                >
                                     </div>
-                                 </form> -->
+                                    <div class="col-sm-2">
+                                        <label class="control-label">UOM <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                              name="uom"
+                                              #uom = "ngModel"
+                                              [(ngModel)] ="ObjproductAdd.UOM"
+                                              [disabled]="true"
+                                              [ngClass]="{'clearance':AddProDetailsFormSubmitted && uom?.errors?.required}"
+                                                required
+                                                >
+                                    </div>
+                                    <div>
+                                    <button id="row-Add" class ="btn btn-primary custombuttonadd"  (click)="AddProductDetails(AddProDetailsForm.form.valid)">
+                                      <!-- <i class="fa fa-fw fa-add"></i>&nbsp; Add --> Add
+                                    </button>
+                                    </div>
+                                      </div>
+                                </form>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                <br>
                                  <div class="clearfix"></div>
 
                                  <div class="no-padding">
-                                     <p-table [value]="productList" [globalFilterFields]="['Product_Description','Yard','Req_Qty','Batch_No','Batch_Qty','Delivery_Qty']" [rowHover]="true" [autoLayout]="true" #dt1>
+                                     <p-table [value]="AddProDetails" [globalFilterFields]="['Product_Description','Yard','Req_Qty','Batch_No','Batch_Qty','Delivery_Qty']" [rowHover]="true" [autoLayout]="true" #dt1>
                                          <ng-template pTemplate="caption">
                                              <div class="row">
                                                  <div class="col-sm-3 pull-right" style="text-align: right; margin-top: 31px;">
@@ -323,19 +338,24 @@
                                                  <th>Yard</th>
                                                  <!-- <th>Req Qty</th> -->
                                                  <th>Lot No</th>
-                                                 <th>Batch Qty</th>
+                                                 <!-- <th>Batch Qty</th> -->
                                                  <th>Qty</th>
+                                                 <th>UOM</th>
+                                                 <th>Delete</th>
                                                  <!-- <th *ngIf="EditList.length">Accept Reason</th> -->
                                              </tr>
                                          </ng-template>
                                          <ng-template pTemplate="body" let-col let-i="rowIndex">
                                              <tr>
                                                  <td>{{col.Product_Description}}</td>
-                                                 <td>{{col.Yard}}</td>
+                                                 <td>{{col.F_Godown_Name}}</td>
                                                  <!-- <td>{{col.Req_Qty}}</td> -->
                                                  <td>{{col.Batch_No}}</td>
-                                                 <td>{{col.Batch_Qty}}</td>
-                                                 <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                                 <!-- <td>{{col.Batch_Qty}}</td> -->
+                                                 <td>{{col.Qty}}</td>
+                                                 <td>{{col.UOM}}</td>
+                                                 <!-- <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
+                                                 <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                  <!-- <td *ngIf="EditList.length">{{col.Accept_Reason}}</td> -->
                                              </tr>
                                              <!-- <tr>
@@ -365,7 +385,7 @@
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                         </button>
                                     </div>
-                        </p-tabPanel>
+                        <!-- </p-tabPanel> -->
                         <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
                             <form name="PendingIndentForm" #PendingIndentForm="ngForm" novalidate>
                             <div class="form-group">

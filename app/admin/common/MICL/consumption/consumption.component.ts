@@ -224,7 +224,8 @@ export class ConsumptionComponent implements OnInit {
  const tempobj = {
   Entry_Date : Entry_Date,
   Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID ? this.ObjBrowse.Cost_Cen_ID : 0,
-  Godown_ID : this.ObjBrowse.godown_id ? this.ObjBrowse.godown_id : 0
+  Godown_ID : this.ObjBrowse.godown_id ? this.ObjBrowse.godown_id : 0,
+  User_ID : this.$CompacctAPI.CompacctCookies.User_ID
 
 }
 const obj = {

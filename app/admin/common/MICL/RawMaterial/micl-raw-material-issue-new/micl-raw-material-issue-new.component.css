@@ -8,6 +8,9 @@
   .custombutton {
     margin-top: 25px;
   }
+  .custombuttonadd {
+    margin-top: 27px;
+}
   hr {
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -36,10 +39,10 @@
 /* #ej2-datepicker_296 > div .e-invalid-input{
   border: 2px red solid;
 } */
-body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+/* body .ui-tabview.ui-tabview-top .ui-tabview-nav {
   border-bottom: 1px solid #c1c1c1 !important;
   margin-bottom: 0px;
-}
+} */
 /* #ui-tabpanel-3 > div > p-table > div > p-paginator > div > p-dropdown{
   top: 41px !important;
 } */
