@@ -280,7 +280,10 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Rate<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="rate" type="text" [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted &&  rate?.errors?.required }" #rate="ngModel" [(ngModel)]="ObjEnginnerQuoation.Rate" (change)="CalculateAmount()" CompacctDigitonly="true"
+                                        <input class="form-control" name="rate" type="text" 
+                                        [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted &&  rate?.errors?.required }" 
+                                        #rate="ngModel" [(ngModel)]="ObjEnginnerQuoation.Rate" 
+                                        (change)="CalculateAmount()" CompacctDigitonly="true"
                                             [required]="true" placeholder="Rate" />
                                     </div>
                                     <div class="col-sm-2">
@@ -296,8 +299,17 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-2">
-                                        <label class="control-label">Discount<sup class="text-danger"></sup></label>
-                                        <input class="form-control" name="Discount" #Discount="ngModel" [(ngModel)]="ObjEnginnerQuoation.Discount" (change)="DiscountTypeChange()" CompacctDigitonly="true" placeholder="Discount" />
+                                        <label class="control-label">Discount<sup class="text-danger" *ngIf="ObjEnginnerQuoation.Discount_Type">*</sup></label>
+                                        <input class="form-control" 
+                                        name="Discount" 
+                                        #Discount="ngModel" 
+                                        [(ngModel)]="ObjEnginnerQuoation.Discount" 
+                                        (change)="DiscountTypeChange()" 
+                                        CompacctDigitonly="true"
+                                         placeholder="Discount" 
+                                         [ngClass]="{'clearance': EnginnerQuoationMachineFormSubmitted &&  Discount?.errors?.required }"
+                                         [required]="ObjEnginnerQuoation.Discount_Type"
+                                         />
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
