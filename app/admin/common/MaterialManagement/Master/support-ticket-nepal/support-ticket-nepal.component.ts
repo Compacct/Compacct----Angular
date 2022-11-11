@@ -608,6 +608,7 @@ export class SupportTicketNepalComponent implements OnInit {
           Arr.push({
             ['Support Ticket No'] : z.Support_Ticket_No,
             ['Support Ticket Date'] : this.DateService.dateConvert(z.Support_Ticket_Date),
+            ['Support Ticket Date(Nepali)'] : z.Support_Ticket_Date_Nepali,
             ['Call Type'] : z.Call_Type,
             ['Customer Name'] : z.Sub_Ledger_Name,
             ['Location'] : z.Location_Name,
