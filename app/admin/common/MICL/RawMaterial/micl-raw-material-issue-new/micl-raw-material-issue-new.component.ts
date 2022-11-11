@@ -75,6 +75,8 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   editDis = false;
   saveData:any = [];
   ToFurnacebrowseList:any = [];
+  DocNo = undefined;
+  prodisabledflag:boolean = true;
 
   constructor(
     private $http: HttpClient,
@@ -233,6 +235,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
       this.SpinnerShow = true;
       this.docdateDisabled = true;
       this.Topfielddisabled = false;
+      this.prodisabledflag = false;
       if (valid) {
         if(Number(this.objRMissue.F_Godown_ID) !== Number(this.objRMissue.To_Godown_ID)){
         const Dobj = {
@@ -241,6 +244,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
           F_Godown_ID : Number(this.objRMissue.F_Godown_ID),
           To_Cost_Cen_ID: Number(this.objRMissue.To_Cost_Cen_ID),
           To_Godown_ID : Number(this.objRMissue.To_Godown_ID),
+          Type_Of_Product : this.issueType
           // Req_No : this.objRMissue.Req_No,
           // Req_Date : this.DateService.dateConvert(new Date(this.ReqDate))
           }
@@ -257,6 +261,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
           // });
           this.AddProDetails = data;
           this.objRMissue.Remarks = data[0].Remarks ? data[0].Remarks : undefined;
+          this.DocNo = this.AddProDetails.length ? data[0].Doc_No : undefined;
           this.RMissueFormSubmit = false;
           this.SpinnerShow = false;
        //console.log("productList",this.productList);
@@ -288,6 +293,8 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   clearbutton(){
     this.objRMissue = new RMissue();
     this.objRMissueadd = new RMissueadd();
+    this.ObjproductAdd = new productAdd();
+    this.prodisabledflag = true;
     this.RM_Issue_Date = new Date();
     this.objRMissue.F_Cost_Cen_ID = 36;
     this.ObjBrowseData.Cost_Cen_ID = 4;
@@ -299,6 +306,17 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     this.reqDocNo = undefined;
     this.docdateDisabled = true;
     this.Topfielddisabled = false;
+  }
+  changedisabled(){
+    this.prodisabledflag = false;
+    if (this.objRMissue.F_Godown_ID){
+      this.ObjproductAdd = new productAdd();
+      this.prodisabledflag = true;
+    }
+    if (this.objRMissue.To_Godown_ID){
+      this.ObjproductAdd = new productAdd();
+      this.prodisabledflag = true;
+    }
   }
   // getUOM(){
   //   this.objRMissueadd.UOM = undefined;
@@ -361,6 +379,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   }
   ProductChange() {
     this.BatchNoList =[];
+    this.ObjproductAdd.UOM = undefined;
   if(this.ObjproductAdd.Product_ID) {
     const ctrl = this;
     this.GetBatchNo();
@@ -372,6 +391,8 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   }
   }
   GetBatchNo(){
+    // this.RMissueFormSubmit = true;
+    // if(this.objRMissue.F_Godown_ID && this.objRMissue.To_Godown_ID) {
     const TempObj = {
       Product_ID : this.ObjproductAdd.Product_ID,
       Cost_Cen_ID : this.objRMissue.F_Cost_Cen_ID,
@@ -386,8 +407,9 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
      this.BatchNoList = data;
      this.ObjproductAdd.Batch_No = this.BatchNoList.length ? this.BatchNoList[0].Batch_No : undefined;
      //console.log('Batch No ==', data)
-
+    //  this.RMissueFormSubmit = false;
     });
+  // }
   }
   AddProductDetails(valid){
   //console.log('add ===', valid)
@@ -396,10 +418,10 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     // console.log(this.ObjproductAdd.Batch_No)
     // var ProDes = this.ProductionlList.filter(item => item.Product_ID == this.ObjproductAdd.Product_ID);
     var yard = this.FGodownList.filter(el => Number(el.Godown_ID) === Number(this.objRMissue.F_Godown_ID));
-    var batch = this.BatchNoList.filter(el => Number(el.Batch_No) === Number(this.ObjproductAdd.Batch_No));
+    var batch = this.BatchNoList.filter(el => el.Batch_No == this.ObjproductAdd.Batch_No);
   var productObj = {
     //ID : this.ObjproductAdd.ID,
-    Doc_No : "A",
+    Doc_No : this.AddProDetails.length ? this.AddProDetails[0].Doc_No : "A",
     Product_ID : this.ObjproductAdd.Product_ID,
     Product_Description : this.ObjproductAdd.Product_Description,
     F_Godown_ID : this.objRMissue.F_Godown_ID,

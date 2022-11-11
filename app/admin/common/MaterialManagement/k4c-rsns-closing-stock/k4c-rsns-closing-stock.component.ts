@@ -323,7 +323,7 @@ GetProductType(){
 VarianceqtyChq(indx){
   this.ProductList[indx]['Varience_Qty'] =  0;
   if(this.ProductList[indx]['Batch_Qty'] && this.ProductList[indx]['Closing_Qty']){
-    this.ProductList[indx]['Varience_Qty'] = this.ProductList[indx]['Batch_Qty'] - this.ProductList[indx]['Closing_Qty'];
+    this.ProductList[indx]['Varience_Qty'] = (this.ProductList[indx]['Batch_Qty'] - this.ProductList[indx]['Closing_Qty']).toFixed(2);
   }
   //this.changeRemarks(indx);
   this.ProductList.forEach(el=>{

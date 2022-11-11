@@ -177,6 +177,7 @@
                                         #F_Godown_ID="ngModel" 
                                         [(ngModel)]="objRMissue.F_Godown_ID" 
                                         [disabled]="Topfielddisabled"
+                                        (change)="changedisabled()"
                                         [ngClass]="{'clearance': RMissueFormSubmit && F_Godown_ID?.errors?.required}"
                                         required 
                                         >
@@ -192,9 +193,9 @@
                                         name="To_Godown_ID" 
                                         #To_Godown_ID="ngModel" 
                                         [(ngModel)]="objRMissue.To_Godown_ID" 
+                                        (change)="changedisabled()"
                                         [disabled]="Topfielddisabled"
                                         [ngClass]="{'clearance': RMissueFormSubmit && To_Godown_ID?.errors?.required}" 
-                                        (change)="GetRequisitionNo()"
                                         required 
                                         >
                                             <option  [ngValue]="undefined">Select</option>
@@ -260,6 +261,7 @@
                                             [virtualScroll]="true"
                                             itemSize="30"
                                             #Product_Name="ngModel"
+                                            [disabled]="prodisabledflag"
                                             [required]="true"
                                             [styleClass]="AddProDetailsFormSubmitted && Product_Name.errors?.required ? 'clearance': ''"
                                             required>
@@ -271,7 +273,7 @@
                                                 name="Batch_No"
                                                 #Batch_No = "ngModel"
                                                 [(ngModel)] ="ObjproductAdd.Batch_No"
-                                                [disabled] = "BatchDisabled"
+                                                [disabled]="prodisabledflag"
                                                 [ngClass]="{'clearance':AddProDetailsFormSubmitted && Batch_No?.errors?.required}"
                                                 required>
                                         <option  [ngValue]="undefined">Select</option>
@@ -286,6 +288,7 @@
                                               name="Qty"
                                               #Qty = "ngModel"
                                               [(ngModel)] ="ObjproductAdd.Qty"
+                                              [disabled]="prodisabledflag"
                                               [ngClass]="{'clearance':AddProDetailsFormSubmitted && Qty?.errors?.required}"
                                                 required
                                                 CompacctDigitonly="true"
@@ -303,7 +306,7 @@
                                                 >
                                     </div>
                                     <div>
-                                    <button id="row-Add" class ="btn btn-primary custombuttonadd"  (click)="AddProductDetails(AddProDetailsForm.form.valid)">
+                                    <button id="row-Add" class ="btn btn-primary custombuttonadd" [disabled]="prodisabledflag" (click)="AddProductDetails(AddProDetailsForm.form.valid)">
                                       <!-- <i class="fa fa-fw fa-add"></i>&nbsp; Add --> Add
                                     </button>
                                     </div>

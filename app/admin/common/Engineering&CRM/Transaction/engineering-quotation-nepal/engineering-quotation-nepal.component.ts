@@ -25,7 +25,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   buttonname = "Save";
   Spinner = false;
   seachSpinner = false;
-  items = [];
+  items:any = [];
 
   ObjSupportTicket = new SupportTicket();
   EnginnerQuoationFormSubmit = false;
@@ -33,37 +33,37 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   ExpectedcompletionDate : any = {};
   SupportStartDate : any = {};
   SupportEndDate : any = {};
-  CallTypeList = [];
-  LoctionList = [];
-  MfList = [];
-  MachineList = [];
-  SerialNoList = [];
-  EngineerList = [];
-  ContractStatusList = [];
-  SymptomList = [];
+  CallTypeList:any = [];
+  LoctionList:any = [];
+  MfList:any = [];
+  MachineList:any = [];
+  SerialNoList:any = [];
+  EngineerList:any = [];
+  ContractStatusList:any = [];
+  SymptomList:any = [];
 
-  previouscontractList = [];
+  previouscontractList:any = [];
   PreviousContractPopup = false;
   customername = undefined;
   locationname = undefined
   precontractdisable = true;
 
-  StatusList = [];
+  StatusList:any = [];
 
   currentdate = new Date();
   ObjBrowse = new Browse();
   BrowseStartDate : any = {};
   BrowseEndDate : any = {};
   SearchFormSubmit = false;
-  BrowseList = [];
-  EditList = [];
+  BrowseList:any = [];
+  EditList:any = [];
   Contract_ID = undefined;
   browsestartdate: Date;
-  CurrentDateNepal= undefined;
+  CurrentDateNepal:any= undefined;
 
   alignedenggid = undefined;
   alignedengineer = undefined;
-  AlEngineerList = [];
+  AlEngineerList:any = [];
 
   EnginnerQuoationFormSubmitted = false;
   ObjEnginnerQuoation = new EnginnerQuoation();
@@ -71,13 +71,13 @@ export class EngineeringQuotationNepalComponent implements OnInit {
 
   EnginnerQuoationMachineFormSubmitted = false;
 
-  CustomerList =[];
-  LeadList = [];
+  CustomerList:any =[];
+  LeadList:any = [];
   ManufactureList:any = [];
-  InstallMachineList = [];
-  SparePartsList =[];
+  InstallMachineList:any = [];
+  SparePartsList:any =[];
 
-  EngQuoationProductList = [];
+  EngQuoationProductList:any = [];
 
   ObjBrowseQuotation = new BrowseQuotation();
   Browse_Sub_Ledger_ID : any;
@@ -92,19 +92,19 @@ export class EngineeringQuotationNepalComponent implements OnInit {
   // Address:any;
   @ViewChild("address", { static: false }) locationInput: ElementRef;
   Lead_Date : any = {};
-  IndustryList = [];
-  SourceList = [];
-  AssignToList = [];
-  ProductGrpList = [];
-  BackupProductGrpList = [];
-  ProductGrpFilter = [];
-  SelectedProGrp = [];
-  TProGrpList = [];
+  IndustryList:any = [];
+  SourceList:any = [];
+  AssignToList:any = [];
+  ProductGrpList:any = [];
+  BackupProductGrpList:any = [];
+  ProductGrpFilter:any = [];
+  SelectedProGrp:any = [];
+  TProGrpList:any = [];
   existingname = undefined;
-  SubjectList = [];
-  CustomerBrowseList = [];
-  LeadBrowseList = [];
-  cols =[];
+  SubjectList:any = [];
+  CustomerBrowseList:any = [];
+  LeadBrowseList:any = [];
+  cols:any =[];
   Quodocid = undefined;
   emailmsg: any;
  
@@ -191,7 +191,7 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     }
     const obj = {
       "SP_String": "SP_New_Lead_Registration",
-      "Report_Name_String": "Get_Leads_with_User_ID",
+      "Report_Name_String": "Get_Leads_with_User_ID_For_Quotation",
       "Json_Param_String": JSON.stringify([tobj])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -231,7 +231,8 @@ export class EngineeringQuotationNepalComponent implements OnInit {
     }
     const obj = {
       "SP_String": "SP_New_Lead_Registration",
-      "Report_Name_String": "Get_Leads_with_User_ID",
+      // "Report_Name_String": "Get_Leads_with_User_ID",
+      "Report_Name_String": "Get_Leads_with_User_ID_For_Quotation",
       "Json_Param_String": JSON.stringify([tobj])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{

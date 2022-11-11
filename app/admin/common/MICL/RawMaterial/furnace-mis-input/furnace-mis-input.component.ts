@@ -27,22 +27,33 @@ export class FurnaceMisInputComponent implements OnInit {
   tabIndexToView = 0;
   items:any = [];
   Spinner = false;
-  RawMatConsList:any = [];
   AddRMConsList:any = [];
   RMConsumptionvalid = false;
   FurnaceNoList:any = [];
 
+  RawMatConsList:any = [];
+  DynamicHeaderforRMC:any = [];
+
   ConsumableConsList:any = [];
+  DynamicHeaderforCC:any = [];
   AddConsumableConsList:any = [];
   ConConsumptionvalid = false;
   
+  ObjFurMISinputPro : FurMISinputPro = new FurMISinputPro();
   ProductionList:any = [];
   AddProductionList:any = [];
   Productionvalid = false;
 
+  ObjFurMISinputWaste : FurMISinputWaste = new FurMISinputWaste();
   WasteSlagList:any = [];
   AddWasteSlagList:any = [];
   wasteslagvalid = false;
+
+  ObjFurMISinputShutdoun : FurMISinputShutdoun = new FurMISinputShutdoun()
+  Shutdownvalid = false;
+  AddShutdownList:any = [];
+  FromTimeValue : any;
+  ToTimeValue : any;
 
   constructor(
     private $http: HttpClient,
@@ -144,6 +155,21 @@ export class FurnaceMisInputComponent implements OnInit {
   WasteSlagdelete(i){
     this.AddWasteSlagList.splice(i,1);
   }
+  addShutdown(valid){
+    this.Shutdownvalid = true;
+    if(valid){
+        this.AddShutdownList.push({
+          From_Time: this.ObjFurMISinputShutdoun.From_Time,
+          To_Time: this.ObjFurMISinputShutdoun.To_Time,
+          Reason: this.ObjFurMISinputShutdoun.Reason,
+        })
+        this.Shutdownvalid = false;
+        this.ObjFurnaceMISinput.Waste_Slag = undefined;
+      }
+  }
+  Shutdowndelete(i){
+    this.AddShutdownList.splice(i,1);
+  }
   SaveFurnace(valid){}
 }
 class FurnaceMISinput {
@@ -168,4 +194,21 @@ class FurnaceMISinput {
   WasteSlag_Batch_No : any;
   WasteSlag_Qty : any;
   Critical_Issue : any;
+}
+class FurMISinputPro {
+  Godown_ID : any;
+  Product_ID : any;
+  Batch_No : any;
+  Qty : any;
+}
+class FurMISinputWaste {
+  Godown_ID : any;
+  Product_ID : any;
+  Batch_No : any;
+  Qty : any;
+}
+class FurMISinputShutdoun {
+  From_Time : any;
+  To_Time : any;
+  Reason : any;
 }
