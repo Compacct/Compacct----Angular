@@ -59,6 +59,7 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
   PDFViewFlag = false;
   ProductPDFLink = undefined;
   JREIdUpload:any = undefined
+  DelVoucherNo :any =undefined
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
  
   constructor(
@@ -506,9 +507,45 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
 
 
   }
-
+  DeleteEarMold(valid){
+    this.DelVoucherNo = undefined
+    if(valid.JRE_Id){
+      this.Del =true;
+      this.Save = false;
+     this.DelVoucherNo = valid.JRE_Id ;
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+   
+    } 
+  }
   onConfirm2(){
-
+    if(this.DelVoucherNo){
+      const obj = {
+        "SP_String": "sp_Joh_Realistic_Expectation",
+        "Report_Name_String": "Delete_Data",
+        "Json_Param_String": JSON.stringify([{JRE_Id : this.DelVoucherNo}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        // console.log("del Data===", data[0].Column1)
+        if (data[0].message){
+          this.onReject();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "JRE_Id: " + this.DelVoucherNo.toString(),
+            detail: "Succesfully Deleted"
+          });
+          this.getAlldata();
+         }
+      })
+    }
   }
   clearData(){
     this.objRealistic = new Realistic();
