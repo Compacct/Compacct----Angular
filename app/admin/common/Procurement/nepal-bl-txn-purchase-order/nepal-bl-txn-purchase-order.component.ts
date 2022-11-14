@@ -51,7 +51,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   ngOnInit() {
   this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
-      Header: "Nepal BL Txn Purchase Order",
+      Header: "Purchase Order",
       Link: " Procurement ->  Nepal BL Txn Purchase Order"
     });
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
