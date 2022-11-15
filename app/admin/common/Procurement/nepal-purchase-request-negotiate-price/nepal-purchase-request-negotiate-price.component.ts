@@ -56,6 +56,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   PaymentTypeName = undefined
   CurrencyId =undefined
   CurrencyName = undefined
+  Spinner:boolean = false;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
