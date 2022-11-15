@@ -246,7 +246,7 @@ export class NepalRequisitionFromSalesmanComponent implements OnInit {
   GetSearchedList(valid:any){
     this.SearchFormSubmit = true
     if(valid){
-      if(this.objbrowse.Sales_Man_ID && this.objbrowse.Status){
+      if(this.objbrowse.Status){
         this.seachSpinner = true
         this.Searchedlist = []
         const tempobj = {
